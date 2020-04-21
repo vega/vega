@@ -8,1293 +8,6 @@
     {
       "items": [
         {
-          "marktype": "shape",
-          "role": "mark",
-          "interactive": true,
-          "clip": true,
-          "items": [
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "#ddd",
-              "stroke": "#eee",
-              "strokeWidth": 1,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "shape",
-          "role": "mark",
-          "interactive": true,
-          "clip": true,
-          "items": [
-            {
-              "fill": "rgb(156, 179, 213)",
-              "fillOpacity": 0.5,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "rgb(144, 149, 198)",
-              "fillOpacity": 0.5,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "rgb(140, 116, 181)",
-              "fillOpacity": 0.5,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "rgb(138, 81, 164)",
-              "fillOpacity": 0.5,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            },
-            {
-              "fill": "rgb(132, 45, 143)",
-              "fillOpacity": 0.5,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "shape"
-            }
-          ],
-          "zindex": 0
-        },
-        {
           "marktype": "group",
           "role": "legend",
           "interactive": false,
@@ -1496,10 +209,930 @@
               "y": 305,
               "width": 486,
               "height": 24,
-              "orient": "bottom",
-              "ariaLabel": "legend for Annual Precipitation (mm), fill color represents values from 0 to 3000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "bottom"
+            }
+          ],
+          "zindex": 1
+        },
+        {
+          "marktype": "shape",
+          "role": "mark",
+          "interactive": true,
+          "clip": true,
+          "items": [
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            },
+            {
+              "fill": "#ddd",
+              "stroke": "#eee",
+              "strokeWidth": 1
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "shape",
+          "role": "mark",
+          "interactive": true,
+          "clip": true,
+          "items": [
+            {
+              "fill": "rgb(156, 179, 213)",
+              "fillOpacity": 0.5
+            },
+            {
+              "fill": "rgb(144, 149, 198)",
+              "fillOpacity": 0.5
+            },
+            {
+              "fill": "rgb(140, 116, 181)",
+              "fillOpacity": 0.5
+            },
+            {
+              "fill": "rgb(138, 81, 164)",
+              "fillOpacity": 0.5
+            },
+            {
+              "fill": "rgb(132, 45, 143)",
+              "fillOpacity": 0.5
             }
           ],
           "zindex": 0

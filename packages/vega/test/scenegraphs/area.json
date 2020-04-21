@@ -472,10 +472,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5,
-              "ariaLabel": "x axis, represents values from 1 to 20",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 200.5
             }
           ],
           "zindex": 1
@@ -756,10 +753,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 1
@@ -777,9 +771,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 26.31578947368421,
@@ -788,9 +780,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 52.63157894736842,
@@ -799,9 +789,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 78.94736842105263,
@@ -810,9 +798,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 105.26315789473684,
@@ -821,9 +807,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 131.57894736842104,
@@ -832,9 +816,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 157.89473684210526,
@@ -843,9 +825,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 184.21052631578945,
@@ -854,9 +834,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 210.52631578947367,
@@ -865,9 +843,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 236.8421052631579,
@@ -876,9 +852,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 263.1578947368421,
@@ -887,9 +861,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 289.4736842105263,
@@ -898,9 +870,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 315.7894736842105,
@@ -909,9 +879,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 342.10526315789474,
@@ -920,9 +888,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 368.4210526315789,
@@ -931,9 +897,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 394.7368421052632,
@@ -942,9 +906,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 421.05263157894734,
@@ -953,9 +915,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 447.36842105263156,
@@ -964,9 +924,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 473.6842105263158,
@@ -975,9 +933,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             },
             {
               "x": 500,
@@ -986,9 +942,7 @@
               "fill": "steelblue",
               "fillOpacity": 1,
               "interpolate": "monotone",
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "area"
+              "y2": 200
             }
           ],
           "zindex": 0

@@ -38,7 +38,7 @@ export default function(spec, scope) {
   // build title specification
   group = guideGroup(TitleRole, style, name, dataRef, interactive,
                      groupEncode(_, userEncode), children);
-  if (spec.zindex) group.zindex = spec.zindex;
+  group.zindex = _('zindex');
 
   // parse title specification
   return parseMark(group, scope);

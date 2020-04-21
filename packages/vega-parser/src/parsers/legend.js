@@ -109,7 +109,7 @@ export default function(spec, scope) {
 
   // build legend specification
   group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
-  if (spec.zindex) group.zindex = spec.zindex;
+  group.zindex = _('zindex');
 
   // parse legend specification
   return parseMark(group, scope);

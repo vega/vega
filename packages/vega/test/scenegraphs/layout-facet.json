@@ -31,9 +31,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 225,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 225
                     },
                     {
                       "zindex": 0,
@@ -44,9 +42,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 291,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 291
                     },
                     {
                       "zindex": 0,
@@ -57,9 +53,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 219,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 219
                     }
                   ],
                   "zindex": 0
@@ -87,9 +81,7 @@
                       "fill": "#f58518",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 189,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 189
                     }
                   ],
                   "zindex": 0
@@ -117,9 +109,7 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 150,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 150
                     },
                     {
                       "zindex": 0,
@@ -130,9 +120,7 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 266,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 266
                     }
                   ],
                   "zindex": 0
@@ -154,6 +142,44 @@
           "items": [
             {
               "items": [
+                {
+                  "marktype": "group",
+                  "role": "title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "align": "right",
+                              "baseline": "middle",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": 0,
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": -45,
+                      "y": 19.799999999999997,
+                      "align": "center",
+                      "orient": "left",
+                      "angle": -90
+                    }
+                  ],
+                  "zindex": 1
+                },
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -234,14 +260,18 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis for cell, represents values a,b,c",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
-                },
+                }
+              ],
+              "x": -5,
+              "y": 0,
+              "height": 39.599999999999994
+            },
+            {
+              "items": [
                 {
                   "marktype": "group",
                   "role": "title",
@@ -261,34 +291,25 @@
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": 0,
+                              "text": 1,
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRole": "caption",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
                         }
                       ],
                       "x": -45,
-                      "y": 19.799999999999997,
+                      "y": 7.800000000000001,
                       "align": "center",
                       "orient": "left",
                       "angle": -90
                     }
                   ],
-                  "zindex": 0
-                }
-              ],
-              "x": -5,
-              "y": 0,
-              "height": 39.599999999999994
-            },
-            {
-              "items": [
+                  "zindex": 1
+                },
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -343,14 +364,18 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis for cell, represents values b",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
-                },
+                }
+              ],
+              "x": -5,
+              "y": 40,
+              "height": 15.600000000000001
+            },
+            {
+              "items": [
                 {
                   "marktype": "group",
                   "role": "title",
@@ -370,34 +395,25 @@
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": 1,
+                              "text": 2,
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRole": "caption",
-                              "ariaRoleDescription": "title"
+                              "fontWeight": "bold"
                             }
                           ],
                           "zindex": 0
                         }
                       ],
                       "x": -45,
-                      "y": 7.800000000000001,
+                      "y": 13.799999999999997,
                       "align": "center",
                       "orient": "left",
                       "angle": -90
                     }
                   ],
-                  "zindex": 0
-                }
-              ],
-              "x": -5,
-              "y": 40,
-              "height": 15.600000000000001
-            },
-            {
-              "items": [
+                  "zindex": 1
+                },
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -465,50 +481,7 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis for cell, represents values b,c",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "group",
-                  "role": "title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "text",
-                          "role": "title-text",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "align": "right",
-                              "baseline": "middle",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": 2,
-                              "angle": 0,
-                              "font": "sans-serif",
-                              "fontSize": 11,
-                              "fontWeight": "bold",
-                              "ariaRole": "caption",
-                              "ariaRoleDescription": "title"
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": -45,
-                      "y": 13.799999999999997,
-                      "align": "center",
-                      "orient": "left",
-                      "angle": -90
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
@@ -542,9 +515,7 @@
                       "text": "Row Title",
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "text"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -577,9 +548,7 @@
                       "text": "Column Title",
                       "font": "sans-serif",
                       "fontSize": 11,
-                      "fontWeight": "bold",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "text"
+                      "fontWeight": "bold"
                     }
                   ],
                   "zindex": 0
@@ -959,10 +928,7 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "x axis, represents values from 0 to 7",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0

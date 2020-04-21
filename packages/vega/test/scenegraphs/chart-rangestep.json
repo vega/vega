@@ -200,10 +200,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis for Left Title, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -458,10 +455,7 @@
                 }
               ],
               "x": 320.5,
-              "y": 0.5,
-              "ariaLabel": "y axis for Right Title, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -701,10 +695,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "x axis for Top Title, represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -1017,131 +1008,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5,
-              "ariaLabel": "x axis for Bottom Title, represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "rect",
-          "role": "mark",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "zindex": 0,
-              "x": 0,
-              "y": 144,
-              "width": 39,
-              "height": 56,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 40,
-              "y": 114.00000000000001,
-              "width": 39,
-              "height": 85.99999999999999,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 80,
-              "y": 2.0000000000000018,
-              "width": 39,
-              "height": 198,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 120,
-              "y": 87.99999999999999,
-              "width": 39,
-              "height": 112.00000000000001,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 160,
-              "y": 124,
-              "width": 39,
-              "height": 76,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 200,
-              "y": 34.00000000000001,
-              "width": 39,
-              "height": 166,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 240,
-              "y": 62.000000000000014,
-              "width": 39,
-              "height": 138,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "zindex": 0,
-              "x": 280,
-              "y": 152,
-              "width": 39,
-              "height": 48,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y": 200.5
             }
           ],
           "zindex": 0
@@ -1501,13 +1368,10 @@
               "y": 0,
               "width": 123,
               "height": 105,
-              "orient": "right",
-              "ariaLabel": "legend for Legend Right 1, shape represents values a,b,c,d,e,f and stroke color represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1864,13 +1728,10 @@
               "y": 0,
               "width": 114,
               "height": 105,
-              "orient": "left",
-              "ariaLabel": "legend for Legend Left 1, shape represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2011,13 +1872,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-left",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "top-left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2158,13 +2016,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-right",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "top-right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2305,13 +2160,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-left",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "bottom-left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2452,10 +2304,112 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-right",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "bottom-right"
+            }
+          ],
+          "zindex": 1
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "zindex": 0,
+              "x": 0,
+              "y": 144,
+              "width": 39,
+              "height": 56,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 40,
+              "y": 114.00000000000001,
+              "width": 39,
+              "height": 85.99999999999999,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 80,
+              "y": 2.0000000000000018,
+              "width": 39,
+              "height": 198,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 120,
+              "y": 87.99999999999999,
+              "width": 39,
+              "height": 112.00000000000001,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 160,
+              "y": 124,
+              "width": 39,
+              "height": 76,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 200,
+              "y": 34.00000000000001,
+              "width": 39,
+              "height": 166,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 240,
+              "y": 62.000000000000014,
+              "width": 39,
+              "height": 138,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
+            },
+            {
+              "zindex": 0,
+              "x": 280,
+              "y": 152,
+              "width": 39,
+              "height": 48,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 200
             }
           ],
           "zindex": 0

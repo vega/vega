@@ -254,10 +254,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "x axis, represents values from 3500 to 10500",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -419,10 +416,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from $1.20 to $3.40",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -438,495 +432,385 @@
               "y": 232,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 24,
               "y": 227,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 30,
               "y": 259,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 46,
               "y": 248,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 50,
               "y": 257,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 55,
               "y": 261,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 67,
               "y": 268,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 82,
               "y": 291,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 99,
               "y": 293,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 119,
               "y": 286,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 134,
               "y": 286,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 152,
               "y": 286,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 176,
               "y": 289,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 195,
               "y": 302,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 214,
               "y": 316,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 242,
               "y": 334,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 283,
               "y": 348,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 303,
               "y": 341,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 279,
               "y": 241,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 298,
               "y": 248,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 330,
               "y": 245,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 358,
               "y": 236,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 387,
               "y": 266,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 371,
               "y": 164,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 363,
               "y": 23,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 369,
               "y": 23,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 381,
               "y": 109,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 393,
               "y": 168,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 415,
               "y": 209,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 437,
               "y": 236,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 464,
               "y": 373,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 488,
               "y": 373,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 524,
               "y": 391,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 560,
               "y": 375,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 575,
               "y": 345,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 575,
               "y": 368,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 590,
               "y": 389,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 612,
               "y": 409,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 618,
               "y": 411,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 646,
               "y": 409,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 651,
               "y": 393,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 676,
               "y": 398,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 696,
               "y": 457,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 707,
               "y": 432,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 711,
               "y": 343,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 708,
               "y": 370,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 722,
               "y": 400,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 728,
               "y": 350,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 742,
               "y": 286,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 751,
               "y": 198,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 747,
               "y": 139,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 746,
               "y": 102,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 729,
               "y": 20,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 704,
               "y": 232,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             },
             {
               "x": 697,
               "y": 180,
               "stroke": "#000",
               "strokeWidth": 3,
-              "interpolate": "cardinal",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "line"
+              "interpolate": "cardinal"
             }
           ],
           "zindex": 0
@@ -943,9 +827,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 24,
@@ -953,9 +835,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 30,
@@ -963,9 +843,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 46,
@@ -973,9 +851,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 50,
@@ -983,9 +859,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 55,
@@ -993,9 +867,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 67,
@@ -1003,9 +875,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 82,
@@ -1013,9 +883,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 99,
@@ -1023,9 +891,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 119,
@@ -1033,9 +899,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 134,
@@ -1043,9 +907,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 152,
@@ -1053,9 +915,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 176,
@@ -1063,9 +923,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 195,
@@ -1073,9 +931,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 214,
@@ -1083,9 +939,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 242,
@@ -1093,9 +947,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 283,
@@ -1103,9 +955,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 303,
@@ -1113,9 +963,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 279,
@@ -1123,9 +971,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 298,
@@ -1133,9 +979,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 330,
@@ -1143,9 +987,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 358,
@@ -1153,9 +995,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 387,
@@ -1163,9 +1003,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 371,
@@ -1173,9 +1011,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 363,
@@ -1183,9 +1019,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 369,
@@ -1193,9 +1027,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 381,
@@ -1203,9 +1035,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 393,
@@ -1213,9 +1043,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 415,
@@ -1223,9 +1051,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 437,
@@ -1233,9 +1059,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 464,
@@ -1243,9 +1067,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 488,
@@ -1253,9 +1075,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 524,
@@ -1263,9 +1083,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 560,
@@ -1273,9 +1091,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 575,
@@ -1283,9 +1099,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 575,
@@ -1293,9 +1107,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 590,
@@ -1303,9 +1115,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 612,
@@ -1313,9 +1123,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 618,
@@ -1323,9 +1131,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 646,
@@ -1333,9 +1139,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 651,
@@ -1343,9 +1147,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 676,
@@ -1353,9 +1155,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 696,
@@ -1363,9 +1163,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 707,
@@ -1373,9 +1171,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 711,
@@ -1383,9 +1179,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 708,
@@ -1393,9 +1187,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 722,
@@ -1403,9 +1195,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 728,
@@ -1413,9 +1203,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 742,
@@ -1423,9 +1211,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 751,
@@ -1433,9 +1219,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 747,
@@ -1443,9 +1227,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 746,
@@ -1453,9 +1235,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 729,
@@ -1463,9 +1243,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 704,
@@ -1473,9 +1251,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             },
             {
               "x": 697,
@@ -1483,9 +1259,7 @@
               "fill": "#fff",
               "stroke": "#000",
               "strokeWidth": 1,
-              "size": 49,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "size": 49
             }
           ],
           "zindex": 0
@@ -1506,9 +1280,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 24,
@@ -1520,9 +1292,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 30,
@@ -1534,9 +1304,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 46,
@@ -1548,9 +1316,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 50,
@@ -1562,9 +1328,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 55,
@@ -1576,9 +1340,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 67,
@@ -1590,9 +1352,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 82,
@@ -1604,9 +1364,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 99,
@@ -1618,9 +1376,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 119,
@@ -1632,9 +1388,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 134,
@@ -1646,9 +1400,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 152,
@@ -1660,9 +1412,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 176,
@@ -1674,9 +1424,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 195,
@@ -1688,9 +1436,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 214,
@@ -1702,9 +1448,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 242,
@@ -1716,9 +1460,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 283,
@@ -1730,9 +1472,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 303,
@@ -1744,9 +1484,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 279,
@@ -1758,9 +1496,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 298,
@@ -1772,9 +1508,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 330,
@@ -1786,9 +1520,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 358,
@@ -1800,9 +1532,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 387,
@@ -1814,9 +1544,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 371,
@@ -1828,9 +1556,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 363,
@@ -1842,9 +1568,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 369,
@@ -1856,9 +1580,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 381,
@@ -1870,9 +1592,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 393,
@@ -1884,9 +1604,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 415,
@@ -1898,9 +1616,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 437,
@@ -1912,9 +1628,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 464,
@@ -1926,9 +1640,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 488,
@@ -1940,9 +1652,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 524,
@@ -1954,9 +1664,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 560,
@@ -1968,9 +1676,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 575,
@@ -1982,9 +1688,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 575,
@@ -1996,9 +1700,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 590,
@@ -2010,9 +1712,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 612,
@@ -2024,9 +1724,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 618,
@@ -2038,9 +1736,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 646,
@@ -2052,9 +1748,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 651,
@@ -2066,9 +1760,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 676,
@@ -2080,9 +1772,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 696,
@@ -2094,9 +1784,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 707,
@@ -2108,9 +1796,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 711,
@@ -2122,9 +1808,7 @@
               "dx": 0,
               "dy": -5,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 708,
@@ -2136,9 +1820,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 722,
@@ -2150,9 +1832,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 728,
@@ -2164,9 +1844,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 742,
@@ -2178,9 +1856,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 751,
@@ -2192,9 +1868,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 747,
@@ -2206,9 +1880,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 746,
@@ -2220,9 +1892,7 @@
               "dx": 6,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 729,
@@ -2234,9 +1904,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 704,
@@ -2248,9 +1916,7 @@
               "dx": 0,
               "dy": 6,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             },
             {
               "x": 697,
@@ -2262,9 +1928,7 @@
               "dx": -7,
               "dy": 1,
               "font": "sans-serif",
-              "fontSize": 11,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "text"
+              "fontSize": 11
             }
           ],
           "zindex": 0

@@ -294,10 +294,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "x axis, represents values from 0.00000 to 1.00000M",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -589,10 +586,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5,
-              "ariaLabel": "x axis, represents values from 0 to 1000000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 200.5
             }
           ],
           "zindex": 0
@@ -884,10 +878,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0.00000 to 1.00000M",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -1179,10 +1170,7 @@
                 }
               ],
               "x": 300.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0 to 1000000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0

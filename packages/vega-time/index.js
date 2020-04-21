@@ -1,6 +1,14 @@
 export {
-  timeUnits
+  timeUnits,
+  TIME_UNITS
 } from './src/units';
+
+export {
+  dayofyear,
+  week,
+  utcdayofyear,
+  utcweek
+} from './src/util';
 
 export {
   timeFloor,

@@ -262,10 +262,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5,
-              "ariaLabel": "x axis, represents values 0,1,2,3,4,5,6,7,8,9",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 200.5
             }
           ],
           "zindex": 1
@@ -504,10 +501,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0 to 160",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 1
@@ -525,9 +519,7 @@
               "height": 35,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 0,
@@ -536,9 +528,7 @@
               "height": 68.75000000000001,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 165
             },
             {
               "x": 50,
@@ -547,9 +537,7 @@
               "height": 53.75,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 50,
@@ -558,9 +546,7 @@
               "height": 113.75,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 146.25,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 146.25
             },
             {
               "x": 100,
@@ -569,9 +555,7 @@
               "height": 101.25,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 100,
@@ -580,9 +564,7 @@
               "height": 66.25,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 98.75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 98.75
             },
             {
               "x": 150,
@@ -591,9 +573,7 @@
               "height": 23.75,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 150,
@@ -602,9 +582,7 @@
               "height": 108.75,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 176.25,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 176.25
             },
             {
               "x": 200,
@@ -613,9 +591,7 @@
               "height": 65,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 200,
@@ -624,9 +600,7 @@
               "height": 60,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 135
             },
             {
               "x": 250,
@@ -635,9 +609,7 @@
               "height": 30,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 250,
@@ -646,9 +618,7 @@
               "height": 61.250000000000014,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 170,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 170
             },
             {
               "x": 300,
@@ -657,9 +627,7 @@
               "height": 108.74999999999999,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 300,
@@ -668,9 +636,7 @@
               "height": 82.50000000000003,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 91.25000000000001,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 91.25000000000001
             },
             {
               "x": 350,
@@ -679,9 +645,7 @@
               "height": 21.25,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 350,
@@ -690,9 +654,7 @@
               "height": 33.75,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 178.75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 178.75
             },
             {
               "x": 400,
@@ -701,9 +663,7 @@
               "height": 85.00000000000001,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 400,
@@ -712,9 +672,7 @@
               "height": 19.999999999999986,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 114.99999999999999,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 114.99999999999999
             },
             {
               "x": 450,
@@ -723,9 +681,7 @@
               "height": 61.25,
               "fill": "#4c78a8",
               "fillOpacity": 1,
-              "y2": 200,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 200
             },
             {
               "x": 450,
@@ -734,9 +690,7 @@
               "height": 18.75,
               "fill": "#f58518",
               "fillOpacity": 1,
-              "y2": 138.75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 138.75
             }
           ],
           "zindex": 0

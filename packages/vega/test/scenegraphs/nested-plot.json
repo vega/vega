@@ -367,10 +367,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 138.5,
-              "ariaLabel": "x axis, represents values from 0 to 7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 138.5
             }
           ],
           "zindex": 0
@@ -441,10 +438,7 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis, represents values a,b,c",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
@@ -464,9 +458,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 225,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 225
                     },
                     {
                       "zindex": 0,
@@ -477,9 +469,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 291,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 291
                     },
                     {
                       "zindex": 0,
@@ -490,9 +480,7 @@
                       "fill": "#4c78a8",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 219,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 219
                     }
                   ],
                   "zindex": 0
@@ -538,10 +526,7 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis, represents values b",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
@@ -561,9 +546,7 @@
                       "fill": "#f58518",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 189,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 189
                     }
                   ],
                   "zindex": 0
@@ -622,10 +605,7 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 0.5,
-                      "ariaLabel": "y axis, represents values b,c",
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "axis"
+                      "y": 0.5
                     }
                   ],
                   "zindex": 0
@@ -645,9 +625,7 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 150,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 150
                     },
                     {
                       "zindex": 0,
@@ -658,9 +636,7 @@
                       "fill": "#e45756",
                       "stroke": null,
                       "strokeWidth": 2,
-                      "x2": 266,
-                      "ariaRole": "graphics-symbol",
-                      "ariaRoleDescription": "rect"
+                      "x2": 266
                     }
                   ],
                   "zindex": 0

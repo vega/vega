@@ -6,23 +6,27 @@ export const MONTH = 'month';
 export const WEEK = 'week';
 export const DATE = 'date';
 export const DAY = 'day';
+export const DAYOFYEAR = 'dayofyear';
 export const HOURS = 'hours';
 export const MINUTES = 'minutes';
 export const SECONDS = 'seconds';
 export const MILLISECONDS = 'milliseconds';
 
-const UNITS = [
+export const TIME_UNITS = [
   YEAR,
   QUARTER,
   MONTH,
   WEEK,
   DATE,
   DAY,
+  DAYOFYEAR,
   HOURS,
   MINUTES,
   SECONDS,
   MILLISECONDS
-].reduce((o, u, i) => (o[u] = 1 + i, o), {});
+];
+
+const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
 
 export function timeUnits(units) {
   const u = array(units).slice(),
@@ -39,7 +43,13 @@ export function timeUnits(units) {
     }
   });
 
-  if ((m[WEEK] || m[DAY]) && (m[QUARTER] || m[MONTH] || m[DATE])) {
+  const numTypes = (
+    (m[WEEK] || m[DAY] ? 1 : 0) +
+    (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) +
+    (m[DAYOFYEAR] ? 1 : 0)
+  );
+
+  if (numTypes > 1) {
     error(`Incompatible time units: ${units}`);
   }
 

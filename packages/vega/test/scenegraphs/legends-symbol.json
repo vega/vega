@@ -320,13 +320,10 @@
               "height": 238,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left",
-              "ariaLabel": "legend for Vertical, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -641,13 +638,10 @@
               "height": 94,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "left",
-              "ariaLabel": "legend for Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -962,13 +956,10 @@
               "height": 62,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right",
-              "ariaLabel": "legend for Clipped - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1283,13 +1274,10 @@
               "height": 66,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right",
-              "ariaLabel": "legend for Clipped - Columns + Padding, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1604,13 +1592,10 @@
               "height": 79,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right",
-              "ariaLabel": "legend for Horizontal, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1925,13 +1910,10 @@
               "height": 38,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right",
-              "ariaLabel": "legend for Horizontal - Clipped, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2246,13 +2228,10 @@
               "height": 56,
               "stroke": "#ccc",
               "cornerRadius": 4,
-              "orient": "right",
-              "ariaLabel": "legend for Horizontal - Columns, size represents values from -100 to 100 and fill color represents values from -100 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         }
       ],
       "x": 0,

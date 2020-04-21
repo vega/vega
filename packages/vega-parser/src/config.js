@@ -149,7 +149,8 @@ export default function() {
       ariaRole: 'caption',
       ariaRoleDescription: 'title',
       subtitleAriaRole: 'caption',
-      subtitleAriaRoleDescription: 'subtitle'
+      subtitleAriaRoleDescription: 'subtitle',
+      zindex: 1
     },
 
     // defaults for axes
@@ -176,7 +177,8 @@ export default function() {
       tickWidth: 1,
       titlePadding: 4,
       ariaRole: 'graphics-symbol',
-      ariaRoleDescription: 'axis'
+      ariaRoleDescription: 'axis',
+      zindex: 0
     },
 
     // correction for centering bias
@@ -218,6 +220,7 @@ export default function() {
       titleLimit: 180,
       titleOrient: 'top',
       titlePadding: 5,
+      zindex: 1,
       layout: {
         offset: 18,
         direction: 'horizontal',

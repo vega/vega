@@ -1,5 +1,8 @@
 import {Transform} from 'vega-dataflow';
-import {timeBin, timeFloor, timeInterval, timeUnits, utcFloor, utcInterval} from 'vega-time';
+import {
+  TIME_UNITS, timeBin, timeFloor, timeInterval, timeUnits,
+  utcFloor, utcInterval
+} from 'vega-time';
 import {accessorFields, extent, inherits, peek} from 'vega-util';
 
 /**
@@ -20,7 +23,7 @@ TimeUnit.Definition = {
   'params': [
     { 'name': 'field', 'type': 'field', 'required': true },
     { 'name': 'interval', 'type': 'boolean', 'default': true },
-    { 'name': 'units', 'type': 'string', 'array': true },
+    { 'name': 'units', 'type': 'enum', 'values': TIME_UNITS, 'array': true },
     { 'name': 'step', 'type': 'number', 'default': 1 },
     { 'name': 'maxbins', 'type': 'number', 'default': 40 },
     { 'name': 'extent', 'type': 'date', 'array': true},

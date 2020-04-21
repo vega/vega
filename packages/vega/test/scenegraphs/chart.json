@@ -200,10 +200,7 @@
                 }
               ],
               "x": -9.5,
-              "y": 0.5,
-              "ariaLabel": "y axis for Left Title, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -458,10 +455,7 @@
                 }
               ],
               "x": 349.5,
-              "y": 0.5,
-              "ariaLabel": "y axis for Right Title, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -722,10 +716,7 @@
                 }
               ],
               "x": 0.5,
-              "y": -9.5,
-              "ariaLabel": "x axis for Top Title, represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": -9.5
             }
           ],
           "zindex": 0
@@ -1067,123 +1058,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 232.5,
-              "ariaLabel": "x axis for Bottom Title, represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "rect",
-          "role": "mark",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "x": 2,
-              "y": 160,
-              "width": 41,
-              "height": 62,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 44,
-              "y": 127,
-              "width": 41,
-              "height": 95,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 86,
-              "y": 2,
-              "width": 41,
-              "height": 220,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 128,
-              "y": 98,
-              "width": 41,
-              "height": 124,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 170,
-              "y": 138,
-              "width": 41,
-              "height": 84,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 212,
-              "y": 38,
-              "width": 41,
-              "height": 184,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 254,
-              "y": 69,
-              "width": 41,
-              "height": 153,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
-            },
-            {
-              "x": 296,
-              "y": 169,
-              "width": 41,
-              "height": 53,
-              "fill": "steelblue",
-              "fillOpacity": 0.5,
-              "stroke": "rgb(250, 0, 157)",
-              "strokeWidth": 0,
-              "y2": 222,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y": 232.5
             }
           ],
           "zindex": 0
@@ -1546,13 +1421,10 @@
               "y": 0,
               "width": 61,
               "height": 118,
-              "orient": "right",
-              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f and stroke color represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1906,13 +1778,10 @@
               "y": 126,
               "width": 61,
               "height": 105,
-              "orient": "right",
-              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f and fill color represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2272,13 +2141,10 @@
               "y": 0,
               "width": 52,
               "height": 118,
-              "orient": "left",
-              "ariaLabel": "legend for Legend, shape represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2638,13 +2504,10 @@
               "y": 126,
               "width": 52,
               "height": 122,
-              "orient": "left",
-              "ariaLabel": "legend for Legend, stroke color represents values a,b,c,d,e,f",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2785,13 +2648,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-left",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "top-left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2932,13 +2792,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "top-right",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "top-right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3079,13 +2936,10 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-left",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "bottom-left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3226,10 +3080,104 @@
               "fillOpacity": 0.5,
               "stroke": "#888",
               "cornerRadius": 4,
-              "orient": "bottom-right",
-              "ariaLabel": "legend, shape represents values alpha,beta",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "bottom-right"
+            }
+          ],
+          "zindex": 1
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 2,
+              "y": 160,
+              "width": 41,
+              "height": 62,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 44,
+              "y": 127,
+              "width": 41,
+              "height": 95,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 86,
+              "y": 2,
+              "width": 41,
+              "height": 220,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 128,
+              "y": 98,
+              "width": 41,
+              "height": 124,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 170,
+              "y": 138,
+              "width": 41,
+              "height": 84,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 212,
+              "y": 38,
+              "width": 41,
+              "height": 184,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 254,
+              "y": 69,
+              "width": 41,
+              "height": 153,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
+            },
+            {
+              "x": 296,
+              "y": 169,
+              "width": 41,
+              "height": 53,
+              "fill": "steelblue",
+              "fillOpacity": 0.5,
+              "stroke": "rgb(250, 0, 157)",
+              "strokeWidth": 0,
+              "y2": 222
             }
           ],
           "zindex": 0

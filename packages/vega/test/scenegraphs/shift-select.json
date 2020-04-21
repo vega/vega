@@ -178,10 +178,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 1
@@ -399,10 +396,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 300.5,
-              "ariaLabel": "x axis, represents values 0,1,2,3,4,5,6,7",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 300.5
             }
           ],
           "zindex": 1
@@ -419,9 +413,7 @@
               "width": 75,
               "height": 84,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 75,
@@ -429,9 +421,7 @@
               "width": 75,
               "height": 129,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 150,
@@ -439,9 +429,7 @@
               "width": 75,
               "height": 297,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 225,
@@ -449,9 +437,7 @@
               "width": 75,
               "height": 168,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 300,
@@ -459,9 +445,7 @@
               "width": 75,
               "height": 114,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 375,
@@ -469,9 +453,7 @@
               "width": 75,
               "height": 249,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 450,
@@ -479,9 +461,7 @@
               "width": 75,
               "height": 207,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             },
             {
               "x": 525,
@@ -489,9 +469,7 @@
               "width": 75,
               "height": 72,
               "fill": "#ccc",
-              "y2": 300,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "rect"
+              "y2": 300
             }
           ],
           "zindex": 0

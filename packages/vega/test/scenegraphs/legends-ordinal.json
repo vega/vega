@@ -1028,13 +1028,10 @@
               "y": 0,
               "width": 70,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Category, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2057,13 +2054,10 @@
               "y": 0,
               "width": 61,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Ordinal, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3086,13 +3080,10 @@
               "y": 0,
               "width": 35,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Ramp, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -4115,13 +4106,10 @@
               "y": 0,
               "width": 79,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Diverging, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -5144,13 +5132,10 @@
               "y": 0,
               "width": 61,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Heatmap, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -6173,13 +6158,10 @@
               "y": 0,
               "width": 52,
               "height": 374,
-              "orient": "none",
-              "ariaLabel": "legend for Custom, fill color represents values a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         }
       ],
       "x": 0,

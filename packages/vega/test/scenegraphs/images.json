@@ -157,10 +157,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 200.5,
-              "ariaLabel": "x axis, represents values from 0 to 4",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 200.5
             }
           ],
           "zindex": 0
@@ -357,10 +354,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis, represents values from 0 to 3",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -379,8 +373,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/ffox.png"
             },
             {
               "x": 25,
@@ -390,8 +383,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/gimp.png"
             },
             {
               "x": 25,
@@ -401,8 +393,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/7zip.png"
             }
           ],
           "zindex": 0
@@ -422,8 +413,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": false,
-              "ariaRole": "graphics-symbol"
+              "aspect": false
             },
             {
               "x": 75,
@@ -434,8 +424,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": false,
-              "ariaRole": "graphics-symbol"
+              "aspect": false
             },
             {
               "x": 75,
@@ -446,8 +435,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": false,
-              "ariaRole": "graphics-symbol"
+              "aspect": false
             }
           ],
           "zindex": 0
@@ -467,8 +455,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/ffox.png",
-              "aspect": true,
-              "ariaRole": "graphics-symbol"
+              "aspect": true
             },
             {
               "x": 125,
@@ -479,8 +466,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/gimp.png",
-              "aspect": true,
-              "ariaRole": "graphics-symbol"
+              "aspect": true
             },
             {
               "x": 125,
@@ -491,8 +477,7 @@
               "baseline": "middle",
               "opacity": 1,
               "url": "data/7zip.png",
-              "aspect": true,
-              "ariaRole": "graphics-symbol"
+              "aspect": true
             }
           ],
           "zindex": 0
@@ -510,8 +495,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/ffox.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/ffox.png"
             },
             {
               "x": 175,
@@ -520,8 +504,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/gimp.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/gimp.png"
             },
             {
               "x": 175,
@@ -530,8 +513,7 @@
               "align": "center",
               "baseline": "middle",
               "opacity": 1,
-              "url": "data/7zip.png",
-              "ariaRole": "graphics-symbol"
+              "url": "data/7zip.png"
             }
           ],
           "zindex": 0

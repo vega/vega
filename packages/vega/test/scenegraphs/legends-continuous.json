@@ -156,13 +156,10 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Linear Ramp, fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -313,13 +310,10 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Pow Ramp - Exponent 1.5, fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -470,13 +464,10 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Pow Ramp - Exponent 0.5, fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -869,13 +860,10 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Log Ramp - Base 10, fill color represents values from 1 to 1000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1026,13 +1014,10 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Log Ramp - Base 2, fill color represents values from 1 to 1024",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1183,13 +1168,10 @@
               "y": 260,
               "width": 303,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Symlog Ramp, fill color represents values from 0 to 1000",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1329,13 +1311,10 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Scheme, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1475,13 +1454,10 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0, 1], fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1621,13 +1597,10 @@
               "y": 416,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0.2, 1], fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1767,13 +1740,10 @@
               "y": 468,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [0.2, 1] Reverse, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1913,13 +1883,10 @@
               "y": 520,
               "width": 300,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Scheme Extent [1, 0.2], fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2059,13 +2026,10 @@
               "y": 0,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate Default, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2205,13 +2169,10 @@
               "y": 52,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate RGB, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2351,13 +2312,10 @@
               "y": 104,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate RGB Gamma 2.2, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2497,13 +2455,10 @@
               "y": 156,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate LAB, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2643,13 +2598,10 @@
               "y": 208,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate HCL, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2789,13 +2741,10 @@
               "y": 260,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate HSL, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -2935,13 +2884,10 @@
               "y": 312,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate HCL-Long, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3081,13 +3027,10 @@
               "y": 364,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Interpolate HSL-Long, fill color represents values from -10 to 10",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3227,13 +3170,10 @@
               "y": 416,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Diverging Mid 0, fill color represents values from -10 to 0",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3373,13 +3313,10 @@
               "y": 468,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Diverging Range Mid -5, fill color represents values from -10 to -5",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -3519,13 +3456,10 @@
               "y": 520,
               "width": 300,
               "height": 44,
-              "orient": "right",
-              "ariaLabel": "legend for Diverging Range Mid 5, fill color represents values from -10 to 5",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         }
       ],
       "x": 0,

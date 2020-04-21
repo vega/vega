@@ -9,6 +9,44 @@
       "items": [
         {
           "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Seattle Annual Temperatures",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": -86,
+              "y": -18,
+              "align": "left",
+              "orient": "top",
+              "angle": 0
+            }
+          ],
+          "zindex": 1
+        },
+        {
+          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -309,10 +347,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 400.5,
-              "ariaLabel": "x axis for Month, represents values from Jan to Dec",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
+              "y": 400.5
             }
           ],
           "zindex": 0
@@ -871,26 +906,7 @@
                 }
               ],
               "x": 0.5,
-              "y": 0.5,
-              "ariaLabel": "y axis for Hour, represents values 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0,1,2,3,4,5",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "axis"
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "image",
-          "role": "mark",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "width": 600,
-              "height": 400,
-              "aspect": false,
-              "smooth": true,
-              "ariaRole": "graphics-symbol"
+              "y": 0.5
             }
           ],
           "zindex": 0
@@ -1033,50 +1049,22 @@
               "y": 0,
               "width": 123,
               "height": 400,
-              "orient": "right",
-              "ariaLabel": "legend for Avg. Temp (°F), fill color represents values from 35.0 to 80.0",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
+          "marktype": "image",
+          "role": "mark",
+          "interactive": true,
           "clip": false,
           "items": [
             {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "Seattle Annual Temperatures",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 14,
-                      "fontWeight": "bold",
-                      "ariaRole": "caption",
-                      "ariaRoleDescription": "title"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": -86,
-              "y": -18,
-              "align": "left",
-              "orient": "top",
-              "angle": 0
+              "width": 600,
+              "height": 400,
+              "aspect": false,
+              "smooth": true
             }
           ],
           "zindex": 0

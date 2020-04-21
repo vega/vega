@@ -19,8 +19,7 @@
               "width": 750,
               "height": 500,
               "aspect": false,
-              "smooth": true,
-              "ariaRole": "graphics-symbol"
+              "smooth": true
             }
           ],
           "zindex": 0

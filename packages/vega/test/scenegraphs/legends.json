@@ -123,13 +123,10 @@
               "y": 0,
               "width": 100,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Gradient, fill color represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -247,13 +244,10 @@
               "y": 52,
               "width": 100,
               "height": 44,
-              "orient": "left",
-              "ariaLabel": "legend for Multi-Stop, stroke color represents values from -100 to -35",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "left"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -616,13 +610,10 @@
               "y": 0,
               "width": 70,
               "height": 109,
-              "orient": "right",
-              "ariaLabel": "legend for Sequence, stroke color represents values from 0 to 100",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -925,13 +916,10 @@
               "y": 117,
               "width": 48,
               "height": 79,
-              "orient": "right",
-              "ariaLabel": "legend for Stops, fill color represents values from -100 to -35",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "right"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         },
         {
           "marktype": "group",
@@ -1138,13 +1126,10 @@
               "y": 105,
               "width": 116,
               "height": 27,
-              "orient": "none",
-              "ariaLabel": "legend for Orient None, fill color represents values from -100 to -35",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "legend"
+              "orient": "none"
             }
           ],
-          "zindex": 0
+          "zindex": 1
         }
       ],
       "x": 0,

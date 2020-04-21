@@ -19,9 +19,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -29,9 +27,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 15
             },
             {
               "x": 100,
@@ -39,9 +35,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 30
             },
             {
               "x": 150,
@@ -49,9 +43,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 45
             },
             {
               "x": 200,
@@ -59,9 +51,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 60
             },
             {
               "x": 250,
@@ -69,9 +59,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 75
             },
             {
               "x": 300,
@@ -79,9 +67,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 90
             },
             {
               "x": 350,
@@ -89,9 +75,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 105
             },
             {
               "x": 400,
@@ -99,9 +83,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 120
             },
             {
               "x": 450,
@@ -109,9 +91,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 135
             },
             {
               "x": 500,
@@ -119,9 +99,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 150
             },
             {
               "x": 550,
@@ -129,9 +107,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 165
             },
             {
               "x": 600,
@@ -139,9 +115,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 180
             },
             {
               "x": 0,
@@ -149,9 +123,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -159,9 +131,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -15
             },
             {
               "x": 100,
@@ -169,9 +139,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -30
             },
             {
               "x": 150,
@@ -179,9 +147,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -45
             },
             {
               "x": 200,
@@ -189,9 +155,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -60
             },
             {
               "x": 250,
@@ -199,9 +163,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -75
             },
             {
               "x": 300,
@@ -209,9 +171,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -90
             },
             {
               "x": 350,
@@ -219,9 +179,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -105
             },
             {
               "x": 400,
@@ -229,9 +187,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -120
             },
             {
               "x": 450,
@@ -239,9 +195,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -135
             },
             {
               "x": 500,
@@ -249,9 +203,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -150
             },
             {
               "x": 550,
@@ -259,9 +211,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -165
             },
             {
               "x": 600,
@@ -269,9 +219,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "cross",
-              "angle": -180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -180
             },
             {
               "x": 0,
@@ -279,9 +227,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -289,9 +235,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 15
             },
             {
               "x": 100,
@@ -299,9 +243,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 30
             },
             {
               "x": 150,
@@ -309,9 +251,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 45
             },
             {
               "x": 200,
@@ -319,9 +259,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 60
             },
             {
               "x": 250,
@@ -329,9 +267,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 75
             },
             {
               "x": 300,
@@ -339,9 +275,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 90
             },
             {
               "x": 350,
@@ -349,9 +283,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 105
             },
             {
               "x": 400,
@@ -359,9 +291,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 120
             },
             {
               "x": 450,
@@ -369,9 +299,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 135
             },
             {
               "x": 500,
@@ -379,9 +307,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 150
             },
             {
               "x": 550,
@@ -389,9 +315,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 165
             },
             {
               "x": 600,
@@ -399,9 +323,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 180
             },
             {
               "x": 0,
@@ -409,9 +331,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -419,9 +339,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -15
             },
             {
               "x": 100,
@@ -429,9 +347,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -30
             },
             {
               "x": 150,
@@ -439,9 +355,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -45
             },
             {
               "x": 200,
@@ -449,9 +363,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -60
             },
             {
               "x": 250,
@@ -459,9 +371,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -75
             },
             {
               "x": 300,
@@ -469,9 +379,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -90
             },
             {
               "x": 350,
@@ -479,9 +387,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -105
             },
             {
               "x": 400,
@@ -489,9 +395,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -120
             },
             {
               "x": 450,
@@ -499,9 +403,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -135
             },
             {
               "x": 500,
@@ -509,9 +411,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -150
             },
             {
               "x": 550,
@@ -519,9 +419,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -165
             },
             {
               "x": 600,
@@ -529,9 +427,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "triangle",
-              "angle": -180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -180
             },
             {
               "x": 0,
@@ -539,9 +435,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -549,9 +443,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 15
             },
             {
               "x": 100,
@@ -559,9 +451,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 30
             },
             {
               "x": 150,
@@ -569,9 +459,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 45
             },
             {
               "x": 200,
@@ -579,9 +467,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 60
             },
             {
               "x": 250,
@@ -589,9 +475,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 75
             },
             {
               "x": 300,
@@ -599,9 +483,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 90
             },
             {
               "x": 350,
@@ -609,9 +491,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 105
             },
             {
               "x": 400,
@@ -619,9 +499,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 120
             },
             {
               "x": 450,
@@ -629,9 +507,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 135
             },
             {
               "x": 500,
@@ -639,9 +515,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 150
             },
             {
               "x": 550,
@@ -649,9 +523,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 165
             },
             {
               "x": 600,
@@ -659,9 +531,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 180
             },
             {
               "x": 0,
@@ -669,9 +539,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -679,9 +547,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -15
             },
             {
               "x": 100,
@@ -689,9 +555,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -30
             },
             {
               "x": 150,
@@ -699,9 +563,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -45
             },
             {
               "x": 200,
@@ -709,9 +571,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -60
             },
             {
               "x": 250,
@@ -719,9 +579,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -75
             },
             {
               "x": 300,
@@ -729,9 +587,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -90
             },
             {
               "x": 350,
@@ -739,9 +595,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -105
             },
             {
               "x": 400,
@@ -749,9 +603,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -120
             },
             {
               "x": 450,
@@ -759,9 +611,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -135
             },
             {
               "x": 500,
@@ -769,9 +619,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -150
             },
             {
               "x": 550,
@@ -779,9 +627,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -165
             },
             {
               "x": 600,
@@ -789,9 +635,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "wedge",
-              "angle": -180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -180
             },
             {
               "x": 0,
@@ -799,9 +643,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -809,9 +651,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 15
             },
             {
               "x": 100,
@@ -819,9 +659,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 30
             },
             {
               "x": 150,
@@ -829,9 +667,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 45
             },
             {
               "x": 200,
@@ -839,9 +675,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 60
             },
             {
               "x": 250,
@@ -849,9 +683,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 75
             },
             {
               "x": 300,
@@ -859,9 +691,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 90
             },
             {
               "x": 350,
@@ -869,9 +699,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 105
             },
             {
               "x": 400,
@@ -879,9 +707,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 120
             },
             {
               "x": 450,
@@ -889,9 +715,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 135
             },
             {
               "x": 500,
@@ -899,9 +723,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 150
             },
             {
               "x": 550,
@@ -909,9 +731,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 165
             },
             {
               "x": 600,
@@ -919,9 +739,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 180
             },
             {
               "x": 0,
@@ -929,9 +747,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": 0,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": 0
             },
             {
               "x": 50,
@@ -939,9 +755,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -15,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -15
             },
             {
               "x": 100,
@@ -949,9 +763,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -30,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -30
             },
             {
               "x": 150,
@@ -959,9 +771,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -45,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -45
             },
             {
               "x": 200,
@@ -969,9 +779,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -60,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -60
             },
             {
               "x": 250,
@@ -979,9 +787,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -75,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -75
             },
             {
               "x": 300,
@@ -989,9 +795,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -90,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -90
             },
             {
               "x": 350,
@@ -999,9 +803,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -105,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -105
             },
             {
               "x": 400,
@@ -1009,9 +811,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -120,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -120
             },
             {
               "x": 450,
@@ -1019,9 +819,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -135,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -135
             },
             {
               "x": 500,
@@ -1029,9 +827,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -150,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -150
             },
             {
               "x": 550,
@@ -1039,9 +835,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -165,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -165
             },
             {
               "x": 600,
@@ -1049,9 +843,7 @@
               "fill": "steelblue",
               "size": 1000,
               "shape": "arrow",
-              "angle": -180,
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "angle": -180
             }
           ],
           "zindex": 0
@@ -1067,936 +859,728 @@
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 0,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 50,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 100,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 150,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 200,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 250,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 300,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 0,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 50,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 100,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 150,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 200,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 250,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 300,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 350,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 400,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 450,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 500,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 550,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             },
             {
               "x": 600,
               "y": 350,
               "fill": "#000",
               "size": 9,
-              "shape": "circle",
-              "ariaRole": "graphics-symbol",
-              "ariaRoleDescription": "symbol"
+              "shape": "circle"
             }
           ],
           "zindex": 0

@@ -26,7 +26,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-geo-projection": "^2.8.1",
+    "d3-geo-projection": "^2.9.0",
     "vega-projection": "^1.4.0"
   }
 }
