@@ -22,7 +22,7 @@ export function tickCount(scale, count, minStep) {
       count = Math.max(count, scale.bins.length);
     }
     if (minStep != null) {
-      count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+      count = Math.min(count, Math.floor(span(scale.domain()) / minStep) || 1);
     }
   }
 
