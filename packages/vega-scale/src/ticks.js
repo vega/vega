@@ -154,7 +154,7 @@ function variablePrecision(specifier) {
 }
 
 function trimZeroes(format, decimalChar) {
-  return function(x) {
+  return x => {
     var str = format(x),
         dec = str.indexOf(decimalChar),
         idx, end;

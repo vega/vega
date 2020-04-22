@@ -79,7 +79,7 @@ export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
 }
 
 function formatRange(format) {
-  return function(value, index, array) {
+  return (value, index, array) => {
     var limit = get(array[index + 1], get(array.max, +Infinity)),
         lo = formatValue(value, format),
         hi = formatValue(limit, format);
@@ -92,15 +92,11 @@ function get(value, dflt) {
 }
 
 function formatDiscrete(format) {
-  return function(value, index) {
-    return index ? format(value) : null;
-  };
+  return (value, index) => index ? format(value) : null;
 }
 
 function formatPoint(format) {
-  return function(value) {
-    return format(value);
-  };
+  return value => format(value);
 }
 
 function formatValue(value, format) {
@@ -115,13 +111,11 @@ export function labelFraction(scale) {
       span = hi - lo;
 
   if (scale.type === Threshold) {
-    var adjust = count ? span / count : 0.1;
+    const adjust = count ? span / count : 0.1;
     lo -= adjust;
     hi += adjust;
     span = hi - lo;
   }
 
-  return function(value) {
-    return (value - lo) / span;
-  };
+  return value => (value - lo) / span;
 }
