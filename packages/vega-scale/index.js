@@ -1,4 +1,6 @@
-export {default as bandSpace} from './src/scales/bandSpace';
+export {
+  default as bandSpace
+} from './src/scales/bandSpace';
 
 export {
   Identity,
@@ -42,6 +44,10 @@ export {
 } from './src/scales';
 
 export {
+  scheme
+} from './src/schemes';
+
+export {
   SymbolLegend,
   DiscreteLegend,
   GradientLegend
@@ -60,6 +66,10 @@ export {
   labelValues
 } from './src/labels';
 
-export {scheme} from './src/schemes';
+export {
+  domainCaption
+} from './src/caption';
 
-export {scaleImplicit} from 'd3-scale';
+export {
+  scaleImplicit
+} from 'd3-scale';

@@ -1,3 +1,4 @@
+import {domainCaption} from 'vega-scale';
 import {peek, toSet} from 'vega-util';
 
 const ARIA_HIDDEN = 'aria-hidden';
@@ -66,13 +67,13 @@ function axisCaption(mark) {
     const item = mark.items[0],
           datum = item.datum,
           orient = datum.orient,
+          title = datum.title ? extractTitle(item) : null,
           scale = item.context.scales[datum.scale].value,
-          type = (orient === 'left' || orient === 'right') ? 'Y' : 'X',
-          title = datum.title ? extractTitle(item) : null;
+          xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
-    return type + '-Axis'
+    return xy + '-Axis'
       + (title ? ` titled "${title}"` : '')
-      + domainCaption(scale);
+      + ` with ${domainCaption(scale)}`;
   } catch (err) {
     return null;
   }
@@ -82,44 +83,29 @@ function legendCaption(mark) {
   try {
     const item = mark.items[0],
           datum = item.datum,
+          title = datum.title ? extractTitle(item) : null,
           scales = datum.scales,
           props = Object.keys(scales),
-          scale = item.context.scales[scales[props[0]]].value,
-          title = datum.title ? extractTitle(item) : null;
+          scale = item.context.scales[scales[props[0]]].value;
 
     return 'Legend'
       + (title ? ` titled "${title}"` : '')
-      + ` for ${channelCaption(props)}`
-      + domainCaption(scale);
+      + ` for ${channelCaption(props)} with ${domainCaption(scale)}`;
   } catch (err) {
     return null;
   }
 }
 
 function extractTitle(item) {
-  return peek(item.items).items[0].text;
+  try {
+    return peek(item.items).items[0].text;
+  } catch (err) {
+    return null;
+  }
 }
 
 function channelCaption(props) {
   props = props.map(p => p + (p === 'fill' || p === 'stroke' ? ' color' : ''));
   return props.length < 2 ? props[0]
     : props.slice(0, -1).join(', ') + ' and ' + peek(props);
-}
-
-function isDiscrete(type) {
-  return type === 'band' || type === 'ordinal'
-      || type === 'point' || type === 'bin-ordinal';
-}
-
-function domainCaption(scale) {
-  const MAX = 10;
-  const d = scale.domain();
-
-  if (isDiscrete(scale.type)) {
-    const n = d.length,
-          v = n > MAX ? d.slice(0, MAX - 2).concat('\u2026', d.slice(-1)) : d;
-    return ` with ${n} discrete value${n !== 1 ? 's' : ''}: ${v.join(', ')}`;
-  } else {
-    return ` with values from ${d[0]} to ${peek(d)}`;
-  }
 }
