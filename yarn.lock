@@ -1627,9 +1627,9 @@
     universal-user-agent "^4.0.0"
 
 "@octokit/types@^2.0.0", "@octokit/types@^2.0.1", "@octokit/types@^2.11.1":
-  version "2.11.1"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-2.11.1.tgz#bd5b059596b42845be3f8e66065667aff8c8bf8b"
-  integrity sha512-QaLoLkmFdfoNbk3eOzPv7vKrUY0nRJIYmZDoz/pTer4ICpqu80aSQTVHnnUxEFuURCiidig76CcxUOYC/bY3RQ==
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-2.12.0.tgz#3780ee594898a168f0dbeeb6f8912f22b4ec1ea7"
+  integrity sha512-T1of7Gln/XzPGTqlCO6bRAll93snD2+DozhChxCqlMNE5s2zkAoJmmrG2Kg2Nq0BTN/76o6/zpnRNwGjmAtkzQ==
   dependencies:
     "@types/node" ">= 8"
 
@@ -2698,7 +2698,7 @@ d3-array@1:
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.4.tgz#635ce4d5eea759f6f605863dbcfc30edc737f71f"
   integrity sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==
 
-"d3-array@1.2.0 - 2", d3-array@^2.0.3, d3-array@^2.3.3, d3-array@^2.4.0:
+"d3-array@1.2.0 - 2", d3-array@^2.0.3, d3-array@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.4.0.tgz#87f8b9ad11088769c82b5ea846bcb1cc9393f242"
   integrity sha512-KQ41bAF2BMakf/HdKT865ALd4cgND6VcIztVQZUTt0+BH3RWy6ZYnHghVXf6NFjt2ritLr8H1T8LreAAlfiNcw==
@@ -2738,7 +2738,7 @@ d3-force@^2.0.1:
     d3-quadtree "1"
     d3-timer "1"
 
-d3-format@1, d3-format@^1.4.2, d3-format@^1.4.3, d3-format@^1.4.4:
+d3-format@1, d3-format@^1.4.4:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.4.4.tgz#356925f28d0fd7c7983bfad593726fce46844030"
   integrity sha512-TWks25e7t8/cqctxCmxpUuzZN11QxIA7YrMbram94zMQ0PXjE4LVIMe/f6a4+xxL8HQ3OsAFULOINQi1pE62Aw==
@@ -2800,7 +2800,7 @@ d3-shape@^1.3.7:
   dependencies:
     d3-path "1"
 
-d3-time-format@2, d3-time-format@^2.2.1, d3-time-format@^2.2.2, d3-time-format@^2.2.3:
+d3-time-format@2, d3-time-format@^2.2.3:
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/d3-time-format/-/d3-time-format-2.2.3.tgz#0c9a12ee28342b2037e5ea1cf0b9eb4dd75f29cb"
   integrity sha512-RAHNnD8+XvC4Zc4d2A56Uw0yJoM7bsvOlJR33bclxq399Rak/b9bhvu/InjxdWhPtkgU53JJcleJTGkNRnN6IA==
@@ -7291,69 +7291,6 @@ vega-datasets@^1.30.2:
   version "1.30.2"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.30.2.tgz#d8a88f2b8602835d4547006797059450b5d9c97c"
   integrity sha512-CRF9WCqEcw9h1+gm7+6p6db0544fAWYlxmfkB+V6SsiaBG/3kP+0Xo+z9xG9Ch15PBhqfkhj1SivwcPQnqm0Qw==
-
-vega-encode@~4.5.3:
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/vega-encode/-/vega-encode-4.5.3.tgz#a243cbe2af461313a8a2eef88400548b89cdf52c"
-  integrity sha512-N7EVoDVQOrloutGnnXZj0Pa9JReH2s7Tio/2KUiMb5eGeJQ7jRD2zyqZSG0ZxKODSlxoP3YLmbLVKHIqNJQ5Kg==
-  dependencies:
-    d3-array "^2.4.0"
-    d3-format "^1.4.3"
-    d3-interpolate "^1.4.0"
-    vega-dataflow "^5.5.0"
-    vega-scale "^6.0.0"
-    vega-time "^1.0.0"
-    vega-util "^1.13.1"
-
-vega-functions@~5.5.1:
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/vega-functions/-/vega-functions-5.5.1.tgz#849a7c9f19c77899c26969b6070c724cd7366131"
-  integrity sha512-VTfEwf/ChSOGc4d4yUIgu2XoScky6NH06WN4vwVGY5PREhsyVPsQ+p2zqgD/N/a00EyWPHeOSHEhsPU28oIMtQ==
-  dependencies:
-    d3-array "^2.4.0"
-    d3-color "^1.4.0"
-    d3-format "^1.4.2"
-    d3-geo "^1.11.9"
-    d3-time-format "^2.2.2"
-    vega-dataflow "^5.5.0"
-    vega-expression "^2.6.3"
-    vega-scale "^6.0.0"
-    vega-scenegraph "^4.5.0"
-    vega-selections "^5.1.0"
-    vega-statistics "^1.7.1"
-    vega-time "^1.0.0"
-    vega-util "^1.12.1"
-
-vega-scale@~6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/vega-scale/-/vega-scale-6.0.0.tgz#b227127b00841e9d507a3235af2f8be475f7de83"
-  integrity sha512-uNJ5LC+s+XLxdO2iXC36/TLen3mMNv0wzhMZMNXa8h+Ih10geJ57sHbYYA8Z8403JC9AYTaWUe7m0H9CHgV9NA==
-  dependencies:
-    d3-array "^2.4.0"
-    d3-interpolate "^1.4.0"
-    d3-scale "^3.2.1"
-    vega-util "^1.12.1"
-
-vega-scenegraph@~4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/vega-scenegraph/-/vega-scenegraph-4.6.0.tgz#431b31c72ce528285c5808593dbb29cf8ed981e8"
-  integrity sha512-OwHr67kUyY5vG7VR1ovatVyynoHemIUxLgG6w5I4ckzCwCUWgvQRMhxT3bJnoIWvgE9AgLTiIL8mfoSLehK1IA==
-  dependencies:
-    d3-path "^1.0.9"
-    d3-shape "^1.3.7"
-    vega-canvas "^1.2.1"
-    vega-loader "^4.2.0"
-    vega-util "^1.13.1"
-
-vega-time@~1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vega-time/-/vega-time-1.0.0.tgz#5bc61ff311260cd212ccc8cbd73049bcd29b1440"
-  integrity sha512-r0yOFr/VklJwD3ew1+fEcB7E0LBCLChYlwh0KoO6cTIWMdlC4KhIIUN3/FuBfUZ4qx4V/xp71xH2YYYZTH6izg==
-  dependencies:
-    d3-array "^2.3.3"
-    d3-time "^1.1.0"
-    d3-time-format "^2.2.1"
-    vega-util "^1.12.0"
 
 verror@1.10.0:
   version "1.10.0"

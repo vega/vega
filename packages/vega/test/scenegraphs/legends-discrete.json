@@ -1198,7 +1198,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.037",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1220,7 +1220,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.075",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1242,7 +1242,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.112",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1460,7 +1460,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.033",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1482,7 +1482,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.067",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1504,7 +1504,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.100",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1526,7 +1526,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "0.133",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1830,7 +1830,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "50.6",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -1841,7 +1841,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "57.8",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -2037,7 +2037,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "45.0",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -2059,7 +2059,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "56.4",
                               "font": "sans-serif",
                               "fontSize": 10
@@ -2081,7 +2081,7 @@
                               "align": "center",
                               "baseline": "top",
                               "fill": "#000",
-                              "opacity": 1,
+                              "opacity": 0,
                               "text": "86.1",
                               "font": "sans-serif",
                               "fontSize": 10
