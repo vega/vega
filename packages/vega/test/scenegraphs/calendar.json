@@ -9,171 +9,6 @@
       "items": [
         {
           "marktype": "group",
-          "role": "legend",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "group",
-                  "role": "legend-entry",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "rect",
-                          "role": "legend-gradient",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "x": 0,
-                              "y": 0,
-                              "width": 250,
-                              "height": 10,
-                              "fill": {
-                                "x2": 1,
-                                "y2": 0
-                              },
-                              "opacity": 1,
-                              "stroke": "#ddd",
-                              "strokeWidth": 0
-                            }
-                          ],
-                          "zindex": 0
-                        },
-                        {
-                          "marktype": "text",
-                          "role": "legend-label",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "x": 0,
-                              "y": 12,
-                              "align": "left",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "-6%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 41.666666666666664,
-                              "y": 12,
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "-4%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 83.33333333333333,
-                              "y": 12,
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "-2%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 125,
-                              "y": 12,
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "0%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 166.66666666666669,
-                              "y": 12,
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "2%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 208.33333333333334,
-                              "y": 12,
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "4%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            },
-                            {
-                              "x": 250,
-                              "y": 12,
-                              "align": "right",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "6%",
-                              "font": "sans-serif",
-                              "fontSize": 10
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 192,
-                      "y": 0
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "text",
-                  "role": "legend-title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "x": 0,
-                      "y": 5,
-                      "align": "left",
-                      "baseline": "middle",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "orient": "left",
-                      "text": "Daily Change, S&P 500",
-                      "angle": 0,
-                      "limit": 180,
-                      "font": "sans-serif",
-                      "fontSize": 12,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 0,
-              "y": -49,
-              "width": 442,
-              "height": 22,
-              "orient": "top"
-            }
-          ],
-          "zindex": 1
-        },
-        {
-          "marktype": "group",
           "role": "scope",
           "interactive": true,
           "clip": false,
@@ -57934,6 +57769,171 @@
               ],
               "x": 0,
               "y": 2140
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "legend",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "group",
+                  "role": "legend-entry",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "rect",
+                          "role": "legend-gradient",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 0,
+                              "y": 0,
+                              "width": 250,
+                              "height": 10,
+                              "fill": {
+                                "x2": 1,
+                                "y2": 0
+                              },
+                              "opacity": 1,
+                              "stroke": "#ddd",
+                              "strokeWidth": 0
+                            }
+                          ],
+                          "zindex": 0
+                        },
+                        {
+                          "marktype": "text",
+                          "role": "legend-label",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "x": 0,
+                              "y": 12,
+                              "align": "left",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "-6%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 41.666666666666664,
+                              "y": 12,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "-4%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 83.33333333333333,
+                              "y": 12,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "-2%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 125,
+                              "y": 12,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "0%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 166.66666666666669,
+                              "y": 12,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "2%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 208.33333333333334,
+                              "y": 12,
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "4%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            },
+                            {
+                              "x": 250,
+                              "y": 12,
+                              "align": "right",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "6%",
+                              "font": "sans-serif",
+                              "fontSize": 10
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 192,
+                      "y": 0
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "legend-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 5,
+                      "align": "left",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "orient": "left",
+                      "text": "Daily Change, S&P 500",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 12,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0,
+              "y": -49,
+              "width": 442,
+              "height": 22,
+              "orient": "top"
             }
           ],
           "zindex": 0

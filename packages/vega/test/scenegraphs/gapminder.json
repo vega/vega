@@ -9,44 +9,6 @@
       "items": [
         {
           "marktype": "group",
-          "role": "title",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "World Development Trends in 1955",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 18,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 0,
-              "y": -27,
-              "align": "left",
-              "orient": "top",
-              "angle": 0
-            }
-          ],
-          "zindex": 1
-        },
-        {
-          "marktype": "group",
           "role": "axis",
           "interactive": false,
           "clip": false,
@@ -694,360 +656,6 @@
           "zindex": 0
         },
         {
-          "marktype": "group",
-          "role": "legend",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "group",
-                  "role": "legend-entry",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "group",
-                          "role": "scope",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#4c78a8",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "South Asia",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 0,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#f58518",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "America",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 13,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#e45756",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "East Asia & Pacific",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 26,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#72b7b2",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "Europe & Central Asia",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 39,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#54a24b",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "Middle East & North Africa",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 52,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            },
-                            {
-                              "items": [
-                                {
-                                  "marktype": "symbol",
-                                  "role": "legend-symbol",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 6,
-                                      "y": 6,
-                                      "fill": "#eeca3b",
-                                      "opacity": 1,
-                                      "strokeWidth": 1.5,
-                                      "size": 100,
-                                      "shape": "circle"
-                                    }
-                                  ],
-                                  "zindex": 0
-                                },
-                                {
-                                  "marktype": "text",
-                                  "role": "legend-label",
-                                  "interactive": false,
-                                  "clip": false,
-                                  "items": [
-                                    {
-                                      "x": 16,
-                                      "y": 6,
-                                      "align": "left",
-                                      "baseline": "middle",
-                                      "fill": "#000",
-                                      "opacity": 1,
-                                      "text": "Sub-Saharan Africa",
-                                      "limit": 160,
-                                      "font": "sans-serif",
-                                      "fontSize": 10
-                                    }
-                                  ],
-                                  "zindex": 0
-                                }
-                              ],
-                              "x": 0,
-                              "y": 65,
-                              "width": 168,
-                              "height": 11,
-                              "opacity": 1
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 0,
-                      "y": 16
-                    }
-                  ],
-                  "zindex": 0
-                },
-                {
-                  "marktype": "text",
-                  "role": "legend-title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "x": 0,
-                      "y": 0,
-                      "align": "left",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "orient": "top",
-                      "text": "Region",
-                      "angle": 0,
-                      "limit": 180,
-                      "font": "sans-serif",
-                      "fontSize": 11,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 10,
-              "y": 498,
-              "width": 168,
-              "height": 92,
-              "orient": "bottom-left"
-            }
-          ],
-          "zindex": 1
-        },
-        {
           "marktype": "symbol",
           "role": "mark",
           "interactive": true,
@@ -1556,6 +1164,398 @@
               "stroke": "#fff",
               "strokeWidth": 0.5,
               "size": 100.2025338331261
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "legend",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "group",
+                  "role": "legend-entry",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "group",
+                          "role": "scope",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#4c78a8",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "South Asia",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 0,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#f58518",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "America",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 13,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#e45756",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "East Asia & Pacific",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 26,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#72b7b2",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "Europe & Central Asia",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 39,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#54a24b",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "Middle East & North Africa",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 52,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            },
+                            {
+                              "items": [
+                                {
+                                  "marktype": "symbol",
+                                  "role": "legend-symbol",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 6,
+                                      "y": 6,
+                                      "fill": "#eeca3b",
+                                      "opacity": 1,
+                                      "strokeWidth": 1.5,
+                                      "size": 100,
+                                      "shape": "circle"
+                                    }
+                                  ],
+                                  "zindex": 0
+                                },
+                                {
+                                  "marktype": "text",
+                                  "role": "legend-label",
+                                  "interactive": false,
+                                  "clip": false,
+                                  "items": [
+                                    {
+                                      "x": 16,
+                                      "y": 6,
+                                      "align": "left",
+                                      "baseline": "middle",
+                                      "fill": "#000",
+                                      "opacity": 1,
+                                      "text": "Sub-Saharan Africa",
+                                      "limit": 160,
+                                      "font": "sans-serif",
+                                      "fontSize": 10
+                                    }
+                                  ],
+                                  "zindex": 0
+                                }
+                              ],
+                              "x": 0,
+                              "y": 65,
+                              "width": 168,
+                              "height": 11,
+                              "opacity": 1
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 0,
+                      "y": 16
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "legend-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "orient": "top",
+                      "text": "Region",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 11,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 10,
+              "y": 498,
+              "width": 168,
+              "height": 92,
+              "orient": "bottom-left"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "World Development Trends in 1955",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 18,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0,
+              "y": -27,
+              "align": "left",
+              "orient": "top",
+              "angle": 0
             }
           ],
           "zindex": 0

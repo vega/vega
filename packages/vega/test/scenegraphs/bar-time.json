@@ -17,44 +17,6 @@
               "items": [
                 {
                   "marktype": "group",
-                  "role": "title",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "items": [
-                        {
-                          "marktype": "text",
-                          "role": "title-text",
-                          "interactive": false,
-                          "clip": false,
-                          "items": [
-                            {
-                              "align": "center",
-                              "baseline": "top",
-                              "fill": "#000",
-                              "opacity": 1,
-                              "text": "Ordinal (Band) Time Scale",
-                              "angle": 0,
-                              "font": "sans-serif",
-                              "fontSize": 13,
-                              "fontWeight": "bold"
-                            }
-                          ],
-                          "zindex": 0
-                        }
-                      ],
-                      "x": 250,
-                      "y": -22,
-                      "align": "center",
-                      "orient": "top",
-                      "angle": 0
-                    }
-                  ],
-                  "zindex": 1
-                },
-                {
-                  "marktype": "group",
                   "role": "axis",
                   "interactive": false,
                   "clip": false,
@@ -629,22 +591,7 @@
                     }
                   ],
                   "zindex": 0
-                }
-              ],
-              "width": 500,
-              "height": 200
-            }
-          ],
-          "zindex": 0
-        },
-        {
-          "marktype": "group",
-          "role": "scope",
-          "interactive": true,
-          "clip": false,
-          "items": [
-            {
-              "items": [
+                },
                 {
                   "marktype": "group",
                   "role": "title",
@@ -664,7 +611,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "Continuous Time Scale",
+                              "text": "Ordinal (Band) Time Scale",
                               "angle": 0,
                               "font": "sans-serif",
                               "fontSize": 13,
@@ -681,8 +628,23 @@
                       "angle": 0
                     }
                   ],
-                  "zindex": 1
-                },
+                  "zindex": 0
+                }
+              ],
+              "width": 500,
+              "height": 200
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "scope",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "items": [
                 {
                   "marktype": "group",
                   "role": "axis",
@@ -1283,6 +1245,44 @@
                       "fill": "steelblue",
                       "x2": 499,
                       "y2": 200
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "group",
+                  "role": "title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "marktype": "text",
+                          "role": "title-text",
+                          "interactive": false,
+                          "clip": false,
+                          "items": [
+                            {
+                              "align": "center",
+                              "baseline": "top",
+                              "fill": "#000",
+                              "opacity": 1,
+                              "text": "Continuous Time Scale",
+                              "angle": 0,
+                              "font": "sans-serif",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          ],
+                          "zindex": 0
+                        }
+                      ],
+                      "x": 250,
+                      "y": -22,
+                      "align": "center",
+                      "orient": "top",
+                      "angle": 0
                     }
                   ],
                   "zindex": 0
