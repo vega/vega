@@ -1,16 +1,10 @@
-import {Discrete, Symbols} from './legend-types';
+import {DiscreteLegend, SymbolLegend} from './legend-types';
+import {Log, Quantile, Quantize, Threshold, Time, UTC} from './scales/types';
 import {tickFormat, tickValues} from './ticks';
 import {peek} from 'vega-util';
-import {
-  Log,
-  Quantile,
-  Quantize,
-  Threshold,
-  Time,
-  UTC,
-  tickFormat as spanFormat
-} from 'vega-scale';
+import {tickFormat as spanFormat} from 'd3-scale';
 
+//   tickFormat as spanFormat
 const symbols = {
   [Quantile]:  'quantiles',
   [Quantize]:  'thresholds',
@@ -79,8 +73,8 @@ export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
     ? thresholdFormat(scale, specifier)
     : tickFormat(scale, count, specifier, formatType, noSkip);
 
-  return type === Symbols && isDiscreteRange(scale) ? formatRange(format)
-    : type === Discrete ? formatDiscrete(format)
+  return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format)
+    : type === DiscreteLegend ? formatDiscrete(format)
     : formatPoint(format);
 }
 

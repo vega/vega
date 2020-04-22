@@ -41,6 +41,25 @@ export {
   isTemporal
 } from './src/scales';
 
+export {
+  SymbolLegend,
+  DiscreteLegend,
+  GradientLegend
+} from './src/legend-types';
+
+export {
+  tickCount,
+  tickFormat,
+  tickValues,
+  validTicks
+} from './src/ticks';
+
+export {
+  labelFormat,
+  labelFraction,
+  labelValues
+} from './src/labels';
+
 export {scheme} from './src/schemes';
 
-export {scaleImplicit, tickFormat} from 'd3-scale';
+export {scaleImplicit} from 'd3-scale';

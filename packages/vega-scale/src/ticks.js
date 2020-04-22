@@ -1,4 +1,5 @@
-import {Time, UTC, isLogarithmic} from 'vega-scale';
+import {isLogarithmic} from './scales';
+import {Time, UTC} from './scales/types';
 import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 import {formatSpecifier, format as numberFormat} from 'd3-format';
