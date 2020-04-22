@@ -650,7 +650,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -70,
+                      "x": -50,
                       "y": 300,
                       "align": "center",
                       "baseline": "bottom",
@@ -62431,7 +62431,7 @@
                   "zindex": 0
                 }
               ],
-              "x": -81,
+              "x": -61,
               "y": -18,
               "align": "left",
               "orient": "top",

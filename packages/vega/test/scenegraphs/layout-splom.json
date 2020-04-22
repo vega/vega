@@ -17324,7 +17324,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -26,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17552,7 +17552,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -19,
+                              "x": -17,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17738,7 +17738,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -26,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -17924,7 +17924,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -19,
+                              "x": -17,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18140,7 +18140,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 35,
+                              "x": 26,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18368,7 +18368,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 19,
+                              "x": 17,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18554,7 +18554,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 35,
+                              "x": 26,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -18740,7 +18740,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": 19,
+                              "x": 17,
                               "y": 60,
                               "align": "center",
                               "baseline": "bottom",
@@ -20491,7 +20491,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 96,
+                              "width": 59,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -20541,7 +20541,7 @@
                               ],
                               "x": 0,
                               "y": 16,
-                              "width": 96,
+                              "width": 59,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -20591,7 +20591,7 @@
                               ],
                               "x": 0,
                               "y": 32,
-                              "width": 96,
+                              "width": 59,
                               "height": 12.5,
                               "opacity": 1
                             }
@@ -20630,9 +20630,9 @@
                   "zindex": 0
                 }
               ],
-              "x": 576,
+              "x": 567,
               "y": 0,
-              "width": 96,
+              "width": 59,
               "height": 61,
               "orient": "right"
             }

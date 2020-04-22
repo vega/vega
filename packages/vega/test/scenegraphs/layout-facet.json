@@ -205,7 +205,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -16,
+                              "x": -14,
                               "y": 19.799999999999997,
                               "align": "center",
                               "baseline": "bottom",
@@ -256,7 +256,7 @@
                           "zindex": 0
                         }
                       ],
-                      "x": -45,
+                      "x": -41,
                       "y": 19.799999999999997,
                       "align": "center",
                       "orient": "left",
@@ -309,7 +309,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -16,
+                              "x": -14,
                               "y": 7.800000000000001,
                               "align": "center",
                               "baseline": "bottom",
@@ -360,7 +360,7 @@
                           "zindex": 0
                         }
                       ],
-                      "x": -45,
+                      "x": -41,
                       "y": 7.800000000000001,
                       "align": "center",
                       "orient": "left",
@@ -426,7 +426,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -16,
+                              "x": -14,
                               "y": 13.799999999999999,
                               "align": "center",
                               "baseline": "bottom",
@@ -477,8 +477,8 @@
                           "zindex": 0
                         }
                       ],
-                      "x": -45,
-                      "y": 13.799999999999997,
+                      "x": -41,
+                      "y": 13.799999999999999,
                       "align": "center",
                       "orient": "left",
                       "angle": -90
@@ -521,7 +521,7 @@
                   "zindex": 0
                 }
               ],
-              "x": -63,
+              "x": -57,
               "y": 42
             }
           ],

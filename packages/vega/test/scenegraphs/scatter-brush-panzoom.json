@@ -424,7 +424,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -27,
+                      "x": -23,
                       "y": 100,
                       "align": "center",
                       "baseline": "bottom",
@@ -4687,7 +4687,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 24,
+                              "width": 22,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -4736,7 +4736,7 @@
                               ],
                               "x": 0,
                               "y": 16,
-                              "width": 24,
+                              "width": 22,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -4785,7 +4785,7 @@
                               ],
                               "x": 0,
                               "y": 32,
-                              "width": 24,
+                              "width": 22,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -4834,7 +4834,7 @@
                               ],
                               "x": 0,
                               "y": 48,
-                              "width": 24,
+                              "width": 22,
                               "height": 12.5,
                               "opacity": 1
                             },
@@ -4883,7 +4883,7 @@
                               ],
                               "x": 0,
                               "y": 64,
-                              "width": 24,
+                              "width": 22,
                               "height": 12.5,
                               "opacity": 1
                             }
@@ -4924,7 +4924,7 @@
               ],
               "x": 218,
               "y": 0,
-              "width": 79,
+              "width": 50,
               "height": 93,
               "orient": "right"
             }

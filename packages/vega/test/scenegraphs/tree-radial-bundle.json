@@ -44321,7 +44321,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 104,
+                              "width": 72,
                               "height": 11,
                               "opacity": 1
                             },
@@ -44370,7 +44370,7 @@
                               ],
                               "x": 0,
                               "y": 13,
-                              "width": 104,
+                              "width": 72,
                               "height": 11,
                               "opacity": 1
                             }
@@ -44409,9 +44409,9 @@
                   "zindex": 0
                 }
               ],
-              "x": 597,
+              "x": 627,
               "y": 662,
-              "width": 105,
+              "width": 75,
               "height": 40,
               "orient": "bottom-right"
             }
