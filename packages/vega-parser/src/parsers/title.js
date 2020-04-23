@@ -60,8 +60,6 @@ function groupEncode(_, userEncode) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    aria:        _('aria'),
-    description: _('description'),
     orient:      _('orient'),
     anchor:      _('anchor'),
     align:       {signal: alignExpr},
@@ -69,7 +67,11 @@ function groupEncode(_, userEncode) {
     limit:       _('limit'),
     frame:       _('frame'),
     offset:      _('offset') || 0,
-    padding:     _('subtitlePadding')
+    padding:     _('subtitlePadding'),
+
+    // accessibility support
+    aria:         _('aria'),
+    description:  _('description'),
   });
 
   return extendEncode(encode, userEncode, Skip);

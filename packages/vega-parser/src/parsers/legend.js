@@ -51,7 +51,7 @@ export default function(spec, scope) {
 
   // encoding properties for legend group
   legendEncode = extendEncode(
-    buildLegendEncode(_, config), legendEncode, Skip
+    buildLegendEncode(_, spec, config), legendEncode, Skip
   );
 
   // encoding properties for legend entry sub-group
@@ -139,12 +139,10 @@ function scaleCount(spec) {
   }, 0);
 }
 
-function buildLegendEncode(_, config) {
+function buildLegendEncode(_, spec, config) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    aria:         _('aria'),
-    description:  _('description'),
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
@@ -156,6 +154,12 @@ function buildLegendEncode(_, config) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
+
+    // accessibility support
+    aria:         _('aria'),
+    description:  _('description'),
+    format:       spec.format,
+    formatType:   spec.formatType,
   });
 
   return encode;

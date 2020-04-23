@@ -95,14 +95,18 @@ function buildAxisEncode(_, spec) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    aria:         _('aria'),
-    description:  _('description'),
     offset:       _('offset') || 0,
     position:     value(spec.position, 0),
     titlePadding: _('titlePadding'),
     minExtent:    _('minExtent'),
     maxExtent:    _('maxExtent'),
-    range:        {signal: `abs(span(range("${spec.scale}")))`}
+    range:        {signal: `abs(span(range("${spec.scale}")))`},
+
+    // accessibility support
+    aria:         _('aria'),
+    description:  _('description'),
+    format:       spec.format,
+    formatType:   spec.formatType,
   });
 
   return encode;

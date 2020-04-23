@@ -164,6 +164,8 @@ const MARK_BASE = {
     'marktype': { 'enum': null },
     'name': { 'type': 'string' },
     'role': { 'type': 'string' },
+    'description': { 'type': 'string' },
+    'aria': { 'type': 'boolean' },
     'interactive': { 'type': 'boolean', 'default': true },
     'items': {
       'type': 'array',

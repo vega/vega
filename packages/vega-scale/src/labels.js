@@ -46,7 +46,7 @@ export function thresholdFormat(scale, specifier) {
     d = Math.min(d, _[i] - _[i-1]);
   }
 
-  // 3 ticks times 10 for increased resolution
+  // tickCount = 3 ticks times 10 for increased resolution
   return spanFormat(0, d, 3 * 10, specifier);
 }
 
