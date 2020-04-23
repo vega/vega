@@ -9,7 +9,7 @@ function hasArgument(_) {
   return process.argv.slice(2).some(a => a === _);
 }
 
-const external = [].concat(!externals ? [] : [
+const external = !externals ? [] : [
   // 'd3-array', // we use d3-array v2, not part of D3 v5
   'd3-color',
   'd3-dispatch',
@@ -27,21 +27,21 @@ const external = [].concat(!externals ? [] : [
   'd3-timer',
   // 'd3-delaunay', // not part of D3 v5
   'topojson-client'
-]);
+];
 
 const options = {
   file: 'build/' + output,
   format: 'es'
 };
 
-if (!esmodule) Object.assign(options, {
-  format: 'umd',
-  name: 'vega',
-  globals: external.reduce(function(map, _) {
-    map[_] = _.split('-')[0]; // map package name to prefix
-    return map;
-  }, {})
-});
+if (!esmodule) {
+  Object.assign(options, {
+    format: 'umd',
+    name: 'vega',
+    // map package name to prefix
+    globals: external.reduce((map, _) => (map[_] = _.split('-')[0], map), {})
+  });
+}
 
 rollup.rollup({
   input: 'index.js',
@@ -49,20 +49,21 @@ rollup.rollup({
   plugins: [
     resolve({
       browser: true,
+      modulesOnly: true,
       customResolveOptions: { preserveSymlinks: false }
     }),
     json()
   ],
-  onwarn: function(warning) {
+  onwarn: warning => {
     // suppress circular dependency warnings
     if (warning.code !== 'CIRCULAR_DEPENDENCY') {
       // eslint-disable-next-line
       console.warn(warning.code, warning.message);
     }
   }
-}).then(function(bundle) {
+}).then(bundle => {
   return bundle.write(options);
-}).then(function() {
+}).then(() => {
   // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);
