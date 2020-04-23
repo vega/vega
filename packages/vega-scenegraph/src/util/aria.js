@@ -6,6 +6,7 @@ const ARIA_LABEL = 'aria-label';
 const ARIA_ROLE = 'role';
 const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
 const DEFAULT_ROLE = 'graphics-symbol';
+const GROUP_ROLE = 'graphics-object';
 
 const bundle = (role, roledesc, label) => ({
   [ARIA_ROLE]: role,
@@ -52,11 +53,12 @@ export const AriaEncode = {
 
 export function ariaMarkAttributes(mark) {
   const role = mark.role;
+  const ariaRole = mark.marktype === 'group' ? GROUP_ROLE : DEFAULT_ROLE;
   return AriaHidden[role] ? { [ARIA_HIDDEN]: true }
     : AriaIgnore[role] ? null
     : AriaGuides[role] ? AriaGuides[role](mark)
     : mark.aria === false ? { [ARIA_HIDDEN]: true }
-    : bundle(DEFAULT_ROLE, mark.marktype, mark.description);
+    : bundle(ariaRole, mark.marktype, mark.description);
 }
 
 export function ariaItemAttributes(emit, item) {
