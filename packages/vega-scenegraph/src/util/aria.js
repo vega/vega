@@ -1,11 +1,12 @@
 import {domainCaption, isDiscrete} from 'vega-scale';
-import {peek, toSet} from 'vega-util';
+import {array, peek, toSet} from 'vega-util';
 
 const ARIA_HIDDEN = 'aria-hidden';
 const ARIA_LABEL = 'aria-label';
 const ARIA_ROLE = 'role';
 const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
-const DEFAULT_ROLE = 'graphics-symbol';
+const GRAPHICS_OBJECT = 'graphics-object';
+const GRAPHICS_SYMBOL = 'graphics-symbol';
 
 const bundle = (role, roledesc, label) => ({
   [ARIA_ROLE]: role,
@@ -13,34 +14,33 @@ const bundle = (role, roledesc, label) => ({
   [ARIA_LABEL]: label || undefined
 });
 
-// these roles should be hidden from aria support
-// instead, a parent element can provide aria attributes
-const AriaHidden = toSet([
+// these roles are covered by related roles
+// we can ignore them, no need to generate attributes
+const AriaIgnore = toSet([
   'axis-domain',
   'axis-grid',
   'axis-label',
   'axis-tick',
   'axis-title',
-  'legend-entry',
-  'legend-title'
-]);
-
-// these roles are contained within hidden roles
-// we can ignore them, no need to generate attributes
-const AriaIgnore = toSet([
   'legend-band',
+  'legend-entry',
   'legend-gradient',
   'legend-label',
-  'legend-symbol'
+  'legend-title',
+  'legend-symbol',
+  'title',
 ]);
 
 // aria attribute generators for guide roles
 const AriaGuides = {
-  'axis': mark => guideAria(mark, DEFAULT_ROLE, 'axis', axisCaption),
-  'legend': mark => guideAria(mark, DEFAULT_ROLE, 'legend', legendCaption),
-  'title': mark => guideAria(mark, 'caption', 'title'),
-  'title-text': () => bundle('caption', 'title text'),
-  'title-subtitle': () => bundle('caption', 'subtitle text')
+  'axis': mark =>
+    guideAria(mark, GRAPHICS_SYMBOL, 'axis', axisCaption),
+  'legend': mark =>
+    guideAria(mark, GRAPHICS_SYMBOL, 'legend', legendCaption),
+  'title-text': mark =>
+    guideAria(mark, GRAPHICS_SYMBOL, 'title', titleCaption),
+  'title-subtitle': mark =>
+    guideAria(mark, GRAPHICS_SYMBOL, 'subtitle', titleCaption)
 };
 
 // aria properties generated for mark item encoding channels
@@ -52,18 +52,41 @@ export const AriaEncode = {
 
 export function ariaMarkAttributes(mark) {
   const role = mark.role;
-  return AriaHidden[role] ? { [ARIA_HIDDEN]: true }
-    : AriaIgnore[role] ? null
+  return AriaIgnore[role] ? null
     : AriaGuides[role] ? AriaGuides[role](mark)
     : mark.aria === false ? { [ARIA_HIDDEN]: true }
-    : bundle(DEFAULT_ROLE, mark.marktype, mark.description);
+    : ariaMark(mark);
+}
+
+function ariaMark(mark) {
+  const type = mark.marktype;
+  const recurse = (
+    type === 'group' ||
+    type === 'text' ||
+    mark.items.some(_ => _.description != null)
+  );
+  return bundle(
+    recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
+    `${type} mark group`,
+    mark.description
+  );
 }
 
 export function ariaItemAttributes(emit, item) {
   const hide = item.aria === false;
   emit(ARIA_HIDDEN, hide || undefined);
-  for (const prop in AriaEncode) {
-    emit(AriaEncode[prop], hide ? undefined : item[prop]);
+
+  if (hide || item.description == null) {
+    for (const prop in AriaEncode) {
+      emit(AriaEncode[prop], undefined);
+    }
+  } else {
+    emit(ARIA_LABEL, item.description);
+    emit(ARIA_ROLE, item.ariaRole || GRAPHICS_SYMBOL);
+    emit(
+      ARIA_ROLEDESCRIPTION,
+      item.ariaRoleDescription || `${item.mark.marktype} mark`
+    );
   }
 }
 
@@ -76,6 +99,10 @@ function guideAria(mark, role, roledesc, caption) {
   } catch (err) {
     return null;
   }
+}
+
+function titleCaption(item) {
+  return array(item.text).join(' ');
 }
 
 function axisCaption(item) {
@@ -107,7 +134,7 @@ function legendCaption(item) {
 
 function extractTitle(item) {
   try {
-    return peek(item.items).items[0].text;
+    return array(peek(item.items).items[0].text).join(' ');
   } catch (err) {
     return null;
   }

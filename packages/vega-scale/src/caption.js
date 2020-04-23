@@ -12,7 +12,7 @@ function format(scale, specifier, formatType) {
 
 export function domainCaption(scale, opt) {
   opt = opt || {};
-  const max = Math.max(3, opt.maxlen || 10),
+  const max = Math.max(3, opt.maxlen || 7),
         fmt = format(scale, opt.format, opt.formatType);
 
   // if scale breaks domain into bins, describe boundaries
@@ -27,9 +27,10 @@ export function domainCaption(scale, opt) {
     const d = scale.domain(),
           n = d.length,
           v = n > max
-            ? d.slice(0, max - 2).map(fmt).concat('...', d.slice(-1).map(fmt))
-            : d.map(fmt);
-    return `${n} value${n === 1 ? '' : 's'}: ${v.join(', ')}`;
+            ? d.slice(0, max - 2).map(fmt).join(', ')
+              + ', ending with ' + d.slice(-1).map(fmt)
+            : d.map(fmt).join(', ');
+    return `${n} value${n === 1 ? '' : 's'}: ${v}`;
   }
 
   // if scale domain is continuous, describe value range
