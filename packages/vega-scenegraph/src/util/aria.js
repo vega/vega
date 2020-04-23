@@ -82,7 +82,11 @@ export function ariaItemAttributes(emit, item) {
     }
   } else {
     emit(ARIA_LABEL, item.description);
-    emit(ARIA_ROLE, item.ariaRole || GRAPHICS_SYMBOL);
+    emit(
+      ARIA_ROLE,
+      item.ariaRole ||
+        (item.mark.marktype === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL)
+    );
     emit(
       ARIA_ROLEDESCRIPTION,
       item.ariaRoleDescription || `${item.mark.marktype} mark`
