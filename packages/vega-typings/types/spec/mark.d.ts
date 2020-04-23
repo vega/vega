@@ -48,6 +48,7 @@ export interface BaseMark {
   role?: string;
   name?: string;
   description?: string;
+  aria?: boolean;
   key?: string;
   clip?: Clip;
   sort?: Compare;

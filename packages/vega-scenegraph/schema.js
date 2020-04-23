@@ -164,6 +164,8 @@ const MARK_BASE = {
     'marktype': { 'enum': null },
     'name': { 'type': 'string' },
     'role': { 'type': 'string' },
+    'description': { 'type': 'string' },
+    'aria': { 'type': 'boolean' },
     'interactive': { 'type': 'boolean', 'default': true },
     'items': {
       'type': 'array',
@@ -215,7 +217,11 @@ const ITEM_BASE = {
     'zindex': { 'type': 'number' },
     'cursor': { 'type': 'string' },
     'href': { 'type': 'string', 'format': 'uri-reference' },
-    'tooltip': {}
+    'tooltip': {},
+    'description': { 'type': 'string' },
+    'aria': { 'type': 'boolean' },
+    'ariaRole': { 'type': 'string' },
+    'ariaRoleDescription': { 'type': 'string' },
   }
 };
 

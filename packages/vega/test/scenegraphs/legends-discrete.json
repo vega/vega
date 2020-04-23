@@ -124,7 +124,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -265,7 +265,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -428,7 +428,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -613,7 +613,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -820,7 +820,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -1049,7 +1049,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -1300,7 +1300,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -1573,7 +1573,7 @@
               "orient": "left"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -1714,7 +1714,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -1899,7 +1899,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -2128,7 +2128,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -2247,7 +2247,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -2388,7 +2388,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -2551,7 +2551,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -2736,7 +2736,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         },
         {
           "marktype": "group",
@@ -3031,7 +3031,7 @@
               "orient": "right"
             }
           ],
-          "zindex": 1
+          "zindex": 0
         }
       ],
       "x": 0,

@@ -12,6 +12,7 @@ import { LayoutAlign } from './layout';
 import {
   AlignValue,
   AnchorValue,
+  BooleanValue,
   ColorValue,
   DashArrayValue,
   FontStyleValue,
@@ -134,6 +135,22 @@ export interface BaseLegend {
    * The desired number of tick values for quantitative legends.
    */
   tickCount?: TickCount;
+
+  // ---------- ARIA ----------
+  /**
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree.
+   *
+   * __Default value:__ `true`
+   */
+  aria?: BooleanValue;
+
+  /**
+   * A text description of this legend for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
+   * If the description is unspecified it will be automatically generated.
+   */
+  description?: StringValue;
 
   // ---------- Legend Group ----------
   /**

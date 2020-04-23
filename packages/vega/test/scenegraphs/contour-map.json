@@ -8,44 +8,6 @@
     {
       "items": [
         {
-          "marktype": "group",
-          "role": "title",
-          "interactive": false,
-          "clip": false,
-          "items": [
-            {
-              "items": [
-                {
-                  "marktype": "text",
-                  "role": "title-text",
-                  "interactive": false,
-                  "clip": false,
-                  "items": [
-                    {
-                      "align": "center",
-                      "baseline": "top",
-                      "fill": "#000",
-                      "opacity": 1,
-                      "text": "Density of U.S. Airports, 2008",
-                      "angle": 0,
-                      "font": "sans-serif",
-                      "fontSize": 13,
-                      "fontWeight": "bold"
-                    }
-                  ],
-                  "zindex": 0
-                }
-              ],
-              "x": 450,
-              "y": 2,
-              "align": "center",
-              "orient": "top",
-              "angle": 0
-            }
-          ],
-          "zindex": 1
-        },
-        {
           "marktype": "path",
           "role": "mark",
           "interactive": true,
@@ -30790,6 +30752,44 @@
                   "zindex": 0
                 }
               ]
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "title",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "text",
+                  "role": "title-text",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "Density of U.S. Airports, 2008",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 13,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 450,
+              "y": 2,
+              "align": "center",
+              "orient": "top",
+              "angle": 0
             }
           ],
           "zindex": 0

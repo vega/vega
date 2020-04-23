@@ -8,7 +8,7 @@ import guideGroup from './guides/guide-group';
 import {lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
-import {encoder, extendEncode} from './encode/encode-util';
+import {addEncoders, extendEncode} from './encode/encode-util';
 import {Skip} from './guides/constants';
 import {ref, value} from '../util';
 import {AxisTicks, Collect} from '../transforms';
@@ -27,6 +27,7 @@ export default function(spec, scope) {
   // single-element data source for axis group
   datum = {
     orient: spec.orient,
+    scale:  spec.scale,
     ticks:  !!_('ticks'),
     labels: !!_('labels'),
     grid:   !!_('grid'),
@@ -37,16 +38,9 @@ export default function(spec, scope) {
   dataRef = ref(scope.add(Collect({}, [datum])));
 
   // encoding properties for axis group item
-  axisEncode = extendEncode({
-    update: {
-      offset:       encoder(_('offset') || 0),
-      position:     encoder(value(spec.position, 0)),
-      titlePadding: encoder(_('titlePadding')),
-      minExtent:    encoder(_('minExtent')),
-      maxExtent:    encoder(_('maxExtent')),
-      range:        {signal: `abs(span(range("${spec.scale}")))`}
-    }
-  }, encode.axis, Skip);
+  axisEncode = extendEncode(
+    buildAxisEncode(_, spec), axisEncode, Skip
+  );
 
   // data source for axis ticks
   ticksRef = ref(scope.add(AxisTicks({
@@ -95,4 +89,25 @@ export default function(spec, scope) {
 
   // parse axis specification
   return parseMark(group, scope);
+}
+
+function buildAxisEncode(_, spec) {
+  var encode = {enter: {}, update: {}};
+
+  addEncoders(encode, {
+    offset:       _('offset') || 0,
+    position:     value(spec.position, 0),
+    titlePadding: _('titlePadding'),
+    minExtent:    _('minExtent'),
+    maxExtent:    _('maxExtent'),
+    range:        {signal: `abs(span(range("${spec.scale}")))`},
+
+    // accessibility support
+    aria:         _('aria'),
+    description:  _('description'),
+    format:       spec.format,
+    formatType:   spec.formatType,
+  });
+
+  return encode;
 }

@@ -1,4 +1,3 @@
-import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
 import {
   error, inherits, isArray, isFunction, isString, peek, stringValue,
@@ -32,7 +31,8 @@ import {
   isInterpolating,
   isLogarithmic,
   quantizeInterpolator,
-  scaleImplicit
+  scaleImplicit,
+  tickCount
 } from 'vega-scale';
 
 import {range as sequence} from 'd3-array';

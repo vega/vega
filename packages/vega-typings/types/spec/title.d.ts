@@ -3,6 +3,7 @@ import { Encode, Text } from './encode';
 import {
   AlignValue,
   AnchorValue,
+  BooleanValue,
   ColorValue,
   FontStyleValue,
   FontWeightValue,
@@ -79,6 +80,28 @@ export interface BaseTitle {
   offset?: NumberValue;
 
   /**
+   * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
+   */
+  orient?: TitleOrient | SignalRef;
+
+  // ---------- ARIA ----------
+  /**
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the title from the ARIA accessibility tree.
+   *
+   * __Default value:__ `true`
+   */
+  aria?: BooleanValue;
+
+  /**
+   * A text description of this title for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
+   * If the description is unspecified no description will be provided.
+   */
+  description?: StringValue;
+
+  // ---------- Shared Text Properties ----------
+  /**
    * Horizontal text alignment for title text. One of `"left"`, `"center"`, or `"right"`.
    */
   align?: AlignValue;
@@ -103,6 +126,14 @@ export interface BaseTitle {
    */
   dy?: NumberValue;
 
+  /**
+   * The maximum allowed length in pixels of title and subtitle text.
+   *
+   * @minimum 0
+   */
+  limit?: NumberValue;
+
+  // ---------- Title Text ----------
   /**
    * Text color for title text.
    */
@@ -136,18 +167,7 @@ export interface BaseTitle {
    */
   lineHeight?: NumberValue;
 
-  /**
-   * The maximum allowed length in pixels of title and subtitle text.
-   *
-   * @minimum 0
-   */
-  limit?: NumberValue;
-
-  /**
-   * Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`)
-   */
-  orient?: TitleOrient | SignalRef;
-
+  // ---------- Subtitle Text ----------
   /**
    * Text color for subtitle text.
    */

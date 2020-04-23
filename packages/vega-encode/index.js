@@ -7,4 +7,3 @@ export {default as pie} from './src/Pie';
 export {default as scale} from './src/Scale';
 export {default as sortitems} from './src/SortItems';
 export {default as stack} from './src/Stack';
-export {validTicks} from './src/ticks';

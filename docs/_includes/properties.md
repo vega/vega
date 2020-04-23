@@ -32,3 +32,14 @@ For marks that support width and height settings (including `rect` and `area`), 
 For marks that do not support width or height (including `path` and `arc`) similar calculations are applied, but are only used to determine the mark's ultimate _x_ and _y_ position. The _width_ property may affect the final _x_ position, but otherwise is not visualized.
 
 When using multiple spatial properties along the same dimension (_x_ and _x2_, or _y_ and _y2_), the properties **must** be specified in the same encoding set; for example, all within `"enter": {...}` or all within `"update": {...}`. Dividing the properties across encoding sets can cause unexpected behavior.
+
+### Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output. Vega will automatically generate ARIA attributes for container SVG `<g>` elements for each mark definition; this can be configured using [mark-level accessibility properties](/docs/marks/#accessibility). Use the properties below in encode sets to add ARIA attributes for individual mark items.
+
+| Property          | Type                          | Description  |
+| :---------------- | :---------------------------: | :------------|
+| aria              | {% include type t="Boolean" %}| A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG element, removing the mark item from the ARIA accessibility tree. |
+| description       | {% include type t="String" %} | A text description of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute). |
+| ariaRole          | {% include type t="String" %} | Sets the type of user interface element of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the "role" attribute. |
+| ariaRoleDescription | {% include type t="String" %} | A human-readable, author-localized description for the role of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the "aria-roledescription" attribute. |
