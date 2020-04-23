@@ -1,6 +1,6 @@
 {
   "name": "vega-loader",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",
@@ -38,7 +38,7 @@
     "d3-time-format": "^2.2.3",
     "node-fetch": "^2.6.0",
     "topojson-client": "^3.1.0",
-    "vega-util": "^1.13.1"
+    "vega-util": "^1.13.2"
   },
   "browser": {
     "./build/vega-loader.node.js": "./build/vega-loader.js",

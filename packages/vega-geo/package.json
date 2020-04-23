@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -27,11 +27,11 @@
     "d3-array": "^2.4.0",
     "d3-color": "^1.4.1",
     "d3-geo": "^1.12.0",
-    "vega-canvas": "^1.2.1",
-    "vega-dataflow": "^5.1.1",
-    "vega-projection": "^1.4.0",
-    "vega-statistics": "^1.7.3",
-    "vega-util": "^1.13.1"
+    "vega-canvas": "^1.2.2",
+    "vega-dataflow": "^5.5.1",
+    "vega-projection": "^1.4.1",
+    "vega-statistics": "^1.7.4",
+    "vega-util": "^1.13.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
