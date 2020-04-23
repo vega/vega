@@ -3,33 +3,31 @@ var rollup = require('rollup'),
     externals = process.argv[2] === '-e',
     output = 'vega-projections' + (externals ? '-core' : '') + '.js';
 
-var modules = ['vega-projection'].concat(!externals ? [] : [
-  'd3-array',
-  'd3-geo'
-]);
-
-var module_globals = modules.reduce(
-  function(map, _) { return map[_] = 'd3', map; },
-  {}
+var modules = ['vega-projection'].concat(
+  externals ? ['d3-array', 'd3-geo'] : []
 );
-module_globals['vega-projection'] = 'vega';
 
 rollup.rollup({
   input: 'index.js',
   external: modules,
   plugins: [
     resolve({
+      modulesOnly: true,
       customResolveOptions: { preserveSymlinks: false }
     })
   ]
-}).then(function(bundle) {
+}).then(bundle => {
+  const module_globals = {};
+  modules.forEach(_ => module_globals[_] = 'd3');
+  module_globals['vega-projection'] = 'vega';
+
   return bundle.write({
     file: 'build/' + output,
     format: 'umd',
     name: 'vega',
     globals: module_globals
   });
-}).then(function() {
+}).then(() => {
   // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);
