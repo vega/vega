@@ -190,7 +190,7 @@ view.<b>runAsync</b>([<i>encode</i>, <i>prerun</i>, <i>postrun</i>])
 
 Evaluates the underlying dataflow graph and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves upon completion of dataflow processing and scengraph rendering. The optional *encode* argument is a String value indicating the name of a custom `"encode"` set to run in addition to the standard `"update"` encoder. Any scenegraph elements modified during dataflow evaluation will automatically be re-rendered in the view.
 
-Internally, this method invokes evaluation by the [Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js) parent class, and then additionally performs rendering. The returned [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) will resolve after rendering operations are complete.
+Internally, this method invokes evaluation by the [Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js) parent class, and then additionally performs rendering. The returned [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) will resolve after rendering operations are complete. This method should not be invoked repeatedly until a prior call resolves: callers should `await` the result of runAsync (or use `.then(...)` chaining) before re-invoking the method.
 
 The optional *prerun* and *postrun* functions are callbacks that will be invoked immediately before and after dataflow evaluation and rendering. The callback functions are called with this view instance as the sole argument. The callbacks may be [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). If provided, *postrun* will be invoked *after* any callbacks registered via the [runAfter](#view_runAfter) method.
 
@@ -448,7 +448,7 @@ Removes a data set listener registered with the [addDataListener](#view_addDataL
 view.<b>change</b>(<i>name</i>, <i>changeset</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/data.js "Source")
 
-Updates the data set with the given *name* with the changes specified by the provided *changeset* instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready.
+Updates the data set with the given *name* with the changes specified by the provided *changeset* instance. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready. To issue a series of changes, insertions, or deletions, be sure to `await` the results of runAsync before issuing the next change.
 
 ```js
 view.change('data', vega.changeset().insert([...]).remove([...]))
@@ -465,7 +465,7 @@ view.<b>insert</b>(<i>name</i>, <i>tuples</i>)
 
 Inserts an array of new data *tuples* into the data set with the given *name*, then returns this view instance. The input *tuples* array should contain one or more data objects that are not already included in the data set. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready.
 
-_Insert can not be used in combination with the [remove](#view_remove) method on the same pulse; to simultaneously add and remove data use the [change](#view_change) method._
+_Insert can not be used in combination with the [remove](#view_remove) method on the same pulse; to simultaneously add and remove data use the [change](#view_change) method._ To issue a series of changes, insertions, or deletions, be sure to `await` the results of runAsync before issuing the next change.
 
 Inserted data tuples must be JavaScript objects that have been properly parsed ahead of time. Any data source `"format"` directives in a Vega JSON specification will **not** be applied to tuples added through the View API. Internally, this method creates a [ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js) and invokes [Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js). See [vega-dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/) for more.
 
@@ -475,7 +475,7 @@ view.<b>remove</b>(<i>name</i>, <i>tuples</i>)
 
 Removes data *tuples* from the data set with the given *name*, then returns this view instance. The *tuples* argument can either be an array of tuples already included in the data set, or a predicate function indicating which tuples should be removed. This method does not force an immediate update to the view: invoke the [runAsync](#view_runAsync) method when ready.
 
-_Remove can not be used in combination with the [insert](#view_insert) method on the same pulse; to simultaneously add and remove data use the [change](#view_change) method._
+_Remove can not be used in combination with the [insert](#view_insert) method on the same pulse; to simultaneously add and remove data use the [change](#view_change) method._ To issue a series of changes, insertions, or deletions, be sure to `await` the results of runAsync before issuing the next change.
 
 For example, to remove all tuples in the `'table'` data set with a `count` property less than five:
 
