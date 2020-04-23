@@ -43,6 +43,17 @@ Properties for specifying a title.
 | subtitlePadding    | {% include type t="Number" %}  | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
 | zindex             | {% include type t="Number" %}  | The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups. The default value is `0`.|
 
+### Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| aria          | {% include type t="Boolean" %}| A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the title from the ARIA accessibility tree.|
+| description   | {% include type t="String" %} | A text description of this title for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified no description will be provided.|
+
+### Themes and Configuration
+
 To create themes, new default values for many title properties can be set using a [config](../config) object.
 
 ## <a name="custom"></a>Custom Title Encodings

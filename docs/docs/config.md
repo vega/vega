@@ -257,6 +257,15 @@ Additional property blocks can target more specific axis types based on the orie
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
 | translate       | {% include type t="Number" %}   | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates, in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
 
+### <a name="axes-accessibility">Axis Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the axis from the ARIA accessibility tree. {% include tag ver="5.11" %}|
+| description           | {% include type t="String" %}   | A text description of this axis for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. {% include tag ver="5.11" %}|
+
 ### Usage
 
 This example sets the axis label color to dark gray for all axes, and rotates the labels for axes oriented along the bottom of a chart.
@@ -347,6 +356,15 @@ Properties defining default settings for legends. These properties are defined u
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
 
+### <a name="legends-accessibility">Legend Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree. {% include tag ver="5.11" %}|
+| description           | {% include type t="String" %}   | A text description of this legend for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. {% include tag ver="5.11" %}|
+
 ### <a name="legends-layout"></a>Legend Layout Properties {% include tag ver="5.0" %}
 
 Collections of legends with the same *orient* value are positioned together, either vertically or horizontally in sequence. The legend *layout* property enables customization of how legends are organized within a Vega view. The *layout* property is an object value that may contain both top-level properties that apply to all legends and a set of *orient*-specific properties for customizing specific legend orientations.
@@ -427,6 +445,15 @@ Properties defining default settings for titles. These properties are defined un
 | subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
 | subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
 | subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
+
+### <a name="title-accessibility">Title Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the title from the ARIA accessibility tree. {% include tag ver="5.11" %}|
+| description           | {% include type t="String" %}   | A text description of this title for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified no description will be provided. {% include tag ver="5.11" %}|
 
 ### Usage
 
