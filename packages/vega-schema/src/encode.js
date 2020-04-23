@@ -202,10 +202,10 @@ const encodeEntry = object({
   cursor: stringValueRef,
   tooltip: anyValueRef,
   zindex: numberValueRef,
-  ariaHidden: booleanValueRef,
-  ariaLabel: stringValueRef,
+  aria: booleanValueRef,
   ariaRole: stringValueRef,
   ariaRoleDescription: stringValueRef,
+  description: stringValueRef,
 
   // Group-mark properties
   clip: booleanValueRef,

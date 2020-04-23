@@ -255,21 +255,25 @@ export interface EncodeEntry {
   tooltip?: ProductionRule<StringValueRef>;
   zindex?: ProductionRule<NumericValueRef>;
   /**
-   * If set to `true`, removes that element and all of its children from the accessibility tree.
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG element, removing the mark item from the ARIA accessibility tree.
    */
-  ariaHidden?: ProductionRule<BooleanValueRef>;
+  aria?: ProductionRule<BooleanValueRef>;
   /**
-   * A string that labels the current element for accessibility. Use it in cases where a text label is not visible on the screen.
-   */
-  ariaLabel?: ProductionRule<StringValueRef>;
-  /**
-   * The type of user interface element for accessibility.
+   * Sets the type of user interface element of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the "role" attribute.
    */
   ariaRole?: ProductionRule<StringValueRef>;
   /**
-   * A human-readable, author-localized description for the role of an element.
+   * A human-readable, author-localized description for the role of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the "aria-roledescription" attribute.
    */
   ariaRoleDescription?: ProductionRule<StringValueRef>;
+  /**
+   * A text description of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute).
+   */
+  description?: ProductionRule<StringValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 

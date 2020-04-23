@@ -1,8 +1,8 @@
 import {timeIntervals} from './scale';
 import {
-  alignValue, anchorValue, arrayOrSignal, baselineValue, booleanOrNumberOrSignal,
-  booleanOrSignal, booleanType, booleanValue, colorValue,
-  dashArrayValue, def, enums,
+  alignValue, anchorValue, arrayOrSignal, baselineValue,
+  booleanOrNumberOrSignal, booleanOrSignal, booleanType, booleanValue,
+  colorValue, dashArrayValue, def, enums,
   fontWeightValue, formatTypeOrSignal, formatTypeType,
   numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
   ref, signalRef, stringType, stringValue, textOrSignal
@@ -59,6 +59,10 @@ const axis = object({
   translate: numberType,
   values: arrayOrSignal,
   zindex: numberType,
+
+  // ARIA CONFIG
+  aria: booleanValue,
+  description: stringValue,
 
   // TITLE CONFIG
   title: textOrSignal,

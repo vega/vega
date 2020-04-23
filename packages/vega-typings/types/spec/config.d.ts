@@ -84,24 +84,28 @@ export type StrokeJoin = 'miter' | 'round' | 'bevel';
 
 export interface MarkConfig {
   /**
-   * If set to `true`, removes marks from the accessibility tree.
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG element, removing the mark item from the ARIA accessibility tree.
    */
-  ariaHidden?: boolean | SignalRef;
+  aria?: boolean | SignalRef;
 
   /**
-   * A string that labels the mark for accessibility.
-   */
-  ariaLabel?: string | SignalRef;
-
-  /**
-   * Sets the type of user interface element of the mark for accessibility.
+   * Sets the type of user interface element of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the "role" attribute.
    */
   ariaRole?: string | SignalRef;
 
   /**
-   * A human-readable, author-localized description for the role of the mark.
+   * A human-readable, author-localized description for the role of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the "aria-roledescription" attribute.
    */
   ariaRoleDescription?: string | SignalRef;
+
+  /**
+   * A text description of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute).
+   */
+  description?: string | SignalRef;
 
   /**
    * Width of the marks.
