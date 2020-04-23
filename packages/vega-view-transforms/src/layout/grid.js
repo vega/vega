@@ -8,6 +8,10 @@ import {tempBounds} from './util';
 import {Bounds} from 'vega-scenegraph';
 import {isObject} from 'vega-util';
 
+// aggregation functions for grid margin determination
+const min = (a, b) => Math.floor(Math.min(a, b));
+const max = (a, b) => Math.ceil(Math.max(a, b));
+
 function gridLayoutGroups(group) {
   var groups = group.items,
       n = groups.length,
@@ -293,10 +297,6 @@ function boundFlush(item, field) {
 function boundFull(item, field) {
   return item.bounds[field];
 }
-
-// aggregation functions for grid margin determination
-function min(a, b) { return Math.floor(Math.min(a, b)); }
-function max(a, b) { return Math.ceil(Math.max(a, b)); }
 
 function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
   var n = groups.length,

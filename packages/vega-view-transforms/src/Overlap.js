@@ -33,10 +33,10 @@ export default function Overlap(params) {
 var prototype = inherits(Overlap, Transform);
 
 var methods = {
-  parity: function(items) {
+  parity: items => {
     return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
   },
-  greedy: function(items, sep) {
+  greedy: (items, sep) => {
     var a;
     return items.filter((b, i) => {
       if (!i || !intersect(a.bounds, b.bounds, sep)) {

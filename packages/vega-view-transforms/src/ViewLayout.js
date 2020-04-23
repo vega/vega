@@ -30,7 +30,7 @@ var prototype = inherits(ViewLayout, Transform);
 prototype.transform = function(_, pulse) {
   // TODO incremental update, output?
   var view = pulse.dataflow;
-  _.mark.items.forEach(function(group) {
+  _.mark.items.forEach(group => {
     if (_.layout) trellisLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });

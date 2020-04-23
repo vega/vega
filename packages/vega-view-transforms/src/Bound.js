@@ -35,11 +35,9 @@ prototype.transform = function(_, pulse) {
   else if (type === Group || _.modified()) {
     // operator parameters modified -> re-bound all items
     // updates group bounds in response to modified group content
-    pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
+    pulse.visit(pulse.MOD, item => view.dirty(item));
     markBounds.clear();
-    mark.items.forEach(function(item) {
-      markBounds.union(boundItem(item, bound));
-    });
+    mark.items.forEach(item => markBounds.union(boundItem(item, bound)));
 
     // force reflow for axes/legends/titles to propagate any layout changes
     switch (mark.role) {
@@ -54,11 +52,11 @@ prototype.transform = function(_, pulse) {
     // incrementally update bounds, re-bound mark as needed
     rebound = pulse.changed(pulse.REM);
 
-    pulse.visit(pulse.ADD, function(item) {
+    pulse.visit(pulse.ADD, item => {
       markBounds.union(boundItem(item, bound));
     });
 
-    pulse.visit(pulse.MOD, function(item) {
+    pulse.visit(pulse.MOD, item => {
       rebound = rebound || markBounds.alignsWith(item.bounds);
       view.dirty(item);
       markBounds.union(boundItem(item, bound));
@@ -66,7 +64,7 @@ prototype.transform = function(_, pulse) {
 
     if (rebound) {
       markBounds.clear();
-      mark.items.forEach(function(item) { markBounds.union(item.bounds); });
+      mark.items.forEach(item => markBounds.union(item.bounds));
     }
   }
 
