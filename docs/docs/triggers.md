@@ -6,7 +6,7 @@ permalink: /docs/triggers/index.html
 
 **Triggers** enable dynamic updates to data sets or mark items when specific conditions are met. When a _trigger_ expression &ndash; typically referencing one or more signals &ndash; evaluates to a truthy value, one or more data updates (_insert_, _remove_, _toggle_ and/or _modify_) are applied.
 
-Triggers can either be used to update data objects within a [data set](../data), or to update the properties (_modify_ only) of mark items within a [mark](../marks) definition.
+Triggers can either be used to update data objects within a [data set](../data), or to update the properties (_modify_ only) of mark items within a [mark](../marks) definition. Please note that triggers are **not** supported for derived data sets; any triggers defined on a derived data set will have no effect.
 
 ## Trigger Object Properties
 
