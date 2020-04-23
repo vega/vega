@@ -64,6 +64,8 @@ const mark = object({
   _type_: marktypeRef,
   role: stringType,
   name: stringType,
+  description: stringType,
+  aria: booleanType,
   style: styleRef,
   key: stringType,
   clip: markclipRef,

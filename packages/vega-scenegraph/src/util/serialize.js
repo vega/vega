@@ -18,7 +18,8 @@ var keys = [
   'size', 'shape',                                              // symbol
   'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight',
-  'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
+  'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription',     // aria
 ];
 
 export function sceneToJSON(scene, indent) {

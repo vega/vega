@@ -1,8 +1,10 @@
 import {
-  alignValue, anchorValue, anyOf, baselineValue,
-  booleanType, colorValue, def, enums,
-  fontWeightValue, numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
-  pattern, ref, stringType, stringValue, textOrSignal
+  alignValue, anchorValue, anyOf,
+  baselineValue, booleanType, booleanValue,
+  colorValue, def, enums, fontWeightValue,
+  numberOrSignal, numberType, numberValue,
+  object, oneOf, orSignal, pattern, ref,
+  stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -25,21 +27,31 @@ const title = oneOf(
     anchor: anchorValue,
     frame: oneOf(enums(titleFrameEnum), stringValueRef),
     offset: numberValue,
+
+    // ARIA CONFIG
+    aria: booleanValue,
+    description: stringValue,
+
+    // SHARED TEXT CONFIG
     limit: numberValue,
-    text: textOrSignal,
-    subtitle: textOrSignal,
     zindex: numberType,
     align: alignValue,
     angle: numberValue,
     baseline: baselineValue,
     dx: numberValue,
     dy: numberValue,
+
+    // TITLE TEXT CONFIG
+    text: textOrSignal,
     color: colorValue,
     font: stringValue,
     fontSize: numberValue,
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
     lineHeight: numberValue,
+
+    // SUBTITLE TEXT CONFIG
+    subtitle: textOrSignal,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
@@ -48,7 +60,7 @@ const title = oneOf(
     subtitleLineHeight: numberValue,
     subtitlePadding: numberOrSignal,
 
-    // custom encoders
+    // CUSTOM ENCODERS
     encode: anyOf(
       titleEncode, // deprecated! (v5.7.0)
       object({

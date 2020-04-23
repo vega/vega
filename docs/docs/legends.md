@@ -84,6 +84,17 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values. The array entries should be legal values in the backing scale domain.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. The default value is `0`.|
 
+### Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| aria          | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree. |
+| description   | {% include type t="String" %}  | A text description of this legend for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. |
+
+### Themes and Configuration
+
 To create themes, new default values for legend properties can be set using a [config](../config/#legends) object. The config object also supports [customized layout](../config/#legends-layout) behavior for collections of legends with the same *orient* value.
 
 

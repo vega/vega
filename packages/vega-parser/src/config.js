@@ -41,29 +41,41 @@ export default function() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
+    arc: {
+      fill: defaultColor,
+    },
+    area: {
+      fill: defaultColor,
+    },
     image: null,
     line: {
       stroke: defaultColor,
-      strokeWidth: defaultStrokeWidth
+      strokeWidth: defaultStrokeWidth,
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: {
+      stroke: defaultColor,
+    },
+    rect: {
+      fill: defaultColor,
+    },
+    rule: {
+      stroke: black,
+    },
+    shape: {
+      stroke: defaultColor,
+    },
     symbol: {
       fill: defaultColor,
-      size: 64
+      size: 64,
     },
     text: {
       fill: black,
       font: defaultFont,
-      fontSize: 11
+      fontSize: 11,
     },
     trail: {
       fill: defaultColor,
-      size: defaultStrokeWidth
+      size: defaultStrokeWidth,
     },
 
     // style definitions
@@ -121,8 +133,7 @@ export default function() {
       orient: 'top',
       anchor: 'middle',
       offset: 4,
-      subtitlePadding: 3,
-      zindex: 1
+      subtitlePadding: 3
     },
 
     // defaults for axes
@@ -147,8 +158,7 @@ export default function() {
       tickRound: true,
       tickSize: 5,
       tickWidth: 1,
-      titlePadding: 4,
-      zindex: 0
+      titlePadding: 4
     },
 
     // correction for centering bias
@@ -190,7 +200,6 @@ export default function() {
       titleLimit: 180,
       titleOrient: 'top',
       titlePadding: 5,
-      zindex: 1,
       layout: {
         offset: 18,
         direction: 'horizontal',

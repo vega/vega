@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
@@ -8,7 +8,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js",
+    "rollup": "rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-scale:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js",
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup && yarn schema",
@@ -23,6 +23,7 @@
     "d3-shape": "^1.3.7",
     "vega-canvas": "^1.2.1",
     "vega-loader": "^4.2.0",
+    "vega-scale": "^6.1.0",
     "vega-util": "^1.13.1"
   }
 }

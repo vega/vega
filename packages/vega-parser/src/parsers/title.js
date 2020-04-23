@@ -22,10 +22,11 @@ export default function(spec, scope) {
       interactive = userEncode.interactive,
       style = userEncode.style,
       children = [],
-      dataRef, group;
+      datum, dataRef, group;
 
   // single-element data source for group title
-  dataRef = ref(scope.add(Collect(null, [{}])));
+  datum = {};
+  dataRef = ref(scope.add(Collect(null, [datum])));
 
   // include title text
   children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
@@ -59,14 +60,18 @@ function groupEncode(_, userEncode) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
-    orient:     _('orient'),
-    anchor:     _('anchor'),
-    align:      {signal: alignExpr},
-    angle:      {signal: angleExpr},
-    limit:      _('limit'),
-    frame:      _('frame'),
-    offset:     _('offset') || 0,
-    padding:    _('subtitlePadding')
+    orient:      _('orient'),
+    anchor:      _('anchor'),
+    align:       {signal: alignExpr},
+    angle:       {signal: angleExpr},
+    limit:       _('limit'),
+    frame:       _('frame'),
+    offset:      _('offset') || 0,
+    padding:     _('subtitlePadding'),
+
+    // accessibility support
+    aria:         _('aria'),
+    description:  _('description'),
   });
 
   return extendEncode(encode, userEncode, Skip);

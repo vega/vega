@@ -639,7 +639,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Delay Histogram"
         },
         {
           "marktype": "group",
@@ -1264,7 +1265,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Time Histogram"
         },
         {
           "marktype": "group",
@@ -1880,7 +1882,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Distance Histogram"
         }
       ],
       "x": 0,

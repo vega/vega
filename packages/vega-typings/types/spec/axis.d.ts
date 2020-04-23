@@ -169,6 +169,22 @@ export interface BaseAxis {
    */
   bandPosition?: NumberValue;
 
+  // ---------- ARIA ----------
+  /**
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the axis from the ARIA accessibility tree.
+   *
+   * __Default value:__ `true`
+   */
+  aria?: BooleanValue;
+
+  /**
+   * A text description of this axis for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
+   * If the description is unspecified it will be automatically generated.
+   */
+  description?: StringValue;
+
   // ---------- Title ----------
   /**
    * The padding, in pixels, between title and axis.

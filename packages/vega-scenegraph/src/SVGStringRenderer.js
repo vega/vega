@@ -1,13 +1,14 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
+import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
 import {cssClass} from './util/dom';
 import {closeTag, openTag} from './util/tags';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styleProperties, styles} from './util/svg/styles';
+import {styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -181,7 +182,11 @@ function emit(name, value, ns, prefixed) {
 
 prototype.attributes = function(attr, item) {
   object = {};
-  attr(emit, item, this);
+  if (Array.isArray(attr)) {
+    attr.forEach(fn => fn(emit, item, this));
+  } else {
+    attr(emit, item, this);
+  }
   return object;
 };
 
@@ -194,7 +199,7 @@ prototype.href = function(item) {
     if (attr = that._hrefs && that._hrefs[href]) {
       return attr;
     } else {
-      that.sanitizeURL(href).then(function(attr) {
+      that.sanitizeURL(href).then(attr => {
         // rewrite to use xlink namespace
         // note that this will be deprecated in SVG 2.0
         attr['xlink:href'] = attr.href;
@@ -219,10 +224,10 @@ prototype.mark = function(scene) {
   }
 
   // render opening group tag
-  str += openTag('g', {
+  str += openTag('g', Object.assign({
     'class': cssClass(scene),
     'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
-  }, style);
+  }, ariaMarkAttributes(scene)), style);
 
   // render contained elements
   function process(item) {
@@ -230,7 +235,11 @@ prototype.mark = function(scene) {
     if (href) str += openTag('a', href);
 
     style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
-    str += openTag(tag, renderer.attributes(mdef.attr, item), style);
+    str += openTag(
+      tag,
+      renderer.attributes([ariaItemAttributes, mdef.attr], item),
+      style
+    );
 
     if (tag === 'text') {
       const tl = textLines(item);
@@ -303,7 +312,7 @@ prototype.markGroup = function(scene) {
 
 function applyStyles(o, mark, tag, defs) {
   if (o == null) return '';
-  var i, n, prop, name, value, s = '';
+  let s = '';
 
   if (tag === 'bgrect' && mark.interactive === false) {
     s += 'pointer-events: none; ';
@@ -330,10 +339,9 @@ function applyStyles(o, mark, tag, defs) {
     if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
   }
 
-  for (i=0, n=styleProperties.length; i<n; ++i) {
-    prop = styleProperties[i];
-    name = styles[prop];
-    value = o[prop];
+  for (const prop in styles) {
+    let value = o[prop];
+    const name = styles[prop];
 
     if (value == null) {
       if (name === 'fill') {
