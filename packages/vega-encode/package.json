@@ -26,9 +26,9 @@
   "dependencies": {
     "d3-array": "^2.4.0",
     "d3-interpolate": "^1.4.0",
-    "vega-dataflow": "^5.5.0",
+    "vega-dataflow": "^5.5.1",
     "vega-scale": "^6.1.0",
-    "vega-util": "^1.13.1"
+    "vega-util": "^1.13.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

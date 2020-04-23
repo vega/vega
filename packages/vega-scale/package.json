@@ -30,6 +30,6 @@
     "d3-interpolate": "^1.4.0",
     "d3-scale": "^3.2.1",
     "vega-time": "^1.1.0",
-    "vega-util": "^1.13.1"
+    "vega-util": "^1.13.2"
   }
 }

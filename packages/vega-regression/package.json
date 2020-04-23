@@ -1,6 +1,6 @@
 {
   "name": "vega-regression",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Regression transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -24,9 +24,9 @@
   },
   "dependencies": {
     "d3-array": "^2.4.0",
-    "vega-dataflow": "^5.4.1",
-    "vega-statistics": "^1.7.3",
-    "vega-util": "^1.12.2"
+    "vega-dataflow": "^5.5.1",
+    "vega-statistics": "^1.7.4",
+    "vega-util": "^1.13.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

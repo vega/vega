@@ -24,17 +24,17 @@
   },
   "dependencies": {
     "d3-array": "^2.4.0",
-    "d3-color": "^1.4.0",
+    "d3-color": "^1.4.1",
     "d3-format": "^1.4.4",
-    "d3-geo": "^1.11.9",
+    "d3-geo": "^1.12.0",
     "d3-time-format": "^2.2.3",
-    "vega-dataflow": "^5.5.0",
-    "vega-expression": "^2.6.3",
-    "vega-scale": "^6.0.0",
-    "vega-scenegraph": "^4.6.0",
-    "vega-selections": "^5.1.0",
-    "vega-statistics": "^1.7.3",
+    "vega-dataflow": "^5.5.1",
+    "vega-expression": "^2.6.4",
+    "vega-scale": "^6.1.0",
+    "vega-scenegraph": "^4.7.0",
+    "vega-selections": "^5.1.1",
+    "vega-statistics": "^1.7.4",
     "vega-time": "^1.1.0",
-    "vega-util": "^1.13.1"
+    "vega-util": "^1.13.2"
   }
 }
