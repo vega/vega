@@ -216,10 +216,10 @@ const ITEM_BASE = {
     'cursor': { 'type': 'string' },
     'href': { 'type': 'string', 'format': 'uri-reference' },
     'tooltip': {},
-    'ariaLabel': { 'type': 'string' },
+    'description': { 'type': 'string' },
+    'aria': { 'type': 'boolean' },
     'ariaRole': { 'type': 'string' },
     'ariaRoleDescription': { 'type': 'string' },
-    'ariaHidden': { 'type': 'boolean' },
   }
 };
 

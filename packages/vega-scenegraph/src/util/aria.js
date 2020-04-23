@@ -3,12 +3,12 @@ import {peek, toSet} from 'vega-util';
 
 const ARIA_HIDDEN = 'aria-hidden';
 const ARIA_LABEL = 'aria-label';
-const ARIA_ROLE = 'aria-role';
+const ARIA_ROLE = 'role';
 const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
 
-const bundle = (desc, role, label) => ({
+const bundle = (role, roledesc, label) => ({
   [ARIA_ROLE]: role || 'graphics-symbol',
-  [ARIA_ROLEDESCRIPTION]: desc,
+  [ARIA_ROLEDESCRIPTION]: roledesc,
   [ARIA_LABEL]: label || undefined
 });
 
@@ -30,18 +30,17 @@ const AriaIgnore = toSet([
 ]);
 
 const AriaRoles = {
-  'axis': mark => bundle('axis', null, axisCaption(mark)),
-  'legend': mark => bundle('legend', null, legendCaption(mark)),
-  'title': () => bundle('title', 'caption'),
-  'title-text': () => bundle('title text', 'caption'),
-  'title-subtitle': () => bundle('subtitle text', 'caption')
+  'axis': mark => guideAria(mark, null, 'axis', axisCaption),
+  'legend': mark => guideAria(mark, null, 'legend', legendCaption),
+  'title': mark => guideAria(mark, 'caption', 'title'),
+  'title-text': () => bundle('caption', 'title text'),
+  'title-subtitle': () => bundle('caption', 'subtitle text')
 };
 
 export const AriaChannels = {
-  ariaHidden: ARIA_HIDDEN,
   ariaRole: ARIA_ROLE,
   ariaRoleDescription: ARIA_ROLEDESCRIPTION,
-  ariaLabel: ARIA_LABEL
+  description: ARIA_LABEL
 };
 
 export function ariaMarkAttributes(mark) {
@@ -49,51 +48,50 @@ export function ariaMarkAttributes(mark) {
   return AriaHidden[role] ? { [ARIA_HIDDEN]: true }
     : AriaIgnore[role] ? null
     : AriaRoles[role] ? AriaRoles[role](mark)
-    : bundle(mark.marktype);
+    : bundle(null, mark.marktype);
 }
 
 export function ariaItemAttributes(emit, item) {
-  const attr = {};
+  const hide = item.aria === false;
+  emit(ARIA_HIDDEN, hide || undefined);
   for (const prop in AriaChannels) {
-    if (item[prop] != null) {
-      emit(AriaChannels[prop], item[prop]);
-    }
+    emit(AriaChannels[prop], hide ? undefined : item[prop]);
   }
-  return attr;
 }
 
-function axisCaption(mark) {
+function guideAria(mark, role, roledesc, caption) {
+  caption = caption || (() => '');
   try {
-    const item = mark.items[0],
-          datum = item.datum,
-          orient = datum.orient,
-          title = datum.title ? extractTitle(item) : null,
-          scale = item.context.scales[datum.scale].value,
-          xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
-
-    return xy + '-Axis'
-      + (title ? ` titled "${title}"` : '')
-      + ` with ${domainCaption(scale)}`;
+    const item = mark.items[0];
+    return item.aria === false ? { [ARIA_HIDDEN]: true }
+      : bundle(role, roledesc, item.description || caption(item));
   } catch (err) {
     return null;
   }
 }
 
-function legendCaption(mark) {
-  try {
-    const item = mark.items[0],
-          datum = item.datum,
-          title = datum.title ? extractTitle(item) : null,
-          scales = datum.scales,
-          props = Object.keys(scales),
-          scale = item.context.scales[scales[props[0]]].value;
+function axisCaption(item) {
+  const datum = item.datum,
+        orient = datum.orient,
+        title = datum.title ? extractTitle(item) : null,
+        scale = item.context.scales[datum.scale].value,
+        xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
-    return 'Legend'
-      + (title ? ` titled "${title}"` : '')
-      + ` for ${channelCaption(props)} with ${domainCaption(scale)}`;
-  } catch (err) {
-    return null;
-  }
+  return xy + '-Axis'
+    + (title ? ` titled "${title}"` : '')
+    + ` with ${domainCaption(scale)}`;
+}
+
+function legendCaption(item) {
+  const datum = item.datum,
+        title = datum.title ? extractTitle(item) : null,
+        scales = datum.scales,
+        props = Object.keys(scales),
+        scale = item.context.scales[scales[props[0]]].value;
+
+  return 'Legend'
+    + (title ? ` titled "${title}"` : '')
+    + ` for ${channelCaption(props)} with ${domainCaption(scale)}`;
 }
 
 function extractTitle(item) {

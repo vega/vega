@@ -143,6 +143,8 @@ function buildLegendEncode(_, config) {
   var encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
+    aria:         _('aria'),
+    description:  _('description'),
     orient:       _('orient'),
     offset:       _('offset'),
     padding:      _('padding'),
