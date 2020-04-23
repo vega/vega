@@ -33,7 +33,7 @@ prototype.transform = function(_, pulse) {
 
   // initialize entering items
   var Init = mark.marktype === Group ? GroupItem : Item;
-  pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
+  pulse.visit(pulse.ADD, item => Init.call(item, mark));
 
   // update clipping and/or interactive status
   if (_.modified('clip') || _.modified('interactive')) {

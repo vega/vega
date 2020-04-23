@@ -33,7 +33,7 @@ prototype.transform = function(_, pulse) {
       id = counter.value,
       as = _.as;
 
-  pulse.visit(pulse.ADD, function(t) {
+  pulse.visit(pulse.ADD, t => {
     if (!t[as]) t[as] = ++id;
   });
 
