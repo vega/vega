@@ -51,5 +51,11 @@ export default function(spec, config, userEncode, dataRef) {
     baseline:    _('titleBaseline'),
   });
 
-  return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+  return guideMark({
+    type:  TextMark,
+    role:  LegendTitleRole,
+    style: GuideTitleStyle,
+    from:  dataRef,
+    encode
+  }, userEncode);
 }

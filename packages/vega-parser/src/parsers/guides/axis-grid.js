@@ -59,7 +59,13 @@ export default function(spec, config, userEncode, dataRef, band) {
     update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
   }
 
-  return guideMark(RuleMark, AxisGridRole, null, Value, dataRef, encode, userEncode);
+  return guideMark({
+    type: RuleMark,
+    role: AxisGridRole,
+    key:  Value,
+    from: dataRef,
+    encode
+   }, userEncode);
 }
 
 function offsetValue(offset, sign)  {

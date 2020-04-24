@@ -29,7 +29,7 @@ export default function(spec, scope) {
       _ = lookup(spec, config),
       scales = {}, scale = 0,
       entryEncode, entryLayout, params, children,
-      type, datum, dataRef, entryRef, group;
+      type, datum, dataRef, entryRef;
 
   // resolve scales and 'canonical' scale name
   LegendScales.forEach(s => spec[s]
@@ -102,8 +102,14 @@ export default function(spec, scope) {
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, null, null, dataRef, interactive,
-               entryEncode, children, entryLayout)
+    guideGroup({
+      role: LegendEntryRole,
+      from: dataRef,
+      encode: entryEncode,
+      marks: children,
+      layout: entryLayout,
+      interactive
+    })
   ];
 
   // include legend title if defined
@@ -111,12 +117,22 @@ export default function(spec, scope) {
     children.push(legendTitle(spec, config, encode.title, dataRef));
   }
 
-  // build legend specification
-  group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
-  group.zindex = _('zindex');
-
   // parse legend specification
-  return parseMark(group, scope);
+  return parseMark(
+    guideGroup({
+      role:        LegendRole,
+      from:        dataRef,
+      encode:      legendEncode,
+      marks:       children,
+      aria:        _('aria'),
+      description: _('description'),
+      zindex:      _('zindex'),
+      name,
+      interactive,
+      style
+    }),
+    scope
+  );
 }
 
 function legendType(spec, scaleType) {
@@ -156,8 +172,6 @@ function buildLegendEncode(_, spec, config) {
     y:            _('legendY'),
 
     // accessibility support
-    aria:         _('aria'),
-    description:  _('description'),
     format:       spec.format,
     formatType:   spec.formatType,
   });

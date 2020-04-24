@@ -1,6 +1,6 @@
 import {
   alignValue, anchorValue, anyOf,
-  baselineValue, booleanType, booleanValue,
+  baselineValue, booleanType,
   colorValue, def, enums, fontWeightValue,
   numberOrSignal, numberType, numberValue,
   object, oneOf, orSignal, pattern, ref,
@@ -29,8 +29,7 @@ const title = oneOf(
     offset: numberValue,
 
     // ARIA CONFIG
-    aria: booleanValue,
-    description: stringValue,
+    aria: booleanType,
 
     // SHARED TEXT CONFIG
     limit: numberValue,

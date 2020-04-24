@@ -28,19 +28,21 @@ const AriaIgnore = toSet([
   'legend-label',
   'legend-title',
   'legend-symbol',
-  'title',
+  'title'
 ]);
 
 // aria attribute generators for guide roles
 const AriaGuides = {
-  'axis': mark =>
-    guideAria(mark, GRAPHICS_SYMBOL, 'axis', axisCaption),
-  'legend': mark =>
-    guideAria(mark, GRAPHICS_SYMBOL, 'legend', legendCaption),
-  'title-text': mark =>
-    guideAria(mark, GRAPHICS_SYMBOL, 'title', titleCaption),
-  'title-subtitle': mark =>
-    guideAria(mark, GRAPHICS_SYMBOL, 'subtitle', titleCaption)
+  'axis': {desc: 'axis', caption: axisCaption},
+  'legend': {desc: 'legend', caption: legendCaption},
+  'title-text': {
+    desc: 'title',
+    caption: item => `Title text "${titleCaption(item)}"`
+  },
+  'title-subtitle': {
+    desc: 'subtitle',
+    caption: item => `Subtitle text "${titleCaption(item)}"`
+  }
 };
 
 // aria properties generated for mark item encoding channels
@@ -49,28 +51,6 @@ export const AriaEncode = {
   ariaRoleDescription: ARIA_ROLEDESCRIPTION,
   description: ARIA_LABEL
 };
-
-export function ariaMarkAttributes(mark) {
-  const role = mark.role;
-  return AriaIgnore[role] ? null
-    : AriaGuides[role] ? AriaGuides[role](mark)
-    : mark.aria === false ? { [ARIA_HIDDEN]: true }
-    : ariaMark(mark);
-}
-
-function ariaMark(mark) {
-  const type = mark.marktype;
-  const recurse = (
-    type === 'group' ||
-    type === 'text' ||
-    mark.items.some(_ => _.description != null)
-  );
-  return bundle(
-    recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
-    `${type} mark group`,
-    mark.description
-  );
-}
 
 export function ariaItemAttributes(emit, item) {
   const hide = item.aria === false;
@@ -81,21 +61,52 @@ export function ariaItemAttributes(emit, item) {
       emit(AriaEncode[prop], undefined);
     }
   } else {
-    emit(ARIA_LABEL, item.description);
-    emit(ARIA_ROLE, item.ariaRole || GRAPHICS_SYMBOL);
+    const type = item.mark.marktype;
+    emit(
+      ARIA_LABEL,
+      item.description
+    );
+    emit(
+      ARIA_ROLE,
+      item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL)
+    );
     emit(
       ARIA_ROLEDESCRIPTION,
-      item.ariaRoleDescription || `${item.mark.marktype} mark`
+      item.ariaRoleDescription || `${type} mark`
     );
   }
 }
 
-function guideAria(mark, role, roledesc, caption) {
-  caption = caption || (() => '');
+export function ariaMarkAttributes(mark) {
+  return mark.aria === false ? { [ARIA_HIDDEN]: true }
+    : AriaIgnore[mark.role] ? null
+    : AriaGuides[mark.role] ? ariaGuide(mark, AriaGuides[mark.role])
+    : ariaMark(mark);
+}
+
+function ariaMark(mark) {
+  const type = mark.marktype;
+  const recurse = (
+    type === 'group' ||
+    type === 'text' ||
+    mark.items.some(_ => _.description != null && _.aria !== false)
+  );
+  return bundle(
+    recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
+    `${type} mark container`,
+    mark.description
+  );
+}
+
+function ariaGuide(mark, opt) {
   try {
-    const item = mark.items[0];
-    return item.aria === false ? { [ARIA_HIDDEN]: true }
-      : bundle(role, roledesc, item.description || caption(item));
+    const item = mark.items[0],
+          caption = opt.caption || (() => '');
+    return bundle(
+      opt.role || GRAPHICS_SYMBOL,
+      opt.desc,
+      item.description || caption(item)
+    );
   } catch (err) {
     return null;
   }

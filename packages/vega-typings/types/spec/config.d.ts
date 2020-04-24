@@ -92,12 +92,14 @@ export interface MarkConfig {
   /**
    * Sets the type of user interface element of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
    * If specified, this property determines the "role" attribute.
+   * Warning: this property is experimental and may be changed in the future.
    */
   ariaRole?: string | SignalRef;
 
   /**
    * A human-readable, author-localized description for the role of the mark item for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
    * If specified, this property determines the "aria-roledescription" attribute.
+   * Warning: this property is experimental and may be changed in the future.
    */
   ariaRoleDescription?: string | SignalRef;
 

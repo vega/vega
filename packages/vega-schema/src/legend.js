@@ -2,7 +2,7 @@ import {layoutAlign} from './layout';
 
 import {
   alignValue, allOf, anchorValue, anyOf, arrayOrSignal,
-  baselineValue, booleanValue, colorValue, dashArrayValue, def,
+  baselineValue, booleanType, colorValue, dashArrayValue, def,
   enums, fontWeightValue, formatTypeOrSignal, formatTypeType,
   numberOrSignal, numberType, numberValue, object, orSignal,
   orientValue, pattern, ref, required, stringType, stringValue,
@@ -65,8 +65,8 @@ const legendProps = object({
   zindex: numberType,
 
   // LEGEND ARIA CONFIG
-  aria: booleanValue,
-  description: stringValue,
+  aria: booleanType,
+  description: stringType,
 
   // LEGEND GROUP CONFIG
   cornerRadius: numberValue,
