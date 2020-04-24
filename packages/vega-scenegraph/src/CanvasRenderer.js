@@ -21,11 +21,11 @@ var prototype = inherits(CanvasRenderer, Renderer),
 prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
   this._options = options;
 
-  if(!options.context) {
-    this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
+  if(options && options.context) {
+    this._context = options.context;
   }
   else {
-    this._context = options.context;
+    this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
   }
 
   if (el && this._canvas) {
