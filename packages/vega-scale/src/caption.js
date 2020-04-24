@@ -1,10 +1,15 @@
 import {labelFormat, labelValues} from './labels';
 import {Time, UTC} from './scales/types';
 import {isDiscrete, isDiscretizing} from './scales';
-import {peek} from 'vega-util';
+import {isString, peek} from 'vega-util';
 
 function format(scale, specifier, formatType) {
   const type = formatType || scale.type;
+
+  // replace abbreviated time specifiers to improve screen reader experience
+  if (isString(specifier) && (type === Time || type === UTC)) {
+    specifier = specifier.replace(/%a/g, '%A').replace(/%b/g, '%B');
+  }
   return !specifier && type === Time  ? d => new Date(d).toLocaleString()
     : !specifier && type === UTC ? d => new Date(d).toUTCString()
     : labelFormat(scale, 5, null, specifier, formatType, true);
