@@ -91,14 +91,7 @@ export interface BaseTitle {
    *
    * __Default value:__ `true`
    */
-  aria?: BooleanValue;
-
-  /**
-   * A text description of this title for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
-   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
-   * If the description is unspecified no description will be provided.
-   */
-  description?: StringValue;
+  aria?: boolean;
 
   // ---------- Shared Text Properties ----------
   /**

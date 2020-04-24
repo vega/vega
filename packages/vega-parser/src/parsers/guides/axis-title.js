@@ -66,5 +66,11 @@ export default function(spec, config, userEncode, dataRef) {
     && horizontal && !has('y', userEncode)
     && (encode.enter.auto = {value: true});
 
-  return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+  return guideMark({
+    type:  TextMark,
+    role:  AxisTitleRole,
+    style: GuideTitleStyle,
+    from:  dataRef,
+    encode
+  }, userEncode);
 }

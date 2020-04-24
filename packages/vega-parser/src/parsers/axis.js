@@ -22,7 +22,7 @@ export default function(spec, scope) {
       style = axisEncode.style,
       _ = lookup(spec, config),
       band = tickBand(_),
-      datum, dataRef, ticksRef, size, group, children;
+      datum, dataRef, ticksRef, size, children;
 
   // single-element data source for axis group
   datum = {
@@ -83,12 +83,22 @@ export default function(spec, scope) {
     children.push(axisTitle(spec, config, encode.title, dataRef));
   }
 
-  // build axis specification
-  group = guideGroup(AxisRole, style, name, dataRef, interactive, axisEncode, children);
-  group.zindex = _('zindex');
-
   // parse axis specification
-  return parseMark(group, scope);
+  return parseMark(
+    guideGroup({
+      role:        AxisRole,
+      from:        dataRef,
+      encode:      axisEncode,
+      marks:       children,
+      aria:        _('aria'),
+      description: _('description'),
+      zindex:      _('zindex'),
+      name,
+      interactive,
+      style
+    }),
+    scope
+  );
 }
 
 function buildAxisEncode(_, spec) {
@@ -103,8 +113,6 @@ function buildAxisEncode(_, spec) {
     range:        {signal: `abs(span(range("${spec.scale}")))`},
 
     // accessibility support
-    aria:         _('aria'),
-    description:  _('description'),
     format:       spec.format,
     formatType:   spec.formatType,
   });

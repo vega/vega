@@ -456,7 +456,6 @@ Accessibility properties are used to determine [ARIA (Accessible Rich Internet A
 | Property              | Type                            | Description    |
 | :-------------------- | :-----------------------------: | :------------- |
 | aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the title from the ARIA accessibility tree. {% include tag ver="5.11" %}|
-| description           | {% include type t="String" %}   | A text description of this title for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified no description will be provided. {% include tag ver="5.11" %}|
 
 ### Usage
 

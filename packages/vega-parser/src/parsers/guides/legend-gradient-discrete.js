@@ -39,5 +39,11 @@ export default function(spec, scale, config, userEncode, dataRef) {
     opacity:     _('gradientOpacity')
   });
 
-  return guideMark(RectMark, LegendBandRole, null, Value, dataRef, encode, userEncode);
+  return guideMark({
+    type: RectMark,
+    role: LegendBandRole,
+    key:  Value,
+    from: dataRef,
+    encode
+  }, userEncode);
 }

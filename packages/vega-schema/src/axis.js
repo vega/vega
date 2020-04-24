@@ -61,8 +61,8 @@ const axis = object({
   zindex: numberType,
 
   // ARIA CONFIG
-  aria: booleanValue,
-  description: stringValue,
+  aria: booleanType,
+  description: stringType,
 
   // TITLE CONFIG
   title: textOrSignal,

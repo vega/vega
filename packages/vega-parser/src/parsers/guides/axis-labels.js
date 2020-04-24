@@ -26,7 +26,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
       labelAlign = _('labelAlign'),
       labelBaseline = _('labelBaseline'),
       encode, enter, tickSize, tickPos, align, baseline, offset,
-      bound, overlap, separation;
+      bound, overlap;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -94,19 +94,22 @@ export default function(spec, config, userEncode, dataRef, size, band) {
 
   bound   = _('labelBound');
   overlap = _('labelOverlap');
-  separation = _('labelSeparation');
-
-  spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 
   // if overlap method or bound defined, request label overlap removal
-  if (overlap || bound) {
-    spec.overlap = {
-      separation: separation,
-      method: overlap,
-      order: 'datum.index',
-      bound: bound ? {scale: scale, orient: orient, tolerance: bound} : null
-    };
-  }
+  overlap = overlap || bound ? {
+    separation: _('labelSeparation'),
+    method: overlap,
+    order: 'datum.index',
+    bound: bound ? {scale, orient, tolerance: bound} : null
+  } : undefined;
 
-  return spec;
+  return guideMark({
+    type:  TextMark,
+    role:  AxisLabelRole,
+    style: GuideLabelStyle,
+    key:   Value,
+    from:  dataRef,
+    encode,
+    overlap
+  }, userEncode);
 }

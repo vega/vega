@@ -22,7 +22,7 @@ export default function(spec, scope) {
       interactive = userEncode.interactive,
       style = userEncode.style,
       children = [],
-      datum, dataRef, group;
+      datum, dataRef;
 
   // single-element data source for group title
   datum = {};
@@ -36,13 +36,22 @@ export default function(spec, scope) {
     children.push(buildSubTitle(spec, _, encode.subtitle, dataRef));
   }
 
-  // build title specification
-  group = guideGroup(TitleRole, style, name, dataRef, interactive,
-                     groupEncode(_, userEncode), children);
-  group.zindex = _('zindex');
-
   // parse title specification
-  return parseMark(group, scope);
+  return parseMark(
+    guideGroup({
+      role:        TitleRole,
+      from:        dataRef,
+      encode:      groupEncode(_, userEncode),
+      marks:       children,
+      aria:        _('aria'),
+      description: _('description'),
+      zindex:      _('zindex'),
+      name,
+      interactive,
+      style
+    }),
+    scope
+  );
 }
 
 // provide backwards-compatibility for title custom encode;
@@ -67,11 +76,7 @@ function groupEncode(_, userEncode) {
     limit:       _('limit'),
     frame:       _('frame'),
     offset:      _('offset') || 0,
-    padding:     _('subtitlePadding'),
-
-    // accessibility support
-    aria:         _('aria'),
-    description:  _('description'),
+    padding:     _('subtitlePadding')
   });
 
   return extendEncode(encode, userEncode, Skip);
@@ -106,8 +111,13 @@ function buildTitle(spec, _, userEncode, dataRef) {
     baseline:   _('baseline')
   });
 
-  return guideMark(TextMark, TitleTextRole, GroupTitleStyle,
-                   null, dataRef, encode, userEncode);
+  return guideMark({
+    type: TextMark,
+    role: TitleTextRole,
+    style: GroupTitleStyle,
+    from: dataRef,
+    encode
+  }, userEncode);
 }
 
 function buildSubTitle(spec, _, userEncode, dataRef) {
@@ -139,6 +149,11 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     baseline:   _('baseline')
   });
 
-  return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle,
-                   null, dataRef, encode, userEncode);
+  return guideMark({
+    type:  TextMark,
+    role:  TitleSubtitleRole,
+    style: GroupSubtitleStyle,
+    from:  dataRef,
+    encode
+  }, userEncode);
 }
