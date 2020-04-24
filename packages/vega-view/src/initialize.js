@@ -31,7 +31,7 @@ export default function(el, elBind) {
   // initialize signal bindings
   if (el && config !== 'none') {
     elBind = elBind ? (view._elBind = lookup(view, elBind))
-      : el.appendChild(element('div', {'class': 'vega-bindings'}));
+      : el.appendChild(element('form', {'class': 'vega-bindings'}));
 
     view._bind.forEach(function(_) {
       if (_.param.element && config !== 'container') {
