@@ -26,12 +26,11 @@ var typeList = [
 export function inferType(values, field) {
   if (!values || !values.length) return 'unknown';
 
-  var value, i, j, t = 0,
-      n = values.length,
+  var value, j, t = 0,
       m = typeTests.length,
       a = typeTests.map(function(_, i) { return i + 1; });
 
-  for (i=0, n=values.length; i<n; ++i) {
+  for (let i=0, n=values.length; i<n; ++i) {
     value = field ? values[i][field] : values[i];
     for (j=0; j<m; ++j) {
       if (a[j] && isValid(value) && !typeTests[j](value)) {
