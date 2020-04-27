@@ -66,6 +66,15 @@ tape('SVGStringRenderer should render scenegraph to SVG string', function(t) {
   t.end();
 });
 
+tape('SVGStringRenderer should support descriptions', function(t) {
+  var scene = loadScene('scenegraph-description.json');
+  var str = render(scene, 400, 200);
+  generate('svg/scenegraph-description.svg', str);
+  var file = load('svg/scenegraph-description.svg');
+  t.equal(str, file);
+  t.end();
+});
+
 tape('SVGStringRenderer should support clipping and gradients', function(t) {
   var scene = loadScene('scenegraph-defs.json');
   var str = render(scene, 102, 102);

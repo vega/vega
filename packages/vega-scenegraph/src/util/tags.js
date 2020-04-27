@@ -10,6 +10,7 @@ export function openTag(tag, attr, raw) {
     for (key in attr) {
       val = attr[key];
       if (val != null) {
+        val = (val + '').replace(/"/g, '&quot;');
         s += ' ' + key + '="' + val + '"';
       }
     }
