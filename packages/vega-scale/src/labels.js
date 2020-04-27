@@ -4,7 +4,6 @@ import {tickFormat, tickValues} from './ticks';
 import {peek} from 'vega-util';
 import {tickFormat as spanFormat} from 'd3-scale';
 
-//   tickFormat as spanFormat
 const symbols = {
   [Quantile]:  'quantiles',
   [Quantize]:  'thresholds',
@@ -53,14 +52,12 @@ export function thresholdFormat(scale, specifier) {
 function thresholdValues(thresholds) {
   const values = [-Infinity].concat(thresholds);
   values.max = +Infinity;
-
   return values;
 }
 
 function binValues(bins) {
   const values = bins.slice(0, -1);
   values.max = peek(bins);
-
   return values;
 }
 

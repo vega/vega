@@ -24,7 +24,7 @@ export function domainCaption(scale, opt) {
 
   // if scale breaks domain into bins, describe boundaries
   if (isDiscretizing(scale.type)) {
-    const v = labelValues(scale).map(fmt),
+    const v = labelValues(scale).slice(1).map(fmt),
           n = v.length;
     return `${n} boundar${n === 1 ? 'y' : 'ies'}: ${v.join(', ')}`;
   }
