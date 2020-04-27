@@ -16,17 +16,17 @@ Properties for specifying a coordinate axis.
 | orient        | {% include type t="String" %}  | {% include required %} The orientation of the axis. See the [axis orientation reference](#orientation).|
 | bandPosition  | {% include type t="Number" %}  | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain        | {% include type t="Boolean" %} | A boolean flag indicating if the domain (the axis baseline) should be included as part of the axis (default `true`).|
-| domainDash    | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
-| domainDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
-| domainCap     | {% include type t="String" %}   | The stroke cap for the domain line's ending style. One of `"butt"` (default), `"round"` or `"square"`. |
+| domainCap     | {% include type t="String" %}   | The stroke cap for the axis domain line. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | domainColor   | {% include type t="Color" %}   | Color of axis domain line. |
+| domainDash    | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
+| domainDashOffset| {% include type t="Number" %} | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
 | domainOpacity | {% include type t="Number" %}  | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth   | {% include type t="Number" %}  | Stroke width of axis domain line. |
 | encode        | {% include type t="Object" %}  | Optional mark encodings for custom axis styling. Supports encoding blocks for `axis`, `ticks`, `grid`, `labels`, `title`, and `domain`. See [custom axis encodings](#custom). |
 | format        | {% include type t="String|TimeMultiFormat" %}  | The format specifier pattern for axis labels. For numerical values, must be a legal [d3-format](https://github.com/d3/d3-format#locale_format) specifier. For date-time values, must be a legal [d3-time-format](https://github.com/d3/d3-time-format#locale_format) specifier or a [TimeMultiFormat object](../types/#TimeMultiFormat). |
 | formatType    | {% include type t="String" %}  | Specifies the type of format to use (`"number"`, `"time"`, `"utc"`) for scales that do not have a strict domain data type. This property is useful for formatting date-time values for band or point scales. If specified, the *format* property must have a valid specifier pattern for the given type. Supported {% include tag ver="5.1" %}, UTC support {% include tag ver="5.8" %}. |
 | grid          | {% include type t="Boolean" %} | A boolean flag indicating if grid lines should be included as part of the axis (default `false`). |
-| gridCap     | {% include type t="String" %}   | The stroke cap for the grid lines' ending style. One of `"butt"` (default), `"round"` or `"square"`. |
+| gridCap     | {% include type t="String" %}   | The stroke cap for axis grid lines. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | gridColor     | {% include type t="Color" %}   | Color of axis grid lines. |
 | gridDash      | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
 | gridDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
@@ -58,7 +58,7 @@ Properties for specifying a coordinate axis.
 | position      | {% include type t="Number|Value" %} | The anchor position of the axis in pixels (default `0`). For x-axes with top or bottom orientation, this sets the axis group `x` coordinate. For y-axes with left or right orientation, this sets the axis group `y` coordinate.|
 | ticks         | {% include type t="Boolean" %} | A boolean flag indicating if ticks should be included as part of the axis (default `true`).|
 | tickBand      | {% include type t="String" %} | Indicates the type of tick style to use in conjunction with band scales. One of `"center"` (default) to center ticks in the middle of the band interval, or `"extent"` to place ticks at band extents (interval boundaries). If specified, this property may override the settings of `bandPosition`, `tickExtra`, and `tickOffset`. {% include tag ver="5.8" %} |
-| tickCap     | {% include type t="String" %}   | The stroke cap for the tick lines' ending style. One of `"butt"` (default), `"round"` or `"square"`. |
+| tickCap     | {% include type t="String" %}   | The stroke cap for axis tick marks. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | tickColor     | {% include type t="Color" %}   | Color of axis ticks. |
 | tickCount     | {% include type t="Number|String|Object" %}  | A desired number of ticks, for axes visualizing quantitative scales. The resulting number may be different so that values are "nice" (multiples of 2, 5, 10) and lie within the underlying scale's range. For scales of type `time` or `utc`, the tick count can instead be a time interval specifier. Legal string values are `"millisecond"`, `"second"`, `"minute"`, `"hour"`, `"day"`, `"week"`, `"month"`, and `"year"`. Alternatively, an object-valued interval specifier of the form `{"interval": "month", "step": 3}` includes a desired number of interval steps. Here, ticks are generated for each quarter (Jan, Apr, Jul, Oct) boundary.|
 | tickDash      | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
