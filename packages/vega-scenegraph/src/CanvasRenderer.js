@@ -36,15 +36,18 @@ prototype.initialize = function(el, width, height, origin, scaleFactor, options)
 };
 
 prototype.resize = function(width, height, origin, scaleFactor) {
-  if (this._resized) {
-    throw new Error('cannot resize canvas twice');
-  }
-
-  this._resized = true;
   base.resize.call(this, width, height, origin, scaleFactor);
+
   if (this._canvas) {
     resize(this._canvas, this._width, this._height,
       this._origin, this._scale, this._context, this._options && this._options.context);
+  }
+  else if (this._context) {
+    this._context.translate(origin[0], origin[1]);
+    this._context.scale(scaleFactor);
+  }
+  else {
+    // unreachable; either a canvas or context should be available at this point
   }
   this._redraw = true;
   return this;
