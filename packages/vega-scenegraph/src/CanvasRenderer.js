@@ -36,7 +36,7 @@ prototype.initialize = function(el, width, height, origin, scaleFactor, options)
 };
 
 prototype.resize = function(width, height, origin, scaleFactor) {
-  if(this._resized) {
+  if (this._resized) {
     throw new Error('cannot resize canvas twice');
   }
 
