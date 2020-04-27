@@ -99,7 +99,7 @@ prototype._render = function(scene) {
     this._redraw = false;
     b = viewBounds(o, w, h).expand(1);
   } else {
-    b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o, w, h);
+    b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o);
   }
 
   this.clear(-o[0], -o[1], w, h);

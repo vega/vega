@@ -43,7 +43,7 @@ prototype.transform = function(_, pulse) {
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
       lskip = !!_.values || type === SymbolLegend,
       format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
-      values = _.values || labelValues(scale, count, type),
+      values = _.values || labelValues(scale, count),
       domain, fraction, size, offset, ellipsis;
 
   if (items) out.rem = items;
