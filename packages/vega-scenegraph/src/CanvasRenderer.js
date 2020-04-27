@@ -21,10 +21,9 @@ var prototype = inherits(CanvasRenderer, Renderer),
 prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
   this._options = options;
 
-  if(options && options.context) {
+  if (options && options.context) {
     this._context = options.context;
-  }
-  else {
+  } else {
     this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
   }
 
@@ -56,13 +55,7 @@ prototype.canvas = function() {
 };
 
 prototype.context = function() {
-  if(this._context) {
-    return this._context;
-  }
-  else if(this._canvas) {
-    return this._canvas.getContext('2d');
-  }
-  return null;
+  return this._context || (this._canvas ? this._canvas.getContext('2d') : null);
 };
 
 prototype.dirty = function(item) {
