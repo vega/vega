@@ -19169,11 +19169,11 @@
     'legend': {desc: 'legend', caption: legendCaption},
     'title-text': {
       desc: 'title',
-      caption: item => `Title text "${titleCaption(item)}"`
+      caption: item => `Title text '${titleCaption(item)}'`
     },
     'title-subtitle': {
       desc: 'subtitle',
-      caption: item => `Subtitle text "${titleCaption(item)}"`
+      caption: item => `Subtitle text '${titleCaption(item)}'`
     }
   };
 
@@ -19257,7 +19257,7 @@
           xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
     return `${xy}-axis`
-      + (title ? ` titled "${title}"` : '')
+      + (title ? ` titled '${title}'` : '')
       + ` for a ${isDiscrete(type) ? 'discrete' : type} scale`
       + ` with ${domainCaption(scale, item)}`;
   }
@@ -19271,7 +19271,7 @@
           scale = item.context.scales[scales[props[0]]].value;
 
     return capitalize(type)
-      + (title ? ` titled "${title}"` : '')
+      + (title ? ` titled '${title}'` : '')
       + ` for ${channelCaption(props)} with ${domainCaption(scale, item)}`;
   }
 
@@ -19305,6 +19305,7 @@
       for (key in attr) {
         val = attr[key];
         if (val != null) {
+          val = (val + '').replace(/"/g, '&quot;');
           s += ' ' + key + '="' + val + '"';
         }
       }
@@ -19860,11 +19861,11 @@
     element = el;
     values = el.__values__;
 
-    // apply svg attributes
-    mdef.attr(emit, item, this);
-
     // apply aria-specific properties
     ariaItemAttributes(emit, item);
+
+    // apply svg attributes
+    mdef.attr(emit, item, this);
 
     // some marks need special treatment
     var extra = mark_extras[mdef.type];
@@ -32982,7 +32983,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.11.0";
+  var version = "5.11.1";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
