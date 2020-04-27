@@ -40,7 +40,7 @@ prototype.resize = function(width, height, origin, scaleFactor) {
 
   if (this._canvas) {
     resize(this._canvas, this._width, this._height,
-      this._origin, this._scale, this._context, this._options && this._options.context);
+      this._origin, this._scale, this._options && this._options.context);
   }
   else if (this._context) {
     this._context.translate(origin[0], origin[1]);
