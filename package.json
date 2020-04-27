@@ -34,7 +34,7 @@
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.7.2",
-    "tape": "^4.13.2",
+    "tape": "^5.0.0",
     "terser": "^4.6.11",
     "typescript": "^3.8.3",
     "vega-datasets": "^1.30.2"
