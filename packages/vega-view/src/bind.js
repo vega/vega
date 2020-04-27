@@ -3,8 +3,8 @@ import {debounce} from 'vega-util';
 import {tickStep} from 'd3-array';
 
 const BindClass = 'vega-bind',
-    NameClass = 'vega-bind-name',
-    RadioClass = 'vega-bind-radio';
+      NameClass = 'vega-bind-name',
+      RadioClass = 'vega-bind-radio';
 
 /**
  * Bind a signal to an external HTML input element. The resulting two-way
@@ -30,7 +30,7 @@ export default function(view, el, binding) {
       elements: null,
       active: false,
       set: null,
-      update: function(value) {
+      update: value => {
         if (value !== view.signal(param.signal)) {
           view.runAsync(null, function() {
             bind.source = true;
@@ -47,7 +47,7 @@ export default function(view, el, binding) {
   generate(bind, el, param, view.signal(param.signal));
 
   if (!bind.active) {
-    view.on(view._signals[param.signal], null, function() {
+    view.on(view._signals[param.signal], null, () => {
       bind.source
         ? (bind.source = false)
         : bind.set(view.signal(param.signal));
@@ -64,8 +64,9 @@ export default function(view, el, binding) {
 function generate(bind, el, param, value) {
   const div = element('div', {'class': BindClass});
 
-  const wrapper =
-    param.input === 'radio' ? div : div.appendChild(element('label'));
+  const wrapper = param.input === 'radio'
+    ? div
+    : div.appendChild(element('label'));
 
   wrapper.appendChild(element('span',
     {'class': NameClass},
@@ -101,13 +102,10 @@ function form(bind, el, param, value) {
   node.value = value;
 
   el.appendChild(node);
-
-  node.addEventListener('input', function() {
-    bind.update(node.value);
-  });
+  node.addEventListener('input', () => bind.update(node.value));
 
   bind.elements = [node];
-  bind.set = function(value) { node.value = value; };
+  bind.set = value => node.value = value;
 }
 
 /**
@@ -119,13 +117,10 @@ function checkbox(bind, el, param, value) {
   const node = element('input', attr);
 
   el.appendChild(node);
-
-  node.addEventListener('change', function() {
-    bind.update(node.checked);
-  });
+  node.addEventListener('change', () => bind.update(node.checked));
 
   bind.elements = [node];
-  bind.set = function(value) { node.checked = !!value || null; };
+  bind.set = value => node.checked = !!value || null;
 }
 
 /**
@@ -133,9 +128,9 @@ function checkbox(bind, el, param, value) {
  */
 function select(bind, el, param, value) {
   const node = element('select', {name: param.signal}),
-      labels = param.labels || [];
+        labels = param.labels || [];
 
-  param.options.forEach(function(option, i) {
+  param.options.forEach((option, i) => {
     const attr = {value: option};
     if (valuesEqual(option, value)) attr.selected = true;
     node.appendChild(element('option', attr, (labels[i] || option)+''));
@@ -143,13 +138,13 @@ function select(bind, el, param, value) {
 
   el.appendChild(node);
 
-  node.addEventListener('change', function() {
+  node.addEventListener('change', () => {
     bind.update(param.options[node.selectedIndex]);
   });
 
   bind.elements = [node];
-  bind.set = function(value) {
-    for (let i=0, n=param.options.length; i<n; ++i) {
+  bind.set = value => {
+    for (let i = 0, n = param.options.length; i < n; ++i) {
       if (valuesEqual(param.options[i], value)) {
         node.selectedIndex = i; return;
       }
@@ -162,11 +157,11 @@ function select(bind, el, param, value) {
  */
 function radio(bind, el, param, value) {
   const group = element('span', {'class': RadioClass}),
-      labels = param.labels || [];
+        labels = param.labels || [];
 
   el.appendChild(group);
 
-  bind.elements = param.options.map(function(option, i) {
+  bind.elements = param.options.map((option, i) => {
     const attr = {
       type:  'radio',
       name:  param.signal,
@@ -175,23 +170,19 @@ function radio(bind, el, param, value) {
     if (valuesEqual(option, value)) attr.checked = true;
 
     const input = element('input', attr);
-
-    input.addEventListener('change', function() {
-      bind.update(option);
-    });
+    input.addEventListener('change', () => bind.update(option));
 
     const label = element('label', {}, (labels[i] || option)+'');
-
     label.prepend(input);
     group.appendChild(label);
 
     return input;
   });
 
-  bind.set = function(value) {
+  bind.set = value => {
     const nodes = bind.elements,
-        n = nodes.length;
-    for (let i = 0; i<n; ++i) {
+          n = nodes.length;
+    for (let i = 0; i < n; ++i) {
       if (valuesEqual(nodes[i].value, value)) nodes[i].checked = true;
     }
   };
@@ -204,8 +195,8 @@ function range(bind, el, param, value) {
   value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
   const max = param.max != null ? param.max : Math.max(100, +value) || 100,
-      min = param.min || Math.min(0, max, +value) || 0,
-      step = param.step || tickStep(min, max, 100);
+        min = param.min || Math.min(0, max, +value) || 0,
+        step = param.step || tickStep(min, max, 100);
 
   const node = element('input', {
     type:  'range',
@@ -221,17 +212,17 @@ function range(bind, el, param, value) {
   el.appendChild(node);
   el.appendChild(span);
 
-  function update() {
+  const update = () => {
     span.textContent = node.value;
     bind.update(+node.value);
-  }
+  };
 
   // subscribe to both input and change
   node.addEventListener('input', update);
   node.addEventListener('change', update);
 
   bind.elements = [node];
-  bind.set = function(value) {
+  bind.set = value => {
     node.value = value;
     span.textContent = value;
   };
