@@ -100,6 +100,14 @@ tape('SVGRenderer should render scenegraph to svg', function(t) {
   t.end();
 });
 
+tape('SVGRenderer should support descriptions', function(t) {
+  var scene = loadScene('scenegraph-description.json');
+  var svg = render(scene, 400, 200);
+  var file = load('svg/scenegraph-description.svg');
+  t.equal(svg, file);
+  t.end();
+});
+
 tape('SVGRenderer should support clipping and gradients', function(t) {
   var r = new Renderer()
     .initialize(doc.body, 102, 102);

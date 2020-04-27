@@ -529,11 +529,11 @@ prototype._update = function(mdef, el, item) {
   element = el;
   values = el.__values__;
 
+  // apply aria-specific properties
+  ariaItemAttributes(emit, item);
+
   // apply svg attributes
   mdef.attr(emit, item, this);
-
-  // apply aria-specific properties
-  ariaItemAttributes(emit, item, this);
 
   // some marks need special treatment
   var extra = mark_extras[mdef.type];
