@@ -93,7 +93,7 @@ export default function() {
   density.size = function(_) {
     if (!arguments.length) return [dx, dy];
     var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-    if (!(_0 >= 0) && !(_0 >= 0)) error('invalid size');
+    if (!(_0 >= 0) && !(_1 >= 0)) error('invalid size');
     return dx = _0, dy = _1, density;
   };
 
