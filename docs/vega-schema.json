@@ -180,6 +180,12 @@
         "zindex": {
           "type": "number"
         },
+        "aria": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
         "title": {
           "$ref": "#/refs/textOrSignal"
         },
@@ -379,6 +385,16 @@
         "domain": {
           "type": "boolean"
         },
+        "domainCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
+        },
         "domainColor": {
           "oneOf": [
             {
@@ -440,6 +456,16 @@
         },
         "tickBand": {
           "$ref": "#/refs/tickBand"
+        },
+        "tickCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
         },
         "tickColor": {
           "oneOf": [
@@ -541,6 +567,16 @@
         },
         "gridScale": {
           "type": "string"
+        },
+        "gridCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
         },
         "gridColor": {
           "oneOf": [
@@ -1685,6 +1721,18 @@
         "zindex": {
           "$ref": "#/refs/numberValue"
         },
+        "description": {
+          "$ref": "#/refs/stringValue"
+        },
+        "aria": {
+          "$ref": "#/refs/booleanValue"
+        },
+        "ariaRole": {
+          "$ref": "#/refs/stringValue"
+        },
+        "ariaRoleDescription": {
+          "$ref": "#/refs/stringValue"
+        },
         "clip": {
           "$ref": "#/refs/booleanValue"
         },
@@ -2191,6 +2239,12 @@
             },
             "zindex": {
               "type": "number"
+            },
+            "aria": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string"
             },
             "cornerRadius": {
               "oneOf": [
@@ -2903,6 +2957,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
         },
         "style": {
           "$ref": "#/refs/style"
@@ -6097,6 +6157,9 @@
                 }
               ]
             },
+            "aria": {
+              "type": "boolean"
+            },
             "limit": {
               "oneOf": [
                 {
@@ -6106,12 +6169,6 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
-            },
-            "text": {
-              "$ref": "#/refs/textOrSignal"
-            },
-            "subtitle": {
-              "$ref": "#/refs/textOrSignal"
             },
             "zindex": {
               "type": "number"
@@ -6176,6 +6233,9 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
+            },
+            "text": {
+              "$ref": "#/refs/textOrSignal"
             },
             "color": {
               "oneOf": [
@@ -6263,6 +6323,9 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
+            },
+            "subtitle": {
+              "$ref": "#/refs/textOrSignal"
             },
             "subtitleColor": {
               "oneOf": [
@@ -11612,7 +11675,19 @@
               "items": {
                 "anyOf": [
                   {
-                    "type": "string"
+                    "enum": [
+                      "year",
+                      "quarter",
+                      "month",
+                      "week",
+                      "date",
+                      "day",
+                      "dayofyear",
+                      "hours",
+                      "minutes",
+                      "seconds",
+                      "milliseconds"
+                    ]
                   },
                   {
                     "$ref": "#/refs/signal"
