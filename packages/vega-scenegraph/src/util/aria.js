@@ -37,11 +37,11 @@ const AriaGuides = {
   'legend': {desc: 'legend', caption: legendCaption},
   'title-text': {
     desc: 'title',
-    caption: item => `Title text "${titleCaption(item)}"`
+    caption: item => `Title text '${titleCaption(item)}'`
   },
   'title-subtitle': {
     desc: 'subtitle',
-    caption: item => `Subtitle text "${titleCaption(item)}"`
+    caption: item => `Subtitle text '${titleCaption(item)}'`
   }
 };
 
@@ -125,7 +125,7 @@ function axisCaption(item) {
         xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
   return `${xy}-axis`
-    + (title ? ` titled "${title}"` : '')
+    + (title ? ` titled '${title}'` : '')
     + ` for a ${isDiscrete(type) ? 'discrete' : type} scale`
     + ` with ${domainCaption(scale, item)}`;
 }
@@ -139,7 +139,7 @@ function legendCaption(item) {
         scale = item.context.scales[scales[props[0]]].value;
 
   return capitalize(type)
-    + (title ? ` titled "${title}"` : '')
+    + (title ? ` titled '${title}'` : '')
     + ` for ${channelCaption(props)} with ${domainCaption(scale, item)}`;
 }
 
