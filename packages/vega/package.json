@@ -51,7 +51,7 @@
     "vega-transforms": "~4.7.2",
     "vega-typings": "~0.16.0",
     "vega-util": "~1.13.2",
-    "vega-view": "~5.5.1",
+    "vega-view": "~5.6.0",
     "vega-view-transforms": "~4.5.3",
     "vega-voronoi": "~4.1.2",
     "vega-wordcloud": "~4.0.5"
