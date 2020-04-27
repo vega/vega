@@ -14,6 +14,10 @@ function items() {
   ];
 }
 
+function toObject(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 tape('Overlap removes overlapping items (parity)', function(t) {
   var data = items(),
       df = new vega.Dataflow(),
@@ -29,7 +33,10 @@ tape('Overlap removes overlapping items (parity)', function(t) {
   t.equal(data[2].opacity, 1);
 
   // overlap updates mark bounds
-  t.deepEqual(data[0].mark.bounds, {x1: 0, y1: 0, x2: 18, y2: 10});
+  t.deepEqual(
+    toObject(data[0].mark.bounds),
+    {x1: 0, y1: 0, x2: 18, y2: 10}
+  );
 
   t.end();
 });
@@ -57,7 +64,10 @@ tape('Overlap removes overlapping items (greedy)', function(t) {
   t.equal(data[3].opacity, 1);
 
   // overlap updates mark bounds
-  t.deepEqual(data[0].mark.bounds, {x1: 0, y1: 0, x2: 35, y2: 10});
+  t.deepEqual(
+    toObject(data[0].mark.bounds),
+    {x1: 0, y1: 0, x2: 35, y2: 10}
+  );
 
   t.end();
 });
