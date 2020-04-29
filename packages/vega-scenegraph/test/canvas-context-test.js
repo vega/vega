@@ -29,14 +29,14 @@ tape('CanvasRenderer should render scenegraph to supplied canvas context', funct
   myContext.save();
   
   new Renderer()
-    .initialize(null, 400, 200, [0, 0], 1.0, { context: myContext })
+    .initialize(null, 400, 200, [0, 0], 1.0, { intoContext: myContext })
     .render(scene);
 
   myContext.restore();
   myContext.translate(0, 200);
 
   new Renderer()
-    .initialize(null, 400, 200, [0, 0], 1.0, { context: myContext })
+    .initialize(null, 400, 200, [0, 0], 1.0, { intoContext: myContext })
     .render(scene);
   
   const image = canvas.toBuffer();

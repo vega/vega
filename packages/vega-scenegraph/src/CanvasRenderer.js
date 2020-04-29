@@ -21,8 +21,8 @@ var prototype = inherits(CanvasRenderer, Renderer),
 prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
   this._options = options;
 
-  if (options && options.context) {
-    this._context = options.context;
+  if (options && options.intoContext) {
+    this._context = options.intoContext;
   } else {
     this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
   }
