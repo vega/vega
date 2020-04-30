@@ -2,7 +2,7 @@ import {resetSVGGradientId} from './src/Gradient';
 import {resetSVGClipId} from './src/util/svg/clip';
 
 export {default as Bounds} from './src/Bounds';
-export {default as Gradient, resetSVGGradientId} from './src/Gradient';
+export {default as Gradient} from './src/Gradient';
 export {default as GroupItem} from './src/GroupItem';
 export {default as ResourceLoader} from './src/ResourceLoader';
 export {default as Item} from './src/Item';
@@ -44,7 +44,6 @@ export {
   multiLineOffset,
   textMetrics
 } from './src/util/text';
-export {resetSVGClipId} from './src/util/svg/clip';
 
 export {sceneEqual, pathEqual} from './src/util/equal';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
