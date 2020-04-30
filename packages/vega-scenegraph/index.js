@@ -1,5 +1,8 @@
+import {resetSVGGradientId} from './src/Gradient';
+import {resetSVGClipId} from './src/util/svg/clip';
+
 export {default as Bounds} from './src/Bounds';
-export {default as Gradient} from './src/Gradient';
+export {default as Gradient, resetSVGGradientId} from './src/Gradient';
 export {default as GroupItem} from './src/GroupItem';
 export {default as ResourceLoader} from './src/ResourceLoader';
 export {default as Item} from './src/Item';
@@ -22,8 +25,6 @@ export {default as boundContext} from './src/bound/boundContext';
 export {default as boundStroke} from './src/bound/boundStroke';
 export {default as boundItem} from './src/bound/boundItem';
 export {default as boundMark} from './src/bound/boundMark';
-
-export {resetGradientId} from './src/Gradient';
 
 export {default as pathCurves} from './src/path/curves';
 export {default as pathSymbols} from './src/path/symbols';
@@ -58,3 +59,8 @@ export {
   visit as sceneVisit,
   pickVisit as scenePickVisit
 } from './src/util/visit';
+
+export function resetSVGDefIds() {
+  resetSVGClipId();
+  resetSVGGradientId();
+}

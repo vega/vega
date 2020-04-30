@@ -1,6 +1,6 @@
 var gradient_id = 0;
 
-export function resetGradientId() {
+export function resetSVGGradientId() {
   gradient_id = 0;
 }
 
