@@ -23,6 +23,8 @@ export {default as boundStroke} from './src/bound/boundStroke';
 export {default as boundItem} from './src/bound/boundItem';
 export {default as boundMark} from './src/bound/boundMark';
 
+export {resetGradientId} from './src/Gradient';
+
 export {default as pathCurves} from './src/path/curves';
 export {default as pathSymbols} from './src/path/symbols';
 export {default as pathRectangle} from './src/path/rectangle';
