@@ -41,7 +41,7 @@ function render(scene, w, h) {
   }
 
   // reset clip id counter
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   // then render svg
   return compensate(new Renderer()
@@ -57,7 +57,7 @@ function renderAsync(scene, w, h, callback) {
   }
 
   // reset clip id counter
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   // then render svg
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
@@ -112,7 +112,7 @@ tape('SVGRenderer should support clipping and gradients', function(t) {
   var r = new Renderer()
     .initialize(doc.body, 102, 102);
 
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
   var scene = loadScene('scenegraph-defs.json');
   var svg = compensate(r.render(scene).svg());
   var file = load('svg/scenegraph-defs.svg');
@@ -121,7 +121,7 @@ tape('SVGRenderer should support clipping and gradients', function(t) {
   svg = compensate(r.render(scene).svg());
   t.equal(svg, file);
 
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
   scene = loadScene('scenegraph-defs.json');
   scene.items[0].clip = false;
   scene.items[0].fill = 'red';
@@ -140,7 +140,7 @@ tape('SVGRenderer should support axes, legends and sub-groups', function(t) {
 });
 
 tape('SVGRenderer should support full redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
@@ -169,7 +169,7 @@ tape('SVGRenderer should support full redraw', function(t) {
 });
 
 tape('SVGRenderer should support enter-item redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
@@ -195,7 +195,7 @@ tape('SVGRenderer should support enter-item redraw', function(t) {
 });
 
 tape('SVGRenderer should support exit-item redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
@@ -217,7 +217,7 @@ tape('SVGRenderer should support exit-item redraw', function(t) {
 });
 
 tape('SVGRenderer should support single-item redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
@@ -238,7 +238,7 @@ tape('SVGRenderer should support single-item redraw', function(t) {
 });
 
 tape('SVGRenderer should support multi-item redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
@@ -258,7 +258,7 @@ tape('SVGRenderer should support multi-item redraw', function(t) {
 });
 
 tape('SVGRenderer should support enter-group redraw', function(t) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-barley.json');
   var r = new Renderer()
