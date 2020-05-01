@@ -6,10 +6,11 @@ import {domClear} from './util/dom';
 import clip from './util/canvas/clip';
 import resize from './util/canvas/resize';
 import {canvas} from 'vega-canvas';
-import {inherits} from 'vega-util';
+import {error, inherits} from 'vega-util';
 
 export default function CanvasRenderer(loader) {
   Renderer.call(this, loader);
+  this._options = {};
   this._redraw = false;
   this._dirty = new Bounds();
 }
@@ -19,18 +20,17 @@ var prototype = inherits(CanvasRenderer, Renderer),
     tempBounds = new Bounds();
 
 prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
-  this._options = options;
+  this._options = options || {};
 
-  if (options && options.intoContext) {
-    this._context = options.intoContext;
-  } else {
-    this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
-  }
+  this._canvas = this._options.externalContext
+    ? null
+    : canvas(1, 1, this._options.type); // instantiate a small canvas
 
   if (el && this._canvas) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
+
   // this method will invoke resize to size the canvas appropriately
   return base.initialize.call(this, el, width, height, origin, scaleFactor);
 };
@@ -39,16 +39,17 @@ prototype.resize = function(width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
 
   if (this._canvas) {
+    // configure canvas size and transform
     resize(this._canvas, this._width, this._height,
-      this._origin, this._scale, this._options && this._options.context);
+      this._origin, this._scale, this._options.context);
+  } else {
+    // external context needs to be positioned to origin
+    const ctx = this._options.externalContext;
+    if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
+    ctx.scale(this._scale, this._scale);
+    ctx.translate(this._origin[0], this._origin[1]);
   }
-  else if (this._context) {
-    this._context.translate(origin[0], origin[1]);
-    this._context.scale(scaleFactor);
-  }
-  else {
-    // unreachable; either a canvas or context should be available at this point
-  }
+
   this._redraw = true;
   return this;
 };
@@ -58,7 +59,8 @@ prototype.canvas = function() {
 };
 
 prototype.context = function() {
-  return this._context || (this._canvas ? this._canvas.getContext('2d') : null);
+  return this._options.externalContext
+    || (this._canvas ? this._canvas.getContext('2d') : null);
 };
 
 prototype.dirty = function(item) {
