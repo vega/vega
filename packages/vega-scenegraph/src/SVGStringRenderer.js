@@ -8,7 +8,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styles} from './util/svg/styles';
+import {defaultCSS, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -47,7 +47,8 @@ prototype.resize = function(width, height, origin, scaleFactor) {
     attr[key] = metadata[key];
   }
 
-  t.head = openTag('svg', attr);
+  t.head = openTag('svg', attr)
+         + openTag('style') + defaultCSS + closeTag('style');
 
   var bg = this._bgcolor;
   if (bg === 'transparent' || bg === 'none') bg = null;
@@ -81,7 +82,7 @@ prototype.background = function() {
 
 prototype.svg = function() {
   var t = this._text;
-  return t.head + t.bg + t.defs + t.root + t.body + t.foot;
+  return t.head + t.defs + t.bg + t.root + t.body + t.foot;
 };
 
 prototype._render = function(scene) {
@@ -343,14 +344,10 @@ function applyStyles(o, mark, tag, defs) {
     let value = o[prop];
     const name = styles[prop];
 
-    if (value == null) {
-      if (name === 'fill') {
-        s += 'fill: none; ';
-      }
-    } else if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
-      // transparent is not a legal SVG value, so map to none instead
-      s += name + ': none; ';
-    } else {
+    if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
+      // transparent is not a legal SVG value
+      // we can skip it to rely on default 'none' instead
+    } else if (value != null) {
       if (isGradient(value)) {
         value = gradientRef(value, defs.gradient, '');
       }

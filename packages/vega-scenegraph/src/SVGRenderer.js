@@ -8,10 +8,11 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {styles} from './util/svg/styles';
+import {defaultCSS, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
-var ns = metadata.xmlns;
+const RootIndex = 1,
+      ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
@@ -30,9 +31,16 @@ prototype.initialize = function(el, width, height, padding) {
     this._svg = domChild(el, 0, 'svg', ns);
     this._svg.setAttribute('class', 'marks');
     domClear(el, 1);
+
+    // set the svg default styles
+    const style = domChild(this._svg, 0, 'style');
+    style.textContent = defaultCSS;
+
     // set the svg root group
-    this._root = domChild(this._svg, 0, 'g', ns);
-    domClear(this._svg, 1);
+    this._root = domChild(this._svg, RootIndex, 'g', ns);
+
+    // ensure no additional child elements
+    domClear(this._svg, RootIndex + 1);
   }
 
   // create the svg definitions cache
@@ -93,7 +101,12 @@ prototype.svg = function() {
         style:  'fill: ' + this._bgcolor + ';'
       }) + closeTag('rect'));
 
-  return openTag('svg', attr) + bg + this._svg.innerHTML + closeTag('svg');
+  return openTag('svg', attr)
+    + openTag('style') + defaultCSS + closeTag('style')
+    + (this._defs.el ? this._defs.el.outerHTML : '')
+    + bg
+    + this._root.outerHTML
+    + closeTag('svg');
 };
 
 
@@ -124,12 +137,12 @@ prototype.updateDefs = function() {
       index = 0, id;
 
   for (id in defs.gradient) {
-    if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
     index = updateGradient(el, defs.gradient[id], index);
   }
 
   for (id in defs.clipping) {
-    if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
+    if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
     index = updateClipping(el, defs.clipping[id], index);
   }
 
@@ -459,7 +472,6 @@ var mark_extras = {
     } else {
       // ensure foreground is ignored
       fg.style.setProperty('display', 'none');
-      fg.style.setProperty('fill', 'none');
     }
   },
   image: function(mdef, el, item) {
@@ -583,21 +595,12 @@ prototype.style = function(el, o) {
   if (o == null) return;
 
   for (const prop in styles) {
-    let value = o[prop];
-
-    if (prop === 'font') {
-      value = fontFamily(o);
-    }
-
+    let value = prop === 'font' ? fontFamily(o) : o[prop];
     if (value === values[prop]) continue;
 
     const name = styles[prop];
     if (value == null) {
-      if (name === 'fill') {
-        el.style.setProperty(name, 'none');
-      } else {
-        el.style.removeProperty(name);
-      }
+      el.style.removeProperty(name);
     } else {
       if (isGradient(value)) {
         value = gradientRef(value, this._defs.gradient, href());
