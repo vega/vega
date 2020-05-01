@@ -28,15 +28,22 @@ export default function ViewLayout(params) {
 var prototype = inherits(ViewLayout, Transform);
 
 prototype.transform = function(_, pulse) {
-  // TODO incremental update, output?
   var view = pulse.dataflow;
   _.mark.items.forEach(group => {
     if (_.layout) trellisLayout(view, group, _.layout);
     layoutGroup(view, group, _);
   });
-  if (_.modified()) pulse.reflow();
-  return pulse;
+  return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
 };
+
+function shouldReflow(group) {
+  // We typically should reflow if layout is invoked (#2568), as child items
+  // may have resized and reflow ensures group bounds are re-calculated.
+  // However, legend entries have a special exception to avoid instability.
+  // For example, if a selected legend symbol gains a stroke on hover,
+  // we don't want to re-position subsequent elements in the legend.
+  return group && group.mark.role !== 'legend-entry';
+}
 
 function layoutGroup(view, group, _) {
   var items = group.items,
