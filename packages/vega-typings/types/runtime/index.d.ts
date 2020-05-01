@@ -20,16 +20,14 @@ export interface Loader {
   file: (filename: string) => Promise<string>;
 }
 
-export interface ToCanvasOptionsWithoutContext {
-  type?: string;
-  context?: any;
-}
-
-export interface ToCanvasOptionsWithContext {
-  intoContext?: any;
-}
-
-export type ToCanvasOptions = ToCanvasOptionsWithoutContext | ToCanvasOptionsWithContext;
+export type ToCanvasOptions =
+  | {
+      type?: string;
+      context?: any;
+    }
+  | {
+      externalContext: any;
+    };
 
 export class View {
   constructor(runtime: Runtime, config?: any);
