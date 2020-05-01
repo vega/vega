@@ -20,6 +20,15 @@ export interface Loader {
   file: (filename: string) => Promise<string>;
 }
 
+export type ToCanvasOptions =
+  | {
+      type?: string;
+      context?: any;
+    }
+  | {
+      externalContext: any;
+    };
+
 export class View {
   constructor(runtime: Runtime, config?: any);
   initialize(dom?: Element | string): this;
@@ -52,10 +61,7 @@ export class View {
 
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
   toSVG(scaleFactor?: number): Promise<string>;
-  toCanvas(
-    scaleFactor?: number,
-    options?: { type?: string; context?: any },
-  ): Promise<HTMLCanvasElement>;
+  toCanvas(scaleFactor?: number, options?: ToCanvasOptions): Promise<HTMLCanvasElement>;
 
   signal(name: string, value: SignalValue): this;
   signal(name: string): SignalValue;
