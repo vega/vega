@@ -1,47 +1,20 @@
 import {
+  format as _format,
   timeFormat as _timeFormat,
-  utcFormat as _utcFormat
-} from 'vega-time';
-
-import {
-  format as _numberFormat
-} from 'd3-format';
-
-import {
   timeParse as _timeParse,
+  utcFormat as _utcFormat,
   utcParse as _utcParse
-} from 'd3-time-format';
+} from 'vega-format';
 
-const formatCache = {};
+const wrap = method => function(value, spec) {
+  return method(spec)(value);
+};
 
-function formatter(type, method, specifier) {
-  let k = type + ':' + specifier,
-      e = formatCache[k];
-  if (!e || e[0] !== method) {
-    formatCache[k] = (e = [method, method(specifier)]);
-  }
-  return e[1];
-}
-
-export function format(_, specifier) {
-  return formatter('format', _numberFormat, specifier)(_);
-}
-
-export function timeFormat(_, specifier) {
-  return formatter('timeFormat', _timeFormat, specifier)(_);
-}
-
-export function utcFormat(_, specifier) {
-  return formatter('utcFormat', _utcFormat, specifier)(_);
-}
-
-export function timeParse(_, specifier) {
-  return formatter('timeParse', _timeParse, specifier)(_);
-}
-
-export function utcParse(_, specifier) {
-  return formatter('utcParse', _utcParse, specifier)(_);
-}
+export const format = wrap(_format);
+export const timeFormat = wrap(_timeFormat);
+export const utcFormat = wrap(_utcFormat);
+export const timeParse = wrap(_timeParse);
+export const utcParse = wrap(_utcParse);
 
 var dateObj = new Date(2000, 0, 1);
 

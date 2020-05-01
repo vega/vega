@@ -1,8 +1,8 @@
 import {DiscreteLegend, SymbolLegend} from './legend-types';
 import {Log, Quantile, Quantize, Threshold, Time, UTC} from './scales/types';
 import {tickFormat, tickValues} from './ticks';
+import {formatSpan} from 'vega-format';
 import {peek} from 'vega-util';
-import {tickFormat as spanFormat} from 'd3-scale';
 
 const symbols = {
   [Quantile]:  'quantiles',
@@ -46,7 +46,7 @@ export function thresholdFormat(scale, specifier) {
   }
 
   // tickCount = 3 ticks times 10 for increased resolution
-  return spanFormat(0, d, 3 * 10, specifier);
+  return formatSpan(0, d, 3 * 10, specifier);
 }
 
 function thresholdValues(thresholds) {

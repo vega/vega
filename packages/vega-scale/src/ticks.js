@@ -1,8 +1,14 @@
 import {isLogarithmic} from './scales';
 import {Time, UTC} from './scales/types';
-import {timeFormat, timeInterval, utcFormat, utcInterval} from 'vega-time';
+import {
+  formatSpan,
+  formatVariablePrecision,
+  format as numberFormat,
+  timeFormat,
+  utcFormat
+} from 'vega-format';
+import {timeInterval, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
-import {formatSpecifier, format as numberFormat} from 'd3-format';
 
 const defaultFormatter = value => isArray(value)
   ? value.map(v => String(v))
@@ -116,64 +122,30 @@ export function tickValues(scale, count) {
  * @return {function(*):string} - The generated label formatter.
  */
 export function tickFormat(scale, count, specifier, formatType, noSkip) {
-  var type = scale.type,
-      format = (type === Time || formatType === Time) ? timeFormat(specifier)
-        : (type === UTC || formatType === UTC) ? utcFormat(specifier)
-        : scale.tickFormat ? scale.tickFormat(count, specifier)
-        : specifier ? numberFormat(specifier)
-        : defaultFormatter;
+  var type = scale.type;
+  let format = defaultFormatter;
 
-  if (isLogarithmic(type)) {
-    var logfmt = variablePrecision(specifier);
-    format = noSkip || scale.bins ? logfmt : filter(format, logfmt);
+  if (type === Time || formatType === Time) {
+    format = timeFormat(specifier);
+  }
+  else if (type === UTC || formatType === UTC) {
+    format = utcFormat(specifier);
+  }
+  else if (isLogarithmic(type)) {
+    const logfmt = scale.tickFormat(count, specifier),
+          varfmt = formatVariablePrecision(specifier);
+    format = noSkip || scale.bins
+      ? varfmt
+      : _ => logfmt(_) ? varfmt(_) : '';
+  }
+  else if (scale.tickFormat) {
+    // if d3 scale has tickFormat, it must be continuous
+    const d = scale.domain();
+    format = formatSpan(d[0], d[d.length - 1], count, specifier);
+  }
+  else if (specifier) {
+    format = numberFormat(specifier);
   }
 
   return format;
-}
-
-function filter(sourceFormat, targetFormat) {
-  return _ => sourceFormat(_) ? targetFormat(_) : '';
-}
-
-function variablePrecision(specifier) {
-  var s = formatSpecifier(specifier || ',');
-
-  if (s.precision == null) {
-    s.precision = 12;
-    switch (s.type) {
-      case '%': s.precision -= 2; break;
-      case 'e': s.precision -= 1; break;
-    }
-    return trimZeroes(
-      numberFormat(s),          // number format
-      numberFormat('.1f')(1)[1] // decimal point character
-    );
-  } else {
-    return numberFormat(s);
-  }
-}
-
-function trimZeroes(format, decimalChar) {
-  return x => {
-    var str = format(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
-
-    if (dec < 0) return str;
-
-    idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
-    while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
-
-    return str.slice(0, idx) + end;
-  };
-}
-
-function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
-  if (i > 0) return i;
-  for (i=str.length; --i > dec;) {
-    c = str.charCodeAt(i);
-    if (c >= 48 && c <= 57) return i + 1; // is digit
-  }
 }

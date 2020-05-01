@@ -66,9 +66,12 @@ export {
 } from 'vega-view';
 
 export {
-  expressionFunction,
   formatLocale,
   timeFormatLocale
+} from 'vega-format';
+
+export {
+  expressionFunction
 } from 'vega-functions';
 
 export {

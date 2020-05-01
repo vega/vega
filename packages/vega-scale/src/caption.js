@@ -1,7 +1,7 @@
 import {labelFormat, labelValues} from './labels';
 import {Time, UTC} from './scales/types';
 import {isDiscrete, isDiscretizing, isTemporal} from './scales';
-import {timeFormat, utcFormat} from 'vega-time';
+import {timeFormat, utcFormat} from 'vega-format';
 import {isString, peek} from 'vega-util';
 
 function format(scale, specifier, formatType) {
