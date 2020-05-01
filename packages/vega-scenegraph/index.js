@@ -59,6 +59,9 @@ export {
   pickVisit as scenePickVisit
 } from './src/util/visit';
 
+// deprecated, remove in next major version
+export {resetSVGClipId} from './src/util/svg/clip';
+
 export function resetSVGDefIds() {
   resetSVGClipId();
   resetSVGGradientId();
