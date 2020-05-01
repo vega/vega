@@ -20,9 +20,14 @@ var prototype = inherits(CanvasRenderer, Renderer),
 
 prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
   this._options = options;
-  this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
 
-  if (el) {
+  if (options && options.intoContext) {
+    this._context = options.intoContext;
+  } else {
+    this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
+  }
+
+  if (el && this._canvas) {
     domClear(el, 0).appendChild(this._canvas);
     this._canvas.setAttribute('class', 'marks');
   }
@@ -32,8 +37,18 @@ prototype.initialize = function(el, width, height, origin, scaleFactor, options)
 
 prototype.resize = function(width, height, origin, scaleFactor) {
   base.resize.call(this, width, height, origin, scaleFactor);
-  resize(this._canvas, this._width, this._height,
-    this._origin, this._scale, this._options && this._options.context);
+
+  if (this._canvas) {
+    resize(this._canvas, this._width, this._height,
+      this._origin, this._scale, this._options && this._options.context);
+  }
+  else if (this._context) {
+    this._context.translate(origin[0], origin[1]);
+    this._context.scale(scaleFactor);
+  }
+  else {
+    // unreachable; either a canvas or context should be available at this point
+  }
   this._redraw = true;
   return this;
 };
@@ -43,7 +58,7 @@ prototype.canvas = function() {
 };
 
 prototype.context = function() {
-  return this._canvas ? this._canvas.getContext('2d') : null;
+  return this._context || (this._canvas ? this._canvas.getContext('2d') : null);
 };
 
 prototype.dirty = function(item) {
