@@ -17,7 +17,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
     const items = d.datum.datum.items[markIndex].items, // area points
           n = items.length, // number of points
           textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum), // label height
+          textWidth = textMetrics.width(d.datum, d.datum.text), // label height
           stack = []; // flood fill stack
 
     let maxSize = avoidBaseMark ? textHeight : 0,
