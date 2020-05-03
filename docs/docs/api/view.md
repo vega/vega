@@ -483,4 +483,4 @@ For example, to remove all tuples in the `'table'` data set with a `count` prope
 view.remove('table', function(d) { return d.count < 5; }).run();
 ```
 
-Internally, this method creates a [ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js) and invokes [Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js). See [vega-dataflow](https://github.com/vega/vega-dataflow) for more.
+Internally, this method creates a [ChangeSet](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/ChangeSet.js) and invokes [Dataflow.pulse](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/update.js). See [vega-dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow) for more.
