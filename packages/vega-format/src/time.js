@@ -63,12 +63,17 @@ function timeLocale(locale) {
   };
 }
 
-let defaultTimeLocale = timeLocale({
-  format: d3_timeFormat,
-  parse: d3_timeParse,
-  utcFormat: d3_utcFormat,
-  utcParse: d3_utcParse,
-});
+let defaultTimeLocale;
+resetTimeFormatDefaultLocale();
+
+export function resetTimeFormatDefaultLocale() {
+  return defaultTimeLocale = timeLocale({
+    format: d3_timeFormat,
+    parse: d3_timeParse,
+    utcFormat: d3_utcFormat,
+    utcParse: d3_utcParse,
+  });
+}
 
 export function timeFormatLocale(definition) {
   return timeLocale(d3_timeFormatLocale(definition));

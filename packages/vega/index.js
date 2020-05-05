@@ -67,7 +67,10 @@ export {
 
 export {
   numberFormatDefaultLocale as formatLocale,
-  timeFormatDefaultLocale as timeFormatLocale
+  timeFormatDefaultLocale as timeFormatLocale,
+  locale,
+  defaultLocale,
+  resetDefaultLocale
 } from 'vega-format';
 
 export {

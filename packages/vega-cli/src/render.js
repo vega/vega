@@ -36,15 +36,16 @@ module.exports = function(type, callback, opt) {
     vega.setRandom(vega.randomLCG(arg.seed));
   }
 
-  // load custom number format locale, if specified
-  if (arg.format) vega.formatLocale(load(arg.format));
-
-  // load custom date/time format locale, if specified
-  if (arg.timeFormat) vega.timeFormatLocale(load(arg.timeFormat));
+  // locale options, load custom number/time formats if specified
+  const locale = {
+    number: arg.format ? load(arg.format) : null,
+    time: arg.timeFormat ? load(arg.timeFormat) : null
+  };
 
   // instantiate view and invoke headless render method
   function render(spec) {
     const view = new vega.View(vega.parse(spec, config), {
+        locale: locale,                         // set locale options
         loader: vega.loader({baseURL: base}),   // load files from base path
         logger: vega.logger(loglevel, 'error'), // route all logging to stderr
         renderer: 'none'                        // no primary renderer needed

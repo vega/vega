@@ -1,14 +1,17 @@
 export {
   numberFormatDefaultLocale,
-  numberFormatLocale
+  numberFormatLocale,
+  resetNumberFormatDefaultLocale
 } from './src/number';
 
 export {
   timeFormatDefaultLocale,
-  timeFormatLocale
+  timeFormatLocale,
+  resetTimeFormatDefaultLocale
 } from './src/time';
 
 export {
   locale,
-  defaultLocale
+  defaultLocale,
+  resetDefaultLocale
 } from './src/locale';

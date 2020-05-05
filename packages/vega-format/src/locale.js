@@ -1,9 +1,11 @@
 import {
   numberFormatDefaultLocale,
-  numberFormatLocale
+  numberFormatLocale,
+  resetNumberFormatDefaultLocale
 } from './number';
 
 import {
+  resetTimeFormatDefaultLocale,
   timeFormatDefaultLocale,
   timeFormatLocale
 } from './time';
@@ -26,9 +28,10 @@ export function locale(numberSpec, timeSpec) {
 
 export function defaultLocale(numberSpec, timeSpec) {
   const args = arguments.length;
-  if (args > 0 && args !== 2) {
-    error('defaultLocale accepts only zero or two arguments.');
+  if (args && args !== 2) {
+    error('defaultLocale expects either zero or two arguments.');
   }
+
   return args
     ? createLocale(
         numberFormatDefaultLocale(numberSpec),
@@ -38,4 +41,10 @@ export function defaultLocale(numberSpec, timeSpec) {
         numberFormatDefaultLocale(),
         timeFormatDefaultLocale()
       );
+}
+
+export function resetDefaultLocale() {
+  resetNumberFormatDefaultLocale();
+  resetTimeFormatDefaultLocale();
+  return defaultLocale();
 }

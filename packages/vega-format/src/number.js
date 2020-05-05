@@ -96,10 +96,15 @@ function numberLocale(locale) {
   };
 }
 
-let defaultNumberLocale = numberLocale({
-  format: d3_format,
-  formatPrefix: d3_formatPrefix
-});
+let defaultNumberLocale;
+resetNumberFormatDefaultLocale();
+
+export function resetNumberFormatDefaultLocale() {
+  return defaultNumberLocale = numberLocale({
+    format: d3_format,
+    formatPrefix: d3_formatPrefix
+  });
+}
 
 export function numberFormatLocale(definition) {
   return numberLocale(d3_formatLocale(definition));
