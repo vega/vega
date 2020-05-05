@@ -146,7 +146,7 @@ export interface BaseAxis {
    *
    * __Default value:__ `0.5`
    */
-  translate?: number;
+  translate?: NumberValue;
 
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
