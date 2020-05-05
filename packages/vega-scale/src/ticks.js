@@ -8,6 +8,9 @@ const defaultFormatter = value => isArray(value)
   ? value.map(v => String(v))
   : String(value);
 
+const ascending = (a, b) => a[1] - b[1];
+const descending = (a, b) => b[1] - a[1];
+
 /**
  * Determine the tick count or interval function.
  * @param {Scale} scale - The scale for which to generate tick values.
@@ -56,21 +59,25 @@ export function tickCount(scale, count, minStep) {
 export function validTicks(scale, ticks, count) {
   let range = scale.range(),
       lo = range[0],
-      hi = peek(range);
+      hi = peek(range),
+      cmp = ascending;
 
   if (lo > hi) {
     range = hi;
     hi = lo;
     lo = range;
+    cmp = descending;
   }
 
   lo = Math.floor(lo);
   hi = Math.ceil(hi);
 
-  ticks = ticks.filter(v => {
-    v = scale(v);
-    return lo <= v && v <= hi;
-  });
+  // filter ticks to valid values within the range
+  // additionally sort ticks in range order (#2579)
+  ticks = ticks.map(v => [v, scale(v)])
+    .filter(_ => lo <= _[1] && _[1] <= hi)
+    .sort(cmp)
+    .map(_ => _[0]);
 
   if (count > 0 && ticks.length > 1) {
     const endpoints = [ticks[0], peek(ticks)];
