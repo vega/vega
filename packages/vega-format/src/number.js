@@ -1,3 +1,4 @@
+import memoize from './memoize';
 import {tickStep} from 'd3-array';
 import {
   format as d3_format,
@@ -34,23 +35,14 @@ function rightmostDigit(str, dec) {
   }
 }
 
-export function numberLocale(locale) {
-  const _format = locale.format,
-        _prefix = locale.formatPrefix,
-        _cache = {};
-
-  const format = spec =>
-    _cache[spec] || (_cache[spec] = _format(spec));
-
-  const prefix = (spec, value) => {
-    const key = spec + ':>' + value;
-    return _cache[key] || (_cache[key] = _prefix(spec, value));
-  };
+function numberLocale(locale) {
+  const format = memoize(locale.format),
+        formatPrefix = locale.formatPrefix;
 
   return {
     format,
-    prefix,
-    variable(spec) {
+    formatPrefix,
+    formatFloat(spec) {
       var s = formatSpecifier(spec || ',');
       if (s.precision == null) {
         s.precision = 12;
@@ -66,28 +58,37 @@ export function numberLocale(locale) {
         return format(s);
       }
     },
-    span(start, stop, count, specifier) {
-      var step = tickStep(start, stop, count),
-          precision;
+    formatSpan(start, stop, count, specifier) {
       specifier = formatSpecifier(specifier == null ? ',f' : specifier);
-      switch (specifier.type) {
-        case 's': {
-          var value = Math.max(Math.abs(start), Math.abs(stop));
-          if (specifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) specifier.precision = precision;
-          return prefix(specifier, value);
-        }
-        case '':
-        case 'e':
-        case 'g':
-        case 'p':
-        case 'r': {
-          if (specifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) specifier.precision = precision - (specifier.type === 'e');
-          break;
-        }
-        case 'f':
-        case '%': {
-          if (specifier.precision == null && !isNaN(precision = precisionFixed(step))) specifier.precision = precision - (specifier.type === '%') * 2;
-          break;
+      const step = tickStep(start, stop, count),
+            value = Math.max(Math.abs(start), Math.abs(stop));
+      let precision;
+
+      if (specifier.precision == null) {
+        switch (specifier.type) {
+          case 's': {
+            if (!isNaN(precision = precisionPrefix(step, value))) {
+              specifier.precision = precision;
+            }
+            return formatPrefix(specifier, value);
+          }
+          case '':
+          case 'e':
+          case 'g':
+          case 'p':
+          case 'r': {
+            if (!isNaN(precision = precisionRound(step, value))) {
+              specifier.precision = precision - (specifier.type === 'e');
+            }
+            break;
+          }
+          case 'f':
+          case '%': {
+            if (!isNaN(precision = precisionFixed(step))) {
+              specifier.precision = precision - (specifier.type === '%') * 2;
+            }
+            break;
+          }
         }
       }
       return format(specifier);
@@ -100,20 +101,12 @@ let defaultNumberLocale = numberLocale({
   formatPrefix: d3_formatPrefix
 });
 
-export function formatLocale(definition) {
-  return arguments.length
-    ? defaultNumberLocale
-    : (defaultNumberLocale = numberLocale(d3_formatLocale(definition)));
+export function numberFormatLocale(definition) {
+  return numberLocale(d3_formatLocale(definition));
 }
 
-export const format = spec =>
-  defaultNumberLocale.format(spec);
-
-export const formatPrefix = (spec, value) =>
-  defaultNumberLocale.prefix(spec, value);
-
-export const formatVariablePrecision = (spec) =>
-  defaultNumberLocale.variable(spec);
-
-export const formatSpan = (start, stop, count, spec) =>
-  defaultNumberLocale.span(start, stop, count, spec);
+export function numberFormatDefaultLocale(definition) {
+  return arguments.length
+    ? (defaultNumberLocale = numberFormatLocale(definition))
+    : defaultNumberLocale;
+}

@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "5.5.1",
+  "version": "5.6.0",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -15,7 +15,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-loader:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
+    "rollup": "rollup -g vega-format:vega,vega-loader:vega,vega-util:vega -f umd -n vega -o build/vega-dataflow.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-dataflow.js -c -m -o build/vega-dataflow.min.js",
@@ -25,7 +25,8 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-loader": "^4.2.2",
+    "vega-format": "^1.0.0",
+    "vega-loader": "^4.3.0",
     "vega-util": "^1.13.2"
   }
 }

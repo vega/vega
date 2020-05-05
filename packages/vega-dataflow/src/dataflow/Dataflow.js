@@ -9,6 +9,7 @@ import {pulse, touch, update} from './update';
 import changeset from '../ChangeSet';
 import Heap from '../util/Heap';
 import UniqueList from '../util/UniqueList';
+import {defaultLocale} from 'vega-format';
 import {loader} from 'vega-loader';
 import {Error, id, logger} from 'vega-util';
 
@@ -22,6 +23,7 @@ export default function Dataflow() {
 
   this._clock = 0;
   this._rank = 0;
+  this._locale = defaultLocale();
   try {
     this._loader = loader();
   } catch (e) {
@@ -68,6 +70,24 @@ prototype.loader = function(_) {
     return this;
   } else {
     return this._loader;
+  }
+};
+
+/**
+ * Gets or sets the locale instance to use for formatting and parsing
+ * string values. The locale object should be provided by the
+ * vega-format library, and include methods such as format, timeFormat,
+ * utcFormat, timeParse, and utcParse.
+ * @param {object} _ - The locale instance to use.
+ * @return {object|Dataflow} - If no arguments are provided, returns
+ *   the current locale instance. Otherwise returns this Dataflow instance.
+ */
+prototype.locale = function(_) {
+  if (arguments.length) {
+    this._locale = _;
+    return this;
+  } else {
+    return this._locale;
   }
 };
 

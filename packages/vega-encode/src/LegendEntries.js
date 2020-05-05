@@ -35,14 +35,15 @@ prototype.transform = function(_, pulse) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+  var locale = pulse.dataflow.locale(),
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       items = this.value,
       type  = _.type || SymbolLegend,
       scale = _.scale,
       limit = +_.limit,
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
       lskip = !!_.values || type === SymbolLegend,
-      format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
+      format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
       values = _.values || labelValues(scale, count),
       domain, fraction, size, offset, ellipsis;
 

@@ -1,3 +1,4 @@
+import memoize from './memoize';
 import {
   DATE, DAY, HOURS, MILLISECONDS, MINUTES, MONTH, QUARTER,
   SECONDS, WEEK, YEAR, timeInterval, utcInterval
@@ -46,42 +47,19 @@ function timeMultiFormat(format, interval, spec) {
     y)(date);
 }
 
-export function timeLocale(locale) {
-  const _timeFormat = locale.timeFormat,
-        _timeParse = locale.timeParse,
-        _utcFormat = locale.utcFormat,
-        _utcParse = locale.utcParse,
-        _cache = {};
-
-  const timeFormat = spec => {
-    const key = 't>>' + spec;
-    return _cache[key] || (_cache[key] = _timeFormat(spec));
-  };
-
-  const utcFormat = spec => {
-    const key = 'u>>' + spec;
-    return _cache[key] || (_cache[key] = _utcFormat(spec));
-  };
+function timeLocale(locale) {
+  const timeFormat = memoize(locale.timeFormat),
+        utcFormat = memoize(locale.utcFormat);
 
   return {
-    timeFormat(spec) {
-      return isString(spec)
-        ? timeFormat(spec)
-        : timeMultiFormat(timeFormat, timeInterval, spec);
-    },
-    timeParse(spec) {
-      const key = 't<<' + spec;
-      return _cache[key] || (_cache[key] = _timeParse(spec));
-    },
-    utcFormat(spec) {
-      return isString(spec)
-        ? utcFormat(spec)
-        : timeMultiFormat(utcFormat, utcInterval, spec);
-    },
-    utcParse(spec) {
-      const key = 'u<<' + spec;
-      return _cache[key] || (_cache[key] = _utcParse(spec));
-    }
+    timeFormat: spec => isString(spec)
+      ? timeFormat(spec)
+      : timeMultiFormat(timeFormat, timeInterval, spec),
+    utcFormat: spec => isString(spec)
+      ? utcFormat(spec)
+      : timeMultiFormat(utcFormat, utcInterval, spec),
+    timeParse: memoize(locale.timeParse),
+    utcParse: memoize(locale.utcParse)
   };
 }
 
@@ -93,12 +71,11 @@ let defaultTimeLocale = timeLocale({
 });
 
 export function timeFormatLocale(definition) {
-  return arguments.length
-    ? defaultTimeLocale
-    : (defaultTimeLocale = timeLocale(d3_timeFormatLocale(definition)));
+  return timeLocale(d3_timeFormatLocale(definition));
 }
 
-export const timeFormat = spec => defaultTimeLocale.timeFormat(spec);
-export const timeParse = spec => defaultTimeLocale.timeParse(spec);
-export const utcFormat = spec => defaultTimeLocale.utcFormat(spec);
-export const utcParse = spec => defaultTimeLocale.utcParse(spec);
+export function timeFormatDefaultLocale(definition) {
+  return arguments.length
+    ? (defaultTimeLocale = timeFormatLocale(definition))
+    : defaultTimeLocale;
+}

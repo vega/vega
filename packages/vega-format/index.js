@@ -1,17 +1,14 @@
 export {
-  numberLocale,
-  formatLocale,
-  format,
-  formatPrefix,
-  formatSpan,
-  formatVariablePrecision
+  numberFormatDefaultLocale,
+  numberFormatLocale
 } from './src/number';
 
 export {
-  timeLocale,
-  timeFormatLocale,
-  timeFormat,
-  timeParse,
-  utcFormat,
-  utcParse
+  timeFormatDefaultLocale,
+  timeFormatLocale
 } from './src/time';
+
+export {
+  locale,
+  defaultLocale
+} from './src/locale';

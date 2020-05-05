@@ -1,20 +1,13 @@
-import {
-  format as _format,
-  timeFormat as _timeFormat,
-  timeParse as _timeParse,
-  utcFormat as _utcFormat,
-  utcParse as _utcParse
-} from 'vega-format';
-
 const wrap = method => function(value, spec) {
-  return method(spec)(value);
+  const locale = this.context.dataflow.locale();
+  return locale[method](spec)(value);
 };
 
-export const format = wrap(_format);
-export const timeFormat = wrap(_timeFormat);
-export const utcFormat = wrap(_utcFormat);
-export const timeParse = wrap(_timeParse);
-export const utcParse = wrap(_utcParse);
+export const format = wrap('format');
+export const timeFormat = wrap('timeFormat');
+export const utcFormat = wrap('utcFormat');
+export const timeParse = wrap('timeParse');
+export const utcParse = wrap('utcParse');
 
 var dateObj = new Date(2000, 0, 1);
 
@@ -23,21 +16,21 @@ function time(month, day, specifier) {
   dateObj.setYear(2000);
   dateObj.setMonth(month);
   dateObj.setDate(day);
-  return timeFormat(dateObj, specifier);
+  return timeFormat.call(this, dateObj, specifier);
 }
 
 export function monthFormat(month) {
-  return time(month, 1, '%B');
+  return time.call(this, month, 1, '%B');
 }
 
 export function monthAbbrevFormat(month) {
-  return time(month, 1, '%b');
+  return time.call(this, month, 1, '%b');
 }
 
 export function dayFormat(day) {
-  return time(0, 2 + day, '%A');
+  return time.call(this, 0, 2 + day, '%A');
 }
 
 export function dayAbbrevFormat(day) {
-  return time(0, 2 + day, '%a');
+  return time.call(this, 0, 2 + day, '%a');
 }

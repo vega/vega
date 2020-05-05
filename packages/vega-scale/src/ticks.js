@@ -1,12 +1,5 @@
 import {isLogarithmic} from './scales';
 import {Time, UTC} from './scales/types';
-import {
-  formatSpan,
-  formatVariablePrecision,
-  format as numberFormat,
-  timeFormat,
-  utcFormat
-} from 'vega-format';
 import {timeInterval, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 
@@ -121,18 +114,18 @@ export function tickValues(scale, count) {
  *   time multi-format specifier object.
  * @return {function(*):string} - The generated label formatter.
  */
-export function tickFormat(scale, count, specifier, formatType, noSkip) {
+export function tickFormat(locale, scale, count, specifier, formatType, noSkip) {
   var type = scale.type;
   let format = defaultFormatter;
 
   if (type === Time || formatType === Time) {
-    format = timeFormat(specifier);
+    format = locale.timeFormat(specifier);
   }
   else if (type === UTC || formatType === UTC) {
-    format = utcFormat(specifier);
+    format = locale.utcFormat(specifier);
   }
   else if (isLogarithmic(type)) {
-    const varfmt = formatVariablePrecision(specifier);
+    const varfmt = locale.formatFloat(specifier);
     if (noSkip || scale.bins) {
       format = varfmt;
     } else {
@@ -143,10 +136,10 @@ export function tickFormat(scale, count, specifier, formatType, noSkip) {
   else if (scale.tickFormat) {
     // if d3 scale has tickFormat, it must be continuous
     const d = scale.domain();
-    format = formatSpan(d[0], d[d.length - 1], count, specifier);
+    format = locale.formatSpan(d[0], d[d.length - 1], count, specifier);
   }
   else if (specifier) {
-    format = numberFormat(specifier);
+    format = locale.format(specifier);
   }
 
   return format;

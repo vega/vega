@@ -21,7 +21,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-scale": "^6.1.0"
+    "vega-scale": "^7.0.0"
   },
   "devDependencies": {
     "vega-crossfilter": "*",

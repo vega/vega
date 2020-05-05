@@ -1,7 +1,6 @@
 import {DiscreteLegend, SymbolLegend} from './legend-types';
 import {Log, Quantile, Quantize, Threshold, Time, UTC} from './scales/types';
 import {tickFormat, tickLog, tickValues} from './ticks';
-import {formatSpan} from 'vega-format';
 import {peek} from 'vega-util';
 
 const symbols = {
@@ -22,7 +21,7 @@ export function labelValues(scale, count) {
     : tickValues(scale, count);
 }
 
-export function thresholdFormat(scale, specifier) {
+export function thresholdFormat(locale, scale, specifier) {
   var _ = scale[formats[scale.type]](),
       n = _.length,
       d = n > 1 ? _[1] - _[0] : _[0], i;
@@ -32,7 +31,7 @@ export function thresholdFormat(scale, specifier) {
   }
 
   // tickCount = 3 ticks times 10 for increased resolution
-  return formatSpan(0, d, 3 * 10, specifier);
+  return locale.formatSpan(0, d, 3 * 10, specifier);
 }
 
 function thresholdValues(thresholds) {
@@ -51,10 +50,10 @@ function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
+export function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
   const format = formats[scale.type] && formatType !== Time && formatType !== UTC
-    ? thresholdFormat(scale, specifier)
-    : tickFormat(scale, count, specifier, formatType, noSkip);
+    ? thresholdFormat(locale, scale, specifier)
+    : tickFormat(locale, scale, count, specifier, formatType, noSkip);
 
   return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format)
     : type === DiscreteLegend ? formatDiscrete(format)

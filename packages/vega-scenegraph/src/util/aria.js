@@ -120,14 +120,16 @@ function axisCaption(item) {
   const datum = item.datum,
         orient = datum.orient,
         title = datum.title ? extractTitle(item) : null,
-        scale = item.context.scales[datum.scale].value,
+        ctx = item.context,
+        scale = ctx.scales[datum.scale].value,
+        locale = ctx.dataflow.locale(),
         type = scale.type,
         xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
   return `${xy}-axis`
     + (title ? ` titled '${title}'` : '')
     + ` for a ${isDiscrete(type) ? 'discrete' : type} scale`
-    + ` with ${domainCaption(scale, item)}`;
+    + ` with ${domainCaption(locale, scale, item)}`;
 }
 
 function legendCaption(item) {
@@ -136,11 +138,14 @@ function legendCaption(item) {
         type = `${datum.type || ''} legend`.trim(),
         scales = datum.scales,
         props = Object.keys(scales),
-        scale = item.context.scales[scales[props[0]]].value;
+        ctx = item.context,
+        scale = ctx.scales[scales[props[0]]].value,
+        locale = ctx.dataflow.locale();
 
   return capitalize(type)
     + (title ? ` titled '${title}'` : '')
-    + ` for ${channelCaption(props)} with ${domainCaption(scale, item)}`;
+    + ` for ${channelCaption(props)}`
+    + ` with ${domainCaption(locale, scale, item)}`;
 }
 
 function extractTitle(item) {

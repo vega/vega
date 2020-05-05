@@ -1,6 +1,6 @@
 {
   "name": "vega-loader",
-  "version": "4.2.2",
+  "version": "4.3.0",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",

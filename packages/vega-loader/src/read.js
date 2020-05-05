@@ -1,6 +1,6 @@
 import {inferTypes, typeParsers} from './type';
 import {formats} from './formats/index';
-import {timeParse, utcParse} from 'vega-format';
+import {timeFormatDefaultLocale} from 'vega-format';
 import {error, hasOwnProperty} from 'vega-util';
 
 export default function(data, schema, timeParser, utcParser) {
@@ -19,8 +19,9 @@ export default function(data, schema, timeParser, utcParser) {
 function parse(data, types, timeParser, utcParser) {
   if (!data.length) return; // early exit for empty data
 
-  timeParser = timeParser || timeParse;
-  utcParser = utcParser || utcParse;
+  const locale = timeFormatDefaultLocale();
+  timeParser = timeParser || locale.timeParse;
+  utcParser = utcParser || locale.utcParse;
 
   var fields = data.columns || Object.keys(data[0]),
       parsers, datum, field, i, j, n, m;

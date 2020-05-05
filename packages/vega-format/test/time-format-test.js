@@ -1,19 +1,20 @@
 var tape = require('tape'),
     vega = require('../'),
+    locale = vega.timeFormatDefaultLocale(),
     {local, utc} = require('./util');
 
 tape('timeFormat supports specifier strings', function(t) {
   var d = local(2001, 0, 1);
-  t.equal(vega.timeFormat('%Y')(d), '2001');
-  t.equal(vega.timeFormat('%m')(d), '01');
-  t.equal(vega.timeFormat('%d')(d), '01');
-  t.throws(() => vega.timeFormat(2));
-  t.throws(() => vega.timeFormat(true));
+  t.equal(locale.timeFormat('%Y')(d), '2001');
+  t.equal(locale.timeFormat('%m')(d), '01');
+  t.equal(locale.timeFormat('%d')(d), '01');
+  t.throws(() => locale.timeFormat(2));
+  t.throws(() => locale.timeFormat(true));
   t.end();
 });
 
 tape('timeFormat supports specifier objects', function(t) {
-  var f = vega.timeFormat();
+  var f = locale.timeFormat();
   t.equal(f(local(2001, 0, 1)), '2001');
   t.equal(f(local(2001, 1, 1)), 'February');
   t.equal(f(local(2001, 1, 2)), 'Fri 02');
@@ -21,7 +22,7 @@ tape('timeFormat supports specifier objects', function(t) {
   t.equal(f(local(2001, 3, 1)), 'April');
   t.equal(f(local(2001, 0, 1, 0, 0, 30)), ':30');
 
-  f = vega.timeFormat({
+  f = locale.timeFormat({
     year: '%y',
     quarter: 'Q%q',
     month: '%m',
@@ -40,16 +41,16 @@ tape('timeFormat supports specifier objects', function(t) {
 
 tape('utcFormat supports specifier strings', function(t) {
   var d = utc(2001, 0, 1);
-  t.equal(vega.utcFormat('%Y')(d), '2001');
-  t.equal(vega.utcFormat('%m')(d), '01');
-  t.equal(vega.utcFormat('%d')(d), '01');
-  t.throws(() => vega.utcFormat(2));
-  t.throws(() => vega.utcFormat(true));
+  t.equal(locale.utcFormat('%Y')(d), '2001');
+  t.equal(locale.utcFormat('%m')(d), '01');
+  t.equal(locale.utcFormat('%d')(d), '01');
+  t.throws(() => locale.utcFormat(2));
+  t.throws(() => locale.utcFormat(true));
   t.end();
 });
 
 tape('utcFormat supports specifier objects', function(t) {
-  var f = vega.utcFormat();
+  var f = locale.utcFormat();
   t.equal(f(utc(2001, 0, 1)), '2001');
   t.equal(f(utc(2001, 1, 1)), 'February');
   t.equal(f(utc(2001, 1, 2)), 'Fri 02');
@@ -57,7 +58,7 @@ tape('utcFormat supports specifier objects', function(t) {
   t.equal(f(utc(2001, 3, 1)), 'April');
   t.equal(f(utc(2001, 0, 1, 0, 0, 30)), ':30');
 
-  f = vega.utcFormat({
+  f = locale.utcFormat({
     year: '%y',
     quarter: 'Q%q',
     month: '%m',

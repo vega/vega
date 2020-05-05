@@ -29,12 +29,13 @@ prototype.transform = function(_, pulse) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+  var locale = pulse.dataflow.locale(),
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       ticks = this.value,
       scale = _.scale,
       tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
       count = tickCount(scale, tally, _.minstep),
-      format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values),
+      format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
       values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
   if (ticks) out.rem = ticks;
