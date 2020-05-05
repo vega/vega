@@ -132,11 +132,13 @@ export function tickFormat(scale, count, specifier, formatType, noSkip) {
     format = utcFormat(specifier);
   }
   else if (isLogarithmic(type)) {
-    const logfmt = scale.tickFormat(count, specifier),
-          varfmt = formatVariablePrecision(specifier);
-    format = noSkip || scale.bins
-      ? varfmt
-      : _ => logfmt(_) ? varfmt(_) : '';
+    const varfmt = formatVariablePrecision(specifier);
+    if (noSkip || scale.bins) {
+      format = varfmt;
+    } else {
+      const test = tickLog(scale, count, false);
+      format = _ => test(_) ? varfmt(_) : '';
+    }
   }
   else if (scale.tickFormat) {
     // if d3 scale has tickFormat, it must be continuous
@@ -148,4 +150,20 @@ export function tickFormat(scale, count, specifier, formatType, noSkip) {
   }
 
   return format;
+}
+
+export function tickLog(scale, count, values) {
+  const ticks = tickValues(scale, count),
+        base = scale.base(),
+        logb = Math.log(base),
+        k = Math.max(1, base * count / ticks.length);
+
+  // apply d3-scale's log format filter criteria
+  const test = d => {
+    let i = d / Math.pow(base, Math.round(Math.log(d) / logb));
+    if (i * base < base - 0.5) i *= base;
+    return i <= k;
+  };
+
+  return values ? ticks.filter(test) : test;
 }
