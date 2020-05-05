@@ -8,20 +8,28 @@ import {
   timeFormatLocale
 } from './time';
 
-const createLocale = (number, time) =>
-  Object.assign({}, number, time);
+import {error, extend} from 'vega-util';
+
+const createLocale = (number, time) => extend({}, number, time);
 
 export function locale(numberSpec, timeSpec) {
-  timeSpec = timeSpec || numberSpec;
-  return createLocale(
-    numberFormatLocale(numberSpec),
-    timeFormatLocale(timeSpec)
-  );
+  const number = numberSpec
+    ? numberFormatLocale(numberSpec)
+    : numberFormatDefaultLocale();
+
+  const time = timeSpec
+    ? timeFormatLocale(timeSpec)
+    : timeFormatDefaultLocale();
+
+  return createLocale(number, time);
 }
 
 export function defaultLocale(numberSpec, timeSpec) {
-  timeSpec = timeSpec || numberSpec;
-  return arguments.length
+  const args = arguments.length;
+  if (args > 0 && args !== 2) {
+    error('defaultLocale accepts only zero or two arguments.');
+  }
+  return args
     ? createLocale(
         numberFormatDefaultLocale(numberSpec),
         timeFormatDefaultLocale(timeSpec)

@@ -20,6 +20,21 @@ export interface Loader {
   file: (filename: string) => Promise<string>;
 }
 
+export type NumberFormat = (number: number) => string;
+export type TimeFormat = (date: Date | number) => string;
+export type TimeParse = (dateString: string) => Date;
+
+export interface Locale {
+  format: (spec: string) => NumberFormat;
+  formatPrefix: (spec: string, value: number) => NumberFormat;
+  formatFloat: (spec: string) => NumberFormat;
+  formatSpan: (start: number, stop: number, count: number, spec: string) => NumberFormat;
+  timeFormat: (spec: string) => TimeFormat;
+  utcFormat: (spec: string) => TimeFormat;
+  timeParse: (spec: string) => TimeParse;
+  utcParse: (spec: string) => TimeParse;
+}
+
 export type ToCanvasOptions =
   | {
       type?: string;
@@ -35,7 +50,12 @@ export class View {
   finalize(): this;
   logLevel(level: number): this;
   renderer(renderer: Renderers): this;
+
+  loader(): Loader;
   loader(loader: Loader): this;
+
+  locale(): Locale;
+  locale(locale: Locale): this;
 
   hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
   run(encode?: string): this;

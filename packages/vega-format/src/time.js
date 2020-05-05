@@ -48,7 +48,7 @@ function timeMultiFormat(format, interval, spec) {
 }
 
 function timeLocale(locale) {
-  const timeFormat = memoize(locale.timeFormat),
+  const timeFormat = memoize(locale.format),
         utcFormat = memoize(locale.utcFormat);
 
   return {
@@ -58,14 +58,14 @@ function timeLocale(locale) {
     utcFormat: spec => isString(spec)
       ? utcFormat(spec)
       : timeMultiFormat(utcFormat, utcInterval, spec),
-    timeParse: memoize(locale.timeParse),
+    timeParse: memoize(locale.parse),
     utcParse: memoize(locale.utcParse)
   };
 }
 
 let defaultTimeLocale = timeLocale({
-  timeFormat: d3_timeFormat,
-  timeParse: d3_timeParse,
+  format: d3_timeFormat,
+  parse: d3_timeParse,
   utcFormat: d3_utcFormat,
   utcParse: d3_utcParse,
 });

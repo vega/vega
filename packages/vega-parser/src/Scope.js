@@ -27,6 +27,7 @@ export default function Scope(config) {
   this.updates = [];
   this.operators = [];
   this.eventConfig = null;
+  this.locale = null;
 
   this._id = 0;
   this._subid = 0;
@@ -83,7 +84,8 @@ prototype.toRuntime = function() {
     streams:     this.streams,
     updates:     this.updates,
     bindings:    this.bindings,
-    eventConfig: this.eventConfig
+    eventConfig: this.eventConfig,
+    locale:      this.locale
   };
 };
 

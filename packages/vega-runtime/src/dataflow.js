@@ -18,6 +18,11 @@ export default function(spec, ctx) {
     ctx.eventConfig = spec.eventConfig;
   }
 
+  // parse locale configuration
+  if (spec.locale) {
+    ctx.locale = spec.locale;
+  }
+
   // parse operators
   operators.forEach(function(entry) {
     parseOperator(entry, ctx);
