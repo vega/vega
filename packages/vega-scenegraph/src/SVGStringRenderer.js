@@ -225,10 +225,11 @@ prototype.mark = function(scene) {
   }
 
   // render opening group tag
-  str += openTag('g', Object.assign({
+  str += openTag('g', {
     'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
-  }, ariaMarkAttributes(scene)), style);
+    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null,
+    ...ariaMarkAttributes(scene)
+  }, style);
 
   // render contained elements
   function process(item) {

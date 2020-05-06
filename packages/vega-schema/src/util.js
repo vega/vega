@@ -39,22 +39,25 @@ export function ref(name) {
 }
 
 export function type(name, props) {
-  return Object.assign({
-    type: name
-  }, props);
+  return {
+    type: name,
+    ...props
+  };
 }
 
 export function enums(values, props) {
-  return Object.assign({
-    enum: values
-  }, props);
+  return {
+    enum: values,
+    ...props
+  };
 }
 
 export function array(items, props) {
-  return Object.assign({
+  return {
     type: 'array',
-    items: items || undefined
-  }, props);
+    items: items || undefined,
+    ...props
+  };
 }
 
 export function object(properties, addl) {
