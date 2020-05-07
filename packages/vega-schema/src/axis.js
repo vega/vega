@@ -56,7 +56,7 @@ const axis = object({
   offset: numberValue,
   position: numberValue,
   bandPosition: numberValue,
-  translate: numberType,
+  translate: numberValue,
   values: arrayOrSignal,
   zindex: numberType,
 

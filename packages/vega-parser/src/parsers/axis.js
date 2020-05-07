@@ -33,7 +33,6 @@ export default function(spec, scope) {
     grid:   !!_('grid'),
     domain: !!_('domain'),
     title:  spec.title != null,
-    translate: _('translate')
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
@@ -111,6 +110,7 @@ function buildAxisEncode(_, spec) {
     minExtent:    _('minExtent'),
     maxExtent:    _('maxExtent'),
     range:        {signal: `abs(span(range("${spec.scale}")))`},
+    translate:    _('translate'),
 
     // accessibility support
     format:       spec.format,
