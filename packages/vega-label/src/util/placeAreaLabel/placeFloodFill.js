@@ -17,7 +17,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
     const items = d.datum.datum.items[markIndex].items, // area points
           n = items.length, // number of points
           textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum), // label height
+          textWidth = textMetrics.width(d.datum, d.datum.text), // label height
           stack = []; // flood fill stack
 
     let maxSize = avoidBaseMark ? textHeight : 0,
@@ -60,7 +60,8 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
 
         if (
           !outOfBounds(x, y, textWidth, textHeight, width, height) &&
-          !collision($, x, y, textHeight, textWidth, lo, bm0, bm1)
+          !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) &&
+          !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)
         ) {
           // if the label fits at the current sample point,
           // perform binary search to find the largest font size that fits

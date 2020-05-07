@@ -15,7 +15,8 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
         mid;
     if (
       !outOfBounds(x, y, textWidth, textHeight, width, height) &&
-      !collision($, x, y, textHeight, textWidth, lo, bm0, bm1)
+      !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) &&
+      !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)
     ) {
       // if the label fits at the current sample point,
       // perform binary search to find the largest font size that fits
@@ -39,7 +40,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
     const items = d.datum.datum.items[markIndex].items, // area points
           n = items.length, // number of points
           textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum); // label height
+          textWidth = textMetrics.width(d.datum, d.datum.text); // label height
 
     let maxSize = avoidBaseMark ? textHeight : 0,
         labelPlaced = false,
@@ -79,9 +80,6 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
           result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
           if (result) {
             [d.x, d.y, maxSize, labelPlaced] = result;
-          } else {
-            _x = _x1 - 1;
-            break;
           }
         }
       }
@@ -92,9 +90,6 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
           result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
           if (result) {
             [d.x, d.y, maxSize, labelPlaced] = result;
-          } else {
-            _x = _x2 + 1;
-            break;
           }
         }
       }
