@@ -1,6 +1,18 @@
 export {
-  timeUnits,
-  TIME_UNITS
+  TIME_UNITS,
+  YEAR,
+  QUARTER,
+  MONTH,
+  WEEK,
+  DATE,
+  DAY,
+  DAYOFYEAR,
+  HOURS,
+  MINUTES,
+  SECONDS,
+  MILLISECONDS,
+  timeUnitSpecifier,
+  timeUnits
 } from './src/units';
 
 export {
@@ -14,12 +26,6 @@ export {
   timeFloor,
   utcFloor
 } from './src/floor';
-
-export {
-  timeUnitSpecifier,
-  timeFormat,
-  utcFormat
-} from './src/format';
 
 export {
   timeInterval,

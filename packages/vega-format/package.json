@@ -1,24 +1,24 @@
 {
-  "name": "vega-scale",
-  "version": "7.0.0",
-  "description": "Scales and color schemes for visual encoding.",
+  "name": "vega-format",
+  "version": "1.0.0",
+  "description": "JavaScript string formatting utilities for Vega.",
   "keywords": [
     "vega",
-    "scale",
-    "color",
-    "palette"
+    "format",
+    "number",
+    "date",
+    "time"
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-scale.js",
+  "main": "build/vega-format.js",
   "module": "index",
-  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,vega-time:vega,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
+    "rollup": "rollup -g d3-array:d3,d3-format:d3,d3-time-format:d3,vega-time:vega,vega-util:vega -f umd -n vega -o build/vega-format.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
-    "postbuild": "terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
+    "postbuild": "terser build/vega-format.js -c -m -o build/vega-format.min.js",
     "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "d3-array": "^2.4.0",
-    "d3-interpolate": "^1.4.0",
-    "d3-scale": "^3.2.1",
+    "d3-format": "^1.4.4",
+    "d3-time-format": "^2.2.3",
     "vega-time": "^2.0.0",
     "vega-util": "^1.13.2"
   }

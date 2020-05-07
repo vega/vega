@@ -1,6 +1,6 @@
 {
   "name": "vega-encode",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -26,8 +26,8 @@
   "dependencies": {
     "d3-array": "^2.4.0",
     "d3-interpolate": "^1.4.0",
-    "vega-dataflow": "^5.5.1",
-    "vega-scale": "^6.1.0",
+    "vega-dataflow": "^5.6.0",
+    "vega-scale": "^7.0.0",
     "vega-util": "^1.13.2"
   },
   "devDependencies": {

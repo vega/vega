@@ -1,8 +1,7 @@
 import {DiscreteLegend, SymbolLegend} from './legend-types';
 import {Log, Quantile, Quantize, Threshold, Time, UTC} from './scales/types';
-import {tickFormat, tickValues} from './ticks';
+import {tickFormat, tickLog, tickValues} from './ticks';
 import {peek} from 'vega-util';
-import {tickFormat as spanFormat} from 'd3-scale';
 
 const symbols = {
   [Quantile]:  'quantiles',
@@ -17,26 +16,12 @@ const formats = {
 
 export function labelValues(scale, count) {
   return scale.bins ? binValues(scale.bins)
-    : scale.type === Log ? logValues(scale, count)
+    : scale.type === Log ? tickLog(scale, count, true)
     : symbols[scale.type] ? thresholdValues(scale[symbols[scale.type]]())
     : tickValues(scale, count);
 }
 
-function logValues(scale, count) {
-  var ticks = tickValues(scale, count),
-      base = scale.base(),
-      logb = Math.log(base),
-      k = Math.max(1, base * count / ticks.length);
-
-  // apply d3-scale's log format filter criteria
-  return ticks.filter(d => {
-    var i = d / Math.pow(base, Math.round(Math.log(d) / logb));
-    if (i * base < base - 0.5) i *= base;
-    return i <= k;
-  });
-}
-
-export function thresholdFormat(scale, specifier) {
+export function thresholdFormat(locale, scale, specifier) {
   var _ = scale[formats[scale.type]](),
       n = _.length,
       d = n > 1 ? _[1] - _[0] : _[0], i;
@@ -46,7 +31,7 @@ export function thresholdFormat(scale, specifier) {
   }
 
   // tickCount = 3 ticks times 10 for increased resolution
-  return spanFormat(0, d, 3 * 10, specifier);
+  return locale.formatSpan(0, d, 3 * 10, specifier);
 }
 
 function thresholdValues(thresholds) {
@@ -65,10 +50,10 @@ function isDiscreteRange(scale) {
   return symbols[scale.type] || scale.bins;
 }
 
-export function labelFormat(scale, count, type, specifier, formatType, noSkip) {
+export function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
   const format = formats[scale.type] && formatType !== Time && formatType !== UTC
-    ? thresholdFormat(scale, specifier)
-    : tickFormat(scale, count, specifier, formatType, noSkip);
+    ? thresholdFormat(locale, scale, specifier)
+    : tickFormat(locale, scale, count, specifier, formatType, noSkip);
 
   return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format)
     : type === DiscreteLegend ? formatDiscrete(format)

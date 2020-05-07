@@ -1,25 +1,27 @@
 import {inferTypes, typeParsers} from './type';
 import {formats} from './formats/index';
+import {timeFormatDefaultLocale} from 'vega-format';
 import {error, hasOwnProperty} from 'vega-util';
-import {timeParse, utcParse} from 'd3-time-format';
 
-export default function(data, schema, dateParse) {
+export default function(data, schema, timeParser, utcParser) {
   schema = schema || {};
 
   const reader = formats(schema.type || 'json');
   if (!reader) error('Unknown data format type: ' + schema.type);
 
   data = reader(data, schema);
-  if (schema.parse) parse(data, schema.parse, dateParse);
+  if (schema.parse) parse(data, schema.parse, timeParser, utcParser);
 
   if (hasOwnProperty(data, 'columns')) delete data.columns;
   return data;
 }
 
-function parse(data, types, dateParse) {
+function parse(data, types, timeParser, utcParser) {
   if (!data.length) return; // early exit for empty data
 
-  dateParse = dateParse || timeParse;
+  const locale = timeFormatDefaultLocale();
+  timeParser = timeParser || locale.timeParse;
+  utcParser = utcParser || locale.utcParse;
 
   var fields = data.columns || Object.keys(data[0]),
       parsers, datum, field, i, j, n, m;
@@ -40,7 +42,8 @@ function parse(data, types, dateParse) {
         pattern = pattern.slice(1, -1);
       }
 
-      return parts[0] === 'utc' ? utcParse(pattern) : dateParse(pattern);
+      const parse = parts[0] === 'utc' ? utcParser : timeParser;
+      return parse(pattern);
     }
 
     if (!typeParsers[type]) {

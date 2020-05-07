@@ -1,4 +1,4 @@
-import {array, error, hasOwnProperty} from 'vega-util';
+import {array, error, extend, hasOwnProperty} from 'vega-util';
 
 export const YEAR = 'year';
 export const QUARTER = 'quarter';
@@ -57,4 +57,42 @@ export function timeUnits(units) {
   u.sort((a, b) => UNITS[a] - UNITS[b]);
 
   return u;
+}
+
+const defaultSpecifiers = {
+  [YEAR]: '%Y ',
+  [QUARTER]: 'Q%q ',
+  [MONTH]: '%b ',
+  [DATE]: '%d ',
+  [WEEK]: 'W%U ',
+  [DAY]: '%a ',
+  [DAYOFYEAR]: '%j ',
+  [HOURS]: '%H:00',
+  [MINUTES]: '00:%M',
+  [SECONDS]: ':%S',
+  [MILLISECONDS]: '.%L',
+  [`${YEAR}-${MONTH}`]: '%Y-%m ',
+  [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
+  [`${HOURS}-${MINUTES}`]: '%H:%M'
+};
+
+export function timeUnitSpecifier(units, specifiers) {
+  const s = extend({}, defaultSpecifiers, specifiers),
+        u = timeUnits(units),
+        n = u.length;
+
+  let fmt = '', start = 0, end, key;
+
+  for (start=0; start<n; ) {
+    for (end=u.length; end > start; --end) {
+      key = u.slice(start, end).join('-');
+      if (s[key] != null) {
+        fmt += s[key];
+        start = end;
+        break;
+      }
+    }
+  }
+
+  return fmt.trim();
 }

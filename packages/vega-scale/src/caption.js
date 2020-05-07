@@ -1,10 +1,9 @@
 import {labelFormat, labelValues} from './labels';
 import {Time, UTC} from './scales/types';
 import {isDiscrete, isDiscretizing, isTemporal} from './scales';
-import {timeFormat, utcFormat} from 'vega-time';
 import {isString, peek} from 'vega-util';
 
-function format(scale, specifier, formatType) {
+function format(locale, scale, specifier, formatType) {
   const type = formatType || scale.type;
 
   // replace abbreviated time specifiers to improve screen reader experience
@@ -12,15 +11,15 @@ function format(scale, specifier, formatType) {
     specifier = specifier.replace(/%a/g, '%A').replace(/%b/g, '%B');
   }
 
-  return !specifier && type === Time  ? timeFormat('%A, %d %B %Y, %X')
-    : !specifier && type === UTC ? utcFormat('%A, %d %B %Y, %X UTC')
-    : labelFormat(scale, 5, null, specifier, formatType, true);
+  return !specifier && type === Time  ? locale.timeFormat('%A, %d %B %Y, %X')
+    : !specifier && type === UTC ? locale.utcFormat('%A, %d %B %Y, %X UTC')
+    : labelFormat(locale, scale, 5, null, specifier, formatType, true);
 }
 
-export function domainCaption(scale, opt) {
+export function domainCaption(locale, scale, opt) {
   opt = opt || {};
   const max = Math.max(3, opt.maxlen || 7),
-        fmt = format(scale, opt.format, opt.formatType);
+        fmt = format(locale, scale, opt.format, opt.formatType);
 
   // if scale breaks domain into bins, describe boundaries
   if (isDiscretizing(scale.type)) {

@@ -21,10 +21,11 @@ export default function parseView(spec, scope) {
   signals = collectSignals(spec, config);
   signals.forEach(_ => parseSignal(_, scope));
 
-  // assign description, event and legend configuration
+  // assign description, event, legend, and locale configuration
   scope.description = spec.description || config.description;
   scope.eventConfig = config.events;
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
+  scope.locale = config.locale;
 
   // store root group item
   input = scope.add(Collect());

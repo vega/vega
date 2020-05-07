@@ -104,10 +104,3 @@ export {
   scaleVisitor
 } from './src/visitors';
 
-export {
-  formatDefaultLocale as formatLocale
-} from 'd3-format';
-
-export {
-  timeFormatDefaultLocale as timeFormatLocale
-} from 'd3-time-format';

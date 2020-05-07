@@ -20,11 +20,13 @@ import defaultTooltip from './tooltip';
 import trap from './trap';
 
 import {Dataflow, asyncCallback} from 'vega-dataflow';
-import {error, extend, hasOwnProperty, inherits, stringValue} from 'vega-util';
+import {locale} from 'vega-format';
 import {
-  CanvasHandler, RenderType,
-  Scenegraph, renderModule
+  CanvasHandler, RenderType, Scenegraph, renderModule
 } from 'vega-scenegraph';
+import {
+  error, extend, hasOwnProperty, inherits, stringValue
+} from 'vega-util';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
@@ -37,19 +39,23 @@ import {
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 export default function View(spec, options) {
-  var view = this;
+  const view = this;
   options = options || {};
 
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
   if (options.logger) view.logger(options.logger);
   if (options.logLevel != null) view.logLevel(options.logLevel);
+  if (options.locale || spec.locale) {
+    const loc = extend({}, spec.locale, options.locale);
+    view.locale(locale(loc.number, loc.time));
+  }
 
   view._el = null;
   view._elBind = null;
   view._renderType = options.renderer || RenderType.Canvas;
   view._scenegraph = new Scenegraph();
-  var root = view._scenegraph.root;
+  const root = view._scenegraph.root;
 
   // initialize renderer, handler and event management
   view._renderer = null;
@@ -65,7 +71,7 @@ export default function View(spec, options) {
   view._eventConfig = initializeEventConfig(spec.eventConfig);
 
   // initialize dataflow graph
-  var ctx = runtime(view, spec, options.functions);
+  const ctx = runtime(view, spec, options.functions);
   view._runtime = ctx;
   view._signals = ctx.signals;
   view._bind = (spec.bindings || []).map(function(_) {

@@ -25,6 +25,7 @@ import {
 } from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
+import { Locale } from './locale';
 import { BaseProjection } from './projection';
 import { InitSignal, NewSignal, SignalRef } from './signal';
 import { BaseTitle, TitleAnchor } from './title';
@@ -55,6 +56,7 @@ export interface Config
     view?: boolean | string[];
     window?: boolean | string[];
   };
+  locale?: Locale;
 
   /**
    * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the "lineBreak" mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid.
