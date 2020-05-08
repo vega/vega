@@ -1,24 +1,30 @@
 import accessor from './accessor';
 import array from './array';
+import getter from './getter';
 import splitAccessPath from './splitAccessPath';
-import stringValue from './stringValue';
+
+const DELIM = '|';
 
 export default function(fields, flat) {
   if (fields) {
     fields = flat
-      ? array(fields).map(function(f) { return f.replace(/\\(.)/g, '$1'); })
+      ? array(fields).map(f => f.replace(/\\(.)/g, '$1'))
       : array(fields);
   }
 
-  var fn = !(fields && fields.length)
-    ? function() { return ''; }
-    : Function('_', 'return \'\'+' +
-        fields.map(function(f) {
-          return '_[' + (flat
-              ? stringValue(f)
-              : splitAccessPath(f).map(stringValue).join('][')
-            ) + ']';
-        }).join('+\'|\'+') + ';');
+  const len = fields && fields.length;
+  let fn;
+
+  if (!len) {
+    fn = function() { return ''; };
+  } else {
+    const get = fields.map(f => getter(flat ? [f] : splitAccessPath(f)));
+    fn = function(_) {
+      let s = '' + get[0](_), i = 0;
+      while (++i < len) s += DELIM + get[i](_);
+      return s;
+    };
+  }
 
   return accessor(fn, fields, 'key');
 }

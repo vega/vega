@@ -1,69 +1,45 @@
 import {default as accessor, accessorFields} from './accessor';
+import {identity} from './accessors';
 import array from './array';
+import field from './field';
 import isFunction from './isFunction';
-import splitAccessPath from './splitAccessPath';
-import stringValue from './stringValue';
+
+const DESC = 'descending';
+
+function _compare(u, v) {
+  return (u < v || u == null) && v != null ? -1
+    : (u > v || v == null) && u != null ? 1
+    : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? -1
+    : v !== v && u === u ? 1
+    : 0;
+}
 
 export default function(fields, orders) {
-  var idx = [],
-      cmp = (fields = array(fields)).map(function(f, i) {
-        if (f == null) {
-          return null;
-        } else {
-          idx.push(i);
-          return isFunction(f) ? f
-            : splitAccessPath(f).map(stringValue).join('][');
-        }
-      }),
-      n = idx.length - 1,
-      ord = array(orders),
-      code = 'var u,v;return ',
-      i, j, f, u, v, d, t, lt, gt;
+  orders = array(orders);
+  const ord = [],
+        cmp = array(fields)
+                .map((f, i) => f == null ? null :
+                  (ord.push(orders && orders[i] === DESC ? -1 : 1),
+                   isFunction(f) ? f : field(f)))
+                .filter(identity),
+        n = cmp.length;
 
-  if (n < 0) return null;
+  if (n <= 0) return null;
 
-  for (j=0; j<=n; ++j) {
-    i = idx[j];
-    f = cmp[i];
-
-    if (isFunction(f)) {
-      d = 'f' + i;
-      u = '(u=this.' + d + '(a))';
-      v = '(v=this.' + d + '(b))';
-      (t = t || {})[d] = f;
-    } else {
-      u = '(u=a['+f+'])';
-      v = '(v=b['+f+'])';
+  const f = function(a, b) {
+    let f, c, i = -1;
+    while (++i < n) {
+      f = cmp[i];
+      c = _compare(f(a), f(b));
+      if (c) return ord[i] * c;
     }
+    return 0;
+  };
 
-    d = '((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))';
-
-    if (ord[i] !== 'descending') {
-      gt = 1;
-      lt = -1;
-    } else {
-      gt = -1;
-      lt = 1;
-    }
-
-    code += '(' + u+'<'+v+'||u==null)&&v!=null?' + lt
-      + ':(u>v||v==null)&&u!=null?' + gt
-      + ':'+d+'!==u&&v===v?' + lt
-      + ':v!==v&&u===u?' + gt
-      + (i < n ? ':' : ':0');
-  }
-
-  f = Function('a', 'b', code + ';');
-  if (t) f = f.bind(t);
-
-  fields = fields.reduce(function(map, field) {
-    if (isFunction(field)) {
-      (accessorFields(field) || []).forEach(function(_) { map[_] = 1; });
-    } else if (field != null) {
-      map[field + ''] = 1;
-    }
-    return map;
-  }, {});
+  fields = {};
+  cmp.forEach(field => {
+    (accessorFields(field) || []).forEach(_ => fields[_] = 1);
+  });
 
   return accessor(f, Object.keys(fields));
 }

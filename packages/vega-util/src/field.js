@@ -1,14 +1,13 @@
 import accessor from './accessor';
+import getter from './getter';
 import splitAccessPath from './splitAccessPath';
-import stringValue from './stringValue';
 
 export default function(field, name) {
-  var path = splitAccessPath(field),
-      code = 'return _[' + path.map(stringValue).join('][') + '];';
-
+  const path = splitAccessPath(field);
+  field = path.length === 1 ? path[0] : field;
   return accessor(
-    Function('_', code),
-    [(field = path.length===1 ? path[0] : field)],
+    getter(path),
+    [field],
     name || field
   );
 }
