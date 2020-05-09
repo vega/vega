@@ -60,7 +60,7 @@ function increment(unit, step) {
 }
 
 function inc(d, f, s) {
-  return Object.assign({}, d, {[f]: d[f] + (s || 1)});
+  return {...d, [f]: d[f] + (s || 1)};
 }
 
 function localDate(y, m, d, H, M, S, L) {

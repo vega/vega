@@ -84,5 +84,5 @@ export function extendOffset(value, offset) {
   return !offset ? value
     : !value ? offset
     : !isObject(value) ? { value, offset }
-    : Object.assign({}, value, { offset: extendOffset(value.offset, offset) });
+    : {...value, offset: extendOffset(value.offset, offset)};
 }
