@@ -1,10 +1,7 @@
 import {entry} from './util';
 
-function transform(name) {
-  return function(params, value, parent) {
-    return entry(name, value, params || undefined, parent);
-  };
-}
+const transform = name => (params, value, parent) =>
+  entry(name, value, params || undefined, parent);
 
 export var Aggregate = transform('aggregate');
 export var AxisTicks = transform('axisticks');

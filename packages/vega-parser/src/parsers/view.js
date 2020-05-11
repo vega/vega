@@ -1,6 +1,6 @@
 import parseAutosize from './autosize';
-import parseEncoders from './encode/index';
 import parsePadding from './padding';
+import parseEncode from './encode';
 import parseSignal from './signal';
 import parseSpec from './scope';
 import {extendEncode} from './encode/util';
@@ -11,15 +11,28 @@ import DataScope from '../DataScope';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
 import {array, extend, hasOwnProperty} from 'vega-util';
 
+const rootEncode = spec => extendEncode(
+  {
+    enter: {
+      x: {value: 0},
+      y: {value: 0}
+    },
+    update: {
+      width: {signal: 'width'},
+      height: {signal: 'height'}
+    }
+  },
+  spec
+);
+
 export default function parseView(spec, scope) {
-  var config = scope.config,
-      op, input, encode, parent, root, signals;
+  const config = scope.config;
 
   // add scenegraph root
-  root = ref(scope.root = scope.add(operator()));
+  const root = ref(scope.root = scope.add(operator()));
 
   // parse top-level signal definitions
-  signals = collectSignals(spec, config);
+  const signals = collectSignals(spec, config);
   signals.forEach(_ => parseSignal(_, scope));
 
   // assign description, event, legend, and locale configuration
@@ -29,20 +42,16 @@ export default function parseView(spec, scope) {
   scope.locale = config.locale;
 
   // store root group item
-  input = scope.add(Collect());
+  const input = scope.add(Collect());
 
   // encode root group item
-  encode = extendEncode({
-    enter: { x: {value: 0}, y: {value: 0} },
-    update: { width: {signal: 'width'}, height: {signal: 'height'} }
-  }, spec.encode);
-
-  encode = scope.add(Encode(parseEncoders(
-    encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)}
+  const encode = scope.add(Encode(parseEncode(
+    rootEncode(spec.encode), GroupMark, FrameRole,
+    spec.style, scope, {pulse: ref(input)}
   )));
 
   // perform view layout
-  parent = scope.add(ViewLayout({
+  const parent = scope.add(ViewLayout({
     layout:   scope.objectProperty(spec.layout),
     legends:  scope.legends,
     autosize: scope.signalRef('autosize'),
@@ -57,7 +66,7 @@ export default function parseView(spec, scope) {
   scope.operators.push(parent);
 
   // bound / render / sieve root item
-  op = scope.add(Bound({mark: root, pulse: ref(parent)}));
+  let op = scope.add(Bound({mark: root, pulse: ref(parent)}));
   op = scope.add(Render({pulse: ref(op)}));
   op = scope.add(Sieve({pulse: ref(op)}));
 

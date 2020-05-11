@@ -19,16 +19,16 @@ export function addEncode(object, name, value, set) {
 }
 
 export function addEncoders(object, enter, update) {
-  for (let name in enter) {
+  for (const name in enter) {
     addEncode(object, name, enter[name]);
   }
-  for (let name in update) {
+  for (const name in update) {
     addEncode(object, name, update[name], 'update');
   }
 }
 
 export function extendEncode(encode, extra, skip) {
-  for (var name in extra) {
+  for (const name in extra) {
     if (skip && hasOwnProperty(skip, name)) continue;
     encode[name] = extend(encode[name] || {}, extra[name]);
   }

@@ -1,4 +1,4 @@
-import parseEncoders from './encode/index';
+import parseEncode from './encode';
 import clip from './marks/clip';
 import definition from './marks/definition';
 import interactive from './marks/interactive';
@@ -53,7 +53,7 @@ export default function(spec, scope) {
   markRef = ref(op);
 
   // add visual encoders
-  op = enc = scope.add(Encode(parseEncoders(
+  op = enc = scope.add(Encode(parseEncode(
     spec.encode, spec.type, role, spec.style, scope,
     {mod: false, pulse: markRef}
   )));

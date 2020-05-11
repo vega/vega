@@ -3,7 +3,8 @@ import {FrameRole, MarkRole} from '../marks/roles';
 import {array, extend} from 'vega-util';
 
 export default function(encode, type, role, style, config) {
-  var defaults = {}, enter = {}, update, key, skip, props;
+  const defaults = {}, enter = {};
+  let update, key, skip, props;
 
   // if text mark, apply global lineBreak settings (#2370)
   key = 'lineBreak';
@@ -31,9 +32,9 @@ export default function(encode, type, role, style, config) {
   }
 
   // resolve styles, apply with increasing precedence
-  array(style).forEach(function(name) {
-    var props = config.style && config.style[name];
-    for (var key in props) {
+  array(style).forEach(name => {
+    const props = config.style && config.style[name];
+    for (const key in props) {
       if (!has(key, encode)) {
         applyDefault(defaults, key, props[key]);
       }

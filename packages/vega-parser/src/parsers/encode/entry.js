@@ -1,17 +1,6 @@
-// import field from './field';
-// import scale from './scale';
-// import gradient from './gradient';
-// import property from './property';
-import {error, isObject, isString, splitAccessPath, stringValue} from 'vega-util';
+import {error, isObject, isString, peek, splitAccessPath, stringValue} from 'vega-util';
 
-const arg = val => stringValue(val == null ? null : val);
-
-const colorValue = (type, x, y, z) =>
-  `(${type}(${[x, y, z].map(entry).join(',')})+'')`;
-
-const field = ref => resolveField(isObject(ref) ? ref : {datum: ref});
-
-const getScale = scale => isString(scale) ? stringValue(scale)
+const scaleRef = scale => isString(scale) ? stringValue(scale)
   : scale.signal ? `(${scale.signal})`
   : field(scale);
 
@@ -20,7 +9,7 @@ export default function entry(enc) {
     return gradient(enc);
   }
 
-  var value = enc.signal ? `(${enc.signal})`
+  let value = enc.signal ? `(${enc.signal})`
     : enc.color ? color(enc.color)
     : enc.field != null ? field(enc.field)
     : enc.value !== undefined ? stringValue(enc.value)
@@ -53,29 +42,39 @@ export default function entry(enc) {
   return value;
 }
 
+const _color = (type, x, y, z) =>
+  `(${type}(${[x, y, z].map(entry).join(',')})+'')`;
+
 function color(enc) {
-  return (enc.c) ? colorValue('hcl', enc.h, enc.c, enc.l)
-    : (enc.h || enc.s) ? colorValue('hsl', enc.h, enc.s, enc.l)
-    : (enc.l || enc.a) ? colorValue('lab', enc.l, enc.a, enc.b)
-    : (enc.r || enc.g || enc.b) ? colorValue('rgb', enc.r, enc.g, enc.b)
+  return (enc.c) ? _color('hcl', enc.h, enc.c, enc.l)
+    : (enc.h || enc.s) ? _color('hsl', enc.h, enc.s, enc.l)
+    : (enc.l || enc.a) ? _color('lab', enc.l, enc.a, enc.b)
+    : (enc.r || enc.g || enc.b) ? _color('rgb', enc.r, enc.g, enc.b)
     : null;
 }
 
 function gradient(enc) {
-  return 'gradient('
-    + getScale(enc.gradient) + ','
-    + arg(enc.start) + ','
-    + arg(enc.stop) + ','
-    + arg(enc.count)
-    + ')';
+  // map undefined to null; expression lang does not allow undefined
+  const args = [enc.start, enc.stop, enc.count]
+    .map(_ => _ == null ? null : stringValue(_));
+
+  // trim null inputs from the end
+  while (args.length && peek(args) == null) args.pop();
+
+  args.unshift(scaleRef(enc.gradient));
+  return `gradient(${args.join(',')})`;
 }
 
 function property(property) {
   return isObject(property) ? '(' + entry(property) + ')' : property;
 }
 
+function field(ref) {
+  return resolveField(isObject(ref) ? ref : {datum: ref});
+}
+
 function resolveField(ref) {
-  var object, level, field;
+  let object, level, field;
 
   if (ref.signal) {
     object = 'datum';
@@ -111,7 +110,7 @@ function resolveField(ref) {
 }
 
 function scale(enc, value) {
-  var scale = getScale(enc.scale);
+  const scale = scaleRef(enc.scale);
 
   if (enc.range != null) {
     // pull value from scale range
