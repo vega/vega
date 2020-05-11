@@ -175,7 +175,7 @@ function updateGradient(el, grad, index) {
     pt = domChild(pt, 0, 'rect', ns);
     pt.setAttribute('width', '1');
     pt.setAttribute('height', '1');
-    pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
+    pt.setAttribute('style', 'fill: url(' + href() + '#' + grad.id + ');');
 
     el = domChild(el, index++, 'radialGradient', ns);
     el.setAttribute('id', grad.id);
