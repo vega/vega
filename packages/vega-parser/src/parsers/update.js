@@ -1,7 +1,7 @@
-import parseExpression from './expression';
 import parseStream from './stream';
 import {Scope, View} from '../util';
 import {selector} from 'vega-event-selector';
+import {parseExpression} from 'vega-functions';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
 var preamble = 'var datum=event.item&&event.item.datum;';

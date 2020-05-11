@@ -1,9 +1,9 @@
 import {GuideTitleStyle, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
+import {addEncoders} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
-import {addEncoders} from '../encode/encode-util';
 
 // expression logic for align, anchor, angle, and baseline calculation
 const isL = 'item.orient === "left"',

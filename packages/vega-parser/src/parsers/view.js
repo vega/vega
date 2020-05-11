@@ -1,8 +1,9 @@
 import parseAutosize from './autosize';
+import parseEncoders from './encode/index';
 import parsePadding from './padding';
 import parseSignal from './signal';
-import parseSpec from './spec';
-import {encoders, extendEncode} from './encode/encode-util';
+import parseSpec from './scope';
+import {extendEncode} from './encode/util';
 import {GroupMark} from './marks/marktypes';
 import {FrameRole} from './marks/roles';
 import {operator, ref, value} from '../util';
@@ -36,9 +37,9 @@ export default function parseView(spec, scope) {
     update: { width: {signal: 'width'}, height: {signal: 'height'} }
   }, spec.encode);
 
-  encode = scope.add(Encode(
-    encoders(encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)}))
-  );
+  encode = scope.add(Encode(parseEncoders(
+    encode, GroupMark, FrameRole, spec.style, scope, {pulse: ref(input)}
+  )));
 
   // perform view layout
   parent = scope.add(ViewLayout({

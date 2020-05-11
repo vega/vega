@@ -1,57 +1,8 @@
-import parseEncode from '../encode';
+import {has} from './util';
 import {FrameRole, MarkRole} from '../marks/roles';
-import {array, extend, hasOwnProperty, isArray, isObject} from 'vega-util';
+import {array, extend} from 'vega-util';
 
-export function encoder(_) {
-  return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
-}
-
-export function addEncode(object, name, value, set) {
-  if (value != null) {
-    // Always assign signal to update, even if the signal is from the enter block
-    if (isObject(value) && !isArray(value)) {
-      object.update[name] = value;
-    } else {
-      object[set || 'enter'][name] = {value: value};
-    }
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-export function addEncoders(object, enter, update) {
-  for (let name in enter) {
-    addEncode(object, name, enter[name]);
-  }
-  for (let name in update) {
-    addEncode(object, name, update[name], 'update');
-  }
-}
-
-export function extendEncode(encode, extra, skip) {
-  for (var name in extra) {
-    if (skip && hasOwnProperty(skip, name)) continue;
-    encode[name] = extend(encode[name] || {}, extra[name]);
-  }
-  return encode;
-}
-
-export function encoders(encode, type, role, style, scope, params) {
-  var enc, key;
-  params = params || {};
-  params.encoders = {$encode: (enc = {})};
-
-  encode = applyDefaults(encode, type, role, style, scope.config);
-
-  for (key in encode) {
-    enc[key] = parseEncode(encode[key], type, params, scope);
-  }
-
-  return params;
-}
-
-function applyDefaults(encode, type, role, style, config) {
+export default function(encode, type, role, style, config) {
   var defaults = {}, enter = {}, update, key, skip, props;
 
   // if text mark, apply global lineBreak settings (#2370)
@@ -109,11 +60,4 @@ function applyDefault(defaults, key, value) {
   defaults[key] = value && value.signal
     ? {signal: value.signal}
     : {value: value};
-}
-
-export function has(key, encode) {
-  return encode && (
-    (encode.enter && encode.enter[key]) ||
-    (encode.update && encode.update[key])
-  );
 }

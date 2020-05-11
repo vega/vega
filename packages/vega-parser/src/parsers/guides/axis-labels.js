@@ -1,9 +1,9 @@
 import {Bottom, GuideLabelStyle, Label, Left, Right, Top, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {extendOffset, lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 import {deref} from '../../util';
 
 function flushExpr(scale, threshold, a, b, c) {

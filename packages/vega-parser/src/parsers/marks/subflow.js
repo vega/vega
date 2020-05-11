@@ -1,4 +1,3 @@
-import parseSpec from '../spec';
 import {PreFacet, Sieve} from '../../transforms';
 
 export default function(spec, scope, input) {
@@ -10,6 +9,6 @@ export default function(spec, scope, input) {
 
   // parse group mark subflow
   op.params.subflow = {
-    $subflow: parseSpec(spec, subscope).toRuntime()
+    $subflow: subscope.parse(spec).toRuntime()
   };
 }

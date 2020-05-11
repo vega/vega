@@ -1,17 +1,17 @@
+import {addEncoders, extendEncode} from './encode/util';
 import axisConfig from './guides/axis-config';
 import axisDomain from './guides/axis-domain';
 import axisGrid from './guides/axis-grid';
 import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
+import {Skip} from './guides/constants';
 import guideGroup from './guides/guide-group';
 import {lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
-import {addEncoders, extendEncode} from './encode/encode-util';
-import {Skip} from './guides/constants';
-import {ref, value} from '../util';
 import {AxisTicks, Collect} from '../transforms';
+import {ref, value} from '../util';
 
 export default function(spec, scope) {
   var config = axisConfig(spec, scope),

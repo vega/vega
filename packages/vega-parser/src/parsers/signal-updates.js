@@ -1,5 +1,5 @@
-import parseExpression from './expression';
 import parseUpdate from './update';
+import {parseExpression} from 'vega-functions';
 import {error} from 'vega-util';
 
 export default function(signal, scope) {
