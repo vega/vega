@@ -1,3 +1,4 @@
+import parseDataflow from './dataflow';
 import {getState, setState} from './state';
 import {canonicalType, isCollect} from './util';
 
@@ -42,6 +43,9 @@ function ContextFork(ctx) {
 }
 
 Context.prototype = ContextFork.prototype = {
+  parse: function(spec) {
+    return parseDataflow(spec, this);
+  },
   fork: function() {
     var ctx = new ContextFork(this);
     (this.subcontext || (this.subcontext = [])).push(ctx);

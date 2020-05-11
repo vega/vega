@@ -1,4 +1,3 @@
-import parseDataflow from './dataflow';
 import {encodeExpression, parameterExpression} from './expression';
 import {tupleid} from 'vega-dataflow';
 import {
@@ -128,7 +127,7 @@ function getContext(_, ctx) {
 function getSubflow(_, ctx) {
   var spec = _.$subflow;
   return function(dataflow, key, parent) {
-    var subctx = parseDataflow(spec, ctx.fork()),
+    var subctx = ctx.fork().parse(spec),
         op = subctx.get(spec.operators[0].id),
         p = subctx.signals.parent;
     if (p) p.set(parent);
