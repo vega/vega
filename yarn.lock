@@ -3149,7 +3149,7 @@ dotignore@^0.1.2:
   dependencies:
     minimatch "^3.0.4"
 
-dts-critic@^3.1.0:
+dts-critic@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/dts-critic/-/dts-critic-3.1.0.tgz#bbbe707f1fb6efa08e85aeaf1ee9dd7a184dca98"
   integrity sha512-cNn4SsrlnGqnqxXE0GdPORurDrr+Y8k6yy5eBpjM6lu0C80QgabU8ypq+uAQ+JYeJ/ykQVUNo9zdLQfZHvnSVQ==
@@ -3162,14 +3162,14 @@ dts-critic@^3.1.0:
     yargs "^12.0.5"
 
 dtslint@^3.4.2:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-3.5.1.tgz#886c1672f4654f04eee9fe359681965f39eca80c"
-  integrity sha512-BVR+7h/tgCKlaWjYPG8xt3iuPPOUTYCg1TBp7UK23XlS6HSeRQVHPpJRTXLmPGXBoE9zKbKesQVLtnNB5bRTCA==
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-3.5.2.tgz#56d70b47415e70a3b689c242d19e20d15be7c7e7"
+  integrity sha512-i76Ai9Oo8uD8IQhGcb8X0AHNs/fo7RUnVSOk+a/OYkO9WXkM7l8oHGnZGZSMu2TbSRE1JQD/hWK56R94e+uXrQ==
   dependencies:
     "@definitelytyped/header-parser" "0.0.29"
     "@definitelytyped/typescript-versions" "0.0.29"
     "@definitelytyped/utils" "0.0.29"
-    dts-critic "^3.1.0"
+    dts-critic "^3.0.2"
     fs-extra "^6.0.1"
     json-stable-stringify "^1.0.1"
     strip-json-comments "^2.0.1"
