@@ -1,4 +1,4 @@
-import {getScale} from './scale';
+import {getScale} from '../scales';
 import {pathParse, pathRender} from 'vega-scenegraph';
 
 export function geoShape(projection, geojson, group) {

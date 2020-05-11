@@ -1,12 +1,14 @@
-const _window = (typeof window !== 'undefined' && window) || null;
+const _window = () => (typeof window !== 'undefined' && window) || null;
 
 export function screen() {
-  return _window ? _window.screen : {};
+  const w = _window();
+  return w ? w.screen : {};
 }
 
 export function windowSize() {
-  return _window
-    ? [_window.innerWidth, _window.innerHeight]
+  const w = _window();
+  return w
+    ? [w.innerWidth, w.innerHeight]
     : [undefined, undefined];
 }
 

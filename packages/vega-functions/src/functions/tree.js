@@ -1,12 +1,10 @@
 import {data} from './data';
 
-const EMPTY = {};
-
-function datum(d) { return d.data; }
+const datum = d => d.data;
 
 function treeNodes(name, context) {
   const tree = data.call(context, name);
-  return tree.root && tree.root.lookup || EMPTY;
+  return tree.root && tree.root.lookup || {};
 }
 
 export function treePath(name, source, target) {
