@@ -21,7 +21,7 @@ tape('Parser parses event streams', function(t) {
   df.events = events.events;
   df.fire = events.fire;
 
-  var ctx = runtime.parse(spec, runtime.context(df, {})),
+  var ctx = runtime.context(df, {}).parse(spec),
       streams = ctx.nodes,
       counts = [0,0,0,0,0,0,0];
 

@@ -44,7 +44,7 @@ tape('Parser parses faceted dataflow specs', function(t) {
   // ----
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, transforms)),
+      ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes;
 
   t.equal(Object.keys(ops).length, spec.operators.length);

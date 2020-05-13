@@ -1,12 +1,9 @@
-import {default as parseOperator, parseOperatorParameters} from './operator';
-import parseStream from './stream';
-import parseUpdate from './update';
-
 /**
  * Parse a serialized dataflow specification.
  */
-export default function(spec, ctx) {
-  var operators = spec.operators || [];
+export default function(spec) {
+  const ctx = this,
+        operators = spec.operators || [];
 
   // parse background
   if (spec.background) {
@@ -24,24 +21,16 @@ export default function(spec, ctx) {
   }
 
   // parse operators
-  operators.forEach(function(entry) {
-    parseOperator(entry, ctx);
-  });
+  operators.forEach(entry => ctx.parseOperator(entry));
 
   // parse operator parameters
-  operators.forEach(function(entry) {
-    parseOperatorParameters(entry, ctx);
-  });
+  operators.forEach(entry => ctx.parseOperatorParameters(entry));
 
   // parse streams
-  (spec.streams || []).forEach(function(entry) {
-    parseStream(entry, ctx);
-  });
+  (spec.streams || []).forEach(entry => ctx.parseStream(entry));
 
   // parse updates
-  (spec.updates || []).forEach(function(entry) {
-    parseUpdate(entry, ctx);
-  });
+  (spec.updates || []).forEach(entry => ctx.parseUpdate(entry));
 
   return ctx.resolve();
 }

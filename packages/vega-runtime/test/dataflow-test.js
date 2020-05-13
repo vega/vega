@@ -25,7 +25,7 @@ tape('Parser parses dataflow specs', function(t) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, transforms)),
+      ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes,
       ids = Object.keys(ops);
 

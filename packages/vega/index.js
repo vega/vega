@@ -82,6 +82,5 @@ export {
 } from 'vega-parser';
 
 export {
-  parse as runtime,
   context as runtimeContext
 } from 'vega-runtime';
