@@ -71,7 +71,7 @@ tape('compare supports descending order', function(t) {
   var c = vega.compare('x', 'descending');
   t.equal(c({x:1}, {x:0}), -1);
   t.equal(c({x:0}, {x:1}), 1);
-  t.equal(c({x:1}, {x:1}), 0);
+  t.equal(c({x:1}, {x:1}), -0);
   t.deepEqual(vega.accessorFields(c), ['x']);
   t.end();
 });

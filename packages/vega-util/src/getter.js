@@ -1,16 +1,18 @@
 export default function(path) {
-  const len = path.length;
-
-  if (len === 1) {
-    const field = path[0];
-    return function(obj) {
-      return obj[field];
-    };
-  } else {
-    return function(obj) {
-      let v = obj, i = -1;
-      while (++i < len) v = v[path[i]];
-      return v;
-    };
-  }
+  return path.length === 1 ? get1(path[0]) : getN(path);
 }
+
+const get1 = field => function(obj) {
+  return obj[field];
+};
+
+const getN = path => {
+  const len = path.length;
+  return function(obj) {
+    for (let i = 0; i < len; ++i) {
+      obj = obj[path[i]];
+    }
+    return obj;
+  };
+};
+
