@@ -4,8 +4,6 @@ import {selector} from 'vega-event-selector';
 import {parseExpression} from 'vega-functions';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
-var preamble = 'var datum=event.item&&event.item.datum;';
-
 export default function(spec, scope, target) {
   var events = spec.events,
       update = spec.update,
@@ -42,8 +40,8 @@ export default function(spec, scope, target) {
   }
 
   // resolve update value
-  entry.update = isString(update) ? parseExpression(update, scope, preamble)
-    : update.expr != null ? parseExpression(update.expr, scope, preamble)
+  entry.update = isString(update) ? parseExpression(update, scope)
+    : update.expr != null ? parseExpression(update.expr, scope)
     : update.value != null ? update.value
     : update.signal != null ? {
         $expr:   '_.value',

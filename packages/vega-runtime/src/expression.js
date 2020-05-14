@@ -1,3 +1,4 @@
+import {adjustSpatial} from './util';
 import {compare, field, key, stringValue} from 'vega-util';
 
 function expression(ctx, args, code) {
@@ -73,13 +74,25 @@ export default {
    * Parse an expression used to handle an event-driven operator update.
    */
   handlerExpression(code) {
+    code = 'var datum=event.item&&event.item.datum;return ' + code + ';';
     return expression(this, ['_', 'event'], code);
   },
 
   /**
    * Parse an expression that performs visual encoding.
    */
-  encodeExpression(code) {
+  encodeExpression(encode) {
+    const marktype = encode.marktype,
+          channels = encode.channels;
+
+    let code = 'var o=item,datum=o.datum,m=0,$;';
+    for (const name in channels) {
+      const o ='o[' + stringValue(name) + ']';
+      code += `$=${channels[name]};if(${o}!==$)${o}=$,m=1;`;
+    }
+    code += adjustSpatial(channels, marktype);
+    code += 'return m;';
+
     return expression(this, ['item', '_'], code);
   },
 

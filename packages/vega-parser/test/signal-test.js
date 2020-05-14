@@ -112,13 +112,13 @@ tape('Parser parses signals with event-driven updates', function(t) {
   update = scope.updates[1];
   t.equal(update.source && update.source.$ref, a);
   t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.update.$expr, '(2*2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[2];
   t.equal(update.source, 5);
   t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.update.$expr, '(2*2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[3];

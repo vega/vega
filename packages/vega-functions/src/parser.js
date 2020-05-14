@@ -3,7 +3,7 @@ import {SignalPrefix} from './constants';
 import {CallExpression, parse} from 'vega-expression';
 import {error, hasOwnProperty, isString, stringValue} from 'vega-util';
 
-export default function(expr, scope, preamble) {
+export default function(expr, scope) {
   var params = {}, ast, gen;
 
   // parse the expression to an abstract syntax tree (ast)
@@ -35,7 +35,7 @@ export default function(expr, scope, preamble) {
 
   // return generated expression code and dependencies
   return {
-    $expr:   preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
+    $expr:   gen.code,
     $fields: gen.fields,
     $params: params
   };
