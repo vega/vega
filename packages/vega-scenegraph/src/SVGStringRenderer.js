@@ -117,7 +117,7 @@ prototype.buildDefs = function() {
       defs += openTag('rect', {
         width: '1',
         height: '1',
-        fill: 'url(#' + id + ')'
+        style: 'fill: url(#' + id + ');'
       }) + closeTag('rect');
 
       defs += closeTag(tag);
