@@ -14,4 +14,8 @@ export const styles = {
 };
 
 // ensure miter limit default is consistent with canvas (#2498)
-export const defaultCSS = '* { fill: none } path { stroke-miterlimit: 10; }';
+export const defaultCSS = [
+  '* { fill: none; }',
+  'tspan { fill: inherit; }',
+  'path { stroke-miterlimit: 10; }'
+].join(' ');
