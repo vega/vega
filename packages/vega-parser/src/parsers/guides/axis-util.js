@@ -32,8 +32,8 @@ const ifXEnc = ($orient, a, b) => ifEnc(
   `${$orient} === '${Top}' || ${$orient} === '${Bottom}'`, a, b
 );
 
-const ifYEnc = ($orient, a, b, f) => ifEnc(
-  `${$orient} !== '${Top}' && ${$orient} !== '${Bottom}'`, a, b, f
+const ifYEnc = ($orient, a, b) => ifEnc(
+  `${$orient} !== '${Top}' && ${$orient} !== '${Bottom}'`, a, b
 );
 
 const ifLeftTopExpr = ($orient, a, b) => ifExpr(
