@@ -29,6 +29,6 @@
     "d3-format": "^1.4.4",
     "d3-time-format": "^2.2.3",
     "vega-time": "^2.0.0",
-    "vega-util": "^1.13.2"
+    "vega-util": "^1.14.0"
   }
 }
