@@ -17,8 +17,9 @@ import {
   isArray, isObject, isString, peek, stringValue
 } from 'vega-util';
 
-export default function Scope(config) {
-  this.config = config;
+export default function Scope(config, options) {
+  this.config = config || {};
+  this.options = options || {};
 
   this.bindings = [];
   this.field = {};
@@ -46,6 +47,7 @@ export default function Scope(config) {
 
 function Subscope(scope) {
   this.config = scope.config;
+  this.options = scope.options;
   this.legends = scope.legends;
 
   this.field = Object.create(scope.field);

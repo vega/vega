@@ -1,7 +1,7 @@
 import {codeGenerator, codegenParams} from './codegen';
 import {SignalPrefix} from './constants';
 import {CallExpression, parse} from 'vega-expression';
-import {error, hasOwnProperty, isString, stringValue} from 'vega-util';
+import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope) {
   var params = {}, ast, gen;
@@ -35,7 +35,7 @@ export default function(expr, scope) {
 
   // return generated expression code and dependencies
   return {
-    $expr:   gen.code,
+    $expr:   extend({code: gen.code}, scope.options.ast ? {ast} : null),
     $fields: gen.fields,
     $params: params
   };

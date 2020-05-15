@@ -52,29 +52,29 @@ export default {
   /**
    * Parse an expression used to update an operator value.
    */
-  operatorExpression(code) {
-    return expression(this, ['_'], code);
+  operatorExpression(expr) {
+    return expression(this, ['_'], expr.code);
   },
 
   /**
    * Parse an expression provided as an operator parameter value.
    */
-  parameterExpression(code) {
-    return expression(this, ['datum', '_'], code);
+  parameterExpression(expr) {
+    return expression(this, ['datum', '_'], expr.code);
   },
 
   /**
    * Parse an expression applied to an event stream.
    */
-  eventExpression(code) {
-    return expression(this, ['event'], code);
+  eventExpression(expr) {
+    return expression(this, ['event'], expr.code);
   },
 
   /**
    * Parse an expression used to handle an event-driven operator update.
    */
-  handlerExpression(code) {
-    code = 'var datum=event.item&&event.item.datum;return ' + code + ';';
+  handlerExpression(expr) {
+    const code = `var datum=event.item&&event.item.datum;return ${expr.code};`;
     return expression(this, ['_', 'event'], code);
   },
 
@@ -82,13 +82,12 @@ export default {
    * Parse an expression that performs visual encoding.
    */
   encodeExpression(encode) {
-    const marktype = encode.marktype,
-          channels = encode.channels;
+    const {marktype, channels} = encode;
 
     let code = 'var o=item,datum=o.datum,m=0,$;';
     for (const name in channels) {
       const o ='o[' + stringValue(name) + ']';
-      code += `$=${channels[name]};if(${o}!==$)${o}=$,m=1;`;
+      code += `$=${channels[name].code};if(${o}!==$)${o}=$,m=1;`;
     }
     code += adjustSpatial(channels, marktype);
     code += 'return m;';
