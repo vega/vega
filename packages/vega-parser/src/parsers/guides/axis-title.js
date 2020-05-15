@@ -1,25 +1,23 @@
-import {resolveAxisOrientConditional, xyAxisConditionalEncoding} from './axis-util';
-import {Bottom, GuideTitleStyle, Left, Top, one, zero} from './constants';
+import {getSign, ifTop, ifX, ifY, mult} from './axis-util';
+import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
-import {encoder, has} from '../encode/encode-util';
+import {addEncoders, encoder, has} from '../encode/encode-util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {addEncode, addEncoders} from '../encode/encode-util';
-import {extend} from 'vega-util';
-import { isSignal } from '../../util';
+import {isSignal} from '../../util';
+import {extend, isArray} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      sign = resolveAxisOrientConditional([Left, Top], orient, -1, 1),
-      horizontal = (orient === Top || orient === Bottom),
-      encode, enter, update, titlePos, u, v, titleXY, titleName;
+      sign = getSign(orient, -1, 1),
+      encode, enter, update, titlePos;
 
   encode = {
     enter: enter = {
       opacity: zero,
-      anchor: encoder(_('titleAnchor')),
+      anchor: encoder(_('titleAnchor', null)),
       align: {signal: alignExpr}
     },
     update: update = extend({}, enter, {
@@ -35,31 +33,14 @@ export default function(spec, config, userEncode, dataRef) {
     signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
+  update.x = ifX(orient, titlePos, null, true);
+  update.y = ifY(orient, titlePos, null, true);
+  enter.angle = ifX(orient, zero, mult(sign, 90));
+  enter.baseline = ifX(orient, ifTop(orient, Bottom, Top), {value: Bottom});
+
   if (isSignal(orient)) {
-    update.x = xyAxisConditionalEncoding('x', orient.signal, titlePos, null);
-    update.y = xyAxisConditionalEncoding('y', orient.signal, titlePos, null);
-    enter.angle = update.angle = 
-      xyAxisConditionalEncoding('x',
-        orient.signal,
-        zero,
-        { signal: `(${sign.signal}) * 90` }
-      );
-    enter.baseline = update.baseline =
-      xyAxisConditionalEncoding('x', 
-        orient.signal,
-        {signal: `(${orient.signal}) === "${Top}" ? "bottom" : "top"`},
-        {value: 'bottom'}
-      );
-  } else {
-    if (horizontal) {
-      update.x = titlePos;
-      enter.angle = zero;
-      enter.baseline = {value: orient === Top ? 'bottom' : 'top'};
-    } else {
-      update.y = titlePos;
-      enter.angle = {value: sign * 90};
-      enter.baseline = {value: 'bottom'};
-    }
+    update.angle = enter.angle;
+    update.baseline = enter.baseline;
   }
 
   addEncoders(encode, {
@@ -77,39 +58,7 @@ export default function(spec, config, userEncode, dataRef) {
     align:       _('titleAlign')
   });
 
-  if (isSignal(orient)) {
-    for (u of ['x', 'y']) {
-      v = u === 'x' ? 'y' : 'x';
-      titleName = 'title' + u.toUpperCase();
-
-      if (_(titleName) != null) {
-        titleXY = encode.update[u];
-        delete titleXY[0].signal;
-
-        titleXY[0] = extend({}, encode.update['x'][0], _(titleName));
-      } else {
-        if (!has(u, userEncode)) {
-          if (!encode.enter.auto) {
-            encode.enter.auto = [];
-          }
-
-          encode.enter.auto.push(
-            xyAxisConditionalEncoding(v, orient.signal, { value: true }, null)[0]
-          );
-        }
-      }
-    }
-  } else {   
-    if (!addEncode(encode, 'x', _('titleX'), 'update')) {
-      !horizontal && !has('x', userEncode)
-      && (encode.enter.auto = {value: true});
-    }
-  
-    if (!addEncode(encode, 'y', _('titleY'), 'update')) {
-      horizontal && !has('y', userEncode)
-      && (encode.enter.auto = {value: true});
-    }
-  }
+  autoLayout(_, orient, encode, userEncode);
 
   return guideMark({
     type:  TextMark,
@@ -118,4 +67,25 @@ export default function(spec, config, userEncode, dataRef) {
     from:  dataRef,
     encode
   }, userEncode);
+}
+
+function autoLayout(_, orient, encode, userEncode) {
+  const auto = (value, dim, ifXY) => {
+    if (value != null) {
+      value = encoder(value);
+      encode.update[dim] = isArray(encode.update[dim])
+        ? ifXY(orient, value, encode.update[dim][0])
+        : encode.update[dim] = value;
+      return false;
+    } else {
+      return !has(dim, userEncode) ? true : false;
+    }
+  };
+
+  const autoY = auto(_('titleX'), 'x', ifY),
+        autoX = auto(_('titleY'), 'y', ifX);
+
+  encode.enter.auto = autoX === autoY
+    ? encoder(autoX)
+    : ifX(orient, encoder(autoX), encoder(autoY));
 }

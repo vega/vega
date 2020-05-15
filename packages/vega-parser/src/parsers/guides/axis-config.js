@@ -1,9 +1,9 @@
+import {ifOrient, ifX} from './axis-util';
 import {Bottom, GuideLabelStyle, GuideTitleStyle, Top} from './constants';
+import {isSignal} from '../../util';
 import {extend, hasOwnProperty} from 'vega-util';
-import { isSignal } from '../../util';
-import { allAxisOrientSignalRef, xyAxisSignalRef } from './axis-util';
 
-function getFallbackConfigValue(prop, axisOrientConfig, axisConfig, style) {
+function fallback(prop, axisOrientConfig, axisConfig, style) {
   var styleProp;
   if (hasOwnProperty(axisOrientConfig, prop)) {
     return axisOrientConfig[prop];
@@ -43,12 +43,13 @@ function getFallbackConfigValue(prop, axisOrientConfig, axisConfig, style) {
 export default function(spec, scope) {
   var config = scope.config,
       style = config.style,
-      orient = spec.orient,
+      axis = config.axis,
       band = scope.scaleType(spec.scale) === 'band' && config.axisBand,
+      orient = spec.orient,
       xy,
       or;
 
-  if (isSignal(spec.orient)) {
+  if (isSignal(orient)) {
     var axisX = config.axisX || {},
         axisY = config.axisY || {},
         axisTop = config.axisTop || {},
@@ -69,22 +70,21 @@ export default function(spec, scope) {
 
     xy = {};
     for (var prop of axisXYConfigKeys) {
-      xy[prop] = xyAxisSignalRef(
-        'x',
-        spec.orient.signal,
-        getFallbackConfigValue(prop, axisX, config.axis, style),
-        getFallbackConfigValue(prop, axisY, config.axis, style),
+      xy[prop] = ifX(
+        orient,
+        fallback(prop, axisX, axis, style),
+        fallback(prop, axisY, axis, style),
       );
     }
 
     or = {};
     for (prop of axisOrientConfigKeys) {
-      or[prop] = allAxisOrientSignalRef(
-        spec.orient.signal,
-        getFallbackConfigValue(prop, axisTop, config.axis, style),
-        getFallbackConfigValue(prop, axisBottom, config.axis, style),
-        getFallbackConfigValue(prop, axisLeft, config.axis, style),
-        getFallbackConfigValue(prop, axisRight, config.axis, style),
+      or[prop] = ifOrient(
+        orient,
+        fallback(prop, axisTop, axis, style),
+        fallback(prop, axisBottom, axis, style),
+        fallback(prop, axisLeft, axis, style),
+        fallback(prop, axisRight, axis, style),
       );
     }
   } else {
@@ -93,8 +93,8 @@ export default function(spec, scope) {
   }
 
   var result = (xy || or || band)
-    ? extend({}, config.axis, xy, or, band)
-    : config.axis;
-  
+    ? extend({}, axis, xy, or, band)
+    : axis;
+
   return result;
 }

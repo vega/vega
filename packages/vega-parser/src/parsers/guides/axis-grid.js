@@ -1,22 +1,21 @@
-import {Bottom, Left, Top, Value, one, zero} from './constants';
+import {getSign, ifX, ifY} from './axis-util';
+import {Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders} from '../encode/encode-util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisGridRole} from '../marks/roles';
-import {addEncoders} from '../encode/encode-util';
+import {isSignal} from '../../util';
 import {extend, isObject} from 'vega-util';
-import { isSignal } from '../../util';
-import { resolveAxisOrientConditional, resolveXYAxisOrientConditional, xyAxisConditionalEncoding } from './axis-util';
 
 export default function(spec, config, userEncode, dataRef, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
       vscale = spec.gridScale,
-      sign = resolveAxisOrientConditional([Top, Left], orient, 1, -1),
+      sign = getSign(orient, 1, -1),
       offset = offsetValue(spec.offset, sign),
       encode, enter, exit, update,
-      tickPos, gridLineStart, gridLineEnd,
-      u, v, v2, s, isXAxis;
+      tickPos, gridStart, gridEnd, sz;
 
   encode = {
     enter: enter = {opacity: zero},
@@ -42,41 +41,22 @@ export default function(spec, config, userEncode, dataRef, band) {
     round:  _('tickRound')
   };
 
-  isXAxis = orient === Top || orient === Bottom;
-  s = resolveXYAxisOrientConditional('x', orient, { signal: 'height' }, { signal: 'width'}).signal;
-  
-  gridLineStart = vscale
+  sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
+
+  gridStart = vscale
     ? {scale: vscale, range: 0, mult: sign, offset: offset}
     : {value: 0, offset: offset};
 
-  gridLineEnd = vscale
+  gridEnd = vscale
     ? {scale: vscale, range: 1, mult: sign, offset: offset}
-    : {signal: s, mult: sign, offset: offset};
+    : extend(sz, {mult: sign, offset: offset});
 
-  if (isSignal(orient)) {
-    for (u of ['x', 'y']) {
-      v = u === 'x' ? 'y' : 'x';
-      v2 = v + '2';
-      
-      update[u] = enter[u] = xyAxisConditionalEncoding(u, orient.signal, tickPos, gridLineStart);
-      exit[u] = xyAxisConditionalEncoding(u, orient.signal, tickPos, null);
-      update[v2] = enter[v2] = xyAxisConditionalEncoding(u, orient.signal, gridLineEnd, null);
-    }
-  } else {
-    if (isXAxis) {
-      u = 'x';
-      v = 'y';
-    } else {
-      u = 'y';
-      v = 'x';
-    }
-    v2 = v + '2';
-  
-    update[u] = enter[u] = exit[u] = tickPos;
-    update[v] = enter[v] = gridLineStart;
-    update[v2] = enter[v2] = gridLineEnd;
-  }
-  
+  enter.x = update.x = ifX(orient, tickPos, gridStart);
+  enter.y = update.y = ifY(orient, tickPos, gridStart);
+  enter.x2 = update.x2 = ifY(orient, gridEnd);
+  enter.y2 = update.y2 = ifX(orient, gridEnd);
+  exit.x = ifX(orient, tickPos);
+  exit.y = ifY(orient, tickPos);
 
   return guideMark({
     type: RuleMark,
@@ -93,26 +73,21 @@ function offsetValue(offset, sign)  {
   if (sign === 1) {
     // do nothing!
   } else if (!isObject(offset)) {
-    offset = isSignal(sign) ? {
-      signal: `(${sign.signal}) === 1 ? 0 : (${sign.signal}) * (${offset || 0})`
-    } : sign * (offset || 0);
+    offset = isSignal(sign)
+      ? {signal: `(${sign.signal}) === 1 ? 0 : (${sign.signal}) * (${offset || 0})`}
+      : sign * (offset || 0);
   } else {
     entry = offset = extend({}, offset);
-    
     while (entry.mult != null) {
       if (!isObject(entry.mult)) {
-        if (isSignal(sign)) {
-          // no offset if sign === 1
-          entry.mult = { signal: `(${sign.signal}) === 1 ? 0 : -${entry.mult}` };
-        } else {
-          entry.mult *= sign;
-        }
+        entry.mult = isSignal(sign) // no offset if sign === 1
+          ? {signal: `(${sign.signal}) === 1 ? 0 : -(${entry.mult})`}
+          : entry.mult * sign;
         return offset;
       } else {
         entry = entry.mult = extend({}, entry.mult);
       }
     }
-
     entry.mult = sign;
   }
 

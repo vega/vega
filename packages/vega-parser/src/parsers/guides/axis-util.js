@@ -1,71 +1,89 @@
-import { isArray, stringValue } from 'vega-util';
-import { Bottom, Left, Top } from './constants';
-import { isSignal} from '../../util';
+import {extend, stringValue} from 'vega-util';
+import {Bottom, Left, Right, Top} from './constants';
+import {encoder} from '../encode/encode-util';
+import {isSignal} from '../../util';
 
-export function resolveAxisOrientConditional(orient, axisOrientSignalRefOrValue, yes, no) {
-  var orientArr = isArray(orient) ? orient : [orient];
+const isX = orient => orient === Bottom || orient === Top;
 
-  if (isSignal(axisOrientSignalRefOrValue)) {
-    return axisOrientSignalRef(orientArr, axisOrientSignalRefOrValue.signal, yes, no);
+// get sign coefficient based on axis orient
+export const getSign = (orient, a, b) => isSignal(orient)
+  ? ifLeftTopExpr(orient.signal, a, b)
+  : orient === Left || orient === Top ? a : b;
+
+// condition on axis x-direction
+// short-circuit if first option is undefined
+export const ifX = (orient, a, b, f) => !a ? a : isSignal(orient)
+  ? ifXEnc(orient.signal, a, b, f)
+  : isX(orient) ? a : b;
+
+// condition on axis y-direction
+// short-circuit if first option is undefined
+export const ifY = (orient, a, b, f) => !a ? a : isSignal(orient)
+  ? ifYEnc(orient.signal, a, b, f)
+  : isX(orient) ? b : a;
+
+export const ifTop = (orient, a, b) => isSignal(orient)
+  ? ifTopExpr(orient.signal, a, b)
+  : orient === Top ? {value: a} : {value: b};
+
+export const ifRight = (orient, a, b) => isSignal(orient)
+  ? ifRightExpr(orient.signal, a, b)
+  : orient === Right ? {value: a} : {value: b};
+
+const ifXEnc = ($orient, a, b, f) => ifEnc(
+  `${$orient} === '${Top}' || ${$orient} === '${Bottom}'`, a, b, f
+);
+
+const ifYEnc = ($orient, a, b, f) => ifEnc(
+  `${$orient} !== '${Top}' && ${$orient} !== '${Bottom}'`, a, b, f
+);
+
+const ifLeftTopExpr = ($orient, a, b) => ifExpr(
+  `${$orient} === '${Left}' || ${$orient} === '${Top}'`, a, b
+);
+
+const ifTopExpr = ($orient, a, b) => ifExpr(
+  `${$orient} === '${Top}'`, a, b
+);
+
+const ifRightExpr = ($orient, a, b) => ifExpr(
+  `${$orient} === '${Right}'`, a, b
+);
+
+const ifEnc = (test, a, b, rule) => {
+  // ensure inputs are encoder objects (or null)
+  a = a != null ? encoder(a) : a;
+  b = b != null ? encoder(b) : b;
+
+  if (!rule && isSimple(a) && isSimple(b)) {
+    // if possible generate simple signal expression
+    a = a ? (a.signal || stringValue(a.value)) : null;
+    b = b ? (b.signal || stringValue(b.value)) : null;
+    return {signal: `${test} ? (${a}) : (${b})`};
   } else {
-    return orientArr.includes(axisOrientSignalRefOrValue) ? yes : no;
+    // otherwise generate rule set
+    return [extend({test}, a)].concat(b || []);
   }
-}
+};
 
-export function resolveXYAxisOrientConditional(xy, axisOrientSignalRefOrValue, yes, no) {
-  if (isSignal(axisOrientSignalRefOrValue)) {
-    return xyAxisSignalRef(xy, axisOrientSignalRefOrValue.signal, yes, no);
-  } else {
-    return axisOrientSignalRefOrValue === Top || axisOrientSignalRefOrValue === Bottom ? yes : no;
-  }
-}
+const isSimple = enc => (
+  !enc || Object.keys(enc).length === 1
+);
 
-export function xyAxisSignalRef(xy, axisOrientExpr, yes, no) {
-  var yesExpr = exprFromValue(yes);
-  var noExpr = exprFromValue(no);
-  return {
-    signal: `${xyAxisBooleanExpr(xy, axisOrientExpr)} ? (${yesExpr}) : (${noExpr})`
-  };
-}
-  
-export function xyAxisBooleanExpr(xy, axisOrientExpr) {
-  return `${xy === 'x' ? '' : '!'}(indexof(["${Top}", "${Bottom}"], ${axisOrientExpr}) >= 0)`;
-}
+const ifExpr = (test, a, b) => ({
+  signal: `${test} ? (${toExpr(a)}) : (${toExpr(b)})`
+});
 
-export function axisOrientSignalRef(orient, axisOrientExpr, yes, no) {
-  var orientArrExpr = stringValue(isArray(orient) ? orient : [orient]);
+export const ifOrient = ($orient, top, bottom, left, right) => ({
+  signal: `${$orient}==='${Left}' ? (${toExpr(left)}) : `
+        + `${$orient}==='${Bottom}' ? (${toExpr(bottom)}) : `
+        + `${$orient}==='${Right}' ? (${toExpr(right)}) : (${toExpr(top)})`
+});
 
-  var yesExpr = exprFromValue(yes);
-  var noExpr = exprFromValue(no);
+const toExpr = v => isSignal(v)
+  ? v.signal
+  : v == null ? null : stringValue(v);
 
-  return {
-    signal: `indexof(${orientArrExpr}, ${axisOrientExpr}) >= 0 ? (${yesExpr}) : (${noExpr})`
-  };
-}
-
-export function allAxisOrientSignalRef(axisOrientExpr, top, bottom, left, right) {
-  var topExpr = exprFromValue(top);
-  var bottomExpr = exprFromValue(bottom);
-  var leftExpr = exprFromValue(left);
-  var rightExpr = exprFromValue(right);
-
-  return {
-    signal: `(${axisOrientExpr}) === "${Top}" ? (${topExpr}) : `
-      + `(${axisOrientExpr}) === "${Bottom}" ? (${bottomExpr}) : `
-      + `(${axisOrientExpr}) === "${Left}" ? (${leftExpr}) : (${rightExpr})`
-  };
-}
-
-export function xyAxisConditionalEncoding(xy, axisOrientExpr, yes, no) {
-  return [
-    {
-      test: xyAxisBooleanExpr(xy, axisOrientExpr),
-      ...yes
-    }
-  ].concat(no || []);
-}
-
-
-export function exprFromValue(val) {
-  return isSignal(val) ? val.signal : stringValue(val === undefined ? null : val);
-}
+export const mult = (sign, value) => value === 0 ? 0 : isSignal(sign)
+  ? {signal: `(${sign.signal}) * ${value}`}
+  : {value: sign * value};

@@ -11,9 +11,13 @@ export default function parseEncode(encode, marktype, params, scope) {
 
   for (channel in encode) {
     enc = encode[channel];
-    if (isArray(enc)) { // rule
+    if (!enc) {
+      // skip any null entries
+    } else if (isArray(enc)) {
+      // process rule
       code += rule(channel, enc, scope, params, fields);
     } else {
+      // process entry
       value = entry(channel, enc, scope, params, fields);
       code += set('o', channel, value);
     }
