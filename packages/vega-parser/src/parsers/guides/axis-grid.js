@@ -2,7 +2,7 @@ import {getSign, ifX, ifY} from './axis-util';
 import {Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
-import {addEncoders} from '../encode/encode-util';
+import {addEncoders} from '../encode/util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisGridRole} from '../marks/roles';
 import {isSignal} from '../../util';

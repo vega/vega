@@ -1,3 +1,4 @@
+import parseEncode from './encode';
 import clip from './marks/clip';
 import definition from './marks/definition';
 import interactive from './marks/interactive';
@@ -7,10 +8,8 @@ import parseSubflow from './marks/subflow';
 import getRole from './marks/role';
 import {GroupMark} from './marks/marktypes';
 import {FrameRole, MarkRole, ScopeRole} from './marks/roles';
-import {encoders} from './encode/encode-util';
 import parseTransform from './transform';
 import parseTrigger from './trigger';
-import parseSpec from './spec';
 import DataScope from '../DataScope';
 import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
@@ -54,7 +53,7 @@ export default function(spec, scope) {
   markRef = ref(op);
 
   // add visual encoders
-  op = enc = scope.add(Encode(encoders(
+  op = enc = scope.add(Encode(parseEncode(
     spec.encode, spec.type, role, spec.style, scope,
     {mod: false, pulse: markRef}
   )));
@@ -109,7 +108,7 @@ export default function(spec, scope) {
     scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
     facet ? parseFacet(spec, scope, input)          // explicit facet
         : nested ? parseSubflow(spec, scope, input) // standard mark group
-        : parseSpec(spec, scope); // guide group, we can avoid nested scopes
+        : scope.parse(spec); // guide group, we can avoid nested scopes
     scope.popState();
 
     if (nested) { if (layout) ops.push(layout); ops.push(bound); }

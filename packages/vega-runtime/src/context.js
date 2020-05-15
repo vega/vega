@@ -1,5 +1,16 @@
+import parse from './dataflow';
+import parseExpressions from './expression';
+import {
+  parseOperator,
+  parseOperatorParameters
+} from './operator';
+import parseParameters from './parameters';
+import parseStream from './stream';
+import parseUpdate from './update';
+
 import {getState, setState} from './state';
 import {canonicalType, isCollect} from './util';
+import {extend} from 'vega-util';
 
 /**
  * Context objects store the current parse state.
@@ -25,7 +36,7 @@ function Context(df, transforms, functions) {
   }
 }
 
-function ContextFork(ctx) {
+function Subcontext(ctx) {
   this.dataflow = ctx.dataflow;
   this.transforms = ctx.transforms;
   this.functions = ctx.functions;
@@ -41,26 +52,26 @@ function ContextFork(ctx) {
   }
 }
 
-Context.prototype = ContextFork.prototype = {
-  fork: function() {
-    var ctx = new ContextFork(this);
+Context.prototype = Subcontext.prototype = {
+  fork() {
+    var ctx = new Subcontext(this);
     (this.subcontext || (this.subcontext = [])).push(ctx);
     return ctx;
   },
-  get: function(id) {
+  get(id) {
     return this.nodes[id];
   },
-  set: function(id, node) {
+  set(id, node) {
     return this.nodes[id] = node;
   },
-  add: function(spec, op) {
-    var ctx = this,
-        df = ctx.dataflow,
-        data;
+  add(spec, op) {
+    const ctx = this,
+          df = ctx.dataflow,
+          data = spec.value;
 
     ctx.set(spec.id, op);
 
-    if (isCollect(spec.type) && (data = spec.value)) {
+    if (isCollect(spec.type) && data) {
       if (data.$ingest) {
         df.ingest(op, data.$ingest, data.$format);
       } else if (data.$request) {
@@ -80,7 +91,7 @@ Context.prototype = ContextFork.prototype = {
         df.connect(p, [op]);
         op.targets().add(p);
       } else {
-        (ctx.unresolved = ctx.unresolved || []).push(function() {
+        (ctx.unresolved = ctx.unresolved || []).push(() => {
           p = ctx.get(spec.parent.$ref);
           df.connect(p, [op]);
           op.targets().add(p);
@@ -97,29 +108,42 @@ Context.prototype = ContextFork.prototype = {
     }
 
     if (spec.data) {
-      for (var name in spec.data) {
-        data = ctx.data[name] || (ctx.data[name] = {});
-        spec.data[name].forEach(function(role) { data[role] = op; });
+      for (const name in spec.data) {
+        const data = ctx.data[name] || (ctx.data[name] = {});
+        spec.data[name].forEach(role => data[role] = op);
       }
     }
   },
-  resolve: function() {
-    (this.unresolved || []).forEach(function(fn) { fn(); });
+  resolve() {
+    (this.unresolved || []).forEach(fn => fn());
     delete this.unresolved;
     return this;
   },
-  operator: function(spec, update) {
+  operator(spec, update) {
     this.add(spec, this.dataflow.add(spec.value, update));
   },
-  transform: function(spec, type) {
+  transform(spec, type) {
     this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)]));
   },
-  stream: function(spec, stream) {
+  stream(spec, stream) {
     this.set(spec.id, stream);
   },
-  update: function(spec, stream, target, update, params) {
+  update(spec, stream, target, update, params) {
     this.dataflow.on(stream, target, update, params, spec.options);
   },
-  getState: getState,
-  setState: setState
+
+  // parse methods
+  parse,
+  parseOperator,
+  parseOperatorParameters,
+  parseParameters,
+  parseStream,
+  parseUpdate,
+
+  // state methods
+  getState,
+  setState
 };
+
+// expression parsing methods
+extend(Context.prototype, parseExpressions);

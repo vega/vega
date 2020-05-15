@@ -1,7 +1,7 @@
-import {aggrField, keyFieldRef, ref} from '../util';
 import {
   Aggregate, Collect, MultiExtent, MultiValues, Sieve, Values
 } from '../transforms';
+import {aggrField, keyFieldRef, ref} from '../util';
 
 import {isDiscrete, isQuantile, isValidScaleType} from 'vega-scale';
 import {

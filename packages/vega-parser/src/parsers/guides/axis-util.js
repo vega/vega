@@ -1,6 +1,6 @@
 import {extend, stringValue} from 'vega-util';
 import {Bottom, Left, Right, Top} from './constants';
-import {encoder} from '../encode/encode-util';
+import {encoder} from '../encode/util';
 import {isSignal} from '../../util';
 
 const isX = orient => orient === Bottom || orient === Top;

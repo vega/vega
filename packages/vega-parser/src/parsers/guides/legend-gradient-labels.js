@@ -4,9 +4,9 @@ import {
 } from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 import {value} from '../../util';
 
 const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,

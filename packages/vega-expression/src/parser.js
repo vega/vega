@@ -1163,8 +1163,7 @@ function parseGroupExpression() {
 // 11.1 Primary Expressions
 
 var legalKeywords = {
-  'if': 1,
-  'this': 1
+  'if': 1
 };
 
 function parsePrimaryExpression() {

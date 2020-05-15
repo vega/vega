@@ -1,4 +1,4 @@
-import {getScale} from './scale';
+import {getScale} from '../scales';
 import {scale as get, scaleFraction} from 'vega-scale';
 import {Gradient} from 'vega-scenegraph';
 import {identity, peek} from 'vega-util';

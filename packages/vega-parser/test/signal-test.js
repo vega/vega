@@ -34,11 +34,11 @@ tape('Parser parses updating signals', function(t) {
   t.equal(Object.keys(scope.signals).length, 2);
   t.equal(scope.signals.a.id, 0);
   t.equal(scope.signals.a.value, undefined);
-  t.equal(scope.signals.a.update, '(5*2)');
+  t.equal(scope.signals.a.update.code, '(5*2)');
   t.deepEqual(scope.signals.a.params, {});
   t.equal(scope.signals.b.id, 1);
   t.equal(scope.signals.b.value, undefined);
-  t.equal(scope.signals.b.update, '(_["$a"]+3)');
+  t.equal(scope.signals.b.update.code, '(_["$a"]+3)');
   t.deepEqual(scope.signals.b.params, {$a: {$ref: 0}});
   t.end();
 });
@@ -112,20 +112,20 @@ tape('Parser parses signals with event-driven updates', function(t) {
   update = scope.updates[1];
   t.equal(update.source && update.source.$ref, a);
   t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.update.$expr.code, '(2*2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[2];
   t.equal(update.source, 5);
   t.equal(update.target, c);
-  t.equal(update.update.$expr, 'var datum=event.item&&event.item.datum;return((2*2));');
+  t.equal(update.update.$expr.code, '(2*2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[3];
   t.equal(update.source, 2);
   t.equal(update.target, d);
-  t.equal(update.update.$expr, '_.value');
-  t.equal(update.update.$params.value.$ref, c);
+  t.equal(update.update.$expr.code, '_.$value');
+  t.equal(update.update.$params.$value.$ref, c);
   t.equal(update.options, undefined);
 
   t.end();
@@ -242,11 +242,11 @@ tape('Parser handles built-in signals', function (t) {
       {name: 'height', value: 300}
     ]
   }), {
-    background: {value: 'blue', update: '\'red\''},
-    autosize: {value: {type: 'none'}, update: '{type:\'fit\'}'},
-    padding: {value: {top: 2, bottom: 2, left: 2, right: 2}, update: '5'},
-    width: {value: 400, update: '200'},
-    height: {value: 300, update: '100'}
+    background: {value: 'blue', update: {code: '\'red\''}},
+    autosize: {value: {type: 'none'}, update: {code: '{type:\'fit\'}'}},
+    padding: {value: {top: 2, bottom: 2, left: 2, right: 2}, update: {code: '5'}},
+    width: {value: 400, update: {code: '200'}},
+    height: {value: 300, update: {code: '100'}}
   });
 
   // config properties and signals should merge
@@ -266,11 +266,11 @@ tape('Parser handles built-in signals', function (t) {
       {name: 'height', value: 300}
     ]
   }), {
-    background: {value: 'blue', update: '\'red\''},
-    autosize: {value: {type: 'none'}, update: '{type:\'fit\'}'},
-    padding: {value: {top: 2, bottom: 2, left: 2, right: 2}, update: '5'},
-    width: {value: 400, update: '200'},
-    height: {value: 300, update: '100'}
+    background: {value: 'blue', update: {code: '\'red\''}},
+    autosize: {value: {type: 'none'}, update: {code: '{type:\'fit\'}'}},
+    padding: {value: {top: 2, bottom: 2, left: 2, right: 2}, update: {code: '5'}},
+    width: {value: 400, update: {code: '200'}},
+    height: {value: 300, update: {code: '100'}}
   });
 
   // spec properties should be overriden by signals
@@ -288,11 +288,11 @@ tape('Parser handles built-in signals', function (t) {
       {name: 'height', update: '300'}
     ]
   }), {
-    background: {update: '\'blue\''},
-    autosize: {update: '{type:\'none\'}'},
-    padding: {update: '{top:2,bottom:2,left:2,right:2}'},
-    width: {update: '400'},
-    height: {update: '300'}
+    background: {update: {code: '\'blue\''}},
+    autosize: {update: {code: '{type:\'none\'}'}},
+    padding: {update: {code: '{top:2,bottom:2,left:2,right:2}'}},
+    width: {update: {code: '400'}},
+    height: {update: {code: '300'}}
   });
 
   // config properties should be overriden by signals
@@ -312,11 +312,11 @@ tape('Parser handles built-in signals', function (t) {
       {name: 'height', update: '300'}
     ]
   }), {
-    background: {update: '\'blue\''},
-    autosize: {update: '{type:\'none\'}'},
-    padding: {update: '{top:2,bottom:2,left:2,right:2}'},
-    width: {update: '400'},
-    height: {update: '300'}
+    background: {update: {code: '\'blue\''}},
+    autosize: {update: {code: '{type:\'none\'}'}},
+    padding: {update: {code: '{top:2,bottom:2,left:2,right:2}'}},
+    width: {update: {code: '400'}},
+    height: {update: {code: '300'}}
   });
 
   t.end();

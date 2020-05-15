@@ -1,6 +1,6 @@
 import parseTransform from '../transform';
-import {ref} from '../../util';
 import {Collect} from '../../transforms';
+import {ref} from '../../util';
 import {array, error, extend} from 'vega-util';
 
 export default function(from, group, scope) {

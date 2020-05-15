@@ -1,8 +1,7 @@
 import {getDataRef} from './data';
-import parseSpec from '../spec';
 import DataScope from '../../DataScope';
-import {ref} from '../../util';
 import {Collect, Facet, PreFacet, Sieve} from '../../transforms';
+import {ref} from '../../util';
 import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {
@@ -42,6 +41,6 @@ export default function(spec, scope, group) {
 
   // parse faceted subflow
   op.params.subflow = {
-    $subflow: parseSpec(spec, subscope).toRuntime()
+    $subflow: subscope.parse(spec).toRuntime()
   };
 }

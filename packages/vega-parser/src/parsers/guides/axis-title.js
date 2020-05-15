@@ -2,7 +2,7 @@ import {getSign, ifTop, ifX, ifY, mult} from './axis-util';
 import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
-import {addEncoders, encoder, has} from '../encode/encode-util';
+import {addEncoders, encoder, has} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
 import {isSignal} from '../../util';
