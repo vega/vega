@@ -34,6 +34,7 @@ Constructor that creates a new View instance for the provided [Vega dataflow *ru
 - *logLevel*: Initial log level to use. See the [logLevel](#view_logLevel) method.
 - *renderer*: The type of renderer to use (`'canvas'` or `'svg'`). See the [renderer](#view_renderer) method.
 - *tooltip*: Handler function invoked to support tooltip display. See the [tooltip](#view_tooltip) method.
+- *locale*: {% include tag ver="5.12" %} Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../locale). If unspecified, the current default locale at the time of instantiation will be used for the View instance.
 
 The View constructor call is typically followed by a chain of method calls to setup the desired view configuration. After this chain, the [runAsync](#view_runAsync) method evaluates the underlying dataflow graph to update and render the visualization.
 
