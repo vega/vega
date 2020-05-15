@@ -20,6 +20,7 @@ All Vega packages, by category:
   - [vega-force](/packages/vega-force): Dataflow transform for force-directed layout.
   - [vega-geo](/packages/vega-geo): Dataflow transforms for projection and visualization of geographic data.
   - [vega-hierarchy](/packages/vega-hierarchy): Dataflow transforms for generation and layout of hierarchical data.
+  - [vega-label](/packages/vega-label): Dataflow transform for text label layout.
   - [vega-regression](/packages/vega-regression): Dataflow transforms for fitting regression models.
   - [vega-transforms](/packages/vega-transforms): Dataflow transforms for data processing, including binning, filtering, and aggregation.
   - [vega-view-transforms](/packages/vega-view-transforms): Dataflow transforms for view-related operations, including scenegraph binding and bounds calculation.
@@ -31,6 +32,7 @@ All Vega packages, by category:
   - [vega-cli](/packages/vega-cli): Command line utilities for running Vega server-side.
   - [vega-event-selector](/packages/vega-event-selector): Vega event selector parser.
   - [vega-expression](/packages/vega-expression): Vega expression language parser and standard function library.
+  - [vega-format](/packages/vega-format): String formatting utilities and locale management for number and date values.
   - [vega-loader](/packages/vega-loader): Load and parse external files.
   - [vega-projection](/packages/vega-projection): Cartographic projections for geographic data.
   - [vega-projection-extended](/packages/vega-projection-extended): Extended collection of cartographic projections.
