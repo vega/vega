@@ -49,7 +49,7 @@ export interface Axis extends BaseAxis {
    *
    * __Default value:__ `"bottom"` for x-axes and `"left"` for y-axes.
    */
-  orient: AxisOrient;
+  orient: AxisOrient | SignalRef;
 
   /**
    * The name of the scale backing the axis component.

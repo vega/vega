@@ -1,4 +1,5 @@
-import {Bottom, Top, one, zero} from './constants';
+import {ifX, ifY} from './axis-util';
+import {one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
 import {addEncoders} from '../encode/util';
@@ -8,7 +9,7 @@ import {AxisDomainRole} from '../marks/roles';
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      encode, enter, update, u, u2, v;
+      encode, enter, update;
 
   encode = {
     enter: enter = {opacity: zero},
@@ -25,18 +26,14 @@ export default function(spec, config, userEncode, dataRef) {
     strokeOpacity:    _('domainOpacity')
   });
 
-  if (orient === Top || orient === Bottom) {
-    u = 'x';
-    v = 'y';
-  } else {
-    u = 'y';
-    v = 'x';
-  }
-  u2 = u + '2';
+  const pos0 = position(spec, 0);
+  const pos1 = position(spec, 1);
 
-  enter[v] = zero;
-  update[u] = enter[u] = position(spec, 0);
-  update[u2] = enter[u2] = position(spec, 1);
+  enter.x = update.x = ifX(orient, pos0, zero);
+  enter.x2 = update.x2 = ifX(orient, pos1);
+
+  enter.y = update.y = ifY(orient, pos0, zero);
+  enter.y2 = update.y2 = ifY(orient, pos1);
 
   return guideMark({
     type: RuleMark,

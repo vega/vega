@@ -23,7 +23,9 @@ function parseBlock(block, marktype, params, scope) {
         fields = {};
 
   for (const name in block) {
-    channels[name] = codegen(expression(block[name]), scope, params, fields);
+    if (block[name] != null) { // skip any null entries
+      channels[name] = parse(expr(block[name]), scope, params, fields);
+    }
   }
 
   return {
@@ -33,11 +35,11 @@ function parseBlock(block, marktype, params, scope) {
   };
 }
 
-function expression(enc) {
+function expr(enc) {
   return isArray(enc) ? rule(enc) : entry(enc);
 }
 
-function codegen(code, scope, params, fields) {
+function parse(code, scope, params, fields) {
   const expr = parseExpression(code, scope);
   expr.$fields.forEach(name => fields[name] = 1);
   extend(params, expr.$params);

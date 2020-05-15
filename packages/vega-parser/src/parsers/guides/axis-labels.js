@@ -1,4 +1,5 @@
-import {Bottom, GuideLabelStyle, Label, Left, Right, Top, Value, one, zero} from './constants';
+import {getSign, ifRight, ifTop, ifX, ifY, patch} from './axis-util';
+import {GuideLabelStyle, Label, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {extendOffset, lookup} from './guide-util';
 import {addEncoders, encoder} from '../encode/util';
@@ -17,16 +18,15 @@ function flushExpr(scale, threshold, a, b, c) {
 export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      isXAxis = (orient === Top || orient === Bottom),
       scale = spec.scale,
+      sign = getSign(orient, -1, 1),
       flush = deref(_('labelFlush')),
       flushOffset = deref(_('labelFlushOffset')),
       flushOn = flush === 0 || !!flush,
       labelAlign = _('labelAlign'),
       labelBaseline = _('labelBaseline'),
-      encode, enter, tickSize, tickPos, align, baseline, offset,
-      bound, overlap;
+      encode, enter, update, tickSize, tickPos,
+      align, baseline, bound, overlap, offsetExpr;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -40,35 +40,38 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     offset: extendOffset(band.offset, _('labelOffset'))
   };
 
-  if (isXAxis) {
-    align = labelAlign || (flushOn
+  align = ifX(orient,
+    flushOn
       ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-      : 'center');
-    baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
-    offset = !labelAlign;
-  } else {
-    align = labelAlign || (orient === Right ? 'left' : 'right');
-    baseline = labelBaseline || (flushOn
-      ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-      : 'middle');
-    offset = !labelBaseline;
-  }
+      : {value: 'center'},
+    ifRight(orient, 'left', 'right')
+  );
 
-  offset = offset && flushOn && flushOffset
-    ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
-    : null;
+  baseline = ifX(orient,
+    ifTop(orient, 'bottom', 'top'),
+    flushOn
+      ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
+      : {value: 'middle'}
+  );
+
+  offsetExpr = flushExpr(scale, flush, `-(${flushOffset})`, flushOffset, 0);
+  flushOn = flushOn && flushOffset;
+
+  enter = {
+    opacity: zero,
+    x: ifX(orient, tickPos, tickSize),
+    y: ifY(orient, tickPos, tickSize)
+  };
 
   encode = {
-    enter: enter = {
-      opacity: zero,
-      x: isXAxis ? tickPos : tickSize,
-      y: isXAxis ? tickSize : tickPos
-    },
-    update: {
+    enter: enter,
+    update: update = {
       opacity: one,
       text: {field: Label},
       x: enter.x,
-      y: enter.y
+      y: enter.y,
+      align,
+      baseline
     },
     exit: {
       opacity: zero,
@@ -78,9 +81,11 @@ export default function(spec, config, userEncode, dataRef, size, band) {
   };
 
   addEncoders(encode, {
-    [isXAxis ? 'dx' : 'dy']: offset,
-    align:       align,
-    baseline:    baseline,
+    dx: !labelAlign && flushOn ? ifX(orient, offsetExpr) : null,
+    dy: !labelBaseline && flushOn ? ifY(orient, offsetExpr) : null
+  });
+
+  addEncoders(encode, {
     angle:       _('labelAngle'),
     fill:        _('labelColor'),
     fillOpacity: _('labelOpacity'),
@@ -90,6 +95,9 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     fontStyle:   _('labelFontStyle'),
     limit:       _('labelLimit'),
     lineHeight:  _('labelLineHeight')
+  }, {
+    align:       labelAlign,
+    baseline:    labelBaseline
   });
 
   bound   = _('labelBound');
@@ -102,6 +110,13 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     order: 'datum.index',
     bound: bound ? {scale, orient, tolerance: bound} : null
   } : undefined;
+
+  if (update.align !== align) {
+    update.align = patch(update.align, align);
+  }
+  if (update.baseline !== baseline) {
+    update.baseline = patch(update.baseline, baseline);
+  }
 
   return guideMark({
     type:  TextMark,
