@@ -51,11 +51,18 @@
       "type": "object",
       "properties": {
         "orient": {
-          "enum": [
-            "top",
-            "bottom",
-            "left",
-            "right"
+          "oneOf": [
+            {
+              "enum": [
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
           ]
         },
         "scale": {
@@ -172,7 +179,14 @@
           ]
         },
         "translate": {
-          "type": "number"
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
         },
         "values": {
           "$ref": "#/refs/arrayOrSignal"
@@ -9621,10 +9635,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
@@ -10907,10 +10921,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
@@ -11329,10 +11343,10 @@
                 "median",
                 "q1",
                 "q3",
-                "argmin",
-                "argmax",
                 "min",
-                "max"
+                "max",
+                "argmin",
+                "argmax"
               ]
             },
             {
@@ -11867,10 +11881,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
