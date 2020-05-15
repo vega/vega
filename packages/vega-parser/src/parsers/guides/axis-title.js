@@ -1,4 +1,4 @@
-import {getSign, ifTop, ifX, ifY, mult} from './axis-util';
+import {getSign, ifTop, ifX, ifY, mult, patch} from './axis-util';
 import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
@@ -55,6 +55,9 @@ export default function(spec, config, userEncode, dataRef) {
   });
 
   autoLayout(_, orient, encode, userEncode);
+  encode.update.align = patch(encode.update.align, enter.align);
+  encode.update.angle = patch(encode.update.angle, enter.angle);
+  encode.update.baseline = patch(encode.update.baseline, enter.baseline);
 
   return guideMark({
     type:  TextMark,
@@ -67,7 +70,7 @@ export default function(spec, config, userEncode, dataRef) {
 
 function autoLayout(_, orient, encode, userEncode) {
   const auto = (value, dim) => value != null
-    ? (encode.update[dim] = patch(encode.update[dim], encoder(value)), false)
+    ? (encode.update[dim] = patch(encoder(value), encode.update[dim]), false)
     : !has(dim, userEncode) ? true : false;
 
   const autoY = auto(_('titleX'), 'x'),
@@ -76,11 +79,4 @@ function autoLayout(_, orient, encode, userEncode) {
   encode.enter.auto = autoX === autoY
     ? encoder(autoX)
     : ifX(orient, encoder(autoX), encoder(autoY));
-}
-
-function patch(base, value) {
-  const s = value.signal;
-  return s && s.endsWith('(null)')
-    ? {signal: s.slice(0, -6) + base.signal}
-    : value;
 }

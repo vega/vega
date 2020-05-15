@@ -87,3 +87,10 @@ const toExpr = v => isSignal(v)
 export const mult = (sign, value) => value === 0 ? 0 : isSignal(sign)
   ? {signal: `(${sign.signal}) * ${value}`}
   : {value: sign * value};
+
+export const patch = (value, base) => {
+  const s = value.signal;
+  return s && s.endsWith('(null)')
+    ? {signal: s.slice(0, -6) + base.signal}
+    : value;
+};

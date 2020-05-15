@@ -1,4 +1,4 @@
-import {getSign, ifRight, ifTop, ifX, ifY} from './axis-util';
+import {getSign, ifRight, ifTop, ifX, ifY, patch} from './axis-util';
 import {GuideLabelStyle, Label, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {extendOffset, lookup} from './guide-util';
@@ -25,8 +25,8 @@ export default function(spec, config, userEncode, dataRef, size, band) {
       flushOn = flush === 0 || !!flush,
       labelAlign = _('labelAlign'),
       labelBaseline = _('labelBaseline'),
-      encode, enter, tickSize, tickPos, align,
-      baseline, bound, overlap, offsetExpr;
+      encode, enter, update, tickSize, tickPos,
+      align, baseline, bound, overlap, offsetExpr;
 
   tickSize = encoder(size);
   tickSize.mult = sign;
@@ -40,14 +40,14 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     offset: extendOffset(band.offset, _('labelOffset'))
   };
 
-  align = labelAlign || ifX(orient,
+  align = ifX(orient,
     flushOn
       ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
       : {value: 'center'},
     ifRight(orient, 'left', 'right')
   );
 
-  baseline = labelBaseline || ifX(orient,
+  baseline = ifX(orient,
     ifTop(orient, 'bottom', 'top'),
     flushOn
       ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
@@ -65,11 +65,13 @@ export default function(spec, config, userEncode, dataRef, size, band) {
 
   encode = {
     enter: enter,
-    update: {
+    update: update = {
       opacity: one,
       text: {field: Label},
       x: enter.x,
-      y: enter.y
+      y: enter.y,
+      align,
+      baseline
     },
     exit: {
       opacity: zero,
@@ -79,13 +81,11 @@ export default function(spec, config, userEncode, dataRef, size, band) {
   };
 
   addEncoders(encode, {
-    dx: ifX(orient, !labelAlign && flushOn ? offsetExpr : null),
-    dy: ifY(orient, !labelBaseline && flushOn ? offsetExpr : null)
+    dx: !labelAlign && flushOn ? ifX(orient, offsetExpr) : null,
+    dy: !labelBaseline && flushOn ? ifY(orient, offsetExpr) : null
   });
 
   addEncoders(encode, {
-    align:       align,
-    baseline:    baseline,
     angle:       _('labelAngle'),
     fill:        _('labelColor'),
     fillOpacity: _('labelOpacity'),
@@ -95,6 +95,9 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     fontStyle:   _('labelFontStyle'),
     limit:       _('labelLimit'),
     lineHeight:  _('labelLineHeight')
+  }, {
+    align:       labelAlign,
+    baseline:    labelBaseline
   });
 
   bound   = _('labelBound');
@@ -107,6 +110,13 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     order: 'datum.index',
     bound: bound ? {scale, orient, tolerance: bound} : null
   } : undefined;
+
+  if (update.align !== align) {
+    update.align = patch(update.align, align);
+  }
+  if (update.baseline !== baseline) {
+    update.baseline = patch(update.baseline, baseline);
+  }
 
   return guideMark({
     type:  TextMark,
