@@ -27,6 +27,6 @@
   "dependencies": {
     "d3-array": "^2.4.0",
     "d3-time": "^1.1.0",
-    "vega-util": "^1.13.2"
+    "vega-util": "^1.14.0"
   }
 }

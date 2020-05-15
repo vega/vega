@@ -38,7 +38,7 @@
     "node-fetch": "^2.6.0",
     "topojson-client": "^3.1.0",
     "vega-format": "^1.0.0",
-    "vega-util": "^1.13.2"
+    "vega-util": "^1.14.0"
   },
   "browser": {
     "./build/vega-loader.node.js": "./build/vega-loader.js",

@@ -27,6 +27,6 @@
   "dependencies": {
     "vega-format": "^1.0.0",
     "vega-loader": "^4.3.0",
-    "vega-util": "^1.13.2"
+    "vega-util": "^1.14.0"
   }
 }
