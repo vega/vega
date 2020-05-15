@@ -1,12 +1,11 @@
-import {eventExpression, handlerExpression} from './expression';
-import parseParameters from './parameters';
 import {error, isObject} from 'vega-util';
 
 /**
  * Parse an event-driven operator update.
  */
-export default function(spec, ctx) {
-  var srcid = isObject(srcid = spec.source) ? srcid.$ref : srcid,
+export default function(spec) {
+  var ctx = this,
+      srcid = isObject(srcid = spec.source) ? srcid.$ref : srcid,
       source = ctx.get(srcid),
       target = null,
       update = spec.update,
@@ -14,17 +13,15 @@ export default function(spec, ctx) {
 
   if (!source) error('Source not defined: ' + spec.source);
 
-  if (spec.target && spec.target.$expr) {
-    target = eventExpression(spec.target.$expr, ctx);
-  } else {
-    target = ctx.get(spec.target);
-  }
+  target = spec.target && spec.target.$expr
+    ? ctx.eventExpression(spec.target.$expr)
+    : ctx.get(spec.target);
 
   if (update && update.$expr) {
     if (update.$params) {
-      params = parseParameters(update.$params, ctx);
+      params = ctx.parseParameters(update.$params);
     }
-    update = handlerExpression(update.$expr, ctx);
+    update = ctx.handlerExpression(update.$expr);
   }
 
   ctx.update(spec, source, target, update, params);

@@ -68,7 +68,6 @@ tape('Evaluate expressions with black list', function(t) {
   // should allow non-blacklisted ids
   t.doesNotThrow(evaluate.fn('d'));
   t.doesNotThrow(evaluate.fn('global'));
-  t.doesNotThrow(evaluate.fn('this'));
 
   t.end();
 });

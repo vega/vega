@@ -1,10 +1,9 @@
 import {Bottom, GuideTitleStyle, Left, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
-import {encoder, has} from '../encode/encode-util';
+import {addEncode, addEncoders, encoder, has} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {addEncode, addEncoders} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {

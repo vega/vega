@@ -44,6 +44,7 @@ import {
 
 import {
   clampRange,
+  extend,
   extent,
   flush,
   inrange,
@@ -90,17 +91,15 @@ import {
 import {
   contrast,
   luminance
-} from './luminance';
+} from './functions/luminance';
 
 import {
   data,
   indata,
   setdata
-} from './data';
+} from './functions/data';
 
-import {
-  default as encode
-} from './encode';
+import encode from './functions/encode';
 
 import {
   dayAbbrevFormat,
@@ -112,40 +111,32 @@ import {
   timeParse,
   utcFormat,
   utcParse
-} from './format';
+} from './functions/format';
 
 import {
   geoArea,
   geoBounds,
   geoCentroid
-} from './geo';
+} from './functions/geo';
 
-import {
-  default as inScope
-} from './inscope';
+import inScope from './functions/inscope';
 
-import {
-  default as intersect
-} from './intersect';
+import intersect from './functions/intersect';
 
 import {
   debug,
   info,
   warn
-} from './log';
+} from './functions/log';
 
-import {
-  default as merge
-} from './merge';
+import merge from './functions/merge';
 
-import {
-  default as modify
-} from './modify';
+import modify from './functions/modify';
 
 import {
   pinchAngle,
   pinchDistance
-} from './pinch';
+} from './functions/pinch';
 
 import {
   bandspace,
@@ -155,35 +146,39 @@ import {
   invert,
   range,
   scale
-} from './scale';
+} from './functions/scale';
 
-import {
-  default as scaleGradient
-} from './scale-gradient';
+import scaleGradient from './functions/scale-gradient';
 
 import {
   geoShape,
   pathShape
-} from './shape';
+} from './functions/shape';
 
 import {
   treeAncestors,
   treePath
-} from './tree';
+} from './functions/tree';
 
 import {
   containerSize,
   screen,
   windowSize
-} from './window';
+} from './functions/window';
+
+import {
+  SignalPrefix
+} from './constants';
+
+import {
+  internalScaleFunctions
+} from './scales';
 
 import {
   dataVisitor,
   indataVisitor,
   scaleVisitor
 } from './visitors';
-
-import {SignalPrefix} from './prefix';
 
 // Expression function context object
 export const functionContext = {
@@ -286,6 +281,7 @@ function buildFunctions(codegen) {
   const fn = functions(codegen);
   eventFunctions.forEach(name => fn[name] = eventPrefix + name);
   for (let name in functionContext) { fn[name] = thisPrefix + name; }
+  extend(fn, internalScaleFunctions(codegen, functionContext, astVisitors));
   return fn;
 }
 
@@ -333,7 +329,7 @@ export const codegenParams = {
   blacklist:  ['_'],
   whitelist:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
-  globalvar:  function(id) { return '_[' + stringValue(SignalPrefix + id) + ']'; },
+  globalvar:  id => '_[' + stringValue(SignalPrefix + id) + ']',
   functions:  buildFunctions,
   constants:  constants,
   visitors:   astVisitors

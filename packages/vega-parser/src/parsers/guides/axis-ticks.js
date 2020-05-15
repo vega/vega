@@ -1,9 +1,9 @@
 import {Bottom, Left, Top, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),

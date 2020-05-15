@@ -1,8 +1,9 @@
+import {codeGenerator, codegenParams} from './codegen';
+import {SignalPrefix} from './constants';
 import {CallExpression, parse} from 'vega-expression';
-import {SignalPrefix, codeGenerator, codegenParams} from 'vega-functions';
-import {error, hasOwnProperty, isString, stringValue} from 'vega-util';
+import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 
-export default function(expr, scope, preamble) {
+export default function(expr, scope) {
   var params = {}, ast, gen;
 
   // parse the expression to an abstract syntax tree (ast)
@@ -14,7 +15,7 @@ export default function(expr, scope, preamble) {
   }
 
   // analyze ast function calls for dependencies
-  ast.visit(function visitor(node) {
+  ast.visit(node => {
     if (node.type !== CallExpression) return;
     var name = node.callee.name,
         visit = codegenParams.visitors[name];
@@ -25,7 +26,7 @@ export default function(expr, scope, preamble) {
   gen = codeGenerator(ast);
 
   // collect signal dependencies
-  gen.globals.forEach(function(name) {
+  gen.globals.forEach(name => {
     var signalName = SignalPrefix + name;
     if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
       params[signalName] = scope.signalRef(name);
@@ -34,7 +35,7 @@ export default function(expr, scope, preamble) {
 
   // return generated expression code and dependencies
   return {
-    $expr:   preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
+    $expr:   extend({code: gen.code}, scope.options.ast ? {ast} : null),
     $fields: gen.fields,
     $params: params
   };

@@ -1,5 +1,5 @@
-import parseExpression from './expression';
 import {Scope, View} from '../util';
+import {parseExpression} from 'vega-functions';
 import {error, stringValue} from 'vega-util';
 
 var Timer = 'timer';
@@ -68,7 +68,7 @@ function streamParameters(entry, stream, scope) {
     param.push('inScope(event.item)');
   }
   if (param.length) {
-    entry.filter = parseExpression('(' + param.join(')&&(') + ')').$expr;
+    entry.filter = parseExpression('(' + param.join(')&&(') + ')', scope).$expr;
   }
 
   if ((param = stream.throttle) != null) {

@@ -1,7 +1,7 @@
-import parseExpression from './expression';
-import {entry, fieldRef, isSignal, ref} from '../util';
 import {Params} from '../transforms';
+import {entry, fieldRef, isSignal, ref} from '../util';
 import {definition} from 'vega-dataflow';
+import {parseExpression} from 'vega-functions';
 import {error, extend, isArray, isString, stringValue} from 'vega-util';
 
 /**

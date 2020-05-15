@@ -14,7 +14,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-functions:vega,vega-scale:vega,vega-selections:vega,vega-scenegraph:vega,vega-statistics:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
+    "rollup": "rollup -f umd -g vega-dataflow:vega,vega-event-selector:vega,vega-functions:vega,vega-scale:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-parser.js -c -m -o build/vega-parser.min.js",
@@ -26,7 +26,6 @@
   "dependencies": {
     "vega-dataflow": "^5.6.0",
     "vega-event-selector": "^2.0.3",
-    "vega-expression": "^2.6.4",
     "vega-functions": "^5.7.0",
     "vega-scale": "^7.0.0",
     "vega-util": "^1.13.2"

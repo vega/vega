@@ -1,7 +1,7 @@
 import parseTransform from './transform';
 import parseTrigger from './trigger';
-import {hasSignal, ref} from '../util';
 import {Collect, Load, Relay, Sieve} from '../transforms';
+import {hasSignal, ref} from '../util';
 import {array} from 'vega-util';
 
 export default function parseData(data, scope) {

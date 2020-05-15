@@ -9,7 +9,7 @@ tape('Parser parses event-driven operator updates', function(t) {
     operators: [
       { id:0, type:'Operator', value:50 },
       { id:1, type:'Operator', value:0 },
-      { id:2, type:'Operator', value:0, update:'this.value + 1' }
+      { id:2, type:'Operator', value:0, update: {code:'this.value + 1'} }
     ],
     streams: [
       { id:3, source:'window', type:'mousemove' },
@@ -21,7 +21,7 @@ tape('Parser parses event-driven operator updates', function(t) {
       { source:4, target:2 },             // touch to re-run
       { source:6, target:0, update: -1 }, // set literal value
       { source:6, target:1, update: {     // evaluate expression
-        $expr: '2 * _.op + event.buttons',
+        $expr: {code: '2 * _.op + event.buttons'},
         $params: {op:{$ref:2}}
       } }
     ]
@@ -31,7 +31,7 @@ tape('Parser parses event-driven operator updates', function(t) {
   df.events = events.events;
   df.fire = events.fire;
 
-  var ctx = runtime.parse(spec, runtime.context(df, {})),
+  var ctx = runtime.context(df, {}).parse(spec),
       ops = ctx.nodes;
 
   df.update(ops[0], 2).run();

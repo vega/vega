@@ -5,9 +5,9 @@ import {
 import guideGroup from './guide-group';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder, extendEncode} from '../encode/util';
 import {SymbolMark, TextMark} from '../marks/marktypes';
 import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
-import {addEncoders, encoder, extendEncode} from '../encode/encode-util';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
