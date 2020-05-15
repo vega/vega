@@ -1,3 +1,7 @@
+const attrText = val => (val + '')
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;');
+
 /**
  * Generate string for an opening xml tag.
  * @param tag the name of the xml tag
@@ -10,8 +14,7 @@ export function openTag(tag, attr, raw) {
     for (key in attr) {
       val = attr[key];
       if (val != null) {
-        val = (val + '').replace(/"/g, '&quot;');
-        s += ' ' + key + '="' + val + '"';
+        s += ' ' + key + '="' + attrText(val) + '"';
       }
     }
   }
