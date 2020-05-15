@@ -5,8 +5,7 @@ import {alignExpr, anchorExpr, lookup} from './guide-util';
 import {addEncoders, encoder, has} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {isSignal} from '../../util';
-import {extend, isArray} from 'vega-util';
+import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
   var _ = lookup(spec, config),
@@ -33,19 +32,14 @@ export default function(spec, config, userEncode, dataRef) {
     signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
-  update.x = ifX(orient, titlePos, null, true);
-  update.y = ifY(orient, titlePos, null, true);
+  update.x = ifX(orient, titlePos);
+  update.y = ifY(orient, titlePos);
   enter.angle = ifX(orient, zero, mult(sign, 90));
   enter.baseline = ifX(orient, ifTop(orient, Bottom, Top), {value: Bottom});
-
-  if (isSignal(orient)) {
-    update.angle = enter.angle;
-    update.baseline = enter.baseline;
-  }
+  update.angle = enter.angle;
+  update.baseline = enter.baseline;
 
   addEncoders(encode, {
-    angle:       _('titleAngle'),
-    baseline:    _('titleBaseline'),
     fill:        _('titleColor'),
     fillOpacity: _('titleOpacity'),
     font:        _('titleFont'),
@@ -53,9 +47,11 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit'),
-    lineHeight:  _('titleLineHeight')
+    lineHeight:  _('titleLineHeight'),
   }, { // require update
-    align:       _('titleAlign')
+    align:       _('titleAlign'),
+    angle:       _('titleAngle'),
+    baseline:    _('titleBaseline'),
   });
 
   autoLayout(_, orient, encode, userEncode);
@@ -70,22 +66,21 @@ export default function(spec, config, userEncode, dataRef) {
 }
 
 function autoLayout(_, orient, encode, userEncode) {
-  const auto = (value, dim, ifXY) => {
-    if (value != null) {
-      value = encoder(value);
-      encode.update[dim] = isArray(encode.update[dim])
-        ? ifXY(orient, value, encode.update[dim][0])
-        : encode.update[dim] = value;
-      return false;
-    } else {
-      return !has(dim, userEncode) ? true : false;
-    }
-  };
+  const auto = (value, dim) => value != null
+    ? (encode.update[dim] = patch(encode.update[dim], encoder(value)), false)
+    : !has(dim, userEncode) ? true : false;
 
-  const autoY = auto(_('titleX'), 'x', ifY),
-        autoX = auto(_('titleY'), 'y', ifX);
+  const autoY = auto(_('titleX'), 'x'),
+        autoX = auto(_('titleY'), 'y');
 
   encode.enter.auto = autoX === autoY
     ? encoder(autoX)
     : ifX(orient, encoder(autoX), encoder(autoY));
+}
+
+function patch(base, value) {
+  const s = value.signal;
+  return s && s.endsWith('(null)')
+    ? {signal: s.slice(0, -6) + base.signal}
+    : value;
 }

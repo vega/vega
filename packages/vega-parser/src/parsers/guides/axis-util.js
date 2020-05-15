@@ -11,15 +11,13 @@ export const getSign = (orient, a, b) => isSignal(orient)
   : orient === Left || orient === Top ? a : b;
 
 // condition on axis x-direction
-// short-circuit if first option is undefined
-export const ifX = (orient, a, b, f) => !a ? a : isSignal(orient)
-  ? ifXEnc(orient.signal, a, b, f)
+export const ifX = (orient, a, b) => isSignal(orient)
+  ? ifXEnc(orient.signal, a, b)
   : isX(orient) ? a : b;
 
 // condition on axis y-direction
-// short-circuit if first option is undefined
-export const ifY = (orient, a, b, f) => !a ? a : isSignal(orient)
-  ? ifYEnc(orient.signal, a, b, f)
+export const ifY = (orient, a, b) => isSignal(orient)
+  ? ifYEnc(orient.signal, a, b)
   : isX(orient) ? b : a;
 
 export const ifTop = (orient, a, b) => isSignal(orient)
@@ -30,8 +28,8 @@ export const ifRight = (orient, a, b) => isSignal(orient)
   ? ifRightExpr(orient.signal, a, b)
   : orient === Right ? {value: a} : {value: b};
 
-const ifXEnc = ($orient, a, b, f) => ifEnc(
-  `${$orient} === '${Top}' || ${$orient} === '${Bottom}'`, a, b, f
+const ifXEnc = ($orient, a, b) => ifEnc(
+  `${$orient} === '${Top}' || ${$orient} === '${Bottom}'`, a, b
 );
 
 const ifYEnc = ($orient, a, b, f) => ifEnc(
@@ -50,12 +48,12 @@ const ifRightExpr = ($orient, a, b) => ifExpr(
   `${$orient} === '${Right}'`, a, b
 );
 
-const ifEnc = (test, a, b, rule) => {
+const ifEnc = (test, a, b) => {
   // ensure inputs are encoder objects (or null)
   a = a != null ? encoder(a) : a;
   b = b != null ? encoder(b) : b;
 
-  if (!rule && isSimple(a) && isSimple(b)) {
+  if (isSimple(a) && isSimple(b)) {
     // if possible generate simple signal expression
     a = a ? (a.signal || stringValue(a.value)) : null;
     b = b ? (b.signal || stringValue(b.value)) : null;
@@ -67,17 +65,19 @@ const ifEnc = (test, a, b, rule) => {
 };
 
 const isSimple = enc => (
-  !enc || Object.keys(enc).length === 1
+  enc == null || Object.keys(enc).length === 1
 );
 
 const ifExpr = (test, a, b) => ({
   signal: `${test} ? (${toExpr(a)}) : (${toExpr(b)})`
 });
 
-export const ifOrient = ($orient, top, bottom, left, right) => ({
-  signal: `${$orient}==='${Left}' ? (${toExpr(left)}) : `
-        + `${$orient}==='${Bottom}' ? (${toExpr(bottom)}) : `
-        + `${$orient}==='${Right}' ? (${toExpr(right)}) : (${toExpr(top)})`
+export const ifOrient = ($orient, t, b, l, r) => ({
+  signal: (l != null ? `${$orient} === '${Left}' ? (${toExpr(l)}) : ` : '')
+        + (b != null ? `${$orient} === '${Bottom}' ? (${toExpr(b)}) : ` : '')
+        + (r != null ? `${$orient} === '${Right}' ? (${toExpr(r)}) : ` : '')
+        + (t != null ? `${$orient} === '${Top}' ? (${toExpr(t)}) : ` : '')
+        + '(null)'
 });
 
 const toExpr = v => isSignal(v)

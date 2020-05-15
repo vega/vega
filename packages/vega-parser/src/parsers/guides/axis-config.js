@@ -3,18 +3,17 @@ import {Bottom, GuideLabelStyle, GuideTitleStyle, Top} from './constants';
 import {isSignal} from '../../util';
 import {extend, hasOwnProperty} from 'vega-util';
 
-function fallback(prop, axisOrientConfig, axisConfig, style) {
-  var styleProp;
-  if (hasOwnProperty(axisOrientConfig, prop)) {
-    return axisOrientConfig[prop];
-  }
+function fallback(prop, config, axisConfig, style) {
+  let styleProp;
 
-  if (hasOwnProperty(axisOrientConfig, prop)) {
+  if (config && hasOwnProperty(config, prop)) {
+    return config[prop];
+  }
+  else if (hasOwnProperty(axisConfig, prop)) {
     return axisConfig[prop];
   }
-
   if (prop.startsWith('title')) {
-    switch(prop) {
+    switch (prop) {
       case 'titleColor':
         styleProp = 'fill';
         break;
@@ -23,10 +22,10 @@ function fallback(prop, axisOrientConfig, axisConfig, style) {
       case 'titleFontWeight':
         styleProp = prop[5].toLowerCase() + prop.slice(6);
     }
-
     return style[GuideTitleStyle][styleProp];
-  } else if (prop.startsWith('label')) {
-    switch(prop) {
+  }
+  else if (prop.startsWith('label')) {
+    switch (prop) {
       case 'labelColor':
         styleProp = 'fill';
         break;
@@ -40,51 +39,49 @@ function fallback(prop, axisOrientConfig, axisConfig, style) {
   return null;
 }
 
+function keys(objects) {
+  const map = {};
+  for (const obj of objects) {
+    if (!obj) continue;
+    for (const key in obj) map[key] = 1;
+  }
+  return Object.keys(map);
+}
+
 export default function(spec, scope) {
   var config = scope.config,
       style = config.style,
       axis = config.axis,
       band = scope.scaleType(spec.scale) === 'band' && config.axisBand,
       orient = spec.orient,
-      xy,
-      or;
+      xy, or, key;
 
   if (isSignal(orient)) {
-    var axisX = config.axisX || {},
-        axisY = config.axisY || {},
-        axisTop = config.axisTop || {},
-        axisBottom = config.axisBottom || {},
-        axisLeft = config.axisLeft || {},
-        axisRight = config.axisRight || {},
-        axisXYConfigKeys = Array.from(new Set(
-          Object.keys(axisX)
-            .concat(Object.keys(axisY))
-        )),
-        axisOrientConfigKeys = Array.from(new Set(
-          Object.keys(axisTop)
-            .concat(Object.keys(axisBottom)
-            .concat(Object.keys(axisLeft)
-            .concat(Object.keys(axisRight))))
-        ));
-
+    const xyKeys = keys([
+            config.axisX, config.axisY
+          ]),
+          orientKeys = keys([
+            config.axisTop, config.axisBottom,
+            config.axisLeft, config.axisRight
+          ]);
 
     xy = {};
-    for (var prop of axisXYConfigKeys) {
-      xy[prop] = ifX(
+    for (key of xyKeys) {
+      xy[key] = ifX(
         orient,
-        fallback(prop, axisX, axis, style),
-        fallback(prop, axisY, axis, style),
+        fallback(key, config.axisX, axis, style),
+        fallback(key, config.axisY, axis, style),
       );
     }
 
     or = {};
-    for (prop of axisOrientConfigKeys) {
-      or[prop] = ifOrient(
-        orient,
-        fallback(prop, axisTop, axis, style),
-        fallback(prop, axisBottom, axis, style),
-        fallback(prop, axisLeft, axis, style),
-        fallback(prop, axisRight, axis, style),
+    for (key of orientKeys) {
+      or[key] = ifOrient(
+        orient.signal,
+        fallback(key, config.axisTop, axis, style),
+        fallback(key, config.axisBottom, axis, style),
+        fallback(key, config.axisLeft, axis, style),
+        fallback(key, config.axisRight, axis, style),
       );
     }
   } else {

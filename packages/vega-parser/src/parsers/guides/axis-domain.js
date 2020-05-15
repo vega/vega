@@ -29,12 +29,10 @@ export default function(spec, config, userEncode, dataRef) {
   const pos0 = position(spec, 0);
   const pos1 = position(spec, 1);
 
-  enter.x = ifX(orient, pos0, zero);
-  update.x = ifX(orient, pos0);
+  enter.x = update.x = ifX(orient, pos0, zero);
   enter.x2 = update.x2 = ifX(orient, pos1);
 
-  enter.y = ifY(orient, pos0, zero);
-  update.y = ifY(orient, pos0);
+  enter.y = update.y = ifY(orient, pos0, zero);
   enter.y2 = update.y2 = ifY(orient, pos1);
 
   return guideMark({

@@ -68,20 +68,18 @@ export default function(spec, config, userEncode, dataRef, band) {
 }
 
 function offsetValue(offset, sign)  {
-  var entry;
-
   if (sign === 1) {
-    // do nothing!
+    // no further adjustment needed, just return offset
   } else if (!isObject(offset)) {
     offset = isSignal(sign)
-      ? {signal: `(${sign.signal}) === 1 ? 0 : (${sign.signal}) * (${offset || 0})`}
+      ? {signal: `(${sign.signal}) * (${offset || 0})`}
       : sign * (offset || 0);
   } else {
-    entry = offset = extend({}, offset);
+    let entry = offset = extend({}, offset);
     while (entry.mult != null) {
       if (!isObject(entry.mult)) {
         entry.mult = isSignal(sign) // no offset if sign === 1
-          ? {signal: `(${sign.signal}) === 1 ? 0 : -(${entry.mult})`}
+          ? {signal: `(${entry.mult}) * (${sign.signal})`}
           : entry.mult * sign;
         return offset;
       } else {
