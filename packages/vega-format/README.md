@@ -136,4 +136,4 @@ Get or set the default locale for both number and time formatting. If no argumen
 vega.<b>resetDefaultLocale</b>()
 [<>](https://github.com/vega/vega/blob/master/packages/vega-format/src/locale.js "Source")
 
-Resets the default locale for both numner and time formatting and returns the resulting comgined locale object. The new default locales for Vega will match the current default locales for the underlying d3-format and d3-time-format libraries.
+Resets the default locale for both number and time formatting and returns the resulting comgined locale object. The new default locales for Vega will match the current default locales for the underlying d3-format and d3-time-format libraries.
