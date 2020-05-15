@@ -12,7 +12,7 @@ function fallback(prop, config, axisConfig, style) {
   else if (hasOwnProperty(axisConfig, prop)) {
     return axisConfig[prop];
   }
-  if (prop.startsWith('title')) {
+  else if (prop.startsWith('title')) {
     switch (prop) {
       case 'titleColor':
         styleProp = 'fill';
