@@ -314,7 +314,7 @@ function findOperatorHandler(op, handler) {
 function addOperatorListener(view, name, op, handler) {
   var h = findOperatorHandler(op, handler);
   if (!h) {
-    h = trap(this, function() { handler(name, op.value); });
+    h = trap(view, function() { handler(name, op.value); });
     h.handler = handler;
     view.on(op, null, h);
   }
