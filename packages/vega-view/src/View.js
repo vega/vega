@@ -74,12 +74,10 @@ export default function View(spec, options) {
   const ctx = runtime(view, spec, options.functions);
   view._runtime = ctx;
   view._signals = ctx.signals;
-  view._bind = (spec.bindings || []).map(function(_) {
-    return {
-      state: null,
-      param: extend({}, _)
-    };
-  });
+  view._bind = (spec.bindings || []).map(_ => ({
+    state: null,
+    param: extend({}, _)
+  }));
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -303,18 +301,15 @@ prototype.removeResizeListener = function(handler) {
 };
 
 function findOperatorHandler(op, handler) {
-  var t = op._targets || [],
-      h = t.filter(function(op) {
-            var u = op._update;
-            return u && u.handler === handler;
-          });
+  const h = (op._targets || [])
+    .filter(op => op._update && op._update.handler === handler);
   return h.length ? h[0] : null;
 }
 
 function addOperatorListener(view, name, op, handler) {
   var h = findOperatorHandler(op, handler);
   if (!h) {
-    h = trap(view, function() { handler(name, op.value); });
+    h = trap(view, () => handler(name, op.value));
     h.handler = handler;
     view.on(op, null, h);
   }
