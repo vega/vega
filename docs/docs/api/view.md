@@ -27,7 +27,7 @@ vega.<b>View</b>(<i>runtime</i>[, <i>options</i>])
 Constructor that creates a new View instance for the provided [Vega dataflow *runtime* specification](https://github.com/vega/vega/blob/master/packages/vega-runtime/). If provided, the *options* argument should be an object with one or more of the following properties:
 
 - *background*: View background color. See the [background](#view_background) method.
-- *bind*: DOM container element (or unique CSS selector) for input elements bound to signals. See the [initialize](#view_initialize) method.
+- *bind*: DOM container element (or CSS selector) for input elements bound to signals. See the [initialize](#view_initialize) method.
 - *container*: Parent DOM container element (or unique CSS selector) for this view. See the [initialize](#view_initialize) method.
 - *hover*: Boolean flag indicating if hover processing should be enabled. See the [hover](#view_hover) method.
 - *loader*: Default [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images.
@@ -368,7 +368,7 @@ Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refe
 
 The optional *options* object provides additional parameters for the canvas:
 
-- *type*: Type string passed to the node-canvas Canvas constructor (for example, to specify PDF output). This property will be ignored if used in a browser.
+- *type*: Type string passed to the [node-canvas Canvas constructor](https://github.com/Automattic/node-canvas#createcanvas) (for example, to specify `'pdf'` output). This property will be ignored if used in the browser.
 - *context*: An object of key-value pairs to assign to the Canvas 2D context object. Useful for setting context parameters, particularly for node-canvas.
 - *externalContext*: {% include tag ver="5.12" %} An external [Context2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D) instance to render into. If an external canvas is provided, the Promise returned by *toCanvas* will resolve to null. As Vega makes changes to the rendering context state, callers should invoke *context.save()* prior to *toCanvas()*, and invoke *context.restore()* to restore the state after the returned Promise resolves.
 

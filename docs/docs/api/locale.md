@@ -4,11 +4,11 @@ title: Locale API
 permalink: /docs/api/locale/index.html
 ---
 
-To display number and date values, by default Vega uses formatting rules for American English. If you are deploying visualizations for other languages you will want to change these defaults.
+To display number and date values, by default Vega uses formatting rules for American English. If you are deploying visualizations for other languages you will want to change these defaults. Vega uses the formatting utilities provided by the D3 framework, specifically the [d3-format](https://github.com/d3/d3-format) and [d3-time-format](https://github.com/d3/d3-time-format) libraries.
 
-Vega uses formatting utilities provided by the D3 framework, specifically the [d3-format](https://github.com/d3/d3-format) and [d3-time-format](https://github.com/d3/d3-time-format) libraries. These libraries provide methods for updating the default locale and Vega exports these methods as part of its own API.
+Vega supports changing the default locale for all visualizations using the methods below. To set the locale for a specific view, either provide a [`locale` config](../../config/#view) or use the [View constructor `locale` option](../view/#view).
 
-**Note:** Application code should set the locale to the desired default _before_ performing parsing and view generation.
+**Note:** If changing the default locale, application code should set the locale to the desired value _before_ performing parsing and view generation.
 
 ## <a name="locale"></a>Locale Configuration
 
