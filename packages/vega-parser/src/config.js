@@ -1,17 +1,17 @@
-var defaultFont = 'sans-serif',
-    defaultSymbolSize = 30,
-    defaultStrokeWidth = 2,
-    defaultColor = '#4c78a8',
-    black = '#000',
-    gray = '#888',
-    lightGray = '#ddd';
-
 /**
  * Standard configuration defaults for Vega specification parsing.
  * Users can provide their own (sub-)set of these default values
  * by passing in a config object to the top-level parse method.
  */
 export default function() {
+  const defaultFont = 'sans-serif',
+        defaultSymbolSize = 30,
+        defaultStrokeWidth = 2,
+        defaultColor = '#4c78a8',
+        black = '#000',
+        gray = '#888',
+        lightGray = '#ddd';
+
   return {
     // default visualization description
     description: 'Vega visualization',
