@@ -38,4 +38,8 @@ jobs:
       - name: Install Node dependencies
         run: yarn --frozen-lockfile
 
-      - run: yarn test
+      - name: Run tests
+        run: yarn lerna run test
+
+      - name: Lint
+        run: yarn lint
