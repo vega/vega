@@ -13,9 +13,11 @@ export const styles = {
   'blend':            'mix-blend-mode'
 };
 
+export const svgRootClass = 'vega-svg-root';
+
 // ensure miter limit default is consistent with canvas (#2498)
 export const defaultCSS = [
-  '* { fill: none; }',
-  'tspan { fill: inherit; }',
-  'path { stroke-miterlimit: 10; }'
+  `${svgRootClass} * { fill: none; }`,
+  `${svgRootClass} tspan { fill: inherit; }`,
+  `${svgRootClass} path { stroke-miterlimit: 10; }`
 ].join(' ');
