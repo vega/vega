@@ -10,28 +10,27 @@ export default function CanvasHandler(loader, tooltip) {
   this._down = null;
   this._touch = null;
   this._first = true;
+  this._events = {};
 }
 
-var prototype = inherits(CanvasHandler, Handler);
+const prototype = inherits(CanvasHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
-  // add event listeners
-  var canvas = this._canvas = el && domFind(el, 'canvas');
-  if (canvas) {
-    var that = this;
-    this.events.forEach(function(type) {
-      canvas.addEventListener(type, function(evt) {
-        if (prototype[type]) {
-          prototype[type].call(that, evt);
-        } else {
-          that.fire(type, evt);
-        }
-      });
-    });
-  }
-
+  this._canvas = el && domFind(el, 'canvas');
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
+
+// lazily add a listener to the canvas as needed
+function eventListenerCheck(handler, type) {
+  const canvas = handler.canvas();
+  if (canvas && !handler._events[type]) {
+    handler._events[type] = 1;
+    canvas.addEventListener(type, handler[type]
+      ? evt => handler[type](evt)
+      : evt => handler.fire(type, evt)
+    );
+  }
+}
 
 // return the backing canvas instance
 prototype.canvas = function() {
@@ -46,15 +45,10 @@ prototype.context = function() {
 // supported events
 prototype.events = Events;
 
-// to keep old versions of firefox happy
-prototype.DOMMouseScroll = function(evt) {
-  this.fire('mousewheel', evt);
-};
-
 function move(moveEvent, overEvent, outEvent) {
   return function(evt) {
-    var a = this._active,
-        p = this.pickEvent(evt);
+    const a = this._active,
+          p = this.pickEvent(evt);
 
     if (p === a) {
       // active item and picked item are the same
@@ -79,6 +73,11 @@ function inactive(type) {
     this._active = null;
   };
 }
+
+// to keep old versions of firefox happy
+prototype.DOMMouseScroll = function(evt) {
+  this.fire('mousewheel', evt);
+};
 
 prototype.mousemove = move('mousemove', 'mouseover', 'mouseout');
 prototype.dragover  = move('dragover', 'dragenter', 'dragleave');
@@ -120,8 +119,8 @@ prototype.touchend = function(evt) {
 
 // fire an event
 prototype.fire = function(type, evt, touch) {
-  var a = touch ? this._touch : this._active,
-      h = this._handlers[type], i, len;
+  const a = touch ? this._touch : this._active,
+        h = this._handlers[type];
 
   // set event type relative to scenegraph items
   evt.vegaType = type;
@@ -135,7 +134,7 @@ prototype.fire = function(type, evt, touch) {
 
   // invoke all registered handlers
   if (h) {
-    for (i=0, len=h.length; i<len; ++i) {
+    for (let i=0, len=h.length; i<len; ++i) {
       h[i].handler.call(this._obj, evt, a);
     }
   }
@@ -143,11 +142,12 @@ prototype.fire = function(type, evt, touch) {
 
 // add an event handler
 prototype.on = function(type, handler) {
-  var name = this.eventName(type),
-      h = this._handlers,
-      i = this._handlerIndex(h[name], type, handler);
+  const name = this.eventName(type),
+        h = this._handlers,
+        i = this._handlerIndex(h[name], type, handler);
 
   if (i < 0) {
+    eventListenerCheck(this, type);
     (h[name] || (h[name] = [])).push({
       type:    type,
       handler: handler
@@ -159,9 +159,9 @@ prototype.on = function(type, handler) {
 
 // remove an event handler
 prototype.off = function(type, handler) {
-  var name = this.eventName(type),
-      h = this._handlers[name],
-      i = this._handlerIndex(h, type, handler);
+  const name = this.eventName(type),
+        h = this._handlers[name],
+        i = this._handlerIndex(h, type, handler);
 
   if (i >= 0) {
     h.splice(i, 1);
@@ -171,8 +171,8 @@ prototype.off = function(type, handler) {
 };
 
 prototype.pickEvent = function(evt) {
-  var p = point(evt, this._canvas),
-      o = this._origin;
+  const p = point(evt, this._canvas),
+        o = this._origin;
   return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
 };
 
@@ -180,7 +180,7 @@ prototype.pickEvent = function(evt) {
 // x, y -- the absolute x, y mouse coordinates on the canvas element
 // gx, gy -- the relative coordinates within the current group
 prototype.pick = function(scene, x, y, gx, gy) {
-  var g = this.context(),
-      mark = Marks[scene.marktype];
+  const g = this.context(),
+        mark = Marks[scene.marktype];
   return mark.pick.call(this, g, scene, x, y, gx, gy);
 };

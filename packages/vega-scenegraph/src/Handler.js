@@ -24,7 +24,7 @@ function defaultTooltip(handler, event, item, value) {
   handler.element().setAttribute('title', value || '');
 }
 
-var prototype = Handler.prototype;
+const prototype = Handler.prototype;
 
 /**
  * Initialize a new Handler instance.
@@ -97,7 +97,7 @@ prototype.off = function(/*type, handler*/) {};
  * @return {number} - The handler's array index or -1 if not registered.
  */
 prototype._handlerIndex = function(h, type, handler) {
-  for (var i = h ? h.length : 0; --i>=0;) {
+  for (let i = h ? h.length : 0; --i>=0;) {
     if (h[i].type === type && (!handler || h[i].handler === handler)) {
       return i;
     }
@@ -114,11 +114,11 @@ prototype._handlerIndex = function(h, type, handler) {
  * @return {Array} - A new array containing all registered event handlers.
  */
 prototype.handlers = function(type) {
-  var h = this._handlers, a = [], k;
+  const h = this._handlers, a = [];
   if (type) {
     a.push.apply(a, h[this.eventName(type)]);
   } else {
-    for (k in h) { a.push.apply(a, h[k]); }
+    for (const k in h) { a.push.apply(a, h[k]); }
   }
   return a;
 };
@@ -130,8 +130,8 @@ prototype.handlers = function(type) {
  * @return {string} - A string with the event type only.
  */
 prototype.eventName = function(name) {
-  var i = name.indexOf('.');
-  return i < 0 ? name : name.slice(0,i);
+  const i = name.indexOf('.');
+  return i < 0 ? name : name.slice(0, i);
 };
 
 /**
@@ -143,10 +143,10 @@ prototype.eventName = function(name) {
 prototype.handleHref = function(event, item, href) {
   this._loader
     .sanitize(href, {context:'href'})
-    .then(function(opt) {
-      var e = new MouseEvent(event.type, event),
-          a = domCreate(null, 'a');
-      for (var name in opt) a.setAttribute(name, opt[name]);
+    .then(opt => {
+      const e = new MouseEvent(event.type, event),
+            a = domCreate(null, 'a');
+      for (const name in opt) a.setAttribute(name, opt[name]);
       a.dispatchEvent(e);
     })
     .catch(function() { /* do nothing */ });
@@ -162,7 +162,7 @@ prototype.handleHref = function(event, item, href) {
 prototype.handleTooltip = function(event, item, show) {
   if (item && item.tooltip != null) {
     item = resolveItem(item, event, this.canvas(), this._origin);
-    var value = (show && item && item.tooltip) || null;
+    const value = (show && item && item.tooltip) || null;
     this._tooltip.call(this._obj, this, event, item, value);
   }
 };
@@ -176,15 +176,17 @@ prototype.handleTooltip = function(event, item, show) {
  *   right, and bottom properties.
  */
 prototype.getItemBoundingClientRect = function(item) {
-  if (!(el = this.canvas())) return;
+  const el = this.canvas();
+  if (!el) return;
 
-  var el, rect = el.getBoundingClientRect(),
-      origin = this._origin,
-      itemBounds = item.bounds,
-      x = itemBounds.x1 + origin[0] + rect.left,
-      y = itemBounds.y1 + origin[1] + rect.top,
-      w = itemBounds.width(),
-      h = itemBounds.height();
+  const rect = el.getBoundingClientRect(),
+        origin = this._origin,
+        bounds = item.bounds,
+        width = bounds.width(),
+        height = bounds.height();
+
+  let x = bounds.x1 + origin[0] + rect.left,
+      y = bounds.y1 + origin[1] + rect.top;
 
   // translate coordinate for each parent group
   while (item.mark && (item = item.mark.group)) {
@@ -194,13 +196,7 @@ prototype.getItemBoundingClientRect = function(item) {
 
   // return DOMRect-compatible bounding box
   return {
-    x:      x,
-    y:      y,
-    width:  w,
-    height: h,
-    left:   x,
-    top:    y,
-    right:  x + w,
-    bottom: y + h
+    x, y, width, height,
+    left: x, top: y, right: x + width, bottom: y + height
   };
 };
