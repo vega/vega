@@ -8,7 +8,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {defaultCSS, styles} from './util/svg/styles';
+import {defaultCSS, styles, svgRootClass} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -64,6 +64,7 @@ prototype.resize = function(width, height, origin, scaleFactor) {
   }
 
   t.root = openTag('g', {
+    class: svgRootClass,
     transform: 'translate(' + o + ')'
   });
 

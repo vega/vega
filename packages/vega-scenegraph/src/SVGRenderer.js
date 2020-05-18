@@ -8,7 +8,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {defaultCSS, styles} from './util/svg/styles';
+import {defaultCSS, styles, svgRootClass} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 const RootIndex = 1,
@@ -38,6 +38,7 @@ prototype.initialize = function(el, width, height, padding) {
 
     // set the svg root group
     this._root = domChild(this._svg, RootIndex, 'g', ns);
+    this._root.setAttribute('class', svgRootClass);
 
     // ensure no additional child elements
     domClear(this._svg, RootIndex + 1);
