@@ -52,8 +52,7 @@ This example cross-filters the _delay_, _time_, and _distance_ fields in a data 
         {
           "type": "resolvefilter",
           "filter": {"signal": "xfilter"},
-          "ignore": 1,
-
+          "ignore": 1
         },
         ...
       ]
