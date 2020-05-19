@@ -11,7 +11,8 @@ export const version: string;
 export function formatLocale(definition: object): void;
 export function timeFormatLocale(definition: object): void;
 
-export function parse(spec: Spec, opt?: any): Runtime;
+// Parser
+export function parse(spec: Spec, config?: any, opt?: object): Runtime;
 
 export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
@@ -35,14 +36,11 @@ export interface Locale {
   utcParse: (spec: string) => TimeParse;
 }
 
-export type ToCanvasOptions =
-  | {
-      type?: string;
-      context?: any;
-    }
-  | {
-      externalContext: any;
-    };
+export interface ToCanvasOptions {
+  type?: string;
+  context?: any;
+  externalContext?: any;
+}
 
 export class View {
   constructor(runtime: Runtime, config?: any);
@@ -67,6 +65,9 @@ export class View {
   changeset(): any;
   data(name: string): any[];
   data(name: string, tuples: any): this;
+
+  description(): string;
+  description(s: string): this;
 
   width(): number;
   width(w: number): this;
