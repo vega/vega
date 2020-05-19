@@ -1,6 +1,6 @@
 import {ariaLabel} from './aria';
 import background from './background';
-import cursor from './cursor';
+import cursor, {setCursor} from './cursor';
 import {change, data, dataref, insert, remove} from './data';
 import {events, initializeEventConfig} from './events';
 import hover from './hover';
@@ -62,6 +62,7 @@ export default function View(spec, options) {
   view._tooltip = options.tooltip || defaultTooltip,
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
+  view._globalCursor = false;
   view._preventDefault = false;
   view._timers = [];
   view._eventListeners = [];
@@ -69,6 +70,7 @@ export default function View(spec, options) {
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
+  view.globalCursor(view._eventConfig.globalCursor);
 
   // initialize dataflow graph
   const ctx = runtime(view, spec, options.functions);
@@ -336,6 +338,18 @@ prototype.addDataListener = function(name, handler) {
 
 prototype.removeDataListener = function(name, handler) {
   return removeOperatorListener(this, dataref(this, name).values, handler);
+};
+
+prototype.globalCursor = function(_) {
+  if (arguments.length) {
+    if (this._globalCursor !== !!_) {
+      setCursor(this, null); // clear previous cursor target
+      this._globalCursor = !!_;
+    }
+    return this;
+  } else {
+    return this._globalCursor;
+  }
 };
 
 prototype.preventDefault = function(_) {
