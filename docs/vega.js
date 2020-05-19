@@ -6078,7 +6078,7 @@
     sum: {
       init:  m => m.sum = 0,
       value: m => m.sum,
-      add:  (m, v) => m.sum += v,
+      add:  (m, v) => m.sum += +v,
       rem:  (m, v) => m.sum -= v,
     },
     product: {
@@ -15448,7 +15448,7 @@
     handler.element().setAttribute('title', value || '');
   }
 
-  var prototype$J = Handler.prototype;
+  const prototype$J = Handler.prototype;
 
   /**
    * Initialize a new Handler instance.
@@ -15521,7 +15521,7 @@
    * @return {number} - The handler's array index or -1 if not registered.
    */
   prototype$J._handlerIndex = function(h, type, handler) {
-    for (var i = h ? h.length : 0; --i>=0;) {
+    for (let i = h ? h.length : 0; --i>=0;) {
       if (h[i].type === type && (!handler || h[i].handler === handler)) {
         return i;
       }
@@ -15538,11 +15538,11 @@
    * @return {Array} - A new array containing all registered event handlers.
    */
   prototype$J.handlers = function(type) {
-    var h = this._handlers, a = [], k;
+    const h = this._handlers, a = [];
     if (type) {
       a.push.apply(a, h[this.eventName(type)]);
     } else {
-      for (k in h) { a.push.apply(a, h[k]); }
+      for (const k in h) { a.push.apply(a, h[k]); }
     }
     return a;
   };
@@ -15554,8 +15554,8 @@
    * @return {string} - A string with the event type only.
    */
   prototype$J.eventName = function(name) {
-    var i = name.indexOf('.');
-    return i < 0 ? name : name.slice(0,i);
+    const i = name.indexOf('.');
+    return i < 0 ? name : name.slice(0, i);
   };
 
   /**
@@ -15567,10 +15567,10 @@
   prototype$J.handleHref = function(event, item, href) {
     this._loader
       .sanitize(href, {context:'href'})
-      .then(function(opt) {
-        var e = new MouseEvent(event.type, event),
-            a = domCreate(null, 'a');
-        for (var name in opt) a.setAttribute(name, opt[name]);
+      .then(opt => {
+        const e = new MouseEvent(event.type, event),
+              a = domCreate(null, 'a');
+        for (const name in opt) a.setAttribute(name, opt[name]);
         a.dispatchEvent(e);
       })
       .catch(function() { /* do nothing */ });
@@ -15586,7 +15586,7 @@
   prototype$J.handleTooltip = function(event, item, show) {
     if (item && item.tooltip != null) {
       item = resolveItem(item, event, this.canvas(), this._origin);
-      var value = (show && item && item.tooltip) || null;
+      const value = (show && item && item.tooltip) || null;
       this._tooltip.call(this._obj, this, event, item, value);
     }
   };
@@ -15600,15 +15600,17 @@
    *   right, and bottom properties.
    */
   prototype$J.getItemBoundingClientRect = function(item) {
-    if (!(el = this.canvas())) return;
+    const el = this.canvas();
+    if (!el) return;
 
-    var el, rect = el.getBoundingClientRect(),
-        origin = this._origin,
-        itemBounds = item.bounds,
-        x = itemBounds.x1 + origin[0] + rect.left,
-        y = itemBounds.y1 + origin[1] + rect.top,
-        w = itemBounds.width(),
-        h = itemBounds.height();
+    const rect = el.getBoundingClientRect(),
+          origin = this._origin,
+          bounds = item.bounds,
+          width = bounds.width(),
+          height = bounds.height();
+
+    let x = bounds.x1 + origin[0] + rect.left,
+        y = bounds.y1 + origin[1] + rect.top;
 
     // translate coordinate for each parent group
     while (item.mark && (item = item.mark.group)) {
@@ -15618,14 +15620,8 @@
 
     // return DOMRect-compatible bounding box
     return {
-      x:      x,
-      y:      y,
-      width:  w,
-      height: h,
-      left:   x,
-      top:    y,
-      right:  x + w,
-      bottom: y + h
+      x, y, width, height,
+      left: x, top: y, right: x + width, bottom: y + height
     };
   };
 
@@ -15843,28 +15839,27 @@
     this._down = null;
     this._touch = null;
     this._first = true;
+    this._events = {};
   }
 
-  var prototype$L = inherits(CanvasHandler, Handler);
+  const prototype$L = inherits(CanvasHandler, Handler);
 
   prototype$L.initialize = function(el, origin, obj) {
-    // add event listeners
-    var canvas = this._canvas = el && domFind(el, 'canvas');
-    if (canvas) {
-      var that = this;
-      this.events.forEach(function(type) {
-        canvas.addEventListener(type, function(evt) {
-          if (prototype$L[type]) {
-            prototype$L[type].call(that, evt);
-          } else {
-            that.fire(type, evt);
-          }
-        });
-      });
-    }
-
+    this._canvas = el && domFind(el, 'canvas');
     return Handler.prototype.initialize.call(this, el, origin, obj);
   };
+
+  // lazily add a listener to the canvas as needed
+  function eventListenerCheck(handler, type) {
+    const canvas = handler.canvas();
+    if (canvas && !handler._events[type]) {
+      handler._events[type] = 1;
+      canvas.addEventListener(type, handler[type]
+        ? evt => handler[type](evt)
+        : evt => handler.fire(type, evt)
+      );
+    }
+  }
 
   // return the backing canvas instance
   prototype$L.canvas = function() {
@@ -15879,15 +15874,10 @@
   // supported events
   prototype$L.events = Events;
 
-  // to keep old versions of firefox happy
-  prototype$L.DOMMouseScroll = function(evt) {
-    this.fire('mousewheel', evt);
-  };
-
   function move(moveEvent, overEvent, outEvent) {
     return function(evt) {
-      var a = this._active,
-          p = this.pickEvent(evt);
+      const a = this._active,
+            p = this.pickEvent(evt);
 
       if (p === a) {
         // active item and picked item are the same
@@ -15912,6 +15902,11 @@
       this._active = null;
     };
   }
+
+  // to keep old versions of firefox happy
+  prototype$L.DOMMouseScroll = function(evt) {
+    this.fire('mousewheel', evt);
+  };
 
   prototype$L.mousemove = move('mousemove', 'mouseover', 'mouseout');
   prototype$L.dragover  = move('dragover', 'dragenter', 'dragleave');
@@ -15953,8 +15948,8 @@
 
   // fire an event
   prototype$L.fire = function(type, evt, touch) {
-    var a = touch ? this._touch : this._active,
-        h = this._handlers[type], i, len;
+    const a = touch ? this._touch : this._active,
+          h = this._handlers[type];
 
     // set event type relative to scenegraph items
     evt.vegaType = type;
@@ -15968,7 +15963,7 @@
 
     // invoke all registered handlers
     if (h) {
-      for (i=0, len=h.length; i<len; ++i) {
+      for (let i=0, len=h.length; i<len; ++i) {
         h[i].handler.call(this._obj, evt, a);
       }
     }
@@ -15976,11 +15971,12 @@
 
   // add an event handler
   prototype$L.on = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
+      eventListenerCheck(this, type);
       (h[name] || (h[name] = [])).push({
         type:    type,
         handler: handler
@@ -15992,9 +15988,9 @@
 
   // remove an event handler
   prototype$L.off = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       h.splice(i, 1);
@@ -16004,8 +16000,8 @@
   };
 
   prototype$L.pickEvent = function(evt) {
-    var p = point$4(evt, this._canvas),
-        o = this._origin;
+    const p = point$4(evt, this._canvas),
+          o = this._origin;
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
   };
 
@@ -16013,8 +16009,8 @@
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   prototype$L.pick = function(scene, x, y, gx, gy) {
-    var g = this.context(),
-        mark = Marks[scene.marktype];
+    const g = this.context(),
+          mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   };
 
@@ -16058,11 +16054,11 @@
     this._options = {};
     this._redraw = false;
     this._dirty = new Bounds();
+    this._tempb = new Bounds();
   }
 
-  var prototype$M = inherits(CanvasRenderer, Renderer),
-      base = Renderer.prototype,
-      tempBounds$1 = new Bounds();
+  const prototype$M = inherits(CanvasRenderer, Renderer),
+        base = Renderer.prototype;
 
   prototype$M.initialize = function(el, width, height, origin, scaleFactor, options) {
     this._options = options || {};
@@ -16088,7 +16084,7 @@
       resize(this._canvas, this._width, this._height,
         this._origin, this._scale, this._options.context);
     } else {
-      // external context needs to be positioned to origin
+      // external context needs to be scaled and positioned to origin
       const ctx = this._options.externalContext;
       if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
       ctx.scale(this._scale, this._scale);
@@ -16109,7 +16105,14 @@
   };
 
   prototype$M.dirty = function(item) {
-    var b = translate$1(item.bounds, item.mark.group);
+    let b = this._tempb.clear().union(item.bounds),
+        g = item.mark.group;
+
+    while (g) {
+      b.translate(g.x || 0, g.y || 0);
+      g = g.mark.group;
+    }
+
     this._dirty.union(b);
   };
 
@@ -16133,36 +16136,23 @@
     return b;
   }
 
-  function viewBounds(origin, width, height) {
-    return tempBounds$1
-      .set(0, 0, width, height)
-      .translate(-origin[0], -origin[1]);
-  }
-
-  function translate$1(bounds, group) {
-    if (group == null) return bounds;
-    var b = tempBounds$1.clear().union(bounds);
-    for (; group != null; group = group.mark.group) {
-      b.translate(group.x || 0, group.y || 0);
-    }
-    return b;
-  }
+  const viewBounds = (origin, width, height) => new Bounds()
+    .set(0, 0, width, height)
+    .translate(-origin[0], -origin[1]);
 
   prototype$M._render = function(scene) {
-    var g = this.context(),
-        o = this._origin,
-        w = this._width,
-        h = this._height,
-        b = this._dirty;
+    const g = this.context(),
+          o = this._origin,
+          w = this._width,
+          h = this._height,
+          db = this._dirty,
+          vb = viewBounds(o, w, h);
 
     // setup
     g.save();
-    if (this._redraw || b.empty()) {
-      this._redraw = false;
-      b = viewBounds(o, w, h).expand(1);
-    } else {
-      b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o);
-    }
+    const b = this._redraw || db.empty()
+      ? (this._redraw = false, vb.expand(1))
+      : clipToBounds(g, vb.intersect(db), o);
 
     this.clear(-o[0], -o[1], w, h);
 
@@ -16171,21 +16161,28 @@
 
     // takedown
     g.restore();
+    db.clear();
 
-    this._dirty.clear();
     return this;
   };
 
   prototype$M.draw = function(ctx, scene, bounds) {
-    var mark = Marks[scene.marktype];
+    const mark = Marks[scene.marktype];
     if (scene.clip) clip$1(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
 
   prototype$M.clear = function(x, y, w, h) {
-    var g = this.context();
-    g.clearRect(x, y, w, h);
+    const opt = this._options,
+           g = this.context();
+
+    if (opt.type !== 'pdf' && !opt.externalContext) {
+      // calling clear rect voids vector output in pdf mode
+      // and could remove external context content (#2615)
+      g.clearRect(x, y, w, h);
+    }
+
     if (this._bgcolor != null) {
       g.fillStyle = this._bgcolor;
       g.fillRect(x, y, w, h);
@@ -16194,19 +16191,19 @@
 
   function SVGHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
-    var h = this;
-    h._hrefHandler = listener(h, function(evt, item) {
+    const h = this;
+    h._hrefHandler = listener(h, (evt, item) => {
       if (item && item.href) h.handleHref(evt, item, item.href);
     });
-    h._tooltipHandler = listener(h, function(evt, item) {
+    h._tooltipHandler = listener(h, (evt, item) => {
       h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
     });
   }
 
-  var prototype$N = inherits(SVGHandler, Handler);
+  const prototype$N = inherits(SVGHandler, Handler);
 
   prototype$N.initialize = function(el, origin, obj) {
-    var svg = this._svg;
+    let svg = this._svg;
     if (svg) {
       svg.removeEventListener(HrefEvent, this._hrefHandler);
       svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
@@ -16226,26 +16223,23 @@
   };
 
   // wrap an event listener for the SVG DOM
-  function listener(context, handler) {
-    return function(evt) {
-      var target = evt.target,
-          item = target.__data__;
-      evt.vegaType = evt.type;
-      item = Array.isArray(item) ? item[0] : item;
-      handler.call(context._obj, evt, item);
-    };
-  }
+  const listener = (context, handler) => evt => {
+    let item = evt.target.__data__;
+    item = Array.isArray(item) ? item[0] : item;
+    evt.vegaType = evt.type;
+    handler.call(context._obj, evt, item);
+  };
 
   // add an event handler
   prototype$N.on = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
-      var x = {
-        type:     type,
-        handler:  handler,
+      const x = {
+        type,
+        handler,
         listener: listener(this, handler)
       };
 
@@ -16260,9 +16254,9 @@
 
   // remove an event handler
   prototype$N.off = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       if (this._svg) {
@@ -19558,11 +19552,13 @@
     'blend':            'mix-blend-mode'
   };
 
+  const svgRootClass = 'vega-svg-root';
+
   // ensure miter limit default is consistent with canvas (#2498)
   const defaultCSS = [
-    '* { fill: none; }',
-    'tspan { fill: inherit; }',
-    'path { stroke-miterlimit: 10; }'
+    `.${svgRootClass} * { fill: none; }`,
+    `.${svgRootClass} tspan { fill: inherit; }`,
+    `.${svgRootClass} path { stroke-miterlimit: 10; }`
   ].join(' ');
 
   const RootIndex = 1,
@@ -19581,27 +19577,31 @@
   var base$1 = Renderer.prototype;
 
   prototype$O.initialize = function(el, width, height, padding) {
-    if (el) {
-      this._svg = domChild(el, 0, 'svg', ns);
-      this._svg.setAttribute('class', 'marks');
-      domClear(el, 1);
-
-      // set the svg default styles
-      const style = domChild(this._svg, 0, 'style');
-      style.textContent = defaultCSS;
-
-      // set the svg root group
-      this._root = domChild(this._svg, RootIndex, 'g', ns);
-
-      // ensure no additional child elements
-      domClear(this._svg, RootIndex + 1);
-    }
-
     // create the svg definitions cache
     this._defs = {
       gradient: {},
       clipping: {}
     };
+
+    if (el) {
+      this._svg = domChild(el, 0, 'svg', ns);
+      this._svg.setAttribute('class', 'marks');
+      domClear(el, 1);
+
+      // create SVG defs element
+      this._defs.el = domChild(this._svg, 0, 'defs', ns);
+
+      // set svg default styles
+      const style = domChild(this._defs.el, 0, 'style');
+      style.textContent = defaultCSS;
+
+      // set the svg root group
+      this._root = domChild(this._svg, RootIndex, 'g', ns);
+      this._root.setAttribute('class', svgRootClass);
+
+      // ensure no additional child elements
+      domClear(this._svg, RootIndex + 1);
+    }
 
     // set background color if defined
     this.background(this._bgcolor);
@@ -19656,8 +19656,7 @@
         }) + closeTag('rect'));
 
     return openTag('svg', attr)
-      + openTag('style') + defaultCSS + closeTag('style')
-      + (this._defs.el ? this._defs.el.outerHTML : '')
+      + this._defs.el.outerHTML
       + bg
       + this._root.outerHTML
       + closeTag('svg');
@@ -19685,30 +19684,20 @@
   // -- Manage SVG definitions ('defs') block --
 
   prototype$O.updateDefs = function() {
-    var svg = this._svg,
-        defs = this._defs,
+    var defs = this._defs,
         el = defs.el,
-        index = 0, id;
+        index = 1, id;
 
     for (id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
       index = updateGradient(el, defs.gradient[id], index);
     }
 
     for (id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
       index = updateClipping(el, defs.clipping[id], index);
     }
 
     // clean-up
-    if (el) {
-      if (index === 0) {
-        svg.removeChild(el);
-        defs.el = null;
-      } else {
-        domClear(el, index);
-      }
-    }
+    domClear(el, index);
   };
 
   function updateGradient(el, grad, index) {
@@ -20209,8 +20198,7 @@
       attr[key] = metadata[key];
     }
 
-    t.head = openTag('svg', attr)
-           + openTag('style') + defaultCSS + closeTag('style');
+    t.head = openTag('svg', attr);
 
     var bg = this._bgcolor;
     if (bg === 'transparent' || bg === 'none') bg = null;
@@ -20226,6 +20214,7 @@
     }
 
     t.root = openTag('g', {
+      class: svgRootClass,
       transform: 'translate(' + o + ')'
     });
 
@@ -20255,7 +20244,7 @@
 
   prototype$P.buildDefs = function() {
     var all = this._defs,
-        defs = '',
+        defs = openTag('style') + defaultCSS + closeTag('style'),
         i, id, def, tag, stops;
 
     for (id in all.gradient) {
@@ -20334,7 +20323,7 @@
       defs += closeTag('clipPath');
     }
 
-    return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
+    return openTag('defs') + defs + closeTag('defs');
   };
 
   var object$2;
@@ -21040,7 +21029,7 @@
     }
   };
 
-  const tempBounds$2 = new Bounds();
+  const tempBounds$1 = new Bounds();
 
   function set$1(item, property, value) {
     return item[property] === value ? 0
@@ -21078,7 +21067,7 @@
         dl = title && multiLineOffset(title),
         x = 0, y = 0, i, s;
 
-    tempBounds$2.clear().union(bounds);
+    tempBounds$1.clear().union(bounds);
     bounds.clear();
     if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
     if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
@@ -21122,7 +21111,7 @@
     boundStroke(bounds.translate(x, y), item);
 
     if (set$1(item, 'x', x + delta) | set$1(item, 'y', y + delta)) {
-      item.bounds = tempBounds$2;
+      item.bounds = tempBounds$1;
       view.dirty(item);
       item.bounds = bounds;
       view.dirty(item);
@@ -21215,7 +21204,7 @@
   function gridLayout(view, groups, opt) {
     var dirty = !opt.nodirty,
         bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
-        bounds = tempBounds$2.set(0, 0, 0, 0),
+        bounds = tempBounds$1.set(0, 0, 0, 0),
         alignCol = get$3(opt.align, Column),
         alignRow = get$3(opt.align, Row),
         padCol = get$3(opt.padding, Column),
@@ -21653,7 +21642,7 @@
         ey = pad - entry.y;
 
     if (!item.datum.title) {
-      if (ex || ey) translate$2(view, entry, ex, ey);
+      if (ex || ey) translate$1(view, entry, ex, ey);
     } else {
       var title = item.items[1].items[0],
           anchor = title.anchor,
@@ -21671,7 +21660,7 @@
         default:
           ey += title.bounds.height() + tpad;
       }
-      if (ex || ey) translate$2(view, entry, ex, ey);
+      if (ex || ey) translate$1(view, entry, ex, ey);
 
       switch (title.orient) {
         case Left:
@@ -21688,12 +21677,12 @@
         default:
           tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
       }
-      if (tx || ty) translate$2(view, title, tx, ty);
+      if (tx || ty) translate$1(view, title, tx, ty);
 
       // translate legend if title pushes into negative coordinates
       if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
-        translate$2(view, entry, -tx, 0);
-        translate$2(view, title, -tx, 0);
+        translate$1(view, entry, -tx, 0);
+        translate$1(view, title, -tx, 0);
       }
     }
   }
@@ -21712,7 +21701,7 @@
       : 0.5 * (s - o));
   }
 
-  function translate$2(view, item, dx, dy) {
+  function translate$1(view, item, dx, dy) {
     item.x += dx;
     item.y += dy;
     item.bounds.translate(dx, dy);
@@ -21773,33 +21762,33 @@
           break;
       }
 
-      tempBounds$2.clear().union(subtitle.bounds);
-      tempBounds$2.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+      tempBounds$1.clear().union(subtitle.bounds);
+      tempBounds$1.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
       if (set$1(subtitle, 'x', sx) | set$1(subtitle, 'y', sy)) {
         view.dirty(subtitle);
-        subtitle.bounds.clear().union(tempBounds$2);
-        subtitle.mark.bounds.clear().union(tempBounds$2);
+        subtitle.bounds.clear().union(tempBounds$1);
+        subtitle.mark.bounds.clear().union(tempBounds$1);
         view.dirty(subtitle);
       }
 
-      tempBounds$2.clear().union(subtitle.bounds);
+      tempBounds$1.clear().union(subtitle.bounds);
     } else {
-      tempBounds$2.clear();
+      tempBounds$1.clear();
     }
-    tempBounds$2.union(title.bounds);
+    tempBounds$1.union(title.bounds);
 
     // position title group
     switch (orient) {
       case Top:
         x = pos;
-        y = viewBounds.y1 - tempBounds$2.height() - offset;
+        y = viewBounds.y1 - tempBounds$1.height() - offset;
         break;
       case Left:
-        x = viewBounds.x1 - tempBounds$2.width() - offset;
+        x = viewBounds.x1 - tempBounds$1.width() - offset;
         y = pos;
         break;
       case Right:
-        x = viewBounds.x2 + tempBounds$2.width() + offset;
+        x = viewBounds.x2 + tempBounds$1.width() + offset;
         y = pos;
         break;
       case Bottom:
@@ -21812,10 +21801,10 @@
     }
 
     if (set$1(group, 'x', x) | set$1(group, 'y', y)) {
-      tempBounds$2.translate(x, y);
+      tempBounds$1.translate(x, y);
       view.dirty(group);
-      group.bounds.clear().union(tempBounds$2);
-      mark.bounds.clear().union(tempBounds$2);
+      group.bounds.clear().union(tempBounds$1);
+      mark.bounds.clear().union(tempBounds$1);
       view.dirty(group);
     }
     return group.bounds;
@@ -33217,7 +33206,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.12.0";
+  var version = "5.12.1";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -37633,12 +37622,10 @@
     const ctx = runtime(view, spec, options.functions);
     view._runtime = ctx;
     view._signals = ctx.signals;
-    view._bind = (spec.bindings || []).map(function(_) {
-      return {
-        state: null,
-        param: extend({}, _)
-      };
-    });
+    view._bind = (spec.bindings || []).map(_ => ({
+      state: null,
+      param: extend({}, _)
+    }));
 
     // initialize scenegraph
     if (ctx.root) ctx.root.set(root);
@@ -37862,18 +37849,15 @@
   };
 
   function findOperatorHandler(op, handler) {
-    var t = op._targets || [],
-        h = t.filter(function(op) {
-              var u = op._update;
-              return u && u.handler === handler;
-            });
+    const h = (op._targets || [])
+      .filter(op => op._update && op._update.handler === handler);
     return h.length ? h[0] : null;
   }
 
   function addOperatorListener(view, name, op, handler) {
     var h = findOperatorHandler(op, handler);
     if (!h) {
-      h = trap(this, function() { handler(name, op.value); });
+      h = trap(view, () => handler(name, op.value));
       h.handler = handler;
       view.on(op, null, h);
     }
@@ -41973,20 +41957,20 @@
     return this.addData(name, DataScope.fromEntries(this, entries));
   };
 
-  var defaultFont = 'sans-serif',
-      defaultSymbolSize = 30,
-      defaultStrokeWidth = 2,
-      defaultColor = '#4c78a8',
-      black = '#000',
-      gray = '#888',
-      lightGray = '#ddd';
-
   /**
    * Standard configuration defaults for Vega specification parsing.
    * Users can provide their own (sub-)set of these default values
    * by passing in a config object to the top-level parse method.
    */
   function defaults() {
+    const defaultFont = 'sans-serif',
+          defaultSymbolSize = 30,
+          defaultStrokeWidth = 2,
+          defaultColor = '#4c78a8',
+          black = '#000',
+          gray = '#888',
+          lightGray = '#ddd';
+
     return {
       // default visualization description
       description: 'Vega visualization',
