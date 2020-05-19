@@ -47,8 +47,7 @@ prototype.resize = function(width, height, origin, scaleFactor) {
     attr[key] = metadata[key];
   }
 
-  t.head = openTag('svg', attr)
-         + openTag('style') + defaultCSS + closeTag('style');
+  t.head = openTag('svg', attr);
 
   var bg = this._bgcolor;
   if (bg === 'transparent' || bg === 'none') bg = null;
@@ -94,7 +93,7 @@ prototype._render = function(scene) {
 
 prototype.buildDefs = function() {
   var all = this._defs,
-      defs = '',
+      defs = openTag('style') + defaultCSS + closeTag('style'),
       i, id, def, tag, stops;
 
   for (id in all.gradient) {
@@ -173,7 +172,7 @@ prototype.buildDefs = function() {
     defs += closeTag('clipPath');
   }
 
-  return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
+  return openTag('defs') + defs + closeTag('defs');
 };
 
 var object;
