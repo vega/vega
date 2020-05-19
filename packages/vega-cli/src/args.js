@@ -47,5 +47,10 @@ To load data, you may need to set a base directory:
   args.number('seed')
     .describe('seed', 'Seed for random number generation.');
 
+  if (type === 'pdf') {
+    args.boolean('test')
+      .describe('test', 'Disable default PDF metadata for test suites.');
+  }
+
   return args.help().version().argv;
 };

@@ -17,7 +17,8 @@
   },
   "repository": "vega/vega",
   "scripts": {
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push && git push --tags",
+    "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
     "canvas": "^2.6.1",
