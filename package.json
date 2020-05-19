@@ -33,9 +33,9 @@
     "lerna": "^3.21.0",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "rollup": "^2.10.2",
+    "rollup": "^2.10.4",
     "tape": "^5.0.0",
-    "terser": "^4.6.13",
+    "terser": "^4.7.0",
     "typescript": "^3.9.2",
     "vega-datasets": "^1.30.2"
   },
