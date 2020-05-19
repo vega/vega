@@ -58,10 +58,9 @@
   ],
 
   "layout": {
-    "padding": 10,
-    "offset": 20,
-    "bounds": "full",
-    "align": "all"
+    "padding": 70,
+    "bounds": "flush",
+    "align": "none"
   },
 
   "marks": [
