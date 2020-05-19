@@ -112,9 +112,9 @@ Valid settings for the legend _orient_ parameter.
 | `top-right`    | Place the legend inside the upper right corner of the chart.|
 | `bottom-left`  | Place the legend inside the lower left corner of the chart.|
 | `bottom-right` | Place the legend inside the lower right corner of the chart.|
-| `none`         | Do not perform automatic layout. Allows custom layout by setting the `x` and `y` properties within a `legend` encoding block.|
+| `none`         | Do not perform automatic layout. Allows custom layout by setting the *legendX* and *legendY* properties of the legend.|
 
-_Multiple legends_: If multiple legends have a `left` or `right` orientation, they will be vertically ordered. If multiple legends have a `top` or `bottom` orientation, they will be horizontally ordered. In all other cases, legends will be drawn on top of each other when placed in the same location.
+_Multiple legends_: If multiple legends have a `left` or `right` orientation, they will be vertically ordered by default. If multiple legends have a `top` or `bottom` orientation, they will be horizontally ordered by default. In all other cases, legends will be drawn on top of each other when placed in the same location. The multiple legend layout can be customized by setting the [legend layout config](../config/#legends-layout).
 
 _Legend offset_: In the case of `left`, `right`, `top` and `bottom` orientation, the _offset_ parameter determines how far away the legend is placed from the rest of the chart. If the orientation is `none`, the _offset_ parameter is ignored. For all other settings, the _offset_ determines the distance the legend is moved inward from a corner of the data rectangle.
 
@@ -180,4 +180,4 @@ The following example shows how to set custom fonts and a border on a legend for
 ]
 ```
 
-Custom text can be defined using the `text` property for `labels`. For example, one could define an ordinal scale that serves as a lookup table from a backing `value` to legend label text. In addition, one can set the `x` and `y` properties for the `legend` to perform custom positioning when _orient_ is `none`.
+Custom text can be defined using the `text` property for `labels`. For example, one could define an ordinal scale that serves as a lookup table from a backing `value` to legend label text. Note: to perform custom positioning when _orient_ is `none`, use the top-level *legendX* and *legendY* properties, do not use `x` and `y` properties within a custom encoding block.
