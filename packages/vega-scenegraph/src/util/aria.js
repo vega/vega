@@ -37,11 +37,11 @@ const AriaGuides = {
   'legend': {desc: 'legend', caption: legendCaption},
   'title-text': {
     desc: 'title',
-    caption: item => `Title text '${titleCaption(item)}'`
+    caption: item => titleCaption(item)
   },
   'title-subtitle': {
     desc: 'subtitle',
-    caption: item => `Subtitle text '${titleCaption(item)}'`
+    caption: item => titleCaption(item)
   }
 };
 
