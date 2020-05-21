@@ -1,4 +1,12 @@
-import { DataType, EncodeEntryName, Format, SignalValue, Spec } from '../spec';
+import {
+  DataType,
+  EncodeEntryName,
+  Format,
+  NumberLocale,
+  SignalValue,
+  Spec,
+  TimeLocale,
+} from '../spec';
 import { Renderers } from './renderer';
 import { Transform, Changeset } from './dataflow';
 
@@ -25,7 +33,7 @@ export type NumberFormat = (number: number) => string;
 export type TimeFormat = (date: Date | number) => string;
 export type TimeParse = (dateString: string) => Date;
 
-export interface Locale {
+export interface LocaleFormatters {
   format: (spec: string) => NumberFormat;
   formatPrefix: (spec: string, value: number) => NumberFormat;
   formatFloat: (spec: string) => NumberFormat;
@@ -52,8 +60,8 @@ export class View {
   loader(): Loader;
   loader(loader: Loader): this;
 
-  locale(): Locale;
-  locale(locale: Locale): this;
+  locale(): LocaleFormatters;
+  locale(locale: LocaleFormatters): this;
 
   hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
   run(encode?: string): this;

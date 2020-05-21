@@ -28,6 +28,7 @@ export * from './encode';
 export * from './expr';
 export * from './layout';
 export * from './legend';
+export * from './locale';
 export * from './mark';
 export * from './marktype';
 export * from './on-events';
