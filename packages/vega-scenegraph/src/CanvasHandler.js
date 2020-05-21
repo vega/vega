@@ -17,6 +17,8 @@ const prototype = inherits(CanvasHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
   this._canvas = el && domFind(el, 'canvas');
+  [HrefEvent, TooltipHideEvent, TooltipShowEvent]
+    .forEach(type => eventListenerCheck(this, type));
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
