@@ -1,6 +1,11 @@
 import Handler from './Handler';
 import Marks from './marks/index';
-import {Events, HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
+import {
+  ClickEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, Events,
+  HrefEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent,
+  MouseWheelEvent, TooltipHideEvent, TooltipShowEvent,
+  TouchEndEvent, TouchMoveEvent, TouchStartEvent
+} from './util/events';
 import point from './util/point';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';
@@ -17,11 +22,28 @@ const prototype = inherits(CanvasHandler, Handler);
 
 prototype.initialize = function(el, origin, obj) {
   this._canvas = el && domFind(el, 'canvas');
+
+  // add minimal events required for proper state management
+  [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
+    .forEach(type => eventListenerCheck(this, type));
+
   return Handler.prototype.initialize.call(this, el, origin, obj);
 };
 
-// lazily add a listener to the canvas as needed
+const eventBundle = type => (
+  type === TouchStartEvent ||
+  type === TouchMoveEvent ||
+  type === TouchEndEvent
+)
+? [TouchStartEvent, TouchMoveEvent, TouchEndEvent]
+: [type];
+
+// lazily add listeners to the canvas as needed
 function eventListenerCheck(handler, type) {
+  eventBundle(type).forEach(_ => addEventListener(handler, _));
+}
+
+function addEventListener(handler, type) {
   const canvas = handler.canvas();
   if (canvas && !handler._events[type]) {
     handler._events[type] = 1;
@@ -76,23 +98,23 @@ function inactive(type) {
 
 // to keep old versions of firefox happy
 prototype.DOMMouseScroll = function(evt) {
-  this.fire('mousewheel', evt);
+  this.fire(MouseWheelEvent, evt);
 };
 
-prototype.mousemove = move('mousemove', 'mouseover', 'mouseout');
-prototype.dragover  = move('dragover', 'dragenter', 'dragleave');
+prototype.mousemove = move(MouseMoveEvent, MouseOverEvent, MouseOutEvent);
+prototype.dragover  = move(DragOverEvent, DragEnterEvent, DragLeaveEvent);
 
-prototype.mouseout  = inactive('mouseout');
-prototype.dragleave = inactive('dragleave');
+prototype.mouseout  = inactive(MouseOutEvent);
+prototype.dragleave = inactive(DragLeaveEvent);
 
 prototype.mousedown = function(evt) {
   this._down = this._active;
-  this.fire('mousedown', evt);
+  this.fire(MouseDownEvent, evt);
 };
 
 prototype.click = function(evt) {
   if (this._down === this._active) {
-    this.fire('click', evt);
+    this.fire(ClickEvent, evt);
     this._down = null;
   }
 };
@@ -105,15 +127,15 @@ prototype.touchstart = function(evt) {
     this._first = false;
   }
 
-  this.fire('touchstart', evt, true);
+  this.fire(TouchStartEvent, evt, true);
 };
 
 prototype.touchmove = function(evt) {
-  this.fire('touchmove', evt, true);
+  this.fire(TouchMoveEvent, evt, true);
 };
 
 prototype.touchend = function(evt) {
-  this.fire('touchend', evt, true);
+  this.fire(TouchEndEvent, evt, true);
   this._touch = null;
 };
 
