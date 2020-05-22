@@ -12673,32 +12673,51 @@
     return this._load('loadImage', uri);
   };
 
-  var Events = [
-    'keydown',
-    'keypress',
-    'keyup',
-    'dragenter',
-    'dragleave',
-    'dragover',
-    'mousedown',
-    'mouseup',
-    'mousemove',
-    'mouseout',
-    'mouseover',
-    'click',
-    'dblclick',
-    'wheel',
-    'mousewheel',
-    'touchstart',
-    'touchmove',
-    'touchend'
+  const KeyDownEvent = 'keydown';
+  const KeyPressEvent = 'keypress';
+  const KeyUpEvent = 'keyup';
+  const DragEnterEvent = 'dragenter';
+  const DragLeaveEvent = 'dragleave';
+  const DragOverEvent = 'dragover';
+  const MouseDownEvent = 'mousedown';
+  const MouseUpEvent = 'mouseup';
+  const MouseMoveEvent = 'mousemove';
+  const MouseOutEvent = 'mouseout';
+  const MouseOverEvent = 'mouseover';
+  const ClickEvent = 'click';
+  const DoubleClickEvent = 'dblclick';
+  const WheelEvent = 'wheel';
+  const MouseWheelEvent = 'mousewheel';
+  const TouchStartEvent = 'touchstart';
+  const TouchMoveEvent = 'touchmove';
+  const TouchEndEvent = 'touchend';
+
+  const Events = [
+    KeyDownEvent,
+    KeyPressEvent,
+    KeyUpEvent,
+    DragEnterEvent,
+    DragLeaveEvent,
+    DragOverEvent,
+    MouseDownEvent,
+    MouseUpEvent,
+    MouseMoveEvent,
+    MouseOutEvent,
+    MouseOverEvent,
+    ClickEvent,
+    DoubleClickEvent,
+    WheelEvent,
+    MouseWheelEvent,
+    TouchStartEvent,
+    TouchMoveEvent,
+    TouchEndEvent
   ];
 
-  var TooltipShowEvent = 'mousemove';
+  const TooltipShowEvent = MouseMoveEvent;
 
-  var TooltipHideEvent = 'mouseout';
+  const TooltipHideEvent = MouseOutEvent;
 
-  var HrefEvent = 'click';
+  const HrefEvent = ClickEvent;
 
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -12712,11 +12731,28 @@
 
   prototype$L.initialize = function(el, origin, obj) {
     this._canvas = el && domFind(el, 'canvas');
+
+    // add minimal events required for proper state management
+    [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
+      .forEach(type => eventListenerCheck(this, type));
+
     return Handler.prototype.initialize.call(this, el, origin, obj);
   };
 
-  // lazily add a listener to the canvas as needed
+  const eventBundle = type => (
+    type === TouchStartEvent ||
+    type === TouchMoveEvent ||
+    type === TouchEndEvent
+  )
+  ? [TouchStartEvent, TouchMoveEvent, TouchEndEvent]
+  : [type];
+
+  // lazily add listeners to the canvas as needed
   function eventListenerCheck(handler, type) {
+    eventBundle(type).forEach(_ => addEventListener(handler, _));
+  }
+
+  function addEventListener(handler, type) {
     const canvas = handler.canvas();
     if (canvas && !handler._events[type]) {
       handler._events[type] = 1;
@@ -12771,23 +12807,23 @@
 
   // to keep old versions of firefox happy
   prototype$L.DOMMouseScroll = function(evt) {
-    this.fire('mousewheel', evt);
+    this.fire(MouseWheelEvent, evt);
   };
 
-  prototype$L.mousemove = move('mousemove', 'mouseover', 'mouseout');
-  prototype$L.dragover  = move('dragover', 'dragenter', 'dragleave');
+  prototype$L.mousemove = move(MouseMoveEvent, MouseOverEvent, MouseOutEvent);
+  prototype$L.dragover  = move(DragOverEvent, DragEnterEvent, DragLeaveEvent);
 
-  prototype$L.mouseout  = inactive('mouseout');
-  prototype$L.dragleave = inactive('dragleave');
+  prototype$L.mouseout  = inactive(MouseOutEvent);
+  prototype$L.dragleave = inactive(DragLeaveEvent);
 
   prototype$L.mousedown = function(evt) {
     this._down = this._active;
-    this.fire('mousedown', evt);
+    this.fire(MouseDownEvent, evt);
   };
 
   prototype$L.click = function(evt) {
     if (this._down === this._active) {
-      this.fire('click', evt);
+      this.fire(ClickEvent, evt);
       this._down = null;
     }
   };
@@ -12800,15 +12836,15 @@
       this._first = false;
     }
 
-    this.fire('touchstart', evt, true);
+    this.fire(TouchStartEvent, evt, true);
   };
 
   prototype$L.touchmove = function(evt) {
-    this.fire('touchmove', evt, true);
+    this.fire(TouchMoveEvent, evt, true);
   };
 
   prototype$L.touchend = function(evt) {
-    this.fire('touchend', evt, true);
+    this.fire(TouchEndEvent, evt, true);
     this._touch = null;
   };
 
@@ -23550,7 +23586,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.12.1";
+  var version = "5.12.2";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
