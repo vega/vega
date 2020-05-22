@@ -8,10 +8,10 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {defaultCSS, styles, svgRootClass} from './util/svg/styles';
+import {rootAttributes, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
-const RootIndex = 1,
+const RootIndex = 0,
       ns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
@@ -38,16 +38,11 @@ prototype.initialize = function(el, width, height, padding) {
     this._svg.setAttribute('class', 'marks');
     domClear(el, 1);
 
-    // create SVG defs element
-    this._defs.el = domChild(this._svg, 0, 'defs', ns);
-
-    // set svg default styles
-    const style = domChild(this._defs.el, 0, 'style');
-    style.textContent = defaultCSS;
-
     // set the svg root group
     this._root = domChild(this._svg, RootIndex, 'g', ns);
-    this._root.setAttribute('class', svgRootClass);
+    for (const attr in rootAttributes) {
+      this._root.setAttribute(attr, rootAttributes[attr]);
+    }
 
     // ensure no additional child elements
     domClear(this._svg, RootIndex + 1);
@@ -106,7 +101,7 @@ prototype.svg = function() {
       }) + closeTag('rect'));
 
   return openTag('svg', attr)
-    + this._defs.el.outerHTML
+    + (this._defs.el ? this._defs.el.outerHTML : '')
     + bg
     + this._root.outerHTML
     + closeTag('svg');
@@ -134,20 +129,28 @@ prototype._render = function(scene) {
 // -- Manage SVG definitions ('defs') block --
 
 prototype.updateDefs = function() {
-  var defs = this._defs,
-      el = defs.el,
-      index = 1, id;
+  const svg = this._svg,
+        defs = this._defs;
 
-  for (id in defs.gradient) {
+  let el = defs.el,
+      index = 0;
+
+  for (const id in defs.gradient) {
+    if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
     index = updateGradient(el, defs.gradient[id], index);
   }
 
-  for (id in defs.clipping) {
+  for (const id in defs.clipping) {
+    if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
     index = updateClipping(el, defs.clipping[id], index);
   }
 
   // clean-up
-  domClear(el, index);
+  if (el) {
+    index === 0
+      ? (svg.removeChild(el), defs.el = null)
+      : domClear(el, index);
+  }
 };
 
 function updateGradient(el, grad, index) {

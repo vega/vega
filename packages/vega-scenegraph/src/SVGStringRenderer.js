@@ -8,8 +8,8 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {defaultCSS, styles, svgRootClass} from './util/svg/styles';
-import {inherits, isArray} from 'vega-util';
+import {rootAttributes, styles} from './util/svg/styles';
+import {extend, inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);
@@ -62,10 +62,9 @@ prototype.resize = function(width, height, origin, scaleFactor) {
     t.bg = '';
   }
 
-  t.root = openTag('g', {
-    class: svgRootClass,
+  t.root = openTag('g', extend({
     transform: 'translate(' + o + ')'
-  });
+  }, rootAttributes));
 
   t.foot = closeTag('g') + closeTag('svg');
 
@@ -92,13 +91,11 @@ prototype._render = function(scene) {
 };
 
 prototype.buildDefs = function() {
-  var all = this._defs,
-      defs = openTag('style') + defaultCSS + closeTag('style'),
-      i, id, def, tag, stops;
+  let defs = '', tag;
 
-  for (id in all.gradient) {
-    def = all.gradient[id];
-    stops = def.stops;
+  for (const id in this._defs.gradient) {
+    const def = this._defs.gradient[id],
+          stops = def.stops;
 
     if (def.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
@@ -141,7 +138,7 @@ prototype.buildDefs = function() {
       });
     }
 
-    for (i=0; i<stops.length; ++i) {
+    for (let i = 0; i < stops.length; ++i) {
       defs += openTag('stop', {
         offset: stops[i].offset,
         'stop-color': stops[i].color
@@ -151,8 +148,8 @@ prototype.buildDefs = function() {
     defs += closeTag(tag);
   }
 
-  for (id in all.clipping) {
-    def = all.clipping[id];
+  for (const id in this._defs.clipping) {
+    const def = this._defs.clipping[id];
 
     defs += openTag('clipPath', {id: id});
 
@@ -225,7 +222,7 @@ prototype.mark = function(scene) {
   }
 
   // render opening group tag
-  str += openTag('g', Object.assign({
+  str += openTag('g', extend({
     'class': cssClass(scene),
     'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
   }, ariaMarkAttributes(scene)), style);
