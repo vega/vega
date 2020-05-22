@@ -70,7 +70,7 @@ export default function(spec, scope) {
       xy[key] = ifX(
         orient,
         fallback(key, config.axisX, axis, style),
-        fallback(key, config.axisY, axis, style),
+        fallback(key, config.axisY, axis, style)
       );
     }
 
@@ -81,7 +81,7 @@ export default function(spec, scope) {
         fallback(key, config.axisTop, axis, style),
         fallback(key, config.axisBottom, axis, style),
         fallback(key, config.axisLeft, axis, style),
-        fallback(key, config.axisRight, axis, style),
+        fallback(key, config.axisRight, axis, style)
       );
     }
   } else {
