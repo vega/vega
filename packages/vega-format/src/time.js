@@ -71,7 +71,7 @@ export function resetTimeFormatDefaultLocale() {
     format: d3_timeFormat,
     parse: d3_timeParse,
     utcFormat: d3_utcFormat,
-    utcParse: d3_utcParse,
+    utcParse: d3_utcParse
   });
 }
 

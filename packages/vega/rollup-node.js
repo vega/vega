@@ -6,7 +6,7 @@ var rollup = require('rollup'),
 rollup.rollup({
   input: 'index.js',
   external: Object.keys(dependencies),
-  plugins: [json()],
+  plugins: [json()]
 }).then(bundle => {
   return bundle.write({
     file: 'build/' + output,

@@ -13,7 +13,7 @@ import {
 } from './units';
 import {
   localDate, localDayOfYear, localFirst, localWeekNum,
-  utcDate, utcDayOfYear, utcFirst, utcWeekNum,
+  utcDate, utcDayOfYear, utcFirst, utcWeekNum
 } from './util';
 import {constant, one, peek, toSet, zero} from 'vega-util';
 

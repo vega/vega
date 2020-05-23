@@ -17,7 +17,7 @@ const titleOrientEnum = ['none', 'left', 'right', 'top', 'bottom'];
 const titleFrameEnum = ['group', 'bounds'];
 
 const titleEncode = pattern({
-  '^(?!interactive|name|style).+$': encodeEntryRef,
+  '^(?!interactive|name|style).+$': encodeEntryRef
 });
 
 const title = oneOf(

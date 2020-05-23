@@ -47,11 +47,11 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit'),
-    lineHeight:  _('titleLineHeight'),
+    lineHeight:  _('titleLineHeight')
   }, { // require update
     align:       _('titleAlign'),
     angle:       _('titleAngle'),
-    baseline:    _('titleBaseline'),
+    baseline:    _('titleBaseline')
   });
 
   autoLayout(_, orient, encode, userEncode);
