@@ -1,6 +1,7 @@
 import {hasCornerRadius, rectangle} from '../path/shapes';
 import boundStroke from '../bound/boundStroke';
 import {intersectRect} from '../util/intersect';
+import value from '../util/value';
 import {pickVisit, visit} from '../util/visit';
 import blend from '../util/canvas/blend';
 import {clipGroup} from '../util/canvas/clip';
@@ -11,7 +12,7 @@ import clip from '../util/svg/clip';
 import {translateItem} from '../util/svg/transform';
 
 function offset(item) {
-  var sw = (sw = item.strokeWidth) != null ? sw : 1;
+  const sw = value(item.strokeWidth, 1);
   return item.strokeOffset != null ? item.strokeOffset
     : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
     : 0;
@@ -22,7 +23,7 @@ function attr(emit, item) {
 }
 
 function emitRectangle(emit, item) {
-  var off = offset(item);
+  const off = offset(item);
   emit('d', rectangle(null, item, off, off));
 }
 
@@ -43,14 +44,14 @@ function foreground(emit, item) {
 }
 
 function content(emit, item, renderer) {
-  var url = item.clip ? clip(renderer, item, item) : null;
+  const url = item.clip ? clip(renderer, item, item) : null;
   emit('clip-path', url);
 }
 
 function bound(bounds, group) {
   if (!group.clip && group.items) {
-    var items = group.items;
-    for (var j=0, m=items.length; j<m; ++j) {
+    const items = group.items, m = items.length;
+    for (let j=0; j<m; ++j) {
       bounds.union(items[j].bounds);
     }
   }
@@ -65,22 +66,20 @@ function bound(bounds, group) {
 }
 
 function rectanglePath(context, group, x, y) {
-  var off = offset(group);
+  const off = offset(group);
   context.beginPath();
   rectangle(context, group, (x || 0) + off, (y || 0) + off);
 }
 
-var hitBackground = hitPath(rectanglePath);
-var hitForeground = hitPath(rectanglePath, false);
+const hitBackground = hitPath(rectanglePath);
+const hitForeground = hitPath(rectanglePath, false);
 
 function draw(context, scene, bounds) {
-  var renderer = this;
-
-  visit(scene, function(group) {
-    var gx = group.x || 0,
-        gy = group.y || 0,
-        fore = group.strokeForeground,
-        opacity = group.opacity == null ? 1 : group.opacity;
+  visit(scene, group => {
+    const gx = group.x || 0,
+          gy = group.y || 0,
+          fore = group.strokeForeground,
+          opacity = group.opacity == null ? 1 : group.opacity;
 
     // draw group background
     if ((group.stroke || group.fill) && opacity) {
@@ -101,8 +100,8 @@ function draw(context, scene, bounds) {
     if (bounds) bounds.translate(-gx, -gy);
 
     // draw group contents
-    visit(group, function(item) {
-      renderer.draw(context, item, bounds);
+    visit(group, item => {
+      this.draw(context, item, bounds);
     });
 
     // restore graphics context
@@ -125,12 +124,11 @@ function pick(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  var handler = this,
-      cx = x * context.pixelRatio,
-      cy = y * context.pixelRatio;
+  const cx = x * context.pixelRatio,
+        cy = y * context.pixelRatio;
 
-  return pickVisit(scene, function(group) {
-    var hit, fore, ix, dx, dy, dw, dh, b, c;
+  return pickVisit(scene, group => {
+    let hit, fore, ix, dx, dy, dw, dh, b, c;
 
     // first hit test bounding box
     b = group.bounds;
@@ -142,7 +140,7 @@ function pick(context, scene, x, y, gx, gy) {
     dw = dx + (group.width || 0);
     dh = dy + (group.height || 0);
     c = group.clip;
-    if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
+    if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
     // adjust coordinate system
     context.save();
@@ -167,11 +165,10 @@ function pick(context, scene, x, y, gx, gy) {
     }
 
     // hit test against contained marks
-    hit = pickVisit(group, function(mark) {
-      return pickMark(mark, dx, dy)
-        ? handler.pick(mark, x, y, dx, dy)
-        : null;
-    });
+    hit = pickVisit(group, mark => pickMark(mark, dx, dy)
+      ? this.pick(mark, x, y, dx, dy)
+      : null
+    );
 
     // hit test against group background
     if (!hit && ix && (group.fill || (!fore && group.stroke))
