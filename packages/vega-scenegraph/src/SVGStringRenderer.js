@@ -8,8 +8,8 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {defaultCSS, styles, svgRootClass} from './util/svg/styles';
-import {inherits, isArray} from 'vega-util';
+import {rootAttributes, styles} from './util/svg/styles';
+import {extend, inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);
@@ -56,16 +56,15 @@ prototype.resize = function(width, height, origin, scaleFactor) {
     t.bg = openTag('rect', {
       width:  this._width,
       height: this._height,
-      style:  'fill: ' + bg + ';'
+      fill:   bg
     }) + closeTag('rect');
   } else {
     t.bg = '';
   }
 
-  t.root = openTag('g', {
-    class: svgRootClass,
-    transform: 'translate(' + o + ')'
-  });
+  t.root = openTag('g', extend(
+    {}, rootAttributes, {transform: 'translate(' + o + ')'}
+  ));
 
   t.foot = closeTag('g') + closeTag('svg');
 
@@ -92,13 +91,11 @@ prototype._render = function(scene) {
 };
 
 prototype.buildDefs = function() {
-  var all = this._defs,
-      defs = openTag('style') + defaultCSS + closeTag('style'),
-      i, id, def, tag, stops;
+  let defs = '', tag;
 
-  for (id in all.gradient) {
-    def = all.gradient[id];
-    stops = def.stops;
+  for (const id in this._defs.gradient) {
+    const def = this._defs.gradient[id],
+          stops = def.stops;
 
     if (def.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
@@ -115,9 +112,9 @@ prototype.buildDefs = function() {
       });
 
       defs += openTag('rect', {
-        width: '1',
+        width:  '1',
         height: '1',
-        style: 'fill: url(#' + id + ');'
+        fill:   'url(#' + id + ')'
       }) + closeTag('rect');
 
       defs += closeTag(tag);
@@ -141,7 +138,7 @@ prototype.buildDefs = function() {
       });
     }
 
-    for (i=0; i<stops.length; ++i) {
+    for (let i = 0; i < stops.length; ++i) {
       defs += openTag('stop', {
         offset: stops[i].offset,
         'stop-color': stops[i].color
@@ -151,8 +148,8 @@ prototype.buildDefs = function() {
     defs += closeTag(tag);
   }
 
-  for (id in all.clipping) {
-    def = all.clipping[id];
+  for (const id in this._defs.clipping) {
+    const def = this._defs.clipping[id];
 
     defs += openTag('clipPath', {id: id});
 
@@ -172,22 +169,27 @@ prototype.buildDefs = function() {
     defs += closeTag('clipPath');
   }
 
-  return openTag('defs') + defs + closeTag('defs');
+  return defs ? (openTag('defs') + defs + closeTag('defs')) : '';
 };
 
-var object;
+prototype.attr = function(scene, item, attrs, tag) {
+  const object = {},
+        emit = (name, value, ns, prefixed) => {
+          object[prefixed || name] = value;
+        };
 
-function emit(name, value, ns, prefixed) {
-  object[prefixed || name] = value;
-}
-
-prototype.attributes = function(attr, item) {
-  object = {};
-  if (Array.isArray(attr)) {
-    attr.forEach(fn => fn(emit, item, this));
+  // apply mark specific attributes
+  if (Array.isArray(attrs)) {
+    attrs.forEach(fn => fn(emit, item, this));
   } else {
-    attr(emit, item, this);
+    attrs(emit, item, this);
   }
+
+  // apply style attributes
+  if (tag) {
+    applyStyles(object, item, scene, tag, this._defs);
+  }
+
   return object;
 };
 
@@ -213,33 +215,32 @@ prototype.href = function(item) {
 };
 
 prototype.mark = function(scene) {
-  var renderer = this,
-      mdef = marks[scene.marktype],
-      tag  = mdef.tag,
-      defs = this._defs,
-      str = '',
-      style;
+  const mdef = marks[scene.marktype],
+        tag  = mdef.tag,
+        attrList = [ariaItemAttributes, mdef.attr];
 
-  if (tag !== 'g' && scene.interactive === false) {
-    style = 'style="pointer-events: none;"';
-  }
+  let str = '';
 
   // render opening group tag
-  str += openTag('g', Object.assign({
-    'class': cssClass(scene),
-    'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
-  }, ariaMarkAttributes(scene)), style);
+  str += openTag('g', extend(
+    {
+      'class': cssClass(scene),
+      'clip-path': scene.clip ? clip(this, scene, scene.group) : null
+    },
+    ariaMarkAttributes(scene),
+    {
+      'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+    }
+  ));
 
   // render contained elements
-  function process(item) {
-    var href = renderer.href(item);
+  const process = item => {
+    const href = this.href(item);
     if (href) str += openTag('a', href);
 
-    style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
     str += openTag(
       tag,
-      renderer.attributes([ariaItemAttributes, mdef.attr], item),
-      style
+      this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
     );
 
     if (tag === 'text') {
@@ -265,30 +266,36 @@ prototype.mark = function(scene) {
         item.stroke = null;
       }
 
-      str += openTag('path', renderer.attributes(mdef.background, item),
-        applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+      str += openTag(
+        'path',
+        this.attr(scene, item, mdef.background, 'bgrect'),
+      ) + closeTag('path');
 
-      str += openTag('g', renderer.attributes(mdef.content, item))
-        + renderer.markGroup(item)
+      str += openTag('g', this.attr(scene, item, mdef.content))
+        + this.markGroup(item)
         + closeTag('g');
 
       if (fore && stroke) {
         if (fill) item.fill = null;
         item.stroke = stroke;
 
-        str += openTag('path', renderer.attributes(mdef.foreground, item),
-          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+        str += openTag(
+          'path',
+          this.attr(scene, item, mdef.foreground, 'bgrect')
+        ) + closeTag('path');
 
         if (fill) item.fill = fill;
       } else {
-        str += openTag('path', renderer.attributes(mdef.foreground, item),
-          applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+        str += openTag(
+          'path',
+          this.attr(scene, item, mdef.foreground, 'bgfore')
+        ) + closeTag('path');
       }
     }
 
     str += closeTag(tag);
     if (href) str += closeTag('a');
-  }
+  };
 
   if (mdef.nested) {
     if (scene.items && scene.items.length) process(scene.items[0]);
@@ -301,47 +308,40 @@ prototype.mark = function(scene) {
 };
 
 prototype.markGroup = function(scene) {
-  var renderer = this,
-      str = '';
-
-  visit(scene, function(item) {
-    str += renderer.mark(item);
-  });
-
+  let str = '';
+  visit(scene, item => { str += this.mark(item); });
   return str;
 };
 
-function applyStyles(o, mark, tag, defs) {
-  if (o == null) return '';
-  let s = '';
+function applyStyles(s, item, scene, tag, defs) {
+  if (item == null) return s;
 
-  if (tag === 'bgrect' && mark.interactive === false) {
-    s += 'pointer-events: none; ';
+  if (tag === 'bgrect' && scene.interactive === false) {
+    s['pointer-events'] = 'none';
   }
 
   if (tag === 'bgfore') {
-    if (mark.interactive === false) {
-      s += 'pointer-events: none; ';
+    if (scene.interactive === false) {
+      s['pointer-events'] = 'none';
     }
-    s += 'display: none; ';
+    s.display = 'none';
+    if (item.fill !== null) return s;
   }
 
-  if (tag === 'image') {
-    if (o.smooth === false) {
-      s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
-    }
+  if (tag === 'image' && item.smooth === false) {
+    s.style = 'image-rendering: optimizeSpeed; image-rendering: pixelated;';
   }
 
   if (tag === 'text') {
-    s += 'font-family: ' + fontFamily(o) + '; ';
-    s += 'font-size: ' + fontSize(o) + 'px; ';
-    if (o.fontStyle) s += 'font-style: ' + o.fontStyle + '; ';
-    if (o.fontVariant) s += 'font-variant: ' + o.fontVariant + '; ';
-    if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
+    s['font-family'] = fontFamily(item);
+    s['font-size'] = fontSize(item) + 'px';
+    if (item.fontStyle) s['font-style'] = item.fontStyle;
+    if (item.fontVariant) s['font-variant'] = item.fontVariant;
+    if (item.fontWeight) s['font-weight'] = item.fontWeight;
   }
 
   for (const prop in styles) {
-    let value = o[prop];
+    let value = item[prop];
     const name = styles[prop];
 
     if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
@@ -351,11 +351,11 @@ function applyStyles(o, mark, tag, defs) {
       if (isGradient(value)) {
         value = gradientRef(value, defs.gradient, '');
       }
-      s += name + ': ' + value + '; ';
+      s[name] = value;
     }
   }
 
-  return s ? 'style="' + s.trim() + '"' : null;
+  return s;
 }
 
 function escape_text(s) {
