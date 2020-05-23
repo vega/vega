@@ -268,7 +268,7 @@ prototype.mark = function(scene) {
 
       str += openTag(
         'path',
-        this.attr(scene, item, mdef.background, 'bgrect'),
+        this.attr(scene, item, mdef.background, 'bgrect')
       ) + closeTag('path');
 
       str += openTag('g', this.attr(scene, item, mdef.content))
