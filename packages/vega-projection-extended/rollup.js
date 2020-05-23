@@ -1,5 +1,5 @@
 var rollup = require('rollup'),
-    resolve = require('@rollup/plugin-node-resolve'),
+    {nodeResolve} = require('@rollup/plugin-node-resolve'),
     externals = process.argv[2] === '-e',
     output = 'vega-projections' + (externals ? '-core' : '') + '.js';
 
@@ -11,7 +11,7 @@ rollup.rollup({
   input: 'index.js',
   external: modules,
   plugins: [
-    resolve({
+    nodeResolve({
       modulesOnly: true,
       customResolveOptions: { preserveSymlinks: false }
     })
