@@ -113,9 +113,11 @@ async function load(name) {
     console.log('LOAD', name);
 
     if (view) view.finalize(); // finalize existing view
+
+    const t0 = Date.now();
     runtime = vega.parse(spec);
     view = await new vega.View(runtime, options).runAsync();
-    console.log('INIT', name);
+    console.log('INIT', name, Date.now() - t0);
   } catch (err) {
     console.error(err, err.stack);
   }
