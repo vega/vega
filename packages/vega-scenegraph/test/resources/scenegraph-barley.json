@@ -97,7 +97,7 @@
                   "items": [
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "0",
@@ -108,7 +108,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "10",
@@ -119,7 +119,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "20",
@@ -130,7 +130,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "30",
@@ -141,7 +141,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "40",
@@ -152,7 +152,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "50",
@@ -163,7 +163,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "60",
@@ -174,7 +174,7 @@
                     },
                     {
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "opacity": 1,
                       "text": "70",
@@ -215,7 +215,7 @@
             {
               "x": 100,
               "y": 16,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "Waseca",
               "align": "center",
@@ -225,7 +225,7 @@
             {
               "x": 100,
               "y": 133,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "Crookston",
               "align": "center",
@@ -235,7 +235,7 @@
             {
               "x": 100,
               "y": 250,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "Morris",
               "align": "center",
@@ -245,7 +245,7 @@
             {
               "x": 100,
               "y": 367,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "University Farm",
               "align": "center",
@@ -255,7 +255,7 @@
             {
               "x": 100,
               "y": 484,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "Duluth",
               "align": "center",
@@ -265,7 +265,7 @@
             {
               "x": 100,
               "y": 601,
-              "font":" Arial",
+              "font": "Arial",
               "fontWeight": "bold",
               "text": "Grand Rapids",
               "align": "center",
@@ -439,7 +439,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -450,7 +450,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -461,7 +461,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -472,7 +472,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -483,7 +483,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -494,7 +494,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -505,7 +505,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -516,7 +516,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -527,7 +527,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -538,7 +538,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -723,7 +723,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -734,7 +734,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -745,7 +745,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -756,7 +756,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -767,7 +767,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -778,7 +778,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -789,7 +789,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -800,7 +800,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -811,7 +811,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -822,7 +822,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -1007,7 +1007,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -1018,7 +1018,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -1029,7 +1029,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -1040,7 +1040,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -1051,7 +1051,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -1062,7 +1062,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -1073,7 +1073,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -1084,7 +1084,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -1095,7 +1095,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -1106,7 +1106,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -1291,7 +1291,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -1302,7 +1302,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -1313,7 +1313,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -1324,7 +1324,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -1335,7 +1335,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -1346,7 +1346,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -1357,7 +1357,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -1368,7 +1368,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -1379,7 +1379,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -1390,7 +1390,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -1575,7 +1575,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -1586,7 +1586,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -1597,7 +1597,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -1608,7 +1608,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -1619,7 +1619,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -1630,7 +1630,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -1641,7 +1641,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -1652,7 +1652,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -1663,7 +1663,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -1674,7 +1674,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -1859,7 +1859,7 @@
                           "items": [
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Trebi",
@@ -1870,7 +1870,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Wisconsin No. 38",
@@ -1881,7 +1881,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 457",
@@ -1892,7 +1892,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Glabron",
@@ -1903,7 +1903,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Peatland",
@@ -1914,7 +1914,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Velvet",
@@ -1925,7 +1925,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 475",
@@ -1936,7 +1936,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Manchuria",
@@ -1947,7 +1947,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "No. 462",
@@ -1958,7 +1958,7 @@
                             },
                             {
                               "fill": "#000",
-                              "font":" Arial",
+                              "font": "Arial",
                               "fontSize": 11,
                               "opacity": 1,
                               "text": "Svansota",
@@ -1999,7 +1999,7 @@
                       "x": 3,
                       "y": 3,
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 11,
                       "fontWeight": "bold",
                       "baseline": "top",
@@ -2040,7 +2040,7 @@
                       "x": 16,
                       "y": 23,
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 10,
                       "align": "left",
                       "baseline": "middle",
@@ -2051,7 +2051,7 @@
                       "x": 16,
                       "y": 38,
                       "fill": "#000",
-                      "font":" Arial",
+                      "font": "Arial",
                       "fontSize": 10,
                       "align": "left",
                       "baseline": "middle",
