@@ -42,40 +42,40 @@ export default function() {
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
     arc: {
-      fill: defaultColor,
+      fill: defaultColor
     },
     area: {
-      fill: defaultColor,
+      fill: defaultColor
     },
     image: null,
     line: {
       stroke: defaultColor,
-      strokeWidth: defaultStrokeWidth,
+      strokeWidth: defaultStrokeWidth
     },
     path: {
-      stroke: defaultColor,
+      stroke: defaultColor
     },
     rect: {
-      fill: defaultColor,
+      fill: defaultColor
     },
     rule: {
-      stroke: black,
+      stroke: black
     },
     shape: {
-      stroke: defaultColor,
+      stroke: defaultColor
     },
     symbol: {
       fill: defaultColor,
-      size: 64,
+      size: 64
     },
     text: {
       fill: black,
       font: defaultFont,
-      fontSize: 11,
+      fontSize: 11
     },
     trail: {
       fill: defaultColor,
-      size: defaultStrokeWidth,
+      size: defaultStrokeWidth
     },
 
     // style definitions

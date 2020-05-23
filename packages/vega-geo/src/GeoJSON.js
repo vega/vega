@@ -23,7 +23,7 @@ GeoJSON.Definition = {
   'metadata': {},
   'params': [
     { 'name': 'fields', 'type': 'field', 'array': true, 'length': 2 },
-    { 'name': 'geojson', 'type': 'field' },
+    { 'name': 'geojson', 'type': 'field' }
   ]
 };
 

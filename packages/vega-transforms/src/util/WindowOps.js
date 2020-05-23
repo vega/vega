@@ -134,8 +134,7 @@ export const WindowOps = {
             : (v = field(d[i]));
       }
     };
-  },
-
+  }
 };
 
 function find(field, data, index) {

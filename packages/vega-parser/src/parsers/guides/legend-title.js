@@ -48,7 +48,7 @@ export default function(spec, config, userEncode, dataRef) {
     lineHeight:  _('titleLineHeight')
   }, { // require update
     align:       _('titleAlign'),
-    baseline:    _('titleBaseline'),
+    baseline:    _('titleBaseline')
   });
 
   return guideMark({

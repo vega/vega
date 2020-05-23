@@ -529,7 +529,7 @@ tape('Window handles prev_value with overwrite', function(t) {
 tape('Window fill operations handle partition state', function(t) {
   var data = [
     {u: 'a',  v: null, key:0, idx:0},
-    {u: null, v: 'b',  key:1, idx:0},
+    {u: null, v: 'b',  key:1, idx:0}
   ];
 
   var u = util.field('u'),
@@ -542,7 +542,7 @@ tape('Window fill operations handle partition state', function(t) {
         fields: [u, u, v, v],
         ops: [
           'next_value', 'prev_value',
-          'next_value', 'prev_value',
+          'next_value', 'prev_value'
         ],
         as: ['un', 'up', 'vn', 'vp'],
         pulse: col

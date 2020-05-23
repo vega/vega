@@ -10,7 +10,7 @@ tape('Stratify tuples', function(t) {
     {id: 'a'},
     {id: 'b', pid: 'a'},
     {id: 'c', pid: 'a'},
-    {id: 'd', pid: 'c'},
+    {id: 'd', pid: 'c'}
   ];
 
   // Setup tree stratification

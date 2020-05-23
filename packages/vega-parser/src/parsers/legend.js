@@ -174,7 +174,7 @@ function buildLegendEncode(_, spec, config) {
 
     // accessibility support
     format:       spec.format,
-    formatType:   spec.formatType,
+    formatType:   spec.formatType
   });
 
   return encode;

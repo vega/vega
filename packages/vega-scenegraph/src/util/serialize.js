@@ -19,7 +19,7 @@ var keys = [
   'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight',
   'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
-  'description', 'aria', 'ariaRole', 'ariaRoleDescription',     // aria
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription'      // aria
 ];
 
 export function sceneToJSON(scene, indent) {

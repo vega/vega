@@ -31,7 +31,7 @@ export default function(spec, scope) {
     labels: !!_('labels'),
     grid:   !!_('grid'),
     domain: !!_('domain'),
-    title:  spec.title != null,
+    title:  spec.title != null
   };
   dataRef = ref(scope.add(Collect({}, [datum])));
 
@@ -114,7 +114,7 @@ function buildAxisEncode(_, spec) {
 
     // accessibility support
     format:       spec.format,
-    formatType:   spec.formatType,
+    formatType:   spec.formatType
   });
 
   return encode;

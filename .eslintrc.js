@@ -12,6 +12,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
+    'comma-dangle': ['error', 'never'],
     'no-console': 'error',
     'no-cond-assign': 'off',
     'no-fallthrough': ['error', { commentPattern: 'break omitted' }],
