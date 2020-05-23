@@ -2884,7 +2884,7 @@
       format: d3TimeFormat.timeFormat,
       parse: d3TimeFormat.timeParse,
       utcFormat: d3TimeFormat.utcFormat,
-      utcParse: d3TimeFormat.utcParse,
+      utcParse: d3TimeFormat.utcParse
     });
   }
 
@@ -4396,123 +4396,123 @@
     init: noop,
     add:  noop,
     rem:  noop,
-    idx:  0,
+    idx:  0
   };
 
   const AggregateOps = {
     values: {
       init:  m => m.cell.store = true,
       value: m => m.cell.data.values(),
-      idx:  -1,
+      idx:  -1
     },
     count: {
-      value: m => m.cell.num,
+      value: m => m.cell.num
     },
     __count__: {
-      value: m => m.missing + m.valid,
+      value: m => m.missing + m.valid
     },
     missing: {
-      value: m => m.missing,
+      value: m => m.missing
     },
     valid: {
-      value: m => m.valid,
+      value: m => m.valid
     },
     sum: {
       init:  m => m.sum = 0,
       value: m => m.sum,
       add:  (m, v) => m.sum += +v,
-      rem:  (m, v) => m.sum -= v,
+      rem:  (m, v) => m.sum -= v
     },
     product: {
       init:  m => m.product = 1,
       value: m => m.valid ? m.product : undefined,
       add:  (m, v) => m.product *= v,
-      rem:  (m, v) => m.product /= v,
+      rem:  (m, v) => m.product /= v
     },
     mean: {
       init:  m => m.mean = 0,
       value: m => m.valid ? m.mean : undefined,
       add:  (m, v) => (m.mean_d = v - m.mean, m.mean += m.mean_d / m.valid),
-      rem:  (m, v) => (m.mean_d = v - m.mean, m.mean -= m.valid ? m.mean_d / m.valid : m.mean),
+      rem:  (m, v) => (m.mean_d = v - m.mean, m.mean -= m.valid ? m.mean_d / m.valid : m.mean)
     },
     average: {
       value: m => m.valid ? m.mean : undefined,
-      req:  ['mean'], idx: 1,
+      req:  ['mean'], idx: 1
     },
     variance: {
       init:  m => m.dev = 0,
       value: m => m.valid > 1 ? m.dev / (m.valid - 1) : undefined,
       add:  (m, v) => m.dev += m.mean_d * (v - m.mean),
       rem:  (m, v) => m.dev -= m.mean_d * (v - m.mean),
-      req:  ['mean'], idx: 1,
+      req:  ['mean'], idx: 1
     },
     variancep: {
       value: m => m.valid > 1 ? m.dev / m.valid : undefined,
-      req:  ['variance'], idx: 2,
+      req:  ['variance'], idx: 2
     },
     stdev: {
       value: m => m.valid > 1 ? Math.sqrt(m.dev / (m.valid - 1)) : undefined,
-      req:  ['variance'], idx: 2,
+      req:  ['variance'], idx: 2
     },
     stdevp: {
       value: m => m.valid > 1 ? Math.sqrt(m.dev / m.valid) : undefined,
-      req:  ['variance'], idx: 2,
+      req:  ['variance'], idx: 2
     },
     stderr: {
       value: m => m.valid > 1 ? Math.sqrt(m.dev / (m.valid * (m.valid - 1))) : undefined,
-      req:  ['variance'], idx: 2,
+      req:  ['variance'], idx: 2
     },
     distinct: {
       value: m => m.cell.data.distinct(m.get),
-      req:  ['values'], idx: 3,
+      req:  ['values'], idx: 3
     },
     ci0: {
       value: m => m.cell.data.ci0(m.get),
-      req:  ['values'], idx: 3,
+      req:  ['values'], idx: 3
     },
     ci1: {
       value: m => m.cell.data.ci1(m.get),
-      req:  ['values'], idx: 3,
+      req:  ['values'], idx: 3
     },
     median: {
       value: m => m.cell.data.q2(m.get),
-      req:  ['values'], idx: 3,
+      req:  ['values'], idx: 3
     },
     q1: {
       value: m => m.cell.data.q1(m.get),
-      req: ['values'], idx: 3,
+      req: ['values'], idx: 3
     },
     q3: {
       value: m => m.cell.data.q3(m.get),
-      req:  ['values'], idx: 3,
+      req:  ['values'], idx: 3
     },
     min: {
       init:  m => m.min = undefined,
       value: m => m.min = (Number.isNaN(m.min) ? m.cell.data.min(m.get) : m.min),
       add:  (m, v) => { if (v < m.min || m.min === undefined) m.min = v; },
       rem:  (m, v) => { if (v <= m.min) m.min = NaN; },
-      req:  ['values'], idx: 4,
+      req:  ['values'], idx: 4
     },
     max: {
       init:  m => m.max = undefined,
       value: m => m.max = (Number.isNaN(m.max) ? m.cell.data.max(m.get) : m.max),
       add:  (m, v) => { if (v > m.max || m.max === undefined) m.max = v; },
       rem:  (m, v) => { if (v >= m.max) m.max = NaN; },
-      req:  ['values'], idx: 4,
+      req:  ['values'], idx: 4
     },
     argmin: {
       init:  m => m.argmin = undefined,
       value: m => m.argmin || m.cell.data.argmin(m.get),
       add:  (m, v, t) => { if (v < m.min) m.argmin = t; },
       rem:  (m, v) => { if (v <= m.min) m.argmin = undefined; },
-      req:  ['min', 'values'], idx: 3,
+      req:  ['min', 'values'], idx: 3
     },
     argmax: {
       init:  m => m.argmax = undefined,
       value: m => m.argmax || m.cell.data.argmax(m.get),
       add:  (m, v, t) => { if (v > m.max) m.argmax = t; },
       rem:  (m, v) => { if (v >= m.max) m.argmax = undefined; },
-      req:  ['max', 'values'], idx: 3,
+      req:  ['max', 'values'], idx: 3
     }
   };
 
@@ -8820,8 +8820,7 @@
               : (v = field(d[i]));
         }
       };
-    },
-
+    }
   };
 
   function find(field, data, index) {
@@ -10837,7 +10836,7 @@
     context.globalCompositeOperation = item.blend || 'source-over';
   }
 
-  function v(value, dflt) {
+  function value$1(value, dflt) {
     return value == null ? dflt : value;
   }
 
@@ -10857,18 +10856,18 @@
 
     if (spec.gradient === 'radial') {
       gradient = context.createRadialGradient(
-        bounds.x1 + v(spec.x1, 0.5) * w,
-        bounds.y1 + v(spec.y1, 0.5) * h,
-        Math.max(w, h) * v(spec.r1, 0),
-        bounds.x1 + v(spec.x2, 0.5) * w,
-        bounds.y1 + v(spec.y2, 0.5) * h,
-        Math.max(w, h) * v(spec.r2, 0.5)
+        bounds.x1 + value$1(spec.x1, 0.5) * w,
+        bounds.y1 + value$1(spec.y1, 0.5) * h,
+        Math.max(w, h) * value$1(spec.r1, 0),
+        bounds.x1 + value$1(spec.x2, 0.5) * w,
+        bounds.y1 + value$1(spec.y2, 0.5) * h,
+        Math.max(w, h) * value$1(spec.r2, 0.5)
       );
     } else { // linear gradient
-      const x1 = v(spec.x1, 0),
-            y1 = v(spec.y1, 0),
-            x2 = v(spec.x2, 1),
-            y2 = v(spec.y2, 0);
+      const x1 = value$1(spec.x1, 0),
+            y1 = value$1(spec.y1, 0),
+            x2 = value$1(spec.x2, 1),
+            y2 = value$1(spec.y2, 0);
 
       if (x1 === x2 || y1 === y2 || w === h) {
         // axis aligned: use normal gradient
@@ -11271,7 +11270,7 @@
   }
 
   function offset$1(item) {
-    var sw = (sw = item.strokeWidth) != null ? sw : 1;
+    const sw = value$1(item.strokeWidth, 1);
     return item.strokeOffset != null ? item.strokeOffset
       : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
       : 0;
@@ -11282,7 +11281,7 @@
   }
 
   function emitRectangle(emit, item) {
-    var off = offset$1(item);
+    const off = offset$1(item);
     emit('d', rectangle(null, item, off, off));
   }
 
@@ -11303,14 +11302,14 @@
   }
 
   function content(emit, item, renderer) {
-    var url = item.clip ? clip(renderer, item, item) : null;
+    const url = item.clip ? clip(renderer, item, item) : null;
     emit('clip-path', url);
   }
 
   function bound(bounds, group) {
     if (!group.clip && group.items) {
-      var items = group.items;
-      for (var j=0, m=items.length; j<m; ++j) {
+      const items = group.items, m = items.length;
+      for (let j=0; j<m; ++j) {
         bounds.union(items[j].bounds);
       }
     }
@@ -11325,22 +11324,20 @@
   }
 
   function rectanglePath(context, group, x, y) {
-    var off = offset$1(group);
+    const off = offset$1(group);
     context.beginPath();
     rectangle(context, group, (x || 0) + off, (y || 0) + off);
   }
 
-  var hitBackground = hitPath(rectanglePath);
-  var hitForeground = hitPath(rectanglePath, false);
+  const hitBackground = hitPath(rectanglePath);
+  const hitForeground = hitPath(rectanglePath, false);
 
   function draw(context, scene, bounds) {
-    var renderer = this;
-
-    visit(scene, function(group) {
-      var gx = group.x || 0,
-          gy = group.y || 0,
-          fore = group.strokeForeground,
-          opacity = group.opacity == null ? 1 : group.opacity;
+    visit(scene, group => {
+      const gx = group.x || 0,
+            gy = group.y || 0,
+            fore = group.strokeForeground,
+            opacity = group.opacity == null ? 1 : group.opacity;
 
       // draw group background
       if ((group.stroke || group.fill) && opacity) {
@@ -11361,8 +11358,8 @@
       if (bounds) bounds.translate(-gx, -gy);
 
       // draw group contents
-      visit(group, function(item) {
-        renderer.draw(context, item, bounds);
+      visit(group, item => {
+        this.draw(context, item, bounds);
       });
 
       // restore graphics context
@@ -11385,12 +11382,11 @@
       return null;
     }
 
-    var handler = this,
-        cx = x * context.pixelRatio,
-        cy = y * context.pixelRatio;
+    const cx = x * context.pixelRatio,
+          cy = y * context.pixelRatio;
 
-    return pickVisit(scene, function(group) {
-      var hit, fore, ix, dx, dy, dw, dh, b, c;
+    return pickVisit(scene, group => {
+      let hit, fore, ix, dx, dy, dw, dh, b, c;
 
       // first hit test bounding box
       b = group.bounds;
@@ -11402,7 +11398,7 @@
       dw = dx + (group.width || 0);
       dh = dy + (group.height || 0);
       c = group.clip;
-      if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
+      if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
       // adjust coordinate system
       context.save();
@@ -11427,11 +11423,10 @@
       }
 
       // hit test against contained marks
-      hit = pickVisit(group, function(mark) {
-        return pickMark(mark, dx, dy)
-          ? handler.pick(mark, x, y, dx, dy)
-          : null;
-      });
+      hit = pickVisit(group, mark => pickMark(mark, dx, dy)
+        ? this.pick(mark, x, y, dx, dy)
+        : null
+      );
 
       // hit test against group background
       if (!hit && ix && (group.fill || (!fore && group.stroke))
@@ -11462,6 +11457,12 @@
     content:    content,
     background: background,
     foreground: foreground
+  };
+
+  var metadata = {
+    'version': '1.1',
+    'xmlns': 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
   };
 
   function getImage(item, renderer) {
@@ -11499,58 +11500,43 @@
   }
 
   function attr$1(emit, item, renderer) {
-    var image = getImage(item, renderer),
-        x = item.x || 0,
-        y = item.y || 0,
-        w = imageWidth(item, image),
-        h = imageHeight(item, image),
-        a = item.aspect === false ? 'none' : 'xMidYMid';
+    const img = getImage(item, renderer),
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h),
+          i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
 
-    x -= imageXOffset(item.align, w);
-    y -= imageYOffset(item.baseline, h);
-
-    if (!image.src && image.toDataURL) {
-      emit('href', image.toDataURL(), 'http://www.w3.org/1999/xlink', 'xlink:href');
-    } else {
-      emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
-    }
+    emit('href', i, metadata['xmlns:xlink'], 'xlink:href');
     emit('transform', translate(x, y));
     emit('width', w);
     emit('height', h);
-    emit('preserveAspectRatio', a);
+    emit('preserveAspectRatio', item.aspect === false ? 'none' : 'xMidYMid');
   }
 
   function bound$1(bounds, item) {
-    var image = item.image,
-        x = item.x || 0,
-        y = item.y || 0,
-        w = imageWidth(item, image),
-        h = imageHeight(item, image);
-
-    x -= imageXOffset(item.align, w);
-    y -= imageYOffset(item.baseline, h);
+    const img = item.image,
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h);
 
     return bounds.set(x, y, x + w, y + h);
   }
 
   function draw$1(context, scene, bounds) {
-    var renderer = this;
-
-    visit(scene, function(item) {
+    visit(scene, item => {
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-      var image = getImage(item, renderer),
-          x = item.x || 0,
-          y = item.y || 0,
-          w = imageWidth(item, image),
-          h = imageHeight(item, image),
+      let img = getImage(item, this),
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h),
           opacity, ar0, ar1, t;
 
-      x -= imageXOffset(item.align, w);
-      y -= imageYOffset(item.baseline, h);
-
       if (item.aspect !== false) {
-        ar0 = image.width / image.height;
+        ar0 = img.width / img.height;
         ar1 = item.width / item.height;
         if (ar0 === ar0 && ar1 === ar1 && ar0 !== ar1) {
           if (ar1 < ar0) {
@@ -11565,11 +11551,11 @@
         }
       }
 
-      if (image.complete || image.toDataURL) {
+      if (img.complete || img.toDataURL) {
         blend(context, item);
         context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
         context.imageSmoothingEnabled = item.smooth !== false;
-        context.drawImage(image, x, y, w, h);
+        context.drawImage(img, x, y, w, h);
       }
     });
   }
@@ -12139,7 +12125,7 @@
     'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
     'ellipsis', 'limit', 'lineBreak', 'lineHeight',
     'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
-    'description', 'aria', 'ariaRole', 'ariaRoleDescription',     // aria
+    'description', 'aria', 'ariaRole', 'ariaRoleDescription'      // aria
   ];
 
   function sceneToJSON(scene, indent) {
@@ -12206,7 +12192,7 @@
       marktype:    def.marktype,
       name:        def.name || undefined,
       role:        def.role || undefined,
-      zindex:      def.zindex || 0,
+      zindex:      def.zindex || 0
     };
 
     // add accessibility properties if defined
@@ -15293,37 +15279,28 @@
     return '</' + tag + '>';
   }
 
-  var metadata = {
-    'version': '1.1',
-    'xmlns': 'http://www.w3.org/2000/svg',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
-  };
-
   const styles = {
-    'fill':             'fill',
-    'fillOpacity':      'fill-opacity',
-    'stroke':           'stroke',
-    'strokeOpacity':    'stroke-opacity',
-    'strokeWidth':      'stroke-width',
-    'strokeCap':        'stroke-linecap',
-    'strokeJoin':       'stroke-linejoin',
-    'strokeDash':       'stroke-dasharray',
-    'strokeDashOffset': 'stroke-dashoffset',
-    'strokeMiterLimit': 'stroke-miterlimit',
-    'opacity':          'opacity',
-    'blend':            'mix-blend-mode'
+    fill:             'fill',
+    fillOpacity:      'fill-opacity',
+    stroke:           'stroke',
+    strokeOpacity:    'stroke-opacity',
+    strokeWidth:      'stroke-width',
+    strokeCap:        'stroke-linecap',
+    strokeJoin:       'stroke-linejoin',
+    strokeDash:       'stroke-dasharray',
+    strokeDashOffset: 'stroke-dashoffset',
+    strokeMiterLimit: 'stroke-miterlimit',
+    opacity:          'opacity',
+    blend:            'mix-blend-mode'
   };
-
-  const svgRootClass = 'vega-svg-root';
 
   // ensure miter limit default is consistent with canvas (#2498)
-  const defaultCSS = [
-    `.${svgRootClass} * { fill: none; }`,
-    `.${svgRootClass} tspan { fill: inherit; }`,
-    `.${svgRootClass} path { stroke-miterlimit: 10; }`
-  ].join(' ');
+  const rootAttributes = {
+    'fill': 'none',
+    'stroke-miterlimit': 10
+  };
 
-  const RootIndex = 1,
+  const RootIndex = 0,
         ns = metadata.xmlns;
 
   function SVGRenderer(loader) {
@@ -15350,16 +15327,11 @@
       this._svg.setAttribute('class', 'marks');
       domClear(el, 1);
 
-      // create SVG defs element
-      this._defs.el = domChild(this._svg, 0, 'defs', ns);
-
-      // set svg default styles
-      const style = domChild(this._defs.el, 0, 'style');
-      style.textContent = defaultCSS;
-
       // set the svg root group
       this._root = domChild(this._svg, RootIndex, 'g', ns);
-      this._root.setAttribute('class', svgRootClass);
+      for (const attr in rootAttributes) {
+        this._root.setAttribute(attr, rootAttributes[attr]);
+      }
 
       // ensure no additional child elements
       domClear(this._svg, RootIndex + 1);
@@ -15414,11 +15386,11 @@
       : (openTag('rect', {
           width:  this._width,
           height: this._height,
-          style:  'fill: ' + this._bgcolor + ';'
+          fill:   this._bgcolor
         }) + closeTag('rect'));
 
     return openTag('svg', attr)
-      + this._defs.el.outerHTML
+      + (this._defs.el ? this._defs.el.outerHTML : '')
       + bg
       + this._root.outerHTML
       + closeTag('svg');
@@ -15446,20 +15418,28 @@
   // -- Manage SVG definitions ('defs') block --
 
   prototype$O.updateDefs = function() {
-    var defs = this._defs,
-        el = defs.el,
-        index = 1, id;
+    const svg = this._svg,
+          defs = this._defs;
 
-    for (id in defs.gradient) {
+    let el = defs.el,
+        index = 0;
+
+    for (const id in defs.gradient) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
       index = updateGradient(el, defs.gradient[id], index);
     }
 
-    for (id in defs.clipping) {
+    for (const id in defs.clipping) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
       index = updateClipping(el, defs.clipping[id], index);
     }
 
     // clean-up
-    domClear(el, index);
+    if (el) {
+      index === 0
+        ? (svg.removeChild(el), defs.el = null)
+        : domClear(el, index);
+    }
   };
 
   function updateGradient(el, grad, index) {
@@ -15480,7 +15460,7 @@
       pt = domChild(pt, 0, 'rect', ns);
       pt.setAttribute('width', '1');
       pt.setAttribute('height', '1');
-      pt.setAttribute('style', 'fill: url(' + href() + '#' + grad.id + ');');
+      pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
 
       el = domChild(el, index++, 'radialGradient', ns);
       el.setAttribute('id', grad.id);
@@ -15623,8 +15603,7 @@
   prototype$O.draw = function(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
-    var renderer = this,
-        svg = this._svg,
+    var svg = this._svg,
         mdef = Marks[scene.marktype],
         events = scene.interactive === false ? 'none' : null,
         isGroup = mdef.tag === 'g',
@@ -15640,23 +15619,23 @@
     for (const key in aria) setAttribute(parent, key, aria[key]);
 
     if (!isGroup) {
-      parent.style.setProperty('pointer-events', events);
+      setAttribute(parent, 'pointer-events', events);
     }
-    setAttribute(parent, 'clip-path', scene.clip
-      ? clip(renderer, scene, scene.group) : null);
+    setAttribute(parent, 'clip-path',
+      scene.clip ? clip(this, scene, scene.group) : null);
 
-    function process(item) {
-      var dirty = renderer.isDirty(item),
-          node = bind(item, parent, sibling, mdef.tag, svg);
+    const process = item => {
+      const dirty = this.isDirty(item),
+            node = bind(item, parent, sibling, mdef.tag, svg);
 
       if (dirty) {
-        renderer._update(mdef, node, item);
-        if (isGroup) recurse(renderer, node, item);
+        this._update(mdef, node, item);
+        if (isGroup) recurse(this, node, item);
       }
 
       sibling = node;
       ++i;
-    }
+    };
 
     if (mdef.nested) {
       if (scene.items.length) process(scene.items[0]);
@@ -15671,9 +15650,9 @@
   // Recursively process group contents.
   function recurse(renderer, el, group) {
     el = el.lastChild.previousSibling;
-    var prev, idx = 0;
+    let prev, idx = 0;
 
-    visit(group, function(item) {
+    visit(group, item => {
       prev = renderer.draw(el, item, prev);
       ++idx;
     });
@@ -15685,7 +15664,7 @@
   // Bind a scenegraph item to an SVG DOM element.
   // Create new SVG elements as needed.
   function bind(item, el, sibling, tag, svg) {
-    var node = item._svg, doc;
+    let node = item._svg, doc;
 
     // create a new dom node if needed
     if (!node) {
@@ -15699,15 +15678,15 @@
 
         // if group, create background, content, and foreground elements
         if (tag === 'g') {
-          var bg = domCreate(doc, 'path', ns);
+          const bg = domCreate(doc, 'path', ns);
           node.appendChild(bg);
           bg.__data__ = item;
 
-          var cg = domCreate(doc, 'g', ns);
+          const cg = domCreate(doc, 'g', ns);
           node.appendChild(cg);
           cg.__data__ = item;
 
-          var fg = domCreate(doc, 'path', ns);
+          const fg = domCreate(doc, 'path', ns);
           node.appendChild(fg);
           fg.__data__ = item;
           fg.__values__ = {fill: 'default'};
@@ -15738,9 +15717,7 @@
   // Extra configuration for certain mark types
   var mark_extras = {
     group: function(mdef, el, item) {
-      var fg, bg;
-
-      element = fg = el.childNodes[2];
+      const fg = element = el.childNodes[2];
       values = fg.__values__;
       mdef.foreground(emit, item, this);
 
@@ -15748,23 +15725,23 @@
       element = el.childNodes[1];
       mdef.content(emit, item, this);
 
-      element = bg = el.childNodes[0];
+      const bg = element = el.childNodes[0];
       mdef.background(emit, item, this);
 
-      var value = item.mark.interactive === false ? 'none' : null;
+      const value = item.mark.interactive === false ? 'none' : null;
       if (value !== values.events) {
-        fg.style.setProperty('pointer-events', value);
-        bg.style.setProperty('pointer-events', value);
+        setAttribute(fg, 'pointer-events', value);
+        setAttribute(bg, 'pointer-events', value);
         values.events = value;
       }
 
       if (item.strokeForeground && item.stroke) {
         const fill = item.fill;
-        fg.style.removeProperty('display');
+        setAttribute(fg, 'display', null);
 
         // set style of background
         this.style(bg, item);
-        bg.style.removeProperty('stroke');
+        setAttribute(bg, 'stroke', null);
 
         // set style of foreground
         if (fill) item.fill = null;
@@ -15776,7 +15753,7 @@
         element = null;
       } else {
         // ensure foreground is ignored
-        fg.style.setProperty('display', 'none');
+        setAttribute(fg, 'display', 'none');
       }
     },
     image: function(mdef, el, item) {
@@ -15788,7 +15765,7 @@
       }
     },
     text: function(mdef, el, item) {
-      var tl = textLines(item),
+      let tl = textLines(item),
           key, value, doc, lh;
 
       if (isArray(tl)) {
@@ -15821,11 +15798,11 @@
         }
       }
 
-      setStyle(el, 'font-family', fontFamily(item));
-      setStyle(el, 'font-size', fontSize(item) + 'px');
-      setStyle(el, 'font-style', item.fontStyle);
-      setStyle(el, 'font-variant', item.fontVariant);
-      setStyle(el, 'font-weight', item.fontWeight);
+      setAttribute(el, 'font-family', fontFamily(item));
+      setAttribute(el, 'font-size', fontSize(item) + 'px');
+      setAttribute(el, 'font-style', item.fontStyle);
+      setAttribute(el, 'font-variant', item.fontVariant);
+      setAttribute(el, 'font-weight', item.fontWeight);
     }
   };
 
@@ -15853,10 +15830,10 @@
     mdef.attr(emit, item, this);
 
     // some marks need special treatment
-    var extra = mark_extras[mdef.type];
+    const extra = mark_extras[mdef.type];
     if (extra) extra.call(this, mdef, el, item);
 
-    // apply svg css styles
+    // apply svg style attributes
     // note: element may be modified by 'extra' method
     if (element) this.style(element, item);
   };
@@ -15905,12 +15882,12 @@
 
       const name = styles[prop];
       if (value == null) {
-        el.style.removeProperty(name);
+        el.removeAttribute(name);
       } else {
         if (isGradient(value)) {
           value = gradientRef(value, this._defs.gradient, href());
         }
-        el.style.setProperty(name, value + '');
+        el.setAttribute(name, value + '');
       }
 
       values[prop] = value;
@@ -15918,7 +15895,7 @@
   };
 
   function href() {
-    var loc;
+    let loc;
     return typeof window === 'undefined' ? ''
       : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
       : loc.href;
@@ -15969,16 +15946,15 @@
       t.bg = openTag('rect', {
         width:  this._width,
         height: this._height,
-        style:  'fill: ' + bg + ';'
+        fill:   bg
       }) + closeTag('rect');
     } else {
       t.bg = '';
     }
 
-    t.root = openTag('g', {
-      class: svgRootClass,
-      transform: 'translate(' + o + ')'
-    });
+    t.root = openTag('g', extend(
+      {}, rootAttributes, {transform: 'translate(' + o + ')'}
+    ));
 
     t.foot = closeTag('g') + closeTag('svg');
 
@@ -16005,13 +15981,11 @@
   };
 
   prototype$P.buildDefs = function() {
-    var all = this._defs,
-        defs = openTag('style') + defaultCSS + closeTag('style'),
-        i, id, def, tag, stops;
+    let defs = '', tag;
 
-    for (id in all.gradient) {
-      def = all.gradient[id];
-      stops = def.stops;
+    for (const id in this._defs.gradient) {
+      const def = this._defs.gradient[id],
+            stops = def.stops;
 
       if (def.gradient === 'radial') {
         // SVG radial gradients automatically transform to normalized bbox
@@ -16028,9 +16002,9 @@
         });
 
         defs += openTag('rect', {
-          width: '1',
+          width:  '1',
           height: '1',
-          style: 'fill: url(#' + id + ');'
+          fill:   'url(#' + id + ')'
         }) + closeTag('rect');
 
         defs += closeTag(tag);
@@ -16054,7 +16028,7 @@
         });
       }
 
-      for (i=0; i<stops.length; ++i) {
+      for (let i = 0; i < stops.length; ++i) {
         defs += openTag('stop', {
           offset: stops[i].offset,
           'stop-color': stops[i].color
@@ -16064,8 +16038,8 @@
       defs += closeTag(tag);
     }
 
-    for (id in all.clipping) {
-      def = all.clipping[id];
+    for (const id in this._defs.clipping) {
+      const def = this._defs.clipping[id];
 
       defs += openTag('clipPath', {id: id});
 
@@ -16085,22 +16059,27 @@
       defs += closeTag('clipPath');
     }
 
-    return openTag('defs') + defs + closeTag('defs');
+    return defs ? (openTag('defs') + defs + closeTag('defs')) : '';
   };
 
-  var object;
+  prototype$P.attr = function(scene, item, attrs, tag) {
+    const object = {},
+          emit = (name, value, ns, prefixed) => {
+            object[prefixed || name] = value;
+          };
 
-  function emit$1(name, value, ns, prefixed) {
-    object[prefixed || name] = value;
-  }
-
-  prototype$P.attributes = function(attr, item) {
-    object = {};
-    if (Array.isArray(attr)) {
-      attr.forEach(fn => fn(emit$1, item, this));
+    // apply mark specific attributes
+    if (Array.isArray(attrs)) {
+      attrs.forEach(fn => fn(emit, item, this));
     } else {
-      attr(emit$1, item, this);
+      attrs(emit, item, this);
     }
+
+    // apply style attributes
+    if (tag) {
+      applyStyles(object, item, scene, tag, this._defs);
+    }
+
     return object;
   };
 
@@ -16126,33 +16105,32 @@
   };
 
   prototype$P.mark = function(scene) {
-    var renderer = this,
-        mdef = Marks[scene.marktype],
-        tag  = mdef.tag,
-        defs = this._defs,
-        str = '',
-        style;
+    const mdef = Marks[scene.marktype],
+          tag  = mdef.tag,
+          attrList = [ariaItemAttributes, mdef.attr];
 
-    if (tag !== 'g' && scene.interactive === false) {
-      style = 'style="pointer-events: none;"';
-    }
+    let str = '';
 
     // render opening group tag
-    str += openTag('g', Object.assign({
-      'class': cssClass(scene),
-      'clip-path': scene.clip ? clip(renderer, scene, scene.group) : null
-    }, ariaMarkAttributes(scene)), style);
+    str += openTag('g', extend(
+      {
+        'class': cssClass(scene),
+        'clip-path': scene.clip ? clip(this, scene, scene.group) : null
+      },
+      ariaMarkAttributes(scene),
+      {
+        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+      }
+    ));
 
     // render contained elements
-    function process(item) {
-      var href = renderer.href(item);
+    const process = item => {
+      const href = this.href(item);
       if (href) str += openTag('a', href);
 
-      style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
       str += openTag(
         tag,
-        renderer.attributes([ariaItemAttributes, mdef.attr], item),
-        style
+        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
       );
 
       if (tag === 'text') {
@@ -16178,30 +16156,36 @@
           item.stroke = null;
         }
 
-        str += openTag('path', renderer.attributes(mdef.background, item),
-          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+        str += openTag(
+          'path',
+          this.attr(scene, item, mdef.background, 'bgrect')
+        ) + closeTag('path');
 
-        str += openTag('g', renderer.attributes(mdef.content, item))
-          + renderer.markGroup(item)
+        str += openTag('g', this.attr(scene, item, mdef.content))
+          + this.markGroup(item)
           + closeTag('g');
 
         if (fore && stroke) {
           if (fill) item.fill = null;
           item.stroke = stroke;
 
-          str += openTag('path', renderer.attributes(mdef.foreground, item),
-            applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
+          str += openTag(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgrect')
+          ) + closeTag('path');
 
           if (fill) item.fill = fill;
         } else {
-          str += openTag('path', renderer.attributes(mdef.foreground, item),
-            applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
+          str += openTag(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgfore')
+          ) + closeTag('path');
         }
       }
 
       str += closeTag(tag);
       if (href) str += closeTag('a');
-    }
+    };
 
     if (mdef.nested) {
       if (scene.items && scene.items.length) process(scene.items[0]);
@@ -16214,58 +16198,51 @@
   };
 
   prototype$P.markGroup = function(scene) {
-    var renderer = this,
-        str = '';
-
-    visit(scene, function(item) {
-      str += renderer.mark(item);
-    });
-
+    let str = '';
+    visit(scene, item => { str += this.mark(item); });
     return str;
   };
 
-  function applyStyles(o, mark, tag, defs) {
-    if (o == null) return '';
-    let s = '';
+  function applyStyles(s, item, scene, tag, defs) {
+    if (item == null) return s;
 
-    if (tag === 'bgrect' && mark.interactive === false) {
-      s += 'pointer-events: none; ';
+    if (tag === 'bgrect' && scene.interactive === false) {
+      s['pointer-events'] = 'none';
     }
 
     if (tag === 'bgfore') {
-      if (mark.interactive === false) {
-        s += 'pointer-events: none; ';
+      if (scene.interactive === false) {
+        s['pointer-events'] = 'none';
       }
-      s += 'display: none; ';
+      s.display = 'none';
+      if (item.fill !== null) return s;
     }
 
-    if (tag === 'image') {
-      if (o.smooth === false) {
-        s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
-      }
+    if (tag === 'image' && item.smooth === false) {
+      s.style = 'image-rendering: optimizeSpeed; image-rendering: pixelated;';
     }
 
     if (tag === 'text') {
-      s += 'font-family: ' + fontFamily(o) + '; ';
-      s += 'font-size: ' + fontSize(o) + 'px; ';
-      if (o.fontStyle) s += 'font-style: ' + o.fontStyle + '; ';
-      if (o.fontVariant) s += 'font-variant: ' + o.fontVariant + '; ';
-      if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
+      s['font-family'] = fontFamily(item);
+      s['font-size'] = fontSize(item) + 'px';
+      if (item.fontStyle) s['font-style'] = item.fontStyle;
+      if (item.fontVariant) s['font-variant'] = item.fontVariant;
+      if (item.fontWeight) s['font-weight'] = item.fontWeight;
     }
 
     for (const prop in styles) {
-      let value = o[prop];
+      let value = item[prop];
       const name = styles[prop];
 
       if (value === 'transparent' && (name === 'fill' || name === 'stroke')) ; else if (value != null) {
         if (isGradient(value)) {
           value = gradientRef(value, defs.gradient, '');
         }
-        s += name + ': ' + value + '; ';
+        s[name] = value;
       }
     }
 
-    return s ? 'style="' + s.trim() + '"' : null;
+    return s;
   }
 
   function escape_text(s) {
@@ -19562,7 +19539,7 @@
     'metadata': {},
     'params': [
       { 'name': 'fields', 'type': 'field', 'array': true, 'length': 2 },
-      { 'name': 'geojson', 'type': 'field' },
+      { 'name': 'geojson', 'type': 'field' }
     ]
   };
 
@@ -23586,7 +23563,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.12.2";
+  var version = "5.12.3";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -28745,7 +28722,7 @@
     return false;
   }
 
-  function value$1(specValue, defaultValue) {
+  function value$2(specValue, defaultValue) {
     return specValue != null ? specValue : defaultValue;
   }
 
@@ -29550,26 +29527,26 @@
   }
 
   function lookup$5(spec, config) {
-    const _ = (name, dflt) => value$1(spec[name], value$1(config[name], dflt));
+    const _ = (name, dflt) => value$2(spec[name], value$2(config[name], dflt));
 
-    _.isVertical = s => Vertical === value$1(
+    _.isVertical = s => Vertical === value$2(
       spec.direction,
       config.direction || (s ? config.symbolDirection : config.gradientDirection)
     );
 
-    _.gradientLength = () => value$1(
+    _.gradientLength = () => value$2(
       spec.gradientLength,
       config.gradientLength || config.gradientWidth
     );
 
-    _.gradientThickness = () => value$1(
+    _.gradientThickness = () => value$2(
       spec.gradientThickness,
       config.gradientThickness || config.gradientHeight
     );
 
-    _.entryColumns = () => value$1(
+    _.entryColumns = () => value$2(
       spec.columns,
-      value$1(config.columns, +_.isVertical(true))
+      value$2(config.columns, +_.isVertical(true))
     );
 
     return _;
@@ -29769,7 +29746,7 @@
       fontSize:    _('labelFontSize'),
       fontStyle:   _('labelFontStyle'),
       fontWeight:  _('labelFontWeight'),
-      limit:       value$1(spec.labelLimit, config.gradientLabelLimit)
+      limit:       value$2(spec.labelLimit, config.gradientLabelLimit)
     });
 
     if (vertical) {
@@ -29785,7 +29762,7 @@
     enter[u] = update[u] = {signal: adjust + 'datum.' + Perc, mult: length};
 
     enter[v] = update[v] = thickness;
-    thickness.offset = value$1(spec.labelOffset, config.gradientLabelOffset) || 0;
+    thickness.offset = value$2(spec.labelOffset, config.gradientLabelOffset) || 0;
 
     overlap = overlap ? {
       separation: _('labelSeparation'),
@@ -30021,7 +29998,7 @@
       lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign'),
-      baseline:    _('titleBaseline'),
+      baseline:    _('titleBaseline')
     });
 
     return guideMark({
@@ -30071,7 +30048,7 @@
       role:         spec.role || getRole(spec),
       zindex:       +spec.zindex || undefined,
       aria:         spec.aria,
-      description:  spec.description,
+      description:  spec.description
     };
   }
 
@@ -30795,7 +30772,7 @@
 
       // accessibility support
       format:       spec.format,
-      formatType:   spec.formatType,
+      formatType:   spec.formatType
     });
 
     return encode;
@@ -31240,7 +31217,7 @@
         xy[key] = ifX(
           orient,
           fallback(key, config.axisX, axis, style),
-          fallback(key, config.axisY, axis, style),
+          fallback(key, config.axisY, axis, style)
         );
       }
 
@@ -31251,7 +31228,7 @@
           fallback(key, config.axisTop, axis, style),
           fallback(key, config.axisBottom, axis, style),
           fallback(key, config.axisLeft, axis, style),
-          fallback(key, config.axisRight, axis, style),
+          fallback(key, config.axisRight, axis, style)
         );
       }
     } else {
@@ -31601,11 +31578,11 @@
       fontStyle:   _('titleFontStyle'),
       fontWeight:  _('titleFontWeight'),
       limit:       _('titleLimit'),
-      lineHeight:  _('titleLineHeight'),
+      lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign'),
       angle:       _('titleAngle'),
-      baseline:    _('titleBaseline'),
+      baseline:    _('titleBaseline')
     });
 
     autoLayout(_, orient, encode, userEncode);
@@ -31653,7 +31630,7 @@
       labels: !!_('labels'),
       grid:   !!_('grid'),
       domain: !!_('domain'),
-      title:  spec.title != null,
+      title:  spec.title != null
     };
     dataRef = ref(scope.add(Collect$1({}, [datum])));
 
@@ -31727,7 +31704,7 @@
     addEncoders(encode, {
       orient:       _('orient'),
       offset:       _('offset') || 0,
-      position:     value$1(spec.position, 0),
+      position:     value$2(spec.position, 0),
       titlePadding: _('titlePadding'),
       minExtent:    _('minExtent'),
       maxExtent:    _('maxExtent'),
@@ -31736,7 +31713,7 @@
 
       // accessibility support
       format:       spec.format,
-      formatType:   spec.formatType,
+      formatType:   spec.formatType
     });
 
     return encode;
@@ -31868,7 +31845,7 @@
    * overwriting existing 'value' or 'update' properties.
    */
   function collectSignals(spec, config) {
-    const _ = name => value$1(spec[name], config[name]),
+    const _ = name => value$2(spec[name], config[name]),
           signals = [
             signalObject('background', _('background')),
             signalObject('autosize', parseAutosize(_('autosize'))),
@@ -32381,40 +32358,40 @@
       // each subset accepts mark properties (fill, stroke, etc)
       mark: null,
       arc: {
-        fill: defaultColor,
+        fill: defaultColor
       },
       area: {
-        fill: defaultColor,
+        fill: defaultColor
       },
       image: null,
       line: {
         stroke: defaultColor,
-        strokeWidth: defaultStrokeWidth,
+        strokeWidth: defaultStrokeWidth
       },
       path: {
-        stroke: defaultColor,
+        stroke: defaultColor
       },
       rect: {
-        fill: defaultColor,
+        fill: defaultColor
       },
       rule: {
-        stroke: black,
+        stroke: black
       },
       shape: {
-        stroke: defaultColor,
+        stroke: defaultColor
       },
       symbol: {
         fill: defaultColor,
-        size: 64,
+        size: 64
       },
       text: {
         fill: black,
         font: defaultFont,
-        fontSize: 11,
+        fontSize: 11
       },
       trail: {
         fill: defaultColor,
-        size: defaultStrokeWidth,
+        size: defaultStrokeWidth
       },
 
       // style definitions
