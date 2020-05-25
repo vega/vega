@@ -7,16 +7,21 @@ import {inherits} from 'vega-util';
  * @constructor
  * @param {Pulse} pulse - A pulse to use as the value of this operator.
  * @param {Transform} parent - The parent transform (typically a Facet instance).
- * @param {Transform} target - A transform that receives the subflow of tuples.
  */
 export default function Subflow(pulse, parent) {
   Operator.call(this, pulse);
   this.parent = parent;
+  this.count = 0;
 }
 
 var prototype = inherits(Subflow, Operator);
 
+/**
+ * Routes pulses from this subflow to a target transform.
+ * @param {Transform} target - A transform that receives the subflow of tuples.
+ */
 prototype.connect = function(target) {
+  this.detachSubflow = target.detachSubflow;
   this.targets().add(target);
   return (target.source = this);
 };
@@ -26,6 +31,7 @@ prototype.connect = function(target) {
  * @param {Tuple} t - The tuple being added.
  */
 prototype.add = function(t) {
+  this.count += 1;
   this.value.add.push(t);
 };
 
@@ -34,6 +40,7 @@ prototype.add = function(t) {
  * @param {Tuple} t - The tuple being removed.
  */
 prototype.rem = function(t) {
+  this.count -= 1;
   this.value.rem.push(t);
 };
 
