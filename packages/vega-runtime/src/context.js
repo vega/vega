@@ -39,7 +39,6 @@ function Context(df, transforms, functions) {
 function Subcontext(ctx) {
   this.dataflow = ctx.dataflow;
   this.transforms = ctx.transforms;
-  this.functions = ctx.functions;
   this.events = ctx.events;
   this.signals = Object.create(ctx.signals);
   this.scales = Object.create(ctx.scales);
@@ -54,9 +53,19 @@ function Subcontext(ctx) {
 
 Context.prototype = Subcontext.prototype = {
   fork() {
-    var ctx = new Subcontext(this);
+    const ctx = new Subcontext(this);
     (this.subcontext || (this.subcontext = [])).push(ctx);
     return ctx;
+  },
+  detach(ctx) {
+    this.subcontext = this.subcontext.filter(c => c !== ctx);
+
+    // disconnect all nodes in the subcontext
+    // wipe out targets first for better efficiency
+    const keys = Object.keys(ctx.nodes);
+    for (const key of keys) ctx.nodes[key]._targets = null;
+    for (const key of keys) ctx.nodes[key].detach();
+    ctx.nodes = null;
   },
   get(id) {
     return this.nodes[id];
