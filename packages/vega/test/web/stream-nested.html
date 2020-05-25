@@ -32,15 +32,19 @@ const runtimeSpec = vega.parse({
       "name": "xscale",
       "type": "band",
       "range": "width",
-      "domain": {"data": "table", "field": "u"}
+      "domain": {"signal": "sequence(1, 21, 1)"},
     },
     {
       "name": "yscale",
       "type": "linear",
       "range": "height",
-      "domain": {"data": "table", "field": "v"},
-      "zero": true,
-      "nice": true
+      "domain": [0, 100]
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"signal": "sequence(0, 20, 1)"},
+      "range": {"scheme": "category20"}
     }
   ],
 
@@ -51,20 +55,27 @@ const runtimeSpec = vega.parse({
 
   "marks": [
     {
-      "type": "rect",
-      "from": {"data": "table"},
-      "encode": {
-        "update": {
-          "x": {"scale": "xscale", "field": "u", "offset": 1},
-          "width": {"scale": "xscale", "band": 1, "offset": -1},
-          "y": {"scale": "yscale", "field": "v"},
-          "y2": {"scale": "yscale", "value": 0},
-          "fill": {"value": "steelblue"}
-        },
-        "hover": {
-          "fill": {"value": "red"}
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "table",
+          "name": "facet",
+          "groupby": ["k"]
         }
-      }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {"scale": "xscale", "field": "u", "band": 0.5},
+              "y": {"scale": "yscale", "field": "v"},
+              "stroke": {"scale": "color", "signal": "(datum.k-1) % 20"}
+            }
+          }
+        }
+      ]
     },
     {
       "type": "text",
@@ -83,11 +94,18 @@ const runtimeSpec = vega.parse({
   ]
 });
 
-let key = 0;
+let k = 0;
 function generate(n) {
   const data = [];
-  for (let i=0; i<n; ++i) {
-    data.push({u: 1 + (key++ % 100), v: 5 + ~~(90 * Math.random())});
+  for (let j=0; j<n; ++j) {
+    ++k;
+    for (let i=0; i<20; ++i) {
+      data.push({
+        k: k,
+        u: i + 1,
+        v: i ? (data[data.length-1].v + (2*Math.random() - 1)) : (5 + ~~(90 * Math.random()))
+      });
+    }
   }
   return data;
 }
@@ -98,7 +116,18 @@ const view = new vega.View(runtimeSpec, {
   hover:     true
 });
 
-const join = view._runtime.nodes[85];
+const facet = view._runtime.nodes[94];
+
+function step() {
+  view.change('table', vega.changeset()
+      .insert(generate(1))
+      .remove(d => d.k === k-20)
+    )
+    .signal('count', view.signal('count') + 1) // cycles so far
+    .signal('size', Object.keys(facet.value).length
+      + '/' + view._runtime.subcontext.length)
+    .runAsync();
+}
 
 view.insert('table', generate(20))
     .signal('count', 20)
@@ -106,19 +135,10 @@ view.insert('table', generate(20))
 
 // clean caches once they have 500 empty slots
 view.cleanThreshold = 500;
-let clean = true;
 
-function step() {
-  view.change('table', vega.changeset().clean(clean)
-      .remove(view.data('table')[0])
-      .insert(generate(1)))
-    .signal('count', view.signal('count') + 1) // tuples so far
-    .signal('size', join.value.size) // datajoin map size
-    .runAsync();
-}
+let intId;
 
-function start(gc) {
-  clean = !!gc;
+function start() {
   intId = setInterval(step, 10);
 }
 
