@@ -18,8 +18,10 @@ function defaultItemCreate() {
   return ingest({});
 }
 
-function isExit(t) {
-  return t.exit;
+function newMap(key) {
+  const map = fastmap().test(t => t.exit);
+  map.lookup = t => map.get(key(t));
+  return map;
 }
 
 prototype.transform = function(_, pulse) {
@@ -41,13 +43,12 @@ prototype.transform = function(_, pulse) {
 
   if (!map) {
     pulse = pulse.addAll();
-    this.value = map = fastmap().test(isExit);
-    map.lookup = function(t) { return map.get(key(t)); };
+    this.value = map = newMap(key);
   }
 
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.ADD, t => {
+    const k = key(t);
+    let x = map.get(k);
 
     if (x) {
       if (x.exit) {
@@ -57,7 +58,8 @@ prototype.transform = function(_, pulse) {
         out.mod.push(x);
       }
     } else {
-      map.set(k, (x = item(t)));
+      x = item(t);
+      map.set(k, x);
       out.add.push(x);
     }
 
@@ -65,9 +67,9 @@ prototype.transform = function(_, pulse) {
     x.exit = false;
   });
 
-  pulse.visit(pulse.MOD, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.MOD, t => {
+    const k = key(t),
+          x = map.get(k);
 
     if (x) {
       x.datum = t;
@@ -75,9 +77,9 @@ prototype.transform = function(_, pulse) {
     }
   });
 
-  pulse.visit(pulse.REM, function(t) {
-    var k = key(t),
-        x = map.get(k);
+  pulse.visit(pulse.REM, t => {
+    const k = key(t),
+          x = map.get(k);
 
     if (t === x.datum && !x.exit) {
       out.rem.push(x);
@@ -88,7 +90,9 @@ prototype.transform = function(_, pulse) {
 
   if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
 
-  if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+  if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
+    df.runAfter(map.clean);
+  }
 
   return out;
 };
