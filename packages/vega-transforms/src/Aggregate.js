@@ -85,6 +85,10 @@ prototype.transform = function(_, pulse) {
     aggr.cross();
   }
 
+  if (pulse.clean() && aggr._drop) {
+    out.clean(true).runAfter(() => this.clean());
+  }
+
   return aggr.changes(out);
 };
 
@@ -258,6 +262,15 @@ prototype.newtuple = function(t, p) {
   }
 
   return p ? replace(p.tuple, x) : ingest(x);
+};
+
+prototype.clean = function() {
+  const cells = this.value;
+  for (const key in cells) {
+    if (cells[key].num === 0) {
+      delete cells[key];
+    }
+  }
 };
 
 // -- Process Tuples -----
