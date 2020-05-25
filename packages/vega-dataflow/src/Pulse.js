@@ -4,19 +4,19 @@ import {isArray, visitArray} from 'vega-util';
 /**
  * Sentinel value indicating pulse propagation should stop.
  */
-export var StopPropagation = {};
+export const StopPropagation = {};
 
 // Pulse visit type flags
-var ADD       = (1 << 0),
-    REM       = (1 << 1),
-    MOD       = (1 << 2),
-    ADD_REM   = ADD | REM,
-    ADD_MOD   = ADD | MOD,
-    ALL       = ADD | REM | MOD,
-    REFLOW    = (1 << 3),
-    SOURCE    = (1 << 4),
-    NO_SOURCE = (1 << 5),
-    NO_FIELDS = (1 << 6);
+const ADD       = (1 << 0),
+      REM       = (1 << 1),
+      MOD       = (1 << 2),
+      ADD_REM   = ADD | REM,
+      ADD_MOD   = ADD | MOD,
+      ALL       = ADD | REM | MOD,
+      REFLOW    = (1 << 3),
+      SOURCE    = (1 << 4),
+      NO_SOURCE = (1 << 5),
+      NO_FIELDS = (1 << 6);
 
 /**
  * A Pulse enables inter-operator communication during a run of the
@@ -51,7 +51,7 @@ export default function Pulse(dataflow, stamp, encode) {
   this.encode = encode || null;
 }
 
-var prototype = Pulse.prototype;
+const prototype = Pulse.prototype;
 
 /**
  * Sentinel value indicating pulse propagation should stop.
@@ -135,7 +135,7 @@ prototype.fork = function(flags) {
  * @see init
  */
 prototype.clone = function() {
-  var p = this.fork(ALL);
+  const p = this.fork(ALL);
   p.add = p.add.slice();
   p.rem = p.rem.slice();
   p.mod = p.mod.slice();
@@ -154,8 +154,8 @@ prototype.clone = function() {
  *   pulse does not have a backing source, it is returned directly.
  */
 prototype.addAll = function() {
-  var p = this;
-  if (!this.source || this.source.length === this.add.length) {
+  let p = this;
+  if (!p.source || p.source.length === p.add.length) {
     return p;
   } else {
     p = new Pulse(this.dataflow).init(this);
@@ -178,7 +178,7 @@ prototype.addAll = function() {
  * @return {Pulse} - Returns this Pulse instance.
  */
 prototype.init = function(src, flags) {
-  var p = this;
+  const p = this;
   p.stamp = src.stamp;
   p.encode = src.encode;
 
@@ -216,6 +216,7 @@ prototype.init = function(src, flags) {
   } else {
     p.srcF = src.srcF;
     p.source = src.source;
+    if (src.cleans) p.cleans = src.cleans;
   }
 
   return p;
@@ -263,6 +264,19 @@ prototype.reflow = function(fork) {
 };
 
 /**
+ * Get/set metadata to pulse requesting garbage collection
+ * to reclaim currently unused resources.
+ */
+prototype.clean = function(value) {
+  if (arguments.length) {
+    this.cleans = !!value;
+    return this;
+  } else {
+    return this.cleans;
+  }
+};
+
+/**
  * Marks one or more data field names as modified to assist dependency
  * tracking and incremental processing by transform operators.
  * @param {string|Array<string>} _ - The field(s) to mark as modified.
@@ -291,7 +305,7 @@ prototype.modified = function(_, nomod) {
   var fields = this.fields;
   return !((nomod || this.mod.length) && fields) ? false
     : !arguments.length ? !!fields
-    : isArray(_) ? _.some(function(f) { return fields[f]; })
+    : isArray(_) ? _.some(f => fields[f])
     : fields[_];
 };
 
@@ -320,7 +334,9 @@ prototype.filter = function(flags, filter) {
 };
 
 function addFilter(a, b) {
-  return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
+  return a
+    ? (t, i) => a(t, i) && b(t, i)
+    : b;
 }
 
 /**
@@ -354,14 +370,14 @@ prototype.materialize = function(flags) {
 
 function materialize(data, filter) {
   var out = [];
-  visitArray(data, filter, function(_) { out.push(_); });
+  visitArray(data, filter, _ => out.push(_));
   return out;
 }
 
 function filter(pulse, flags) {
   var map = {};
   pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-  return function(t) { return map[tupleid(t)] ? null : t; };
+  return t => map[tupleid(t)] ? null : t;
 }
 
 /**
