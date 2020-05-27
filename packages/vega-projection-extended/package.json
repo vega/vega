@@ -1,6 +1,6 @@
 {
   "name": "vega-projection-extended",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Extended projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "d3-geo-projection": "^2.9.0",
-    "vega-projection": "^1.4.1"
+    "vega-projection": "^1.4.2"
   }
 }
