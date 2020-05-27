@@ -1,6 +1,7 @@
 import {tupleid} from 'vega-dataflow';
 import {
-  accessor, array, error, hasOwnProperty, isArray, isObject
+  accessor, array, compare, error, field,
+  hasOwnProperty, isArray, isObject, key
 } from 'vega-util';
 
 /**
@@ -76,7 +77,7 @@ function getExpression(_, ctx, params) {
  */
 function getKey(_, ctx) {
   const k = 'k:' + _.$key + '_' + (!!_.$flat);
-  return ctx.fn[k] || (ctx.fn[k] = ctx.keyExpression(_.$key, _.$flat));
+  return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat, ctx.expr.codegen));
 }
 
 /**
@@ -85,7 +86,7 @@ function getKey(_, ctx) {
 function getField(_, ctx) {
   if (!_.$field) return null;
   const k = 'f:' + _.$field + '_' + _.$name;
-  return ctx.fn[k] || (ctx.fn[k] = ctx.fieldExpression(_.$field, _.$name));
+  return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name, ctx.expr.codegen));
 }
 
 /**
@@ -96,7 +97,7 @@ function getCompare(_, ctx) {
   // Keep here for now for backwards compatibility.
   const k = 'c:' + _.$compare + '_' + _.$order,
         c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
-  return ctx.fn[k] || (ctx.fn[k] = ctx.compareExpression(c, _.$order));
+  return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order, ctx.expr.codegen));
 }
 
 /**
