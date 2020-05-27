@@ -35,5 +35,5 @@ export function range(name, group) {
 
 export function scale(name, value, group) {
   const s = getScale(name, (group || this).context);
-  return s && value !== undefined ? s(value) : undefined;
+  return s ? s(value) : undefined;
 }
