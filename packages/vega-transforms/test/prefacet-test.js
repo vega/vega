@@ -23,7 +23,7 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   }
 
   function values(index) {
-    return subs[index].data.value.map(function(_) { return _.x; });
+    return subs[index].data.value.map(_ => _.x);
   }
 
   var tuples = util.field('tuples'),
@@ -49,7 +49,7 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   t.ok(tupleid(subs[2].data.value[1]));
 
   // -- test rem
-  df.pulse(source, changeset().remove(data[0])).run();
+  df.pulse(source, changeset().remove(data[0]).clean(false)).run();
   t.equal(facet.targets().active, 1); // 1 subflow updated
   t.equal(subs.length, 3); // no new subflows added
   t.deepEqual(values(0), []);
@@ -66,7 +66,7 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
 
   // -- test add - new subflow
   df.pulse(source, changeset()
-    .insert({'key': 'd', 'tuples': [{x:7},{x:8}]}))
+    .insert({key: 'd', tuples: [{x:7}, {x:8}]}))
     .run();
   t.equal(facet.targets().active, 1); // 1 subflow updated
   t.equal(subs.length, 4); // 1 subflow added
@@ -76,6 +76,25 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   t.deepEqual(values(3), [7, 8]);
   t.ok(tupleid(subs[3].data.value[0]));
   t.ok(tupleid(subs[3].data.value[1]));
+
+  // -- test rem with garbage collection
+  df.pulse(source, changeset().remove(util.truthy).clean(true)).run();
+  t.equal(facet.targets().active, 4); // 4 subflows updated
+  t.equal(subs.length, 4); // no new subflows added
+  t.deepEqual(values(0), []);
+  t.deepEqual(values(1), []);
+  t.deepEqual(values(2), []);
+  t.deepEqual(values(3), []);
+
+  // -- test add - new subflow
+  df.pulse(source, changeset()
+    .insert({key: 'd', tuples: [{x:1}, {x:2}]}))
+    .run();
+  t.equal(facet.targets().active, 1); // 1 subflow updated
+  t.equal(subs.length, 5); // 1 subflow added
+  t.deepEqual(values(4), [1, 2]);
+  t.ok(tupleid(subs[4].data.value[0]));
+  t.ok(tupleid(subs[4].data.value[1]));
 
   t.end();
 });

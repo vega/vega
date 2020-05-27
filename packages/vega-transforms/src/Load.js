@@ -55,5 +55,6 @@ function output(op, pulse, data) {
   out.rem = op.value;
   op.value = out.source = out.add = data;
   op._pending = null;
+  if (out.rem.length) out.clean(true);
   return out;
 }
