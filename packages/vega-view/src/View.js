@@ -71,7 +71,7 @@ export default function View(spec, options) {
   view._eventConfig = initializeEventConfig(spec.eventConfig);
 
   // initialize dataflow graph
-  const ctx = runtime(view, spec, options.functions);
+  const ctx = runtime(view, spec, options.expr);
   view._runtime = ctx;
   view._signals = ctx.signals;
   view._bind = (spec.bindings || []).map(_ => ({
