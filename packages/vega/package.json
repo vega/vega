@@ -50,11 +50,7 @@
     "vega-statistics": "~1.7.6",
     "vega-time": "~2.0.1",
     "vega-transforms": "~4.9.0",
-<<<<<<< HEAD
     "vega-typings": "~0.18.0",
-=======
-    "vega-typings": "~0.17.2",
->>>>>>> chore: Update version numbers.
     "vega-util": "~1.14.1",
     "vega-view": "~5.8.0",
     "vega-view-transforms": "~4.5.5",
