@@ -6,10 +6,11 @@ In addition to generated code, the Vega parser output can include the parsed [Ab
 
 ## Usage
 
-To use the interpreter, two steps must be taken:
+To use the interpreter, three steps must be taken:
 
-1. Invoke the Vega parser with the `{ast: true}` option to enable inclusion of parsed ASTs in the output.
-2. Pass the interpreter as an option to the Vega View constructor. The underlying runtime will be configured to use the alternative expression evaluator.
+1. Load the Vega interpreter module, as either using a separate HTML script tag or as part of a custom Vega build.
+2. Invoke the Vega parser with the `{ast: true}` option to enable inclusion of parsed ASTs in the output.
+3. Pass the interpreter as an option to the Vega View constructor. The underlying runtime will be configured to use the alternative expression evaluator.
 
 ```js
 const spec; // Vega specification to show.
