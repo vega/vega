@@ -44,10 +44,8 @@ export function setCursor(view, cursor) {
     : view.container();
 
   if (el) {
-    if (cursor == null) {
-      el.style.removeProperty('cursor');
-    } else {
-      el.style.cursor = cursor;
-    }
+    return cursor == null
+      ? el.style.removeProperty('cursor')
+      : (el.style.cursor = cursor);
   }
 }

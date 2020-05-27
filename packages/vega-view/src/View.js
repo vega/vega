@@ -343,8 +343,9 @@ prototype.removeDataListener = function(name, handler) {
 prototype.globalCursor = function(_) {
   if (arguments.length) {
     if (this._globalCursor !== !!_) {
-      setCursor(this, null); // clear previous cursor target
+      const prev = setCursor(this, null); // clear previous cursor
       this._globalCursor = !!_;
+      if (prev) setCursor(this, prev); // swap cursor
     }
     return this;
   } else {
