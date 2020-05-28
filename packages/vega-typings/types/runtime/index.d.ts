@@ -6,9 +6,12 @@ import {
   SignalValue,
   Spec,
   TimeLocale,
+  Padding,
 } from '../spec';
 import { Renderers } from './renderer';
 import { Transform, Changeset } from './dataflow';
+import { Scene } from './scene';
+import { LoggerInterface } from 'vega-util';
 
 // TODO
 export type Runtime = any;
@@ -55,13 +58,17 @@ export class View {
   initialize(dom?: Element | string): this;
   finalize(): this;
   logLevel(level: number): this;
+  logLevel(): number;
+  logger(logger: LoggerInterface): this;
+  logger(): LoggerInterface;
   renderer(renderer: Renderers): this;
+  renderer(): Renderers;
 
-  loader(): Loader;
   loader(loader: Loader): this;
+  loader(): Loader;
 
-  locale(): LocaleFormatters;
   locale(locale: LocaleFormatters): this;
+  locale(): LocaleFormatters;
 
   hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
   run(encode?: string): this;
@@ -74,17 +81,18 @@ export class View {
   data(name: string): any[];
   data(name: string, tuples: any): this;
 
-  description(): string;
   description(s: string): this;
+  description(): string;
 
-  width(): number;
   width(w: number): this;
-  height(): number;
+  width(): number;
   height(h: number): this;
+  height(): number;
 
   origin(): [number, number];
 
-  padding(p: number | { left?: number; right?: number; top?: number; bottom?: number }): this;
+  padding(p: Padding): this;
+  padding(): Padding;
 
   resize(): this;
 
@@ -95,6 +103,7 @@ export class View {
   signal(name: string, value: SignalValue): this;
   signal(name: string): SignalValue;
   container(): HTMLElement | null;
+  scenegraph(): Scene;
   addEventListener(type: string, handler: EventListenerHandler): this;
   removeEventListener(type: string, handler: EventListenerHandler): this;
   addSignalListener(name: string, handler: SignalListenerHandler): this;
@@ -115,7 +124,6 @@ export class View {
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;
 
-export const Warn: number;
 export interface LoaderOptions {
   baseURL?: string;
   mode?: 'file' | 'http';
