@@ -32,6 +32,7 @@ Constructor that creates a new View instance for the provided [Vega dataflow *ru
 - *hover*: Boolean flag indicating if hover processing should be enabled. See the [hover](#view_hover) method.
 - *loader*: Default [loader](https://github.com/vega/vega/blob/master/packages/vega-loader/#loader) instance to use for data files and images.
 - *logLevel*: Initial log level to use. See the [logLevel](#view_logLevel) method.
+- *logger*: Initial logger to use. See the [logger](#view_logger) method.
 - *renderer*: The type of renderer to use (`'canvas'` or `'svg'`). See the [renderer](#view_renderer) method.
 - *tooltip*: Handler function invoked to support tooltip display. See the [tooltip](#view_tooltip) method.
 - *locale*: {% include tag ver="5.12" %} Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../locale). If unspecified, the current default locale at the time of instantiation will be used for the View instance.
