@@ -43,7 +43,9 @@ export async function evaluate(encode, prerun, postrun) {
 
   // exit early if there are no updates
   if (!df._touched.length) {
-    df.info('Dataflow invoked, but nothing to do.');
+    if (level >= Info) {
+      df.info('Dataflow invoked, but nothing to do.');
+    }
     return df;
   }
 
@@ -54,7 +56,7 @@ export async function evaluate(encode, prerun, postrun) {
   // set the current pulse
   df._pulse = new Pulse(df, stamp, encode);
 
-  if (level >= Info) {
+  if (level >= Debug) {
     dt = Date.now();
     df.debug('-- START PROPAGATION (' + stamp + ') -----');
   }
