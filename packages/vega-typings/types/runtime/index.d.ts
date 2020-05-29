@@ -72,6 +72,7 @@ export class View {
       expr?: any;
     },
   );
+
   initialize(container?: Element | string, bindContainer?: Element | string): this;
   finalize(): this;
 
