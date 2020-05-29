@@ -34,7 +34,7 @@ import {
  * should also invoke the initialize method (e.g., to set the parent
  * DOM element in browser-based deployment) and then invoke the run
  * method to evaluate the dataflow graph. Rendering will automatically
- * be peformed upon dataflow runs.
+ * be performed upon dataflow runs.
  * @constructor
  * @param {object} spec - The Vega dataflow runtime specification.
  */
