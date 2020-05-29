@@ -52,7 +52,8 @@ export function toString(a: any): string;
 export function extend<T>(target: T, ...source: readonly Partial<T>[]): T;
 export function inherits<C extends object, P extends object>(
   child: C,
-  parent: P
+  parent: P,
+  members?: object
 ): C & P;
 
 export function hasOwnProperty(object: object, property: PropertyKey): boolean;
