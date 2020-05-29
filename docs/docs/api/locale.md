@@ -24,7 +24,7 @@ vega.<b>timeFormatLocale</b>([<i>definition</i>])
 
 Get or set the default locale for time formatting. If no arguments are provided, returns the current default locale. Otherwise, sets the default locale based on the provided *definition*, and returns the resulting locale object. The *definition* argument must match the format expected by [d3-time-format](https://github.com/d3/d3-time-format#timeFormatLocale). For examples of definition files for a variety of languages, see the [d3-time-format locale collection](https://github.com/d3/d3-time-format/tree/master/locale). To set the number and time locales simultaneously, use the [defaultLocale](#defaultLocale) method.
 
-## <a name="combined-locale"></a>Combined Locale {% include tag ver="5.12" %}
+## <a name="combined-locale"></a>Combined Locale <small>{% include tag ver="5.12" %}</small>
 
 Combined locale objects provide a convenient abstraction for both number and time formatting methods defined on a single object. A combined locale object contains the methods of both a number format locale object and a time format locale object.
 
