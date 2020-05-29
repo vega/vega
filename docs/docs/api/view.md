@@ -229,7 +229,7 @@ Returns the DOM container element for this view, if it exists.
 view.<b>scenegraph</b>()
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Returns the [Vega scenegraph](https://github.com/vega/vega-scenegraph) instance for this view.
+Returns the [Vega scenegraph](https://github.com/vega/vega/tree/master/packages/vega-scenegraph) instance for this view.
 
 <a name="view_origin" href="#view_origin">#</a>
 view.<b>origin</b>()
