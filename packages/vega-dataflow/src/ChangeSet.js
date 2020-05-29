@@ -16,18 +16,18 @@ export default function changeset() {
 
   return {
     constructor: changeset,
-    insert: function(t) {
+    insert(t) {
       var d = array(t), i = 0, n = d.length;
       for (; i<n; ++i) add.push(d[i]);
       return this;
     },
-    remove: function(t) {
+    remove(t) {
       var a = isFunction(t) ? remp : rem,
           d = array(t), i = 0, n = d.length;
       for (; i<n; ++i) a.push(d[i]);
       return this;
     },
-    modify: function(t, field, value) {
+    modify(t, field, value) {
       var m = {field: field, value: constant(value)};
       if (isFunction(t)) {
         m.filter = t;
@@ -38,20 +38,20 @@ export default function changeset() {
       }
       return this;
     },
-    encode: function(t, set) {
+    encode(t, set) {
       if (isFunction(t)) modp.push({filter: t, field: set});
       else mod.push({tuple: t, field: set});
       return this;
     },
-    clean: function(value) {
+    clean(value) {
       clean = value;
       return this;
     },
-    reflow: function() {
+    reflow() {
       reflow = true;
       return this;
     },
-    pulse: function(pulse, tuples) {
+    pulse(pulse, tuples) {
       var cur = {}, out = {}, i, n, m, f, t, id;
 
       // build lookup table of current tuples

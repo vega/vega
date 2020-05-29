@@ -5,7 +5,7 @@ export default function UniqueList(idFunc) {
       list = [],
       ids = {};
 
-  list.add = function(_) {
+  list.add = _ => {
     var id = $(_);
     if (!ids[id]) {
       ids[id] = 1;
@@ -14,7 +14,7 @@ export default function UniqueList(idFunc) {
     return list;
   };
 
-  list.remove = function(_) {
+  list.remove = _ => {
     var id = $(_), idx;
     if (ids[id]) {
       ids[id] = 0;
