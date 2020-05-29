@@ -1,9 +1,9 @@
 import {hasOwnProperty} from 'vega-util';
 
-export var transforms = {};
+export const transforms = {};
 
 export function definition(type) {
-  var t = transform(type);
+  const t = transform(type);
   return t && t.Definition || null;
 }
 
