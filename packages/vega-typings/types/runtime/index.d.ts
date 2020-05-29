@@ -8,7 +8,7 @@ import {
   Padding,
   SignalValue,
   Spec,
-  TimeLocale
+  TimeLocale,
 } from '../spec';
 import { Renderers } from './renderer';
 import { Changeset, Transform } from './dataflow';
@@ -64,6 +64,7 @@ export class View {
       container?: Element | string;
       hover?: boolean;
       loader?: Loader;
+      logger?: LoggerInterface;
       logLevel?: number;
       renderer?: Renderers;
       tooltip?: TooltipHandler;
@@ -71,12 +72,15 @@ export class View {
       expr?: any;
     },
   );
+
   initialize(container?: Element | string, bindContainer?: Element | string): this;
   finalize(): this;
+
   logLevel(level: number): this;
   logLevel(): number;
   logger(logger: LoggerInterface): this;
   logger(): LoggerInterface;
+
   renderer(renderer: Renderers): this;
   renderer(): Renderers;
 
