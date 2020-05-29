@@ -51,6 +51,7 @@ export interface Config
   events?: {
     bind?: 'any' | 'container' | 'none';
     defaults?: DefaultsConfig;
+    globalCursor?: boolean;
     selector?: boolean | string[];
     timer?: boolean;
     view?: boolean | string[];

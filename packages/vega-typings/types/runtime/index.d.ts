@@ -1,15 +1,17 @@
 import {
+  Color,
+  Config,
   DataType,
   EncodeEntryName,
   Format,
   NumberLocale,
+  Padding,
   SignalValue,
   Spec,
-  TimeLocale,
-  Padding,
+  TimeLocale
 } from '../spec';
 import { Renderers } from './renderer';
-import { Transform, Changeset } from './dataflow';
+import { Changeset, Transform } from './dataflow';
 import { Scene } from './scene';
 import { LoggerInterface } from 'vega-util';
 
@@ -23,7 +25,7 @@ export function formatLocale(definition: object): void;
 export function timeFormatLocale(definition: object): void;
 
 // Parser
-export function parse(spec: Spec, config?: any, opt?: object): Runtime;
+export function parse(spec: Spec, config?: Config, opt?: { ast?: boolean }): Runtime;
 
 export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
@@ -54,8 +56,22 @@ export interface ToCanvasOptions {
 }
 
 export class View {
-  constructor(runtime: Runtime, config?: any);
-  initialize(dom?: Element | string): this;
+  constructor(
+    runtime: Runtime,
+    opt?: {
+      background?: Color;
+      bind?: Element | string;
+      container?: Element | string;
+      hover?: boolean;
+      loader?: Loader;
+      logLevel?: number;
+      renderer?: Renderers;
+      tooltip?: TooltipHandler;
+      locale?: LocaleFormatters;
+      expr?: any;
+    },
+  );
+  initialize(container?: Element | string, bindContainer?: Element | string): this;
   finalize(): this;
   logLevel(level: number): this;
   logLevel(): number;
@@ -194,6 +210,6 @@ export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 export const transforms: { [name: string]: Transform };
 
 export * from 'vega-util';
+export * from './dataflow';
 export * from './renderer';
 export * from './scene';
-export * from './dataflow';
