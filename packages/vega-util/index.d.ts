@@ -151,6 +151,7 @@ export interface LoggerInterface {
 }
 
 export const None: number;
+export const Error: number;
 export const Warn: number;
 export const Info: number;
 export const Debug: number;
