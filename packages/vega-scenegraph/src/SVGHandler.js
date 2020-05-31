@@ -14,28 +14,6 @@ export default function SVGHandler(loader, tooltip) {
   });
 }
 
-const prototype = inherits(SVGHandler, Handler);
-
-prototype.initialize = function(el, origin, obj) {
-  let svg = this._svg;
-  if (svg) {
-    svg.removeEventListener(HrefEvent, this._hrefHandler);
-    svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
-    svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
-  }
-  this._svg = svg = el && domFind(el, 'svg');
-  if (svg) {
-    svg.addEventListener(HrefEvent, this._hrefHandler);
-    svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
-    svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
-  }
-  return Handler.prototype.initialize.call(this, el, origin, obj);
-};
-
-prototype.canvas = function() {
-  return this._svg;
-};
-
 // wrap an event listener for the SVG DOM
 const listener = (context, handler) => evt => {
   let item = evt.target.__data__;
@@ -44,40 +22,62 @@ const listener = (context, handler) => evt => {
   handler.call(context._obj, evt, item);
 };
 
-// add an event handler
-prototype.on = function(type, handler) {
-  const name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
-
-  if (i < 0) {
-    const x = {
-      type,
-      handler,
-      listener: listener(this, handler)
-    };
-
-    (h[name] || (h[name] = [])).push(x);
-    if (this._svg) {
-      this._svg.addEventListener(name, x.listener);
+inherits(SVGHandler, Handler, {
+  initialize(el, origin, obj) {
+    let svg = this._svg;
+    if (svg) {
+      svg.removeEventListener(HrefEvent, this._hrefHandler);
+      svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
+      svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
     }
-  }
-
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  const name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
-
-  if (i >= 0) {
-    if (this._svg) {
-      this._svg.removeEventListener(name, h[i].listener);
+    this._svg = svg = el && domFind(el, 'svg');
+    if (svg) {
+      svg.addEventListener(HrefEvent, this._hrefHandler);
+      svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
+      svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
     }
-    h.splice(i, 1);
-  }
+    return Handler.prototype.initialize.call(this, el, origin, obj);
+  },
 
-  return this;
-};
+  canvas() {
+    return this._svg;
+  },
+
+  // add an event handler
+  on(type, handler) {
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
+
+    if (i < 0) {
+      const x = {
+        type,
+        handler,
+        listener: listener(this, handler)
+      };
+
+      (h[name] || (h[name] = [])).push(x);
+      if (this._svg) {
+        this._svg.addEventListener(name, x.listener);
+      }
+    }
+
+    return this;
+  },
+
+  // remove an event handler
+  off(type, handler) {
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
+
+    if (i >= 0) {
+      if (this._svg) {
+        this._svg.removeEventListener(name, h[i].listener);
+      }
+      h.splice(i, 1);
+    }
+
+    return this;
+  }
+});

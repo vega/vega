@@ -15,18 +15,18 @@ export default function Scenegraph(scene) {
   }
 }
 
-var prototype = Scenegraph.prototype;
+Scenegraph.prototype = {
+  toJSON(indent) {
+    return sceneToJSON(this.root, indent || 0);
+  },
 
-prototype.toJSON = function(indent) {
-  return sceneToJSON(this.root, indent || 0);
-};
-
-prototype.mark = function(markdef, group, index) {
-  group = group || this.root.items[0];
-  var mark = createMark(markdef, group);
-  group.items[index] = mark;
-  if (mark.zindex) mark.group.zdirty = true;
-  return mark;
+  mark(markdef, group, index) {
+    group = group || this.root.items[0];
+    var mark = createMark(markdef, group);
+    group.items[index] = mark;
+    if (mark.zindex) mark.group.zdirty = true;
+    return mark;
+  }
 };
 
 function createMark(def, group) {

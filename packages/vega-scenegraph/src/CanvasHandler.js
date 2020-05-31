@@ -18,18 +18,6 @@ export default function CanvasHandler(loader, tooltip) {
   this._events = {};
 }
 
-const prototype = inherits(CanvasHandler, Handler);
-
-prototype.initialize = function(el, origin, obj) {
-  this._canvas = el && domFind(el, 'canvas');
-
-  // add minimal events required for proper state management
-  [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
-    .forEach(type => eventListenerCheck(this, type));
-
-  return Handler.prototype.initialize.call(this, el, origin, obj);
-};
-
 const eventBundle = type => (
   type === TouchStartEvent ||
   type === TouchMoveEvent ||
@@ -53,19 +41,6 @@ function addEventListener(handler, type) {
     );
   }
 }
-
-// return the backing canvas instance
-prototype.canvas = function() {
-  return this._canvas;
-};
-
-// retrieve the current canvas context
-prototype.context = function() {
-  return this._canvas.getContext('2d');
-};
-
-// supported events
-prototype.events = Events;
 
 function move(moveEvent, overEvent, outEvent) {
   return function(evt) {
@@ -96,113 +71,138 @@ function inactive(type) {
   };
 }
 
-// to keep old versions of firefox happy
-prototype.DOMMouseScroll = function(evt) {
-  this.fire(MouseWheelEvent, evt);
-};
+inherits(CanvasHandler, Handler, {
+  initialize(el, origin, obj) {
+    this._canvas = el && domFind(el, 'canvas');
 
-prototype.mousemove = move(MouseMoveEvent, MouseOverEvent, MouseOutEvent);
-prototype.dragover  = move(DragOverEvent, DragEnterEvent, DragLeaveEvent);
+    // add minimal events required for proper state management
+    [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
+      .forEach(type => eventListenerCheck(this, type));
 
-prototype.mouseout  = inactive(MouseOutEvent);
-prototype.dragleave = inactive(DragLeaveEvent);
+    return Handler.prototype.initialize.call(this, el, origin, obj);
+  },
 
-prototype.mousedown = function(evt) {
-  this._down = this._active;
-  this.fire(MouseDownEvent, evt);
-};
+  // return the backing canvas instance
+  canvas() {
+    return this._canvas;
+  },
 
-prototype.click = function(evt) {
-  if (this._down === this._active) {
-    this.fire(ClickEvent, evt);
-    this._down = null;
-  }
-};
+  // retrieve the current canvas context
+  context() {
+    return this._canvas.getContext('2d');
+  },
 
-prototype.touchstart = function(evt) {
-  this._touch = this.pickEvent(evt.changedTouches[0]);
+  // supported events
+  events: Events,
 
-  if (this._first) {
-    this._active = this._touch;
-    this._first = false;
-  }
+  // to keep old versions of firefox happy
+  DOMMouseScroll(evt) {
+    this.fire(MouseWheelEvent, evt);
+  },
 
-  this.fire(TouchStartEvent, evt, true);
-};
+  mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
+  dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
 
-prototype.touchmove = function(evt) {
-  this.fire(TouchMoveEvent, evt, true);
-};
+  mouseout: inactive(MouseOutEvent),
+  dragleave: inactive(DragLeaveEvent),
 
-prototype.touchend = function(evt) {
-  this.fire(TouchEndEvent, evt, true);
-  this._touch = null;
-};
+  mousedown(evt) {
+    this._down = this._active;
+    this.fire(MouseDownEvent, evt);
+  },
 
-// fire an event
-prototype.fire = function(type, evt, touch) {
-  const a = touch ? this._touch : this._active,
-        h = this._handlers[type];
-
-  // set event type relative to scenegraph items
-  evt.vegaType = type;
-
-  // handle hyperlinks and tooltips first
-  if (type === HrefEvent && a && a.href) {
-    this.handleHref(evt, a, a.href);
-  } else if (type === TooltipShowEvent || type === TooltipHideEvent) {
-    this.handleTooltip(evt, a, type !== TooltipHideEvent);
-  }
-
-  // invoke all registered handlers
-  if (h) {
-    for (let i=0, len=h.length; i<len; ++i) {
-      h[i].handler.call(this._obj, evt, a);
+  click(evt) {
+    if (this._down === this._active) {
+      this.fire(ClickEvent, evt);
+      this._down = null;
     }
+  },
+
+  touchstart(evt) {
+    this._touch = this.pickEvent(evt.changedTouches[0]);
+
+    if (this._first) {
+      this._active = this._touch;
+      this._first = false;
+    }
+
+    this.fire(TouchStartEvent, evt, true);
+  },
+
+  touchmove(evt) {
+    this.fire(TouchMoveEvent, evt, true);
+  },
+
+  touchend(evt) {
+    this.fire(TouchEndEvent, evt, true);
+    this._touch = null;
+  },
+
+  // fire an event
+  fire(type, evt, touch) {
+    const a = touch ? this._touch : this._active,
+          h = this._handlers[type];
+
+    // set event type relative to scenegraph items
+    evt.vegaType = type;
+
+    // handle hyperlinks and tooltips first
+    if (type === HrefEvent && a && a.href) {
+      this.handleHref(evt, a, a.href);
+    } else if (type === TooltipShowEvent || type === TooltipHideEvent) {
+      this.handleTooltip(evt, a, type !== TooltipHideEvent);
+    }
+
+    // invoke all registered handlers
+    if (h) {
+      for (let i=0, len=h.length; i<len; ++i) {
+        h[i].handler.call(this._obj, evt, a);
+      }
+    }
+  },
+
+  // add an event handler
+  on(type, handler) {
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
+
+    if (i < 0) {
+      eventListenerCheck(this, type);
+      (h[name] || (h[name] = [])).push({
+        type:    type,
+        handler: handler
+      });
+    }
+
+    return this;
+  },
+
+  // remove an event handler
+  off(type, handler) {
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
+
+    if (i >= 0) {
+      h.splice(i, 1);
+    }
+
+    return this;
+  },
+
+  pickEvent(evt) {
+    const p = point(evt, this._canvas),
+          o = this._origin;
+    return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
+  },
+
+  // find the scenegraph item at the current mouse position
+  // x, y -- the absolute x, y mouse coordinates on the canvas element
+  // gx, gy -- the relative coordinates within the current group
+  pick(scene, x, y, gx, gy) {
+    const g = this.context(),
+          mark = Marks[scene.marktype];
+    return mark.pick.call(this, g, scene, x, y, gx, gy);
   }
-};
-
-// add an event handler
-prototype.on = function(type, handler) {
-  const name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
-
-  if (i < 0) {
-    eventListenerCheck(this, type);
-    (h[name] || (h[name] = [])).push({
-      type:    type,
-      handler: handler
-    });
-  }
-
-  return this;
-};
-
-// remove an event handler
-prototype.off = function(type, handler) {
-  const name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
-
-  if (i >= 0) {
-    h.splice(i, 1);
-  }
-
-  return this;
-};
-
-prototype.pickEvent = function(evt) {
-  const p = point(evt, this._canvas),
-        o = this._origin;
-  return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
-};
-
-// find the scenegraph item at the current mouse position
-// x, y -- the absolute x, y mouse coordinates on the canvas element
-// gx, gy -- the relative coordinates within the current group
-prototype.pick = function(scene, x, y, gx, gy) {
-  const g = this.context(),
-        mark = Marks[scene.marktype];
-  return mark.pick.call(this, g, scene, x, y, gx, gy);
-};
+});
