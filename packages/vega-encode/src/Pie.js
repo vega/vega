@@ -27,36 +27,34 @@ Pie.Definition = {
   ]
 };
 
-var prototype = inherits(Pie, Transform);
+inherits(Pie, Transform, {
+  transform(_, pulse) {
+    var as = _.as || ['startAngle', 'endAngle'],
+        startAngle = as[0],
+        endAngle = as[1],
+        field = _.field || one,
+        start = _.startAngle || 0,
+        stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
+        data = pulse.source,
+        values = data.map(field),
+        n = values.length,
+        a = start,
+        k = (stop - start) / sum(values),
+        index = range(n),
+        i, t, v;
 
-prototype.transform = function(_, pulse) {
-  var as = _.as || ['startAngle', 'endAngle'],
-      startAngle = as[0],
-      endAngle = as[1],
-      field = _.field || one,
-      start = _.startAngle || 0,
-      stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
-      data = pulse.source,
-      values = data.map(field),
-      n = values.length,
-      a = start,
-      k = (stop - start) / sum(values),
-      index = range(n),
-      i, t, v;
+    if (_.sort) {
+      index.sort((a, b) => values[a] - values[b]);
+    }
 
-  if (_.sort) {
-    index.sort(function(a, b) {
-      return values[a] - values[b];
-    });
+    for (i=0; i<n; ++i) {
+      v = values[index[i]];
+      t = data[index[i]];
+      t[startAngle] = a;
+      t[endAngle] = (a += v * k);
+    }
+
+    this.value = values;
+    return pulse.reflow(_.modified()).modifies(as);
   }
-
-  for (i=0; i<n; ++i) {
-    v = values[index[i]];
-    t = data[index[i]];
-    t[startAngle] = a;
-    t[endAngle] = (a += v * k);
-  }
-
-  this.value = values;
-  return pulse.reflow(_.modified()).modifies(as);
-};
+});
