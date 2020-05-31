@@ -26,6 +26,7 @@ All valid aggregate operations.
 | :-------- | :------------|
 | count     | The total count of data objects in the group.|
 | valid     | The count of field values that are not null, undefined or NaN.|
+| values    | The list of data objects in the group.|
 | missing   | The count of null or undefined field values.|
 | distinct  | The count of distinct field values.|
 | sum       | The sum of field values.|
