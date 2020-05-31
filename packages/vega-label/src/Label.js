@@ -69,44 +69,44 @@ Label.Definition = {
   ]
 };
 
-const prototype = inherits(Label, Transform);
+inherits(Label, Transform, {
+  transform(_, pulse) {
+    function modp(param) {
+      const p = _[param];
+      return isFunction(p) && pulse.modified(p.fields);
+    }
 
-prototype.transform = function (_, pulse) {
-  function modp(param) {
-    const p = _[param];
-    return isFunction(p) && pulse.modified(p.fields);
+    const mod = _.modified();
+    if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
+    if (!_.size || _.size.length !== 2) {
+      error('Size parameter should be specified as a [width, height] array.');
+    }
+
+    const as = _.as || Output;
+
+    // run label layout
+    labelLayout(
+      pulse.materialize(pulse.SOURCE).source,
+      _.size,
+      _.sort,
+      array(_.offset || 1),
+      array(_.anchor || Anchors),
+      _.avoidMarks || [],
+      _.avoidBaseMark === false ? false : true,
+      _.lineAnchor || 'end',
+      _.markIndex || 0,
+      _.padding || 0,
+      _.method || 'naive'
+    ).forEach(l => {
+      // write layout results to data stream
+      const t = l.datum;
+      t[as[0]] = l.x;
+      t[as[1]] = l.y;
+      t[as[2]] = l.opacity;
+      t[as[3]] = l.align;
+      t[as[4]] = l.baseline;
+    });
+
+    return pulse.reflow(mod).modifies(as);
   }
-
-  const mod = _.modified();
-  if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
-  if (!_.size || _.size.length !== 2) {
-    error('Size parameter should be specified as a [width, height] array.');
-  }
-
-  const as = _.as || Output;
-
-  // run label layout
-  labelLayout(
-    pulse.materialize(pulse.SOURCE).source,
-    _.size,
-    _.sort,
-    array(_.offset || 1),
-    array(_.anchor || Anchors),
-    _.avoidMarks || [],
-    _.avoidBaseMark === false ? false : true,
-    _.lineAnchor || 'end',
-    _.markIndex || 0,
-    _.padding || 0,
-    _.method || 'naive'
-  ).forEach(l => {
-    // write layout results to data stream
-    const t = l.datum;
-    t[as[0]] = l.x;
-    t[as[1]] = l.y;
-    t[as[2]] = l.opacity;
-    t[as[3]] = l.align;
-    t[as[4]] = l.baseline;
-  });
-
-  return pulse.reflow(mod).modifies(as);
-};
+});
