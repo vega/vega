@@ -9,6 +9,7 @@ export function accessorName(fn: AccessorFn): string;
 
 export type Order = 'ascending' | 'descending';
 
+export function ascending(a: any, b: any): number;
 export function compare(fields: string | readonly string[] | AccessorFn | readonly AccessorFn[], orders?: Order | readonly Order[]): (a: any, b: any) => number;
 
 export function constant<V>(v: V): () => V;

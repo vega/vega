@@ -24,7 +24,7 @@ export default function(fields, orders, opt) {
     : accessor(gen(get, ord), Object.keys(fmap));
 }
 
-const compare = (u, v) => (u < v || u == null) && v != null ? -1
+export const ascending = (u, v) => (u < v || u == null) && v != null ? -1
   : (u > v || v == null) && u != null ? 1
   : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? -1
   : v !== v && u === u ? 1
@@ -35,7 +35,7 @@ const comparator = (fields, orders) => fields.length === 1
   : compareN(fields, orders, fields.length);
 
 const compare1 = (field, order) => function(a, b) {
-  return compare(field(a), field(b)) * order;
+  return ascending(field(a), field(b)) * order;
 };
 
 const compareN = (fields, orders, n) => {
@@ -44,7 +44,7 @@ const compareN = (fields, orders, n) => {
     let f, c = 0, i = -1;
     while (c === 0 && ++i < n) {
       f = fields[i];
-      c = compare(f(a), f(b));
+      c = ascending(f(a), f(b));
     }
     return c * orders[i];
   };

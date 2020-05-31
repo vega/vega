@@ -45,7 +45,7 @@ export {
 
 export {default as array} from './src/array';
 export {default as clampRange} from './src/clampRange';
-export {default as compare} from './src/compare';
+export {default as compare, ascending} from './src/compare';
 export {default as constant} from './src/constant';
 export {default as debounce} from './src/debounce';
 export {default as error} from './src/error';
