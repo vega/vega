@@ -34,9 +34,7 @@ function children(node) {
     case LogicalExpression:
       return [node.left, node.right];
     case CallExpression:
-      var args = node.arguments.slice();
-      args.unshift(node.callee);
-      return args;
+      return [node.callee].concat(node.arguments);
     case ConditionalExpression:
       return [node.test, node.consequent, node.alternate];
     case MemberExpression:
