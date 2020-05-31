@@ -10,7 +10,7 @@ import {
   treemapSquarify
 } from 'd3-hierarchy';
 
-var Tiles = {
+const Tiles = {
   binary: treemapBinary,
   dice: treemapDice,
   slice: treemapSlice,
@@ -19,7 +19,7 @@ var Tiles = {
   resquarify: treemapResquarify
 };
 
-var Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+const Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
 /**
  * Treemap layout.
@@ -53,29 +53,32 @@ Treemap.Definition = {
   ]
 };
 
-var prototype = inherits(Treemap, HierarchyLayout);
+inherits(Treemap, HierarchyLayout, {
+  /**
+   * Treemap layout generator. Adds 'method' and 'ratio' parameters
+   * to configure the underlying tile method.
+   */
+  layout() {
+    const x = treemap();
 
-/**
- * Treemap layout generator. Adds 'method' and 'ratio' parameters
- * to configure the underlying tile method.
- */
-prototype.layout = function() {
-  var x = treemap();
-  x.ratio = function(_) {
-    var t = x.tile();
-    if (t.ratio) x.tile(t.ratio(_));
-  };
-  x.method = function(_) {
-    if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
-    else error('Unrecognized Treemap layout method: ' + _);
-  };
-  return x;
-};
+    x.ratio = _ => {
+      const t = x.tile();
+      if (t.ratio) x.tile(t.ratio(_));
+    };
 
-prototype.params = [
-  'method', 'ratio', 'size', 'round',
-  'padding', 'paddingInner', 'paddingOuter',
-  'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
-];
+    x.method = _ => {
+      if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
+      else error('Unrecognized Treemap layout method: ' + _);
+    };
 
-prototype.fields = Output;
+    return x;
+  },
+
+  params: [
+    'method', 'ratio', 'size', 'round',
+    'padding', 'paddingInner', 'paddingOuter',
+    'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
+  ],
+
+  fields: Output
+});
