@@ -1,6 +1,19 @@
 import {identity, toBoolean, toDate, toNumber, toString} from 'vega-util';
 
-export var typeParsers = {
+const isValid = _ => _ != null && _ === _;
+
+const isBoolean = _ => _ === 'true'
+  || _ === 'false'
+  || _ === true
+  || _ === false;
+
+const isDate = _ => !Number.isNaN(Date.parse(_));
+
+const isNumber = _ => !Number.isNaN(+_) && !(_ instanceof Date);
+
+const isInteger = _ => isNumber(_) && Number.isInteger(+_);
+
+export const typeParsers = {
   boolean: toBoolean,
   integer: toNumber,
   number:  toNumber,
@@ -9,14 +22,14 @@ export var typeParsers = {
   unknown: identity
 };
 
-var typeTests = [
+const typeTests = [
   isBoolean,
   isInteger,
   isNumber,
   isDate
 ];
 
-var typeList = [
+const typeList = [
   'boolean',
   'integer',
   'number',
@@ -51,26 +64,4 @@ export function inferTypes(data, fields) {
     types[field] = inferType(data, field);
     return types;
   }, {});
-}
-
-// -- Type Checks ----
-
-function isValid(_) {
-  return _ != null && _ === _;
-}
-
-function isBoolean(_) {
-  return _ === 'true' || _ === 'false' || _ === true || _ === false;
-}
-
-function isDate(_) {
-  return !Number.isNaN(Date.parse(_));
-}
-
-function isNumber(_) {
-  return !Number.isNaN(+_) && !(_ instanceof Date);
-}
-
-function isInteger(_) {
-  return isNumber(_) && Number.isInteger(+_);
 }
