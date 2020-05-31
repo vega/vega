@@ -27,46 +27,46 @@ Project.Definition = {
   ]
 };
 
-var prototype = inherits(Project, Transform);
+inherits(Project, Transform, {
+  transform(_, pulse) {
+    let fields = _.fields,
+        as = fieldNames(_.fields, _.as || []),
+        derive = fields
+          ? (s, t) => project(s, t, fields, as)
+          : rederive,
+        out, lut;
 
-prototype.transform = function(_, pulse) {
-  var fields = _.fields,
-      as = fieldNames(_.fields, _.as || []),
-      derive = fields
-        ? function(s, t) { return project(s, t, fields, as); }
-        : rederive,
-      out, lut;
+    if (this.value) {
+      lut = this.value;
+    } else {
+      pulse = pulse.addAll();
+      lut = this.value = {};
+    }
 
-  if (this.value) {
-    lut = this.value;
-  } else {
-    pulse = pulse.addAll();
-    lut = this.value = {};
+    out = pulse.fork(pulse.NO_SOURCE);
+
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t);
+      out.rem.push(lut[id]);
+      lut[id] = null;
+    });
+
+    pulse.visit(pulse.ADD, t => {
+      const dt = derive(t, ingest({}));
+      lut[tupleid(t)] = dt;
+      out.add.push(dt);
+    });
+
+    pulse.visit(pulse.MOD, t => {
+      out.mod.push(derive(t, lut[tupleid(t)]));
+    });
+
+    return out;
   }
-
-  out = pulse.fork(pulse.NO_SOURCE);
-
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t);
-    out.rem.push(lut[id]);
-    lut[id] = null;
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    var dt = derive(t, ingest({}));
-    lut[tupleid(t)] = dt;
-    out.add.push(dt);
-  });
-
-  pulse.visit(pulse.MOD, function(t) {
-    out.mod.push(derive(t, lut[tupleid(t)]));
-  });
-
-  return out;
-};
+});
 
 function project(s, t, fields, as) {
-  for (var i=0, n=fields.length; i<n; ++i) {
+  for (let i=0, n=fields.length; i<n; ++i) {
     t[as[i]] = fields[i](s);
   }
   return t;

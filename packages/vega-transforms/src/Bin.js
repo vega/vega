@@ -37,78 +37,74 @@ Bin.Definition = {
   ]
 };
 
-var prototype = inherits(Bin, Transform);
+inherits(Bin, Transform, {
+  transform(_, pulse) {
+    const band = _.interval !== false,
+        bins = this._bins(_),
+        start = bins.start,
+        step = bins.step,
+        as = _.as || ['bin0', 'bin1'],
+        b0 = as[0],
+        b1 = as[1];
 
-prototype.transform = function(_, pulse) {
-  var band = _.interval !== false,
-      bins = this._bins(_),
-      start = bins.start,
-      step = bins.step,
-      as = _.as || ['bin0', 'bin1'],
-      b0 = as[0],
-      b1 = as[1],
-      flag;
+    let flag;
+    if (_.modified()) {
+      pulse = pulse.reflow(true);
+      flag = pulse.SOURCE;
+    } else {
+      flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
+    }
 
-  if (_.modified()) {
-    pulse = pulse.reflow(true);
-    flag = pulse.SOURCE;
-  } else {
-    flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
+    pulse.visit(flag, band
+      ? t => {
+          const v = bins(t);
+          // minimum bin value (inclusive)
+          t[b0] = v;
+          // maximum bin value (exclusive)
+          // use convoluted math for better floating point agreement
+          // see https://github.com/vega/vega/issues/830
+          // infinite values propagate through this formula! #2227
+          t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+        }
+      : t => t[b0] = bins(t)
+    );
+
+    return pulse.modifies(band ? as : b0);
+  },
+
+  _bins(_) {
+    if (this.value && !_.modified()) {
+      return this.value;
+    }
+
+    let field = _.field,
+        bins  = bin(_),
+        step  = bins.step,
+        start = bins.start,
+        stop  = start + Math.ceil((bins.stop - start) / step) * step,
+        a, d;
+
+    if ((a = _.anchor) != null) {
+      d = a - (start + step * Math.floor((a - start) / step));
+      start += d;
+      stop += d;
+    }
+
+    const f = function(t) {
+      let v = toNumber(field(t));
+      return v == null ? null
+        : v < start ? -Infinity
+        : v > stop ? +Infinity
+        : (
+            v = Math.max(start, Math.min(v, stop - step)),
+            start + step * Math.floor(EPSILON + (v - start) / step)
+          );
+    };
+
+    return this.value = accessor(
+      f,
+      accessorFields(field),
+      _.name || 'bin_' + accessorName(field)
+    );
   }
-
-  pulse.visit(flag, band
-    ? function(t) {
-        var v = bins(t);
-        // minimum bin value (inclusive)
-        t[b0] = v;
-        // maximum bin value (exclusive)
-        // use convoluted math for better floating point agreement
-        // see https://github.com/vega/vega/issues/830
-        // infinite values propagate through this formula! #2227
-        t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
-      }
-    : function(t) { t[b0] = bins(t); }
-  );
-
-  return pulse.modifies(band ? as : b0);
-};
-
-prototype._bins = function(_) {
-  if (this.value && !_.modified()) {
-    return this.value;
-  }
-
-  var field = _.field,
-      bins  = bin(_),
-      step  = bins.step,
-      start = bins.start,
-      stop  = start + Math.ceil((bins.stop - start) / step) * step,
-      a, d;
-
-  if ((a = _.anchor) != null) {
-    d = a - (start + step * Math.floor((a - start) / step));
-    start += d;
-    stop += d;
-  }
-
-  var f = function(t) {
-    var v = toNumber(field(t));
-    return v == null ? null
-      : v < start ? -Infinity
-      : v > stop ? +Infinity
-      : (
-          v = Math.max(start, Math.min(v, stop - step)),
-          start + step * Math.floor(EPSILON + (v - start) / step)
-        );
-  };
-
-  f.start = start;
-  f.stop = bins.stop;
-  f.step = step;
-
-  return this.value = accessor(
-    f,
-    accessorFields(field),
-    _.name || 'bin_' + accessorName(field)
-  );
-};
+});

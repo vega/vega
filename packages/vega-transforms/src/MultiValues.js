@@ -16,5 +16,5 @@ inherits(MultiValues, Operator);
 function update(_) {
   return (this.value && !_.modified())
     ? this.value
-    : _.values.reduce(function(data, _) { return data.concat(_); }, []);
+    : _.values.reduce((data, _) => data.concat(_), []);
 }

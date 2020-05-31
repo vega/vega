@@ -21,24 +21,24 @@ Collect.Definition = {
   ]
 };
 
-var prototype = inherits(Collect, Transform);
+inherits(Collect, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.ALL),
+          list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
+          sort = _.sort,
+          mod = pulse.changed() || (sort &&
+                (_.modified('sort') || pulse.modified(sort.fields)));
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
-      sort = _.sort,
-      mod = pulse.changed() || (sort &&
-            (_.modified('sort') || pulse.modified(sort.fields)));
+    out.visit(out.REM, list.remove);
 
-  out.visit(out.REM, list.remove);
+    this.modified(mod);
+    this.value = out.source = list.data(stableCompare(sort), mod);
 
-  this.modified(mod);
-  this.value = out.source = list.data(stableCompare(sort), mod);
+    // propagate tree root if defined
+    if (pulse.source && pulse.source.root) {
+      this.value.root = pulse.source.root;
+    }
 
-  // propagate tree root if defined
-  if (pulse.source && pulse.source.root) {
-    this.value.root = pulse.source.root;
+    return out;
   }
-
-  return out;
-};
+});

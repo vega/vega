@@ -34,83 +34,81 @@ function tokenize(text, tcase, match) {
   return text.match(match);
 }
 
-var prototype = inherits(CountPattern, Transform);
-
-prototype.transform = function(_, pulse) {
-  function process(update) {
-    return function(tuple) {
+inherits(CountPattern, Transform, {
+  transform(_, pulse) {
+    const process = update => tuple => {
       var tokens = tokenize(get(tuple), _.case, match) || [], t;
       for (var i=0, n=tokens.length; i<n; ++i) {
         if (!stop.test(t = tokens[i])) update(t);
       }
     };
-  }
 
-  var init = this._parameterCheck(_, pulse),
-      counts = this._counts,
-      match = this._match,
-      stop = this._stop,
-      get = _.field,
-      as = _.as || ['text', 'count'],
-      add = process(function(t) { counts[t] = 1 + (counts[t] || 0); }),
-      rem = process(function(t) { counts[t] -= 1; });
+    const init = this._parameterCheck(_, pulse),
+          counts = this._counts,
+          match = this._match,
+          stop = this._stop,
+          get = _.field,
+          as = _.as || ['text', 'count'],
+          add = process(t => counts[t] = 1 + (counts[t] || 0)),
+          rem = process(t => counts[t] -= 1);
 
-  if (init) {
-    pulse.visit(pulse.SOURCE, add);
-  } else {
-    pulse.visit(pulse.ADD, add);
-    pulse.visit(pulse.REM, rem);
-  }
-
-  return this._finish(pulse, as); // generate output tuples
-};
-
-prototype._parameterCheck = function(_, pulse) {
-  var init = false;
-
-  if (_.modified('stopwords') || !this._stop) {
-    this._stop = new RegExp('^' + (_.stopwords || '') + '$', 'i');
-    init = true;
-  }
-
-  if (_.modified('pattern') || !this._match) {
-    this._match = new RegExp((_.pattern || '[\\w\']+'), 'g');
-    init = true;
-  }
-
-  if (_.modified('field') || pulse.modified(_.field.fields)) {
-    init = true;
-  }
-
-  if (init) this._counts = {};
-  return init;
-};
-
-prototype._finish = function(pulse, as) {
-  var counts = this._counts,
-      tuples = this._tuples || (this._tuples = {}),
-      text = as[0],
-      count = as[1],
-      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      w, t, c;
-
-  for (w in counts) {
-    t = tuples[w];
-    c = counts[w] || 0;
-    if (!t && c) {
-      tuples[w] = (t = ingest({}));
-      t[text] = w;
-      t[count] = c;
-      out.add.push(t);
-    } else if (c === 0) {
-      if (t) out.rem.push(t);
-      counts[w] = null;
-      tuples[w] = null;
-    } else if (t[count] !== c) {
-      t[count] = c;
-      out.mod.push(t);
+    if (init) {
+      pulse.visit(pulse.SOURCE, add);
+    } else {
+      pulse.visit(pulse.ADD, add);
+      pulse.visit(pulse.REM, rem);
     }
-  }
 
-  return out.modifies(as);
-};
+    return this._finish(pulse, as); // generate output tuples
+  },
+
+  _parameterCheck(_, pulse) {
+    let init = false;
+
+    if (_.modified('stopwords') || !this._stop) {
+      this._stop = new RegExp('^' + (_.stopwords || '') + '$', 'i');
+      init = true;
+    }
+
+    if (_.modified('pattern') || !this._match) {
+      this._match = new RegExp((_.pattern || '[\\w\']+'), 'g');
+      init = true;
+    }
+
+    if (_.modified('field') || pulse.modified(_.field.fields)) {
+      init = true;
+    }
+
+    if (init) this._counts = {};
+    return init;
+  },
+
+  _finish(pulse, as) {
+    let counts = this._counts,
+        tuples = this._tuples || (this._tuples = {}),
+        text = as[0],
+        count = as[1],
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        w, t, c;
+
+    for (w in counts) {
+      t = tuples[w];
+      c = counts[w] || 0;
+      if (!t && c) {
+        tuples[w] = (t = ingest({}));
+        t[text] = w;
+        t[count] = c;
+        out.add.push(t);
+      } else if (c === 0) {
+        if (t) out.rem.push(t);
+        counts[w] = null;
+        tuples[w] = null;
+      } else if (t[count] !== c) {
+        t[count] = c;
+        out.mod.push(t);
+      }
+    }
+
+    return out.modifies(as);
+  }
+});
