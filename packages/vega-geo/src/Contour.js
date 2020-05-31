@@ -55,33 +55,33 @@ Contour.Definition = {
   ]
 };
 
-var prototype = inherits(Contour, Transform);
+inherits(Contour, Transform, {
+  transform(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
+    }
 
-prototype.transform = function(_, pulse) {
-  if (this.value && !pulse.changed() && !_.modified()) {
-    return pulse.StopPropagation;
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        contour = contours().smooth(_.smooth !== false),
+        values = _.values,
+        thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
+        size = _.size, grid, post;
+
+    if (!values) {
+      values = pulse.materialize(pulse.SOURCE).source;
+      grid = params(density2D(), _)(values, true);
+      post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
+      size = [grid.width, grid.height];
+      values = grid.values;
+    }
+
+    thresh = isArray(thresh) ? thresh : thresh(values);
+    values = contour.size(size)(values, thresh);
+    if (post) values.forEach(post);
+
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = (values || []).map(ingest);
+
+    return out;
   }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      contour = contours().smooth(_.smooth !== false),
-      values = _.values,
-      thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
-      size = _.size, grid, post;
-
-  if (!values) {
-    values = pulse.materialize(pulse.SOURCE).source;
-    grid = params(density2D(), _)(values, true);
-    post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
-    size = [grid.width, grid.height];
-    values = grid.values;
-  }
-
-  thresh = isArray(thresh) ? thresh : thresh(values);
-  values = contour.size(size)(values, thresh);
-  if (post) values.forEach(post);
-
-  if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = (values || []).map(ingest);
-
-  return out;
-};
+});

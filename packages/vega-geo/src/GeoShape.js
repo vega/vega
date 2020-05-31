@@ -28,40 +28,40 @@ GeoShape.Definition = {
   ]
 };
 
-var prototype = inherits(GeoShape, Transform);
+inherits(GeoShape, Transform, {
+  transform(_, pulse) {
+    var out = pulse.fork(pulse.ALL),
+        shape = this.value,
+        as = _.as || 'shape',
+        flag = out.ADD;
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      shape = this.value,
-      as = _.as || 'shape',
-      flag = out.ADD;
+    if (!shape || _.modified()) {
+      // parameters updated, reset and reflow
+      this.value = shape = shapeGenerator(
+        getProjectionPath(_.projection),
+        _.field || field('datum'),
+        _.pointRadius
+      );
+      out.materialize().reflow();
+      flag = out.SOURCE;
+    }
 
-  if (!shape || _.modified()) {
-    // parameters updated, reset and reflow
-    this.value = shape = shapeGenerator(
-      getProjectionPath(_.projection),
-      _.field || field('datum'),
-      _.pointRadius
-    );
-    out.materialize().reflow();
-    flag = out.SOURCE;
+    out.visit(flag, t => t[as] = shape);
+
+    return out.modifies(as);
   }
-
-  out.visit(flag, function(t) { t[as] = shape; });
-
-  return out.modifies(as);
-};
+});
 
 function shapeGenerator(path, field, pointRadius) {
   var shape = pointRadius == null
-    ? function(_) { return path(field(_)); }
-    : function(_) {
+    ? _ => path(field(_))
+    : _ => {
       var prev = path.pointRadius(),
           value = path.pointRadius(pointRadius)(field(_));
       path.pointRadius(prev);
       return value;
     };
-  shape.context = function(_) {
+  shape.context = _ => {
     path.context(_);
     return shape;
   };

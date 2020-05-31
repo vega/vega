@@ -28,27 +28,27 @@ Graticule.Definition = {
   ]
 };
 
-var prototype = inherits(Graticule, Transform);
+inherits(Graticule, Transform, {
+  transform(_, pulse) {
+    var src = this.value,
+        gen = this.generator, t;
 
-prototype.transform = function(_, pulse) {
-  var src = this.value,
-      gen = this.generator, t;
-
-  if (!src.length || _.modified()) {
-    for (var prop in _) {
-      if (isFunction(gen[prop])) {
-        gen[prop](_[prop]);
+    if (!src.length || _.modified()) {
+      for (var prop in _) {
+        if (isFunction(gen[prop])) {
+          gen[prop](_[prop]);
+        }
       }
     }
-  }
 
-  t = gen();
-  if (src.length) {
-    pulse.mod.push(replace(src[0], t));
-  } else {
-    pulse.add.push(ingest(t));
-  }
-  src[0] = t;
+    t = gen();
+    if (src.length) {
+      pulse.mod.push(replace(src[0], t));
+    } else {
+      pulse.add.push(ingest(t));
+    }
+    src[0] = t;
 
-  return pulse;
-};
+    return pulse;
+  }
+});
