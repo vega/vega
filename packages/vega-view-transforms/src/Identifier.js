@@ -1,7 +1,7 @@
 import {Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
-var COUNTER_NAME = ':vega_identifier:';
+const COUNTER_NAME = ':vega_identifier:';
 
 /**
  * Adds a unique identifier to all added tuples.
@@ -26,25 +26,19 @@ Identifier.Definition = {
   ]
 };
 
-var prototype = inherits(Identifier, Transform);
+inherits(Identifier, Transform, {
+  transform(_, pulse) {
+    const counter = getCounter(pulse.dataflow),
+          as = _.as;
+    let id = counter.value;
 
-prototype.transform = function(_, pulse) {
-  var counter = getCounter(pulse.dataflow),
-      id = counter.value,
-      as = _.as;
-
-  pulse.visit(pulse.ADD, t => {
-    if (!t[as]) t[as] = ++id;
-  });
-
-  counter.set(this.value = id);
-  return pulse;
-};
+    pulse.visit(pulse.ADD, t => (t[as] = t[as] || ++id));
+    counter.set(this.value = id);
+    return pulse;
+  }
+});
 
 function getCounter(view) {
-  var counter = view._signals[COUNTER_NAME];
-  if (!counter) {
-    view._signals[COUNTER_NAME] = (counter = view.add(0));
-  }
-  return counter;
+  return view._signals[COUNTER_NAME]
+     || (view._signals[COUNTER_NAME] = view.add(0));
 }
