@@ -26,75 +26,74 @@ Nest.Definition = {
   ]
 };
 
-var prototype = inherits(Nest, Transform);
+const children = n => n.values;
 
-function children(n) {
-  return n.values;
-}
-
-prototype.transform = function(_, pulse) {
-  if (!pulse.source) {
-    error('Nest transform requires an upstream data source.');
-  }
-
-  var gen = _.generate,
-      mod = _.modified(),
-      out = pulse.clone(),
-      tree = this.value;
-
-  if (!tree || mod || pulse.changed()) {
-    // collect nodes to remove
-    if (tree) {
-      tree.each(node => {
-        if (node.children && isTuple(node.data)) {
-          out.rem.push(node.data);
-        }
-      });
+inherits(Nest, Transform, {
+  transform(_, pulse) {
+    if (!pulse.source) {
+      error('Nest transform requires an upstream data source.');
     }
 
-    // generate new tree structure
-    this.value = tree = hierarchy({
-      values: array(_.keys)
-        .reduce((n, k) => { n.key(k); return n; }, nest())
-        .entries(out.source)
-    }, children);
+    var gen = _.generate,
+        mod = _.modified(),
+        out = pulse.clone(),
+        tree = this.value;
 
-    // collect nodes to add
-    if (gen) {
-      tree.each(node => {
-        if (node.children) {
-          node = ingest(node.data);
-          out.add.push(node);
-          out.source.push(node);
-        }
-      });
+    if (!tree || mod || pulse.changed()) {
+      // collect nodes to remove
+      if (tree) {
+        tree.each(node => {
+          if (node.children && isTuple(node.data)) {
+            out.rem.push(node.data);
+          }
+        });
+      }
+
+      // generate new tree structure
+      this.value = tree = hierarchy({
+        values: array(_.keys)
+          .reduce((n, k) => { n.key(k); return n; }, nest())
+          .entries(out.source)
+      }, children);
+
+      // collect nodes to add
+      if (gen) {
+        tree.each(node => {
+          if (node.children) {
+            node = ingest(node.data);
+            out.add.push(node);
+            out.source.push(node);
+          }
+        });
+      }
+
+      // build lookup table
+      lookup(tree, tupleid, tupleid);
     }
 
-    // build lookup table
-    lookup(tree, tupleid, tupleid);
+    out.source.root = tree;
+    return out;
   }
-
-  out.source.root = tree;
-  return out;
-};
+});
 
 function nest() {
-  var keys = [],
-      nest;
+  const keys = [],
+        nest = {
+          entries: array => entries(apply(array, 0), 0),
+          key: d => (keys.push(d), nest)
+        };
 
   function apply(array, depth) {
     if (depth >= keys.length) {
       return array;
     }
 
-    var i = -1,
-        n = array.length,
-        key = keys[depth++],
-        keyValue,
-        value,
-        valuesByKey = {},
-        values,
-        result = {};
+    const n = array.length,
+          key = keys[depth++],
+          valuesByKey = {},
+          result = {};
+
+    let i = -1, keyValue, value, values;
 
     while (++i < n) {
       keyValue = key(value = array[i]) + '';
@@ -114,15 +113,15 @@ function nest() {
 
   function entries(map, depth) {
     if (++depth > keys.length) return map;
-    var array = [], k;
-    for (k in map) {
-      array.push({key: k, values: entries(map[k], depth)});
+    const array = [];
+    for (const key in map) {
+      array.push({
+        key,
+        values: entries(map[key], depth)
+      });
     }
     return array;
   }
 
-  return nest = {
-    entries: array => entries(apply(array, 0), 0),
-    key: d => { keys.push(d); return nest; }
-  };
+  return nest;
 }
