@@ -38,35 +38,6 @@ DataScope.fromEntries = function(scope, entries) {
   return new DataScope(scope, input, output, values, aggr);
 };
 
-var prototype = DataScope.prototype;
-
-prototype.countsRef = function(scope, field, sort) {
-  var ds = this,
-      cache = ds.counts || (ds.counts = {}),
-      k = fieldKey(field), v, a, p;
-
-  if (k != null) {
-    scope = ds.scope;
-    v = cache[k];
-  }
-
-  if (!v) {
-    p = {
-      groupby: scope.fieldRef(field, 'key'),
-      pulse: ref(ds.output)
-    };
-    if (sort && sort.field) addSortField(scope, p, sort);
-    a = scope.add(Aggregate(p));
-    v = scope.add(Collect({pulse: ref(a)}));
-    v = {agg: a, ref: ref(v)};
-    if (k != null) cache[k] = v;
-  } else if (sort && sort.field) {
-    addSortField(scope, v.agg.params, sort);
-  }
-
-  return v.ref;
-};
-
 function fieldKey(field) {
   return isString(field) ? field : null;
 }
@@ -114,26 +85,55 @@ function cache(scope, ds, name, optype, field, counts, index) {
   return v;
 }
 
-prototype.tuplesRef = function() {
-  return ref(this.values);
-};
+DataScope.prototype = {
+  countsRef(scope, field, sort) {
+    var ds = this,
+        cache = ds.counts || (ds.counts = {}),
+        k = fieldKey(field), v, a, p;
 
-prototype.extentRef = function(scope, field) {
-  return cache(scope, this, 'extent', 'extent', field, false);
-};
+    if (k != null) {
+      scope = ds.scope;
+      v = cache[k];
+    }
 
-prototype.domainRef = function(scope, field) {
-  return cache(scope, this, 'domain', 'values', field, false);
-};
+    if (!v) {
+      p = {
+        groupby: scope.fieldRef(field, 'key'),
+        pulse: ref(ds.output)
+      };
+      if (sort && sort.field) addSortField(scope, p, sort);
+      a = scope.add(Aggregate(p));
+      v = scope.add(Collect({pulse: ref(a)}));
+      v = {agg: a, ref: ref(v)};
+      if (k != null) cache[k] = v;
+    } else if (sort && sort.field) {
+      addSortField(scope, v.agg.params, sort);
+    }
 
-prototype.valuesRef = function(scope, field, sort) {
-  return cache(scope, this, 'vals', 'values', field, sort || true);
-};
+    return v.ref;
+  },
 
-prototype.lookupRef = function(scope, field) {
-  return cache(scope, this, 'lookup', 'tupleindex', field, false);
-};
+  tuplesRef() {
+    return ref(this.values);
+  },
 
-prototype.indataRef = function(scope, field) {
-  return cache(scope, this, 'indata', 'tupleindex', field, true, true);
+  extentRef(scope, field) {
+    return cache(scope, this, 'extent', 'extent', field, false);
+  },
+
+  domainRef(scope, field) {
+    return cache(scope, this, 'domain', 'values', field, false);
+  },
+
+  valuesRef(scope, field, sort) {
+    return cache(scope, this, 'vals', 'values', field, sort || true);
+  },
+
+  lookupRef(scope, field) {
+    return cache(scope, this, 'lookup', 'tupleindex', field, false);
+  },
+
+  indataRef(scope, field) {
+    return cache(scope, this, 'indata', 'tupleindex', field, true, true);
+  }
 };
