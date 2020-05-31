@@ -18,7 +18,7 @@ function update(_) {
     return this.value;
   }
 
-  var min = +Infinity,
+  let min = +Infinity,
       max = -Infinity,
       ext = _.extents,
       i, n, e;

@@ -24,28 +24,28 @@ Fold.Definition = {
   ]
 };
 
-var prototype = inherits(Fold, Transform);
+inherits(Fold, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.NO_SOURCE),
+          fields = _.fields,
+          fnames = fields.map(accessorName),
+          as = _.as || ['key', 'value'],
+          k = as[0],
+          v = as[1],
+          n = fields.length;
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      fields = _.fields,
-      fnames = fields.map(accessorName),
-      as = _.as || ['key', 'value'],
-      k = as[0],
-      v = as[1],
-      n = fields.length;
+    out.rem = this.value;
 
-  out.rem = this.value;
+    pulse.visit(pulse.SOURCE, t => {
+      for (let i=0, d; i<n; ++i) {
+        d = derive(t);
+        d[k] = fnames[i];
+        d[v] = fields[i](t);
+        out.add.push(d);
+      }
+    });
 
-  pulse.visit(pulse.SOURCE, function(t) {
-    for (var i=0, d; i<n; ++i) {
-      d = derive(t);
-      d[k] = fnames[i];
-      d[v] = fields[i](t);
-      out.add.push(d);
-    }
-  });
-
-  this.value = out.source = out.add;
-  return out.modifies(as);
-};
+    this.value = out.source = out.add;
+    return out.modifies(as);
+  }
+});

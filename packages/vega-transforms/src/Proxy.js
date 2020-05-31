@@ -12,11 +12,11 @@ export default function Proxy(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Proxy, Transform);
-
-prototype.transform = function(_, pulse) {
-  this.value = _.value;
-  return _.modified('value')
-    ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-    : pulse.StopPropagation;
-};
+inherits(Proxy, Transform, {
+  transform(_, pulse) {
+    this.value = _.value;
+    return _.modified('value')
+      ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
+      : pulse.StopPropagation;
+  }
+});

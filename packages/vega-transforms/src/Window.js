@@ -44,77 +44,73 @@ Window.Definition = {
   ]
 };
 
-var prototype = inherits(Window, Transform);
+inherits(Window, Transform, {
+  transform(_, pulse) {
+    this.stamp = pulse.stamp;
 
-prototype.transform = function(_, pulse) {
-  var self = this,
-      state = self.state,
-      mod = _.modified(),
-      cmp = stableCompare(_.sort),
-      i, n;
+    const mod = _.modified(),
+          cmp = stableCompare(_.sort),
+          key = groupkey(_.groupby),
+          group = t => this.group(key(t));
 
-  this.stamp = pulse.stamp;
+    // initialize window state
+    let state = this.state;
+    if (!state || mod) {
+      state = this.state = new WindowState(_);
+    }
 
-  // initialize window state
-  if (!state || mod) {
-    state = self.state = new WindowState(_);
+    // partition input tuples
+    if (mod || pulse.modified(state.inputs)) {
+      this.value = {};
+      pulse.visit(pulse.SOURCE, t => group(t).add(t));
+    } else {
+      pulse.visit(pulse.REM, t => group(t).remove(t));
+      pulse.visit(pulse.ADD, t => group(t).add(t));
+    }
+
+    // perform window calculations for each modified partition
+    for (let i=0, n=this._mlen; i<n; ++i) {
+      processPartition(this._mods[i], state, cmp, _);
+    }
+    this._mlen = 0;
+    this._mods = [];
+
+    // TODO don't reflow everything?
+    return pulse.reflow(mod).modifies(state.outputs);
+  },
+
+  group(key) {
+    let self = this,
+        group = self.value[key];
+
+    if (!group) {
+      group = self.value[key] = SortedList(tupleid);
+      group.stamp = -1;
+    }
+
+    if (group.stamp < self.stamp) {
+      group.stamp = self.stamp;
+      self._mods[self._mlen++] = group;
+    }
+
+    return group;
   }
-
-  // retrieve group for a tuple
-  var key = groupkey(_.groupby);
-  function group(t) { return self.group(key(t)); }
-
-  // partition input tuples
-  if (mod || pulse.modified(state.inputs)) {
-    self.value = {};
-    pulse.visit(pulse.SOURCE, function(t) { group(t).add(t); });
-  } else {
-    pulse.visit(pulse.REM, function(t) { group(t).remove(t); });
-    pulse.visit(pulse.ADD, function(t) { group(t).add(t); });
-  }
-
-  // perform window calculations for each modified partition
-  for (i=0, n=self._mlen; i<n; ++i) {
-    processPartition(self._mods[i], state, cmp, _);
-  }
-  self._mlen = 0;
-  self._mods = [];
-
-  // TODO don't reflow everything?
-  return pulse.reflow(mod).modifies(state.outputs);
-};
-
-prototype.group = function(key) {
-  var self = this,
-      group = self.value[key];
-
-  if (!group) {
-    group = self.value[key] = SortedList(tupleid);
-    group.stamp = -1;
-  }
-
-  if (group.stamp < self.stamp) {
-    group.stamp = self.stamp;
-    self._mods[self._mlen++] = group;
-  }
-
-  return group;
-};
+});
 
 function processPartition(list, state, cmp, _) {
-  var sort = _.sort,
-      range = sort && !_.ignorePeers,
-      frame = _.frame || [null, 0],
-      data = list.data(cmp), // use cmp for stable sort
-      n = data.length,
-      i = 0,
-      b = range ? bisector(sort) : null,
-      w = {
-        i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
-        data: data, compare: sort || constant(-1)
-      };
+  const sort = _.sort,
+        range = sort && !_.ignorePeers,
+        frame = _.frame || [null, 0],
+        data = list.data(cmp), // use cmp for stable sort
+        n = data.length,
+        b = range ? bisector(sort) : null,
+        w = {
+          i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
+          data: data, compare: sort || constant(-1)
+        };
 
-  for (state.init(); i<n; ++i) {
+  state.init();
+  for (let i=0; i<n; ++i) {
     setWindow(w, frame, i, n);
     if (range) adjustRange(w, b);
     state.update(w, data[i]);
@@ -131,11 +127,11 @@ function setWindow(w, f, i, n) {
 
 // if frame type is 'range', adjust window for peer values
 function adjustRange(w, bisect) {
-  var r0 = w.i0,
-      r1 = w.i1 - 1,
-      c = w.compare,
-      d = w.data,
-      n = d.length - 1;
+  const r0 = w.i0,
+        r1 = w.i1 - 1,
+        c = w.compare,
+        d = w.data,
+        n = d.length - 1;
 
   if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect.left(d, d[r0]);
   if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);

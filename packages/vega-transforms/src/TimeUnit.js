@@ -32,69 +32,69 @@ TimeUnit.Definition = {
   ]
 };
 
-var prototype = inherits(TimeUnit, Transform);
+inherits(TimeUnit, Transform, {
+  transform(_, pulse) {
+    let field = _.field,
+        band = _.interval !== false,
+        utc = _.timezone === 'utc',
+        floor = this._floor(_, pulse),
+        offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+        as = _.as || OUTPUT,
+        u0 = as[0],
+        u1 = as[1],
+        min = floor.start || Infinity,
+        max = floor.stop || -Infinity,
+        step = floor.step,
+        flag = pulse.ADD;
 
-prototype.transform = function(_, pulse) {
-  var field = _.field,
-      band = _.interval !== false,
-      utc = _.timezone === 'utc',
-      floor = this._floor(_, pulse),
-      offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
-      as = _.as || OUTPUT,
-      u0 = as[0],
-      u1 = as[1],
-      min = floor.start || Infinity,
-      max = floor.stop || -Infinity,
-      step = floor.step,
-      flag = pulse.ADD;
-
-  if (_.modified() || pulse.modified(accessorFields(field))) {
-    pulse = pulse.reflow(true);
-    flag = pulse.SOURCE;
-    min = Infinity;
-    max = -Infinity;
-  }
-
-  pulse.visit(flag, function(t) {
-    var v = field(t), a, b;
-    if (v == null) {
-      t[u0] = null;
-      if (band) t[u1] = null;
-    } else {
-      t[u0] = a = b = floor(v);
-      if (band) t[u1] = b = offset(a, step);
-      if (a < min) min = a;
-      if (b > max) max = b;
+    if (_.modified() || pulse.modified(accessorFields(field))) {
+      pulse = pulse.reflow(true);
+      flag = pulse.SOURCE;
+      min = Infinity;
+      max = -Infinity;
     }
-  });
 
-  floor.start = min;
-  floor.stop = max;
-
-  return pulse.modifies(band ? as : u0);
-};
-
-prototype._floor = function(_, pulse) {
-  const utc = _.timezone === 'utc';
-
-  // get parameters
-  let {units, step} = _.units
-    ? {units: _.units, step: _.step || 1}
-    : timeBin({
-      extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
-      maxbins: _.maxbins
+    pulse.visit(flag, t => {
+      let v = field(t), a, b;
+      if (v == null) {
+        t[u0] = null;
+        if (band) t[u1] = null;
+      } else {
+        t[u0] = a = b = floor(v);
+        if (band) t[u1] = b = offset(a, step);
+        if (a < min) min = a;
+        if (b > max) max = b;
+      }
     });
 
-  // check / standardize time units
-  units = timeUnits(units);
+    floor.start = min;
+    floor.stop = max;
 
-  const prev = this.value || {},
-        floor = (utc ? utcFloor : timeFloor)(units, step);
+    return pulse.modifies(band ? as : u0);
+  },
 
-  floor.unit = peek(units);
-  floor.units = units;
-  floor.step = step;
-  floor.start = prev.start;
-  floor.stop = prev.stop;
-  return this.value = floor;
-};
+  _floor(_, pulse) {
+    const utc = _.timezone === 'utc';
+
+    // get parameters
+    let {units, step} = _.units
+      ? {units: _.units, step: _.step || 1}
+      : timeBin({
+        extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
+        maxbins: _.maxbins
+      });
+
+    // check / standardize time units
+    units = timeUnits(units);
+
+    const prev = this.value || {},
+          floor = (utc ? utcFloor : timeFloor)(units, step);
+
+    floor.unit = peek(units);
+    floor.units = units;
+    floor.step = step;
+    floor.start = prev.start;
+    floor.stop = prev.stop;
+    return this.value = floor;
+  }
+});

@@ -89,41 +89,42 @@ Density.Definition = {
   ]
 };
 
-var prototype = inherits(Density, Transform);
+inherits(Density, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    if (!this.value || pulse.changed() || _.modified()) {
+      let dist = parseDist(_.distribution, source(pulse)),
+          minsteps = _.steps || _.minsteps || 25,
+          maxsteps = _.steps || _.maxsteps || 200,
+          method = _.method || 'pdf';
 
-  if (!this.value || pulse.changed() || _.modified()) {
-    var dist = parseDist(_.distribution, source(pulse)),
-        minsteps = _.steps || _.minsteps || 25,
-        maxsteps = _.steps || _.maxsteps || 200,
-        method = _.method || 'pdf';
+      if (method !== 'pdf' && method !== 'cdf') {
+        error('Invalid density method: ' + method);
+      }
+      if (!_.extent && !dist.data) {
+        error('Missing density extent parameter.');
+      }
+      method = dist[method];
 
-    if (method !== 'pdf' && method !== 'cdf') {
-      error('Invalid density method: ' + method);
+      const as = _.as || ['value', 'density'],
+            domain = _.extent || extent(dist.data()),
+            values = sampleCurve(method, domain, minsteps, maxsteps)
+              .map(v => {
+                const tuple = {};
+                tuple[as[0]] = v[0];
+                tuple[as[1]] = v[1];
+                return ingest(tuple);
+              });
+
+      if (this.value) out.rem = this.value;
+      this.value = out.add = out.source = values;
     }
-    if (!_.extent && !dist.data) {
-      error('Missing density extent parameter.');
-    }
-    method = dist[method];
 
-    var as = _.as || ['value', 'density'],
-        domain = _.extent || extent(dist.data()),
-        values = sampleCurve(method, domain, minsteps, maxsteps).map(v => {
-          var tuple = {};
-          tuple[as[0]] = v[0];
-          tuple[as[1]] = v[1];
-          return ingest(tuple);
-        });
-
-    if (this.value) out.rem = this.value;
-    this.value = out.add = out.source = values;
+    return out;
   }
-
-  return out;
-};
+});
 
 function source(pulse) {
-  return function() { return pulse.materialize(pulse.SOURCE).source; };
+  return () => pulse.materialize(pulse.SOURCE).source;
 }
