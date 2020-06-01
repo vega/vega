@@ -1,5 +1,5 @@
 import {Transform} from 'vega-dataflow';
-import {accessorName, inherits} from 'vega-util';
+import {accessorName, inherits, toNumber} from 'vega-util';
 
 /**
  * Computes extents (min/max) for a data field.
@@ -38,10 +38,8 @@ prototype.transform = function(_, pulse) {
   }
 
   pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-    var v = field(t);
+    var v = toNumber(field(t));
     if (v != null) {
-      // coerce to number
-      v = +v;
       // NaNs will fail all comparisons!
       if (v < min) min = v;
       if (v > max) max = v;
