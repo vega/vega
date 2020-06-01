@@ -25,8 +25,9 @@ All valid aggregate operations.
 | Operation | Description  |
 | :-------- | :------------|
 | count     | The total count of data objects in the group.|
-| valid     | The count of field values that are not null, undefined or NaN.|
-| missing   | The count of null or undefined field values.|
+| valid     | The count of field values that are not `null`, `undefined` or `NaN`.|
+| values    | The list of data objects in the group.|
+| missing   | The count of `null` or `undefined` field values.|
 | distinct  | The count of distinct field values.|
 | sum       | The sum of field values.|
 | product   | The product of field values. {% include tag ver="5.10" %}|
