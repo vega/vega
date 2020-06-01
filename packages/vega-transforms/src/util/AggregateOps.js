@@ -173,14 +173,14 @@ function init() {
 }
 
 function add(v, t) {
-  if (v == null) { ++this.missing; return; }
+  if (v == null || v === '') { ++this.missing; return; }
   if (v !== v) return;
   ++this.valid;
   this._ops.forEach(op => op.add(this, v, t));
 }
 
 function rem(v, t) {
-  if (v == null) { --this.missing; return; }
+  if (v == null || v === '') { --this.missing; return; }
   if (v !== v) return;
   --this.valid;
   this._ops.forEach(op => op.rem(this, v, t));
