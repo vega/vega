@@ -38,8 +38,7 @@ prototype.transform = function(_, pulse) {
   }
 
   pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-    var v = field(t);
-    v = toNumber(v);
+    var v = toNumber(field(t));
     if (v != null) {
       // NaNs will fail all comparisons!
       if (v < min) min = v;

@@ -92,8 +92,7 @@ prototype._bins = function(_) {
   }
 
   var f = function(t) {
-    var v = field(t);
-    v = toNumber(v);
+    var v = toNumber(field(t));
     return v == null ? null
       : v < start ? -Infinity
       : v > stop ? +Infinity
