@@ -7676,9 +7676,9 @@ validate-npm-package-name@^3.0.0:
     builtins "^1.0.3"
 
 vega-datasets@^1.30.2:
-  version "1.30.2"
-  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.30.2.tgz#d8a88f2b8602835d4547006797059450b5d9c97c"
-  integrity sha512-CRF9WCqEcw9h1+gm7+6p6db0544fAWYlxmfkB+V6SsiaBG/3kP+0Xo+z9xG9Ch15PBhqfkhj1SivwcPQnqm0Qw==
+  version "1.30.4"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.30.4.tgz#59693c595da2c779d1f9dc63c4dcb51ac12aae4f"
+  integrity sha512-rC1sgThPL8OjkHT4KTB3Oa4vB2gHxnAs4TsUSdLEx/EB4RZUqaudpgQbGuLwBkN1bPaM41vZybOpGniq+aITmA==
 
 verror@1.10.0:
   version "1.10.0"
