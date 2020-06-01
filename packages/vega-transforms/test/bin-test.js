@@ -120,3 +120,25 @@ tape('Bin supports point output', function(t) {
 
   t.end();
 });
+
+tape('Bin ignores invalid values', function(t) {
+  var df = new vega.Dataflow(),
+      extent = df.add([0, 10]),
+      step = df.add(10 / 20),
+      bin = df.add(Bin, {
+        field:  util.field('v'),
+        extent: extent,
+        step:   step,
+        nice:   false
+      });
+
+  df.run();
+
+  t.equal(bin.value({v: 0}), 0);
+  t.equal(bin.value({v: null}), null);
+  t.equal(bin.value({v: undefined}), null);
+  t.equal(bin.value({v: NaN}), NaN);
+  t.equal(bin.value({v: ''}), null);
+
+  t.end();
+});

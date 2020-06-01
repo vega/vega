@@ -43,7 +43,7 @@ tape('Extent handles empty and invalid data', function(t) {
   t.deepEqual(e.value, [undefined, undefined]);
 
   df.pulse(c, changeset().insert([
-    {x: NaN}, {x: null}, {x: undefined}
+    {x: NaN}, {x: null}, {x: undefined}, {x: ''}
   ])).run();
   t.deepEqual(e.value, [undefined, undefined]);
 

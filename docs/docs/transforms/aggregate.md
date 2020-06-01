@@ -46,6 +46,7 @@ All valid aggregate operations.
 | max       | The maximum field value.|
 | argmin    | An input data object containing the minimum field value.|
 | argmax    | An input data object containing the maximum field value.|
+| values    | The list of data objects in the group.|
 
 ## Usage
 
