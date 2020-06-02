@@ -9,7 +9,7 @@ import {isSignal} from '../../util';
 import {extend, isObject} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef, band) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       orient = spec.orient,
       vscale = spec.gridScale,
       sign = getSign(orient, 1, -1),

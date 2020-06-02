@@ -7,7 +7,7 @@ import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
 
 export default function(spec, config, userEncode, dataRef, size, band) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       orient = spec.orient,
       sign = getSign(orient, -1, 1),
       encode, enter, exit, update, tickSize, tickPos;

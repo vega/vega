@@ -8,7 +8,7 @@ import {AxisTitleRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       orient = spec.orient,
       sign = getSign(orient, -1, 1),
       encode, enter, update, titlePos;

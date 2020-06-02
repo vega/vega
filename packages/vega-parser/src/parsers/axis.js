@@ -14,7 +14,7 @@ import {AxisTicks, Collect} from '../transforms';
 import {ref, value} from '../util';
 
 export default function(spec, scope) {
-  var config = axisConfig(spec, scope),
+  let config = axisConfig(spec, scope),
       encode = spec.encode || {},
       axisEncode = encode.axis || {},
       name = axisEncode.name || undefined,
@@ -100,7 +100,7 @@ export default function(spec, scope) {
 }
 
 function buildAxisEncode(_, spec) {
-  var encode = {enter: {}, update: {}};
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
     orient:       _('orient'),

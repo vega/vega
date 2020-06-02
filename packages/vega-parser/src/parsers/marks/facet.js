@@ -5,7 +5,7 @@ import {ref} from '../../util';
 import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {
-  var facet = spec.from.facet,
+  let facet = spec.from.facet,
       name = facet.name,
       data = getDataRef(facet, scope),
       subscope, source, values, op;

@@ -21,7 +21,7 @@ import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var config = scope.config.legend,
+  let config = scope.config.legend,
       encode = spec.encode || {},
       legendEncode = encode.legend || {},
       name = legendEncode.name || undefined,
@@ -137,7 +137,7 @@ export default function(spec, scope) {
 }
 
 function legendType(spec, scaleType) {
-  var type = spec.type || Symbols;
+  let type = spec.type || Symbols;
 
   if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
     type = isContinuous(scaleType) ? Gradient
@@ -157,7 +157,7 @@ function scaleCount(spec) {
 }
 
 function buildLegendEncode(_, spec, config) {
-  var encode = {enter: {}, update: {}};
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
     orient:       _('orient'),
@@ -181,9 +181,9 @@ function buildLegendEncode(_, spec, config) {
 }
 
 function sizeExpression(spec, scope, marks) {
-  var size = deref(getChannel('size', spec, marks)),
-      strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
-      fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
+  const size = deref(getChannel('size', spec, marks)),
+        strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
+        fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
   return parseExpression(
     `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,

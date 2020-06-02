@@ -29,7 +29,7 @@ export function lookup(spec, config) {
 }
 
 export function getEncoding(name, encode) {
-  var v = encode && (
+  const v = encode && (
     (encode.update && encode.update[name]) ||
     (encode.enter && encode.enter[name])
   );
@@ -37,7 +37,7 @@ export function getEncoding(name, encode) {
 }
 
 export function getStyle(name, scope, style) {
-  var s = scope.config.style[style];
+  const s = scope.config.style[style];
   return s && s[name];
 }
 

@@ -113,7 +113,7 @@ Scope.prototype = Subscope.prototype = {
   },
 
   proxy(op) {
-    var vref = op instanceof Entry ? ref(op) : op;
+    const vref = op instanceof Entry ? ref(op) : op;
     return this.add(Proxy({value: vref}));
   },
 
@@ -130,7 +130,7 @@ Scope.prototype = Subscope.prototype = {
 
   // Apply metadata
   finish() {
-    var name, ds;
+    let name, ds;
 
     // annotate root
     if (this.root) this.root.root = true;
@@ -147,7 +147,7 @@ Scope.prototype = Subscope.prototype = {
 
     // annotate data sets
     function annotate(op, name, type) {
-      var data, list;
+      let data, list;
       if (op) {
         data = op.data || (op.data = {});
         list = data[name] || (data[name] = []);
@@ -159,7 +159,7 @@ Scope.prototype = Subscope.prototype = {
       annotate(ds.input,  name, 'input');
       annotate(ds.output, name, 'output');
       annotate(ds.values, name, 'values');
-      for (var field in ds.index) {
+      for (const field in ds.index) {
         annotate(ds.index[field], name, 'index:' + field);
       }
     }
@@ -208,12 +208,11 @@ Scope.prototype = Subscope.prototype = {
       error('Unsupported field reference: ' + stringValue(field));
     }
 
-    var s = field.signal,
-        f = this.field[s],
-        params;
+    let s = field.signal,
+        f = this.field[s];
 
     if (!f) {
-      params = {name: this.signalRef(s)};
+      const params = {name: this.signalRef(s)};
       if (name) params.as = name;
       this.field[s] = f = ref(this.add(Field(params)));
     }
@@ -292,7 +291,7 @@ Scope.prototype = Subscope.prototype = {
     if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + stringValue(name));
     }
-    var op = value instanceof Entry ? value : this.add(operator(value));
+    const op = value instanceof Entry ? value : this.add(operator(value));
     return this.signals[name] = op;
   },
 
@@ -313,11 +312,11 @@ Scope.prototype = Subscope.prototype = {
   },
 
   parseLambdas() {
-    var code = Object.keys(this.lambdas);
-    for (var i=0, n=code.length; i<n; ++i) {
-      var s = code[i],
-          e = parseExpression(s, this),
-          op = this.lambdas[s];
+    const code = Object.keys(this.lambdas);
+    for (let i=0, n=code.length; i<n; ++i) {
+      const s = code[i],
+            e = parseExpression(s, this),
+            op = this.lambdas[s];
       op.params = e.$params;
       op.update = e.$expr;
     }
@@ -333,7 +332,7 @@ Scope.prototype = Subscope.prototype = {
   },
 
   exprRef(code, name) {
-    var params = {expr: parseExpression(code, this)};
+    const params = {expr: parseExpression(code, this)};
     if (name) params.expr.$name = name;
     return ref(this.add(Expression(params)));
   },
@@ -414,7 +413,7 @@ function propertyLambda(spec) {
 }
 
 function arrayLambda(array) {
-  var code = '[',
+  let code = '[',
       i = 0,
       n = array.length,
       value;
@@ -430,7 +429,7 @@ function arrayLambda(array) {
 }
 
 function objectLambda(obj) {
-  var code = '{',
+  let code = '{',
       i = 0,
       key, value;
 

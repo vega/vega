@@ -2,10 +2,10 @@ import {Scope, View} from '../util';
 import {parseExpression} from 'vega-functions';
 import {error, stringValue} from 'vega-util';
 
-var Timer = 'timer';
+const Timer = 'timer';
 
 export default function parseStream(stream, scope) {
-  var method = stream.merge ? mergeStream
+  const method = stream.merge ? mergeStream
     : stream.stream ? nestedStream
     : stream.type ? eventStream
     : error('Invalid stream specification: ' + stringValue(stream));
@@ -18,19 +18,19 @@ function eventSource(source) {
 }
 
 function mergeStream(stream, scope) {
-  var list = stream.merge.map(s => parseStream(s, scope)),
-      entry = streamParameters({merge: list}, stream, scope);
+  const list = stream.merge.map(s => parseStream(s, scope)),
+        entry = streamParameters({merge: list}, stream, scope);
   return scope.addStream(entry).id;
 }
 
 function nestedStream(stream, scope) {
-  var id = parseStream(stream.stream, scope),
-      entry = streamParameters({stream: id}, stream, scope);
+  const id = parseStream(stream.stream, scope),
+        entry = streamParameters({stream: id}, stream, scope);
   return scope.addStream(entry).id;
 }
 
 function eventStream(stream, scope) {
-  var id, entry;
+  let id, entry;
 
   if (stream.type === Timer) {
     id = scope.event(Timer, stream.throttle);
@@ -46,7 +46,7 @@ function eventStream(stream, scope) {
 }
 
 function streamParameters(entry, stream, scope) {
-  var param = stream.between;
+  let param = stream.between;
 
   if (param) {
     if (param.length !== 2) {
@@ -87,7 +87,7 @@ function streamParameters(entry, stream, scope) {
 }
 
 function filterMark(type, name, role) {
-  var item = 'event.item';
+  const item = 'event.item';
   return item
     + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
     + (role ? '&&' + item + '.mark.role===\'' + role + '\'' : '')

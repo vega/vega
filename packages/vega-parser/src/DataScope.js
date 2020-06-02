@@ -16,7 +16,7 @@ export default function DataScope(scope, input, output, values, aggr) {
 }
 
 DataScope.fromEntries = function(scope, entries) {
-  var n = entries.length,
+  let n = entries.length,
       i = 1,
       input  = entries[0],
       values = entries[n-1],
@@ -43,10 +43,11 @@ function fieldKey(field) {
 }
 
 function addSortField(scope, p, sort) {
-  var as = aggrField(sort.op, sort.field), s;
+  let as = aggrField(sort.op, sort.field),
+      s;
 
   if (p.ops) {
-    for (var i=0, n=p.as.length; i<n; ++i) {
+    for (let i=0, n=p.as.length; i<n; ++i) {
       if (p.as[i] === as) return;
     }
   } else {
@@ -62,9 +63,10 @@ function addSortField(scope, p, sort) {
 }
 
 function cache(scope, ds, name, optype, field, counts, index) {
-  var cache = ds[name] || (ds[name] = {}),
+  let cache = ds[name] || (ds[name] = {}),
       sort = sortKey(counts),
-      k = fieldKey(field), v, op;
+      k = fieldKey(field),
+      v, op;
 
   if (k != null) {
     scope = ds.scope;
@@ -73,7 +75,7 @@ function cache(scope, ds, name, optype, field, counts, index) {
   }
 
   if (!v) {
-    var params = counts
+    const params = counts
       ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
       : {field: scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = scope.sortRef(counts);
@@ -87,7 +89,7 @@ function cache(scope, ds, name, optype, field, counts, index) {
 
 DataScope.prototype = {
   countsRef(scope, field, sort) {
-    var ds = this,
+    let ds = this,
         cache = ds.counts || (ds.counts = {}),
         k = fieldKey(field), v, a, p;
 

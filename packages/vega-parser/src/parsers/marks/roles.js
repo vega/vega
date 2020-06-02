@@ -1,22 +1,22 @@
-export var MarkRole = 'mark';
-export var FrameRole = 'frame';
-export var ScopeRole = 'scope';
+export const MarkRole = 'mark';
+export const FrameRole = 'frame';
+export const ScopeRole = 'scope';
 
-export var AxisRole = 'axis';
-export var AxisDomainRole = 'axis-domain';
-export var AxisGridRole = 'axis-grid';
-export var AxisLabelRole = 'axis-label';
-export var AxisTickRole = 'axis-tick';
-export var AxisTitleRole = 'axis-title';
+export const AxisRole = 'axis';
+export const AxisDomainRole = 'axis-domain';
+export const AxisGridRole = 'axis-grid';
+export const AxisLabelRole = 'axis-label';
+export const AxisTickRole = 'axis-tick';
+export const AxisTitleRole = 'axis-title';
 
-export var LegendRole = 'legend';
-export var LegendBandRole = 'legend-band';
-export var LegendEntryRole = 'legend-entry';
-export var LegendGradientRole = 'legend-gradient';
-export var LegendLabelRole = 'legend-label';
-export var LegendSymbolRole = 'legend-symbol';
-export var LegendTitleRole = 'legend-title';
+export const LegendRole = 'legend';
+export const LegendBandRole = 'legend-band';
+export const LegendEntryRole = 'legend-entry';
+export const LegendGradientRole = 'legend-gradient';
+export const LegendLabelRole = 'legend-label';
+export const LegendSymbolRole = 'legend-symbol';
+export const LegendTitleRole = 'legend-title';
 
-export var TitleRole = 'title';
-export var TitleTextRole = 'title-text';
-export var TitleSubtitleRole = 'title-subtitle';
+export const TitleRole = 'title';
+export const TitleTextRole = 'title-text';
+export const TitleSubtitleRole = 'title-subtitle';
