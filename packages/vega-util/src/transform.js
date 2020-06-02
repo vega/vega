@@ -2,32 +2,25 @@ import {identity} from './accessors';
 import peek from './peek';
 import toNumber from './toNumber';
 
-function exp(sign) {
-  return function(x) { return sign * Math.exp(x); };
-}
+const exp = sign =>
+  x => sign * Math.exp(x);
 
-function log(sign) {
-  return function(x) { return Math.log(sign * x); };
-}
+const log = sign =>
+  x => Math.log(sign * x);
 
-function symlog(c) {
-  return function(x) { return Math.sign(x) * Math.log1p(Math.abs(x / c)); };
-}
+const symlog = c =>
+  x => Math.sign(x) * Math.log1p(Math.abs(x / c));
 
-function symexp(c) {
-  return function(x) { return Math.sign(x) * Math.expm1(Math.abs(x)) * c; };
-}
+const symexp = c =>
+  x => Math.sign(x) * Math.expm1(Math.abs(x)) * c;
 
-function pow(exponent) {
-  return function(x) {
-    return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
-  };
-}
+const pow = exponent =>
+  x => x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
 
 function pan(domain, delta, lift, ground) {
-  var d0 = lift(domain[0]),
-      d1 = lift(peek(domain)),
-      dd = (d1 - d0) * delta;
+  const d0 = lift(domain[0]),
+        d1 = lift(peek(domain)),
+        dd = (d1 - d0) * delta;
 
   return [
     ground(d0 - dd),
@@ -53,9 +46,9 @@ export function panSymlog(domain, delta, constant) {
 }
 
 function zoom(domain, anchor, scale, lift, ground) {
-  var d0 = lift(domain[0]),
-      d1 = lift(peek(domain)),
-      da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
+  const d0 = lift(domain[0]),
+        d1 = lift(peek(domain)),
+        da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
 
   return [
     ground(da + (d0 - da) * scale),
@@ -68,7 +61,7 @@ export function zoomLinear(domain, anchor, scale) {
 }
 
 export function zoomLog(domain, anchor, scale) {
-  var sign = Math.sign(domain[0]);
+  const sign = Math.sign(domain[0]);
   return zoom(domain, anchor, scale, log(sign), exp(sign));
 }
 
