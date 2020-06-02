@@ -1,6 +1,6 @@
 import {isArray} from 'vega-util';
 
-var CACHE = '_:mod:_';
+const CACHE = '_:mod:_';
 
 /**
  * Hash that tracks modifications to assigned values.
@@ -23,9 +23,9 @@ Parameters.prototype = {
    * @return {Parameters} - This parameter object.
    */
   set(name, index, value, force) {
-    var o = this,
-        v = o[name],
-        mod = o[CACHE];
+    const o = this,
+          v = o[name],
+          mod = o[CACHE];
 
     if (index != null && index >= 0) {
       if (v[index] !== value || force) {
@@ -52,7 +52,7 @@ Parameters.prototype = {
    * @return {boolean} - Returns true if a queried parameter was modified.
    */
   modified(name, index) {
-    var mod = this[CACHE], k;
+    let mod = this[CACHE], k;
     if (!arguments.length) {
       for (k in mod) { if (mod[k]) return true; }
       return false;

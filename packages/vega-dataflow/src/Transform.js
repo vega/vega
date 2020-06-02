@@ -25,7 +25,7 @@ inherits(Transform, Operator, {
   run(pulse) {
     if (pulse.stamp < this.stamp) return pulse.StopPropagation;
 
-    var rv;
+    let rv;
     if (this.skip()) {
       this.skip(false);
     } else {

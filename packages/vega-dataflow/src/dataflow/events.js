@@ -13,7 +13,7 @@ import {array} from 'vega-util';
  * @return {EventStream}
  */
 export default function(source, type, filter, apply) {
-  var df = this,
+  let df = this,
       s = stream(filter, apply),
       send = function(e) {
         e.dataflow = df;
@@ -33,7 +33,7 @@ export default function(source, type, filter, apply) {
     sources = array(source);
   }
 
-  for (var i=0, n=sources.length; i<n; ++i) {
+  for (let i=0, n=sources.length; i<n; ++i) {
     sources[i].addEventListener(type, send);
   }
 
