@@ -1,7 +1,7 @@
 import UniqueList from './util/UniqueList';
 import {debounce, id, identity, truthy} from 'vega-util';
 
-var STREAM_ID = 0;
+let STREAM_ID = 0;
 
 /**
  * Models an event stream.
@@ -51,7 +51,7 @@ EventStream.prototype = {
 
   receive(evt) {
     if (this._filter(evt)) {
-      var val = (this.value = this._apply(evt)),
+      let val = (this.value = this._apply(evt)),
           trg = this._targets,
           n = trg ? trg.length : 0,
           i = 0;
@@ -66,22 +66,22 @@ EventStream.prototype = {
   },
 
   filter(filter) {
-    var s = stream(filter);
+    const s = stream(filter);
     this.targets().add(s);
     return s;
   },
 
   apply(apply) {
-    var s = stream(null, apply);
+    const s = stream(null, apply);
     this.targets().add(s);
     return s;
   },
 
   merge() {
-    var s = stream();
+    const s = stream();
 
     this.targets().add(s);
-    for (var i=0, n=arguments.length; i<n; ++i) {
+    for (let i=0, n=arguments.length; i<n; ++i) {
       arguments[i].targets().add(s);
     }
 
@@ -89,9 +89,9 @@ EventStream.prototype = {
   },
 
   throttle(pause) {
-    var t = -1;
-    return this.filter(function() {
-      var now = Date.now();
+    let t = -1;
+    return this.filter(() => {
+      const now = Date.now();
       if ((now - t) > pause) {
         t = now;
         return 1;
@@ -102,11 +102,11 @@ EventStream.prototype = {
   },
 
   debounce(delay) {
-    var s = stream();
+    const s = stream();
 
     this.targets().add(stream(null, null,
-      debounce(delay, function(e) {
-        var df = e.dataflow;
+      debounce(delay, e => {
+        const df = e.dataflow;
         s.receive(e);
         if (df && df.run) df.run();
       })
@@ -116,9 +116,9 @@ EventStream.prototype = {
   },
 
   between(a, b) {
-    var active = false;
-    a.targets().add(stream(null, null, function() { active = true; }));
-    b.targets().add(stream(null, null, function() { active = false; }));
-    return this.filter(function() { return active; });
+    let active = false;
+    a.targets().add(stream(null, null, () => active = true));
+    b.targets().add(stream(null, null, () => active = false));
+    return this.filter(() => active);
   }
 };

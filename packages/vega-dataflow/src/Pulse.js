@@ -52,13 +52,13 @@ export default function Pulse(dataflow, stamp, encode) {
 }
 
 function materialize(data, filter) {
-  var out = [];
+  const out = [];
   visitArray(data, filter, _ => out.push(_));
   return out;
 }
 
 function filter(pulse, flags) {
-  var map = {};
+  const map = {};
   pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
   return t => map[tupleid(t)] ? null : t;
 }
@@ -256,7 +256,7 @@ Pulse.prototype = {
    *   changed, false otherwise.
    */
   changed(flags) {
-    var f = flags || ALL;
+    const f = flags || ALL;
     return ((f & ADD) && this.add.length)
         || ((f & REM) && this.rem.length)
         || ((f & MOD) && this.mod.length);
@@ -272,8 +272,8 @@ Pulse.prototype = {
   reflow(fork) {
     if (fork) return this.fork(ALL).reflow();
 
-    var len = this.add.length,
-        src = this.source && this.source.length;
+    const len = this.add.length,
+          src = this.source && this.source.length;
     if (src && src !== len) {
       this.mod = this.source;
       if (len) this.filter(MOD, filter(this, ADD));
@@ -301,7 +301,7 @@ Pulse.prototype = {
    * @return {Pulse} - This pulse instance.
    */
   modifies(_) {
-    var hash = this.fields || (this.fields = {});
+    const hash = this.fields || (this.fields = {});
     if (isArray(_)) {
       _.forEach(f => hash[f] = true);
     } else {
@@ -320,7 +320,7 @@ Pulse.prototype = {
    *   marked as modified, false otherwise.
    */
   modified(_, nomod) {
-    var fields = this.fields;
+    const fields = this.fields;
     return !((nomod || this.mod.length) && fields) ? false
       : !arguments.length ? !!fields
       : isArray(_) ? _.some(f => fields[f])
@@ -343,7 +343,7 @@ Pulse.prototype = {
    * @return {Pulse} - Returns this pulse instance.
    */
   filter(flags, filter) {
-    var p = this;
+    const p = this;
     if (flags & ADD) p.addF = addFilter(p.addF, filter);
     if (flags & REM) p.remF = addFilter(p.remF, filter);
     if (flags & MOD) p.modF = addFilter(p.modF, filter);
@@ -360,7 +360,7 @@ Pulse.prototype = {
    */
   materialize(flags) {
     flags = flags || ALL;
-    var p = this;
+    const p = this;
     if ((flags & ADD) && p.addF) {
       p.add = materialize(p.add, p.addF);
       p.addF = null;
@@ -389,7 +389,7 @@ Pulse.prototype = {
    * @return {Pulse} - Returns this pulse instance.
    */
   visit(flags, visitor) {
-    var p = this, v = visitor, src, sum;
+    let p = this, v = visitor, src, sum;
 
     if (flags & SOURCE) {
       visitArray(p.source, p.srcF, v);
