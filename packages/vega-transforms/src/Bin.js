@@ -101,6 +101,10 @@ inherits(Bin, Transform, {
           );
     };
 
+    f.start = start;
+    f.stop = bins.stop;
+    f.step = step;
+
     return this.value = accessor(
       f,
       accessorFields(field),
