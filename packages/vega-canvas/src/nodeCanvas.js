@@ -1,4 +1,4 @@
-var NodeCanvas;
+let NodeCanvas;
 
 try {
   NodeCanvas = require('canvas');
@@ -20,6 +20,5 @@ export function nodeCanvas(w, h, type) {
   return null;
 }
 
-export function nodeImage() {
-  return (NodeCanvas && NodeCanvas.Image) || null;
-}
+export const nodeImage = () =>
+  (NodeCanvas && NodeCanvas.Image) || null;
