@@ -3,7 +3,7 @@ import {error} from 'vega-util';
 export default function(codegen) {
 
   function fncall(name, args, cast, type) {
-    var obj = codegen(args[0]);
+    let obj = codegen(args[0]);
     if (cast) {
       obj = cast + '(' + obj + ')';
       if (cast.lastIndexOf('new ', 0) === 0) obj = '(' + obj + ')';
@@ -14,14 +14,12 @@ export default function(codegen) {
   }
 
   function fn(name, cast, type) {
-    return function(args) {
-      return fncall(name, args, cast, type);
-    };
+    return args => fncall(name, args, cast, type);
   }
 
-  var DATE = 'new Date',
-      STRING = 'String',
-      REGEXP = 'RegExp';
+  const DATE = 'new Date',
+        STRING = 'String',
+        REGEXP = 'RegExp';
 
   return {
     // MATH functions
@@ -49,7 +47,7 @@ export default function(codegen) {
     clamp: function(args) {
       if (args.length < 3) error('Missing arguments to clamp function.');
       if (args.length > 3) error('Too many arguments to clamp function.');
-      var a = args.map(codegen);
+      const a = args.map(codegen);
       return 'Math.max('+a[1]+', Math.min('+a[2]+','+a[0]+'))';
     },
 
@@ -105,7 +103,7 @@ export default function(codegen) {
     if: function(args) {
         if (args.length < 3) error('Missing arguments to if function.');
         if (args.length > 3) error('Too many arguments to if function.');
-        var a = args.map(codegen);
+        const a = args.map(codegen);
         return '('+a[0]+'?'+a[1]+':'+a[2]+')';
       }
   };
