@@ -1722,9 +1722,9 @@
     "@types/node" ">= 8"
 
 "@octokit/types@^4.0.1":
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-4.1.3.tgz#9a90f2c2dd2d42105c4dbf5cabcb31e4ac960835"
-  integrity sha512-MMBEO1k+fMa44gATPamxdpZmya9ugPBdcxwBIPgnH8/uD/1FWO3hiQFMGJT8diUk7E5UnnkraTFx00oHfUIFAA==
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-4.1.4.tgz#75a0bcdff6198ef98d7edf108c4d7f2c585caefa"
+  integrity sha512-W+aHUBA6pEZ8OC1fgfFW1/jrgtkaMVBhNr7jhhBErvbWQY4Ii9Hlf3LAurwcy5XXjz8EYluiCZjHhnQO4GSfNg==
   dependencies:
     "@types/node" ">= 8"
 
@@ -1792,14 +1792,14 @@
   integrity sha1-aaI6OtKcrwCX8G7aWbNh7i8GOfY=
 
 "@types/node@*", "@types/node@>= 8", "@types/node@^14.0.6":
-  version "14.0.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.6.tgz#f9e178b2da31a4b0ec60b64649e244c31ce18daf"
-  integrity sha512-FbNmu4F67d3oZMWBV6Y4MaPER+0EpE9eIYf2yaHhCWovc1dlXCZkqGX4NLHfVVr6umt20TNBdRzrNJIzIKfdbw==
+  version "14.0.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.9.tgz#43896ab87fc82bda1dfd600cdf44a0c8a64e11d2"
+  integrity sha512-0sCTiXKXELOBxvZLN4krQ0FPOAA7ij+6WwvD0k/PHd9/KAkr4dXel5J9fh6F4x1FwAQILqAWkmpeuS6mjf1iKA==
 
 "@types/node@^12.12.29":
-  version "12.12.42"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.42.tgz#d0d1149336bd07540dd1ea576692829d575dec34"
-  integrity sha512-R/9QdYFLL9dE9l5cWWzWIZByVGFd7lk7JVOJ7KD+E1SJ4gni7XJRLz9QTjyYQiHIqEAgku9VgxdLjMlhhUaAFg==
+  version "12.12.43"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.43.tgz#b60ce047822e526e7a9252e50844eee79d5386ff"
+  integrity sha512-KUyZdkGCnVPuXfsKmDUu2XLui65LZIJ2s0M57noy5e+ixUT2oK33ep7zlvgzI8LElcWqbf8AR+o/3GqAPac2zA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3329,9 +3329,9 @@ ecstatic@^3.3.2:
     url-join "^2.0.5"
 
 electron-to-chromium@^1.3.413:
-  version "1.3.455"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.455.tgz#fd65a3f5db6ffa83eb7c84f16ea9b1b7396f537d"
-  integrity sha512-4lwnxp+ArqOX9hiLwLpwhfqvwzUHFuDgLz4NTiU3lhygUzWtocIJ/5Vix+mWVNE2HQ9aI1k2ncGe5H/0OktMvA==
+  version "1.3.456"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.456.tgz#5125bce136b04a8e39473696509e83038f679cbd"
+  integrity sha512-jaVZ9+8HG2qvEN7c9r5EVguvhtevITJou4L10XuqoiZUoXIMF5qLG1pB9raP3WFcME4exDZRq1b6qyCA+u5Vew==
 
 emoji-regex@^7.0.1:
   version "7.0.3"
@@ -7568,9 +7568,9 @@ typescript@^3.9.3:
   integrity sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
 
 typescript@next:
-  version "4.0.0-dev.20200601"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.0-dev.20200601.tgz#f9cb22cbfc312350ff55b7c57eef62810b0fd1e8"
-  integrity sha512-vInHlMfXsl78aut2sD+Nj2mFL8Cl3+NxzVKYX9q5FrCEzd7NK7ptrCklBFm5WE2E1gioYofCEo8q4hgIVChfjQ==
+  version "4.0.0-dev.20200602"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.0-dev.20200602.tgz#93f04a7c90b5d307059c96c2524fcc5594e388da"
+  integrity sha512-DN04jM86diUV7hgOooYJSpdN+Gn9WEkx7FgckU+65O47hg6i2hU1/I99upanvp/36VhvJ1uCXpEnh9KbWsVSaA==
 
 uglify-js@^3.1.4:
   version "3.9.4"

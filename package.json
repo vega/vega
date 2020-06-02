@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.10.2",
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^8.0.0",
-    "@types/node": "^14.0.6",
+    "@types/node": "^14.0.9",
     "ajv": "^6.12.2",
     "canvas": "^2.6.1",
     "dtslint": "^3.6.9",
