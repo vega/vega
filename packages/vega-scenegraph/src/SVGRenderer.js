@@ -3,7 +3,7 @@ import {gradientRef, isGradient, patternPrefix} from './Gradient';
 import marks from './marks/index';
 import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
 import {cssClass, domChild, domClear, domCreate} from './util/dom';
-import {closeTag, openTag} from './util/tags';
+import {serializeXML} from './util/markup';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
@@ -35,14 +35,13 @@ inherits(SVGRenderer, Renderer, {
 
     if (el) {
       this._svg = domChild(el, 0, 'svg', ns);
+      setAttributes(this._svg, metadata);
       this._svg.setAttribute('class', 'marks');
       domClear(el, 1);
 
       // set the svg root group
       this._root = domChild(this._svg, RootIndex, 'g', ns);
-      for (const attr in rootAttributes) {
-        this._root.setAttribute(attr, rootAttributes[attr]);
-      }
+      setAttributes(this._root, rootAttributes);
 
       // ensure no additional child elements
       domClear(this._svg, RootIndex + 1);
@@ -65,10 +64,12 @@ inherits(SVGRenderer, Renderer, {
     base.resize.call(this, width, height, origin, scaleFactor);
 
     if (this._svg) {
-      this._svg.setAttribute('width', this._width * this._scale);
-      this._svg.setAttribute('height', this._height * this._scale);
-      this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
-      this._root.setAttribute('transform', 'translate(' + this._origin + ')');
+      setAttributes(this._svg, {
+        width: this._width * this._scale,
+        height: this._height * this._scale,
+        viewBox: `0 0 ${this._width} ${this._height}`
+      });
+      this._root.setAttribute('transform', `translate(${this._origin})`);
     }
 
     this._dirty = [];
@@ -81,30 +82,26 @@ inherits(SVGRenderer, Renderer, {
   },
 
   svg() {
-    if (!this._svg) return null;
+    const svg = this._svg,
+          bg = this._bgcolor;
 
-    var attr = {
-      class:   'marks',
-      width:   this._width * this._scale,
-      height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
+    if (!svg) return null;
+
+    let node;
+    if (bg) {
+      svg.removeAttribute('style');
+      node = domChild(svg, RootIndex, 'rect', ns);
+      setAttributes(node, {width: this._width, height: this._height, fill: bg});
     }
 
-    var bg = !this._bgcolor ? ''
-      : (openTag('rect', {
-          width:  this._width,
-          height: this._height,
-          fill:   this._bgcolor
-        }) + closeTag('rect'));
+    const text = serializeXML(svg);
 
-    return openTag('svg', attr)
-      + (this._defs.el ? this._defs.el.outerHTML : '')
-      + bg
-      + this._root.outerHTML
-      + closeTag('svg');
+    if (bg) {
+      svg.removeChild(node);
+      this._svg.style.setProperty('background-color', bg);
+    }
+
+    return text;
   },
 
   // -- Render entry point --
@@ -135,12 +132,12 @@ inherits(SVGRenderer, Renderer, {
         index = 0;
 
     for (const id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
       index = updateGradient(el, defs.gradient[id], index);
     }
 
     for (const id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
       index = updateClipping(el, defs.clipping[id], index);
     }
 
@@ -322,15 +319,6 @@ inherits(SVGRenderer, Renderer, {
   }
 });
 
-function dirtyParents(item, id) {
-  for (; item && item.dirty !== id; item=item.mark.group) {
-    item.dirty = id;
-    if (item.mark && item.mark.dirty !== id) {
-      item.mark.dirty = id;
-    } else return;
-  }
-}
-
 function updateGradient(el, grad, index) {
   var i, n, stop;
 
@@ -340,32 +328,40 @@ function updateGradient(el, grad, index) {
     // We wrap the radial gradient in a pattern element, allowing us to
     // maintain a circular gradient that matches what canvas provides.
     var pt = domChild(el, index++, 'pattern', ns);
-    pt.setAttribute('id', patternPrefix + grad.id);
-    pt.setAttribute('viewBox', '0,0,1,1');
-    pt.setAttribute('width', '100%');
-    pt.setAttribute('height', '100%');
-    pt.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    setAttributes(pt, {
+      id: patternPrefix + grad.id,
+      viewBox: '0,0,1,1',
+      width: '100%',
+      height: '100%',
+      preserveAspectRatio: 'xMidYMid slice'
+    });
 
     pt = domChild(pt, 0, 'rect', ns);
-    pt.setAttribute('width', '1');
-    pt.setAttribute('height', '1');
-    pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
+    setAttributes(pt, {
+      width: 1,
+      height: 1,
+      fill: `url(${href()}#${grad.id})`
+    });
 
     el = domChild(el, index++, 'radialGradient', ns);
-    el.setAttribute('id', grad.id);
-    el.setAttribute('fx', grad.x1);
-    el.setAttribute('fy', grad.y1);
-    el.setAttribute('fr', grad.r1);
-    el.setAttribute('cx', grad.x2);
-    el.setAttribute('cy', grad.y2);
-    el.setAttribute( 'r', grad.r2);
+    setAttributes(el, {
+      id: grad.id,
+      fx: grad.x1,
+      fy: grad.y1,
+      fr: grad.r1,
+      cx: grad.x2,
+      cy: grad.y2,
+      r: grad.r2
+    });
   } else {
     el = domChild(el, index++, 'linearGradient', ns);
-    el.setAttribute('id', grad.id);
-    el.setAttribute('x1', grad.x1);
-    el.setAttribute('x2', grad.x2);
-    el.setAttribute('y1', grad.y1);
-    el.setAttribute('y2', grad.y2);
+    setAttributes(el, {
+      id: grad.id,
+      x1: grad.x1,
+      x2: grad.x2,
+      y1: grad.y1,
+      y2: grad.y2
+    });
   }
 
   for (i=0, n=grad.stops.length; i<n; ++i) {
@@ -389,14 +385,20 @@ function updateClipping(el, clip, index) {
     mask.setAttribute('d', clip.path);
   } else {
     mask = domChild(el, 0, 'rect', ns);
-    mask.setAttribute('x', 0);
-    mask.setAttribute('y', 0);
-    mask.setAttribute('width', clip.width);
-    mask.setAttribute('height', clip.height);
+    setAttributes(mask, {x: 0, y: 0, width: clip.width, height: clip.height});
   }
   domClear(el, 1);
 
   return index + 1;
+}
+
+function dirtyParents(item, id) {
+  for (; item && item.dirty !== id; item=item.mark.group) {
+    item.dirty = id;
+    if (item.mark && item.mark.dirty !== id) {
+      item.mark.dirty = id;
+    } else return;
+  }
 }
 
 // Recursively process group contents.
@@ -580,6 +582,12 @@ function setStyle(el, name, value) {
       el.style.setProperty(name, value + '');
     }
     values[name] = value;
+  }
+}
+
+function setAttributes(el, attrs) {
+  for (const key in attrs) {
+    setAttribute(el, key, attrs[key]);
   }
 }
 
