@@ -47,7 +47,7 @@
     "vega-runtime": "~6.1.0",
     "vega-scale": "~7.0.0",
     "vega-scenegraph": "~4.8.3",
-    "vega-statistics": "~1.7.5",
+    "vega-statistics": "~1.7.6",
     "vega-time": "~2.0.1",
     "vega-transforms": "~4.9.0",
     "vega-typings": "~0.18.0",
