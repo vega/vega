@@ -7,7 +7,7 @@ import {LegendGradientRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       vertical = _.isVertical(),
       thickness = _.gradientThickness(),
       length = _.gradientLength(),

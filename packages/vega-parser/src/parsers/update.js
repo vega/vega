@@ -11,7 +11,7 @@ const OP_VALUE_EXPR = {
 };
 
 export default function(spec, scope, target) {
-  var events = spec.events,
+  let events = spec.events,
       update = spec.update,
       encode = spec.encode,
       sources = [],
@@ -59,9 +59,9 @@ export default function(spec, scope, target) {
     entry.options = {force: true};
   }
 
-  sources.forEach(function(source) {
-    scope.addUpdate(extend(streamSource(source, scope), entry));
-  });
+  sources.forEach(source =>
+    scope.addUpdate(extend(streamSource(source, scope), entry))
+  );
 }
 
 function streamSource(stream, scope) {

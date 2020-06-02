@@ -11,7 +11,7 @@ import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       entries = userEncode.entries,
       interactive = !!(entries && entries.interactive),
       name = entries ? entries.name : undefined,
@@ -44,7 +44,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   };
 
-  var baseFill = null,
+  let baseFill = null,
       baseStroke = null;
   if (!spec.fill) {
     baseFill = config.symbolBaseFillColor;

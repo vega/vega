@@ -5,10 +5,10 @@ import {hasSignal, ref} from '../util';
 import {array} from 'vega-util';
 
 export default function parseData(data, scope) {
-  var transforms = [];
+  const transforms = [];
 
   if (data.transform) {
-    data.transform.forEach(function(tx) {
+    data.transform.forEach(tx => {
       transforms.push(parseTransform(tx, scope));
     });
   }
@@ -26,7 +26,7 @@ export default function parseData(data, scope) {
  * Analyze a data pipeline, add needed operators.
  */
 function analyze(data, scope, ops) {
-  var output = [],
+  let output = [],
       source = null,
       modify = false,
       generate = false,
@@ -60,9 +60,8 @@ function analyze(data, scope, ops) {
     }
   } else if (data.source) {
     // derives from one or more other data sets
-    source = upstream = array(data.source).map(function(d) {
-      return ref(scope.getData(d).output);
-    });
+    source = upstream = array(data.source)
+      .map(d => ref(scope.getData(d).output));
     output.push(null); // populate later
   }
 
@@ -101,7 +100,7 @@ function analyze(data, scope, ops) {
 }
 
 function collect(values) {
-  var s = Collect({}, values);
+  const s = Collect({}, values);
   s.metadata = {source: true};
   return s;
 }

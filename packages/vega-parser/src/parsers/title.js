@@ -15,7 +15,7 @@ const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
 
-  var _ = lookup(spec, scope.config.title),
+  let _ = lookup(spec, scope.config.title),
       encode = spec.encode || {},
       userEncode = encode.group || {},
       name = userEncode.name || undefined,
@@ -66,7 +66,7 @@ function titleEncode(spec) {
 }
 
 function groupEncode(_, userEncode) {
-  var encode = {enter: {}, update: {}};
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
     orient:      _('orient'),
@@ -83,13 +83,13 @@ function groupEncode(_, userEncode) {
 }
 
 function buildTitle(spec, _, userEncode, dataRef) {
-  var zero = {value: 0},
-      text = spec.text,
-      encode = {
-        enter: {opacity: zero},
-        update: {opacity: {value: 1}},
-        exit: {opacity: zero}
-      };
+  const zero = {value: 0},
+        text = spec.text,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
 
   addEncoders(encode, {
     text:       text,
@@ -121,13 +121,13 @@ function buildTitle(spec, _, userEncode, dataRef) {
 }
 
 function buildSubTitle(spec, _, userEncode, dataRef) {
-  var zero = {value: 0},
-      text = spec.subtitle,
-      encode = {
-        enter: {opacity: zero},
-        update: {opacity: {value: 1}},
-        exit: {opacity: zero}
-      };
+  const zero = {value: 0},
+        text = spec.subtitle,
+        encode = {
+          enter: {opacity: zero},
+          update: {opacity: {value: 1}},
+          exit: {opacity: zero}
+        };
 
   addEncoders(encode, {
     text:       text,
