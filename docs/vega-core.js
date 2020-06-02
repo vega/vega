@@ -4594,14 +4594,14 @@
   }
 
   function add$1(v, t) {
-    if (v == null) { ++this.missing; return; }
+    if (v == null || v === '') { ++this.missing; return; }
     if (v !== v) return;
     ++this.valid;
     this._ops.forEach(op => op.add(this, v, t));
   }
 
   function rem(v, t) {
-    if (v == null) { --this.missing; return; }
+    if (v == null || v === '') { --this.missing; return; }
     if (v !== v) return;
     --this.valid;
     this._ops.forEach(op => op.rem(this, v, t));
@@ -4635,16 +4635,17 @@
   }
 
   function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
+    if (valueof == null) {
       for (let value of values) {
-        if (value != null && (value = +value) >= value) {
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+        value = valueof(value, ++index, values);
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
@@ -6386,12 +6387,12 @@
     }
 
     var f = function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
         : v > stop ? +Infinity
         : (
-            v = Math.max(start, Math.min(+v, stop - step)),
+            v = Math.max(start, Math.min(v, stop - step)),
             start + step * Math.floor(EPSILON + (v - start) / step)
           );
     };
@@ -7024,10 +7025,8 @@
     }
 
     pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       if (v != null) {
-        // coerce to number
-        v = +v;
         // NaNs will fail all comparisons!
         if (v < min) min = v;
         if (v > max) max = v;
