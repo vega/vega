@@ -34,7 +34,7 @@ const scales = {};
  */
 function create(type, constructor, metadata) {
   const ctr = function scale() {
-    var s = constructor();
+    const s = constructor();
 
     if (!s.invertRange) {
       s.invertRange = s.invert ? invertRange(s)
