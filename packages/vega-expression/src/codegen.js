@@ -3,7 +3,7 @@ import Functions from './functions';
 import {error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
-  var n = s && s.length - 1;
+  const n = s && s.length - 1;
   return n && (
       (s[0]==='"' && s[n]==='"') ||
       (s[0]==='\'' && s[n]==='\'')
@@ -13,34 +13,32 @@ function stripQuotes(s) {
 export default function(opt) {
   opt = opt || {};
 
-  var whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
-      blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
-      constants = opt.constants || Constants,
-      functions = (opt.functions || Functions)(visit),
-      globalvar = opt.globalvar,
-      fieldvar = opt.fieldvar,
-      globals = {},
+  const whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
+        blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
+        constants = opt.constants || Constants,
+        functions = (opt.functions || Functions)(visit),
+        globalvar = opt.globalvar,
+        fieldvar = opt.fieldvar,
+        outputGlobal = isFunction(globalvar)
+          ? globalvar
+          : id => `${globalvar}["${id}"]`;
+
+  let globals = {},
       fields = {},
       memberDepth = 0;
 
-  var outputGlobal = isFunction(globalvar)
-    ? globalvar
-    : function (id) { return globalvar + '["' + id + '"]'; };
-
   function visit(ast) {
     if (isString(ast)) return ast;
-    var generator = Generators[ast.type];
+    const generator = Generators[ast.type];
     if (generator == null) error('Unsupported type: ' + ast.type);
     return generator(ast);
   }
 
-  var Generators = {
-    Literal: function(n) {
-        return n.raw;
-      },
+  const Generators = {
+    Literal: n => n.raw,
 
-    Identifier: function(n) {
-      var id = n.name;
+    Identifier: n => {
+      const id = n.name;
       if (memberDepth > 0) {
         return id;
       } else if (hasOwnProperty(blacklist, id)) {
@@ -55,11 +53,11 @@ export default function(opt) {
       }
     },
 
-    MemberExpression: function(n) {
-        var d = !n.computed;
-        var o = visit(n.object);
+    MemberExpression: n => {
+        const d = !n.computed,
+              o = visit(n.object);
         if (d) memberDepth += 1;
-        var p = visit(n.property);
+        const p = visit(n.property);
         if (o === fieldvar) {
           // strip quotes to sanitize field name (#1653)
           fields[stripQuotes(p)] = 1;
@@ -68,56 +66,50 @@ export default function(opt) {
         return o + (d ? '.'+p : '['+p+']');
       },
 
-    CallExpression: function(n) {
+    CallExpression: n => {
         if (n.callee.type !== 'Identifier') {
           error('Illegal callee type: ' + n.callee.type);
         }
-        var callee = n.callee.name;
-        var args = n.arguments;
-        var fn = hasOwnProperty(functions, callee) && functions[callee];
+        const callee = n.callee.name,
+              args = n.arguments,
+              fn = hasOwnProperty(functions, callee) && functions[callee];
         if (!fn) error('Unrecognized function: ' + callee);
         return isFunction(fn)
           ? fn(args)
           : fn + '(' + args.map(visit).join(',') + ')';
       },
 
-    ArrayExpression: function(n) {
-        return '[' + n.elements.map(visit).join(',') + ']';
-      },
+    ArrayExpression: n =>
+        '[' + n.elements.map(visit).join(',') + ']',
 
-    BinaryExpression: function(n) {
-        return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
-      },
+    BinaryExpression: n =>
+        '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-    UnaryExpression: function(n) {
-        return '(' + n.operator + visit(n.argument) + ')';
-      },
+    UnaryExpression: n =>
+        '(' + n.operator + visit(n.argument) + ')',
 
-    ConditionalExpression: function(n) {
-        return '(' + visit(n.test) +
+    ConditionalExpression: n =>
+        '(' + visit(n.test) +
           '?' + visit(n.consequent) +
           ':' + visit(n.alternate) +
-          ')';
-      },
+          ')',
 
-    LogicalExpression: function(n) {
-        return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
-      },
+    LogicalExpression: n =>
+        '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-    ObjectExpression: function(n) {
-        return '{' + n.properties.map(visit).join(',') + '}';
-      },
+    ObjectExpression: n =>
+        '{' + n.properties.map(visit).join(',') + '}',
 
-    Property: function(n) {
+    Property: n => {
         memberDepth += 1;
-        var k = visit(n.key);
+        const k = visit(n.key);
         memberDepth -= 1;
         return k + ':' + visit(n.value);
       }
   };
 
   function codegen(ast) {
-    var result = {
+    const result = {
       code:    visit(ast),
       globals: Object.keys(globals),
       fields:  Object.keys(fields)
