@@ -8,7 +8,7 @@ export default function(selector, source, marks) {
   return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var VIEW    = 'view',
+let VIEW    = 'view',
     LBRACK  = '[',
     RBRACK  = ']',
     LBRACE  = '{',
@@ -41,7 +41,7 @@ function isMarkType(type) {
 }
 
 function find(s, i, endChar, pushChar, popChar) {
-  var count = 0,
+  let count = 0,
       n = s.length,
       c;
   for (; i<n; ++i) {
@@ -54,7 +54,7 @@ function find(s, i, endChar, pushChar, popChar) {
 }
 
 function parseMerge(s) {
-  var output = [],
+  let output = [],
       start = 0,
       n = s.length,
       i = 0;
@@ -78,7 +78,7 @@ function parseSelector(s) {
 }
 
 function parseBetween(s) {
-  var n = s.length,
+  let n = s.length,
       i = 1,
       b, stream;
 
@@ -113,7 +113,7 @@ function parseBetween(s) {
 }
 
 function parseStream(s) {
-  var stream = {source: DEFAULT_SOURCE},
+  let stream = {source: DEFAULT_SOURCE},
       source = [],
       throttle = [0, 0],
       markname = 0,
@@ -198,10 +198,10 @@ function parseStream(s) {
 }
 
 function parseThrottle(s) {
-  var a = s.split(COMMA);
+  const a = s.split(COMMA);
   if (!s.length || a.length > 2) throw s;
   return a.map(function(_) {
-    var x = +_;
+    const x = +_;
     if (x !== x) throw s;
     return x;
   });
