@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Canvas dependencies
-        run: sudo apt-get install -y libcairo2-dev libpango1.0-dev
+      - name: Install Canvas and XML dependencies
+        run: sudo apt-get install -y libcairo2-dev libpango1.0-dev libxml2-utils
 
       - name: Get Yarn cache directory path
         id: yarn-cache-dir-path

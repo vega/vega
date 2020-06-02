@@ -35,7 +35,7 @@ export {default as pathRender} from './src/path/render';
 
 export {default as point} from './src/util/point';
 export {domCreate, domFind, domChild, domClear} from './src/util/dom';
-export {openTag, closeTag} from './src/util/tags';
+export {markup, serializeXML} from './src/util/markup';
 export {
   font,
   fontFamily,

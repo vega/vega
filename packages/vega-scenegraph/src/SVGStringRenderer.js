@@ -1,9 +1,9 @@
 import Renderer from './Renderer';
 import {gradientRef, isGradient, patternPrefix} from './Gradient';
-import marks from './marks/index';
+import Marks from './marks/index';
 import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
 import {cssClass} from './util/dom';
-import {closeTag, openTag} from './util/tags';
+import {markup} from './util/markup';
 import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
@@ -13,165 +13,190 @@ import {extend, inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
   Renderer.call(this, loader);
-
-  this._text = {
-    head: '',
-    bg:   '',
-    root: '',
-    foot: '',
-    defs: '',
-    body: ''
-  };
-
+  this._text = null;
   this._defs = {
     gradient: {},
     clipping: {}
   };
 }
 
-const base = Renderer.prototype;
-
 inherits(SVGStringRenderer, Renderer, {
-  resize(width, height, origin, scaleFactor) {
-    base.resize.call(this, width, height, origin, scaleFactor);
-    var o = this._origin,
-        t = this._text;
+  /**
+   * Returns the rendered SVG text string,
+   * or null if rendering has not yet occurred.
+   */
+  svg() {
+    return this._text;
+  },
 
-    var attr = {
+  /**
+   * Internal rendering method.
+   * @param {object} scene - The root mark of a scenegraph to render.
+   */
+  _render(scene) {
+    const m = markup();
+
+    // svg tag
+    m.open('svg', extend({}, metadata, {
       class:   'marks',
       width:   this._width * this._scale,
       height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
-    }
+      viewBox: `0 0 ${this._width} ${this._height}`
+    }));
 
-    t.head = openTag('svg', attr);
-
-    var bg = this._bgcolor;
-    if (bg === 'transparent' || bg === 'none') bg = null;
-
-    if (bg) {
-      t.bg = openTag('rect', {
+    // background, if defined
+    const bg = this._bgcolor;
+    if (bg && bg !== 'transparent' && bg !== 'none') {
+      m.open('rect', {
         width:  this._width,
         height: this._height,
         fill:   bg
-      }) + closeTag('rect');
+      }).close();
+    }
+
+    // root content group
+    m.open('g', rootAttributes, {
+      transform: 'translate(' + this._origin + ')'
+    });
+    this.mark(m, scene);
+    m.close(); // </g>
+
+    // defs
+    this.defs(m);
+
+    // get SVG text string
+    this._text = m.close() + '';
+
+    return this;
+  },
+
+  /**
+   * Render a set of mark items.
+   * @param {object} m - The markup context.
+   * @param {object} scene - The mark parent to render.
+   */
+  mark(m, scene) {
+    const mdef = Marks[scene.marktype],
+          tag  = mdef.tag,
+          attrList = [ariaItemAttributes, mdef.attr];
+
+    // render opening group tag
+    m.open('g',
+      {
+        'class': cssClass(scene),
+        'clip-path': scene.clip ? clip(this, scene, scene.group) : null
+      },
+      ariaMarkAttributes(scene),
+      {
+        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+      }
+    );
+
+    // render contained elements
+    const process = item => {
+      const href = this.href(item);
+      if (href) m.open('a', href);
+
+      m.open(
+        tag,
+        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
+      );
+
+      if (tag === 'text') {
+        const tl = textLines(item);
+        if (isArray(tl)) {
+          // multi-line text
+          const attrs = {x: 0, dy: lineHeight(item)};
+          for (let i=0; i<tl.length; ++i) {
+            m.open('tspan', i ? attrs: null)
+              .text(textValue(item, tl[i]))
+              .close();
+          }
+        } else {
+          // single-line text
+          m.text(textValue(item, tl));
+        }
+      } else if (tag === 'g') {
+        const fore = item.strokeForeground,
+              fill = item.fill,
+              stroke = item.stroke;
+
+        if (fore && stroke) {
+          item.stroke = null;
+        }
+
+        m.open(
+          'path',
+          this.attr(scene, item, mdef.background, 'bgrect')
+        ).close();
+
+        // recurse for group content
+        m.open('g', this.attr(scene, item, mdef.content));
+        visit(item, scene => this.mark(m, scene));
+        m.close();
+
+        if (fore && stroke) {
+          if (fill) item.fill = null;
+          item.stroke = stroke;
+
+          m.open(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgrect')
+          ).close();
+
+          if (fill) item.fill = fill;
+        } else {
+          m.open(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgfore')
+          ).close();
+        }
+      }
+
+      m.close(); // </tag>
+      if (href) m.close(); // </a>
+    };
+
+    if (mdef.nested) {
+      if (scene.items && scene.items.length) process(scene.items[0]);
     } else {
-      t.bg = '';
+      visit(scene, process);
     }
 
-    t.root = openTag('g', extend(
-      {}, rootAttributes, {transform: 'translate(' + o + ')'}
-    ));
-
-    t.foot = closeTag('g') + closeTag('svg');
-
-    return this;
+    // render closing group tag
+    return m.close(); // </g>
   },
 
-  background() {
-    var rv = base.background.apply(this, arguments);
-    if (arguments.length && this._text.head) {
-      this.resize(this._width, this._height, this._origin, this._scale);
-    }
-    return rv;
-  },
+  /**
+   * Get href attributes for a hyperlinked mark item.
+   * @param {Item} item - The mark item.
+   */
+  href(item) {
+    let href = item.href,
+        attr;
 
-  svg() {
-    var t = this._text;
-    return t.head + t.defs + t.bg + t.root + t.body + t.foot;
-  },
-
-  _render(scene) {
-    this._text.body = this.mark(scene);
-    this._text.defs = this.buildDefs();
-    return this;
-  },
-
-  buildDefs() {
-    let defs = '', tag;
-
-    for (const id in this._defs.gradient) {
-      const def = this._defs.gradient[id],
-            stops = def.stops;
-
-      if (def.gradient === 'radial') {
-        // SVG radial gradients automatically transform to normalized bbox
-        // coordinates, in a way that is cumbersome to replicate in canvas.
-        // We wrap the radial gradient in a pattern element, allowing us to
-        // maintain a circular gradient that matches what canvas provides.
-
-        defs += openTag(tag = 'pattern', {
-          id: patternPrefix + id,
-          viewBox: '0,0,1,1',
-          width: '100%',
-          height: '100%',
-          preserveAspectRatio: 'xMidYMid slice'
-        });
-
-        defs += openTag('rect', {
-          width:  '1',
-          height: '1',
-          fill:   'url(#' + id + ')'
-        }) + closeTag('rect');
-
-        defs += closeTag(tag);
-
-        defs += openTag(tag = 'radialGradient', {
-          id: id,
-          fx: def.x1,
-          fy: def.y1,
-          fr: def.r1,
-          cx: def.x2,
-          cy: def.y2,
-          r: def.r2
-        });
+    if (href) {
+      if (attr = this._hrefs && this._hrefs[href]) {
+        return attr;
       } else {
-        defs += openTag(tag = 'linearGradient', {
-          id: id,
-          x1: def.x1,
-          x2: def.x2,
-          y1: def.y1,
-          y2: def.y2
+        this.sanitizeURL(href).then(attr => {
+          // rewrite to use xlink namespace
+          attr['xlink:href'] = attr.href;
+          attr.href = null;
+          (this._hrefs || (this._hrefs = {}))[href] = attr;
         });
       }
-
-      for (let i = 0; i < stops.length; ++i) {
-        defs += openTag('stop', {
-          offset: stops[i].offset,
-          'stop-color': stops[i].color
-        }) + closeTag('stop');
-      }
-
-      defs += closeTag(tag);
     }
-
-    for (const id in this._defs.clipping) {
-      const def = this._defs.clipping[id];
-
-      defs += openTag('clipPath', {id: id});
-
-      if (def.path) {
-        defs += openTag('path', {
-          d: def.path
-        }) + closeTag('path');
-      } else {
-        defs += openTag('rect', {
-          x: 0,
-          y: 0,
-          width: def.width,
-          height: def.height
-        }) + closeTag('rect');
-      }
-
-      defs += closeTag('clipPath');
-    }
-
-    return defs ? (openTag('defs') + defs + closeTag('defs')) : '';
+    return null;
   },
 
+  /**
+   * Get an object of SVG attributes for a mark item.
+   * @param {object} scene - The mark parent.
+   * @param {Item} item - The mark item.
+   * @param {array|function} attrs - One or more attribute emitters.
+   * @param {string} tag - The tag being rendered.
+   */
   attr(scene, item, attrs, tag) {
     const object = {},
           emit = (name, value, ns, prefixed) => {
@@ -187,134 +212,107 @@ inherits(SVGStringRenderer, Renderer, {
 
     // apply style attributes
     if (tag) {
-      applyStyles(object, item, scene, tag, this._defs);
+      style(object, item, scene, tag, this._defs);
     }
 
     return object;
   },
 
-  href(item) {
-    var that = this,
-        href = item.href,
-        attr;
+  /**
+   * Render SVG defs, as needed.
+   * Must be called *after* marks have been processed to ensure the
+   * collected state is current and accurate.
+   * @param {object} m - The markup context.
+   */
+  defs(m) {
+    const gradient = this._defs.gradient,
+          clipping = this._defs.clipping,
+          count = Object.keys(gradient).length + Object.keys(clipping).length;
 
-    if (href) {
-      if (attr = that._hrefs && that._hrefs[href]) {
-        return attr;
+    if (count === 0) return; // nothing to do
+
+    m.open('defs');
+
+    for (const id in gradient) {
+      const def = gradient[id],
+            stops = def.stops;
+
+      if (def.gradient === 'radial') {
+        // SVG radial gradients automatically transform to normalized bbox
+        // coordinates, in a way that is cumbersome to replicate in canvas.
+        // We wrap the radial gradient in a pattern element, allowing us to
+        // maintain a circular gradient that matches what canvas provides.
+
+        m.open('pattern', {
+          id: patternPrefix + id,
+          viewBox: '0,0,1,1',
+          width: '100%',
+          height: '100%',
+          preserveAspectRatio: 'xMidYMid slice'
+        });
+
+        m.open('rect', {
+          width:  '1',
+          height: '1',
+          fill:   'url(#' + id + ')'
+        }).close();
+
+        m.close(); // </pattern>
+
+        m.open('radialGradient', {
+          id: id,
+          fx: def.x1,
+          fy: def.y1,
+          fr: def.r1,
+          cx: def.x2,
+          cy: def.y2,
+          r: def.r2
+        });
       } else {
-        that.sanitizeURL(href).then(attr => {
-          // rewrite to use xlink namespace
-          // note that this will be deprecated in SVG 2.0
-          attr['xlink:href'] = attr.href;
-          attr.href = null;
-          (that._hrefs || (that._hrefs = {}))[href] = attr;
+        m.open('linearGradient', {
+          id: id,
+          x1: def.x1,
+          x2: def.x2,
+          y1: def.y1,
+          y2: def.y2
         });
       }
-    }
-    return null;
-  },
 
-  mark(scene) {
-    const mdef = marks[scene.marktype],
-          tag  = mdef.tag,
-          attrList = [ariaItemAttributes, mdef.attr];
-
-    let str = '';
-
-    // render opening group tag
-    str += openTag('g', extend(
-      {
-        'class': cssClass(scene),
-        'clip-path': scene.clip ? clip(this, scene, scene.group) : null
-      },
-      ariaMarkAttributes(scene),
-      {
-        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
-      }
-    ));
-
-    // render contained elements
-    const process = item => {
-      const href = this.href(item);
-      if (href) str += openTag('a', href);
-
-      str += openTag(
-        tag,
-        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
-      );
-
-      if (tag === 'text') {
-        const tl = textLines(item);
-        if (isArray(tl)) {
-          // multi-line text
-          const attrs = {x: 0, dy: lineHeight(item)};
-          for (let i=0; i<tl.length; ++i) {
-            str += openTag('tspan', i ? attrs: null)
-              + escape_text(textValue(item, tl[i]))
-              + closeTag('tspan');
-          }
-        } else {
-          // single-line text
-          str += escape_text(textValue(item, tl));
-        }
-      } else if (tag === 'g') {
-        const fore = item.strokeForeground,
-              fill = item.fill,
-              stroke = item.stroke;
-
-        if (fore && stroke) {
-          item.stroke = null;
-        }
-
-        str += openTag(
-          'path',
-          this.attr(scene, item, mdef.background, 'bgrect')
-        ) + closeTag('path');
-
-        str += openTag('g', this.attr(scene, item, mdef.content))
-          + this.markGroup(item)
-          + closeTag('g');
-
-        if (fore && stroke) {
-          if (fill) item.fill = null;
-          item.stroke = stroke;
-
-          str += openTag(
-            'path',
-            this.attr(scene, item, mdef.foreground, 'bgrect')
-          ) + closeTag('path');
-
-          if (fill) item.fill = fill;
-        } else {
-          str += openTag(
-            'path',
-            this.attr(scene, item, mdef.foreground, 'bgfore')
-          ) + closeTag('path');
-        }
+      for (let i = 0; i < stops.length; ++i) {
+        m.open('stop', {
+          offset: stops[i].offset,
+          'stop-color': stops[i].color
+        }).close();
       }
 
-      str += closeTag(tag);
-      if (href) str += closeTag('a');
-    };
-
-    if (mdef.nested) {
-      if (scene.items && scene.items.length) process(scene.items[0]);
-    } else {
-      visit(scene, process);
+      m.close();
     }
 
-    // render closing group tag
-    return str + closeTag('g');
-  },
+    for (const id in clipping) {
+      const def = clipping[id];
 
-  markGroup(scene) {
-    let str = '';
-    visit(scene, item => { str += this.mark(item); });
-    return str;
+      m.open('clipPath', {id: id});
+      if (def.path) {
+        m.open('path', {
+          d: def.path
+        }).close();
+      } else {
+        m.open('rect', {
+          x: 0,
+          y: 0,
+          width: def.width,
+          height: def.height
+        }).close();
+      }
+      m.close();
+    }
+
+    m.close();
   }
 });
 
-function applyStyles(s, item, scene, tag, defs) {
+// Helper function for attr for style presentation attributes
+function style(s, item, scene, tag, defs) {
   if (item == null) return s;
 
   if (tag === 'bgrect' && scene.interactive === false) {
@@ -336,9 +334,9 @@ function applyStyles(s, item, scene, tag, defs) {
   if (tag === 'text') {
     s['font-family'] = fontFamily(item);
     s['font-size'] = fontSize(item) + 'px';
-    if (item.fontStyle) s['font-style'] = item.fontStyle;
-    if (item.fontVariant) s['font-variant'] = item.fontVariant;
-    if (item.fontWeight) s['font-weight'] = item.fontWeight;
+    s['font-style'] = item.fontStyle;
+    s['font-variant'] = item.fontVariant;
+    s['font-weight'] = item.fontWeight;
   }
 
   for (const prop in styles) {
@@ -357,10 +355,4 @@ function applyStyles(s, item, scene, tag, defs) {
   }
 
   return s;
-}
-
-function escape_text(s) {
-  return s.replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;');
 }

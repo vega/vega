@@ -41,7 +41,7 @@ function renderAsync(scene, w, h, callback) {
 
 tape('SVGStringRenderer should build empty group for item-less area mark', function(t) {
   var r = new Renderer();
-  var str = r.mark({marktype: 'area', items:[]});
+  var str = r.mark(vega.markup(), {marktype: 'area', items:[]}) + '';
   generate('svg/marks-itemless-area.svg', str);
   var file = load('svg/marks-itemless-area.svg');
   t.equal(str, file);
@@ -50,7 +50,7 @@ tape('SVGStringRenderer should build empty group for item-less area mark', funct
 
 tape('SVGStringRenderer should build empty group for item-less line mark', function(t) {
   var r = new Renderer();
-  var str = r.mark({marktype: 'line', items:[]});
+  var str = r.mark(vega.markup(), {marktype: 'line', items:[]}) + '';
   generate('svg/marks-itemless-line.svg', str);
   var file = load('svg/marks-itemless-line.svg');
   t.equal(str, file);
