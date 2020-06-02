@@ -33,7 +33,7 @@ tape('markup should generate nested tags', function(t) {
   t.end();
 });
 
-tape('markup should generate attributes', function(t) {
+tape('markup should generate tag with attributes', function(t) {
   const attr = {
     fill: 'none',
     transform: 'translate(0,0)',
@@ -41,6 +41,18 @@ tape('markup should generate attributes', function(t) {
   };
   t.equal(
     markup().open('g', attr).close() + '',
+    '<g fill="none" transform="translate(0,0)"/>'
+  );
+  t.end();
+});
+
+tape('markup should append attributes', function(t) {
+  t.equal(
+    markup().open('g')
+      .attr('fill', 'none')
+      .attr('transform', 'translate(0,0)')
+      .attr('ignore', null)
+      .close() + '',
     '<g fill="none" transform="translate(0,0)"/>'
   );
   t.end();

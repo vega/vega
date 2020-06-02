@@ -10,71 +10,62 @@ const attrText = val => innerText(val)
   .replace(/\r/g, '&#xD;');
 
 export function markup() {
-  let stack = [],
-      text = '',
+  let buf = '',
       outer = '',
-      inner = '',
-      push = tag => {
-        if (outer) {
-          text += `${outer}>${inner}`;
-          outer = inner = '';
-        }
-        stack.push(tag);
-      };
+      inner = '';
 
-  const m = {
-    open(tag, ...attrs) {
-      push(tag);
-      let s = '<' + tag;
-      for (const attr of attrs) {
-        for (const key in attr) {
-          const val = attr[key];
-          if (val != null) {
-            s += ` ${key}="${attrText(val)}"`;
-          }
-        }
-      }
-      outer = s;
-      return m;
-    },
-    close() {
-      const tag = stack.pop();
-      if (outer) {
-        text += outer + (inner
-          ? `>${inner}</${tag}>`
-          : '/>');
-      } else {
-        text += `</${tag}>`;
-      }
-      outer = inner = '';
-      return m;
-    },
-    text: t => (inner += innerText(t), m),
-    toString: () => text
-  };
+  const stack = [],
+        clear = () => outer = inner = '',
+        push = tag => {
+          if (outer) { buf += `${outer}>${inner}`; clear(); }
+          stack.push(tag);
+        },
+        attr = (name, value) => {
+          if (value != null) outer += ` ${name}="${attrText(value)}"`;
+          return m;
+        },
+
+        m = {
+          open(tag, ...attrs) {
+            push(tag);
+            outer = '<' + tag;
+            for (const set of attrs) {
+              for (const key in set) attr(key, set[key]);
+            }
+            return m;
+          },
+          close() {
+            const tag = stack.pop();
+            if (outer) {
+              buf += outer + (inner
+                ? `>${inner}</${tag}>`
+                : '/>');
+            } else {
+              buf += `</${tag}>`;
+            }
+            clear();
+            return m;
+          },
+          attr,
+          text: t => (inner += innerText(t), m),
+          toString: () => buf
+        };
 
   return m;
 }
 
-export function serializeXML(node) {
-  const m = markup();
-  _serialize(m, node);
-  return m + '';
-}
+export const serializeXML = node =>
+  _serialize(markup(), node) + '';
 
 function _serialize(m, node) {
-  const tag = node.tagName;
+  m.open(node.tagName);
 
   if (node.hasAttributes()) {
-    const  attr = {};
     const attrs = node.attributes,
           n = attrs.length;
     for (let i=0; i<n; ++i) {
-      attr[attrs[i].name] = attrs[i].value;
+      m.attr(attrs[i].name, attrs[i].value);
     }
-    m.open(tag, attr);
-  } else {
-    m.open(tag);
   }
 
   if (node.hasChildNodes()) {
@@ -83,13 +74,11 @@ function _serialize(m, node) {
 
     for (let i=0; i<n; i++) {
       const child = children[i];
-      if (child.nodeType === 3) { // text node
-        m.text(child.nodeValue);
-      } else {
-        _serialize(m, child);
-      }
+      child.nodeType === 3 // text node
+        ? m.text(child.nodeValue)
+        : _serialize(m, child);
     }
   }
 
-  m.close();
+  return m.close();
 }
