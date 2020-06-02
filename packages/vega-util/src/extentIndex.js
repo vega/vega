@@ -1,5 +1,5 @@
 export default function(array, f) {
-  var i = -1,
+  let i = -1,
       n = array.length,
       a, b, c, u, v;
 

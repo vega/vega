@@ -1,14 +1,11 @@
 export default function(delay, handler) {
-  var tid, evt;
+  let tid;
 
-  function callback() {
-    handler(evt);
-    tid = evt = null;
-  }
-
-  return function(e) {
-    evt = e;
+  return e => {
     if (tid) clearTimeout(tid);
-    tid = setTimeout(callback, delay);
+    tid = setTimeout(
+      () => (handler(e), tid = null),
+      delay
+    );
   };
 }

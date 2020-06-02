@@ -1,9 +1,9 @@
 import hasOwnProperty from './hasOwnProperty';
 
-var NULL = {};
+const NULL = {};
 
 export default function(input) {
-  var obj = {},
+  let obj = {},
       map,
       test;
 
@@ -48,7 +48,7 @@ export default function(input) {
       }
     },
     clean() {
-      var next = {},
+      let next = {},
           size = 0,
           key, value;
       for (key in obj) {
