@@ -1,7 +1,7 @@
 import error from './error';
 
 export default function(p) {
-  var path = [],
+  let path = [],
       q = null,
       b = 0,
       n = p.length,
