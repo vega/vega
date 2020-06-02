@@ -9,7 +9,7 @@ export const utcFormat = wrap('utcFormat');
 export const timeParse = wrap('timeParse');
 export const utcParse = wrap('utcParse');
 
-var dateObj = new Date(2000, 0, 1);
+const dateObj = new Date(2000, 0, 1);
 
 function time(month, day, specifier) {
   if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
