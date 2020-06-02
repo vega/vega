@@ -26,12 +26,21 @@ export default function SVGRenderer(loader) {
 const base = Renderer.prototype;
 
 inherits(SVGRenderer, Renderer, {
-  initialize(el, width, height, padding) {
+  /**
+   * Initialize a new SVGRenderer instance.
+   * @param {DOMElement} el - The containing DOM element for the display.
+   * @param {number} width - The coordinate width of the display, in pixels.
+   * @param {number} height - The coordinate height of the display, in pixels.
+   * @param {Array<number>} origin - The origin of the display, in pixels.
+   *   The coordinate system will be translated to this point.
+   * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+   *   the width and height to determine the final pixel size.
+   * @return {SVGRenderer} - This renderer instance.
+   */
+  initialize(el, width, height, origin, scaleFactor) {
     // create the svg definitions cache
-    this._defs = {
-      gradient: {},
-      clipping: {}
-    };
+    this._defs = {};
+    this._clearDefs();
 
     if (el) {
       this._svg = domChild(el, 0, 'svg', ns);
@@ -50,9 +59,12 @@ inherits(SVGRenderer, Renderer, {
     // set background color if defined
     this.background(this._bgcolor);
 
-    return base.initialize.call(this, el, width, height, padding);
+    return base.initialize.call(this, el, width, height, origin, scaleFactor);
   },
 
+  /**
+   * Get / set the background color.
+   */
   background(bgcolor) {
     if (arguments.length && this._svg) {
       this._svg.style.setProperty('background-color', bgcolor);
@@ -60,6 +72,16 @@ inherits(SVGRenderer, Renderer, {
     return base.background.apply(this, arguments);
   },
 
+  /**
+   * Resize the display.
+   * @param {number} width - The new coordinate width of the display, in pixels.
+   * @param {number} height - The new coordinate height of the display, in pixels.
+   * @param {Array<number>} origin - The new origin of the display, in pixels.
+   *   The coordinate system will be translated to this point.
+   * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+   *   the width and height to determine the final pixel size.
+   * @return {SVGRenderer} - This renderer instance;
+   */
   resize(width, height, origin, scaleFactor) {
     base.resize.call(this, width, height, origin, scaleFactor);
 
@@ -77,10 +99,18 @@ inherits(SVGRenderer, Renderer, {
     return this;
   },
 
+  /**
+   * Returns the SVG element of the visualization.
+   * @return {DOMElement} - The SVG element.
+   */
   canvas() {
     return this._svg;
   },
 
+  /**
+   * Returns an SVG text string for the rendered content,
+   * or null if this renderer is currently headless.
+   */
   svg() {
     const svg = this._svg,
           bg = this._bgcolor;
@@ -104,17 +134,19 @@ inherits(SVGRenderer, Renderer, {
     return text;
   },
 
-  // -- Render entry point --
-
+  /**
+   * Internal rendering method.
+   * @param {object} scene - The root mark of a scenegraph to render.
+   */
   _render(scene) {
     // perform spot updates and re-render markup
     if (this._dirtyCheck()) {
-      if (this._dirtyAll) this._resetDefs();
-      this.draw(this._root, scene);
+      if (this._dirtyAll) this._clearDefs();
+      this.mark(this._root, scene);
       domClear(this._root, 1);
     }
 
-    this.updateDefs();
+    this.defs();
 
     this._dirty = [];
     ++this._dirtyID;
@@ -122,42 +154,12 @@ inherits(SVGRenderer, Renderer, {
     return this;
   },
 
-  // -- Manage SVG definitions ('defs') block --
-
-  updateDefs() {
-    const svg = this._svg,
-          defs = this._defs;
-
-    let el = defs.el,
-        index = 0;
-
-    for (const id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
-      index = updateGradient(el, defs.gradient[id], index);
-    }
-
-    for (const id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
-      index = updateClipping(el, defs.clipping[id], index);
-    }
-
-    // clean-up
-    if (el) {
-      index === 0
-        ? (svg.removeChild(el), defs.el = null)
-        : domClear(el, index);
-    }
-  },
-
-  _resetDefs() {
-    var def = this._defs;
-    def.gradient = {};
-    def.clipping = {};
-  },
-
-
   // -- Manage rendering of items marked as dirty --
 
+  /**
+   * Flag a mark item as dirty.
+   * @param {Item} item - The mark item.
+   */
   dirty(item) {
     if (item.dirty !== this._dirtyID) {
       item.dirty = this._dirtyID;
@@ -165,18 +167,26 @@ inherits(SVGRenderer, Renderer, {
     }
   },
 
+  /**
+   * Check if a mark item is considered dirty.
+   * @param {Item} item - The mark item.
+   */
   isDirty(item) {
     return this._dirtyAll
       || !item._svg
       || item.dirty === this._dirtyID;
   },
 
+  /**
+   * Internal method to check dirty status and, if possible,
+   * make targetted updates without a full rendering pass.
+   */
   _dirtyCheck() {
     this._dirtyAll = true;
-    var items = this._dirty;
+    const items = this._dirty;
     if (!items.length || !this._dirtyID) return true;
 
-    var id = ++this._dirtyID,
+    let id = ++this._dirtyID,
         item, mark, type, mdef, i, n, o;
 
     for (i=0, n=items.length; i<n; ++i) {
@@ -228,11 +238,16 @@ inherits(SVGRenderer, Renderer, {
 
   // -- Construct & maintain scenegraph to SVG mapping ---
 
-  // Draw a mark container.
-  draw(el, scene, prev) {
+  /**
+   * Render a set of mark items.
+   * @param {SVGElement} el - The parent element in the SVG tree.
+   * @param {object} scene - The mark parent to render.
+   * @param {SVGElement} prev - The previous sibling in the SVG tree.
+   */
+  mark(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
-    var svg = this._svg,
+    let svg = this._svg,
         mdef = marks[scene.marktype],
         events = scene.interactive === false ? 'none' : null,
         isGroup = mdef.tag === 'g',
@@ -276,6 +291,12 @@ inherits(SVGRenderer, Renderer, {
     return parent;
   },
 
+  /**
+   * Update the attributes of an SVG element for a mark item.
+   * @param {object} mdef - The mark definition object
+   * @param {SVGElement} el - The SVG element.
+   * @param {Item} item - The mark item.
+   */
   _update(mdef, el, item) {
     // set dom element and values cache
     // provides access to emit method
@@ -293,15 +314,20 @@ inherits(SVGRenderer, Renderer, {
     if (extra) extra.call(this, mdef, el, item);
 
     // apply svg style attributes
-    // note: element may be modified by 'extra' method
+    // note: element state may have been modified by 'extra' method
     if (element) this.style(element, item);
   },
 
-  style(el, o) {
-    if (o == null) return;
+  /**
+   * Update the presentation attributes of an SVG element for a mark item.
+   * @param {SVGElement} el - The SVG element.
+   * @param {Item} item - The mark item.
+   */
+  style(el, item) {
+    if (item == null) return;
 
     for (const prop in styles) {
-      let value = prop === 'font' ? fontFamily(o) : o[prop];
+      let value = prop === 'font' ? fontFamily(item) : item[prop];
       if (value === values[prop]) continue;
 
       const name = styles[prop];
@@ -316,18 +342,68 @@ inherits(SVGRenderer, Renderer, {
 
       values[prop] = value;
     }
+  },
+
+  /**
+   * Render SVG defs, as needed.
+   * Must be called *after* marks have been processed to ensure the
+   * collected state is current and accurate.
+   */
+  defs() {
+    const svg = this._svg,
+          defs = this._defs;
+
+    let el = defs.el,
+        index = 0;
+
+    for (const id in defs.gradient) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+      index = updateGradient(el, defs.gradient[id], index);
+    }
+
+    for (const id in defs.clipping) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+      index = updateClipping(el, defs.clipping[id], index);
+    }
+
+    // clean-up
+    if (el) {
+      index === 0
+        ? (svg.removeChild(el), defs.el = null)
+        : domClear(el, index);
+    }
+  },
+
+  /**
+   * Clear defs caches.
+   */
+  _clearDefs() {
+    const def = this._defs;
+    def.gradient = {};
+    def.clipping = {};
   }
 });
 
+// mark ancestor chain with a dirty id
+function dirtyParents(item, id) {
+  for (; item && item.dirty !== id; item=item.mark.group) {
+    item.dirty = id;
+    if (item.mark && item.mark.dirty !== id) {
+      item.mark.dirty = id;
+    } else return;
+  }
+}
+
+// update gradient definitions
 function updateGradient(el, grad, index) {
-  var i, n, stop;
+  let i, n, stop;
 
   if (grad.gradient === 'radial') {
     // SVG radial gradients automatically transform to normalized bbox
     // coordinates, in a way that is cumbersome to replicate in canvas.
     // We wrap the radial gradient in a pattern element, allowing us to
     // maintain a circular gradient that matches what canvas provides.
-    var pt = domChild(el, index++, 'pattern', ns);
+    let pt = domChild(el, index++, 'pattern', ns);
     setAttributes(pt, {
       id: patternPrefix + grad.id,
       viewBox: '0,0,1,1',
@@ -374,8 +450,9 @@ function updateGradient(el, grad, index) {
   return index;
 }
 
+// update clipping path definitions
 function updateClipping(el, clip, index) {
-  var mask;
+  let mask;
 
   el = domChild(el, index, 'clipPath', ns);
   el.setAttribute('id', clip.id);
@@ -392,22 +469,13 @@ function updateClipping(el, clip, index) {
   return index + 1;
 }
 
-function dirtyParents(item, id) {
-  for (; item && item.dirty !== id; item=item.mark.group) {
-    item.dirty = id;
-    if (item.mark && item.mark.dirty !== id) {
-      item.mark.dirty = id;
-    } else return;
-  }
-}
-
 // Recursively process group contents.
 function recurse(renderer, el, group) {
   el = el.lastChild.previousSibling;
   let prev, idx = 0;
 
   visit(group, item => {
-    prev = renderer.draw(el, item, prev);
+    prev = renderer.mark(el, item, prev);
     ++idx;
   });
 
@@ -456,6 +524,7 @@ function bind(item, el, sibling, tag, svg) {
   return node;
 }
 
+// check if two nodes are ordered siblings
 function siblingCheck(node, sibling) {
   return node.parentNode
     && node.parentNode.childNodes.length > 1
@@ -464,7 +533,7 @@ function siblingCheck(node, sibling) {
 
 // -- Set attributes & styles on SVG elements ---
 
-var element = null, // temp var for current SVG element
+let element = null, // temp var for current SVG element
     values = null;  // temp var for current values hash
 
 // Extra configuration for certain mark types

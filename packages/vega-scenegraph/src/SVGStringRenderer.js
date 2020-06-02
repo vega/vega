@@ -21,10 +21,18 @@ export default function SVGStringRenderer(loader) {
 }
 
 inherits(SVGStringRenderer, Renderer, {
+  /**
+   * Returns the rendered SVG text string,
+   * or null if rendering has not yet occurred.
+   */
   svg() {
     return this._text;
   },
 
+  /**
+   * Internal rendering method.
+   * @param {object} scene - The root mark of a scenegraph to render.
+   */
   _render(scene) {
     const m = markup();
 
@@ -53,100 +61,20 @@ inherits(SVGStringRenderer, Renderer, {
     this.mark(m, scene);
     m.close(); // </g>
 
-    // defs, if any
-    this.buildDefs(m);
+    // defs
+    this.defs(m);
 
+    // get SVG text string
     this._text = m.close() + '';
 
     return this;
   },
 
-  buildDefs(m) {
-    const gradient = this._defs.gradient,
-          clipping = this._defs.clipping,
-          count = Object.keys(gradient).length + Object.keys(clipping).length;
-
-    if (count === 0) return; // nothing to do
-
-    m.open('defs');
-
-    for (const id in gradient) {
-      const def = gradient[id],
-            stops = def.stops;
-
-      if (def.gradient === 'radial') {
-        // SVG radial gradients automatically transform to normalized bbox
-        // coordinates, in a way that is cumbersome to replicate in canvas.
-        // We wrap the radial gradient in a pattern element, allowing us to
-        // maintain a circular gradient that matches what canvas provides.
-
-        m.open('pattern', {
-          id: patternPrefix + id,
-          viewBox: '0,0,1,1',
-          width: '100%',
-          height: '100%',
-          preserveAspectRatio: 'xMidYMid slice'
-        });
-
-        m.open('rect', {
-          width:  '1',
-          height: '1',
-          fill:   'url(#' + id + ')'
-        }).close();
-
-        m.close(); // </pattern>
-
-        m.open('radialGradient', {
-          id: id,
-          fx: def.x1,
-          fy: def.y1,
-          fr: def.r1,
-          cx: def.x2,
-          cy: def.y2,
-          r: def.r2
-        });
-      } else {
-        m.open('linearGradient', {
-          id: id,
-          x1: def.x1,
-          x2: def.x2,
-          y1: def.y1,
-          y2: def.y2
-        });
-      }
-
-      for (let i = 0; i < stops.length; ++i) {
-        m.open('stop', {
-          offset: stops[i].offset,
-          'stop-color': stops[i].color
-        }).close();
-      }
-
-      m.close();
-    }
-
-    for (const id in clipping) {
-      const def = clipping[id];
-
-      m.open('clipPath', {id: id});
-      if (def.path) {
-        m.open('path', {
-          d: def.path
-        }).close();
-      } else {
-        m.open('rect', {
-          x: 0,
-          y: 0,
-          width: def.width,
-          height: def.height
-        }).close();
-      }
-      m.close();
-    }
-
-    m.close();
-  },
-
+  /**
+   * Render a set of mark items.
+   * @param {object} m - The markup context.
+   * @param {object} scene - The mark parent to render.
+   */
   mark(m, scene) {
     const mdef = Marks[scene.marktype],
           tag  = mdef.tag,
@@ -239,6 +167,10 @@ inherits(SVGStringRenderer, Renderer, {
     return m.close(); // </g>
   },
 
+  /**
+   * Get href attributes for a hyperlinked mark item.
+   * @param {Item} item - The mark item.
+   */
   href(item) {
     let href = item.href,
         attr;
@@ -258,6 +190,13 @@ inherits(SVGStringRenderer, Renderer, {
     return null;
   },
 
+  /**
+   * Get an object of SVG attributes for a mark item.
+   * @param {object} scene - The mark parent.
+   * @param {Item} item - The mark item.
+   * @param {array|function} attrs - One or more attribute emitters.
+   * @param {string} tag - The tag being rendered.
+   */
   attr(scene, item, attrs, tag) {
     const object = {},
           emit = (name, value, ns, prefixed) => {
@@ -273,14 +212,107 @@ inherits(SVGStringRenderer, Renderer, {
 
     // apply style attributes
     if (tag) {
-      applyStyles(object, item, scene, tag, this._defs);
+      style(object, item, scene, tag, this._defs);
     }
 
     return object;
+  },
+
+  /**
+   * Render SVG defs, as needed.
+   * Must be called *after* marks have been processed to ensure the
+   * collected state is current and accurate.
+   * @param {object} m - The markup context.
+   */
+  defs(m) {
+    const gradient = this._defs.gradient,
+          clipping = this._defs.clipping,
+          count = Object.keys(gradient).length + Object.keys(clipping).length;
+
+    if (count === 0) return; // nothing to do
+
+    m.open('defs');
+
+    for (const id in gradient) {
+      const def = gradient[id],
+            stops = def.stops;
+
+      if (def.gradient === 'radial') {
+        // SVG radial gradients automatically transform to normalized bbox
+        // coordinates, in a way that is cumbersome to replicate in canvas.
+        // We wrap the radial gradient in a pattern element, allowing us to
+        // maintain a circular gradient that matches what canvas provides.
+
+        m.open('pattern', {
+          id: patternPrefix + id,
+          viewBox: '0,0,1,1',
+          width: '100%',
+          height: '100%',
+          preserveAspectRatio: 'xMidYMid slice'
+        });
+
+        m.open('rect', {
+          width:  '1',
+          height: '1',
+          fill:   'url(#' + id + ')'
+        }).close();
+
+        m.close(); // </pattern>
+
+        m.open('radialGradient', {
+          id: id,
+          fx: def.x1,
+          fy: def.y1,
+          fr: def.r1,
+          cx: def.x2,
+          cy: def.y2,
+          r: def.r2
+        });
+      } else {
+        m.open('linearGradient', {
+          id: id,
+          x1: def.x1,
+          x2: def.x2,
+          y1: def.y1,
+          y2: def.y2
+        });
+      }
+
+      for (let i = 0; i < stops.length; ++i) {
+        m.open('stop', {
+          offset: stops[i].offset,
+          'stop-color': stops[i].color
+        }).close();
+      }
+
+      m.close();
+    }
+
+    for (const id in clipping) {
+      const def = clipping[id];
+
+      m.open('clipPath', {id: id});
+      if (def.path) {
+        m.open('path', {
+          d: def.path
+        }).close();
+      } else {
+        m.open('rect', {
+          x: 0,
+          y: 0,
+          width: def.width,
+          height: def.height
+        }).close();
+      }
+      m.close();
+    }
+
+    m.close();
   }
 });
 
-function applyStyles(s, item, scene, tag, defs) {
+// Helper function for attr for style presentation attributes
+function style(s, item, scene, tag, defs) {
   if (item == null) return s;
 
   if (tag === 'bgrect' && scene.interactive === false) {
@@ -302,9 +334,9 @@ function applyStyles(s, item, scene, tag, defs) {
   if (tag === 'text') {
     s['font-family'] = fontFamily(item);
     s['font-size'] = fontSize(item) + 'px';
-    if (item.fontStyle) s['font-style'] = item.fontStyle;
-    if (item.fontVariant) s['font-variant'] = item.fontVariant;
-    if (item.fontWeight) s['font-weight'] = item.fontWeight;
+    s['font-style'] = item.fontStyle;
+    s['font-variant'] = item.fontVariant;
+    s['font-weight'] = item.fontWeight;
   }
 
   for (const prop in styles) {
