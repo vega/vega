@@ -1,6 +1,6 @@
 export default function(scale) {
   return function(_) {
-    var lo = _[0],
+    let lo = _[0],
         hi = _[1],
         t;
 

@@ -3,7 +3,7 @@ import peek from './peek';
 export default function(range, value, threshold, left, right, center) {
   if (!threshold && threshold !== 0) return center;
 
-  var a = range[0],
+  let a = range[0],
       b = peek(range),
       t = +threshold,
       l, r;

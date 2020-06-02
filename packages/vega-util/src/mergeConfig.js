@@ -5,7 +5,7 @@ const isLegalKey = key => key !== '__proto__';
 
 export function mergeConfig(...configs) {
   return configs.reduce((out, source) => {
-    for (var key in source) {
+    for (const key in source) {
       if (key === 'signals') {
         // for signals, we merge the signals arrays
         // source signals take precedence over
@@ -16,7 +16,7 @@ export function mergeConfig(...configs) {
         // for legend block, recurse for the layout entry only
         // for style block, recurse for all properties
         // otherwise, no recursion: objects overwrite, no merging
-        var r = key === 'legend' ? {layout: 1}
+        const r = key === 'legend' ? {layout: 1}
           : key === 'style' ? true
           : null;
         writeConfig(out, key, source[key], r);
@@ -29,7 +29,7 @@ export function mergeConfig(...configs) {
 export function writeConfig(output, key, value, recurse) {
   if (!isLegalKey(key)) return;
 
-  var k, o;
+  let k, o;
   if (isObject(value) && !isArray(value)) {
     o = isObject(output[key]) ? output[key] : (output[key] = {});
     for (k in value) {

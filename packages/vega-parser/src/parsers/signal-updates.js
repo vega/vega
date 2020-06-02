@@ -3,7 +3,7 @@ import {parseExpression} from 'vega-functions';
 import {error} from 'vega-util';
 
 export default function(signal, scope) {
-  var op = scope.getSignal(signal.name),
+  let op = scope.getSignal(signal.name),
       expr = signal.update;
 
   if (signal.init) {
@@ -22,8 +22,6 @@ export default function(signal, scope) {
   }
 
   if (signal.on) {
-    signal.on.forEach(function(_) {
-      parseUpdate(_, scope, op.id);
-    });
+    signal.on.forEach(_ => parseUpdate(_, scope, op.id));
   }
 }

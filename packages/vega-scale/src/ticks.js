@@ -18,7 +18,7 @@ const descending = (a, b) => b[1] - a[1];
  * @return {*} - The tick count or interval function.
  */
 export function tickCount(scale, count, minStep) {
-  var step;
+  let step;
 
   if (isNumber(count)) {
     if (scale.bins) {
@@ -122,7 +122,7 @@ export function tickValues(scale, count) {
  * @return {function(*):string} - The generated label formatter.
  */
 export function tickFormat(locale, scale, count, specifier, formatType, noSkip) {
-  var type = scale.type;
+  const type = scale.type;
   let format = defaultFormatter;
 
   if (type === Time || formatType === Time) {

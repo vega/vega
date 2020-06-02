@@ -1,27 +1,27 @@
-export var RawCode = 'RawCode';
-export var Literal = 'Literal';
-export var Property = 'Property';
-export var Identifier = 'Identifier';
+export const RawCode = 'RawCode';
+export const Literal = 'Literal';
+export const Property = 'Property';
+export const Identifier = 'Identifier';
 
-export var ArrayExpression = 'ArrayExpression';
-export var BinaryExpression = 'BinaryExpression';
-export var CallExpression = 'CallExpression';
-export var ConditionalExpression = 'ConditionalExpression';
-export var LogicalExpression = 'LogicalExpression';
-export var MemberExpression = 'MemberExpression';
-export var ObjectExpression = 'ObjectExpression';
-export var UnaryExpression = 'UnaryExpression';
+export const ArrayExpression = 'ArrayExpression';
+export const BinaryExpression = 'BinaryExpression';
+export const CallExpression = 'CallExpression';
+export const ConditionalExpression = 'ConditionalExpression';
+export const LogicalExpression = 'LogicalExpression';
+export const MemberExpression = 'MemberExpression';
+export const ObjectExpression = 'ObjectExpression';
+export const UnaryExpression = 'UnaryExpression';
 
 export default function ASTNode(type) {
   this.type = type;
 }
 
 ASTNode.prototype.visit = function(visitor) {
-  var node = this, c, i, n;
+  let c, i, n;
 
-  if (visitor(node)) return 1;
+  if (visitor(this)) return 1;
 
-  for (c=children(node), i=0, n=c.length; i<n; ++i) {
+  for (c=children(this), i=0, n=c.length; i<n; ++i) {
     if (c[i].visit(visitor)) return 1;
   }
 };
@@ -34,9 +34,7 @@ function children(node) {
     case LogicalExpression:
       return [node.left, node.right];
     case CallExpression:
-      var args = node.arguments.slice();
-      args.unshift(node.callee);
-      return args;
+      return [node.callee].concat(node.arguments);
     case ConditionalExpression:
       return [node.test, node.consequent, node.alternate];
     case MemberExpression:

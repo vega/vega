@@ -49,8 +49,6 @@ KDE2D.Definition = {
   ]
 };
 
-var prototype = inherits(KDE2D, Transform);
-
 const PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
 
 export function params(obj, _) {
@@ -58,33 +56,35 @@ export function params(obj, _) {
   return obj;
 }
 
-prototype.transform = function(_, pulse) {
-  if (this.value && !pulse.changed() && !_.modified())
-    return pulse.StopPropagation;
+inherits(KDE2D, Transform, {
+  transform(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified())
+      return pulse.StopPropagation;
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      source = pulse.materialize(pulse.SOURCE).source,
-      groups = partition(source, _.groupby),
-      names = (_.groupby || []).map(accessorName),
-      kde = params(density2D(), _),
-      as = _.as || 'grid',
-      values = [];
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        groups = partition(source, _.groupby),
+        names = (_.groupby || []).map(accessorName),
+        kde = params(density2D(), _),
+        as = _.as || 'grid',
+        values = [];
 
-  function set(t, vals) {
-    for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
-    return t;
+    function set(t, vals) {
+      for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
+      return t;
+    }
+
+    // generate density raster grids
+    values = groups.map(g => ingest(
+      set({[as]: kde(g, _.counts)}, g.dims)
+    ));
+
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = values;
+
+    return out;
   }
-
-  // generate density raster grids
-  values = groups.map(g => ingest(
-    set({[as]: kde(g, _.counts)}, g.dims)
-  ));
-
-  if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = values;
-
-  return out;
-};
+});
 
 export function partition(data, groupby) {
   var groups = [],

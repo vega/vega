@@ -23,14 +23,14 @@ function parse(data, types, timeParser, utcParser) {
   timeParser = timeParser || locale.timeParse;
   utcParser = utcParser || locale.utcParse;
 
-  var fields = data.columns || Object.keys(data[0]),
+  let fields = data.columns || Object.keys(data[0]),
       parsers, datum, field, i, j, n, m;
 
   if (types === 'auto') types = inferTypes(data, fields);
 
   fields = Object.keys(types);
-  parsers = fields.map(function(field) {
-    var type = types[field],
+  parsers = fields.map(field => {
+    let type = types[field],
         parts, pattern;
 
     if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {

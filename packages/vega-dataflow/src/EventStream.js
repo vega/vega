@@ -1,7 +1,7 @@
 import UniqueList from './util/UniqueList';
 import {debounce, id, identity, truthy} from 'vega-util';
 
-var STREAM_ID = 0;
+let STREAM_ID = 0;
 
 /**
  * Models an event stream.
@@ -34,91 +34,91 @@ export function stream(filter, apply, receive) {
   return new EventStream(filter, apply, receive);
 }
 
-var prototype = EventStream.prototype;
+EventStream.prototype = {
+  _filter: truthy,
 
-prototype._filter = truthy;
+  _apply: identity,
 
-prototype._apply = identity;
+  targets() {
+    return this._targets || (this._targets = UniqueList(id));
+  },
 
-prototype.targets = function() {
-  return this._targets || (this._targets = UniqueList(id));
-};
+  consume(_) {
+    if (!arguments.length) return !!this._consume;
+    this._consume = !!_;
+    return this;
+  },
 
-prototype.consume = function(_) {
-  if (!arguments.length) return !!this._consume;
-  this._consume = !!_;
-  return this;
-};
+  receive(evt) {
+    if (this._filter(evt)) {
+      let val = (this.value = this._apply(evt)),
+          trg = this._targets,
+          n = trg ? trg.length : 0,
+          i = 0;
 
-prototype.receive = function(evt) {
-  if (this._filter(evt)) {
-    var val = (this.value = this._apply(evt)),
-        trg = this._targets,
-        n = trg ? trg.length : 0,
-        i = 0;
+      for (; i<n; ++i) trg[i].receive(val);
 
-    for (; i<n; ++i) trg[i].receive(val);
-
-    if (this._consume) {
-      evt.preventDefault();
-      evt.stopPropagation();
+      if (this._consume) {
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
     }
-  }
-};
+  },
 
-prototype.filter = function(filter) {
-  var s = stream(filter);
-  this.targets().add(s);
-  return s;
-};
+  filter(filter) {
+    const s = stream(filter);
+    this.targets().add(s);
+    return s;
+  },
 
-prototype.apply = function(apply) {
-  var s = stream(null, apply);
-  this.targets().add(s);
-  return s;
-};
+  apply(apply) {
+    const s = stream(null, apply);
+    this.targets().add(s);
+    return s;
+  },
 
-prototype.merge = function() {
-  var s = stream();
+  merge() {
+    const s = stream();
 
-  this.targets().add(s);
-  for (var i=0, n=arguments.length; i<n; ++i) {
-    arguments[i].targets().add(s);
-  }
-
-  return s;
-};
-
-prototype.throttle = function(pause) {
-  var t = -1;
-  return this.filter(function() {
-    var now = Date.now();
-    if ((now - t) > pause) {
-      t = now;
-      return 1;
-    } else {
-      return 0;
+    this.targets().add(s);
+    for (let i=0, n=arguments.length; i<n; ++i) {
+      arguments[i].targets().add(s);
     }
-  });
-};
 
-prototype.debounce = function(delay) {
-  var s = stream();
+    return s;
+  },
 
-  this.targets().add(stream(null, null,
-    debounce(delay, function(e) {
-      var df = e.dataflow;
-      s.receive(e);
-      if (df && df.run) df.run();
-    })
-  ));
+  throttle(pause) {
+    let t = -1;
+    return this.filter(() => {
+      const now = Date.now();
+      if ((now - t) > pause) {
+        t = now;
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  },
 
-  return s;
-};
+  debounce(delay) {
+    const s = stream();
 
-prototype.between = function(a, b) {
-  var active = false;
-  a.targets().add(stream(null, null, function() { active = true; }));
-  b.targets().add(stream(null, null, function() { active = false; }));
-  return this.filter(function() { return active; });
+    this.targets().add(stream(null, null,
+      debounce(delay, e => {
+        const df = e.dataflow;
+        s.receive(e);
+        if (df && df.run) df.run();
+      })
+    ));
+
+    return s;
+  },
+
+  between(a, b) {
+    let active = false;
+    a.targets().add(stream(null, null, () => active = true));
+    b.targets().add(stream(null, null, () => active = false));
+    return this.filter(() => active);
+  }
 };

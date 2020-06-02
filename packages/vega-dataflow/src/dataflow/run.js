@@ -234,7 +234,7 @@ function reentrant(df) {
  *   dataflow graph is dynamically modified and the operator rank changes.
  */
 export function enqueue(op, force) {
-  var q = op.stamp < this._clock;
+  const q = op.stamp < this._clock;
   if (q) op.stamp = this._clock;
   if (q || force) {
     op.qrank = op.rank;
@@ -255,8 +255,8 @@ export function enqueue(op, force) {
  *   annotate the returned pulse. See {@link run} for more information.
  */
 export function getPulse(op, encode) {
-  var s = op.source,
-      stamp = this._clock;
+  const s = op.source,
+        stamp = this._clock;
 
   return s && isArray(s)
     ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)

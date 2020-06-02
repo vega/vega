@@ -13,7 +13,7 @@ const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Cen
       baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       vertical = _.isVertical(),
       thickness = encoder(_.gradientThickness()),
       length = _.gradientLength(),

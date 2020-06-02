@@ -1,5 +1,5 @@
-export var GroupMark = 'group';
-export var RectMark = 'rect';
-export var RuleMark = 'rule';
-export var SymbolMark = 'symbol';
-export var TextMark = 'text';
+export const GroupMark = 'group';
+export const RectMark = 'rect';
+export const RuleMark = 'rule';
+export const SymbolMark = 'symbol';
+export const TextMark = 'text';

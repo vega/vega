@@ -1,5 +1,5 @@
 export default function(index, i, query) {
-  var bit = (1 << i);
+  const bit = (1 << i);
 
   return {
     one:     bit,
@@ -9,8 +9,8 @@ export default function(index, i, query) {
     index:   index.index,
     size:    index.size,
 
-    onAdd: function(added, curr) {
-      var dim = this,
+    onAdd(added, curr) {
+      let dim = this,
           range = dim.bisect(dim.range, added.value),
           idx = added.index,
           lo = range[0],

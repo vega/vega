@@ -14,7 +14,7 @@ import {error, inherits, isArray} from 'vega-util';
  * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
  */
 export default function MultiPulse(dataflow, stamp, pulses, encode) {
-  var p = this,
+  let p = this,
       c = 0,
       pulse, hash, i, n, f;
 
@@ -41,65 +41,59 @@ export default function MultiPulse(dataflow, stamp, pulses, encode) {
   this.changes = c;
 }
 
-var prototype = inherits(MultiPulse, Pulse);
-
-/**
- * Creates a new pulse based on the values of this pulse.
- * The dataflow, time stamp and field modification values are copied over.
- * @return {Pulse}
- */
-prototype.fork = function(flags) {
-  var p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
-  if (flags !== undefined) {
-    if (flags & p.ADD) {
-      this.visit(p.ADD, function(t) { return p.add.push(t); });
+inherits(MultiPulse, Pulse, {
+  /**
+   * Creates a new pulse based on the values of this pulse.
+   * The dataflow, time stamp and field modification values are copied over.
+   * @return {Pulse}
+   */
+  fork(flags) {
+    const p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
+    if (flags !== undefined) {
+      if (flags & p.ADD) this.visit(p.ADD, t => p.add.push(t));
+      if (flags & p.REM) this.visit(p.REM, t => p.rem.push(t));
+      if (flags & p.MOD) this.visit(p.MOD, t => p.mod.push(t));
     }
-    if (flags & p.REM) {
-      this.visit(p.REM, function(t) { return p.rem.push(t); });
-    }
-    if (flags & p.MOD) {
-      this.visit(p.MOD, function(t) { return p.mod.push(t); });
-    }
-  }
-  return p;
-};
+    return p;
+  },
 
-prototype.changed = function(flags) {
-  return this.changes & flags;
-};
+  changed(flags) {
+    return this.changes & flags;
+  },
 
-prototype.modified = function(_) {
-  var p = this, fields = p.fields;
-  return !(fields && (p.changes & p.MOD)) ? 0
-    : isArray(_) ? _.some(function(f) { return fields[f]; })
-    : fields[_];
-};
+  modified(_) {
+    const p = this, fields = p.fields;
+    return !(fields && (p.changes & p.MOD)) ? 0
+      : isArray(_) ? _.some(function(f) { return fields[f]; })
+      : fields[_];
+  },
 
-prototype.filter = function() {
-  error('MultiPulse does not support filtering.');
-};
+  filter() {
+    error('MultiPulse does not support filtering.');
+  },
 
-prototype.materialize = function() {
-  error('MultiPulse does not support materialization.');
-};
+  materialize() {
+    error('MultiPulse does not support materialization.');
+  },
 
-prototype.visit = function(flags, visitor) {
-  var p = this,
-      pulses = p.pulses,
-      n = pulses.length,
-      i = 0;
+  visit(flags, visitor) {
+    let p = this,
+        pulses = p.pulses,
+        n = pulses.length,
+        i = 0;
 
-  if (flags & p.SOURCE) {
-    for (; i<n; ++i) {
-      pulses[i].visit(flags, visitor);
-    }
-  } else {
-    for (; i<n; ++i) {
-      if (pulses[i].stamp === p.stamp) {
+    if (flags & p.SOURCE) {
+      for (; i<n; ++i) {
         pulses[i].visit(flags, visitor);
       }
+    } else {
+      for (; i<n; ++i) {
+        if (pulses[i].stamp === p.stamp) {
+          pulses[i].visit(flags, visitor);
+        }
+      }
     }
-  }
 
-  return p;
-};
+    return p;
+  }
+});

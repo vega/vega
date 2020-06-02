@@ -11,10 +11,10 @@ export default function Params(params) {
   Transform.call(this, null, params);
 }
 
-inherits(Params, Transform);
-
-Params.prototype.transform = function(_, pulse) {
-  this.modified(_.modified());
-  this.value = _;
-  return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
-};
+inherits(Params, Transform, {
+  transform(_, pulse) {
+    this.modified(_.modified());
+    this.value = _;
+    return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
+  }
+});

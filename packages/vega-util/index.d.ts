@@ -9,6 +9,7 @@ export function accessorName(fn: AccessorFn): string;
 
 export type Order = 'ascending' | 'descending';
 
+export function ascending(a: any, b: any): number;
 export function compare(fields: string | readonly string[] | AccessorFn | readonly AccessorFn[], orders?: Order | readonly Order[]): (a: any, b: any) => number;
 
 export function constant<V>(v: V): () => V;
@@ -52,7 +53,8 @@ export function toString(a: any): string;
 export function extend<T>(target: T, ...source: readonly Partial<T>[]): T;
 export function inherits<C extends object, P extends object>(
   child: C,
-  parent: P
+  parent: P,
+  members?: object
 ): C & P;
 
 export function hasOwnProperty(object: object, property: PropertyKey): boolean;

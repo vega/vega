@@ -25,16 +25,16 @@ export default function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(ViewLayout, Transform);
-
-prototype.transform = function(_, pulse) {
-  var view = pulse.dataflow;
-  _.mark.items.forEach(group => {
-    if (_.layout) trellisLayout(view, group, _.layout);
-    layoutGroup(view, group, _);
-  });
-  return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
-};
+inherits(ViewLayout, Transform, {
+  transform(_, pulse) {
+    const view = pulse.dataflow;
+    _.mark.items.forEach(group => {
+      if (_.layout) trellisLayout(view, group, _.layout);
+      layoutGroup(view, group, _);
+    });
+    return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
+  }
+});
 
 function shouldReflow(group) {
   // We typically should reflow if layout is invoked (#2568), as child items

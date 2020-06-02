@@ -8,7 +8,7 @@ import {
   forceManyBody, forceSimulation, forceX, forceY
 } from 'd3-force';
 
-var ForceMap = {
+const ForceMap = {
   center: forceCenter,
   collide: forceCollide,
   nbody: forceManyBody,
@@ -17,13 +17,13 @@ var ForceMap = {
   y: forceY
 };
 
-var Forces = 'forces',
-    ForceParams = [
-      'alpha', 'alphaMin', 'alphaTarget',
-      'velocityDecay', 'forces'
-    ],
-    ForceConfig = ['static', 'iterations'],
-    ForceOutput = ['x', 'y', 'vx', 'vy'];
+const Forces = 'forces',
+      ForceParams = [
+        'alpha', 'alphaMin', 'alphaTarget',
+        'velocityDecay', 'forces'
+      ],
+      ForceConfig = ['static', 'iterations'],
+      ForceOutput = ['x', 'y', 'vx', 'vy'];
 
 /**
  * Force simulation layout.
@@ -104,95 +104,87 @@ Force.Definition = {
   ]
 };
 
-var prototype = inherits(Force, Transform);
+inherits(Force, Transform, {
+  transform(_, pulse) {
+    var sim = this.value,
+        change = pulse.changed(pulse.ADD_REM),
+        params = _.modified(ForceParams),
+        iters = _.iterations || 300;
 
-prototype.transform = function(_, pulse) {
-  var sim = this.value,
-      change = pulse.changed(pulse.ADD_REM),
-      params = _.modified(ForceParams),
-      iters = _.iterations || 300;
-
-  // configure simulation
-  if (!sim) {
-    this.value = sim = simulation(pulse.source, _);
-    sim.on('tick', rerun(pulse.dataflow, this));
-    if (!_.static) {
-      change = true;
-      sim.tick(); // ensure we run on init
-    }
-    pulse.modifies('index');
-  } else {
-    if (change) {
+    // configure simulation
+    if (!sim) {
+      this.value = sim = simulation(pulse.source, _);
+      sim.on('tick', rerun(pulse.dataflow, this));
+      if (!_.static) {
+        change = true;
+        sim.tick(); // ensure we run on init
+      }
       pulse.modifies('index');
-      sim.nodes(pulse.source);
-    }
-    if (params || pulse.changed(pulse.MOD)) {
-      setup(sim, _, 0, pulse);
-    }
-  }
-
-  // run simulation
-  if (params || change || _.modified(ForceConfig)
-      || (pulse.changed() && _.restart))
-  {
-    sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
-       .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
-
-    if (_.static) {
-      for (sim.stop(); --iters >= 0;) sim.tick();
     } else {
-      if (sim.stopped()) sim.restart();
-      if (!change) return pulse.StopPropagation; // defer to sim ticks
-    }
-  }
-
-  return this.finish(_, pulse);
-};
-
-prototype.finish = function(_, pulse) {
-  var dataflow = pulse.dataflow;
-
-  // inspect dependencies, touch link source data
-  for (var args=this._argops, j=0, m=args.length, arg; j<m; ++j) {
-    arg = args[j];
-    if (arg.name !== Forces || arg.op._argval.force !== 'link') {
-      continue;
-    }
-    for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
-      if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-        dataflow.pulse(op, dataflow.changeset().reflow());
-        break;
+      if (change) {
+        pulse.modifies('index');
+        sim.nodes(pulse.source);
+      }
+      if (params || pulse.changed(pulse.MOD)) {
+        setup(sim, _, 0, pulse);
       }
     }
-  }
 
-  // reflow all nodes
-  return pulse.reflow(_.modified()).modifies(ForceOutput);
-};
+    // run simulation
+    if (params || change || _.modified(ForceConfig)
+        || (pulse.changed() && _.restart))
+    {
+      sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
+        .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
+
+      if (_.static) {
+        for (sim.stop(); --iters >= 0;) sim.tick();
+      } else {
+        if (sim.stopped()) sim.restart();
+        if (!change) return pulse.StopPropagation; // defer to sim ticks
+      }
+    }
+
+    return this.finish(_, pulse);
+  },
+
+  finish(_, pulse) {
+    const dataflow = pulse.dataflow;
+
+    // inspect dependencies, touch link source data
+    for (let args=this._argops, j=0, m=args.length, arg; j<m; ++j) {
+      arg = args[j];
+      if (arg.name !== Forces || arg.op._argval.force !== 'link') {
+        continue;
+      }
+      for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
+        if (ops[i].name === 'links' && (op = ops[i].op.source)) {
+          dataflow.pulse(op, dataflow.changeset().reflow());
+          break;
+        }
+      }
+    }
+
+    // reflow all nodes
+    return pulse.reflow(_.modified()).modifies(ForceOutput);
+  }
+});
 
 function rerun(df, op) {
-  return function() { df.touch(op).run(); };
+  return () => df.touch(op).run();
 }
 
 function simulation(nodes, _) {
-  var sim = forceSimulation(nodes),
-      stopped = false,
-      stop = sim.stop,
-      restart = sim.restart;
+  const sim = forceSimulation(nodes),
+        stop = sim.stop,
+        restart = sim.restart;
+  let stopped = false;
 
-  sim.stopped = function() {
-    return stopped;
-  };
-  sim.restart = function() {
-    stopped = false;
-    return restart();
-  };
-  sim.stop = function() {
-    stopped = true;
-    return stop();
-  };
+  sim.stopped = () => stopped;
+  sim.restart = () => (stopped = false, restart());
+  sim.stop = () => (stopped = true, stop());
 
-  return setup(sim, _, true).on('end', function() { stopped = true; });
+  return setup(sim, _, true).on('end', () => stopped = true);
 }
 
 function setup(sim, _, init, pulse) {
@@ -244,5 +236,5 @@ function getForce(_) {
 }
 
 function setForceParam(f, v, _) {
-  f(isFunction(v) ? function(d) { return v(d, _); } : v);
+  f(isFunction(v) ? d => v(d, _) : v);
 }

@@ -70,12 +70,12 @@ export async function preload(target, url, format) {
 }
 
 function loadPending(df) {
-  var pending = new Promise(function(a) { accept = a; }),
-      accept;
+  let accept,
+      pending = new Promise(a => accept = a);
 
   pending.requests = 0;
 
-  pending.done = function() {
+  pending.done = () => {
     if (--pending.requests === 0) {
       df._pending = null;
       accept(df);

@@ -16,7 +16,7 @@ function flushExpr(scale, threshold, a, b, c) {
 }
 
 export default function(spec, config, userEncode, dataRef, size, band) {
-  var _ = lookup(spec, config),
+  let _ = lookup(spec, config),
       orient = spec.orient,
       scale = spec.scale,
       sign = getSign(orient, -1, 1),

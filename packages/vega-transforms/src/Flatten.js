@@ -30,37 +30,37 @@ Flatten.Definition = {
   ]
 };
 
-var prototype = inherits(Flatten, Transform);
+inherits(Flatten, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.NO_SOURCE),
+          fields = _.fields,
+          as = fieldNames(fields, _.as || []),
+          index = _.index || null,
+          m = as.length;
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      fields = _.fields,
-      as = fieldNames(fields, _.as || []),
-      index = _.index || null,
-      m = as.length;
+    // remove any previous results
+    out.rem = this.value;
 
-  // remove any previous results
-  out.rem = this.value;
+    // generate flattened tuples
+    pulse.visit(pulse.SOURCE, t => {
+      let arrays = fields.map(f => f(t)),
+          maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
+          i = 0, j, d, v;
 
-  // generate flattened tuples
-  pulse.visit(pulse.SOURCE, function(t) {
-    var arrays = fields.map(f => f(t)),
-        maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
-        i = 0, j, d, v;
-
-    for (; i<maxlen; ++i) {
-      d = derive(t);
-      for (j=0; j<m; ++j) {
-        d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+      for (; i<maxlen; ++i) {
+        d = derive(t);
+        for (j=0; j<m; ++j) {
+          d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+        }
+        if (index) {
+          d[index] = i;
+        }
+        out.add.push(d);
       }
-      if (index) {
-        d[index] = i;
-      }
-      out.add.push(d);
-    }
-  });
+    });
 
-  this.value = out.source = out.add;
-  if (index) out.modifies(index);
-  return out.modifies(as);
-};
+    this.value = out.source = out.add;
+    if (index) out.modifies(index);
+    return out.modifies(as);
+  }
+});

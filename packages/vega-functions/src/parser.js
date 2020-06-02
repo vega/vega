@@ -4,7 +4,7 @@ import {CallExpression, parse} from 'vega-expression';
 import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope) {
-  var params = {}, ast, gen;
+  let params = {}, ast, gen;
 
   // parse the expression to an abstract syntax tree (ast)
   try {
@@ -17,8 +17,8 @@ export default function(expr, scope) {
   // analyze ast function calls for dependencies
   ast.visit(node => {
     if (node.type !== CallExpression) return;
-    var name = node.callee.name,
-        visit = codegenParams.visitors[name];
+    const name = node.callee.name,
+          visit = codegenParams.visitors[name];
     if (visit) visit(name, node.arguments, scope, params);
   });
 
@@ -27,7 +27,7 @@ export default function(expr, scope) {
 
   // collect signal dependencies
   gen.globals.forEach(name => {
-    var signalName = SignalPrefix + name;
+    const signalName = SignalPrefix + name;
     if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
       params[signalName] = scope.signalRef(name);
     }

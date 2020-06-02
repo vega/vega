@@ -7,7 +7,7 @@ var Layouts = {
   cluster: cluster
 };
 
-var Output = ['x', 'y', 'depth', 'children'];
+const Output = ['x', 'y', 'depth', 'children'];
 
 /**
  * Tree layout. Depending on the method parameter, performs either
@@ -33,17 +33,15 @@ Tree.Definition = {
   ]
 };
 
-var prototype = inherits(Tree, HierarchyLayout);
-
-/**
- * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
- */
-prototype.layout = function(method) {
-  var m = method || 'tidy';
-  if (hasOwnProperty(Layouts, m)) return Layouts[m]();
-  else error('Unrecognized Tree layout method: ' + m);
-};
-
-prototype.params = ['size', 'nodeSize'];
-
-prototype.fields = Output;
+inherits(Tree, HierarchyLayout, {
+  /**
+   * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
+   */
+  layout(method) {
+    var m = method || 'tidy';
+    if (hasOwnProperty(Layouts, m)) return Layouts[m]();
+    else error('Unrecognized Tree layout method: ' + m);
+  },
+  params: ['size', 'nodeSize'],
+  fields: Output
+});

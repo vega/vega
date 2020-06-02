@@ -22,29 +22,29 @@ Cross.Definition = {
   ]
 };
 
-var prototype = inherits(Cross, Transform);
+inherits(Cross, Transform, {
+  transform(_, pulse) {
+    let out = pulse.fork(pulse.NO_SOURCE),
+        data = this.value,
+        as = _.as || ['a', 'b'],
+        a = as[0], b = as[1],
+        reset = !data
+            || pulse.changed(pulse.ADD_REM)
+            || _.modified('as')
+            || _.modified('filter');
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      data = this.value,
-      as = _.as || ['a', 'b'],
-      a = as[0], b = as[1],
-      reset = !data
-          || pulse.changed(pulse.ADD_REM)
-          || _.modified('as')
-          || _.modified('filter');
+    if (reset) {
+      if (data) out.rem = data;
+      data = pulse.materialize(pulse.SOURCE).source;
+      out.add = this.value = cross(data, a, b, _.filter || truthy);
+    } else {
+      out.mod = data;
+    }
 
-  if (reset) {
-    if (data) out.rem = data;
-    data = pulse.materialize(pulse.SOURCE).source;
-    out.add = this.value = cross(data, a, b, _.filter || truthy);
-  } else {
-    out.mod = data;
+    out.source = this.value;
+    return out.modifies(as);
   }
-
-  out.source = this.value;
-  return out.modifies(as);
-};
+});
 
 function cross(input, a, b, filter) {
   var data = [],

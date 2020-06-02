@@ -18,6 +18,6 @@ inherits(Field, Operator);
 
 function update(_) {
   return (this.value && !_.modified()) ? this.value
-    : isArray(_.name) ? array(_.name).map(function(f) { return field(f); })
+    : isArray(_.name) ? array(_.name).map(f => field(f))
     : field(_.name, _.as);
 }

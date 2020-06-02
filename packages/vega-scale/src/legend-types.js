@@ -1,3 +1,3 @@
-export var SymbolLegend  = 'symbol';
-export var DiscreteLegend = 'discrete';
-export var GradientLegend = 'gradient';
+export const SymbolLegend  = 'symbol';
+export const DiscreteLegend = 'discrete';
+export const GradientLegend = 'gradient';

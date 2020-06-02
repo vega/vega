@@ -34,42 +34,40 @@ DotBin.Definition = {
   ]
 };
 
-const prototype = inherits(DotBin, Transform);
+const autostep = (data, field) => span(extent(data, field)) / 30;
 
-prototype.transform = function(_, pulse) {
-  if (this.value && !(_.modified() || pulse.changed())) {
-    return pulse; // early exit
-  }
-
-  const source = pulse.materialize(pulse.SOURCE).source,
-        groups = partition(pulse.source, _.groupby, identity),
-        smooth = _.smooth || false,
-        field = _.field,
-        step = _.step || autostep(source, field),
-        sort = stableCompare((a, b) => field(a) - field(b)),
-        as = _.as || Output,
-        n = groups.length;
-
-  // compute dotplot bins per group
-  let min = Infinity, max = -Infinity, i = 0, j;
-  for (; i<n; ++i) {
-    const g = groups[i].sort(sort);
-    j = -1;
-    for (const v of dotbin(g, step, smooth, field)) {
-      if (v < min) min = v;
-      if (v > max) max = v;
-      g[++j][as] = v;
+inherits(DotBin, Transform, {
+  transform(_, pulse) {
+    if (this.value && !(_.modified() || pulse.changed())) {
+      return pulse; // early exit
     }
+
+    const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(pulse.source, _.groupby, identity),
+          smooth = _.smooth || false,
+          field = _.field,
+          step = _.step || autostep(source, field),
+          sort = stableCompare((a, b) => field(a) - field(b)),
+          as = _.as || Output,
+          n = groups.length;
+
+    // compute dotplot bins per group
+    let min = Infinity, max = -Infinity, i = 0, j;
+    for (; i<n; ++i) {
+      const g = groups[i].sort(sort);
+      j = -1;
+      for (const v of dotbin(g, step, smooth, field)) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        g[++j][as] = v;
+      }
+    }
+
+    this.value = {
+      start: min,
+      stop: max,
+      step: step
+    };
+    return pulse.reflow(true).modifies(as);
   }
-
-  this.value = {
-    start: min,
-    stop: max,
-    step: step
-  };
-  return pulse.reflow(true).modifies(as);
-};
-
-function autostep(data, field) {
-  return span(extent(data, field)) / 30;
-}
+});

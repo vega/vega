@@ -21,7 +21,7 @@ import {
   curveStepBefore
 } from 'd3-shape';
 
-var lookup = {
+const lookup = {
   'basis': {
     curve: curveBasis
   },

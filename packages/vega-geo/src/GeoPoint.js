@@ -26,35 +26,35 @@ GeoPoint.Definition = {
   ]
 };
 
-var prototype = inherits(GeoPoint, Transform);
+inherits(GeoPoint, Transform, {
+  transform(_, pulse) {
+    var proj = _.projection,
+        lon = _.fields[0],
+        lat = _.fields[1],
+        as = _.as || ['x', 'y'],
+        x = as[0],
+        y = as[1],
+        mod;
 
-prototype.transform = function(_, pulse) {
-  var proj = _.projection,
-      lon = _.fields[0],
-      lat = _.fields[1],
-      as = _.as || ['x', 'y'],
-      x = as[0],
-      y = as[1],
-      mod;
-
-  function set(t) {
-    var xy = proj([lon(t), lat(t)]);
-    if (xy) {
-      t[x] = xy[0];
-      t[y] = xy[1];
-    } else {
-      t[x] = undefined;
-      t[y] = undefined;
+    function set(t) {
+      var xy = proj([lon(t), lat(t)]);
+      if (xy) {
+        t[x] = xy[0];
+        t[y] = xy[1];
+      } else {
+        t[x] = undefined;
+        t[y] = undefined;
+      }
     }
-  }
 
-  if (_.modified()) {
-    // parameters updated, reflow
-    pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-  } else {
-    mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
-    pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
-  }
+    if (_.modified()) {
+      // parameters updated, reflow
+      pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
+    } else {
+      mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
+      pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+    }
 
-  return pulse.modifies(as);
-};
+    return pulse.modifies(as);
+  }
+});

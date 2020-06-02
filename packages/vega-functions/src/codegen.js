@@ -182,7 +182,7 @@ import {
 
 // Expression function context object
 export const functionContext = {
-  random: function() { return random(); }, // override default
+  random() { return random(); }, // override default
   cumulativeNormal,
   cumulativeLogNormal,
   cumulativeUniform,
@@ -198,13 +198,13 @@ export const functionContext = {
   isArray,
   isBoolean,
   isDate,
-  isDefined: function(_) { return _ !== undefined; },
+  isDefined(_) { return _ !== undefined; },
   isNumber,
   isObject,
   isRegExp,
   isString,
   isTuple,
-  isValid: function(_) { return _ != null && _ === _; },
+  isValid(_) { return _ != null && _ === _; },
   toBoolean,
   toDate,
   toNumber,
@@ -276,6 +276,20 @@ const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event funct
       thisPrefix = 'this.', // function context prefix
       astVisitors = {}; // AST visitors for dependency analysis
 
+// export code generator parameters
+export const codegenParams = {
+  blacklist:  ['_'],
+  whitelist:  ['datum', 'event', 'item'],
+  fieldvar:   'datum',
+  globalvar:  id => `_[${stringValue(SignalPrefix + id)}]`,
+  functions:  buildFunctions,
+  constants:  constants,
+  visitors:   astVisitors
+};
+
+// export code generator
+export const codeGenerator = codegen(codegenParams);
+
 // Build expression function registry
 function buildFunctions(codegen) {
   const fn = functions(codegen);
@@ -323,16 +337,3 @@ expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 // register Vega-Lite selection functions
 expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
 expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
-
-// Export code generator and parameters
-export const codegenParams = {
-  blacklist:  ['_'],
-  whitelist:  ['datum', 'event', 'item'],
-  fieldvar:   'datum',
-  globalvar:  id => '_[' + stringValue(SignalPrefix + id) + ']',
-  functions:  buildFunctions,
-  constants:  constants,
-  visitors:   astVisitors
-};
-
-export var codeGenerator = codegen(codegenParams);

@@ -1,5 +1,5 @@
-var TUPLE_ID_KEY = Symbol('vega_id'),
-    TUPLE_ID = 1;
+const TUPLE_ID_KEY = Symbol('vega_id');
+let TUPLE_ID = 1;
 
 /**
  * Resets the internal tuple id counter to one.
@@ -47,7 +47,7 @@ function setid(t, id) {
  * @return {object} The ingested data tuple.
  */
 export function ingest(datum) {
-  var t = (datum === Object(datum)) ? datum : {data: datum};
+  const t = (datum === Object(datum)) ? datum : {data: datum};
   return tupleid(t) ? t : setid(t, TUPLE_ID++);
 }
 
@@ -67,7 +67,7 @@ export function derive(t) {
  * @return {object} The derived tuple.
  */
 export function rederive(t, d) {
-  for (var k in t) d[k] = t[k];
+  for (const k in t) d[k] = t[k];
   return d;
 }
 
