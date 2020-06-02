@@ -12,7 +12,7 @@ import {
 
 function trimZeroes(numberFormat, decimalChar) {
   return x => {
-    var str = numberFormat(x),
+    let str = numberFormat(x),
         dec = str.indexOf(decimalChar),
         idx, end;
 
@@ -27,7 +27,7 @@ function trimZeroes(numberFormat, decimalChar) {
 }
 
 function rightmostDigit(str, dec) {
-  var i = str.lastIndexOf('e'), c;
+  let i = str.lastIndexOf('e'), c;
   if (i > 0) return i;
   for (i=str.length; --i > dec;) {
     c = str.charCodeAt(i);
@@ -43,7 +43,7 @@ function numberLocale(locale) {
     format,
     formatPrefix,
     formatFloat(spec) {
-      var s = formatSpecifier(spec || ',');
+      const s = formatSpecifier(spec || ',');
       if (s.precision == null) {
         s.precision = 12;
         switch (s.type) {
