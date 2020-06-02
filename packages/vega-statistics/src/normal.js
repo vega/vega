@@ -161,30 +161,30 @@ function erfinv(x) {
 }
 
 export default function(mean, stdev) {
-  var mu,
-      sigma,
-      dist = {
-        mean: function(_) {
-          if (arguments.length) {
-            mu = _ || 0;
-            return dist;
-          } else {
-            return mu;
-          }
-        },
-        stdev: function(_) {
-          if (arguments.length) {
-            sigma = _ == null ? 1 : _;
-            return dist;
-          } else {
-            return sigma;
-          }
-        },
-        sample: () => sampleNormal(mu, sigma),
-        pdf: value => densityNormal(value, mu, sigma),
-        cdf: value => cumulativeNormal(value, mu, sigma),
-        icdf: p => quantileNormal(p, mu, sigma)
-      };
+  let mu, sigma;
+
+  const dist = {
+    mean(_) {
+      if (arguments.length) {
+        mu = _ || 0;
+        return dist;
+      } else {
+        return mu;
+      }
+    },
+    stdev(_) {
+      if (arguments.length) {
+        sigma = _ == null ? 1 : _;
+        return dist;
+      } else {
+        return sigma;
+      }
+    },
+    sample: () => sampleNormal(mu, sigma),
+    pdf: value => densityNormal(value, mu, sigma),
+    cdf: value => cumulativeNormal(value, mu, sigma),
+    icdf: p => quantileNormal(p, mu, sigma)
+  };
 
   return dist.mean(mean).stdev(stdev);
 }

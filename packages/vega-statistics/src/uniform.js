@@ -33,29 +33,30 @@ export function quantileUniform(p, min, max) {
 }
 
 export default function(min, max) {
-  var a, b,
-      dist = {
-        min: function(_) {
-          if (arguments.length) {
-            a = _ || 0;
-            return dist;
-          } else {
-            return a;
-          }
-        },
-        max: function(_) {
-          if (arguments.length) {
-            b = _ == null ? 1 : _;
-            return dist;
-          } else {
-            return b;
-          }
-        },
-        sample: () => sampleUniform(a, b),
-        pdf: value => densityUniform(value, a, b),
-        cdf: value => cumulativeUniform(value, a, b),
-        icdf: p => quantileUniform(p, a, b)
-      };
+  let a, b;
+
+  const dist = {
+    min(_) {
+      if (arguments.length) {
+        a = _ || 0;
+        return dist;
+      } else {
+        return a;
+      }
+    },
+    max(_) {
+      if (arguments.length) {
+        b = _ == null ? 1 : _;
+        return dist;
+      } else {
+        return b;
+      }
+    },
+    sample: () => sampleUniform(a, b),
+    pdf: value => densityUniform(value, a, b),
+    cdf: value => cumulativeUniform(value, a, b),
+    icdf: p => quantileUniform(p, a, b)
+  };
 
   if (max == null) {
     max = (min == null ? 1 : min);

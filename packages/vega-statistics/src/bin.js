@@ -1,6 +1,6 @@
 export default function(_) {
   // determine range
-  var maxb = _.maxbins || 20,
+  let maxb = _.maxbins || 20,
       base = _.base || 10,
       logb = Math.log(base),
       div  = _.divide || [5, 2],
