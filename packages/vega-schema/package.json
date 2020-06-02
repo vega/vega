@@ -1,6 +1,6 @@
 {
   "name": "vega-schema",
-  "version": "5.12.1",
+  "version": "5.13.0",
   "description": "Generate the Vega JSON schema.",
   "keywords": [
     "vega",

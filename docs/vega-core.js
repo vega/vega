@@ -556,10 +556,10 @@
       empty: 0,
       object: obj,
       has: has,
-      get: function(key) {
+      get(key) {
         return has(key) ? obj[key] : undefined;
       },
-      set: function(key, value) {
+      set(key, value) {
         if (!has(key)) {
           ++map.size;
           if (obj[key] === NULL) --map.empty;
@@ -567,7 +567,7 @@
         obj[key] = value;
         return this;
       },
-      delete: function(key) {
+      delete(key) {
         if (has(key)) {
           --map.size;
           ++map.empty;
@@ -575,11 +575,11 @@
         }
         return this;
       },
-      clear: function() {
+      clear() {
         map.size = map.empty = 0;
         map.object = obj = {};
       },
-      test: function(_) {
+      test(_) {
         if (arguments.length) {
           test = _;
           return map;
@@ -587,7 +587,7 @@
           return test;
         }
       },
-      clean: function() {
+      clean() {
         var next = {},
             size = 0,
             key, value;
@@ -847,8 +847,8 @@
 
   function visitArray(array, filter, visitor) {
     if (array) {
-      var i = 0, n = array.length, t;
       if (filter) {
+        var i = 0, n = array.length, t;
         for (; i<n; ++i) {
           if (t = filter(array[i])) visitor(t, i, array);
         }
@@ -997,6 +997,7 @@
         mod = [],  // modify tuples
         remp = [], // remove by predicate
         modp = [], // modify by predicate
+        clean = null,
         reflow = false;
 
     return {
@@ -1026,6 +1027,10 @@
       encode: function(t, set) {
         if (isFunction(t)) modp.push({filter: t, field: set});
         else mod.push({tuple: t, field: set});
+        return this;
+      },
+      clean: function(value) {
+        clean = value;
         return this;
       },
       reflow: function() {
@@ -1116,6 +1121,11 @@
             : tuples.slice();
         } else {
           for (id in out) pulse.mod.push(out[id]);
+        }
+
+        // set pulse garbage collection request
+        if (clean || clean == null && (rem.length || remp.length)) {
+          pulse.clean(true);
         }
 
         return pulse;
@@ -1383,6 +1393,25 @@
       }
     }
     return argval;
+  };
+
+  /**
+   * Detach this operator from the dataflow.
+   * Unregisters listeners on upstream dependencies.
+   */
+  prototype$1.detach = function() {
+    var argops = this._argops,
+        i, n, item, op;
+
+    if (argops) {
+      for (i=0, n=argops.length; i<n; ++i) {
+        item = argops[i];
+        op = item.op;
+        if (op._targets) {
+          op._targets.remove(this);
+        }
+      }
+    }
   };
 
   /**
@@ -3203,19 +3232,19 @@
   /**
    * Sentinel value indicating pulse propagation should stop.
    */
-  var StopPropagation = {};
+  const StopPropagation = {};
 
   // Pulse visit type flags
-  var ADD       = (1 << 0),
-      REM       = (1 << 1),
-      MOD       = (1 << 2),
-      ADD_REM   = ADD | REM,
-      ADD_MOD   = ADD | MOD,
-      ALL       = ADD | REM | MOD,
-      REFLOW    = (1 << 3),
-      SOURCE    = (1 << 4),
-      NO_SOURCE = (1 << 5),
-      NO_FIELDS = (1 << 6);
+  const ADD       = (1 << 0),
+        REM       = (1 << 1),
+        MOD       = (1 << 2),
+        ADD_REM   = ADD | REM,
+        ADD_MOD   = ADD | MOD,
+        ALL       = ADD | REM | MOD,
+        REFLOW    = (1 << 3),
+        SOURCE    = (1 << 4),
+        NO_SOURCE = (1 << 5),
+        NO_FIELDS = (1 << 6);
 
   /**
    * A Pulse enables inter-operator communication during a run of the
@@ -3250,7 +3279,7 @@
     this.encode = encode || null;
   }
 
-  var prototype$3 = Pulse.prototype;
+  const prototype$3 = Pulse.prototype;
 
   /**
    * Sentinel value indicating pulse propagation should stop.
@@ -3334,7 +3363,7 @@
    * @see init
    */
   prototype$3.clone = function() {
-    var p = this.fork(ALL);
+    const p = this.fork(ALL);
     p.add = p.add.slice();
     p.rem = p.rem.slice();
     p.mod = p.mod.slice();
@@ -3353,8 +3382,8 @@
    *   pulse does not have a backing source, it is returned directly.
    */
   prototype$3.addAll = function() {
-    var p = this;
-    if (!this.source || this.source.length === this.add.length) {
+    let p = this;
+    if (!p.source || p.source.length === p.add.length) {
       return p;
     } else {
       p = new Pulse(this.dataflow).init(this);
@@ -3377,7 +3406,7 @@
    * @return {Pulse} - Returns this Pulse instance.
    */
   prototype$3.init = function(src, flags) {
-    var p = this;
+    const p = this;
     p.stamp = src.stamp;
     p.encode = src.encode;
 
@@ -3415,6 +3444,7 @@
     } else {
       p.srcF = src.srcF;
       p.source = src.source;
+      if (src.cleans) p.cleans = src.cleans;
     }
 
     return p;
@@ -3462,6 +3492,19 @@
   };
 
   /**
+   * Get/set metadata to pulse requesting garbage collection
+   * to reclaim currently unused resources.
+   */
+  prototype$3.clean = function(value) {
+    if (arguments.length) {
+      this.cleans = !!value;
+      return this;
+    } else {
+      return this.cleans;
+    }
+  };
+
+  /**
    * Marks one or more data field names as modified to assist dependency
    * tracking and incremental processing by transform operators.
    * @param {string|Array<string>} _ - The field(s) to mark as modified.
@@ -3490,7 +3533,7 @@
     var fields = this.fields;
     return !((nomod || this.mod.length) && fields) ? false
       : !arguments.length ? !!fields
-      : isArray(_) ? _.some(function(f) { return fields[f]; })
+      : isArray(_) ? _.some(f => fields[f])
       : fields[_];
   };
 
@@ -3519,7 +3562,9 @@
   };
 
   function addFilter(a, b) {
-    return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
+    return a
+      ? (t, i) => a(t, i) && b(t, i)
+      : b;
   }
 
   /**
@@ -3553,14 +3598,14 @@
 
   function materialize(data, filter) {
     var out = [];
-    visitArray(data, filter, function(_) { out.push(_); });
+    visitArray(data, filter, _ => out.push(_));
     return out;
   }
 
   function filter(pulse, flags) {
     var map = {};
     pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-    return function(t) { return map[tupleid(t)] ? null : t; };
+    return t => map[tupleid(t)] ? null : t;
   }
 
   /**
@@ -3723,41 +3768,34 @@
    */
   async function evaluate(encode, prerun, postrun) {
     const df = this,
-          level = df.logLevel(),
           async = [];
 
     // if the pulse value is set, this is a re-entrant call
     if (df._pulse) return reentrant(df);
 
     // wait for pending datasets to load
-    if (df._pending) {
-      await df._pending;
-    }
+    if (df._pending) await df._pending;
 
     // invoke prerun function, if provided
     if (prerun) await asyncCallback(df, prerun);
 
     // exit early if there are no updates
     if (!df._touched.length) {
-      df.info('Dataflow invoked, but nothing to do.');
+      df.debug('Dataflow invoked, but nothing to do.');
       return df;
     }
 
     // increment timestamp clock
-    let stamp = ++df._clock,
-        count = 0, op, next, dt, error;
+    const stamp = ++df._clock;
 
     // set the current pulse
     df._pulse = new Pulse(df, stamp, encode);
 
-    if (level >= Info) {
-      dt = Date.now();
-      df.debug('-- START PROPAGATION (' + stamp + ') -----');
-    }
-
     // initialize priority queue, reset touched operators
     df._touched.forEach(op => df._enqueue(op, true));
     df._touched = UniqueList(id);
+
+    let count = 0, op, next, error;
 
     try {
       while (df._heap.size() > 0) {
@@ -3765,7 +3803,10 @@
         op = df._heap.pop();
 
         // re-queue if rank changed
-        if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
+        if (op.rank !== op.qrank) {
+          df._enqueue(op, true);
+          continue;
+        }
 
         // otherwise, evaluate the operator
         next = op.run(df._getPulse(op, encode));
@@ -3777,10 +3818,6 @@
           // queue parallel asynchronous execution
           async.push(next.async);
           next = StopPropagation;
-        }
-
-        if (level >= Debug) {
-          df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
         }
 
         // propagate evaluation, enqueue dependent operators
@@ -3800,10 +3837,7 @@
     df._input = {};
     df._pulse = null;
 
-    if (level >= Info) {
-      dt = Date.now() - dt;
-      df.info('> Pulse ' + stamp + ': ' + count + ' operators; ' + dt + 'ms');
-    }
+    df.debug(`Pulse ${stamp}: ${count} operators`);
 
     if (error) {
       df._postrun = [];
@@ -3824,9 +3858,10 @@
 
     // handle non-blocking asynchronous callbacks
     if (async.length) {
-      Promise.all(async).then(cb => df.runAsync(null, () => {
-        cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
-      }));
+      Promise.all(async)
+        .then(cb => df.runAsync(null, () => {
+          cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
+        }));
     }
 
     return df;
@@ -4559,14 +4594,14 @@
   }
 
   function add$1(v, t) {
-    if (v == null) { ++this.missing; return; }
+    if (v == null || v === '') { ++this.missing; return; }
     if (v !== v) return;
     ++this.valid;
     this._ops.forEach(op => op.add(this, v, t));
   }
 
   function rem(v, t) {
-    if (v == null) { --this.missing; return; }
+    if (v == null || v === '') { --this.missing; return; }
     if (v !== v) return;
     --this.valid;
     this._ops.forEach(op => op.rem(this, v, t));
@@ -4600,16 +4635,17 @@
   }
 
   function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
+    if (valueof == null) {
       for (let value of values) {
-        if (value != null && (value = +value) >= value) {
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+        value = valueof(value, ++index, values);
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
@@ -5984,6 +6020,10 @@
       aggr.cross();
     }
 
+    if (pulse.clean() && aggr._drop) {
+      out.clean(true).runAfter(() => this.clean());
+    }
+
     return aggr.changes(out);
   };
 
@@ -6157,6 +6197,15 @@
     }
 
     return p ? replace(p.tuple, x) : ingest(x);
+  };
+
+  prototype$8.clean = function() {
+    const cells = this.value;
+    for (const key in cells) {
+      if (cells[key].num === 0) {
+        delete cells[key];
+      }
+    }
   };
 
   // -- Process Tuples -----
@@ -6338,12 +6387,12 @@
     }
 
     var f = function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
         : v > stop ? +Infinity
         : (
-            v = Math.max(start, Math.min(+v, stop - step)),
+            v = Math.max(start, Math.min(v, stop - step)),
             start + step * Math.floor(EPSILON + (v - start) / step)
           );
     };
@@ -6976,10 +7025,8 @@
     }
 
     pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       if (v != null) {
-        // coerce to number
-        v = +v;
         // NaNs will fail all comparisons!
         if (v < min) min = v;
         if (v > max) max = v;
@@ -7001,16 +7048,21 @@
    * @constructor
    * @param {Pulse} pulse - A pulse to use as the value of this operator.
    * @param {Transform} parent - The parent transform (typically a Facet instance).
-   * @param {Transform} target - A transform that receives the subflow of tuples.
    */
   function Subflow(pulse, parent) {
     Operator.call(this, pulse);
     this.parent = parent;
+    this.count = 0;
   }
 
   var prototype$g = inherits(Subflow, Operator);
 
+  /**
+   * Routes pulses from this subflow to a target transform.
+   * @param {Transform} target - A transform that receives the subflow of tuples.
+   */
   prototype$g.connect = function(target) {
+    this.detachSubflow = target.detachSubflow;
     this.targets().add(target);
     return (target.source = this);
   };
@@ -7020,6 +7072,7 @@
    * @param {Tuple} t - The tuple being added.
    */
   prototype$g.add = function(t) {
+    this.count += 1;
     this.value.add.push(t);
   };
 
@@ -7028,6 +7081,7 @@
    * @param {Tuple} t - The tuple being removed.
    */
   prototype$g.rem = function(t) {
+    this.count -= 1;
     this.value.rem.push(t);
   };
 
@@ -7072,29 +7126,32 @@
 
     // keep track of active subflows, use as targets array for listeners
     // this allows us to limit propagation to only updated subflows
-    var a = this._targets = [];
+    const a = this._targets = [];
     a.active = 0;
-    a.forEach = function(f) {
-      for (var i=0, n=a.active; i<n; ++i) f(a[i], i, a);
+    a.forEach = f => {
+      for (let i=0, n=a.active; i<n; ++i) {
+        f(a[i], i, a);
+      }
     };
   }
 
-  var prototype$h = inherits(Facet, Transform);
+  const prototype$h = inherits(Facet, Transform);
 
   prototype$h.activate = function(flow) {
     this._targets[this._targets.active++] = flow;
   };
 
+  // parent argument provided by PreFacet subclass
   prototype$h.subflow = function(key, flow, pulse, parent) {
-    var flows = this.value,
+    let flows = this.value,
         sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
 
     if (!sf) {
       p = parent || (p = this._group[key]) && p.tuple;
       df = pulse.dataflow;
-      sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
-        .connect(flow(df, key, p));
+      sf = new Subflow(pulse.fork(pulse.NO_SOURCE), this);
+      df.add(sf).connect(flow(df, key, p));
       flows[key] = sf;
       this.activate(sf);
     } else if (sf.value.stamp < pulse.stamp) {
@@ -7105,41 +7162,57 @@
     return sf;
   };
 
-  prototype$h.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        self = this,
-        key = _.key,
-        flow = _.subflow,
-        cache = this._keys,
-        rekey = _.modified('key');
-
-    function subflow(key) {
-      return self.subflow(key, flow, pulse);
+  prototype$h.clean = function() {
+    const flows = this.value;
+    for (const key in flows) {
+      if (flows[key].count === 0) {
+        const detach = flows[key].detachSubflow;
+        if (detach) detach();
+        delete flows[key];
+      }
     }
+  };
+
+  prototype$h.initTargets = function() {
+    const a = this._targets,
+          n = a.length;
+    for (let i=0; i<n && a[i] != null; ++i) {
+      a[i] = null; // ensure old flows can be garbage collected
+    }
+    a.active = 0;
+  };
+
+  prototype$h.transform = function(_, pulse) {
+    const df = pulse.dataflow,
+          key = _.key,
+          flow = _.subflow,
+          cache = this._keys,
+          rekey = _.modified('key'),
+          subflow = key => this.subflow(key, flow, pulse);
 
     this._group = _.group || {};
-    this._targets.active = 0; // reset list of active subflows
+    this.initTargets(); // reset list of active subflows
 
-    pulse.visit(pulse.REM, function(t) {
-      var id = tupleid(t),
-          k = cache.get(id);
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t),
+             k = cache.get(id);
       if (k !== undefined) {
         cache.delete(id);
         subflow(k).rem(t);
       }
     });
 
-    pulse.visit(pulse.ADD, function(t) {
-      var k = key(t);
+    pulse.visit(pulse.ADD, t => {
+      const k = key(t);
       cache.set(tupleid(t), k);
       subflow(k).add(t);
     });
 
     if (rekey || pulse.modified(key.fields)) {
-      pulse.visit(pulse.MOD, function(t) {
-        var id = tupleid(t),
-            k0 = cache.get(id),
-            k1 = key(t);
+      pulse.visit(pulse.MOD, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
         if (k0 === k1) {
           subflow(k1).mod(t);
         } else {
@@ -7149,16 +7222,16 @@
         }
       });
     } else if (pulse.changed(pulse.MOD)) {
-      pulse.visit(pulse.MOD, function(t) {
+      pulse.visit(pulse.MOD, t => {
         subflow(cache.get(tupleid(t))).mod(t);
       });
     }
 
     if (rekey) {
-      pulse.visit(pulse.REFLOW, function(t) {
-        var id = tupleid(t),
-            k0 = cache.get(id),
-            k1 = key(t);
+      pulse.visit(pulse.REFLOW, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
         if (k0 !== k1) {
           cache.set(id, k1);
           subflow(k0).rem(t);
@@ -7167,7 +7240,12 @@
       });
     }
 
-    if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+    if (pulse.clean()) {
+      df.runAfter(() => { this.clean(); cache.clean(); });
+    } else if (cache.empty > df.cleanThreshold) {
+      df.runAfter(cache.clean);
+    }
+
     return pulse;
   };
 
@@ -7841,6 +7919,7 @@
     out.rem = op.value;
     op.value = out.source = out.add = data;
     op._pending = null;
+    if (out.rem.length) out.clean(true);
     return out;
   }
 
@@ -8106,33 +8185,43 @@
     Facet.call(this, params);
   }
 
-  var prototype$t = inherits(PreFacet, Facet);
+  const prototype$t = inherits(PreFacet, Facet);
 
   prototype$t.transform = function(_, pulse) {
-    var self = this,
-        flow = _.subflow,
-        field = _.field;
+    const flow = _.subflow,
+          field = _.field,
+          subflow = t => this.subflow(tupleid(t), flow, pulse, t);
 
     if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
       error('PreFacet does not support field modification.');
     }
 
-    this._targets.active = 0; // reset list of active subflows
+    this.initTargets(); // reset list of active subflows
 
-    pulse.visit(pulse.MOD, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.mod(_); }) : sf.mod(t);
-    });
+    if (field) {
+      pulse.visit(pulse.MOD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.mod(_));
+      });
 
-    pulse.visit(pulse.ADD, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.add(ingest(_)); }) : sf.add(t);
-    });
+      pulse.visit(pulse.ADD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.add(ingest(_)));
+      });
 
-    pulse.visit(pulse.REM, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.rem(_); }) : sf.rem(t);
-    });
+      pulse.visit(pulse.REM, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.rem(_));
+      });
+    } else {
+      pulse.visit(pulse.MOD, t => subflow(t).mod(t));
+      pulse.visit(pulse.ADD, t => subflow(t).add(t));
+      pulse.visit(pulse.REM, t => subflow(t).rem(t));
+    }
+
+    if (pulse.clean()) {
+      pulse.runAfter(() => this.clean());
+    }
 
     return pulse;
   };
@@ -17830,8 +17919,10 @@
     return ingest({});
   }
 
-  function isExit(t) {
-    return t.exit;
+  function newMap(key) {
+    const map = fastmap().test(t => t.exit);
+    map.lookup = t => map.get(key(t));
+    return map;
   }
 
   prototype$X.transform = function(_, pulse) {
@@ -17853,13 +17944,12 @@
 
     if (!map) {
       pulse = pulse.addAll();
-      this.value = map = fastmap().test(isExit);
-      map.lookup = function(t) { return map.get(key(t)); };
+      this.value = map = newMap(key);
     }
 
-    pulse.visit(pulse.ADD, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.ADD, t => {
+      const k = key(t);
+      let x = map.get(k);
 
       if (x) {
         if (x.exit) {
@@ -17869,7 +17959,8 @@
           out.mod.push(x);
         }
       } else {
-        map.set(k, (x = item(t)));
+        x = item(t);
+        map.set(k, x);
         out.add.push(x);
       }
 
@@ -17877,9 +17968,9 @@
       x.exit = false;
     });
 
-    pulse.visit(pulse.MOD, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.MOD, t => {
+      const k = key(t),
+            x = map.get(k);
 
       if (x) {
         x.datum = t;
@@ -17887,9 +17978,9 @@
       }
     });
 
-    pulse.visit(pulse.REM, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.REM, t => {
+      const k = key(t),
+            x = map.get(k);
 
       if (t === x.datum && !x.exit) {
         out.rem.push(x);
@@ -17900,7 +17991,9 @@
 
     if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
 
-    if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+    if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
+      df.runAfter(map.clean);
+    }
 
     return out;
   };
@@ -18451,10 +18544,9 @@
 
       if (_.domainMid != null) {
         mid = _.domainMid;
-        if (mid < domain[0] || mid > domain[n]) {
-          df.warn('Scale domainMid exceeds domain min or max.', mid);
-        }
-        domain.splice(n, 0, mid);
+        const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
+        if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+        domain.splice(i, 0, mid);
       }
     }
 
@@ -21800,7 +21892,7 @@
     renderCell(i, context) {
       const buffer = context == null ? context = new Path : undefined;
       const points = this._clip(i);
-      if (points === null) return;
+      if (points === null || !points.length) return;
       context.moveTo(points[0], points[1]);
       let n = points.length;
       while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
@@ -21815,7 +21907,7 @@
       const {delaunay: {points}} = this;
       for (let i = 0, n = points.length / 2; i < n; ++i) {
         const cell = this.cellPolygon(i);
-        if (cell) yield cell;
+        if (cell) cell.index = i, yield cell;
       }
     }
     cellPolygon(i) {
@@ -22012,7 +22104,7 @@
     }
   }
 
-  const tau = 2 * Math.PI;
+  const tau = 2 * Math.PI, pow$2 = Math.pow;
 
   function pointX(p) {
     return p[0];
@@ -22067,7 +22159,7 @@
           .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
         const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
           bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-          r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+          r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
         for (let i = 0, n = points.length / 2; i < n; ++i) {
           const p = jitter(points[2 * i], points[2 * i + 1], r);
           points[2 * i] = p[0];
@@ -22146,12 +22238,12 @@
       const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
       if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
       let c = i;
-      let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+      let dc = pow$2(x - points[i * 2], 2) + pow$2(y - points[i * 2 + 1], 2);
       const e0 = inedges[i];
       let e = e0;
       do {
         let t = triangles[e];
-        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+        const dt = pow$2(x - points[t * 2], 2) + pow$2(y - points[t * 2 + 1], 2);
         if (dt < dc) dc = dt, c = t;
         e = e % 3 === 2 ? e - 2 : e + 1;
         if (triangles[e] !== i) break; // bad triangulation
@@ -22159,7 +22251,7 @@
         if (e === -1) {
           e = hull[(_hullIndex[i] + 1) % hull.length];
           if (e !== t) {
-            if ((x - points[e * 2]) ** 2 + (y - points[e * 2 + 1]) ** 2 < dc) return e;
+            if (pow$2(x - points[e * 2], 2) + pow$2(y - points[e * 2 + 1], 2) < dc) return e;
           }
           break;
         }
@@ -23563,7 +23655,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.12.3";
+  var version = "5.13.0";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -23591,31 +23683,31 @@
     }, { bg: view._signals.background });
   }
 
-  var Default = 'default';
+  const Default = 'default';
 
   function cursor(view) {
-    var cursor = view._signals.cursor;
-
-    // add cursor signal to dataflow, if needed
-    if (!cursor) {
-      view._signals.cursor = (cursor = view.add({user: Default, item: null}));
-    }
+    // get cursor signal, add to dataflow if needed
+    const cursor = view._signals.cursor || (view._signals.cursor = view.add({
+      user: Default,
+      item: null
+    }));
 
     // evaluate cursor on each mousemove event
     view.on(view.events('view', 'mousemove'), cursor,
       function(_, event) {
-        var value = cursor.value,
-            user = value ? (isString(value) ? value : value.user) : Default,
-            item = event.item && event.item.cursor || null;
+        const value = cursor.value,
+              user = value ? (isString(value) ? value : value.user) : Default,
+              item = event.item && event.item.cursor || null;
 
-        return (value && user === value.user && item == value.item) ? value
+        return (value && user === value.user && item == value.item)
+          ? value
           : {user: user, item: item};
       }
     );
 
     // when cursor signal updates, set visible cursor
     view.add(null, function(_) {
-      var user = _.cursor,
+      let user = _.cursor,
           item = this.value;
 
       if (!isString(user)) {
@@ -23623,17 +23715,21 @@
         user = user.user;
       }
 
-      setCursor(user && user !== Default ? user : (item || user));
+      setCursor(view, user && user !== Default ? user : (item || user));
 
       return item;
     }, {cursor: cursor});
   }
 
-  function setCursor(cursor) {
-    // set cursor on document body
-    // this ensures cursor applies even if dragging out of view
-    if (typeof document !== 'undefined' && document.body) {
-      document.body.style.cursor = cursor;
+  function setCursor(view, cursor) {
+    const el = view.globalCursor()
+      ? (typeof document !== 'undefined' && document.body)
+      : view.container();
+
+    if (el) {
+      return cursor == null
+        ? el.style.removeProperty('cursor')
+        : (el.style.cursor = cursor);
     }
   }
 
@@ -26552,7 +26648,7 @@
 
   function scale$3(name, value, group) {
     const s = getScale(name, (group || this).context);
-    return s && value !== undefined ? s(value) : undefined;
+    return s ? s(value) : undefined;
   }
 
   function scaleGradient(scale, p0, p1, count, group) {
@@ -27196,36 +27292,6 @@
     return ctx && ctx.functions ? fn.bind(ctx.functions) : fn;
   }
 
-  // optimized code generators for access and comparison
-  const opt = {
-    get(path) {
-      const ref = `[${path.map($).join('][')}]`;
-      const get = Function('_', `return _${ref};`);
-      get.path = ref;
-      return get;
-    },
-    comparator(fields, orders) {
-      let t;
-      const map = (f, i) => {
-        const o = orders[i];
-        let u, v;
-        if (f.path) {
-          u = `a${f.path}`;
-          v = `b${f.path}`;
-        } else {
-          (t = t || {})['f'+i] = f;
-          u = `this.f${i}(a)`;
-          v = `this.f${i}(b)`;
-        }
-        return _compare(u, v, -o, o);
-      };
-
-      const fn = Function('a', 'b', 'var u, v; return '
-        + fields.map(map).join('') + '0;');
-      return t ? fn.bind(t) : fn;
-    }
-  };
-
   // generate code for comparing a single field
   function _compare(u, v, lt, gt) {
     return `((u = ${u}) < (v = ${v}) || u == null) && v != null ? ${lt}
@@ -27234,40 +27300,34 @@
   : v !== v && u === u ? ${gt} : `;
   }
 
-  var parseExpressions = {
+  var expressionCodegen = {
     /**
      * Parse an expression used to update an operator value.
      */
-    operatorExpression(expr) {
-      return expression(this, ['_'], expr.code);
-    },
+    operator: (ctx, expr) => expression(ctx, ['_'], expr.code),
 
     /**
      * Parse an expression provided as an operator parameter value.
      */
-    parameterExpression(expr) {
-      return expression(this, ['datum', '_'], expr.code);
-    },
+    parameter: (ctx, expr) => expression(ctx, ['datum', '_'], expr.code),
 
     /**
      * Parse an expression applied to an event stream.
      */
-    eventExpression(expr) {
-      return expression(this, ['event'], expr.code);
-    },
+    event: (ctx, expr) => expression(ctx, ['event'], expr.code),
 
     /**
      * Parse an expression used to handle an event-driven operator update.
      */
-    handlerExpression(expr) {
+    handler: (ctx, expr) => {
       const code = `var datum=event.item&&event.item.datum;return ${expr.code};`;
-      return expression(this, ['_', 'event'], code);
+      return expression(ctx, ['_', 'event'], code);
     },
 
     /**
      * Parse an expression that performs visual encoding.
      */
-    encodeExpression(encode) {
+    encode: (ctx, encode) => {
       const {marktype, channels} = encode;
 
       let code = 'var o=item,datum=o.datum,m=0,$;';
@@ -27278,28 +27338,39 @@
       code += adjustSpatial(channels, marktype);
       code += 'return m;';
 
-      return expression(this, ['item', '_'], code);
+      return expression(ctx, ['item', '_'], code);
     },
 
     /**
-     * Parse a comparator specification.
+     * Optimized code generators for access and comparison.
      */
-    compareExpression($compare, $order) {
-      return compare($compare, $order, opt);
-    },
+    codegen: {
+      get(path) {
+        const ref = `[${path.map($).join('][')}]`;
+        const get = Function('_', `return _${ref};`);
+        get.path = ref;
+        return get;
+      },
+      comparator(fields, orders) {
+        let t;
+        const map = (f, i) => {
+          const o = orders[i];
+          let u, v;
+          if (f.path) {
+            u = `a${f.path}`;
+            v = `b${f.path}`;
+          } else {
+            (t = t || {})['f'+i] = f;
+            u = `this.f${i}(a)`;
+            v = `this.f${i}(b)`;
+          }
+          return _compare(u, v, -o, o);
+        };
 
-    /**
-     * Parse a field accessor specification.
-     */
-    fieldExpression($field, $name) {
-      return field($field, $name, opt);
-    },
-
-    /**
-     * Parse a key accessor specification.
-     */
-    keyExpression($key, $flat) {
-      return key($key, $flat, opt);
+        const fn = Function('a', 'b', 'var u, v; return '
+          + fields.map(map).join('') + '0;');
+        return t ? fn.bind(t) : fn;
+      }
     }
   };
 
@@ -27407,7 +27478,7 @@
    */
   function getKey(_, ctx) {
     const k = 'k:' + _.$key + '_' + (!!_.$flat);
-    return ctx.fn[k] || (ctx.fn[k] = ctx.keyExpression(_.$key, _.$flat));
+    return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat, ctx.expr.codegen));
   }
 
   /**
@@ -27416,7 +27487,7 @@
   function getField$1(_, ctx) {
     if (!_.$field) return null;
     const k = 'f:' + _.$field + '_' + _.$name;
-    return ctx.fn[k] || (ctx.fn[k] = ctx.fieldExpression(_.$field, _.$name));
+    return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name, ctx.expr.codegen));
   }
 
   /**
@@ -27427,7 +27498,7 @@
     // Keep here for now for backwards compatibility.
     const k = 'c:' + _.$compare + '_' + _.$order,
           c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
-    return ctx.fn[k] || (ctx.fn[k] = ctx.compareExpression(c, _.$order));
+    return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order, ctx.expr.codegen));
   }
 
   /**
@@ -27462,6 +27533,7 @@
             op = subctx.get(spec.operators[0].id),
             p = subctx.signals.parent;
       if (p) p.set(parent);
+      op.detachSubflow = () => ctx.detach(subctx);
       return op;
     };
   }
@@ -27604,14 +27676,15 @@
    * Enables lookup of parsed operators, event streams, accessors, etc.
    * Provides a 'fork' method for creating child contexts for subflows.
    */
-  function context$2(df, transforms, functions) {
-    return new Context(df, transforms, functions);
+  function context$2(df, transforms, functions, expr) {
+    return new Context(df, transforms, functions, expr);
   }
 
-  function Context(df, transforms, functions) {
+  function Context(df, transforms, functions, expr) {
     this.dataflow = df;
     this.transforms = transforms;
     this.events = df.events.bind(df);
+    this.expr = expr || expressionCodegen,
     this.signals = {};
     this.scales = {};
     this.nodes = {};
@@ -27626,8 +27699,8 @@
   function Subcontext(ctx) {
     this.dataflow = ctx.dataflow;
     this.transforms = ctx.transforms;
-    this.functions = ctx.functions;
     this.events = ctx.events;
+    this.expr = ctx.expr;
     this.signals = Object.create(ctx.signals);
     this.scales = Object.create(ctx.scales);
     this.nodes = Object.create(ctx.nodes);
@@ -27641,9 +27714,19 @@
 
   Context.prototype = Subcontext.prototype = {
     fork() {
-      var ctx = new Subcontext(this);
+      const ctx = new Subcontext(this);
       (this.subcontext || (this.subcontext = [])).push(ctx);
       return ctx;
+    },
+    detach(ctx) {
+      this.subcontext = this.subcontext.filter(c => c !== ctx);
+
+      // disconnect all nodes in the subcontext
+      // wipe out targets first for better efficiency
+      const keys = Object.keys(ctx.nodes);
+      for (const key of keys) ctx.nodes[key]._targets = null;
+      for (const key of keys) ctx.nodes[key].detach();
+      ctx.nodes = null;
     },
     get(id) {
       return this.nodes[id];
@@ -27719,6 +27802,23 @@
       this.dataflow.on(stream, target, update, params, spec.options);
     },
 
+    // expression parsing
+    operatorExpression(expr) {
+      return this.expr.operator(this, expr);
+    },
+    parameterExpression(expr) {
+      return this.expr.parameter(this, expr);
+    },
+    eventExpression(expr) {
+      return this.expr.event(this, expr);
+    },
+    handlerExpression(expr) {
+      return this.expr.handler(this, expr);
+    },
+    encodeExpression(encode) {
+      return this.expr.encode(this, encode);
+    },
+
     // parse methods
     parse: parse$4,
     parseOperator,
@@ -27732,12 +27832,8 @@
     setState
   };
 
-  // expression parsing methods
-  extend(Context.prototype, parseExpressions);
-
-  function runtime(view, spec, functions) {
-    const fn = functions || functionContext;
-    return context$2(view, transforms, fn).parse(spec);
+  function runtime(view, spec, expr) {
+    return context$2(view, transforms, functionContext, expr).parse(spec);
   }
 
   function scale$4(name) {
@@ -27939,7 +28035,7 @@
    * should also invoke the initialize method (e.g., to set the parent
    * DOM element in browser-based deployment) and then invoke the run
    * method to evaluate the dataflow graph. Rendering will automatically
-   * be peformed upon dataflow runs.
+   * be performed upon dataflow runs.
    * @constructor
    * @param {object} spec - The Vega dataflow runtime specification.
    */
@@ -27967,6 +28063,7 @@
     view._tooltip = options.tooltip || defaultTooltip$1,
     view._redraw = true;
     view._handler = new CanvasHandler().scene(root);
+    view._globalCursor = false;
     view._preventDefault = false;
     view._timers = [];
     view._eventListeners = [];
@@ -27974,9 +28071,10 @@
 
     // initialize event configuration
     view._eventConfig = initializeEventConfig(spec.eventConfig);
+    view.globalCursor(view._eventConfig.globalCursor);
 
     // initialize dataflow graph
-    const ctx = runtime(view, spec, options.functions);
+    const ctx = runtime(view, spec, options.expr);
     view._runtime = ctx;
     view._signals = ctx.signals;
     view._bind = (spec.bindings || []).map(_ => ({
@@ -28241,6 +28339,19 @@
 
   prototype$1s.removeDataListener = function(name, handler) {
     return removeOperatorListener(this, dataref(this, name).values, handler);
+  };
+
+  prototype$1s.globalCursor = function(_) {
+    if (arguments.length) {
+      if (this._globalCursor !== !!_) {
+        const prev = setCursor(this, null); // clear previous cursor
+        this._globalCursor = !!_;
+        if (prev) setCursor(this, prev); // swap cursor
+      }
+      return this;
+    } else {
+      return this._globalCursor;
+    }
   };
 
   prototype$1s.preventDefault = function(_) {

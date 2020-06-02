@@ -153,10 +153,9 @@ function configureDomain(scale, _, df) {
 
     if (_.domainMid != null) {
       mid = _.domainMid;
-      if (mid < domain[0] || mid > domain[n]) {
-        df.warn('Scale domainMid exceeds domain min or max.', mid);
-      }
-      domain.splice(n, 0, mid);
+      const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
+      if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+      domain.splice(i, 0, mid);
     }
   }
 

@@ -20,4 +20,4 @@ In addition to passing configuration options to this [parse](#parse) method, Veg
 
 The _options_ object can modfity the parser configuration. The supported options are:
 
-- *ast*: {% include tag ver="5.12" %} A boolean flag (default `false`) that indicates if abstract syntax trees (ASTs) for Vega [expressions](../../expressions/) should be included in the parser output. By default only generated JavaScript code fragments are included. This option allows third parties to swap out Vega's code generation for an alternative expression evaluator.
+- *ast*: A boolean flag (default `false`) that indicates if abstract syntax trees (ASTs) for Vega [expressions](../../expressions/) should be included in the parser output. By default only generated JavaScript code fragments are included. This option allows third parties to swap out Vega's code generation for an alternative expression evaluator, such as the one provided by the [vega-interpreter package](../../../usage/interpreter). <small>{% include tag ver="5.12" %}</small>
