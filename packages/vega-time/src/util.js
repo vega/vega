@@ -32,7 +32,7 @@ export function localFirst(y) {
 
 export function localDate(y, m, d, H, M, S, L) {
   if (0 <= y && y < 100) {
-    var date = new Date(-1, m, d, H, M, S, L);
+    const date = new Date(-1, m, d, H, M, S, L);
     date.setFullYear(y);
     return date;
   }
@@ -64,7 +64,7 @@ export function utcFirst(y) {
 
 export function utcDate(y, m, d, H, M, S, L) {
   if (0 <= y && y < 100) {
-    var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
+    const date = new Date(Date.UTC(-1, m, d, H, M, S, L));
     date.setUTCFullYear(d.y);
     return date;
   }
