@@ -625,23 +625,23 @@ export type RangeConfig = {
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for categorical data.
    */
-  category?: RangeScheme | string[];
+  category?: RangeScheme | Color[];
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for diverging quantitative ramps.
    */
-  diverging?: RangeScheme | string[];
+  diverging?: RangeScheme | Color[];
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for quantitative heatmaps.
    */
-  heatmap?: RangeScheme | string[];
+  heatmap?: RangeScheme | Color[];
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for rank-ordered data.
    */
-  ordinal?: RangeScheme | string[];
+  ordinal?: RangeScheme | Color[];
   /**
    * Default [color scheme](https://vega.github.io/vega/docs/schemes/) for sequential quantitative ramps.
    */
-  ramp?: RangeScheme | string[];
+  ramp?: RangeScheme | Color[];
   /**
    * Array of [symbol](https://vega.github.io/vega/docs/marks/symbol/) names or paths for the default shape palette.
    */
