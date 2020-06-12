@@ -1,6 +1,6 @@
 {
   "name": "vega-interpreter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CSP-compliant interpreter for Vega expressions.",
   "keywords": [
     "vega",
@@ -14,7 +14,7 @@
   "module": "index",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -n vega -o build/vega-interpreter.js -- index.js",
+    "rollup": "rollup -f umd -n vega --extend -o build/vega-interpreter.js -- index.js",
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "postbuild": "terser build/vega-interpreter.js -c -m -o build/vega-interpreter.min.js",
