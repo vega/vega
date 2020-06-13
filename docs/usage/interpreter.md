@@ -19,7 +19,7 @@ To use the interpreter, follow these three steps:
 
 In the example below, we are setting the CSP via the HTML Meta tag but in most cases the server mandates a CSP. 
 
-The source of teh site. 
+The HTML source of the site.
 
 ```html
 <head>
