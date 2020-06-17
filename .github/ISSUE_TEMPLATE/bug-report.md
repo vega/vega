@@ -2,7 +2,7 @@
 name: Bug Report
 about: Create a report to help us fix a problem with Vega.
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
