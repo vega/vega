@@ -22,6 +22,7 @@ var Forces = 'forces',
       'alpha', 'alphaMin', 'alphaTarget',
       'velocityDecay', 'forces'
     ],
+    ForceParamMethods = ['alpha', 'alphaMin', 'alphaDecay'],
     ForceConfig = ['static', 'iterations'],
     ForceOutput = ['x', 'y', 'vx', 'vy'];
 
@@ -41,6 +42,7 @@ Force.Definition = {
   "params": [
     { "name": "static", "type": "boolean", "default": false },
     { "name": "restart", "type": "boolean", "default": false },
+    { "name": "worker", "type": "URL", "default": undefined },
     { "name": "iterations", "type": "number", "default": 300 },
     { "name": "alpha", "type": "number", "default": 1 },
     { "name": "alphaMin", "type": "number", "default": 0.001 },
@@ -114,7 +116,9 @@ prototype.transform = function(_, pulse) {
 
   // configure simulation
   if (!sim) {
-    this.value = sim = simulation(pulse.source, _);
+    this.value = sim = _.worker
+      ? simulationWorker(pulse.source, _)
+      : simulation(pulse.source, _);
     sim.on('tick', rerun(pulse.dataflow, this));
     if (!_.static) {
       change = true;
@@ -195,6 +199,72 @@ function simulation(nodes, _) {
   return setup(sim, _, true).on('end', function() { stopped = true; });
 }
 
+function simulationWorker(nodes, _) {
+  var stopped = false,
+      sim;
+ sim = {
+   worker: new Worker(_.worker),
+   local: { nodes: nodes, alphaMin: 0.001, alpha: 1 },
+   onTick: function() {},
+   onEnd: function() { stopped = true; }
+  };
+  sim.worker.onmessage = function (event) {
+    var message = event.data;
+    if (message.action === 'tick') {
+      sim.local.alpha = message.alpha;
+      updateNodesFromWorker(message.nodes, sim.local.nodes);
+      sim.onTick(message);
+    }
+    if (message.action === 'end') {
+      sim.local.alpha = message.alpha;
+      sim.onEnd(message);
+    }
+  };
+
+  sim.stopped = function() {
+    return stopped;
+  };
+  sim.restart = function() {
+    stopped = false;
+    sim.worker.postMessage({ action: 'restart' });
+    return sim;
+  };
+  sim.stop = function() {
+    stopped = true;
+    sim.worker.postMessage({ action: 'stop' });
+    return sim;
+  };
+  sim.force = function() {
+    // TODO: forces
+    return sim;
+  };
+  sim.on = function(type, handler) {
+    if (type === 'tick') sim.onTick = handler;
+    return sim;
+  };
+  sim.tick = function(iters) {
+    sim.worker.postMessage({ action: 'tick', iters: iters });
+    return sim;
+  };
+  sim.nodes = function(nodes) {
+    if (!arguments.length) return sim.local.nodes;
+    sim.worker.postMessage({ action: 'init', nodes: getCloneableNodes(nodes) });
+    sim.local.nodes = nodes;
+    return sim;
+  };
+  ForceParamMethods.forEach(function (param) {
+    sim[param] = function (value) {
+      if (!arguments.length) return sim.local[param];
+      sim.worker.postMessage({action: 'param', name: param, value: value});
+      sim.local[param] = value;
+      return sim;
+    };
+  });
+
+  sim.worker.postMessage({ action: 'init', nodes: getCloneableNodes(nodes) });
+  return sim;
+}
+
 function setup(sim, _, init, pulse) {
   var f = array(_.forces), i, n, p, name;
 
@@ -245,4 +315,28 @@ function getForce(_) {
 
 function setForceParam(f, v, _) {
   f(isFunction(v) ? function(d) { return v(d, _); } : v);
+}
+
+// remove mark objects as they cannot be posted to worker
+function getCloneableNodes(nodes) {
+  var nodesCloneable = new Array(nodes.length),
+      prop;
+  nodes.forEach(function (node, i) {
+    nodesCloneable[i] = {};
+    for(prop of Object.keys(node)) {
+      if (prop === 'mark') { continue; }
+      nodesCloneable[i][prop] = node[prop];
+    }
+  });
+  return nodesCloneable;
+}
+
+// copy updated simulation values back into pulse source
+function updateNodesFromWorker(workerNodes, nodes) {
+  var p;
+  workerNodes.forEach(function (source, i) {
+    for(p of ForceOutput) {
+      nodes[i][p] = source[p];
+    }
+  })
 }

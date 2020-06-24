@@ -13,8 +13,9 @@
   "repository": "vega/vega",
   "scripts": {
     "rollup": "rollup -g d3-force:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-force.js -- index.js",
+    "rollup:worker": "rollup -p @rollup/plugin-node-resolve -f umd -n vega.transforms -o build/vega-force-worker.js -- index-worker.js",
     "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
+    "build": "yarn rollup && yarn rollup:worker",
     "postbuild": "terser build/vega-force.js -c -m -o build/vega-force.min.js",
     "pretest": "yarn prebuild && yarn rollup",
     "test": "tape 'test/**/*-test.js' && eslint index.js src test",
@@ -22,6 +23,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
+    "@rollup/plugin-node-resolve": "^8.1.0",
     "d3-force": "^2.0.1",
     "vega-dataflow": "^5.4.0",
     "vega-util": "^1.11.0"
