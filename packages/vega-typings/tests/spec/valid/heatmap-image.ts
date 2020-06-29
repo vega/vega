@@ -7,7 +7,7 @@ export const spec: Spec = {
   "padding": 5,
 
   "config": {
-    "title": {"fontSize": 14}
+    "title": { "fontSize": 14 }
   },
 
   "title": {
@@ -21,10 +21,12 @@ export const spec: Spec = {
       "bind": {
         "input": "select",
         "options": [
+          "Turbo",
           "Viridis",
           "Magma",
           "Inferno",
           "Plasma",
+          "Cividis",
           "DarkBlue",
           "DarkGold",
           "DarkGreen",
@@ -73,10 +75,10 @@ export const spec: Spec = {
       }
     },
     {
-      "name": "reverse", "value": false, "bind": {"input": "checkbox"}
+      "name": "reverse", "value": false, "bind": { "input": "checkbox" }
     },
     {
-      "name": "smooth", "value": true, "bind": {"input": "checkbox"}
+      "name": "smooth", "value": true, "bind": { "input": "checkbox" }
     },
     {
       "name": "msday",
@@ -88,11 +90,13 @@ export const spec: Spec = {
     {
       "name": "temperature",
       "url": "data/seattle-temps.csv",
-      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
+      "format": { "type": "csv", "parse": { "temp": "number", "date": "date" } },
       "transform": [
         { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
-        { "type": "timeunit", "as": ["day", "unit1"], "field": "date",
-          "units": ["year", "month", "date"], "interval": false }
+        {
+          "type": "timeunit", "as": ["day", "unit1"], "field": "date",
+          "units": ["year", "month", "date"], "interval": false
+        }
       ]
     },
     {
@@ -102,8 +106,8 @@ export const spec: Spec = {
         {
           "type": "kde2d",
           "size": [365, 24],
-          "x": {"expr": "round((datum.day - datetime(year(datum.day), 0, 1)) / msday)"},
-          "y": {"expr": "datum.hour - 6 < 0 ? datum.hour + 18 : datum.hour - 6"},
+          "x": { "expr": "round((datum.day - datetime(year(datum.day), 0, 1)) / msday)" },
+          "y": { "expr": "datum.hour - 6 < 0 ? datum.hour + 18 : datum.hour - 6" },
           "weight": "temp",
           "counts": true,
           "bandwidth": [0, 0],
@@ -117,7 +121,7 @@ export const spec: Spec = {
     {
       "name": "x",
       "type": "time",
-      "domain": {"data": "temperature", "field": "day"},
+      "domain": { "data": "temperature", "field": "day" },
       "range": "width"
     },
     {
@@ -132,21 +136,21 @@ export const spec: Spec = {
     {
       "name": "color",
       "type": "linear",
-      "range": {"scheme": {"signal": "palette"}},
-      "domain": {"data": "temperature", "field": "temp"},
-      "reverse": {"signal": "reverse"},
+      "range": { "scheme": { "signal": "palette" } },
+      "domain": { "data": "temperature", "field": "temp" },
+      "reverse": { "signal": "reverse" },
       "zero": false, "nice": true
     }
   ],
 
   "axes": [
-    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b"},
+    { "orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b" },
     {
       "orient": "left", "scale": "y", "domain": false, "title": "Hour",
       "encode": {
         "labels": {
           "update": {
-            "text": {"signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 AM' : (datum.value - 12) + ':00 PM'"}
+            "text": { "signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 AM' : (datum.value - 12) + ':00 PM'" }
           }
         }
       }
@@ -158,7 +162,7 @@ export const spec: Spec = {
       "fill": "color",
       "type": "gradient",
       "direction": "vertical",
-      "gradientLength": {"signal": "height - 16"},
+      "gradientLength": { "signal": "height - 16" },
       "title": "Avg. Temp (°F)",
       "format": "0.1f"
     }
@@ -167,22 +171,22 @@ export const spec: Spec = {
   "marks": [
     {
       "type": "image",
-      "from": {"data": "heatmap"},
+      "from": { "data": "heatmap" },
       "encode": {
         "enter": {
-          "width": {"signal": "width"},
-          "height": {"signal": "height"},
-          "aspect": {"value": false}
+          "width": { "signal": "width" },
+          "height": { "signal": "height" },
+          "aspect": { "value": false }
         },
         "update": {
-          "smooth": {"signal": "smooth"}
+          "smooth": { "signal": "smooth" }
         }
       },
       "transform": [
         {
           "type": "heatmap",
           "field": "datum.grid",
-          "color": {"expr": "scale('color', datum.$value)"},
+          "color": { "expr": "scale('color', datum.$value)" },
           "opacity": 1
         }
       ]
