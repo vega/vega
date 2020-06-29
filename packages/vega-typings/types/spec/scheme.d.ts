@@ -27,10 +27,12 @@ export type SequentialSingleHue =
   | 'oranges';
 
 export type SequentialMultiHue =
+  | 'turbo'
   | 'viridis'
   | 'inferno'
   | 'magma'
   | 'plasma'
+  | 'cividis'
   | 'bluegreen'
   | 'bluegreen-3'
   | 'bluegreen-4'
