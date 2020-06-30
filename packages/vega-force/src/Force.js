@@ -1,7 +1,7 @@
 import {Transform} from 'vega-dataflow';
 import {
   accessorFields, array, error, hasOwnProperty,
-  inherits, isFunction
+  inherits, isFunction, accessorName
 } from 'vega-util';
 import {
   forceSimulation, forceCenter, forceCollide,
@@ -23,6 +23,7 @@ var Forces = 'forces',
       'velocityDecay', 'forces'
     ],
     ForceParamMethods = ['alpha', 'alphaMin', 'alphaDecay'],
+    ForceInput = ['x', 'y', 'vx', 'vy', 'fx', 'fy'],
     ForceConfig = ['static', 'iterations'],
     ForceOutput = ['x', 'y', 'vx', 'vy'];
 
@@ -128,7 +129,7 @@ prototype.transform = function(_, pulse) {
   } else {
     if (change) {
       pulse.modifies('index');
-      sim.nodes(pulse.source);
+      sim.nodes(pulse.source, _);
     }
     if (params || pulse.changed(pulse.MOD)) {
       setup(sim, _, 0, pulse);
@@ -246,9 +247,9 @@ function simulationWorker(nodes, _) {
     sim.worker.postMessage({ action: 'tick', iters: iters });
     return sim;
   };
-  sim.nodes = function(nodes) {
+  sim.nodes = function(nodes, _) {
     if (!arguments.length) return sim.local.nodes;
-    sim.worker.postMessage({ action: 'init', nodes: getCloneableNodes(nodes) });
+    sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _) });
     sim.local.nodes = nodes;
     return sim;
   };
@@ -261,7 +262,7 @@ function simulationWorker(nodes, _) {
     };
   });
 
-  sim.worker.postMessage({ action: 'init', nodes: getCloneableNodes(nodes) });
+  sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _) });
   return sim;
 }
 
@@ -317,16 +318,29 @@ function setForceParam(f, v, _) {
   f(isFunction(v) ? function(d) { return v(d, _); } : v);
 }
 
-// remove mark objects as they cannot be posted to worker
-function getCloneableNodes(nodes) {
+// send only relevant data to worker, avoid non-cloneable props like mark
+function getWorkerNodes(nodes, _) {
   var nodesCloneable = new Array(nodes.length),
+      f = array(_.forces),
+      accessors = [],
       prop;
+  // accessors aren't cloneable; resolve before transfer
+  f.forEach(function (force) {
+    for (const forceProp of Object.keys(force)) {
+      if (isFunction(force[forceProp])) {
+        accessors.push(function (input, output) {
+          output[accessorName(force[forceProp])] = force[forceProp](input);
+        })
+      }
+    }
+  });
   nodes.forEach(function (node, i) {
     nodesCloneable[i] = {};
-    for(prop of Object.keys(node)) {
-      if (prop === 'mark') { continue; }
-      nodesCloneable[i][prop] = node[prop];
+    for(prop of ForceInput) {
+      if (prop in node) nodesCloneable[i][prop] = node[prop];
     }
+    accessors.forEach(function (acc) { acc(node, nodesCloneable[i]) })
+
   });
   return nodesCloneable;
 }
