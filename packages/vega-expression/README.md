@@ -36,7 +36,7 @@ function names to function values. The values may either be strings (which will 
 - *globalvar*: (Required) The name of the variable upon which to lookup global variables. This variable name will be included in the generated code as the scope for any global variable references. Alternatively, this property can be a function that maps from variable names in the source input to generated code to write to the output.
 
 <a name="constants" href="#constants">#</a>
-<b>constants</b>(<i>codegen</i>)
+<b>constants</b>
 [<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/constants.js "Source")
 
 An object defining default constant values for the Vega expression language. The object maps from constant identifiers to JavaScript code to defining the constant value (for example, `'PI'` maps to `'Math.PI`').
