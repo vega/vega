@@ -144,7 +144,8 @@ prototype.transform = function(_, pulse) {
        .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
 
     if (_.static) {
-      for (sim.stop(); --iters >= 0;) sim.tick();
+      sim.stop();
+      sim.tick(iters);
     } else {
       if (sim.stopped()) sim.restart();
       if (!change) return pulse.StopPropagation; // defer to sim ticks
