@@ -1,13 +1,24 @@
-// import { setup } from './src/Force';
 import {
   forceSimulation, forceCenter, forceCollide,
   forceManyBody, forceLink, forceX, forceY
 } from 'd3-force';
+import {
+  isFunction, isObject
+} from 'vega-util';
 
-var sim;
+const ForceMap = {
+  center: forceCenter,
+  collide: forceCollide,
+  nbody: forceManyBody,
+  link: forceLink,
+  x: forceX,
+  y: forceY
+};
+
+let sim;
 
 onmessage = function (event) {
-  var message = event.data;
+  const message = event.data;
   switch (message.action) {
     case 'init':
       initialize(message.nodes);
@@ -28,6 +39,9 @@ onmessage = function (event) {
     case 'param':
       sim[message.name](message.value);
       break;
+    case 'force':
+      sim.force(message.name, getForce(message.force));
+      break;
   }
 
 };
@@ -44,4 +58,20 @@ function reportTick() {
 
 function reportEnd() {
   postMessage({ action: 'end', alpha: sim.alpha(), nodes: sim.nodes() });
+}
+
+export function getForce(_) {
+  let f;
+  if (_ === null) return _;
+
+  f = ForceMap[_.force]();
+  for (const p in _) {
+    if (isFunction(f[p])) setForceParam(f[p], _[p], _);
+  }
+
+  return f;
+}
+
+function setForceParam(f, v) {
+  f(isObject(v) ? function(d) { return d[v.fname]; } : v);
 }

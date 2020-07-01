@@ -204,8 +204,9 @@ function simulationWorker(nodes, _) {
   var stopped = false,
       sim;
  sim = {
+   isWorker: true,
    worker: new Worker(_.worker),
-   local: { nodes: nodes, alphaMin: 0.001, alpha: 1 },
+   local: { nodes: nodes, alphaMin: 0.001, alpha: 1, forces: {} },
    onTick: function() {},
    onEnd: function() { stopped = true; }
   };
@@ -235,8 +236,14 @@ function simulationWorker(nodes, _) {
     sim.worker.postMessage({ action: 'stop' });
     return sim;
   };
-  sim.force = function() {
-    // TODO: forces
+  sim.force = function(name, force) {
+    if (arguments.length === 1) return sim.local.forces[name];
+    sim.worker.postMessage({ action: 'force', name: name, force: force });
+    if (force === null) {
+      delete sim.local.forces[name];
+    } else {
+      sim.local.forces[name] = force;
+    }
     return sim;
   };
   sim.on = function(type, handler) {
@@ -263,6 +270,7 @@ function simulationWorker(nodes, _) {
   });
 
   sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _) });
+  setup(sim, _, true);
   return sim;
 }
 
@@ -276,7 +284,7 @@ function setup(sim, _, init, pulse) {
 
   for (i=0, n=f.length; i<n; ++i) {
     name = Forces + i;
-    p = init || _.modified(Forces, i) ? getForce(f[i])
+    p = init || _.modified(Forces, i) ? getForce(f[i], sim.isWorker)
       : pulse && modified(f[i], pulse) ? sim.force(name)
       : null;
     if (p) sim.force(name, p);
@@ -299,11 +307,18 @@ function modified(f, pulse) {
   return 0;
 }
 
-function getForce(_) {
+export function getForce(_, isWorker) {
   var f, p;
 
   if (!hasOwnProperty(ForceMap, _.force)) {
     error('Unrecognized force: ' + _.force);
+  }
+  if (isWorker) {
+    f = { force: _.force };
+    for (p in _) {
+      f[p] = isFunction(_[p]) ? { fname: accessorName(_[p]) }: _[p];
+    }
+    return f;
   }
   f = ForceMap[_.force]();
 
