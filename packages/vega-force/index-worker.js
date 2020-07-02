@@ -15,12 +15,13 @@ const ForceMap = {
   y: forceY
 };
 
-let sim;
+let sim, pulseId;
 
 onmessage = function (event) {
   const message = event.data;
   switch (message.action) {
     case 'init':
+      pulseId = message.id;
       initialize(message.nodes);
       break;
     case 'restart':
@@ -30,6 +31,7 @@ onmessage = function (event) {
       sim.stop();
       break;
     case 'nodes':
+      pulseId = message.id;
       sim.nodes(message.nodes);
       break;
     case 'tick':
@@ -53,7 +55,7 @@ function initialize (nodes) {
 }
 
 function reportTick() {
-  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes() });
+  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes(), id: pulseId });
 }
 
 function reportEnd() {

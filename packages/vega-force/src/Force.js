@@ -114,7 +114,6 @@ prototype.transform = function(_, pulse) {
       change = pulse.changed(pulse.ADD_REM),
       params = _.modified(ForceParams),
       iters = _.iterations || 300;
-
   // configure simulation
   if (!sim) {
     this.value = sim = _.worker
@@ -203,17 +202,20 @@ function simulation(nodes, _) {
 
 function simulationWorker(nodes, _) {
   var stopped = false,
+      pulseId= 0,
       sim;
- sim = {
-   isWorker: true,
-   worker: new Worker(_.worker),
-   local: { nodes: nodes, alphaMin: 0.001, alpha: 1, forces: {} },
-   onTick: function() {},
-   onEnd: function() { stopped = true; }
+  sim = {
+    isWorker: true,
+    worker: new Worker(_.worker),
+    local: { nodes: nodes, alphaMin: 0.001, alpha: 1, forces: {} },
+    onTick: function() {},
+    onEnd: function() { stopped = true; }
   };
   sim.worker.onmessage = function (event) {
     var message = event.data;
     if (message.action === 'tick') {
+      // ignore delayed tick results from obsolete data
+      if (message.id !== pulseId) return;
       sim.local.alpha = message.alpha;
       updateNodesFromWorker(message.nodes, sim.local.nodes);
       sim.onTick(message);
@@ -257,7 +259,7 @@ function simulationWorker(nodes, _) {
   };
   sim.nodes = function(nodes, _) {
     if (!arguments.length) return sim.local.nodes;
-    sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _) });
+    sim.worker.postMessage({ action: 'nodes', nodes: getWorkerNodes(nodes, _), id: ++pulseId });
     sim.local.nodes = nodes;
     return sim;
   };
@@ -270,7 +272,7 @@ function simulationWorker(nodes, _) {
     };
   });
 
-  sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _) });
+  sim.worker.postMessage({ action: 'init', nodes: getWorkerNodes(nodes, _), id: ++pulseId });
   setup(sim, _, true);
   return sim;
 }
