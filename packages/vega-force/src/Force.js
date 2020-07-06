@@ -38,7 +38,7 @@ export default function Force(params) {
 }
 
 Force.Definition = {
-  "type": "Force",
+  "type": "ForceWorker",
   "metadata": {"modifies": true},
   "params": [
     { "name": "static", "type": "boolean", "default": false },
