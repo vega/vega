@@ -25,7 +25,7 @@ var Forces = 'forces',
     ForceParamMethods = ['alpha', 'alphaMin', 'alphaDecay'],
     ForceInput = ['x', 'y', 'vx', 'vy', 'fx', 'fy'],
     ForceConfig = ['static', 'iterations'],
-    ForceOutput = ['x', 'y', 'vx', 'vy'];
+    ForceOutput = ['x', 'y', 'vx', 'vy', 'source', 'target'];
 
 /**
  * Force simulation layout.
@@ -218,6 +218,9 @@ function simulationWorker(nodes, _) {
       if (message.id !== pulseId) return;
       sim.local.alpha = message.alpha;
       updateNodesFromWorker(message.nodes, sim.local.nodes);
+      Object.keys(message.linkData).forEach(function (force) {
+        updateNodesFromWorker(message.linkData[force], sim.local.forces[force].links);
+      });
       sim.onTick(message);
     }
     if (message.action === 'end') {
@@ -319,7 +322,7 @@ export function getForce(_, isWorker) {
   if (isWorker) {
     f = { force: _.force };
     for (p in _) {
-      f[p] = isFunction(_[p]) ? { fname: accessorName(_[p]) }: _[p];
+      f[p] = isFunction(_[p]) ? { fname: accessorName(_[p]) } : _[p];
     }
     return f;
   }
