@@ -60,7 +60,8 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
 
         if (
           !outOfBounds(x, y, textWidth, textHeight, width, height) &&
-          !collision($, x, y, textHeight, textWidth, lo, bm0, bm1)
+          !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) &&
+          !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)
         ) {
           // if the label fits at the current sample point,
           // perform binary search to find the largest font size that fits

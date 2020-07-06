@@ -77,6 +77,7 @@ export default function(texts, size, compare, offset, anchor,
     avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
   }
 
+  const t0 = performance.now();
   // generate bitmaps for layout calculation
   const bitmaps = avoidMarks.length
     ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
@@ -89,6 +90,13 @@ export default function(texts, size, compare, offset, anchor,
 
   // place all labels
   data.forEach(d => d.opacity = +place(d));
+  // bitmaps[0].write("bitmap");
+  const time = performance.now() - t0;
+  console.log(JSON.stringify({
+    labeler: method,
+    runtime: time,
+    width: size[0]
+  }))
 
   return data;
 }

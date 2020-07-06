@@ -30,6 +30,7 @@
     </div>
     <div id="view"></div>
     <div id="external"></div>
+    <canvas id="bitmap"></canvas>
     <script>
 var runtime, spec, view;
 
@@ -40,39 +41,53 @@ const options = {
   hover:     true
 };
 
-const size_widths = [];
+const sizes = [];
 for (let i = 200; i <= 2000; i += 200) {
-  size_widths.push(i);
+  sizes.push(i);
 }
 
-const sizes = [];
-for (const w of size_widths) {
-  for (let i = 0; i < 10; i++) {
-    sizes.push(w);
-  }
-}
+// const sizes = [];
+// for (const w of size_widths) {
+//   for (let i = 0; i < 10; i++) {
+//     sizes.push(w);
+//   }
+// }
 
 async function loadJobs() {
   // load vega spec, then visualize it
   try {
     const spec = await fetch(`specs-valid/jobs.vg.json`).then(r => r.json());
-    let idx = 0;
+    let idx = 4;
     let interval;
+    let labelers = ["floodfill", "reduced-search"];
+    let labelerIter = 0;
+    let n = 5;
+    let i = 0;
     const renderJobs = async () => {
-      const w = sizes[idx++];
-      console.log(`width: ${w}`);
+      const w = sizes[idx];
+      // console.log(`width: ${w}`);
 
       if (view) view.finalize(); // finalize existing view
       spec["width"] = w;
       spec["height"] = w;
-      spec["marks"][1]["transform"]["size"] = [w, w];
+      spec["marks"][1]["transform"][0]["size"] = [w, w];
+      spec["marks"][1]["transform"][0]["method"] = labelers[labelerIter];
       runtime = vega.parse(spec);
-      view = await new vega.View(runtime, options).runAsync();
-      if (idx > sizes.length) {
-        clearInterval(interval)
+      view = await new vega.View(runtime, options).renderer('canvas').runAsync();
+      labelerIter++;
+      if (labelerIter >= labelers.length) {
+        labelerIter = 0;
+        i++;
+      }
+      if (i >= n) {
+        i = 0;
+        idx++;
+      }
+      if (idx < sizes.length) {
+        setTimeout(renderJobs, 6000)
       }
     }
-    interval = setInterval(renderJobs, 10000);
+    interval = setTimeout(renderJobs, 6000);
   } catch (err) {
     console.error(err, err.stack);
   }

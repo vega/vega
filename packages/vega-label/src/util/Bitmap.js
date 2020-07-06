@@ -96,6 +96,24 @@ export default function(w, h) {
       }
     },
 
-    outOfBounds: (x, y, x2, y2) => x < 0 || y < 0 || y2 >= h || x2 >= w
+    outOfBounds: (x, y, x2, y2) => x < 0 || y < 0 || y2 >= h || x2 >= w,
+
+    write: (id) => {
+      const canvas = document.getElementById(id);
+      console.log(w, h);
+      canvas.setAttribute("width", w);
+      canvas.setAttribute("height", h);
+      let ctx = canvas.getContext("2d");
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const index = y * w + x;
+          const v = array[index >>> DIV] & (1 << (index & MOD));
+          if (v) {
+            ctx.fillStyle = "black";
+            ctx.fillRect(x, y, 1, 1);
+          }
+        }
+      }
+    }
   };
 }

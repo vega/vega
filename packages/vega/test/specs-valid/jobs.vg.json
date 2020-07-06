@@ -173,7 +173,7 @@
       "transform": [
         {
           "type": "label",
-          "method": "floodfill",
+          "method": "reduced-search",
           "size": [800, 500],
           "avoidBaseMark": false
         }
