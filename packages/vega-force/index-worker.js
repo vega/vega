@@ -37,7 +37,7 @@ onmessage = function (event) {
       break;
     case 'tick':
       sim.tick(message.iters);
-      reportTick();
+      reportTick(message.id);
       break;
     case 'param':
       sim[message.name](message.value);
@@ -58,8 +58,8 @@ function initialize (nodes) {
     .on('end', reportEnd);
 }
 
-function reportTick() {
-  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes(), linkData: linkDatasets, id: pulseId });
+function reportTick(tickId) {
+  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes(), linkData: linkDatasets, id: pulseId, tickId: tickId });
 }
 
 function reportEnd() {
