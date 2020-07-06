@@ -15,7 +15,8 @@ const ForceMap = {
   y: forceY
 };
 
-let sim, pulseId;
+let sim, pulseId,
+    linkDatasets = {};
 
 onmessage = function (event) {
   const message = event.data;
@@ -43,6 +44,9 @@ onmessage = function (event) {
       break;
     case 'force':
       sim.force(message.name, getForce(message.force));
+      if ('links' in message.force) {
+        linkDatasets[message.name] = message.force.links;
+      }
       break;
   }
 
@@ -55,11 +59,11 @@ function initialize (nodes) {
 }
 
 function reportTick() {
-  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes(), id: pulseId });
+  postMessage({ action: 'tick', alpha: sim.alpha(), nodes: sim.nodes(), linkData: linkDatasets, id: pulseId });
 }
 
 function reportEnd() {
-  postMessage({ action: 'end', alpha: sim.alpha(), nodes: sim.nodes() });
+  postMessage({ action: 'end', alpha: sim.alpha(), nodes: sim.nodes(), linkData: linkDatasets });
 }
 
 export function getForce(_) {
@@ -75,5 +79,6 @@ export function getForce(_) {
 }
 
 function setForceParam(f, v) {
-  f(isObject(v) ? function(d) { return d[v.fname]; } : v);
+  // deseralize accessor functions
+  f(isObject(v) && v.fname ? function(d) { return d[v.fname]; } : v);
 }
