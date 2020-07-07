@@ -178,6 +178,13 @@ prototype.finish = function(_, pulse) {
   return pulse.reflow(_.modified()).modifies(ForceOutput);
 };
 
+prototype.detach = function () {
+  if (this.value && this.value.worker) {
+    this.value.worker.terminate();
+  }
+  return Transform.prototype.detach.call(this);
+}
+
 function rerun(df, op) {
   return function() { df.touch(op).run(); }
 }
