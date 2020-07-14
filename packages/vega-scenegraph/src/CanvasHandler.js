@@ -9,6 +9,7 @@ import {
 import point from './util/point';
 import {domFind} from './util/dom';
 import {inherits} from 'vega-util';
+import resolveItem from './util/resolveItem';
 
 export default function CanvasHandler(loader, tooltip) {
   Handler.call(this, loader, tooltip);
@@ -141,7 +142,7 @@ prototype.touchend = function(evt) {
 
 // fire an event
 prototype.fire = function(type, evt, touch) {
-  const a = touch ? this._touch : this._active,
+  const a = resolveItem(touch ? this._touch : this._active, evt, this.canvas(), this._origin),
         h = this._handlers[type];
 
   // set event type relative to scenegraph items

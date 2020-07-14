@@ -1,5 +1,4 @@
 import {domCreate} from './util/dom';
-import resolveItem from './util/resolveItem';
 import {loader} from 'vega-loader';
 
 /**
@@ -161,7 +160,6 @@ prototype.handleHref = function(event, item, href) {
  */
 prototype.handleTooltip = function(event, item, show) {
   if (item && item.tooltip != null) {
-    item = resolveItem(item, event, this.canvas(), this._origin);
     const value = (show && item && item.tooltip) || null;
     this._tooltip.call(this._obj, this, event, item, value);
   }

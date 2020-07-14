@@ -2,6 +2,7 @@ import Handler from './Handler';
 import {domFind} from './util/dom';
 import {HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
 import {inherits} from 'vega-util';
+import resolveItem from './util/resolveItem';
 
 export default function SVGHandler(loader, tooltip) {
   Handler.call(this, loader, tooltip);
@@ -40,6 +41,7 @@ prototype.canvas = function() {
 const listener = (context, handler) => evt => {
   let item = evt.target.__data__;
   item = Array.isArray(item) ? item[0] : item;
+  item = resolveItem(item, evt, context.canvas(), context._origin);
   evt.vegaType = evt.type;
   handler.call(context._obj, evt, item);
 };
