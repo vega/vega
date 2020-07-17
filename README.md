@@ -7,7 +7,7 @@ saving interactive visualization designs. With Vega you can describe data
 visualizations in a JSON format, and generate interactive views using either 
 HTML5 Canvas or SVG.
 
-To learn more, [visit the wiki](https://github.com/vega/vega/wiki).
+To learn more, [visit the wiki](https://github.com/vega/vega2-docs/wiki).
 
 ## The Vega Runtime
 
