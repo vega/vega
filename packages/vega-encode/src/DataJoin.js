@@ -81,7 +81,7 @@ prototype.transform = function(_, pulse) {
     const k = key(t),
           x = map.get(k);
 
-    if (t === x.datum && !x.exit) {
+    if (x && t === x.datum && !x.exit) {
       out.rem.push(x);
       x.exit = true;
       ++map.empty;
