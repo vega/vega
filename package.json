@@ -31,6 +31,7 @@
     "http-server": "^0.12.3",
     "jsdom": "^16.2.2",
     "lerna": "^3.22.0",
+    "pixelmatch": "^5.2.1",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
     "rollup": "^2.12.0",
