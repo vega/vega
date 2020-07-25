@@ -21,7 +21,7 @@ module.exports = function test(t, cmd, file, png=false) {
         const expect = PNG.sync.read(expectImg);
         const actual = PNG.sync.read(actualImg);
         const {width, height} = expect;
-        t.equal(pixelmatch(actual.data, expect.data, null, width, height), 0);
+        t.equal(pixelmatch(actual.data, expect.data, null, width, height, {threshold: 0}), 0);
       } else {
         t.ok(expectImg.equals(actualImg));
       }
