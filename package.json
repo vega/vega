@@ -25,7 +25,7 @@
     "@rollup/plugin-node-resolve": "^8.0.0",
     "@types/node": "^14.0.9",
     "ajv": "^6.12.2",
-    "canvas": "^2.6.1",
+    "canvas": "Automattic/node-canvas#master",
     "dtslint": "^3.6.9",
     "eslint": "^7.1.0",
     "http-server": "^0.12.3",
