@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------------------------------------
 
 # To fully customize the contents of this image, use the following Dockerfile instead:
-# https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/javascript-node-12/.devcontainer/Dockerfile
+# https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/javascript-node-12/.devcontainer/Dockerfile
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-12
 
 # ** [Optional] Uncomment this section to install additional packages. **

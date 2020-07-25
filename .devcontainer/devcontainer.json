@@ -1,5 +1,5 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/javascript-node-12
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/javascript-node-12
 {
 	"name": "Node.js 12",
 	"dockerFile": "Dockerfile",
@@ -18,7 +18,7 @@
 	"forwardPorts": [8080],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "yarn",
+	"postCreateCommand": "yarn"
 
 	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
 	// "remoteUser": "node"
