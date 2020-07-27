@@ -10,6 +10,7 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "types": "index.d.ts",
   "main": "build/vega-interpreter.js",
   "module": "index",
   "repository": "vega/vega",
