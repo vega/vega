@@ -17,36 +17,45 @@ To use the interpreter, follow these three steps:
 
 ### Example
 
+In the example below, we are setting the CSP via the HTML Meta tag but in most cases the server mandates a CSP. 
+
+The HTML source of the site.
+
 ```html
 <head>
+  <meta http-equiv="Content-Security-Policy" content="script-src self cdn.jsdelivr.net" />
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-interpreter@{{ site.data.versions.interpreter }}"></script>
 </head>
 <body>
   <div id="view"></div>
-  <script type="text/javascript">
-    var view;
-
-    fetch('https://vega.github.io/vega/examples/bar-chart.vg.json')
-      .then(res => res.json())
-      .then(spec => render(spec))
-      .catch(err => console.error(err));
-
-    function render(spec) {
-      // Parse the Vega specification with AST output enabled
-      // Pass a null configuration value as the second argument
-      const runtime = vega.parse(spec, null, { ast: true });
-
-      // Call Vega View constructor with an 'expr' interpreter option
-      view = new vega.View(runtime, {
-        expr:      vega.expressionInterpreter,
-        renderer:  'svg',    // renderer (canvas or svg)
-        container: '#view',  // parent DOM container
-        hover:     true      // enable hover processing
-      });
-
-      return view.runAsync();
-    }
-  </script>
+  <script src="main.js"></script>
 </body>
+```
+
+The `main.js` source. We are separating out the script as many CSPs do not allow `unsafe-inline`.
+
+```js
+let view;
+
+fetch('https://vega.github.io/vega/examples/bar-chart.vg.json')
+  .then(res => res.json())
+  .then(spec => render(spec))
+  .catch(err => console.error(err));
+
+function render(spec) {
+  // Parse the Vega specification with AST output enabled
+  // Pass a null configuration value as the second argument
+  const runtime = vega.parse(spec, null, { ast: true });
+
+  // Call Vega View constructor with an 'expr' interpreter option
+  view = new vega.View(runtime, {
+    expr:      vega.expressionInterpreter,
+    renderer:  'svg',    // renderer (canvas or svg)
+    container: '#view',  // parent DOM container
+    hover:     true      // enable hover processing
+  });
+
+  return view.runAsync();
+}
 ```
