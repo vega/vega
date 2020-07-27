@@ -2,7 +2,7 @@
 name: Feature Request
 about: Suggest an improvement for the Vega project.
 title: ''
-labels: ''
+labels: 'feature-request'
 assignees: ''
 
 ---
