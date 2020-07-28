@@ -1,16 +1,7 @@
 /** Parse a JavaScript *expression* string and return the resulting abstract syntax tree in the ESTree format */
 export function parse(expression: string): object;
 
-/**
- * Create a new output code generator configured according to the provided options:
- * - `constants` — a hash of allowed top-level constant values
- * - `functions` — a function that is given an AST visitor instance as input and returns an object of allowed functions
- * - `blacklist` — an array of variable names that may not be referenced within the expression scope
- * - `whitelist` — an array of variable names that may be referenced within the expression scope
- * - `fieldvar` — the name of the primary data input argument within the generated expression function
- * - `globalvar` — the name of the variable upon which to lookup global variables
- */
-export function codegen(options: {
+interface CodegenOptions {
   /** A hash of allowed top-level constant values */
   constants?: { [cn: string]: string };
 
@@ -28,7 +19,10 @@ export function codegen(options: {
 
   /** The name of the variable upon which to lookup global variables */
   globalvar: string | ((id: string) => string);
-}): (ast) => {
+}
+
+/** Create a new output code generator configured according to the provided options */
+export function codegen(options: CodegenOptions): (ast) => {
   /** The generated code as a string */
   code: string;
 
