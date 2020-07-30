@@ -78,7 +78,7 @@ prototype.transform = function (_, pulse) {
   }
 
   const mod = _.modified();
-  if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
+  if (!(mod || pulse.changed(pulse.ALL) || modp('sort'))) return;
   if (!_.size || _.size.length !== 2) {
     error('Size parameter should be specified as a [width, height] array.');
   }
