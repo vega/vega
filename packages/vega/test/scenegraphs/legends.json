@@ -35,6 +35,95 @@
                               "width": 100,
                               "height": 16,
                               "fill": {
+                                "gradient": "linear",
+                                "x1": 0,
+                                "y1": 0,
+                                "stops": [
+                                  {
+                                    "offset": 0,
+                                    "color": "rgb(68, 1, 84)"
+                                  },
+                                  {
+                                    "offset": 0.05,
+                                    "color": "rgb(72, 20, 103)"
+                                  },
+                                  {
+                                    "offset": 0.1,
+                                    "color": "rgb(72, 37, 117)"
+                                  },
+                                  {
+                                    "offset": 0.15,
+                                    "color": "rgb(70, 53, 128)"
+                                  },
+                                  {
+                                    "offset": 0.2,
+                                    "color": "rgb(65, 68, 135)"
+                                  },
+                                  {
+                                    "offset": 0.25,
+                                    "color": "rgb(59, 82, 139)"
+                                  },
+                                  {
+                                    "offset": 0.3,
+                                    "color": "rgb(53, 96, 141)"
+                                  },
+                                  {
+                                    "offset": 0.35,
+                                    "color": "rgb(47, 108, 142)"
+                                  },
+                                  {
+                                    "offset": 0.4,
+                                    "color": "rgb(42, 120, 142)"
+                                  },
+                                  {
+                                    "offset": 0.45,
+                                    "color": "rgb(37, 133, 142)"
+                                  },
+                                  {
+                                    "offset": 0.5,
+                                    "color": "rgb(33, 145, 141)"
+                                  },
+                                  {
+                                    "offset": 0.55,
+                                    "color": "rgb(31, 156, 138)"
+                                  },
+                                  {
+                                    "offset": 0.6,
+                                    "color": "rgb(34, 168, 132)"
+                                  },
+                                  {
+                                    "offset": 0.65,
+                                    "color": "rgb(48, 180, 124)"
+                                  },
+                                  {
+                                    "offset": 0.7,
+                                    "color": "rgb(67, 191, 113)"
+                                  },
+                                  {
+                                    "offset": 0.75,
+                                    "color": "rgb(93, 201, 99)"
+                                  },
+                                  {
+                                    "offset": 0.8,
+                                    "color": "rgb(122, 209, 81)"
+                                  },
+                                  {
+                                    "offset": 0.85,
+                                    "color": "rgb(154, 217, 61)"
+                                  },
+                                  {
+                                    "offset": 0.9,
+                                    "color": "rgb(188, 223, 39)"
+                                  },
+                                  {
+                                    "offset": 0.95,
+                                    "color": "rgb(222, 228, 26)"
+                                  },
+                                  {
+                                    "offset": 1,
+                                    "color": "rgb(253, 231, 37)"
+                                  }
+                                ],
                                 "x2": 1,
                                 "y2": 0
                               },
@@ -123,6 +212,7 @@
               "y": 0,
               "width": 100,
               "height": 44,
+              "offset": 0,
               "orient": "left"
             }
           ],
@@ -156,6 +246,95 @@
                               "width": 100,
                               "height": 16,
                               "fill": {
+                                "gradient": "linear",
+                                "x1": 0,
+                                "y1": 0,
+                                "stops": [
+                                  {
+                                    "offset": 0,
+                                    "color": "rgb(255, 0, 0)"
+                                  },
+                                  {
+                                    "offset": 0.05,
+                                    "color": "rgb(242, 10, 10)"
+                                  },
+                                  {
+                                    "offset": 0.1,
+                                    "color": "rgb(229, 21, 21)"
+                                  },
+                                  {
+                                    "offset": 0.15,
+                                    "color": "rgb(216, 31, 31)"
+                                  },
+                                  {
+                                    "offset": 0.2,
+                                    "color": "rgb(203, 42, 42)"
+                                  },
+                                  {
+                                    "offset": 0.25,
+                                    "color": "rgb(190, 52, 52)"
+                                  },
+                                  {
+                                    "offset": 0.3,
+                                    "color": "rgb(177, 63, 63)"
+                                  },
+                                  {
+                                    "offset": 0.35,
+                                    "color": "rgb(160, 73, 73)"
+                                  },
+                                  {
+                                    "offset": 0.4,
+                                    "color": "rgb(141, 83, 83)"
+                                  },
+                                  {
+                                    "offset": 0.45,
+                                    "color": "rgb(121, 92, 92)"
+                                  },
+                                  {
+                                    "offset": 0.5,
+                                    "color": "rgb(102, 102, 102)"
+                                  },
+                                  {
+                                    "offset": 0.55,
+                                    "color": "rgb(92, 121, 92)"
+                                  },
+                                  {
+                                    "offset": 0.6,
+                                    "color": "rgb(83, 141, 83)"
+                                  },
+                                  {
+                                    "offset": 0.65,
+                                    "color": "rgb(73, 160, 73)"
+                                  },
+                                  {
+                                    "offset": 0.7,
+                                    "color": "rgb(63, 177, 63)"
+                                  },
+                                  {
+                                    "offset": 0.75,
+                                    "color": "rgb(52, 190, 52)"
+                                  },
+                                  {
+                                    "offset": 0.8,
+                                    "color": "rgb(42, 203, 42)"
+                                  },
+                                  {
+                                    "offset": 0.85,
+                                    "color": "rgb(31, 216, 31)"
+                                  },
+                                  {
+                                    "offset": 0.9,
+                                    "color": "rgb(21, 229, 21)"
+                                  },
+                                  {
+                                    "offset": 0.95,
+                                    "color": "rgb(10, 242, 10)"
+                                  },
+                                  {
+                                    "offset": 1,
+                                    "color": "rgb(0, 255, 0)"
+                                  }
+                                ],
                                 "x2": 1,
                                 "y2": 0
                               },
@@ -244,6 +423,7 @@
               "y": 52,
               "width": 100,
               "height": 44,
+              "offset": 0,
               "orient": "left"
             }
           ],

@@ -369,6 +369,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
+              "offset": 0,
               "orient": "left"
             }
           ],
@@ -652,6 +653,7 @@
               ],
               "x": 0.5,
               "y": 600.5,
+              "offset": 0,
               "orient": "bottom"
             }
           ],
@@ -1519,6 +1521,7 @@
               "y": 498,
               "width": 168,
               "height": 92,
+              "offset": 10,
               "orient": "bottom-left"
             }
           ],
@@ -1556,6 +1559,7 @@
               "x": 0,
               "y": -27,
               "align": "left",
+              "offset": 4,
               "orient": "top",
               "angle": 0
             }

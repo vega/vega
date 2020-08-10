@@ -11118,6 +11118,7 @@
               "x": -76,
               "y": -17,
               "align": "left",
+              "offset": 4,
               "orient": "top",
               "angle": 0
             }

@@ -1132,6 +1132,7 @@
               "y": 305,
               "width": 486,
               "height": 24,
+              "offset": 5,
               "orient": "bottom"
             }
           ],

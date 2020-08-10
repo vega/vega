@@ -121,6 +121,7 @@
               "y": 0,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -262,6 +263,7 @@
               "y": 52,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -425,6 +427,7 @@
               "y": 104,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -610,6 +613,7 @@
               "y": 156,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -817,6 +821,7 @@
               "y": 208,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -1046,6 +1051,7 @@
               "y": 260,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -1297,6 +1303,7 @@
               "y": 312,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -1570,6 +1577,7 @@
               "y": 364,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -1711,6 +1719,7 @@
               "y": 0,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -1896,6 +1905,7 @@
               "y": 52,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -2125,6 +2135,7 @@
               "y": 104,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -2244,6 +2255,7 @@
               "y": 156,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -2385,6 +2397,7 @@
               "y": 208,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -2548,6 +2561,7 @@
               "y": 260,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -2733,6 +2747,7 @@
               "y": 312,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -3028,6 +3043,7 @@
               "y": 364,
               "width": 300,
               "height": 44,
+              "offset": 5,
               "orient": "right"
             }
           ],

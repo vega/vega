@@ -503,6 +503,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
+                      "offset": 0,
                       "orient": "bottom"
                     }
                   ],
@@ -807,6 +808,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
+                      "offset": 0,
                       "orient": "left"
                     }
                   ],
@@ -1036,6 +1038,7 @@
                       "x": 200,
                       "y": -36,
                       "align": "center",
+                      "offset": 5,
                       "orient": "top",
                       "angle": 0,
                       "limit": 400
@@ -1548,6 +1551,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
+                      "offset": 0,
                       "orient": "bottom"
                     }
                   ],
@@ -1852,6 +1856,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
+                      "offset": 0,
                       "orient": "left"
                     }
                   ],
@@ -2081,6 +2086,7 @@
                       "x": -77.00000000000001,
                       "y": 50,
                       "align": "center",
+                      "offset": 5,
                       "orient": "left",
                       "angle": -90,
                       "limit": 100
@@ -2593,6 +2599,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
+                      "offset": 0,
                       "orient": "bottom"
                     }
                   ],
@@ -2897,6 +2904,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
+                      "offset": 0,
                       "orient": "left"
                     }
                   ],
@@ -3127,6 +3135,7 @@
                       "x": 431,
                       "y": 50,
                       "align": "center",
+                      "offset": 5,
                       "orient": "right",
                       "angle": 90,
                       "limit": 100
@@ -3639,6 +3648,7 @@
                       ],
                       "x": 0.5,
                       "y": 100.5,
+                      "offset": 0,
                       "orient": "bottom"
                     }
                   ],
@@ -3943,6 +3953,7 @@
                       ],
                       "x": 0.5,
                       "y": 0.5,
+                      "offset": 0,
                       "orient": "left"
                     }
                   ],
@@ -4173,6 +4184,7 @@
                       "x": 200,
                       "y": 137,
                       "align": "center",
+                      "offset": 5,
                       "orient": "bottom",
                       "angle": 0,
                       "limit": 400

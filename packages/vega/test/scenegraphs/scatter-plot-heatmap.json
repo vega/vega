@@ -163,6 +163,7 @@
               ],
               "x": 0.5,
               "y": 300.5,
+              "offset": 0,
               "orient": "bottom"
             }
           ],
@@ -450,6 +451,7 @@
               ],
               "x": 0.5,
               "y": 0.5,
+              "offset": 0,
               "orient": "left"
             }
           ],
@@ -500,6 +502,95 @@
                               "width": 16,
                               "height": 200,
                               "fill": {
+                                "gradient": "linear",
+                                "x1": 0,
+                                "y1": 1,
+                                "stops": [
+                                  {
+                                    "offset": 0,
+                                    "color": "rgb(68, 1, 84)"
+                                  },
+                                  {
+                                    "offset": 0.05,
+                                    "color": "rgb(72, 20, 103)"
+                                  },
+                                  {
+                                    "offset": 0.1,
+                                    "color": "rgb(72, 37, 117)"
+                                  },
+                                  {
+                                    "offset": 0.15,
+                                    "color": "rgb(70, 53, 128)"
+                                  },
+                                  {
+                                    "offset": 0.2,
+                                    "color": "rgb(65, 68, 135)"
+                                  },
+                                  {
+                                    "offset": 0.25,
+                                    "color": "rgb(59, 82, 139)"
+                                  },
+                                  {
+                                    "offset": 0.3,
+                                    "color": "rgb(53, 96, 141)"
+                                  },
+                                  {
+                                    "offset": 0.35,
+                                    "color": "rgb(47, 108, 142)"
+                                  },
+                                  {
+                                    "offset": 0.4,
+                                    "color": "rgb(42, 120, 142)"
+                                  },
+                                  {
+                                    "offset": 0.45,
+                                    "color": "rgb(37, 133, 142)"
+                                  },
+                                  {
+                                    "offset": 0.5,
+                                    "color": "rgb(33, 145, 141)"
+                                  },
+                                  {
+                                    "offset": 0.55,
+                                    "color": "rgb(31, 156, 138)"
+                                  },
+                                  {
+                                    "offset": 0.6,
+                                    "color": "rgb(34, 168, 132)"
+                                  },
+                                  {
+                                    "offset": 0.65,
+                                    "color": "rgb(48, 180, 124)"
+                                  },
+                                  {
+                                    "offset": 0.7,
+                                    "color": "rgb(67, 191, 113)"
+                                  },
+                                  {
+                                    "offset": 0.75,
+                                    "color": "rgb(93, 201, 99)"
+                                  },
+                                  {
+                                    "offset": 0.8,
+                                    "color": "rgb(122, 209, 81)"
+                                  },
+                                  {
+                                    "offset": 0.85,
+                                    "color": "rgb(154, 217, 61)"
+                                  },
+                                  {
+                                    "offset": 0.9,
+                                    "color": "rgb(188, 223, 39)"
+                                  },
+                                  {
+                                    "offset": 0.95,
+                                    "color": "rgb(222, 228, 27)"
+                                  },
+                                  {
+                                    "offset": 1,
+                                    "color": "rgb(253, 231, 37)"
+                                  }
+                                ],
                                 "x2": 0,
                                 "y2": 0
                               },

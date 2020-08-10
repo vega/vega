@@ -1028,6 +1028,7 @@
               "y": 0,
               "width": 70,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],
@@ -2054,6 +2055,7 @@
               "y": 0,
               "width": 61,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],
@@ -3080,6 +3082,7 @@
               "y": 0,
               "width": 35,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],
@@ -4106,6 +4109,7 @@
               "y": 0,
               "width": 79,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],
@@ -5132,6 +5136,7 @@
               "y": 0,
               "width": 61,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],
@@ -6158,6 +6163,7 @@
               "y": 0,
               "width": 52,
               "height": 374,
+              "offset": 5,
               "orient": "none"
             }
           ],

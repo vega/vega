@@ -225,6 +225,7 @@
               ],
               "x": -4.5,
               "y": 0.5,
+              "offset": 5,
               "orient": "left"
             }
           ],
@@ -448,6 +449,7 @@
               ],
               "x": 855.5,
               "y": 0.5,
+              "offset": 5,
               "orient": "right"
             }
           ],
@@ -751,6 +753,7 @@
               ],
               "x": 0.5,
               "y": -4.5,
+              "offset": 5,
               "orient": "top"
             }
           ],
@@ -1118,6 +1121,7 @@
               "y": 165,
               "width": 70,
               "height": 30,
+              "offset": 5,
               "orient": "bottom-right"
             }
           ],
@@ -1156,6 +1160,7 @@
               "x": 0,
               "y": -98,
               "align": "left",
+              "offset": 4,
               "orient": "top",
               "angle": 0
             }

@@ -30788,6 +30788,7 @@
               "x": 450,
               "y": 2,
               "align": "center",
+              "offset": -15,
               "orient": "top",
               "angle": 0
             }
