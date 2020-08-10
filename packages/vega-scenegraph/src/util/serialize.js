@@ -6,6 +6,7 @@ var keys = [
   'fill', 'fillOpacity', 'opacity', 'blend',                    // fill
   'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',        // stroke
   'strokeDash', 'strokeDashOffset',                             // stroke dash
+  'gradient', 'x1', 'y1', 'stops', 'offset', 'color',           // gradient
   'strokeForeground', 'strokeOffset',                           // group
   'startAngle', 'endAngle', 'innerRadius', 'outerRadius',       // arc
   'cornerRadius', 'padAngle',                                   // arc, rect
