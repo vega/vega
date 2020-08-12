@@ -21,15 +21,15 @@ tape('Vega generates scenegraphs for specifications', function(t) {
   let count = specs.length;
 
   specs.forEach(async function(name, index) {
-    const path = testdir + name + '.json',
-          spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-          runtime = vega.parse(spec),
-          view = new vega.View(runtime, {
-            loader: loader,
-            renderer: 'none'
-          }).finalize(); // remove timers, event listeners
-
     try {
+      const path = testdir + name + '.json',
+            spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
+            runtime = vega.parse(spec),
+            view = new vega.View(runtime, {
+              loader: loader,
+              renderer: 'none'
+            }).finalize(); // remove timers, event listeners
+
       await view.runAsync();
 
       const actual = view.scenegraph().toJSON(2);

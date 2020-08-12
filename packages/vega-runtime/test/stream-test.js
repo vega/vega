@@ -13,7 +13,7 @@ tape('Parser parses event streams', function(t) {
       { id:3, merge:[1,2] },
       { id:4, stream:0, between:[1,2] },
       { id:5, stream:4, throttle:100 },
-      { id:6, stream:4, debounce:100, filter:'event.buttons > 0' }
+      { id:6, stream:4, debounce:100, filter: {code:'event.buttons > 0'} }
     ]
   };
 
@@ -21,7 +21,7 @@ tape('Parser parses event streams', function(t) {
   df.events = events.events;
   df.fire = events.fire;
 
-  var ctx = runtime.parse(spec, runtime.context(df, {})),
+  var ctx = runtime.context(df, {}).parse(spec),
       streams = ctx.nodes,
       counts = [0,0,0,0,0,0,0];
 

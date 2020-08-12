@@ -1,6 +1,6 @@
 {
   "name": "vega-voronoi",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Voronoi diagram transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -17,14 +17,14 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-delaunay": "^5.1.5",
-    "vega-dataflow": "^5.1.1",
-    "vega-util": "^1.11.0"
+    "d3-delaunay": "^5.2.1",
+    "vega-dataflow": "^5.5.1",
+    "vega-util": "^1.13.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

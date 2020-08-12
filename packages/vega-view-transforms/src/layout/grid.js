@@ -1,12 +1,16 @@
 import {
-  All, Each, Flush, Column, X, Y, Row, Middle, End,
-  Group, AxisRole, LegendRole, TitleRole,
-  RowHeader, RowFooter, RowTitle,
-  ColHeader, ColFooter, ColTitle
+  All, AxisRole, ColFooter, ColHeader, ColTitle, Column, Each, End, Flush,
+  Group, LegendRole, Middle, Row,
+  RowFooter, RowHeader, RowTitle,
+  TitleRole, X, Y
 } from '../constants';
 import {tempBounds} from './util';
 import {Bounds} from 'vega-scenegraph';
 import {isObject} from 'vega-util';
+
+// aggregation functions for grid margin determination
+const min = (a, b) => Math.floor(Math.min(a, b));
+const max = (a, b) => Math.ceil(Math.max(a, b));
 
 function gridLayoutGroups(group) {
   var groups = group.items,
@@ -76,7 +80,7 @@ export function gridLayout(view, groups, opt) {
       padCol = get(opt.padding, Column),
       padRow = get(opt.padding, Row),
       ncols = opt.columns || groups.length,
-      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
       n = groups.length,
       xOffset = Array(n), xExtent = Array(ncols), xMax = 0,
       yOffset = Array(n), yExtent = Array(nrows), yMax = 0,
@@ -230,12 +234,13 @@ export function trellisLayout(view, group, opt) {
       bbox = opt.bounds === Flush ? boundFlush : boundFull,
       off = opt.offset,
       ncols = opt.columns || groups.length,
-      nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
+      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
       cells = nrows * ncols,
       x, y, x2, y2, anchor, band, offset;
 
   // -- initial grid layout
   const bounds = gridLayout(view, groups, opt);
+  if (bounds.empty()) bounds.set(0, 0, 0, 0); // empty grid
 
   // -- layout grid headers and footers --
 
@@ -293,10 +298,6 @@ function boundFlush(item, field) {
 function boundFull(item, field) {
   return item.bounds[field];
 }
-
-// aggregation functions for grid margin determination
-function min(a, b) { return Math.floor(Math.min(a, b)); }
-function max(a, b) { return Math.ceil(Math.max(a, b)); }
 
 function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
   var n = groups.length,

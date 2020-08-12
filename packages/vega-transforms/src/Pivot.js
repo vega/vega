@@ -23,15 +23,15 @@ export default function Pivot(params) {
 }
 
 Pivot.Definition = {
-  "type": "Pivot",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "field", "type": "field", "required": true },
-    { "name": "value", "type": "field", "required": true },
-    { "name": "op", "type": "enum", "values": ValidAggregateOps, "default": "sum" },
-    { "name": "limit", "type": "number", "default": 0 },
-    { "name": "key", "type": "field" }
+  'type': 'Pivot',
+  'metadata': {'generates': true, 'changes': true},
+  'params': [
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'value', 'type': 'field', 'required': true },
+    { 'name': 'op', 'type': 'enum', 'values': ValidAggregateOps, 'default': 'sum' },
+    { 'name': 'limit', 'type': 'number', 'default': 0 },
+    { 'name': 'key', 'type': 'field' }
   ]
 };
 

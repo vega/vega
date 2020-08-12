@@ -8,8 +8,8 @@ var tape = require('tape'),
 
 tape('Extent computes extents', function(t) {
   var data = [
-    {"x": 0, "y": 28}, {"x": 1, "y": 43},
-    {"x": 0, "y": 55}, {"x": 1, "y": 72}
+    {'x': 0, 'y': 28}, {'x': 1, 'y': 43},
+    {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
   ];
 
   var x = util.field('x'),
@@ -43,7 +43,7 @@ tape('Extent handles empty and invalid data', function(t) {
   t.deepEqual(e.value, [undefined, undefined]);
 
   df.pulse(c, changeset().insert([
-    {x: NaN}, {x: null}, {x: undefined}
+    {x: NaN}, {x: null}, {x: undefined}, {x: ''}
   ])).run();
   t.deepEqual(e.value, [undefined, undefined]);
 

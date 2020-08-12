@@ -19,7 +19,7 @@ Click to add data points. Shift-click to remove data points.
 | field               | {% include type t="Field" %}   | The data field that determines the stack heights.|
 | groupby             | {% include type t="Field[]" %} | An array of fields by which to partition the data into separate stacks.|
 | sort                | {% include type t="Compare" %} | Criteria for sorting values within each stack.|
-| offset              | {% include type t="Number" %}  | The baseline offset. One of "zero" (default), "center", or "normalize". The "zero" offset will stack starting at 0. The "center" offset will center the stacks. The "normalize" offset will compute percentage values for each stack point, with output values in the range [0,1].|
+| offset              | {% include type t="String" %}  | The baseline offset. One of "zero" (default), "center", or "normalize". The "zero" offset will stack starting at 0. The "center" offset will center the stacks. The "normalize" offset will compute percentage values for each stack point, with output values in the range [0,1].|
 | as                  | {% include type t="String[]" %}| The output fields for the computed start and end stack values. The default is `["y0", "y1"]`.|
 
 ## Usage

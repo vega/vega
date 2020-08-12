@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "4.3.0",
+  "version": "4.3.4",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -19,19 +19,19 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-geo.js -c -m -o build/vega-geo.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
     "d3-array": "^2.4.0",
-    "d3-color": "^1.4.0",
-    "d3-geo": "^1.11.9",
-    "vega-canvas": "^1.2.1",
-    "vega-dataflow": "^5.1.1",
-    "vega-projection": "^1.4.0",
-    "vega-statistics": "^1.7.1",
-    "vega-util": "^1.12.1"
+    "d3-color": "^1.4.1",
+    "d3-geo": "^1.12.1",
+    "vega-canvas": "^1.2.2",
+    "vega-dataflow": "^5.6.0",
+    "vega-projection": "^1.4.2",
+    "vega-statistics": "^1.7.5",
+    "vega-util": "^1.14.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

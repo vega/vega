@@ -1,4 +1,4 @@
-import {Left, Right, Center, Start, End, Vertical} from './constants';
+import {Center, End, Left, Right, Start, Vertical} from './constants';
 import {value} from '../../util';
 import {isObject, stringValue} from 'vega-util';
 
@@ -42,7 +42,7 @@ export function getStyle(name, scope, style) {
 }
 
 export function anchorExpr(s, e, m) {
-  return `item.anchor === "${Start}" ? ${s} : item.anchor === "${End}" ? ${e} : ${m}`;
+  return `item.anchor === '${Start}' ? ${s} : item.anchor === '${End}' ? ${e} : ${m}`;
 }
 
 export const alignExpr = anchorExpr(
@@ -62,10 +62,10 @@ export function tickBand(_) {
     extra = _('tickExtra');
   } else if (v.signal) {
     // if signal, augment code to interpret values
-    band = {signal: `(${v.signal})==='extent'?1:0.5`};
-    extra = {signal: `(${v.signal})==='extent'?true:false`};
+    band = {signal: `(${v.signal}) === 'extent' ? 1 : 0.5`};
+    extra = {signal: `(${v.signal}) === 'extent'`};
     if (!isObject(offset)) {
-      offset = {signal: `(${v.signal})==='extent'?0:${offset}`};
+      offset = {signal: `(${v.signal}) === 'extent' ? 0 : ${offset}`};
     }
   } else if (v === 'extent') {
     // if constant, simply set values
@@ -84,5 +84,5 @@ export function extendOffset(value, offset) {
   return !offset ? value
     : !value ? offset
     : !isObject(value) ? { value, offset }
-    : { ...value, offset: extendOffset(value.offset, offset) };
+    : Object.assign({}, value, { offset: extendOffset(value.offset, offset) });
 }

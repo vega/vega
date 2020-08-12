@@ -9,36 +9,45 @@ import {
 } from 'vega-dataflow';
 
 import {
-  selectionTest,
   selectionResolve,
+  selectionTest,
   selectionVisitor
 } from 'vega-selections';
 
 import {
-  random,
-  cumulativeNormal,
   cumulativeLogNormal,
+  cumulativeNormal,
   cumulativeUniform,
-  densityNormal,
   densityLogNormal,
+  densityNormal,
   densityUniform,
-  quantileNormal,
   quantileLogNormal,
+  quantileNormal,
   quantileUniform,
-  sampleNormal,
+  random,
   sampleLogNormal,
+  sampleNormal,
   sampleUniform
 } from 'vega-statistics';
 
 import {
+  dayofyear,
   timeOffset,
   timeSequence,
   timeUnitSpecifier,
   utcOffset,
-  utcSequence
+  utcSequence,
+  utcdayofyear,
+  utcweek,
+  week
 } from 'vega-time';
 
 import {
+  clampRange,
+  extend,
+  extent,
+  flush,
+  inrange,
   isArray,
   isBoolean,
   isDate,
@@ -46,30 +55,26 @@ import {
   isObject,
   isRegExp,
   isString,
+  lerp,
+  pad,
   panLinear,
   panLog,
   panPow,
   panSymlog,
-  zoomLinear,
-  zoomLog,
-  zoomPow,
-  zoomSymlog,
+  peek,
+  quarter,
+  span,
+  stringValue,
   toBoolean,
   toDate,
   toNumber,
   toString,
-  clampRange,
-  extent,
-  flush,
-  inrange,
-  lerp,
-  pad,
-  peek,
-  quarter,
+  truncate,
   utcquarter,
-  span,
-  stringValue,
-  truncate
+  zoomLinear,
+  zoomLog,
+  zoomPow,
+  zoomSymlog
 } from 'vega-util';
 
 import {
@@ -77,109 +82,103 @@ import {
 } from 'd3-array';
 
 import {
-  rgb,
-  lab,
   hcl,
-  hsl
+  hsl,
+  lab,
+  rgb
 } from 'd3-color';
 
 import {
-  luminance,
-  contrast
-} from './luminance';
+  contrast,
+  luminance
+} from './functions/luminance';
 
 import {
   data,
   indata,
   setdata
-} from './data';
+} from './functions/data';
+
+import encode from './functions/encode';
 
 import {
-  default as encode
-} from './encode';
-
-import {
-  format,
-  utcFormat,
-  timeFormat,
-  utcParse,
-  timeParse,
-  monthFormat,
-  monthAbbrevFormat,
+  dayAbbrevFormat,
   dayFormat,
-  dayAbbrevFormat
-} from './format';
+  format,
+  monthAbbrevFormat,
+  monthFormat,
+  timeFormat,
+  timeParse,
+  utcFormat,
+  utcParse
+} from './functions/format';
 
 import {
   geoArea,
   geoBounds,
   geoCentroid
-} from './geo';
+} from './functions/geo';
+
+import inScope from './functions/inscope';
+
+import intersect from './functions/intersect';
 
 import {
-  default as inScope
-} from './inscope';
-
-import {
-  default as intersect
-} from './intersect';
-
-import {
-  warn,
+  debug,
   info,
-  debug
-} from './log';
+  warn
+} from './functions/log';
+
+import merge from './functions/merge';
+
+import modify from './functions/modify';
 
 import {
-  default as merge
-} from './merge';
+  pinchAngle,
+  pinchDistance
+} from './functions/pinch';
 
 import {
-  default as modify
-} from './modify';
-
-import {
-  pinchDistance,
-  pinchAngle
-} from './pinch';
-
-import {
-  range,
-  domain,
-  bandwidth,
   bandspace,
+  bandwidth,
   copy,
-  scale,
-  invert
-} from './scale';
+  domain,
+  invert,
+  range,
+  scale
+} from './functions/scale';
 
-import {
-  default as scaleGradient
-} from './scale-gradient';
+import scaleGradient from './functions/scale-gradient';
 
 import {
   geoShape,
   pathShape
-} from './shape';
+} from './functions/shape';
 
 import {
-  treePath,
-  treeAncestors
-} from './tree';
+  treeAncestors,
+  treePath
+} from './functions/tree';
 
 import {
   containerSize,
   screen,
   windowSize
-} from './window';
+} from './functions/window';
+
+import {
+  SignalPrefix
+} from './constants';
+
+import {
+  internalScaleFunctions
+} from './scales';
 
 import {
   dataVisitor,
   indataVisitor,
   scaleVisitor
 } from './visitors';
-
-import {SignalPrefix} from './prefix';
 
 // Expression function context object
 export const functionContext = {
@@ -241,6 +240,10 @@ export const functionContext = {
   dayAbbrevFormat,
   quarter,
   utcquarter,
+  week,
+  utcweek,
+  dayofyear,
+  utcdayofyear,
   warn,
   info,
   debug,
@@ -278,6 +281,7 @@ function buildFunctions(codegen) {
   const fn = functions(codegen);
   eventFunctions.forEach(name => fn[name] = eventPrefix + name);
   for (let name in functionContext) { fn[name] = thisPrefix + name; }
+  extend(fn, internalScaleFunctions(codegen, functionContext, astVisitors));
   return fn;
 }
 
@@ -325,7 +329,7 @@ export const codegenParams = {
   blacklist:  ['_'],
   whitelist:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
-  globalvar:  function(id) { return '_[' + stringValue(SignalPrefix + id) + ']'; },
+  globalvar:  id => '_[' + stringValue(SignalPrefix + id) + ']',
   functions:  buildFunctions,
   constants:  constants,
   visitors:   astVisitors

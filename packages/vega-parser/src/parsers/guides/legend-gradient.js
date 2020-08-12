@@ -1,9 +1,9 @@
-import {zero, one} from './constants';
+import {one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {RectMark} from '../marks/marktypes';
 import {LegendGradientRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {
@@ -49,5 +49,9 @@ export default function(spec, scale, config, userEncode) {
     opacity:     _('gradientOpacity')
   });
 
-  return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
+  return guideMark({
+    type: RectMark,
+    role: LegendGradientRole,
+    encode
+  }, userEncode);
 }

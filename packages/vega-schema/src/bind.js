@@ -1,6 +1,6 @@
 import {
-  array, enums, not, object, oneOf, ref,
-  arrayType, numberType, stringType
+  array, arrayType, enums, not, numberType, object,
+  oneOf, ref, stringType
 } from './util';
 
 const Checkbox = 'checkbox',
@@ -41,7 +41,7 @@ const bind = oneOf(
     debounce: numberType,
     name: stringType
   }, true)
-)
+);
 
 export default {
   refs: {

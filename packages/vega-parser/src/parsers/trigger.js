@@ -1,5 +1,5 @@
-import parseExpression from './expression';
 import {operator} from '../util';
+import {parseExpression} from 'vega-functions';
 
 export default function(spec, scope, name) {
   var remove = spec.remove,

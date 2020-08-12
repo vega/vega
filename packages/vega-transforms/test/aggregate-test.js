@@ -140,7 +140,6 @@ tape('Aggregate handles count aggregates', function(t) {
   t.end();
 });
 
-
 tape('Aggregate properly handles empty aggregation cells', function(t) {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
@@ -315,6 +314,7 @@ tape('Aggregate handles cross-product', function(t) {
 tape('Aggregate handles empty/invalid data', function(t) {
   var ops = [
     'count',
+    'missing',
     'valid',
     'sum',
     'product',
@@ -325,23 +325,28 @@ tape('Aggregate handles empty/invalid data', function(t) {
     'max',
     'median'
   ];
-  var res = [1, 0, 0]; // higher indices 'undefined'
+  var res = [4, 3, 0, 0]; // higher indices 'undefined'
 
   var v = util.field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
-        fields: ops.map(function() { return v; }),
+        fields: ops.map(() => v),
         ops: ops,
         as: ops,
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
 
-  df.pulse(col, changeset().insert([{v: NaN}])).run();
+  df.pulse(
+    col,
+    changeset().insert([
+      {v: NaN}, {v: null}, {v: undefined}, {v: ''}
+    ])
+  ).run();
   var d = out.value[0];
 
-  ops.forEach(function(op, i) {
+  ops.forEach((op, i) => {
     t.equal(d[op], res[i], op);
   });
 

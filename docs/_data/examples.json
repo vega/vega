@@ -78,12 +78,13 @@
         {"name": "word-cloud"},
         {"name": "beeswarm-plot"}
     ],
-    "Custom Visual Designs": [
+    "Custom Designs": [
         {"name": "budget-forecasts"},
         {"name": "wheat-and-wages"},
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
+        {"name": "flight-passengers"},
         {"name": "timelines"},
         {"name": "u-district-cuisine"},
         {"name": "clock"},

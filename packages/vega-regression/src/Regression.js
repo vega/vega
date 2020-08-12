@@ -1,8 +1,8 @@
 import partition from './partition';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {
-  regressionLinear, regressionLog, regressionExp,
-  regressionPow, regressionQuad, regressionPoly, sampleCurve
+  regressionExp, regressionLinear, regressionLog,
+  regressionPoly, regressionPow, regressionQuad, sampleCurve
 } from 'vega-statistics';
 import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
 
@@ -35,17 +35,17 @@ export default function Regression(params) {
 }
 
 Regression.Definition = {
-  "type": "Regression",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "x", "type": "field", "required": true },
-    { "name": "y", "type": "field", "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "string", "default": "linear", "values": Object.keys(Methods) },
-    { "name": "order", "type": "number", "default": 3 },
-    { "name": "extent", "type": "number", "array": true, "length": 2 },
-    { "name": "params", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "array": true }
+  'type': 'Regression',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'x', 'type': 'field', 'required': true },
+    { 'name': 'y', 'type': 'field', 'required': true },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'method', 'type': 'string', 'default': 'linear', 'values': Object.keys(Methods) },
+    { 'name': 'order', 'type': 'number', 'default': 3 },
+    { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+    { 'name': 'params', 'type': 'boolean', 'default': false },
+    { 'name': 'as', 'type': 'string', 'array': true }
   ]
 };
 

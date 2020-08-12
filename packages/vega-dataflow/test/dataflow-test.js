@@ -95,7 +95,7 @@ tape('Dataflow handles errors', function(t) {
       error = 0;
 
   df.error = function() { error = 1; };
-  df.add(function() { throw Error('!!!') });
+  df.add(function() { throw Error('!!!'); });
 
   df.run();
 
@@ -104,5 +104,26 @@ tape('Dataflow handles errors', function(t) {
   t.equal(Object.keys(df._input).length, 0);
   t.equal(df._postrun.length, 0);
   t.equal(df._heap.size(), 0);
+  t.end();
+});
+
+tape('Dataflow accepts new logger', function(t) {
+  const store = [];
+  const logger = {
+    level: lvl => store.push('level:'+lvl),
+    error: msg => store.push(msg),
+    warn: msg => store.push(msg),
+    info: msg => store.push(msg),
+    debug: msg => store.push(msg)
+  };
+  const df = new vega.Dataflow().logger(logger);
+
+  df.logLevel(99);
+  df.error('error');
+  df.warn('warn');
+  df.info('info');
+  df.debug('debug');
+
+  t.deepEqual(store, ['level:99', 'error', 'warn', 'info', 'debug']);
   t.end();
 });

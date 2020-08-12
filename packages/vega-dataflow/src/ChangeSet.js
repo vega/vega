@@ -11,6 +11,7 @@ export default function changeset() {
       mod = [],  // modify tuples
       remp = [], // remove by predicate
       modp = [], // modify by predicate
+      clean = null,
       reflow = false;
 
   return {
@@ -40,6 +41,10 @@ export default function changeset() {
     encode: function(t, set) {
       if (isFunction(t)) modp.push({filter: t, field: set});
       else mod.push({tuple: t, field: set});
+      return this;
+    },
+    clean: function(value) {
+      clean = value;
       return this;
     },
     reflow: function() {
@@ -130,6 +135,11 @@ export default function changeset() {
           : tuples.slice();
       } else {
         for (id in out) pulse.mod.push(out[id]);
+      }
+
+      // set pulse garbage collection request
+      if (clean || clean == null && (rem.length || remp.length)) {
+        pulse.clean(true);
       }
 
       return pulse;

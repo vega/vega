@@ -12,6 +12,7 @@ import { LayoutAlign } from './layout';
 import {
   AlignValue,
   AnchorValue,
+  BooleanValue,
   ColorValue,
   DashArrayValue,
   FontStyleValue,
@@ -100,14 +101,6 @@ export interface Legend extends BaseLegend {
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
-   *
-   * @TJS-type integer
-   * @minimum 0
-   */
-  zindex?: number;
-
-  /**
    * Mark definitions for custom legend encoding.
    */
   encode?: LegendEncode;
@@ -142,6 +135,22 @@ export interface BaseLegend {
    * The desired number of tick values for quantitative legends.
    */
   tickCount?: TickCount;
+
+  // ---------- ARIA ----------
+  /**
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree.
+   *
+   * __Default value:__ `true`
+   */
+  aria?: boolean;
+
+  /**
+   * A text description of this legend for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
+   * If the description is unspecified it will be automatically generated.
+   */
+  description?: string;
 
   // ---------- Legend Group ----------
   /**
@@ -197,7 +206,7 @@ export interface BaseLegend {
   titleAnchor?: AnchorValue;
 
   /**
-   * Vertical text baseline for legend titles.
+   * Vertical text baseline for legend titles.  One of `"alphabetic"` (default), `"top"`, `"middle"`, `"bottom"`, `"line-top"`, or `"line-bottom"`. The `"line-top"` and `"line-bottom"` values operate similarly to `"top"` and `"bottom"`, but are calculated relative to the *lineHeight* rather than *fontSize* alone.
    *
    * __Default value:__ `"top"`.
    */
@@ -238,7 +247,7 @@ export interface BaseLegend {
   titleLimit?: NumberValue;
 
   /**
-   * Line height in pixels for multi-line title text.
+   * Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline.
    */
   titleLineHeight?: NumberValue;
 
@@ -463,4 +472,12 @@ export interface BaseLegend {
    * The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled.
    */
   labelSeparation?: number | SignalRef;
+
+  /**
+   * The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
 }

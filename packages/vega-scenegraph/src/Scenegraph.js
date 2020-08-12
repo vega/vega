@@ -30,7 +30,7 @@ prototype.mark = function(markdef, group, index) {
 };
 
 function createMark(def, group) {
-  return {
+  const mark = {
     bounds:      new Bounds(),
     clip:        !!def.clip,
     group:       group,
@@ -41,4 +41,14 @@ function createMark(def, group) {
     role:        def.role || undefined,
     zindex:      def.zindex || 0
   };
+
+  // add accessibility properties if defined
+  if (def.aria != null) {
+    mark.aria = def.aria;
+  }
+  if (def.description) {
+    mark.description = def.description;
+  }
+
+  return mark;
 }

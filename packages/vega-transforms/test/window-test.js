@@ -525,3 +525,42 @@ tape('Window handles prev_value with overwrite', function(t) {
 
   t.end();
 });
+
+tape('Window fill operations handle partition state', function(t) {
+  var data = [
+    {u: 'a',  v: null, key:0, idx:0},
+    {u: null, v: 'b',  key:1, idx:0}
+  ];
+
+  var u = util.field('u'),
+      v = util.field('v'),
+      df = new vega.Dataflow(),
+      col = df.add(Collect),
+      win = df.add(Window, {
+        groupby: [util.field('key')],
+        sort: util.compare('idx'),
+        fields: [u, u, v, v],
+        ops: [
+          'next_value', 'prev_value',
+          'next_value', 'prev_value'
+        ],
+        as: ['un', 'up', 'vn', 'vp'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: win});
+
+  // -- test add
+  df.pulse(col, changeset().insert(data)).run();
+  var d = out.value;
+  t.equal(d.length, data.length);
+  match(t, d[0], {
+    u: 'a', v: null, key: 0, idx: 0,
+    un: 'a', up: 'a', vn: null, vp: null
+  });
+  match(t, d[1], {
+    u: null, v: 'b', key: 1, idx: 0,
+    un: null, up: null, vn: 'b', vp: 'b'
+  });
+
+  t.end();
+});

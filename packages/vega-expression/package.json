@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "2.6.3",
+  "version": "2.6.5",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -20,11 +20,11 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-expression.js -c -m -o build/vega-expression.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-util": "^1.11.0"
+    "vega-util": "^1.14.0"
   }
 }

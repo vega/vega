@@ -1,8 +1,8 @@
 import {ariaLabel} from './aria';
 import background from './background';
-import cursor from './cursor';
-import {data, dataref, change, insert, remove} from './data';
-import {initializeEventConfig, events} from './events';
+import cursor, {setCursor} from './cursor';
+import {change, data, dataref, insert, remove} from './data';
+import {events, initializeEventConfig} from './events';
 import hover from './hover';
 import finalize from './finalize';
 import initialize from './initialize';
@@ -13,18 +13,20 @@ import renderToSVG from './render-to-svg';
 import {resizeRenderer} from './render-size';
 import runtime from './runtime';
 import {scale} from './scale';
-import {resizeView, initializeResize, viewWidth, viewHeight} from './size';
+import {initializeResize, resizeView, viewHeight, viewWidth} from './size';
 import {getState, setState} from './state';
 import timer from './timer';
 import defaultTooltip from './tooltip';
 import trap from './trap';
 
-import {asyncCallback, Dataflow} from 'vega-dataflow';
-import {error, extend, inherits, hasOwnProperty, stringValue} from 'vega-util';
+import {Dataflow, asyncCallback} from 'vega-dataflow';
+import {locale} from 'vega-format';
 import {
-  CanvasHandler, Scenegraph,
-  renderModule, RenderType
+  CanvasHandler, RenderType, Scenegraph, renderModule
 } from 'vega-scenegraph';
+import {
+  error, extend, hasOwnProperty, inherits, stringValue
+} from 'vega-util';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.
@@ -32,30 +34,35 @@ import {
  * should also invoke the initialize method (e.g., to set the parent
  * DOM element in browser-based deployment) and then invoke the run
  * method to evaluate the dataflow graph. Rendering will automatically
- * be peformed upon dataflow runs.
+ * be performed upon dataflow runs.
  * @constructor
  * @param {object} spec - The Vega dataflow runtime specification.
  */
 export default function View(spec, options) {
-  var view = this;
+  const view = this;
   options = options || {};
 
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
   if (options.logger) view.logger(options.logger);
   if (options.logLevel != null) view.logLevel(options.logLevel);
+  if (options.locale || spec.locale) {
+    const loc = extend({}, spec.locale, options.locale);
+    view.locale(locale(loc.number, loc.time));
+  }
 
   view._el = null;
   view._elBind = null;
   view._renderType = options.renderer || RenderType.Canvas;
   view._scenegraph = new Scenegraph();
-  var root = view._scenegraph.root;
+  const root = view._scenegraph.root;
 
   // initialize renderer, handler and event management
   view._renderer = null;
   view._tooltip = options.tooltip || defaultTooltip,
   view._redraw = true;
   view._handler = new CanvasHandler().scene(root);
+  view._globalCursor = false;
   view._preventDefault = false;
   view._timers = [];
   view._eventListeners = [];
@@ -63,17 +70,16 @@ export default function View(spec, options) {
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
+  view.globalCursor(view._eventConfig.globalCursor);
 
   // initialize dataflow graph
-  var ctx = runtime(view, spec, options.functions);
+  const ctx = runtime(view, spec, options.expr);
   view._runtime = ctx;
   view._signals = ctx.signals;
-  view._bind = (spec.bindings || []).map(function(_) {
-    return {
-      state: null,
-      param: extend({}, _)
-    };
-  });
+  view._bind = (spec.bindings || []).map(_ => ({
+    state: null,
+    param: extend({}, _)
+  }));
 
   // initialize scenegraph
   if (ctx.root) ctx.root.set(root);
@@ -297,18 +303,15 @@ prototype.removeResizeListener = function(handler) {
 };
 
 function findOperatorHandler(op, handler) {
-  var t = op._targets || [],
-      h = t.filter(function(op) {
-            var u = op._update;
-            return u && u.handler === handler;
-          });
+  const h = (op._targets || [])
+    .filter(op => op._update && op._update.handler === handler);
   return h.length ? h[0] : null;
 }
 
 function addOperatorListener(view, name, op, handler) {
   var h = findOperatorHandler(op, handler);
   if (!h) {
-    h = trap(this, function() { handler(name, op.value); });
+    h = trap(view, () => handler(name, op.value));
     h.handler = handler;
     view.on(op, null, h);
   }
@@ -335,6 +338,19 @@ prototype.addDataListener = function(name, handler) {
 
 prototype.removeDataListener = function(name, handler) {
   return removeOperatorListener(this, dataref(this, name).values, handler);
+};
+
+prototype.globalCursor = function(_) {
+  if (arguments.length) {
+    if (this._globalCursor !== !!_) {
+      const prev = setCursor(this, null); // clear previous cursor
+      this._globalCursor = !!_;
+      if (prev) setCursor(this, prev); // swap cursor
+    }
+    return this;
+  } else {
+    return this._globalCursor;
+  }
 };
 
 prototype.preventDefault = function(_) {

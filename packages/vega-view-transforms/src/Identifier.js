@@ -19,10 +19,10 @@ export default function Identifier(params) {
 }
 
 Identifier.Definition = {
-  "type": "Identifier",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "as", "type": "string", "required": true }
+  'type': 'Identifier',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'as', 'type': 'string', 'required': true }
   ]
 };
 
@@ -33,7 +33,7 @@ prototype.transform = function(_, pulse) {
       id = counter.value,
       as = _.as;
 
-  pulse.visit(pulse.ADD, function(t) {
+  pulse.visit(pulse.ADD, t => {
     if (!t[as]) t[as] = ++id;
   });
 

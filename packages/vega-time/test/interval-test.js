@@ -30,6 +30,10 @@ tape('timeInterval provides local intervals for time units', function(t) {
   t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 12)));
   t.equal(+local(2012, 3, 4), +ti(local(2012, 3, 4, 7)));
 
+  ti = vega.timeInterval('dayofyear');
+  t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 12)));
+  t.equal(+local(2012, 3, 4), +ti(local(2012, 3, 4, 7)));
+
   ti = vega.timeInterval('hours');
   t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 0, 15)));
   t.equal(+local(2000, 0, 1, 7), +ti(local(2000, 0, 1, 7, 30)));
@@ -74,6 +78,10 @@ tape('utcInterval provides utc intervals for time units', function(t) {
   t.equal(+utc(2012, 3, 4), +ti(utc(2012, 3, 4, 7)));
 
   ti = vega.utcInterval('day');
+  t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 12)));
+  t.equal(+utc(2012, 3, 4), +ti(utc(2012, 3, 4, 7)));
+
+  ti = vega.utcInterval('dayofyear');
   t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 12)));
   t.equal(+utc(2012, 3, 4), +ti(utc(2012, 3, 4, 7)));
 

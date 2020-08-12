@@ -1,8 +1,10 @@
 import {
-  numberValue, stringValue, textOrSignal, anchorValue,
-  alignValue, baselineValue, colorValue, fontWeightValue,
-  def, enums, object, anyOf, oneOf, pattern, ref,
-  booleanType, numberType, stringType, orSignal, numberOrSignal
+  alignValue, anchorValue, anyOf,
+  baselineValue, booleanType,
+  colorValue, def, enums, fontWeightValue,
+  numberOrSignal, numberType, numberValue,
+  object, oneOf, orSignal, pattern, ref,
+  stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -15,7 +17,7 @@ const titleOrientEnum = ['none', 'left', 'right', 'top', 'bottom'];
 const titleFrameEnum = ['group', 'bounds'];
 
 const titleEncode = pattern({
-  '^(?!interactive|name|style).+$': encodeEntryRef,
+  '^(?!interactive|name|style).+$': encodeEntryRef
 });
 
 const title = oneOf(
@@ -25,21 +27,30 @@ const title = oneOf(
     anchor: anchorValue,
     frame: oneOf(enums(titleFrameEnum), stringValueRef),
     offset: numberValue,
+
+    // ARIA CONFIG
+    aria: booleanType,
+
+    // SHARED TEXT CONFIG
     limit: numberValue,
-    text: textOrSignal,
-    subtitle: textOrSignal,
     zindex: numberType,
     align: alignValue,
     angle: numberValue,
     baseline: baselineValue,
     dx: numberValue,
     dy: numberValue,
+
+    // TITLE TEXT CONFIG
+    text: textOrSignal,
     color: colorValue,
     font: stringValue,
     fontSize: numberValue,
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
     lineHeight: numberValue,
+
+    // SUBTITLE TEXT CONFIG
+    subtitle: textOrSignal,
     subtitleColor: colorValue,
     subtitleFont: stringValue,
     subtitleFontSize: numberValue,
@@ -48,7 +59,7 @@ const title = oneOf(
     subtitleLineHeight: numberValue,
     subtitlePadding: numberOrSignal,
 
-    // custom encoders
+    // CUSTOM ENCODERS
     encode: anyOf(
       titleEncode, // deprecated! (v5.7.0)
       object({

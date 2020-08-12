@@ -36,5 +36,5 @@ export default function(_, method) {
       if (level >= Debug) log(method || 'log', 'DEBUG', arguments);
       return this;
     }
-  }
+  };
 }

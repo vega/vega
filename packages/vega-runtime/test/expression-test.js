@@ -6,19 +6,19 @@ var tape = require('tape'),
 
 tape('Parser parses expressions', function(t) {
   var values = [
-    {"x": 1,  "y": 28},
-    {"x": 2,  "y": 43},
-    {"x": 3,  "y": 81},
-    {"x": 4,  "y": 19}
+    {'x': 1,  'y': 28},
+    {'x': 2,  'y': 43},
+    {'x': 3,  'y': 81},
+    {'x': 4,  'y': 19}
   ];
 
   var spec = {operators: [
     {id:0, type:'Operator', value: 50},
-    {id:1, type:'Operator', update: '2 * _.foo', params: {foo:{$ref:0}}},
+    {id:1, type:'Operator', update: {code: '2 * _.foo'}, params: {foo:{$ref:0}}},
     {id:2, type:'Collect',  value: {$ingest: values}},
     {id:3, type:'Formula', params: {
       expr: {
-        $expr: 'datum.x * datum.y',
+        $expr: {code: 'datum.x * datum.y'},
         $fields: ['x', 'y']
       },
       as: 'z',
@@ -26,7 +26,7 @@ tape('Parser parses expressions', function(t) {
     }},
     {id:4, type:'Filter', params: {
       expr: {
-        $expr: 'datum.z > _.bar',
+        $expr: {code: 'datum.z > _.bar'},
         $fields: ['z'],
         $params: {bar: {$ref:1}}
       },
@@ -36,7 +36,7 @@ tape('Parser parses expressions', function(t) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, transforms)),
+      ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes,
       ids = Object.keys(ops),
       z = util.field('z');

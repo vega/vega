@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-time-format'), require('d3-time'), require('d3-shape'), require('d3-path'), require('d3-interpolate'), require('d3-format'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-timer')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-time-format', 'd3-time', 'd3-shape', 'd3-path', 'd3-interpolate', 'd3-format', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-timer'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-timer')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-timer'], factory) :
   (global = global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-}(this, (function (exports, d3Dsv, topojsonClient, d3TimeFormat, d3Time, d3Shape, d3Path, $$1, d3Format, d3Geo, d3Color, d3Force, d3Hierarchy, d3Timer) { 'use strict';
+}(this, (function (exports, d3Dsv, topojsonClient, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Timer) { 'use strict';
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -17,6 +17,24 @@
   function accessorFields(fn) {
     return fn == null ? null : fn.fields;
   }
+
+  function getter(path) {
+    return path.length === 1 ? get1(path[0]) : getN(path);
+  }
+
+  const get1 = field => function(obj) {
+    return obj[field];
+  };
+
+  const getN = path => {
+    const len = path.length;
+    return function(obj) {
+      for (let i = 0; i < len; ++i) {
+        obj = obj[path[i]];
+      }
+      return obj;
+    };
+  };
 
   function error(message) {
     throw Error(message);
@@ -84,32 +102,12 @@
     return path;
   }
 
-  var isArray = Array.isArray;
-
-  function isObject(_) {
-    return _ === Object(_);
-  }
-
-  function isString(_) {
-    return typeof _ === 'string';
-  }
-
-  function $(x) {
-    return isArray(x) ? '[' + x.map($) + ']'
-      : isObject(x) || isString(x) ?
-        // Output valid JSON and JS source strings.
-        // See http://timelessrepo.com/json-isnt-a-javascript-subset
-        JSON.stringify(x).replace('\u2028','\\u2028').replace('\u2029', '\\u2029')
-      : x;
-  }
-
-  function field(field, name) {
-    var path = splitAccessPath(field),
-        code = 'return _[' + path.map($).join('][') + '];';
-
+  function field(field, name, opt) {
+    const path = splitAccessPath(field);
+    field = path.length === 1 ? path[0] : field;
     return accessor(
-      Function('_', code),
-      [(field = path.length===1 ? path[0] : field)],
+      (opt && opt.get || getter)(path),
+      [field],
       name || field
     );
   }
@@ -166,7 +164,13 @@
         if (level >= Debug) log(method || 'log', 'DEBUG', arguments);
         return this;
       }
-    }
+    };
+  }
+
+  var isArray = Array.isArray;
+
+  function isObject(_) {
+    return _ === Object(_);
   }
 
   const isLegalKey = key => key !== '__proto__';
@@ -358,69 +362,52 @@
     return typeof _ === 'function';
   }
 
-  function compare(fields, orders) {
-    var idx = [],
-        cmp = (fields = array(fields)).map(function(f, i) {
-          if (f == null) {
-            return null;
-          } else {
-            idx.push(i);
-            return isFunction(f) ? f
-              : splitAccessPath(f).map($).join('][');
-          }
-        }),
-        n = idx.length - 1,
-        ord = array(orders),
-        code = 'var u,v;return ',
-        i, j, f, u, v, d, t, lt, gt;
+  const DESCENDING = 'descending';
 
-    if (n < 0) return null;
+  function compare(fields, orders, opt) {
+    opt = opt || {};
+    orders = array(orders) || [];
 
-    for (j=0; j<=n; ++j) {
-      i = idx[j];
-      f = cmp[i];
+    const ord = [], get = [], fmap = {},
+          gen = opt.comparator || comparator;
 
-      if (isFunction(f)) {
-        d = 'f' + i;
-        u = '(u=this.' + d + '(a))';
-        v = '(v=this.' + d + '(b))';
-        (t = t || {})[d] = f;
-      } else {
-        u = '(u=a['+f+'])';
-        v = '(v=b['+f+'])';
-      }
+    array(fields).forEach((f, i) => {
+      if (f == null) return;
+      ord.push(orders[i] === DESCENDING ? -1 : 1);
+      get.push(f = isFunction(f) ? f : field(f, null, opt));
+      (accessorFields(f) || []).forEach(_ => fmap[_] = 1);
+    });
 
-      d = '((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))';
-
-      if (ord[i] !== 'descending') {
-        gt = 1;
-        lt = -1;
-      } else {
-        gt = -1;
-        lt = 1;
-      }
-
-      code += '(' + u+'<'+v+'||u==null)&&v!=null?' + lt
-        + ':(u>v||v==null)&&u!=null?' + gt
-        + ':'+d+'!==u&&v===v?' + lt
-        + ':v!==v&&u===u?' + gt
-        + (i < n ? ':' : ':0');
-    }
-
-    f = Function('a', 'b', code + ';');
-    if (t) f = f.bind(t);
-
-    fields = fields.reduce(function(map, field) {
-      if (isFunction(field)) {
-        (accessorFields(field) || []).forEach(function(_) { map[_] = 1; });
-      } else if (field != null) {
-        map[field + ''] = 1;
-      }
-      return map;
-    }, {});
-
-    return accessor(f, Object.keys(fields));
+    return get.length === 0
+      ? null
+      : accessor(gen(get, ord), Object.keys(fmap));
   }
+
+  const compare$1 = (u, v) => (u < v || u == null) && v != null ? -1
+    : (u > v || v == null) && u != null ? 1
+    : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? -1
+    : v !== v && u === u ? 1
+    : 0;
+
+  const comparator = (fields, orders) => fields.length === 1
+    ? compare1(fields[0], orders[0])
+    : compareN(fields, orders, fields.length);
+
+  const compare1 = (field, order) => function(a, b) {
+    return compare$1(field(a), field(b)) * order;
+  };
+
+  const compareN = (fields, orders, n) => {
+    orders.push(0); // pad zero for convenient lookup
+    return function(a, b) {
+      let f, c = 0, i = -1;
+      while (c === 0 && ++i < n) {
+        f = fields[i];
+        c = compare$1(f(a), f(b));
+      }
+      return c * orders[i];
+    };
+  };
 
   function constant(_) {
     return isFunction(_) ? _ : function() { return _; };
@@ -569,10 +556,10 @@
       empty: 0,
       object: obj,
       has: has,
-      get: function(key) {
+      get(key) {
         return has(key) ? obj[key] : undefined;
       },
-      set: function(key, value) {
+      set(key, value) {
         if (!has(key)) {
           ++map.size;
           if (obj[key] === NULL) --map.empty;
@@ -580,7 +567,7 @@
         obj[key] = value;
         return this;
       },
-      delete: function(key) {
+      delete(key) {
         if (has(key)) {
           --map.size;
           ++map.empty;
@@ -588,11 +575,11 @@
         }
         return this;
       },
-      clear: function() {
+      clear() {
         map.size = map.empty = 0;
         map.object = obj = {};
       },
-      test: function(_) {
+      test(_) {
         if (arguments.length) {
           test = _;
           return map;
@@ -600,7 +587,7 @@
           return test;
         }
       },
-      clean: function() {
+      clean() {
         var next = {},
             size = 0,
             key, value;
@@ -686,22 +673,35 @@
     return Object.prototype.toString.call(_) === '[object RegExp]';
   }
 
-  function key(fields, flat) {
+  function isString(_) {
+    return typeof _ === 'string';
+  }
+
+  function key(fields, flat, opt) {
     if (fields) {
       fields = flat
-        ? array(fields).map(function(f) { return f.replace(/\\(.)/g, '$1'); })
+        ? array(fields).map(f => f.replace(/\\(.)/g, '$1'))
         : array(fields);
     }
 
-    var fn = !(fields && fields.length)
-      ? function() { return ''; }
-      : Function('_', 'return \'\'+' +
-          fields.map(function(f) {
-            return '_[' + (flat
-                ? $(f)
-                : splitAccessPath(f).map($).join('][')
-              ) + ']';
-          }).join('+\'|\'+') + ';');
+    const len = fields && fields.length,
+          gen = opt && opt.get || getter,
+          map = f => gen(flat ? [f] : splitAccessPath(f));
+    let fn;
+
+    if (!len) {
+      fn = function() { return ''; };
+    } else if (len === 1) {
+      const get = map(fields[0]);
+      fn = function(_) { return '' + get(_); };
+    } else {
+      const get = fields.map(map);
+      fn = function(_) {
+        let s = '' + get[0](_), i = 0;
+        while (++i < len) s += '|' + get[i](_);
+        return s;
+      };
+    }
 
     return accessor(fn, fields, 'key');
   }
@@ -802,6 +802,15 @@
     return array && (peek(array) - array[0]) || 0;
   }
 
+  function $(x) {
+    return isArray(x) ? '[' + x.map($) + ']'
+      : isObject(x) || isString(x) ?
+        // Output valid JSON and JS source strings.
+        // See http://timelessrepo.com/json-isnt-a-javascript-subset
+        JSON.stringify(x).replace('\u2028','\\u2028').replace('\u2029', '\\u2029')
+      : x;
+  }
+
   function toBoolean(_) {
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
   }
@@ -838,8 +847,8 @@
 
   function visitArray(array, filter, visitor) {
     if (array) {
-      var i = 0, n = array.length, t;
       if (filter) {
+        var i = 0, n = array.length, t;
         for (; i<n; ++i) {
           if (t = filter(array[i])) visitor(t, i, array);
         }
@@ -988,6 +997,7 @@
         mod = [],  // modify tuples
         remp = [], // remove by predicate
         modp = [], // modify by predicate
+        clean = null,
         reflow = false;
 
     return {
@@ -1017,6 +1027,10 @@
       encode: function(t, set) {
         if (isFunction(t)) modp.push({filter: t, field: set});
         else mod.push({tuple: t, field: set});
+        return this;
+      },
+      clean: function(value) {
+        clean = value;
         return this;
       },
       reflow: function() {
@@ -1107,6 +1121,11 @@
             : tuples.slice();
         } else {
           for (id in out) pulse.mod.push(out[id]);
+        }
+
+        // set pulse garbage collection request
+        if (clean || clean == null && (rem.length || remp.length)) {
+          pulse.clean(true);
         }
 
         return pulse;
@@ -1374,6 +1393,25 @@
       }
     }
     return argval;
+  };
+
+  /**
+   * Detach this operator from the dataflow.
+   * Unregisters listeners on upstream dependencies.
+   */
+  prototype$1.detach = function() {
+    var argops = this._argops,
+        i, n, item, op;
+
+    if (argops) {
+      for (i=0, n=argops.length; i<n; ++i) {
+        item = argops[i];
+        op = item.op;
+        if (op._targets) {
+          op._targets.remove(this);
+        }
+      }
+    }
   };
 
   /**
@@ -1864,14 +1902,13 @@
   function inferType(values, field) {
     if (!values || !values.length) return 'unknown';
 
-    var value, i, j, t = 0,
-        n = values.length,
-        m = typeTests.length,
-        a = typeTests.map(function(_, i) { return i + 1; });
+    const n = values.length,
+          m = typeTests.length,
+          a = typeTests.map((_, i) => i + 1);
 
-    for (i=0, n=values.length; i<n; ++i) {
+    for (let i = 0, t = 0, j, value; i < n; ++i) {
       value = field ? values[i][field] : values[i];
-      for (j=0; j<m; ++j) {
+      for (j = 0; j < m; ++j) {
         if (a[j] && isValid(value) && !typeTests[j](value)) {
           a[j] = 0;
           ++t;
@@ -1880,8 +1917,9 @@
       }
     }
 
-    t = a.reduce(function(u, v) { return u === 0 ? v : u; }, 0) - 1;
-    return typeList[t];
+    return typeList[
+      a.reduce((u, v) => u === 0 ? v : u, 0) - 1
+    ];
   }
 
   function inferTypes(data, fields) {
@@ -2006,23 +2044,945 @@
     return f && f.responseType || 'text';
   }
 
-  function read(data, schema, dateParse) {
+  function memoize(method) {
+    const cache = {};
+    return spec => cache[spec] || (cache[spec] = method(spec));
+  }
+
+  function ascending(a, b) {
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  function bisector(compare) {
+    if (compare.length === 1) compare = ascendingComparator(compare);
+    return {
+      left: function(a, x, lo, hi) {
+        if (lo == null) lo = 0;
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+          var mid = lo + hi >>> 1;
+          if (compare(a[mid], x) < 0) lo = mid + 1;
+          else hi = mid;
+        }
+        return lo;
+      },
+      right: function(a, x, lo, hi) {
+        if (lo == null) lo = 0;
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+          var mid = lo + hi >>> 1;
+          if (compare(a[mid], x) > 0) hi = mid;
+          else lo = mid + 1;
+        }
+        return lo;
+      }
+    };
+  }
+
+  function ascendingComparator(f) {
+    return function(d, x) {
+      return ascending(f(d), x);
+    };
+  }
+
+  var ascendingBisect = bisector(ascending);
+  var bisectRight = ascendingBisect.right;
+  var bisectLeft = ascendingBisect.left;
+
+  function variance(values, valueof) {
+    let count = 0;
+    let delta;
+    let mean = 0;
+    let sum = 0;
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          delta = value - mean;
+          mean += delta / ++count;
+          sum += delta * (value - mean);
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          delta = value - mean;
+          mean += delta / ++count;
+          sum += delta * (value - mean);
+        }
+      }
+    }
+    if (count > 1) return sum / (count - 1);
+  }
+
+  function deviation(values, valueof) {
+    const v = variance(values, valueof);
+    return v ? Math.sqrt(v) : v;
+  }
+
+  function sequence(start, stop, step) {
+    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+    var i = -1,
+        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+        range = new Array(n);
+
+    while (++i < n) {
+      range[i] = start + i * step;
+    }
+
+    return range;
+  }
+
+  var e10 = Math.sqrt(50),
+      e5 = Math.sqrt(10),
+      e2 = Math.sqrt(2);
+
+  function ticks(start, stop, count) {
+    var reverse,
+        i = -1,
+        n,
+        ticks,
+        step;
+
+    stop = +stop, start = +start, count = +count;
+    if (start === stop && count > 0) return [start];
+    if (reverse = stop < start) n = start, start = stop, stop = n;
+    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+
+    if (step > 0) {
+      start = Math.ceil(start / step);
+      stop = Math.floor(stop / step);
+      ticks = new Array(n = Math.ceil(stop - start + 1));
+      while (++i < n) ticks[i] = (start + i) * step;
+    } else {
+      start = Math.floor(start * step);
+      stop = Math.ceil(stop * step);
+      ticks = new Array(n = Math.ceil(start - stop + 1));
+      while (++i < n) ticks[i] = (start - i) / step;
+    }
+
+    if (reverse) ticks.reverse();
+
+    return ticks;
+  }
+
+  function tickIncrement(start, stop, count) {
+    var step = (stop - start) / Math.max(0, count),
+        power = Math.floor(Math.log(step) / Math.LN10),
+        error = step / Math.pow(10, power);
+    return power >= 0
+        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+  }
+
+  function tickStep(start, stop, count) {
+    var step0 = Math.abs(stop - start) / Math.max(0, count),
+        step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+        error = step0 / step1;
+    if (error >= e10) step1 *= 10;
+    else if (error >= e5) step1 *= 5;
+    else if (error >= e2) step1 *= 2;
+    return stop < start ? -step1 : step1;
+  }
+
+  function max(values, valueof) {
+    let max;
+    if (valueof === undefined) {
+      for (const value of values) {
+        if (value != null
+            && (max < value || (max === undefined && value >= value))) {
+          max = value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null
+            && (max < value || (max === undefined && value >= value))) {
+          max = value;
+        }
+      }
+    }
+    return max;
+  }
+
+  function min(values, valueof) {
+    let min;
+    if (valueof === undefined) {
+      for (const value of values) {
+        if (value != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null
+            && (min > value || (min === undefined && value >= value))) {
+          min = value;
+        }
+      }
+    }
+    return min;
+  }
+
+  // Based on https://github.com/mourner/quickselect
+  // ISC license, Copyright 2018 Vladimir Agafonkin.
+  function quickselect(array, k, left = 0, right = array.length - 1, compare = ascending) {
+    while (right > left) {
+      if (right - left > 600) {
+        const n = right - left + 1;
+        const m = k - left + 1;
+        const z = Math.log(n);
+        const s = 0.5 * Math.exp(2 * z / 3);
+        const sd = 0.5 * Math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
+        const newLeft = Math.max(left, Math.floor(k - m * s / n + sd));
+        const newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
+        quickselect(array, k, newLeft, newRight, compare);
+      }
+
+      const t = array[k];
+      let i = left;
+      let j = right;
+
+      swap(array, left, k);
+      if (compare(array[right], t) > 0) swap(array, left, right);
+
+      while (i < j) {
+        swap(array, i, j), ++i, --j;
+        while (compare(array[i], t) < 0) ++i;
+        while (compare(array[j], t) > 0) --j;
+      }
+
+      if (compare(array[left], t) === 0) swap(array, left, j);
+      else ++j, swap(array, j, right);
+
+      if (j <= k) left = j + 1;
+      if (k <= j) right = j - 1;
+    }
+    return array;
+  }
+
+  function swap(array, i, j) {
+    const t = array[i];
+    array[i] = array[j];
+    array[j] = t;
+  }
+
+  function number(x) {
+    return x === null ? NaN : +x;
+  }
+
+  function* numbers(values, valueof) {
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    }
+  }
+
+  function quantile(values, p, valueof) {
+    values = Float64Array.from(numbers(values, valueof));
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return min(values);
+    if (p >= 1) return max(values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = max(quickselect(values, i0).subarray(0, i0 + 1)),
+        value1 = min(values.subarray(i0 + 1));
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function quantileSorted(values, p, valueof = number) {
+    if (!(n = values.length)) return;
+    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = +valueof(values[i0], i0, values),
+        value1 = +valueof(values[i0 + 1], i0 + 1, values);
+    return value0 + (value1 - value0) * (i - i0);
+  }
+
+  function mean(values, valueof) {
+    let count = 0;
+    let sum = 0;
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          ++count, sum += value;
+        }
+      }
+    }
+    if (count) return sum / count;
+  }
+
+  function median(values, valueof) {
+    return quantile(values, 0.5, valueof);
+  }
+
+  function permute(source, keys) {
+    return Array.from(keys, key => source[key]);
+  }
+
+  function sum(values, valueof) {
+    let sum = 0;
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value = +value) {
+          sum += value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if (value = +valueof(value, ++index, values)) {
+          sum += value;
+        }
+      }
+    }
+    return sum;
+  }
+
+  function trimZeroes(numberFormat, decimalChar) {
+    return x => {
+      var str = numberFormat(x),
+          dec = str.indexOf(decimalChar),
+          idx, end;
+
+      if (dec < 0) return str;
+
+      idx = rightmostDigit(str, dec);
+      end = idx < str.length ? str.slice(idx) : '';
+      while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+
+      return str.slice(0, idx) + end;
+    };
+  }
+
+  function rightmostDigit(str, dec) {
+    var i = str.lastIndexOf('e'), c;
+    if (i > 0) return i;
+    for (i=str.length; --i > dec;) {
+      c = str.charCodeAt(i);
+      if (c >= 48 && c <= 57) return i + 1; // is digit
+    }
+  }
+
+  function numberLocale(locale) {
+    const format = memoize(locale.format),
+          formatPrefix = locale.formatPrefix;
+
+    return {
+      format,
+      formatPrefix,
+      formatFloat(spec) {
+        var s = d3Format.formatSpecifier(spec || ',');
+        if (s.precision == null) {
+          s.precision = 12;
+          switch (s.type) {
+            case '%': s.precision -= 2; break;
+            case 'e': s.precision -= 1; break;
+          }
+          return trimZeroes(
+            format(s),          // number format
+            format('.1f')(1)[1] // decimal point character
+          );
+        } else {
+          return format(s);
+        }
+      },
+      formatSpan(start, stop, count, specifier) {
+        specifier = d3Format.formatSpecifier(specifier == null ? ',f' : specifier);
+        const step = tickStep(start, stop, count),
+              value = Math.max(Math.abs(start), Math.abs(stop));
+        let precision;
+
+        if (specifier.precision == null) {
+          switch (specifier.type) {
+            case 's': {
+              if (!isNaN(precision = d3Format.precisionPrefix(step, value))) {
+                specifier.precision = precision;
+              }
+              return formatPrefix(specifier, value);
+            }
+            case '':
+            case 'e':
+            case 'g':
+            case 'p':
+            case 'r': {
+              if (!isNaN(precision = d3Format.precisionRound(step, value))) {
+                specifier.precision = precision - (specifier.type === 'e');
+              }
+              break;
+            }
+            case 'f':
+            case '%': {
+              if (!isNaN(precision = d3Format.precisionFixed(step))) {
+                specifier.precision = precision - (specifier.type === '%') * 2;
+              }
+              break;
+            }
+          }
+        }
+        return format(specifier);
+      }
+    };
+  }
+
+  let defaultNumberLocale;
+  resetNumberFormatDefaultLocale();
+
+  function resetNumberFormatDefaultLocale() {
+    return defaultNumberLocale = numberLocale({
+      format: d3Format.format,
+      formatPrefix: d3Format.formatPrefix
+    });
+  }
+
+  function numberFormatLocale(definition) {
+    return numberLocale(d3Format.formatLocale(definition));
+  }
+
+  function numberFormatDefaultLocale(definition) {
+    return arguments.length
+      ? (defaultNumberLocale = numberFormatLocale(definition))
+      : defaultNumberLocale;
+  }
+
+  const YEAR = 'year';
+  const QUARTER = 'quarter';
+  const MONTH = 'month';
+  const WEEK = 'week';
+  const DATE = 'date';
+  const DAY = 'day';
+  const DAYOFYEAR = 'dayofyear';
+  const HOURS = 'hours';
+  const MINUTES = 'minutes';
+  const SECONDS = 'seconds';
+  const MILLISECONDS = 'milliseconds';
+
+  const TIME_UNITS = [
+    YEAR,
+    QUARTER,
+    MONTH,
+    WEEK,
+    DATE,
+    DAY,
+    DAYOFYEAR,
+    HOURS,
+    MINUTES,
+    SECONDS,
+    MILLISECONDS
+  ];
+
+  const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
+
+  function timeUnits(units) {
+    const u = array(units).slice(),
+          m = {};
+
+    // check validity
+    if (!u.length) error('Missing time unit.');
+
+    u.forEach(unit => {
+      if (hasOwnProperty(UNITS, unit)) {
+        m[unit] = 1;
+      } else {
+        error(`Invalid time unit: ${unit}.`);
+      }
+    });
+
+    const numTypes = (
+      (m[WEEK] || m[DAY] ? 1 : 0) +
+      (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) +
+      (m[DAYOFYEAR] ? 1 : 0)
+    );
+
+    if (numTypes > 1) {
+      error(`Incompatible time units: ${units}`);
+    }
+
+    // ensure proper sort order
+    u.sort((a, b) => UNITS[a] - UNITS[b]);
+
+    return u;
+  }
+
+  const defaultSpecifiers = {
+    [YEAR]: '%Y ',
+    [QUARTER]: 'Q%q ',
+    [MONTH]: '%b ',
+    [DATE]: '%d ',
+    [WEEK]: 'W%U ',
+    [DAY]: '%a ',
+    [DAYOFYEAR]: '%j ',
+    [HOURS]: '%H:00',
+    [MINUTES]: '00:%M',
+    [SECONDS]: ':%S',
+    [MILLISECONDS]: '.%L',
+    [`${YEAR}-${MONTH}`]: '%Y-%m ',
+    [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
+    [`${HOURS}-${MINUTES}`]: '%H:%M'
+  };
+
+  function timeUnitSpecifier(units, specifiers) {
+    const s = extend({}, defaultSpecifiers, specifiers),
+          u = timeUnits(units),
+          n = u.length;
+
+    let fmt = '', start = 0, end, key;
+
+    for (start=0; start<n; ) {
+      for (end=u.length; end > start; --end) {
+        key = u.slice(start, end).join('-');
+        if (s[key] != null) {
+          fmt += s[key];
+          start = end;
+          break;
+        }
+      }
+    }
+
+    return fmt.trim();
+  }
+
+  const t0 = new Date;
+
+  function localYear(y) {
+    t0.setFullYear(y);
+    t0.setMonth(0);
+    t0.setDate(1);
+    t0.setHours(0, 0, 0, 0);
+    return t0;
+  }
+
+  function dayofyear(d) {
+    return localDayOfYear(new Date(d));
+  }
+
+  function week(d) {
+    return localWeekNum(new Date(d));
+  }
+
+  function localDayOfYear(d) {
+    return d3Time.timeDay.count(localYear(d.getFullYear()) - 1, d);
+  }
+
+  function localWeekNum(d) {
+    return d3Time.timeWeek.count(localYear(d.getFullYear()) - 1, d);
+  }
+
+  function localFirst(y) {
+    return localYear(y).getDay();
+  }
+
+  function localDate(y, m, d, H, M, S, L) {
+    if (0 <= y && y < 100) {
+      var date = new Date(-1, m, d, H, M, S, L);
+      date.setFullYear(y);
+      return date;
+    }
+    return new Date(y, m, d, H, M, S, L);
+  }
+
+  function utcdayofyear(d) {
+    return utcDayOfYear(new Date(d));
+  }
+
+  function utcweek(d) {
+    return utcWeekNum(new Date(d));
+  }
+
+  function utcDayOfYear(d) {
+    const y = Date.UTC(d.getUTCFullYear(), 0, 1);
+    return d3Time.utcDay.count(y - 1, d);
+  }
+
+  function utcWeekNum(d) {
+    const y = Date.UTC(d.getUTCFullYear(), 0, 1);
+    return d3Time.utcWeek.count(y - 1, d);
+  }
+
+  function utcFirst(y) {
+    t0.setTime(Date.UTC(y, 0, 1));
+    return t0.getUTCDay();
+  }
+
+  function utcDate(y, m, d, H, M, S, L) {
+    if (0 <= y && y < 100) {
+      var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
+      date.setUTCFullYear(d.y);
+      return date;
+    }
+    return new Date(Date.UTC(y, m, d, H, M, S, L));
+  }
+
+  function floor(units, step, get, inv, newDate) {
+    const s = step || 1,
+          b = peek(units),
+          _ = (unit, p, key) => {
+            key = key || unit;
+            return getUnit(get[key], inv[key], unit === b && s, p);
+          };
+
+    const t = new Date,
+          u = toSet(units),
+          y = u[YEAR] ? _(YEAR) : constant(2012),
+          m = u[MONTH] ? _(MONTH)
+            : u[QUARTER] ? _(QUARTER)
+            : zero,
+          d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY)
+            : u[WEEK] ? _(WEEK, 1)
+            : u[DAY] ? _(DAY, 1)
+            : u[DATE] ? _(DATE, 1)
+            : u[DAYOFYEAR] ? _(DAYOFYEAR, 1)
+            : one,
+          H = u[HOURS] ? _(HOURS) : zero,
+          M = u[MINUTES] ? _(MINUTES) : zero,
+          S = u[SECONDS] ? _(SECONDS) : zero,
+          L = u[MILLISECONDS] ? _(MILLISECONDS) : zero;
+
+    return function(v) {
+      t.setTime(+v);
+      const year = y(t);
+      return newDate(year, m(t), d(t, year), H(t), M(t), S(t), L(t));
+    };
+  }
+
+  function getUnit(f, inv, step, phase) {
+    const u = step <= 1 ? f
+      : phase ? (d, y) => phase + step * Math.floor((f(d, y) - phase) / step)
+      : (d, y) => step * Math.floor(f(d, y) / step);
+    return inv ? (d, y) => inv(u(d, y), y) : u;
+  }
+
+  // returns the day of the year based on week number, day of week,
+  // and the day of the week for the first day of the year
+  function weekday(week, day, firstDay) {
+    return day + week * 7 - (firstDay + 6) % 7;
+  }
+
+  // -- LOCAL TIME --
+
+  const localGet = {
+    [YEAR]:         d => d.getFullYear(),
+    [QUARTER]:      d => Math.floor(d.getMonth() / 3),
+    [MONTH]:        d => d.getMonth(),
+    [DATE]:         d => d.getDate(),
+    [HOURS]:        d => d.getHours(),
+    [MINUTES]:      d => d.getMinutes(),
+    [SECONDS]:      d => d.getSeconds(),
+    [MILLISECONDS]: d => d.getMilliseconds(),
+    [DAYOFYEAR]:    d => localDayOfYear(d),
+    [WEEK]:         d => localWeekNum(d),
+    [WEEK + DAY]:   (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
+    [DAY]:          (d, y) => weekday(1, d.getDay(), localFirst(y))
+  };
+
+  const localInv = {
+    [QUARTER]: q => 3 * q,
+    [WEEK]:    (w, y) => weekday(w, 0, localFirst(y))
+  };
+
+  function timeFloor(units, step) {
+    return floor(units, step || 1, localGet, localInv, localDate);
+  }
+
+  // -- UTC TIME --
+
+  const utcGet = {
+    [YEAR]:         d => d.getUTCFullYear(),
+    [QUARTER]:      d => Math.floor(d.getUTCMonth() / 3),
+    [MONTH]:        d => d.getUTCMonth(),
+    [DATE]:         d => d.getUTCDate(),
+    [HOURS]:        d => d.getUTCHours(),
+    [MINUTES]:      d => d.getUTCMinutes(),
+    [SECONDS]:      d => d.getUTCSeconds(),
+    [MILLISECONDS]: d => d.getUTCMilliseconds(),
+    [DAYOFYEAR]:    d => utcDayOfYear(d),
+    [WEEK]:         d => utcWeekNum(d),
+    [DAY]:          (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
+    [WEEK + DAY]:   (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+  };
+
+  const utcInv = {
+    [QUARTER]: q => 3 * q,
+    [WEEK]:    (w, y) => weekday(w, 0, utcFirst(y))
+  };
+
+  function utcFloor(units, step) {
+    return floor(units, step || 1, utcGet, utcInv, utcDate);
+  }
+
+  const timeIntervals = {
+    [YEAR]:         d3Time.timeYear,
+    [QUARTER]:      d3Time.timeMonth.every(3),
+    [MONTH]:        d3Time.timeMonth,
+    [WEEK]:         d3Time.timeWeek,
+    [DATE]:         d3Time.timeDay,
+    [DAY]:          d3Time.timeDay,
+    [DAYOFYEAR]:    d3Time.timeDay,
+    [HOURS]:        d3Time.timeHour,
+    [MINUTES]:      d3Time.timeMinute,
+    [SECONDS]:      d3Time.timeSecond,
+    [MILLISECONDS]: d3Time.timeMillisecond
+  };
+
+  const utcIntervals = {
+    [YEAR]:         d3Time.utcYear,
+    [QUARTER]:      d3Time.utcMonth.every(3),
+    [MONTH]:        d3Time.utcMonth,
+    [WEEK]:         d3Time.utcWeek,
+    [DATE]:         d3Time.utcDay,
+    [DAY]:          d3Time.utcDay,
+    [DAYOFYEAR]:    d3Time.utcDay,
+    [HOURS]:        d3Time.utcHour,
+    [MINUTES]:      d3Time.utcMinute,
+    [SECONDS]:      d3Time.utcSecond,
+    [MILLISECONDS]: d3Time.utcMillisecond
+  };
+
+  function timeInterval(unit) {
+    return timeIntervals[unit];
+  }
+
+  function utcInterval(unit) {
+    return utcIntervals[unit];
+  }
+
+  function offset(ival, date, step) {
+    return ival ? ival.offset(date, step) : undefined;
+  }
+
+  function timeOffset(unit, date, step) {
+    return offset(timeInterval(unit), date, step);
+  }
+
+  function utcOffset(unit, date, step) {
+    return offset(utcInterval(unit), date, step);
+  }
+
+  function sequence$1(ival, start, stop, step) {
+    return ival ? ival.range(start, stop, step) : undefined;
+  }
+
+  function timeSequence(unit, start, stop, step) {
+    return sequence$1(timeInterval(unit), start, stop, step);
+  }
+
+  function utcSequence(unit, start, stop, step) {
+    return sequence$1(utcInterval(unit), start, stop, step);
+  }
+
+  const durationSecond = 1000,
+        durationMinute = durationSecond * 60,
+        durationHour = durationMinute * 60,
+        durationDay = durationHour * 24,
+        durationWeek = durationDay * 7,
+        durationMonth = durationDay * 30,
+        durationYear = durationDay * 365;
+
+  const Milli   = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS],
+        Seconds = Milli.slice(0, -1),
+        Minutes = Seconds.slice(0, -1),
+        Hours   = Minutes.slice(0, -1),
+        Day     = Hours.slice(0, -1),
+        Week    = [YEAR, WEEK],
+        Month   = [YEAR, MONTH],
+        Year    = [YEAR];
+
+  const intervals = [
+    [Seconds,  1,      durationSecond],
+    [Seconds,  5,  5 * durationSecond],
+    [Seconds, 15, 15 * durationSecond],
+    [Seconds, 30, 30 * durationSecond],
+    [Minutes,  1,      durationMinute],
+    [Minutes,  5,  5 * durationMinute],
+    [Minutes, 15, 15 * durationMinute],
+    [Minutes, 30, 30 * durationMinute],
+    [  Hours,  1,      durationHour  ],
+    [  Hours,  3,  3 * durationHour  ],
+    [  Hours,  6,  6 * durationHour  ],
+    [  Hours, 12, 12 * durationHour  ],
+    [    Day,  1,      durationDay   ],
+    [   Week,  1,      durationWeek  ],
+    [  Month,  1,      durationMonth ],
+    [  Month,  3,  3 * durationMonth ],
+    [   Year,  1,      durationYear  ]
+  ];
+
+  function timeBin(opt) {
+    const ext = opt.extent,
+          max = opt.maxbins || 40,
+          target = Math.abs(span(ext)) / max;
+
+    let i = bisector(i => i[2]).right(intervals, target),
+        units, step;
+
+    if (i === intervals.length) {
+      units = Year,
+      step = tickStep(ext[0] / durationYear, ext[1] / durationYear, max);
+    } else if (i) {
+      i = intervals[target / intervals[i - 1][2] < intervals[i][2] / target ? i - 1 : i];
+      units = i[0];
+      step = i[1];
+    } else {
+      units = Milli;
+      step = Math.max(tickStep(ext[0], ext[1], max), 1);
+    }
+
+    return {units, step};
+  }
+
+  function timeMultiFormat(format, interval, spec) {
+    spec = spec || {};
+    if (!isObject(spec)) {
+      error(`Invalid time multi-format specifier: ${spec}`);
+    }
+
+    const second = interval(SECONDS),
+          minute = interval(MINUTES),
+          hour = interval(HOURS),
+          day = interval(DATE),
+          week = interval(WEEK),
+          month = interval(MONTH),
+          quarter = interval(QUARTER),
+          year = interval(YEAR),
+          L = format(spec[MILLISECONDS] || '.%L'),
+          S = format(spec[SECONDS] || ':%S'),
+          M = format(spec[MINUTES] || '%I:%M'),
+          H = format(spec[HOURS] || '%I %p'),
+          d = format(spec[DATE] || spec[DAY] || '%a %d'),
+          w = format(spec[WEEK] || '%b %d'),
+          m = format(spec[MONTH] || '%B'),
+          q = format(spec[QUARTER] || '%B'),
+          y = format(spec[YEAR] || '%Y');
+
+    return date => (
+      second(date) < date ? L :
+      minute(date) < date ? S :
+      hour(date) < date ? M :
+      day(date) < date ? H :
+      month(date) < date ? (week(date) < date ? d : w) :
+      year(date) < date ? (quarter(date) < date ? m : q) :
+      y)(date);
+  }
+
+  function timeLocale(locale) {
+    const timeFormat = memoize(locale.format),
+          utcFormat = memoize(locale.utcFormat);
+
+    return {
+      timeFormat: spec => isString(spec)
+        ? timeFormat(spec)
+        : timeMultiFormat(timeFormat, timeInterval, spec),
+      utcFormat: spec => isString(spec)
+        ? utcFormat(spec)
+        : timeMultiFormat(utcFormat, utcInterval, spec),
+      timeParse: memoize(locale.parse),
+      utcParse: memoize(locale.utcParse)
+    };
+  }
+
+  let defaultTimeLocale;
+  resetTimeFormatDefaultLocale();
+
+  function resetTimeFormatDefaultLocale() {
+    return defaultTimeLocale = timeLocale({
+      format: d3TimeFormat.timeFormat,
+      parse: d3TimeFormat.timeParse,
+      utcFormat: d3TimeFormat.utcFormat,
+      utcParse: d3TimeFormat.utcParse
+    });
+  }
+
+  function timeFormatLocale(definition) {
+    return timeLocale(d3TimeFormat.timeFormatLocale(definition));
+  }
+
+  function timeFormatDefaultLocale(definition) {
+    return arguments.length
+      ? (defaultTimeLocale = timeFormatLocale(definition))
+      : defaultTimeLocale;
+  }
+
+  const createLocale = (number, time) => extend({}, number, time);
+
+  function locale(numberSpec, timeSpec) {
+    const number = numberSpec
+      ? numberFormatLocale(numberSpec)
+      : numberFormatDefaultLocale();
+
+    const time = timeSpec
+      ? timeFormatLocale(timeSpec)
+      : timeFormatDefaultLocale();
+
+    return createLocale(number, time);
+  }
+
+  function defaultLocale(numberSpec, timeSpec) {
+    const args = arguments.length;
+    if (args && args !== 2) {
+      error('defaultLocale expects either zero or two arguments.');
+    }
+
+    return args
+      ? createLocale(
+          numberFormatDefaultLocale(numberSpec),
+          timeFormatDefaultLocale(timeSpec)
+        )
+      : createLocale(
+          numberFormatDefaultLocale(),
+          timeFormatDefaultLocale()
+        );
+  }
+
+  function resetDefaultLocale() {
+    resetNumberFormatDefaultLocale();
+    resetTimeFormatDefaultLocale();
+    return defaultLocale();
+  }
+
+  function read(data, schema, timeParser, utcParser) {
     schema = schema || {};
 
     const reader = formats(schema.type || 'json');
     if (!reader) error('Unknown data format type: ' + schema.type);
 
     data = reader(data, schema);
-    if (schema.parse) parse(data, schema.parse, dateParse);
+    if (schema.parse) parse(data, schema.parse, timeParser, utcParser);
 
     if (hasOwnProperty(data, 'columns')) delete data.columns;
     return data;
   }
 
-  function parse(data, types, dateParse) {
+  function parse(data, types, timeParser, utcParser) {
     if (!data.length) return; // early exit for empty data
 
-    dateParse = dateParse || d3TimeFormat.timeParse;
+    const locale = timeFormatDefaultLocale();
+    timeParser = timeParser || locale.timeParse;
+    utcParser = utcParser || locale.utcParse;
 
     var fields = data.columns || Object.keys(data[0]),
         parsers, datum, field, i, j, n, m;
@@ -2034,7 +2994,7 @@
       var type = types[field],
           parts, pattern;
 
-      if (type && (type.indexOf('date:') === 0 || type.indexOf('utc:') === 0)) {
+      if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
         parts = type.split(/:(.+)?/, 2);  // split on first :
         pattern = parts[1];
 
@@ -2043,7 +3003,8 @@
           pattern = pattern.slice(1, -1);
         }
 
-        return parts[0] === 'utc' ? d3TimeFormat.utcParse(pattern) : dateParse(pattern);
+        const parse = parts[0] === 'utc' ? utcParser : timeParser;
+        return parse(pattern);
       }
 
       if (!typeParsers[type]) {
@@ -2067,7 +3028,10 @@
     null // no file system access
   );
 
-  const parse$1 = read;
+  function parse$1(data, format) {
+    const locale = this.locale();
+    return read(data, format, locale.timeParse, locale.utcParse);
+  }
 
   /**
    * Ingests new data into the dataflow. First parses the data using the
@@ -2081,7 +3045,8 @@
    * @returns {Dataflow}
    */
   function ingest$1(target, data, format) {
-    return this.pulse(target, this.changeset().insert(parse$1(data, format)));
+    data = this.parse(data, format);
+    return this.pulse(target, this.changeset().insert(data));
   }
 
   /**
@@ -2105,7 +3070,7 @@
         response: responseType(format && format.type)
       });
       try {
-        data = parse$1(data, format);
+        data = df.parse(data, format);
       } catch (err) {
         status = -2;
         df.warn('Data ingestion failed', url, err);
@@ -2267,19 +3232,19 @@
   /**
    * Sentinel value indicating pulse propagation should stop.
    */
-  var StopPropagation = {};
+  const StopPropagation = {};
 
   // Pulse visit type flags
-  var ADD       = (1 << 0),
-      REM       = (1 << 1),
-      MOD       = (1 << 2),
-      ADD_REM   = ADD | REM,
-      ADD_MOD   = ADD | MOD,
-      ALL       = ADD | REM | MOD,
-      REFLOW    = (1 << 3),
-      SOURCE    = (1 << 4),
-      NO_SOURCE = (1 << 5),
-      NO_FIELDS = (1 << 6);
+  const ADD       = (1 << 0),
+        REM       = (1 << 1),
+        MOD       = (1 << 2),
+        ADD_REM   = ADD | REM,
+        ADD_MOD   = ADD | MOD,
+        ALL       = ADD | REM | MOD,
+        REFLOW    = (1 << 3),
+        SOURCE    = (1 << 4),
+        NO_SOURCE = (1 << 5),
+        NO_FIELDS = (1 << 6);
 
   /**
    * A Pulse enables inter-operator communication during a run of the
@@ -2314,7 +3279,7 @@
     this.encode = encode || null;
   }
 
-  var prototype$3 = Pulse.prototype;
+  const prototype$3 = Pulse.prototype;
 
   /**
    * Sentinel value indicating pulse propagation should stop.
@@ -2398,7 +3363,7 @@
    * @see init
    */
   prototype$3.clone = function() {
-    var p = this.fork(ALL);
+    const p = this.fork(ALL);
     p.add = p.add.slice();
     p.rem = p.rem.slice();
     p.mod = p.mod.slice();
@@ -2417,8 +3382,8 @@
    *   pulse does not have a backing source, it is returned directly.
    */
   prototype$3.addAll = function() {
-    var p = this;
-    if (!this.source || this.source.length === this.add.length) {
+    let p = this;
+    if (!p.source || p.source.length === p.add.length) {
       return p;
     } else {
       p = new Pulse(this.dataflow).init(this);
@@ -2441,7 +3406,7 @@
    * @return {Pulse} - Returns this Pulse instance.
    */
   prototype$3.init = function(src, flags) {
-    var p = this;
+    const p = this;
     p.stamp = src.stamp;
     p.encode = src.encode;
 
@@ -2479,6 +3444,7 @@
     } else {
       p.srcF = src.srcF;
       p.source = src.source;
+      if (src.cleans) p.cleans = src.cleans;
     }
 
     return p;
@@ -2526,6 +3492,19 @@
   };
 
   /**
+   * Get/set metadata to pulse requesting garbage collection
+   * to reclaim currently unused resources.
+   */
+  prototype$3.clean = function(value) {
+    if (arguments.length) {
+      this.cleans = !!value;
+      return this;
+    } else {
+      return this.cleans;
+    }
+  };
+
+  /**
    * Marks one or more data field names as modified to assist dependency
    * tracking and incremental processing by transform operators.
    * @param {string|Array<string>} _ - The field(s) to mark as modified.
@@ -2554,7 +3533,7 @@
     var fields = this.fields;
     return !((nomod || this.mod.length) && fields) ? false
       : !arguments.length ? !!fields
-      : isArray(_) ? _.some(function(f) { return fields[f]; })
+      : isArray(_) ? _.some(f => fields[f])
       : fields[_];
   };
 
@@ -2583,7 +3562,9 @@
   };
 
   function addFilter(a, b) {
-    return a ? function(t,i) { return a(t,i) && b(t,i); } : b;
+    return a
+      ? (t, i) => a(t, i) && b(t, i)
+      : b;
   }
 
   /**
@@ -2617,14 +3598,14 @@
 
   function materialize(data, filter) {
     var out = [];
-    visitArray(data, filter, function(_) { out.push(_); });
+    visitArray(data, filter, _ => out.push(_));
     return out;
   }
 
   function filter(pulse, flags) {
     var map = {};
     pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-    return function(t) { return map[tupleid(t)] ? null : t; };
+    return t => map[tupleid(t)] ? null : t;
   }
 
   /**
@@ -2787,41 +3768,34 @@
    */
   async function evaluate(encode, prerun, postrun) {
     const df = this,
-          level = df.logLevel(),
           async = [];
 
     // if the pulse value is set, this is a re-entrant call
     if (df._pulse) return reentrant(df);
 
     // wait for pending datasets to load
-    if (df._pending) {
-      await df._pending;
-    }
+    if (df._pending) await df._pending;
 
     // invoke prerun function, if provided
     if (prerun) await asyncCallback(df, prerun);
 
     // exit early if there are no updates
     if (!df._touched.length) {
-      df.info('Dataflow invoked, but nothing to do.');
+      df.debug('Dataflow invoked, but nothing to do.');
       return df;
     }
 
     // increment timestamp clock
-    let stamp = ++df._clock,
-        count = 0, op, next, dt, error;
+    const stamp = ++df._clock;
 
     // set the current pulse
     df._pulse = new Pulse(df, stamp, encode);
 
-    if (level >= Info) {
-      dt = Date.now();
-      df.debug('-- START PROPAGATION (' + stamp + ') -----');
-    }
-
     // initialize priority queue, reset touched operators
     df._touched.forEach(op => df._enqueue(op, true));
     df._touched = UniqueList(id);
+
+    let count = 0, op, next, error;
 
     try {
       while (df._heap.size() > 0) {
@@ -2829,7 +3803,10 @@
         op = df._heap.pop();
 
         // re-queue if rank changed
-        if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
+        if (op.rank !== op.qrank) {
+          df._enqueue(op, true);
+          continue;
+        }
 
         // otherwise, evaluate the operator
         next = op.run(df._getPulse(op, encode));
@@ -2841,10 +3818,6 @@
           // queue parallel asynchronous execution
           async.push(next.async);
           next = StopPropagation;
-        }
-
-        if (level >= Debug) {
-          df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
         }
 
         // propagate evaluation, enqueue dependent operators
@@ -2864,10 +3837,7 @@
     df._input = {};
     df._pulse = null;
 
-    if (level >= Info) {
-      dt = Date.now() - dt;
-      df.info('> Pulse ' + stamp + ': ' + count + ' operators; ' + dt + 'ms');
-    }
+    df.debug(`Pulse ${stamp}: ${count} operators`);
 
     if (error) {
       df._postrun = [];
@@ -2888,9 +3858,10 @@
 
     // handle non-blocking asynchronous callbacks
     if (async.length) {
-      Promise.all(async).then(cb => df.runAsync(null, () => {
-        cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
-      }));
+      Promise.all(async)
+        .then(cb => df.runAsync(null, () => {
+          cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
+        }));
     }
 
     return df;
@@ -3187,6 +4158,7 @@
 
     this._clock = 0;
     this._rank = 0;
+    this._locale = defaultLocale();
     try {
       this._loader = loader();
     } catch (e) {
@@ -3233,6 +4205,24 @@
       return this;
     } else {
       return this._loader;
+    }
+  };
+
+  /**
+   * Gets or sets the locale instance to use for formatting and parsing
+   * string values. The locale object should be provided by the
+   * vega-format library, and include methods such as format, timeFormat,
+   * utcFormat, timeParse, and utcParse.
+   * @param {object} _ - The locale instance to use.
+   * @return {object|Dataflow} - If no arguments are provided, returns
+   *   the current locale instance. Otherwise returns this Dataflow instance.
+   */
+  prototype$5.locale = function(_) {
+    if (arguments.length) {
+      this._locale = _;
+      return this;
+    } else {
+      return this._locale;
     }
   };
 
@@ -3435,546 +4425,235 @@
     return as || (op + (!field ? '' : '_' + field));
   }
 
-  var AggregateOps = {
-    'values': measure({
-      name: 'values',
-      init: 'cell.store = true;',
-      set:  'cell.data.values()', idx: -1
-    }),
-    'count': measure({
-      name: 'count',
-      set:  'cell.num'
-    }),
-    '__count__': measure({
-      name: 'count',
-      set:  'this.missing + this.valid'
-    }),
-    'missing': measure({
-      name: 'missing',
-      set:  'this.missing'
-    }),
-    'valid': measure({
-      name: 'valid',
-      set:  'this.valid'
-    }),
-    'sum': measure({
-      name: 'sum',
-      init: 'this.sum = 0;',
-      add:  'this.sum += +v;',
-      rem:  'this.sum -= v;',
-      set:  'this.sum'
-    }),
-    'product': measure({
-      name: 'product',
-      init: 'this.product = 1;',
-      add:  'this.product *= v;',
-      rem:  'this.product /= v;',
-      set:  'this.valid ? this.product : undefined'
-    }),
-    'mean': measure({
-      name: 'mean',
-      init: 'this.mean = 0;',
-      add:  'var d = v - this.mean; this.mean += d / this.valid;',
-      rem:  'var d = v - this.mean; this.mean -= this.valid ? d / this.valid : this.mean;',
-      set:  'this.valid ? this.mean : undefined'
-    }),
-    'average': measure({
-      name: 'average',
-      set:  'this.valid ? this.mean : undefined',
-      req:  ['mean'], idx: 1
-    }),
-    'variance': measure({
-      name: 'variance',
-      init: 'this.dev = 0;',
-      add:  'this.dev += d * (v - this.mean);',
-      rem:  'this.dev -= d * (v - this.mean);',
-      set:  'this.valid > 1 ? this.dev / (this.valid-1) : undefined',
-      req:  ['mean'], idx: 1
-    }),
-    'variancep': measure({
-      name: 'variancep',
-      set:  'this.valid > 1 ? this.dev / this.valid : undefined',
-      req:  ['variance'], idx: 2
-    }),
-    'stdev': measure({
-      name: 'stdev',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid-1)) : undefined',
-      req:  ['variance'], idx: 2
-    }),
-    'stdevp': measure({
-      name: 'stdevp',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / this.valid) : undefined',
-      req:  ['variance'], idx: 2
-    }),
-    'stderr': measure({
-      name: 'stderr',
-      set:  'this.valid > 1 ? Math.sqrt(this.dev / (this.valid * (this.valid-1))) : undefined',
-      req:  ['variance'], idx: 2
-    }),
-    'distinct': measure({
-      name: 'distinct',
-      set:  'cell.data.distinct(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'ci0': measure({
-      name: 'ci0',
-      set:  'cell.data.ci0(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'ci1': measure({
-      name: 'ci1',
-      set:  'cell.data.ci1(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'median': measure({
-      name: 'median',
-      set:  'cell.data.q2(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'q1': measure({
-      name: 'q1',
-      set:  'cell.data.q1(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'q3': measure({
-      name: 'q3',
-      set:  'cell.data.q3(this.get)',
-      req:  ['values'], idx: 3
-    }),
-    'argmin': measure({
-      name: 'argmin',
-      init: 'this.argmin = undefined;',
-      add:  'if (v < this.min) this.argmin = t;',
-      rem:  'if (v <= this.min) this.argmin = undefined;',
-      set:  'this.argmin || cell.data.argmin(this.get)',
-      req:  ['min'], str: ['values'], idx: 3
-    }),
-    'argmax': measure({
-      name: 'argmax',
-      init: 'this.argmax = undefined;',
-      add:  'if (v > this.max) this.argmax = t;',
-      rem:  'if (v >= this.max) this.argmax = undefined;',
-      set:  'this.argmax || cell.data.argmax(this.get)',
-      req:  ['max'], str: ['values'], idx: 3
-    }),
-    'min': measure({
-      name: 'min',
-      init: 'this.min = undefined;',
-      add:  'if (v < this.min || this.min === undefined) this.min = v;',
-      rem:  'if (v <= this.min) this.min = NaN;',
-      set:  'this.min = (Number.isNaN(this.min) ? cell.data.min(this.get) : this.min)',
-      str:  ['values'], idx: 4
-    }),
-    'max': measure({
-      name: 'max',
-      init: 'this.max = undefined;',
-      add:  'if (v > this.max || this.max === undefined) this.max = v;',
-      rem:  'if (v >= this.max) this.max = NaN;',
-      set:  'this.max = (Number.isNaN(this.max) ? cell.data.max(this.get) : this.max)',
-      str:  ['values'], idx: 4
-    })
+  const noop = () => {};
+
+  const base_op = {
+    init: noop,
+    add:  noop,
+    rem:  noop,
+    idx:  0
   };
 
-  var ValidAggregateOps = Object.keys(AggregateOps);
+  const AggregateOps = {
+    values: {
+      init:  m => m.cell.store = true,
+      value: m => m.cell.data.values(),
+      idx:  -1
+    },
+    count: {
+      value: m => m.cell.num
+    },
+    __count__: {
+      value: m => m.missing + m.valid
+    },
+    missing: {
+      value: m => m.missing
+    },
+    valid: {
+      value: m => m.valid
+    },
+    sum: {
+      init:  m => m.sum = 0,
+      value: m => m.sum,
+      add:  (m, v) => m.sum += +v,
+      rem:  (m, v) => m.sum -= v
+    },
+    product: {
+      init:  m => m.product = 1,
+      value: m => m.valid ? m.product : undefined,
+      add:  (m, v) => m.product *= v,
+      rem:  (m, v) => m.product /= v
+    },
+    mean: {
+      init:  m => m.mean = 0,
+      value: m => m.valid ? m.mean : undefined,
+      add:  (m, v) => (m.mean_d = v - m.mean, m.mean += m.mean_d / m.valid),
+      rem:  (m, v) => (m.mean_d = v - m.mean, m.mean -= m.valid ? m.mean_d / m.valid : m.mean)
+    },
+    average: {
+      value: m => m.valid ? m.mean : undefined,
+      req:  ['mean'], idx: 1
+    },
+    variance: {
+      init:  m => m.dev = 0,
+      value: m => m.valid > 1 ? m.dev / (m.valid - 1) : undefined,
+      add:  (m, v) => m.dev += m.mean_d * (v - m.mean),
+      rem:  (m, v) => m.dev -= m.mean_d * (v - m.mean),
+      req:  ['mean'], idx: 1
+    },
+    variancep: {
+      value: m => m.valid > 1 ? m.dev / m.valid : undefined,
+      req:  ['variance'], idx: 2
+    },
+    stdev: {
+      value: m => m.valid > 1 ? Math.sqrt(m.dev / (m.valid - 1)) : undefined,
+      req:  ['variance'], idx: 2
+    },
+    stdevp: {
+      value: m => m.valid > 1 ? Math.sqrt(m.dev / m.valid) : undefined,
+      req:  ['variance'], idx: 2
+    },
+    stderr: {
+      value: m => m.valid > 1 ? Math.sqrt(m.dev / (m.valid * (m.valid - 1))) : undefined,
+      req:  ['variance'], idx: 2
+    },
+    distinct: {
+      value: m => m.cell.data.distinct(m.get),
+      req:  ['values'], idx: 3
+    },
+    ci0: {
+      value: m => m.cell.data.ci0(m.get),
+      req:  ['values'], idx: 3
+    },
+    ci1: {
+      value: m => m.cell.data.ci1(m.get),
+      req:  ['values'], idx: 3
+    },
+    median: {
+      value: m => m.cell.data.q2(m.get),
+      req:  ['values'], idx: 3
+    },
+    q1: {
+      value: m => m.cell.data.q1(m.get),
+      req: ['values'], idx: 3
+    },
+    q3: {
+      value: m => m.cell.data.q3(m.get),
+      req:  ['values'], idx: 3
+    },
+    min: {
+      init:  m => m.min = undefined,
+      value: m => m.min = (Number.isNaN(m.min) ? m.cell.data.min(m.get) : m.min),
+      add:  (m, v) => { if (v < m.min || m.min === undefined) m.min = v; },
+      rem:  (m, v) => { if (v <= m.min) m.min = NaN; },
+      req:  ['values'], idx: 4
+    },
+    max: {
+      init:  m => m.max = undefined,
+      value: m => m.max = (Number.isNaN(m.max) ? m.cell.data.max(m.get) : m.max),
+      add:  (m, v) => { if (v > m.max || m.max === undefined) m.max = v; },
+      rem:  (m, v) => { if (v >= m.max) m.max = NaN; },
+      req:  ['values'], idx: 4
+    },
+    argmin: {
+      init:  m => m.argmin = undefined,
+      value: m => m.argmin || m.cell.data.argmin(m.get),
+      add:  (m, v, t) => { if (v < m.min) m.argmin = t; },
+      rem:  (m, v) => { if (v <= m.min) m.argmin = undefined; },
+      req:  ['min', 'values'], idx: 3
+    },
+    argmax: {
+      init:  m => m.argmax = undefined,
+      value: m => m.argmax || m.cell.data.argmax(m.get),
+      add:  (m, v, t) => { if (v > m.max) m.argmax = t; },
+      rem:  (m, v) => { if (v >= m.max) m.argmax = undefined; },
+      req:  ['max', 'values'], idx: 3
+    }
+  };
+
+  const ValidAggregateOps = Object.keys(AggregateOps);
+
+  function measure(key, value) {
+    return out => extend({
+      name: key,
+      out: out || key
+    }, base_op, value);
+  }
+
+  ValidAggregateOps.forEach(key => {
+    AggregateOps[key] = measure(key, AggregateOps[key]);
+  });
 
   function createMeasure(op, name) {
     return AggregateOps[op](name);
-  }
-
-  function measure(base) {
-    return function(out) {
-      var m = extend({init:'', add:'', rem:'', idx:0}, base);
-      m.out = out || base.name;
-      return m;
-    };
   }
 
   function compareIndex(a, b) {
     return a.idx - b.idx;
   }
 
-  function resolve(agg, stream) {
-    function collect(m, a) {
-      function helper(r) { if (!m[r]) collect(m, m[r] = AggregateOps[r]()); }
-      if (a.req) a.req.forEach(helper);
-      if (stream && a.str) a.str.forEach(helper);
-      return m;
-    }
-    var map = agg.reduce(
-      collect,
-      agg.reduce(function(m, a) {
-        m[a.name] = a;
-        return m;
-      }, {})
-    );
-    var values = [], key;
-    for (key in map) values.push(map[key]);
-    return values.sort(compareIndex);
+  function resolve(agg) {
+    const map = {};
+    agg.forEach(a => map[a.name] = a);
+
+    const getreqs = a => {
+      if (!a.req) return;
+      a.req.forEach(key => {
+        if (!map[key]) getreqs(map[key] = AggregateOps[key]());
+      });
+    };
+    agg.forEach(getreqs);
+
+    return Object.values(map).sort(compareIndex);
+  }
+
+  function init() {
+    this.valid = 0;
+    this.missing = 0;
+    this._ops.forEach(op => op.init(this));
+  }
+
+  function add$1(v, t) {
+    if (v == null || v === '') { ++this.missing; return; }
+    if (v !== v) return;
+    ++this.valid;
+    this._ops.forEach(op => op.add(this, v, t));
+  }
+
+  function rem(v, t) {
+    if (v == null || v === '') { --this.missing; return; }
+    if (v !== v) return;
+    --this.valid;
+    this._ops.forEach(op => op.rem(this, v, t));
+  }
+
+  function set(t) {
+    this._out.forEach(op => t[op.out] = op.value(this));
+    return t;
   }
 
   function compileMeasures(agg, field) {
     var get = field || identity,
-        all = resolve(agg, true), // assume streaming removes may occur
-        init = 'var cell = this.cell; this.valid = 0; this.missing = 0;',
-        ctr = 'this.cell = cell; this.init();',
-        add = 'if(v==null){++this.missing; return;} if(v!==v) return; ++this.valid;',
-        rem = 'if(v==null){--this.missing; return;} if(v!==v) return; --this.valid;',
-        set = 'var cell = this.cell;';
+        ops = resolve(agg),
+        out = agg.slice().sort(compareIndex);
 
-    all.forEach(function(a) {
-      init += a.init;
-      add += a.add;
-      rem += a.rem;
-    });
-    agg.slice().sort(compareIndex).forEach(function(a) {
-      set += 't[' + $(a.out) + ']=' + a.set + ';';
-    });
-    set += 'return t;';
+    function ctr(cell) {
+      this._ops = ops;
+      this._out = out;
+      this.cell = cell;
+      this.init();
+    }
 
-    ctr = Function('cell', ctr);
-    ctr.prototype.init = Function(init);
-    ctr.prototype.add = Function('v', 't', add);
-    ctr.prototype.rem = Function('v', 't', rem);
-    ctr.prototype.set = Function('t', set);
+    ctr.prototype.init = init;
+    ctr.prototype.add = add$1;
+    ctr.prototype.rem = rem;
+    ctr.prototype.set = set;
     ctr.prototype.get = get;
-    ctr.fields = agg.map(function(_) { return _.out; });
+    ctr.fields = agg.map(op => op.out);
+
     return ctr;
   }
 
-  function* numbers(values, valueof) {
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    }
-  }
-
-  function ascending(a, b) {
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  function bisector(compare) {
-    if (compare.length === 1) compare = ascendingComparator(compare);
-    return {
-      left: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) < 0) lo = mid + 1;
-          else hi = mid;
-        }
-        return lo;
-      },
-      right: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) > 0) hi = mid;
-          else lo = mid + 1;
-        }
-        return lo;
-      }
-    };
-  }
-
-  function ascendingComparator(f) {
-    return function(d, x) {
-      return ascending(f(d), x);
-    };
-  }
-
-  var ascendingBisect = bisector(ascending);
-  var bisectRight = ascendingBisect.right;
-  var bisectLeft = ascendingBisect.left;
-
-  function variance(values, valueof) {
-    let count = 0;
-    let delta;
-    let mean = 0;
-    let sum = 0;
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          delta = value - mean;
-          mean += delta / ++count;
-          sum += delta * (value - mean);
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          delta = value - mean;
-          mean += delta / ++count;
-          sum += delta * (value - mean);
-        }
-      }
-    }
-    if (count > 1) return sum / (count - 1);
-  }
-
-  function deviation(values, valueof) {
-    const v = variance(values, valueof);
-    return v ? Math.sqrt(v) : v;
-  }
-
-  function sequence(start, stop, step) {
-    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-    var i = -1,
-        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-        range = new Array(n);
-
-    while (++i < n) {
-      range[i] = start + i * step;
-    }
-
-    return range;
-  }
-
-  var e10 = Math.sqrt(50),
-      e5 = Math.sqrt(10),
-      e2 = Math.sqrt(2);
-
-  function ticks(start, stop, count) {
-    var reverse,
-        i = -1,
-        n,
-        ticks,
-        step;
-
-    stop = +stop, start = +start, count = +count;
-    if (start === stop && count > 0) return [start];
-    if (reverse = stop < start) n = start, start = stop, stop = n;
-    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
-
-    if (step > 0) {
-      start = Math.ceil(start / step);
-      stop = Math.floor(stop / step);
-      ticks = new Array(n = Math.ceil(stop - start + 1));
-      while (++i < n) ticks[i] = (start + i) * step;
-    } else {
-      start = Math.floor(start * step);
-      stop = Math.ceil(stop * step);
-      ticks = new Array(n = Math.ceil(start - stop + 1));
-      while (++i < n) ticks[i] = (start - i) / step;
-    }
-
-    if (reverse) ticks.reverse();
-
-    return ticks;
-  }
-
-  function tickIncrement(start, stop, count) {
-    var step = (stop - start) / Math.max(0, count),
-        power = Math.floor(Math.log(step) / Math.LN10),
-        error = step / Math.pow(10, power);
-    return power >= 0
-        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
-        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-  }
-
-  function tickStep(start, stop, count) {
-    var step0 = Math.abs(stop - start) / Math.max(0, count),
-        step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-        error = step0 / step1;
-    if (error >= e10) step1 *= 10;
-    else if (error >= e5) step1 *= 5;
-    else if (error >= e2) step1 *= 2;
-    return stop < start ? -step1 : step1;
-  }
-
-  function max(values, valueof) {
-    let max;
-    if (valueof === undefined) {
-      for (const value of values) {
-        if (value != null
-            && (max < value || (max === undefined && value >= value))) {
-          max = value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null
-            && (max < value || (max === undefined && value >= value))) {
-          max = value;
-        }
-      }
-    }
-    return max;
-  }
-
-  function min(values, valueof) {
-    let min;
-    if (valueof === undefined) {
-      for (const value of values) {
-        if (value != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null
-            && (min > value || (min === undefined && value >= value))) {
-          min = value;
-        }
-      }
-    }
-    return min;
-  }
-
-  // Based on https://github.com/mourner/quickselect
-  // ISC license, Copyright 2018 Vladimir Agafonkin.
-  function quickselect(array, k, left = 0, right = array.length - 1, compare = ascending) {
-    while (right > left) {
-      if (right - left > 600) {
-        const n = right - left + 1;
-        const m = k - left + 1;
-        const z = Math.log(n);
-        const s = 0.5 * Math.exp(2 * z / 3);
-        const sd = 0.5 * Math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1);
-        const newLeft = Math.max(left, Math.floor(k - m * s / n + sd));
-        const newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
-        quickselect(array, k, newLeft, newRight, compare);
-      }
-
-      const t = array[k];
-      let i = left;
-      let j = right;
-
-      swap(array, left, k);
-      if (compare(array[right], t) > 0) swap(array, left, right);
-
-      while (i < j) {
-        swap(array, i, j), ++i, --j;
-        while (compare(array[i], t) < 0) ++i;
-        while (compare(array[j], t) > 0) --j;
-      }
-
-      if (compare(array[left], t) === 0) swap(array, left, j);
-      else ++j, swap(array, j, right);
-
-      if (j <= k) left = j + 1;
-      if (k <= j) right = j - 1;
-    }
-    return array;
-  }
-
-  function swap(array, i, j) {
-    const t = array[i];
-    array[i] = array[j];
-    array[j] = t;
-  }
-
-  function number(x) {
-    return x === null ? NaN : +x;
-  }
-
   function* numbers$1(values, valueof) {
-    if (valueof === undefined) {
+    if (valueof == null) {
       for (let value of values) {
-        if (value != null && (value = +value) >= value) {
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
     } else {
       let index = -1;
       for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+        value = valueof(value, ++index, values);
+        if (value != null && value !== '' && (value = +value) >= value) {
           yield value;
         }
       }
     }
-  }
-
-  function quantile(values, p, valueof) {
-    values = Float64Array.from(numbers$1(values, valueof));
-    if (!(n = values.length)) return;
-    if ((p = +p) <= 0 || n < 2) return min(values);
-    if (p >= 1) return max(values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = max(quickselect(values, i0).subarray(0, i0 + 1)),
-        value1 = min(values.subarray(i0 + 1));
-    return value0 + (value1 - value0) * (i - i0);
-  }
-
-  function quantileSorted(values, p, valueof = number) {
-    if (!(n = values.length)) return;
-    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = +valueof(values[i0], i0, values),
-        value1 = +valueof(values[i0 + 1], i0 + 1, values);
-    return value0 + (value1 - value0) * (i - i0);
-  }
-
-  function mean(values, valueof) {
-    let count = 0;
-    let sum = 0;
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          ++count, sum += value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          ++count, sum += value;
-        }
-      }
-    }
-    if (count) return sum / count;
-  }
-
-  function median(values, valueof) {
-    return quantile(values, 0.5, valueof);
-  }
-
-  function permute(source, keys) {
-    return Array.from(keys, key => source[key]);
-  }
-
-  function sum(values, valueof) {
-    let sum = 0;
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value = +value) {
-          sum += value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if (value = +valueof(value, ++index, values)) {
-          sum += value;
-        }
-      }
-    }
-    return sum;
   }
 
   function quantiles(array, p, f) {
-    var values = Float64Array.from(numbers(array, f));
+    var values = Float64Array.from(numbers$1(array, f));
 
     // don't depend on return value from typed array sort call
     // protects against undefined sort results in Safari (vega/vega-lite#4964)
@@ -4064,7 +4743,7 @@
   function bootstrapCI(array, samples, alpha, f) {
     if (!array.length) return [undefined, undefined];
 
-    var values = Float64Array.from(numbers(array, f)),
+    var values = Float64Array.from(numbers$1(array, f)),
         n = values.length,
         m = samples,
         a, i, j, mu;
@@ -5296,16 +5975,16 @@
   }
 
   Aggregate.Definition = {
-    "type": "Aggregate",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-      { "name": "fields", "type": "field", "null": true, "array": true },
-      { "name": "as", "type": "string", "null": true, "array": true },
-      { "name": "drop", "type": "boolean", "default": true },
-      { "name": "cross", "type": "boolean", "default": false },
-      { "name": "key", "type": "field" }
+    'type': 'Aggregate',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
+      { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+      { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+      { 'name': 'drop', 'type': 'boolean', 'default': true },
+      { 'name': 'cross', 'type': 'boolean', 'default': false },
+      { 'name': 'key', 'type': 'field' }
     ]
   };
 
@@ -5339,6 +6018,10 @@
     if (_.cross && aggr._dims.length > 1) {
       aggr._drop = false;
       aggr.cross();
+    }
+
+    if (pulse.clean() && aggr._drop) {
+      out.clean(true).runAfter(() => this.clean());
     }
 
     return aggr.changes(out);
@@ -5516,6 +6199,15 @@
     return p ? replace(p.tuple, x) : ingest(x);
   };
 
+  prototype$8.clean = function() {
+    const cells = this.value;
+    for (const key in cells) {
+      if (cells[key].num === 0) {
+        delete cells[key];
+      }
+    }
+  };
+
   // -- Process Tuples -----
 
   prototype$8.add = function(t) {
@@ -5620,23 +6312,23 @@
   }
 
   Bin.Definition = {
-    "type": "Bin",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "interval", "type": "boolean", "default": true },
-      { "name": "anchor", "type": "number" },
-      { "name": "maxbins", "type": "number", "default": 20 },
-      { "name": "base", "type": "number", "default": 10 },
-      { "name": "divide", "type": "number", "array": true, "default": [5, 2] },
-      { "name": "extent", "type": "number", "array": true, "length": 2, "required": true },
-      { "name": "span", "type": "number" },
-      { "name": "step", "type": "number" },
-      { "name": "steps", "type": "number", "array": true },
-      { "name": "minstep", "type": "number", "default": 0 },
-      { "name": "nice", "type": "boolean", "default": true },
-      { "name": "name", "type": "string" },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["bin0", "bin1"] }
+    'type': 'Bin',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'interval', 'type': 'boolean', 'default': true },
+      { 'name': 'anchor', 'type': 'number' },
+      { 'name': 'maxbins', 'type': 'number', 'default': 20 },
+      { 'name': 'base', 'type': 'number', 'default': 10 },
+      { 'name': 'divide', 'type': 'number', 'array': true, 'default': [5, 2] },
+      { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+      { 'name': 'span', 'type': 'number' },
+      { 'name': 'step', 'type': 'number' },
+      { 'name': 'steps', 'type': 'number', 'array': true },
+      { 'name': 'minstep', 'type': 'number', 'default': 0 },
+      { 'name': 'nice', 'type': 'boolean', 'default': true },
+      { 'name': 'name', 'type': 'string' },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['bin0', 'bin1'] }
     ]
   };
 
@@ -5695,12 +6387,12 @@
     }
 
     var f = function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
         : v > stop ? +Infinity
         : (
-            v = Math.max(start, Math.min(+v, stop - step)),
+            v = Math.max(start, Math.min(v, stop - step)),
             start + step * Math.floor(EPSILON + (v - start) / step)
           );
     };
@@ -5744,7 +6436,7 @@
         }
         return data;
       }
-    }
+    };
   }
 
   /**
@@ -5759,10 +6451,10 @@
   }
 
   Collect.Definition = {
-    "type": "Collect",
-    "metadata": {"source": true},
-    "params": [
-      { "name": "sort", "type": "compare" }
+    'type': 'Collect',
+    'metadata': {'source': true},
+    'params': [
+      { 'name': 'sort', 'type': 'compare' }
     ]
   };
 
@@ -5822,14 +6514,14 @@
   }
 
   CountPattern.Definition = {
-    "type": "CountPattern",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "case", "type": "enum", "values": ["upper", "lower", "mixed"], "default": "mixed" },
-      { "name": "pattern", "type": "string", "default": "[\\w\"]+" },
-      { "name": "stopwords", "type": "string", "default": "" },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["text", "count"] }
+    'type': 'CountPattern',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'case', 'type': 'enum', 'values': ['upper', 'lower', 'mixed'], 'default': 'mixed' },
+      { 'name': 'pattern', 'type': 'string', 'default': '[\\w"]+' },
+      { 'name': 'stopwords', 'type': 'string', 'default': '' },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['text', 'count'] }
     ]
   };
 
@@ -5935,11 +6627,11 @@
   }
 
   Cross.Definition = {
-    "type": "Cross",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "filter", "type": "expr" },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
+    'type': 'Cross',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'filter', 'type': 'expr' },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['a', 'b'] }
     ]
   };
 
@@ -6070,59 +6762,59 @@
 
   var distributions = [
     {
-      "key": {"function": "normal"},
-      "params": [
-        { "name": "mean", "type": "number", "default": 0 },
-        { "name": "stdev", "type": "number", "default": 1 }
+      'key': {'function': 'normal'},
+      'params': [
+        { 'name': 'mean', 'type': 'number', 'default': 0 },
+        { 'name': 'stdev', 'type': 'number', 'default': 1 }
       ]
     },
     {
-      "key": {"function": "lognormal"},
-      "params": [
-        { "name": "mean", "type": "number", "default": 0 },
-        { "name": "stdev", "type": "number", "default": 1 }
+      'key': {'function': 'lognormal'},
+      'params': [
+        { 'name': 'mean', 'type': 'number', 'default': 0 },
+        { 'name': 'stdev', 'type': 'number', 'default': 1 }
       ]
     },
     {
-      "key": {"function": "uniform"},
-      "params": [
-        { "name": "min", "type": "number", "default": 0 },
-        { "name": "max", "type": "number", "default": 1 }
+      'key': {'function': 'uniform'},
+      'params': [
+        { 'name': 'min', 'type': 'number', 'default': 0 },
+        { 'name': 'max', 'type': 'number', 'default': 1 }
       ]
     },
     {
-      "key": {"function": "kde"},
-      "params": [
-        { "name": "field", "type": "field", "required": true },
-        { "name": "from", "type": "data" },
-        { "name": "bandwidth", "type": "number", "default": 0 }
+      'key': {'function': 'kde'},
+      'params': [
+        { 'name': 'field', 'type': 'field', 'required': true },
+        { 'name': 'from', 'type': 'data' },
+        { 'name': 'bandwidth', 'type': 'number', 'default': 0 }
       ]
     }
   ];
 
   var mixture = {
-    "key": {"function": "mixture"},
-    "params": [
-      { "name": "distributions", "type": "param", "array": true,
-        "params": distributions },
-      { "name": "weights", "type": "number", "array": true }
+    'key': {'function': 'mixture'},
+    'params': [
+      { 'name': 'distributions', 'type': 'param', 'array': true,
+        'params': distributions },
+      { 'name': 'weights', 'type': 'number', 'array': true }
     ]
   };
 
   Density.Definition = {
-    "type": "Density",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "extent", "type": "number", "array": true, "length": 2 },
-      { "name": "steps", "type": "number" },
-      { "name": "minsteps", "type": "number", "default": 25 },
-      { "name": "maxsteps", "type": "number", "default": 200 },
-      { "name": "method", "type": "string", "default": "pdf",
-        "values": ["pdf", "cdf"] },
-      { "name": "distribution", "type": "param",
-        "params": distributions.concat(mixture) },
-      { "name": "as", "type": "string", "array": true,
-        "default": ["value", "density"] }
+    'type': 'Density',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'steps', 'type': 'number' },
+      { 'name': 'minsteps', 'type': 'number', 'default': 25 },
+      { 'name': 'maxsteps', 'type': 'number', 'default': 200 },
+      { 'name': 'method', 'type': 'string', 'default': 'pdf',
+        'values': ['pdf', 'cdf'] },
+      { 'name': 'distribution', 'type': 'param',
+        'params': distributions.concat(mixture) },
+      { 'name': 'as', 'type': 'string', 'array': true,
+        'default': ['value', 'density'] }
     ]
   };
 
@@ -6218,14 +6910,14 @@
   }
 
   DotBin.Definition = {
-    "type": "DotBin",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "step", "type": "number" },
-      { "name": "smooth", "type": "boolean", "default": false },
-      { "name": "as", "type": "string", "default": Output }
+    'type': 'DotBin',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'step', 'type': 'number' },
+      { 'name': 'smooth', 'type': 'boolean', 'default': false },
+      { 'name': 'as', 'type': 'string', 'default': Output }
     ]
   };
 
@@ -6307,10 +6999,10 @@
   }
 
   Extent.Definition = {
-    "type": "Extent",
-    "metadata": {},
-    "params": [
-      { "name": "field", "type": "field", "required": true }
+    'type': 'Extent',
+    'metadata': {},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true }
     ]
   };
 
@@ -6333,10 +7025,8 @@
     }
 
     pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-      var v = field(t);
+      var v = toNumber(field(t));
       if (v != null) {
-        // coerce to number
-        v = +v;
         // NaNs will fail all comparisons!
         if (v < min) min = v;
         if (v > max) max = v;
@@ -6358,16 +7048,21 @@
    * @constructor
    * @param {Pulse} pulse - A pulse to use as the value of this operator.
    * @param {Transform} parent - The parent transform (typically a Facet instance).
-   * @param {Transform} target - A transform that receives the subflow of tuples.
    */
   function Subflow(pulse, parent) {
     Operator.call(this, pulse);
     this.parent = parent;
+    this.count = 0;
   }
 
   var prototype$g = inherits(Subflow, Operator);
 
+  /**
+   * Routes pulses from this subflow to a target transform.
+   * @param {Transform} target - A transform that receives the subflow of tuples.
+   */
   prototype$g.connect = function(target) {
+    this.detachSubflow = target.detachSubflow;
     this.targets().add(target);
     return (target.source = this);
   };
@@ -6377,6 +7072,7 @@
    * @param {Tuple} t - The tuple being added.
    */
   prototype$g.add = function(t) {
+    this.count += 1;
     this.value.add.push(t);
   };
 
@@ -6385,6 +7081,7 @@
    * @param {Tuple} t - The tuple being removed.
    */
   prototype$g.rem = function(t) {
+    this.count -= 1;
     this.value.rem.push(t);
   };
 
@@ -6429,29 +7126,32 @@
 
     // keep track of active subflows, use as targets array for listeners
     // this allows us to limit propagation to only updated subflows
-    var a = this._targets = [];
+    const a = this._targets = [];
     a.active = 0;
-    a.forEach = function(f) {
-      for (var i=0, n=a.active; i<n; ++i) f(a[i], i, a);
+    a.forEach = f => {
+      for (let i=0, n=a.active; i<n; ++i) {
+        f(a[i], i, a);
+      }
     };
   }
 
-  var prototype$h = inherits(Facet, Transform);
+  const prototype$h = inherits(Facet, Transform);
 
   prototype$h.activate = function(flow) {
     this._targets[this._targets.active++] = flow;
   };
 
+  // parent argument provided by PreFacet subclass
   prototype$h.subflow = function(key, flow, pulse, parent) {
-    var flows = this.value,
+    let flows = this.value,
         sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
 
     if (!sf) {
       p = parent || (p = this._group[key]) && p.tuple;
       df = pulse.dataflow;
-      sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
-        .connect(flow(df, key, p));
+      sf = new Subflow(pulse.fork(pulse.NO_SOURCE), this);
+      df.add(sf).connect(flow(df, key, p));
       flows[key] = sf;
       this.activate(sf);
     } else if (sf.value.stamp < pulse.stamp) {
@@ -6462,41 +7162,57 @@
     return sf;
   };
 
-  prototype$h.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        self = this,
-        key = _.key,
-        flow = _.subflow,
-        cache = this._keys,
-        rekey = _.modified('key');
-
-    function subflow(key) {
-      return self.subflow(key, flow, pulse);
+  prototype$h.clean = function() {
+    const flows = this.value;
+    for (const key in flows) {
+      if (flows[key].count === 0) {
+        const detach = flows[key].detachSubflow;
+        if (detach) detach();
+        delete flows[key];
+      }
     }
+  };
+
+  prototype$h.initTargets = function() {
+    const a = this._targets,
+          n = a.length;
+    for (let i=0; i<n && a[i] != null; ++i) {
+      a[i] = null; // ensure old flows can be garbage collected
+    }
+    a.active = 0;
+  };
+
+  prototype$h.transform = function(_, pulse) {
+    const df = pulse.dataflow,
+          key = _.key,
+          flow = _.subflow,
+          cache = this._keys,
+          rekey = _.modified('key'),
+          subflow = key => this.subflow(key, flow, pulse);
 
     this._group = _.group || {};
-    this._targets.active = 0; // reset list of active subflows
+    this.initTargets(); // reset list of active subflows
 
-    pulse.visit(pulse.REM, function(t) {
-      var id = tupleid(t),
-          k = cache.get(id);
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t),
+             k = cache.get(id);
       if (k !== undefined) {
         cache.delete(id);
         subflow(k).rem(t);
       }
     });
 
-    pulse.visit(pulse.ADD, function(t) {
-      var k = key(t);
+    pulse.visit(pulse.ADD, t => {
+      const k = key(t);
       cache.set(tupleid(t), k);
       subflow(k).add(t);
     });
 
     if (rekey || pulse.modified(key.fields)) {
-      pulse.visit(pulse.MOD, function(t) {
-        var id = tupleid(t),
-            k0 = cache.get(id),
-            k1 = key(t);
+      pulse.visit(pulse.MOD, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
         if (k0 === k1) {
           subflow(k1).mod(t);
         } else {
@@ -6506,16 +7222,16 @@
         }
       });
     } else if (pulse.changed(pulse.MOD)) {
-      pulse.visit(pulse.MOD, function(t) {
+      pulse.visit(pulse.MOD, t => {
         subflow(cache.get(tupleid(t))).mod(t);
       });
     }
 
     if (rekey) {
-      pulse.visit(pulse.REFLOW, function(t) {
-        var id = tupleid(t),
-            k0 = cache.get(id),
-            k1 = key(t);
+      pulse.visit(pulse.REFLOW, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
         if (k0 !== k1) {
           cache.set(id, k1);
           subflow(k0).rem(t);
@@ -6524,7 +7240,12 @@
       });
     }
 
-    if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+    if (pulse.clean()) {
+      df.runAfter(() => { this.clean(); cache.clean(); });
+    } else if (cache.empty > df.cleanThreshold) {
+      df.runAfter(cache.clean);
+    }
+
     return pulse;
   };
 
@@ -6561,10 +7282,10 @@
   }
 
   Filter.Definition = {
-    "type": "Filter",
-    "metadata": {"changes": true},
-    "params": [
-      { "name": "expr", "type": "expr", "required": true }
+    'type': 'Filter',
+    'metadata': {'changes': true},
+    'params': [
+      { 'name': 'expr', 'type': 'expr', 'required': true }
     ]
   };
 
@@ -6636,12 +7357,12 @@
   }
 
   Flatten.Definition = {
-    "type": "Flatten",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "fields", "type": "field", "array": true, "required": true },
-      { "name": "index", "type": "string" },
-      { "name": "as", "type": "string", "array": true }
+    'type': 'Flatten',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+      { 'name': 'index', 'type': 'string' },
+      { 'name': 'as', 'type': 'string', 'array': true }
     ]
   };
 
@@ -6695,11 +7416,11 @@
   }
 
   Fold.Definition = {
-    "type": "Fold",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "fields", "type": "field", "array": true, "required": true },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["key", "value"] }
+    'type': 'Fold',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['key', 'value'] }
     ]
   };
 
@@ -6743,12 +7464,12 @@
   }
 
   Formula.Definition = {
-    "type": "Formula",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "expr", "type": "expr", "required": true },
-      { "name": "as", "type": "string", "required": true },
-      { "name": "initonly", "type": "boolean" }
+    'type': 'Formula',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'expr', 'type': 'expr', 'required': true },
+      { 'name': 'as', 'type': 'string', 'required': true },
+      { 'name': 'initonly', 'type': 'boolean' }
     ]
   };
 
@@ -6854,16 +7575,16 @@
   }
 
   Impute.Definition = {
-    "type": "Impute",
-    "metadata": {"changes": true},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "key", "type": "field", "required": true },
-      { "name": "keyvals", "array": true },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "method", "type": "enum", "default": "value",
-        "values": ["value", "mean", "median", "max", "min"] },
-      { "name": "value", "default": 0 }
+    'type': 'Impute',
+    'metadata': {'changes': true},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'key', 'type': 'field', 'required': true },
+      { 'name': 'keyvals', 'array': true },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'method', 'type': 'enum', 'default': 'value',
+        'values': ['value', 'mean', 'median', 'max', 'min'] },
+      { 'name': 'value', 'default': 0 }
     ]
   };
 
@@ -6965,14 +7686,14 @@
   }
 
   JoinAggregate.Definition = {
-    "type": "JoinAggregate",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "fields", "type": "field", "null": true, "array": true },
-      { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-      { "name": "as", "type": "string", "null": true, "array": true },
-      { "name": "key", "type": "field" }
+    'type': 'JoinAggregate',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+      { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
+      { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+      { 'name': 'key', 'type': 'field' }
     ]
   };
 
@@ -7058,20 +7779,20 @@
   }
 
   KDE.Definition = {
-    "type": "KDE",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "field", "type": "field", "required": true },
-      { "name": "cumulative", "type": "boolean", "default": false },
-      { "name": "counts", "type": "boolean", "default": false },
-      { "name": "bandwidth", "type": "number", "default": 0 },
-      { "name": "extent", "type": "number", "array": true, "length": 2 },
-      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-      { "name": "steps", "type": "number" },
-      { "name": "minsteps", "type": "number", "default": 25 },
-      { "name": "maxsteps", "type": "number", "default": 200 },
-      { "name": "as", "type": "string", "array": true, "default": ["value", "density"] }
+    'type': 'KDE',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'cumulative', 'type': 'boolean', 'default': false },
+      { 'name': 'counts', 'type': 'boolean', 'default': false },
+      { 'name': 'bandwidth', 'type': 'number', 'default': 0 },
+      { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+      { 'name': 'steps', 'type': 'number' },
+      { 'name': 'minsteps', 'type': 'number', 'default': 25 },
+      { 'name': 'maxsteps', 'type': 'number', 'default': 200 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'default': ['value', 'density'] }
     ]
   };
 
@@ -7198,6 +7919,7 @@
     out.rem = op.value;
     op.value = out.source = out.add = data;
     op._pending = null;
+    if (out.rem.length) out.clean(true);
     return out;
   }
 
@@ -7215,17 +7937,17 @@
   }
 
   Lookup.Definition = {
-    "type": "Lookup",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "index", "type": "index", "params": [
-          {"name": "from", "type": "data", "required": true },
-          {"name": "key", "type": "field", "required": true }
+    'type': 'Lookup',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'index', 'type': 'index', 'params': [
+          {'name': 'from', 'type': 'data', 'required': true },
+          {'name': 'key', 'type': 'field', 'required': true }
         ] },
-      { "name": "values", "type": "field", "array": true },
-      { "name": "fields", "type": "field", "array": true, "required": true },
-      { "name": "as", "type": "string", "array": true },
-      { "name": "default", "default": null }
+      { 'name': 'values', 'type': 'field', 'array': true },
+      { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+      { 'name': 'as', 'type': 'string', 'array': true },
+      { 'name': 'default', 'default': null }
     ]
   };
 
@@ -7372,15 +8094,15 @@
   }
 
   Pivot.Definition = {
-    "type": "Pivot",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "field", "type": "field", "required": true },
-      { "name": "value", "type": "field", "required": true },
-      { "name": "op", "type": "enum", "values": ValidAggregateOps, "default": "sum" },
-      { "name": "limit", "type": "number", "default": 0 },
-      { "name": "key", "type": "field" }
+    'type': 'Pivot',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'value', 'type': 'field', 'required': true },
+      { 'name': 'op', 'type': 'enum', 'values': ValidAggregateOps, 'default': 'sum' },
+      { 'name': 'limit', 'type': 'number', 'default': 0 },
+      { 'name': 'key', 'type': 'field' }
     ]
   };
 
@@ -7463,33 +8185,43 @@
     Facet.call(this, params);
   }
 
-  var prototype$t = inherits(PreFacet, Facet);
+  const prototype$t = inherits(PreFacet, Facet);
 
   prototype$t.transform = function(_, pulse) {
-    var self = this,
-        flow = _.subflow,
-        field = _.field;
+    const flow = _.subflow,
+          field = _.field,
+          subflow = t => this.subflow(tupleid(t), flow, pulse, t);
 
     if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
       error('PreFacet does not support field modification.');
     }
 
-    this._targets.active = 0; // reset list of active subflows
+    this.initTargets(); // reset list of active subflows
 
-    pulse.visit(pulse.MOD, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.mod(_); }) : sf.mod(t);
-    });
+    if (field) {
+      pulse.visit(pulse.MOD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.mod(_));
+      });
 
-    pulse.visit(pulse.ADD, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.add(ingest(_)); }) : sf.add(t);
-    });
+      pulse.visit(pulse.ADD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.add(ingest(_)));
+      });
 
-    pulse.visit(pulse.REM, function(t) {
-      var sf = self.subflow(tupleid(t), flow, pulse, t);
-      field ? field(t).forEach(function(_) { sf.rem(_); }) : sf.rem(t);
-    });
+      pulse.visit(pulse.REM, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.rem(_));
+      });
+    } else {
+      pulse.visit(pulse.MOD, t => subflow(t).mod(t));
+      pulse.visit(pulse.ADD, t => subflow(t).add(t));
+      pulse.visit(pulse.REM, t => subflow(t).rem(t));
+    }
+
+    if (pulse.clean()) {
+      pulse.runAfter(() => this.clean());
+    }
 
     return pulse;
   };
@@ -7511,11 +8243,11 @@
   }
 
   Project.Definition = {
-    "type": "Project",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "fields", "type": "field", "array": true },
-      { "name": "as", "type": "string", "null": true, "array": true }
+    'type': 'Project',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'fields', 'type': 'field', 'array': true },
+      { 'name': 'as', 'type': 'string', 'null': true, 'array': true }
     ]
   };
 
@@ -7605,14 +8337,14 @@
   }
 
   Quantile.Definition = {
-    "type": "Quantile",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "field", "type": "field", "required": true },
-      { "name": "probs", "type": "number", "array": true },
-      { "name": "step", "type": "number", "default": 0.01 },
-      { "name": "as", "type": "string", "array": true, "default": ["prob", "value"] }
+    'type': 'Quantile',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'probs', 'type': 'number', 'array': true },
+      { 'name': 'step', 'type': 'number', 'default': 0.01 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'default': ['prob', 'value'] }
     ]
   };
 
@@ -7726,10 +8458,10 @@
   }
 
   Sample.Definition = {
-    "type": "Sample",
-    "metadata": {},
-    "params": [
-      { "name": "size", "type": "number", "default": 1000 }
+    'type': 'Sample',
+    'metadata': {},
+    'params': [
+      { 'name': 'size', 'type': 'number', 'default': 1000 }
     ]
   };
 
@@ -7832,13 +8564,13 @@
   }
 
   Sequence.Definition = {
-    "type": "Sequence",
-    "metadata": {"generates": true, "changes": true},
-    "params": [
-      { "name": "start", "type": "number", "required": true },
-      { "name": "stop", "type": "number", "required": true },
-      { "name": "step", "type": "number", "default": 1 },
-      { "name": "as", "type": "string", "default": "data" }
+    'type': 'Sequence',
+    'metadata': {'generates': true, 'changes': true},
+    'params': [
+      { 'name': 'start', 'type': 'number', 'required': true },
+      { 'name': 'stop', 'type': 'number', 'required': true },
+      { 'name': 'step', 'type': 'number', 'default': 1 },
+      { 'name': 'as', 'type': 'string', 'default': 'data' }
     ]
   };
 
@@ -7883,399 +8615,6 @@
       : pulse.StopPropagation;
   };
 
-  const YEAR = 'year';
-  const QUARTER = 'quarter';
-  const MONTH = 'month';
-  const WEEK = 'week';
-  const DATE = 'date';
-  const DAY = 'day';
-  const HOURS = 'hours';
-  const MINUTES = 'minutes';
-  const SECONDS = 'seconds';
-  const MILLISECONDS = 'milliseconds';
-
-  const UNITS = [
-    YEAR,
-    QUARTER,
-    MONTH,
-    WEEK,
-    DATE,
-    DAY,
-    HOURS,
-    MINUTES,
-    SECONDS,
-    MILLISECONDS
-  ].reduce((o, u, i) => (o[u] = 1 + i, o), {});
-
-  function timeUnits(units) {
-    const u = array(units).slice(),
-          m = {};
-
-    // check validity
-    if (!u.length) error('Missing time unit.');
-
-    u.forEach(unit => {
-      if (hasOwnProperty(UNITS, unit)) {
-        m[unit] = 1;
-      } else {
-        error(`Invalid time unit: ${unit}.`);
-      }
-    });
-
-    if ((m[WEEK] || m[DAY]) && (m[QUARTER] || m[MONTH] || m[DATE])) {
-      error(`Incompatible time units: ${units}`);
-    }
-
-    // ensure proper sort order
-    u.sort((a, b) => UNITS[a] - UNITS[b]);
-
-    return u;
-  }
-
-  const t0 = new Date;
-
-  function floor(units, step, get, inv, newDate) {
-    const s = step || 1,
-          b = peek(units),
-          _ = (unit, p, key) => {
-            key = key || unit;
-            return getUnit(get[key], inv[key], unit === b && s, p);
-          };
-
-    const t = new Date,
-          u = toSet(units),
-          y = u[YEAR] ? _(YEAR) : constant(2012),
-          m = u[MONTH] ? _(MONTH)
-            : u[QUARTER] ? _(QUARTER)
-            : zero,
-          d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY)
-            : u[WEEK] ? _(WEEK, 1)
-            : u[DAY] ? _(DAY, 1)
-            : u[DATE] ? _(DATE, 1)
-            : one,
-          H = u[HOURS] ? _(HOURS) : zero,
-          M = u[MINUTES] ? _(MINUTES) : zero,
-          S = u[SECONDS] ? _(SECONDS) : zero,
-          L = u[MILLISECONDS] ? _(MILLISECONDS) : zero;
-
-    return function(v) {
-      t.setTime(+v);
-      const year = y(t);
-      return newDate(year, m(t), d(t, year), H(t), M(t), S(t), L(t));
-    };
-  }
-
-  function getUnit(f, inv, step, phase) {
-    const u = step <= 1 ? f
-      : phase ? (d, y) => phase + step * Math.floor((f(d, y) - phase) / step)
-      : (d, y) => step * Math.floor(f(d, y) / step);
-    return inv ? (d, y) => inv(u(d, y), y) : u;
-  }
-
-  // returns the day of the year based on week number, day of week,
-  // and the day of the week for the first day of the year
-  function weekday(week, day, firstDay) {
-    return day + week * 7 - (firstDay + 6) % 7;
-  }
-
-  // -- LOCAL TIME --
-
-  const localGet = {
-    [YEAR]:         d => d.getFullYear(),
-    [QUARTER]:      d => Math.floor(d.getMonth() / 3),
-    [MONTH]:        d => d.getMonth(),
-    [DATE]:         d => d.getDate(),
-    [HOURS]:        d => d.getHours(),
-    [MINUTES]:      d => d.getMinutes(),
-    [SECONDS]:      d => d.getSeconds(),
-    [MILLISECONDS]: d => d.getMilliseconds(),
-    [WEEK]:         d => localWeekNum(d),
-    [WEEK + DAY]:   (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
-    [DAY]:          (d, y) => weekday(1, d.getDay(), localFirst(y))
-  };
-
-  const localInv = {
-    [QUARTER]: q => 3 * q,
-    [WEEK]:    (w, y) => weekday(w, 0, localFirst(y))
-  };
-
-  function localYear(y) {
-    t0.setFullYear(y);
-    t0.setMonth(0);
-    t0.setDate(1);
-    t0.setHours(0, 0, 0, 0);
-    return t0;
-  }
-
-  function localWeekNum(d) {
-    return d3Time.timeWeek.count(localYear(d.getFullYear()) - 1, d);
-  }
-
-  function localFirst(y) {
-    return localYear(y).getDay();
-  }
-
-  function localDate(y, m, d, H, M, S, L) {
-    if (0 <= y && y < 100) {
-      var date = new Date(-1, m, d, H, M, S, L);
-      date.setFullYear(y);
-      return date;
-    }
-    return new Date(y, m, d, H, M, S, L);
-  }
-
-  function timeFloor(units, step) {
-    return floor(units, step || 1, localGet, localInv, localDate);
-  }
-
-  // -- UTC TIME --
-
-  const utcGet = {
-    [YEAR]:         d => d.getUTCFullYear(),
-    [QUARTER]:      d => Math.floor(d.getUTCMonth() / 3),
-    [MONTH]:        d => d.getUTCMonth(),
-    [DATE]:         d => d.getUTCDate(),
-    [HOURS]:        d => d.getUTCHours(),
-    [MINUTES]:      d => d.getUTCMinutes(),
-    [SECONDS]:      d => d.getUTCSeconds(),
-    [MILLISECONDS]: d => d.getUTCMilliseconds(),
-    [WEEK]:         d => utcWeekNum(d),
-    [DAY]:          (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
-    [WEEK + DAY]:   (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
-  };
-
-  const utcInv = {
-    [QUARTER]: q => 3 * q,
-    [WEEK]:    (w, y) => weekday(w, 0, utcFirst(y))
-  };
-
-  function utcWeekNum(d) {
-    const y = Date.UTC(d.getUTCFullYear(), 0, 1);
-    return d3Time.utcWeek.count(y - 1, d);
-  }
-
-  function utcFirst(y) {
-    t0.setTime(Date.UTC(y, 0, 1));
-    return t0.getUTCDay();
-  }
-
-  function utcDate(y, m, d, H, M, S, L) {
-    if (0 <= y && y < 100) {
-      var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
-      date.setUTCFullYear(d.y);
-      return date;
-    }
-    return new Date(Date.UTC(y, m, d, H, M, S, L));
-  }
-
-  function utcFloor(units, step) {
-    return floor(units, step || 1, utcGet, utcInv, utcDate);
-  }
-
-  const timeIntervals = {
-    [YEAR]:         d3Time.timeYear,
-    [QUARTER]:      d3Time.timeMonth.every(3),
-    [MONTH]:        d3Time.timeMonth,
-    [WEEK]:         d3Time.timeWeek,
-    [DATE]:         d3Time.timeDay,
-    [DAY]:          d3Time.timeDay,
-    [HOURS]:        d3Time.timeHour,
-    [MINUTES]:      d3Time.timeMinute,
-    [SECONDS]:      d3Time.timeSecond,
-    [MILLISECONDS]: d3Time.timeMillisecond
-  };
-
-  const utcIntervals = {
-    [YEAR]:         d3Time.utcYear,
-    [QUARTER]:      d3Time.utcMonth.every(3),
-    [MONTH]:        d3Time.utcMonth,
-    [WEEK]:         d3Time.utcWeek,
-    [DATE]:         d3Time.utcDay,
-    [DAY]:          d3Time.utcDay,
-    [HOURS]:        d3Time.utcHour,
-    [MINUTES]:      d3Time.utcMinute,
-    [SECONDS]:      d3Time.utcSecond,
-    [MILLISECONDS]: d3Time.utcMillisecond
-  };
-
-  function timeInterval(unit) {
-    return timeIntervals[unit];
-  }
-
-  function utcInterval(unit) {
-    return utcIntervals[unit];
-  }
-
-  function offset(ival, date, step) {
-    return ival ? ival.offset(date, step) : undefined;
-  }
-
-  function timeOffset(unit, date, step) {
-    return offset(timeInterval(unit), date, step);
-  }
-
-  function utcOffset(unit, date, step) {
-    return offset(utcInterval(unit), date, step);
-  }
-
-  function sequence$1(ival, start, stop, step) {
-    return ival ? ival.range(start, stop, step) : undefined;
-  }
-
-  function timeSequence(unit, start, stop, step) {
-    return sequence$1(timeInterval(unit), start, stop, step);
-  }
-
-  function utcSequence(unit, start, stop, step) {
-    return sequence$1(utcInterval(unit), start, stop, step);
-  }
-
-  const defaultSpecifiers = {
-    [YEAR]: '%Y ',
-    [QUARTER]: 'Q%q ',
-    [MONTH]: '%b ',
-    [DATE]: '%d ',
-    [WEEK]: 'W%U ',
-    [DAY]: '%a ',
-    [HOURS]: '%H:00',
-    [MINUTES]: '00:%M',
-    [SECONDS]: ':%S',
-    [MILLISECONDS]: '.%L',
-    [`${YEAR}-${MONTH}`]: '%Y-%m ',
-    [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
-    [`${HOURS}-${MINUTES}`]: '%H:%M'
-  };
-
-  function timeUnitSpecifier(units, specifiers) {
-    const s = extend({}, defaultSpecifiers, specifiers),
-          u = timeUnits(units),
-          n = u.length;
-
-    let fmt = '', start = 0, end, key;
-
-    for (start=0; start<n; ) {
-      for (end=u.length; end > start; --end) {
-        key = u.slice(start, end).join('-');
-        if (s[key] != null) {
-          fmt += s[key];
-          start = end;
-          break;
-        }
-      }
-    }
-
-    return fmt.trim();
-  }
-
-  function timeFormat(specifier) {
-    return formatter(d3TimeFormat.timeFormat, timeInterval, specifier);
-  }
-
-  function utcFormat(specifier) {
-    return formatter(d3TimeFormat.utcFormat, utcInterval, specifier);
-  }
-
-  function formatter(format, interval, specifier) {
-    return isString(specifier)
-      ? format(specifier)
-      : multiFormat(format, interval, specifier);
-  }
-
-  function multiFormat(format, interval, spec) {
-    spec = spec || {};
-    if (!isObject(spec)) {
-      error(`Invalid time multi-format specifier: ${spec}`);
-    }
-
-    const second = interval(SECONDS),
-          minute = interval(MINUTES),
-          hour = interval(HOURS),
-          day = interval(DATE),
-          week = interval(WEEK),
-          month = interval(MONTH),
-          quarter = interval(QUARTER),
-          year = interval(YEAR),
-          L = format(spec[MILLISECONDS] || '.%L'),
-          S = format(spec[SECONDS] || ':%S'),
-          M = format(spec[MINUTES] || '%I:%M'),
-          H = format(spec[HOURS] || '%I %p'),
-          d = format(spec[DATE] || spec[DAY] || '%a %d'),
-          w = format(spec[WEEK] || '%b %d'),
-          m = format(spec[MONTH] || '%B'),
-          q = format(spec[QUARTER] || '%B'),
-          y = format(spec[YEAR] || '%Y');
-
-    return function(date) {
-      return (second(date) < date ? L
-        : minute(date) < date ? S
-        : hour(date) < date ? M
-        : day(date) < date ? H
-        : month(date) < date ? (week(date) < date ? d : w)
-        : year(date) < date ? (quarter(date) < date ? m : q)
-        : y)(date);
-    };
-  }
-
-  const durationSecond = 1000,
-        durationMinute = durationSecond * 60,
-        durationHour = durationMinute * 60,
-        durationDay = durationHour * 24,
-        durationWeek = durationDay * 7,
-        durationMonth = durationDay * 30,
-        durationYear = durationDay * 365;
-
-  const Milli   = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS],
-        Seconds = Milli.slice(0, -1),
-        Minutes = Seconds.slice(0, -1),
-        Hours   = Minutes.slice(0, -1),
-        Day     = Hours.slice(0, -1),
-        Week    = [YEAR, WEEK],
-        Month   = [YEAR, MONTH],
-        Year    = [YEAR];
-
-  const intervals = [
-    [Seconds,  1,      durationSecond],
-    [Seconds,  5,  5 * durationSecond],
-    [Seconds, 15, 15 * durationSecond],
-    [Seconds, 30, 30 * durationSecond],
-    [Minutes,  1,      durationMinute],
-    [Minutes,  5,  5 * durationMinute],
-    [Minutes, 15, 15 * durationMinute],
-    [Minutes, 30, 30 * durationMinute],
-    [  Hours,  1,      durationHour  ],
-    [  Hours,  3,  3 * durationHour  ],
-    [  Hours,  6,  6 * durationHour  ],
-    [  Hours, 12, 12 * durationHour  ],
-    [    Day,  1,      durationDay   ],
-    [   Week,  1,      durationWeek  ],
-    [  Month,  1,      durationMonth ],
-    [  Month,  3,  3 * durationMonth ],
-    [   Year,  1,      durationYear  ]
-  ];
-
-  function timeBin(opt) {
-    const ext = opt.extent,
-          max = opt.maxbins || 40,
-          target = Math.abs(span(ext)) / max;
-
-    let i = bisector(i => i[2]).right(intervals, target),
-        units, step;
-
-    if (i === intervals.length) {
-      units = Year,
-      step = tickStep(ext[0] / durationYear, ext[1] / durationYear, max);
-    } else if (i) {
-      i = intervals[target / intervals[i - 1][2] < intervals[i][2] / target ? i - 1 : i];
-      units = i[0];
-      step = i[1];
-    } else {
-      units = Milli;
-      step = Math.max(tickStep(ext[0], ext[1], max), 1);
-    }
-
-    return {units, step};
-  }
-
   /**
    * Discretize dates to specific time units.
    * @constructor
@@ -8289,17 +8628,17 @@
   const OUTPUT = ['unit0', 'unit1'];
 
   TimeUnit.Definition = {
-    "type": "TimeUnit",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field", "required": true },
-      { "name": "interval", "type": "boolean", "default": true },
-      { "name": "units", "type": "string", "array": true },
-      { "name": "step", "type": "number", "default": 1 },
-      { "name": "maxbins", "type": "number", "default": 40 },
-      { "name": "extent", "type": "date", "array": true},
-      { "name": "timezone", "type": "enum", "default": "local", "values": ["local", "utc"] },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": OUTPUT }
+    'type': 'TimeUnit',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field', 'required': true },
+      { 'name': 'interval', 'type': 'boolean', 'default': true },
+      { 'name': 'units', 'type': 'enum', 'values': TIME_UNITS, 'array': true },
+      { 'name': 'step', 'type': 'number', 'default': 1 },
+      { 'name': 'maxbins', 'type': 'number', 'default': 40 },
+      { 'name': 'extent', 'type': 'date', 'array': true},
+      { 'name': 'timezone', 'type': 'enum', 'default': 'local', 'values': ['local', 'utc'] },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': OUTPUT }
     ]
   };
 
@@ -8535,7 +8874,7 @@
     last_value: function(field) {
       return {
         next: w => field(w.data[w.i1 - 1])
-      }
+      };
     },
     nth_value: function(field, nth) {
       nth = +nth;
@@ -8545,22 +8884,23 @@
           let i = w.i0 + (nth - 1);
           return i < w.i1 ? field(w.data[i]) : null;
         }
-      }
+      };
     },
 
     prev_value: function(field) {
-      let prev = null;
+      let prev;
       return {
+        init: () => prev = null,
         next: w => {
           let v = field(w.data[w.index]);
           return v != null ? (prev = v) : prev;
         }
-      }
+      };
     },
     next_value: function(field) {
-      let v = null,
-          i = -1;
+      let v, i;
       return {
+        init: () => (v = null, i = -1),
         next: w => {
           let d = w.data;
           return w.index <= i ? v
@@ -8569,8 +8909,7 @@
               : (v = field(d[i]));
         }
       };
-    },
-
+    }
   };
 
   function find(field, data, index) {
@@ -8748,17 +9087,17 @@
   }
 
   Window.Definition = {
-    "type": "Window",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "sort", "type": "compare" },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "ops", "type": "enum", "array": true, "values": ValidWindowOps.concat(ValidAggregateOps) },
-      { "name": "params", "type": "number", "null": true, "array": true },
-      { "name": "fields", "type": "field", "null": true, "array": true },
-      { "name": "as", "type": "string", "null": true, "array": true },
-      { "name": "frame", "type": "number", "null": true, "array": true, "length": 2, "default": [null, 0] },
-      { "name": "ignorePeers", "type": "boolean", "default": false }
+    'type': 'Window',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidWindowOps.concat(ValidAggregateOps) },
+      { 'name': 'params', 'type': 'number', 'null': true, 'array': true },
+      { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+      { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+      { 'name': 'frame', 'type': 'number', 'null': true, 'array': true, 'length': 2, 'default': [null, 0] },
+      { 'name': 'ignorePeers', 'type': 'boolean', 'default': false }
     ]
   };
 
@@ -8859,8 +9198,6 @@
     if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);
   }
 
-
-
   var tx = /*#__PURE__*/Object.freeze({
     __proto__: null,
     aggregate: Aggregate,
@@ -8954,186 +9291,11 @@
   const Column = 'column';
   const Row = 'row';
 
-  function Bounds(b) {
-    this.clear();
-    if (b) this.union(b);
-  }
-
-  var prototype$G = Bounds.prototype;
-
-  prototype$G.clone = function() {
-    return new Bounds(this);
-  };
-
-  prototype$G.clear = function() {
-    this.x1 = +Number.MAX_VALUE;
-    this.y1 = +Number.MAX_VALUE;
-    this.x2 = -Number.MAX_VALUE;
-    this.y2 = -Number.MAX_VALUE;
-    return this;
-  };
-
-  prototype$G.empty = function() {
-    return (
-      this.x1 === +Number.MAX_VALUE &&
-      this.y1 === +Number.MAX_VALUE &&
-      this.x2 === -Number.MAX_VALUE &&
-      this.y2 === -Number.MAX_VALUE
-    );
-  };
-
-  prototype$G.equals = function(b) {
-    return (
-      this.x1 === b.x1 &&
-      this.y1 === b.y1 &&
-      this.x2 === b.x2 &&
-      this.y2 === b.y2
-    );
-  };
-
-  prototype$G.set = function(x1, y1, x2, y2) {
-    if (x2 < x1) {
-      this.x2 = x1;
-      this.x1 = x2;
-    } else {
-      this.x1 = x1;
-      this.x2 = x2;
-    }
-    if (y2 < y1) {
-      this.y2 = y1;
-      this.y1 = y2;
-    } else {
-      this.y1 = y1;
-      this.y2 = y2;
-    }
-    return this;
-  };
-
-  prototype$G.add = function(x, y) {
-    if (x < this.x1) this.x1 = x;
-    if (y < this.y1) this.y1 = y;
-    if (x > this.x2) this.x2 = x;
-    if (y > this.y2) this.y2 = y;
-    return this;
-  };
-
-  prototype$G.expand = function(d) {
-    this.x1 -= d;
-    this.y1 -= d;
-    this.x2 += d;
-    this.y2 += d;
-    return this;
-  };
-
-  prototype$G.round = function() {
-    this.x1 = Math.floor(this.x1);
-    this.y1 = Math.floor(this.y1);
-    this.x2 = Math.ceil(this.x2);
-    this.y2 = Math.ceil(this.y2);
-    return this;
-  };
-
-  prototype$G.scale = function(s) {
-    this.x1 *= s;
-    this.y1 *= s;
-    this.x2 *= s;
-    this.y2 *= s;
-    return this;
-  };
-
-  prototype$G.translate = function(dx, dy) {
-    this.x1 += dx;
-    this.x2 += dx;
-    this.y1 += dy;
-    this.y2 += dy;
-    return this;
-  };
-
-  prototype$G.rotate = function(angle, x, y) {
-    const p = this.rotatedPoints(angle, x, y);
-    return this.clear()
-      .add(p[0], p[1])
-      .add(p[2], p[3])
-      .add(p[4], p[5])
-      .add(p[6], p[7]);
-  };
-
-  prototype$G.rotatedPoints = function(angle, x, y) {
-    var {x1, y1, x2, y2} = this,
-        cos = Math.cos(angle),
-        sin = Math.sin(angle),
-        cx = x - x*cos + y*sin,
-        cy = y - x*sin - y*cos;
-
-    return [
-      cos*x1 - sin*y1 + cx, sin*x1 + cos*y1 + cy,
-      cos*x1 - sin*y2 + cx, sin*x1 + cos*y2 + cy,
-      cos*x2 - sin*y1 + cx, sin*x2 + cos*y1 + cy,
-      cos*x2 - sin*y2 + cx, sin*x2 + cos*y2 + cy
-    ];
-  };
-
-  prototype$G.union = function(b) {
-    if (b.x1 < this.x1) this.x1 = b.x1;
-    if (b.y1 < this.y1) this.y1 = b.y1;
-    if (b.x2 > this.x2) this.x2 = b.x2;
-    if (b.y2 > this.y2) this.y2 = b.y2;
-    return this;
-  };
-
-  prototype$G.intersect = function(b) {
-    if (b.x1 > this.x1) this.x1 = b.x1;
-    if (b.y1 > this.y1) this.y1 = b.y1;
-    if (b.x2 < this.x2) this.x2 = b.x2;
-    if (b.y2 < this.y2) this.y2 = b.y2;
-    return this;
-  };
-
-  prototype$G.encloses = function(b) {
-    return b && (
-      this.x1 <= b.x1 &&
-      this.x2 >= b.x2 &&
-      this.y1 <= b.y1 &&
-      this.y2 >= b.y2
-    );
-  };
-
-  prototype$G.alignsWith = function(b) {
-    return b && (
-      this.x1 == b.x1 ||
-      this.x2 == b.x2 ||
-      this.y1 == b.y1 ||
-      this.y2 == b.y2
-    );
-  };
-
-  prototype$G.intersects = function(b) {
-    return b && !(
-      this.x2 < b.x1 ||
-      this.x1 > b.x2 ||
-      this.y2 < b.y1 ||
-      this.y1 > b.y2
-    );
-  };
-
-  prototype$G.contains = function(x, y) {
-    return !(
-      x < this.x1 ||
-      x > this.x2 ||
-      y < this.y1 ||
-      y > this.y2
-    );
-  };
-
-  prototype$G.width = function() {
-    return this.x2 - this.x1;
-  };
-
-  prototype$G.height = function() {
-    return this.y2 - this.y1;
-  };
-
   var gradient_id = 0;
+
+  function resetSVGGradientId() {
+    gradient_id = 0;
+  }
 
   const patternPrefix = 'p_';
 
@@ -9191,110 +9353,6 @@
       }
     };
   }
-
-  function Item(mark) {
-    this.mark = mark;
-    this.bounds = (this.bounds || new Bounds());
-  }
-
-  function GroupItem(mark) {
-    Item.call(this, mark);
-    this.items = (this.items || []);
-  }
-
-  inherits(GroupItem, Item);
-
-  function domCanvas(w, h) {
-    if (typeof document !== 'undefined' && document.createElement) {
-      var c = document.createElement('canvas');
-      if (c && c.getContext) {
-        c.width = w;
-        c.height = h;
-        return c;
-      }
-    }
-    return null;
-  }
-
-  function domImage() {
-    return typeof Image !== 'undefined' ? Image : null;
-  }
-
-  function ResourceLoader(customLoader) {
-    this._pending = 0;
-    this._loader = customLoader || loader();
-  }
-
-  var prototype$H = ResourceLoader.prototype;
-
-  prototype$H.pending = function() {
-    return this._pending;
-  };
-
-  function increment(loader) {
-    loader._pending += 1;
-  }
-
-  function decrement(loader) {
-    loader._pending -= 1;
-  }
-
-  prototype$H.sanitizeURL = function(uri) {
-    var loader = this;
-    increment(loader);
-
-    return loader._loader.sanitize(uri, {context:'href'})
-      .then(function(opt) {
-        decrement(loader);
-        return opt;
-      })
-      .catch(function() {
-        decrement(loader);
-        return null;
-      });
-  };
-
-  prototype$H.loadImage = function(uri) {
-    const loader = this,
-          Image = domImage();
-    increment(loader);
-
-    return loader._loader
-      .sanitize(uri, {context: 'image'})
-      .then(function(opt) {
-        const url = opt.href;
-        if (!url || !Image) throw {url: url};
-
-        const img = new Image();
-
-        // set crossOrigin only if cors is defined; empty string sets anonymous mode
-        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
-        const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
-        if (cors != null) img.crossOrigin = cors;
-
-        // attempt to load image resource
-        img.onload = () => decrement(loader);
-        img.onerror = () => decrement(loader);
-        img.src = url;
-
-        return img;
-      })
-      .catch(function(e) {
-        decrement(loader);
-        return {complete: false, width: 0, height: 0, src: e && e.url || ''};
-      });
-  };
-
-  prototype$H.ready = function() {
-    var loader = this;
-    return new Promise(function(accept) {
-      function poll(value) {
-        if (!loader.pending()) accept(value);
-        else setTimeout(function() { poll(true); }, 10);
-      }
-      poll(false);
-    });
-  };
 
   var lookup = {
     'basis': {
@@ -10343,6 +10401,313 @@
     return trailShape.context(context)(items);
   }
 
+  var clip_id = 1;
+
+  function resetSVGClipId() {
+    clip_id = 1;
+  }
+
+  function clip(renderer, item, size) {
+    var clip = item.clip,
+        defs = renderer._defs,
+        id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
+        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+
+    if (isFunction(clip)) {
+      c.path = clip(null);
+    } else if (hasCornerRadius(size)) {
+      c.path = rectangle(null, size, 0, 0);
+    } else {
+      c.width = size.width || 0;
+      c.height = size.height || 0;
+    }
+
+    return 'url(#' + id + ')';
+  }
+
+  function Bounds(b) {
+    this.clear();
+    if (b) this.union(b);
+  }
+
+  var prototype$G = Bounds.prototype;
+
+  prototype$G.clone = function() {
+    return new Bounds(this);
+  };
+
+  prototype$G.clear = function() {
+    this.x1 = +Number.MAX_VALUE;
+    this.y1 = +Number.MAX_VALUE;
+    this.x2 = -Number.MAX_VALUE;
+    this.y2 = -Number.MAX_VALUE;
+    return this;
+  };
+
+  prototype$G.empty = function() {
+    return (
+      this.x1 === +Number.MAX_VALUE &&
+      this.y1 === +Number.MAX_VALUE &&
+      this.x2 === -Number.MAX_VALUE &&
+      this.y2 === -Number.MAX_VALUE
+    );
+  };
+
+  prototype$G.equals = function(b) {
+    return (
+      this.x1 === b.x1 &&
+      this.y1 === b.y1 &&
+      this.x2 === b.x2 &&
+      this.y2 === b.y2
+    );
+  };
+
+  prototype$G.set = function(x1, y1, x2, y2) {
+    if (x2 < x1) {
+      this.x2 = x1;
+      this.x1 = x2;
+    } else {
+      this.x1 = x1;
+      this.x2 = x2;
+    }
+    if (y2 < y1) {
+      this.y2 = y1;
+      this.y1 = y2;
+    } else {
+      this.y1 = y1;
+      this.y2 = y2;
+    }
+    return this;
+  };
+
+  prototype$G.add = function(x, y) {
+    if (x < this.x1) this.x1 = x;
+    if (y < this.y1) this.y1 = y;
+    if (x > this.x2) this.x2 = x;
+    if (y > this.y2) this.y2 = y;
+    return this;
+  };
+
+  prototype$G.expand = function(d) {
+    this.x1 -= d;
+    this.y1 -= d;
+    this.x2 += d;
+    this.y2 += d;
+    return this;
+  };
+
+  prototype$G.round = function() {
+    this.x1 = Math.floor(this.x1);
+    this.y1 = Math.floor(this.y1);
+    this.x2 = Math.ceil(this.x2);
+    this.y2 = Math.ceil(this.y2);
+    return this;
+  };
+
+  prototype$G.scale = function(s) {
+    this.x1 *= s;
+    this.y1 *= s;
+    this.x2 *= s;
+    this.y2 *= s;
+    return this;
+  };
+
+  prototype$G.translate = function(dx, dy) {
+    this.x1 += dx;
+    this.x2 += dx;
+    this.y1 += dy;
+    this.y2 += dy;
+    return this;
+  };
+
+  prototype$G.rotate = function(angle, x, y) {
+    const p = this.rotatedPoints(angle, x, y);
+    return this.clear()
+      .add(p[0], p[1])
+      .add(p[2], p[3])
+      .add(p[4], p[5])
+      .add(p[6], p[7]);
+  };
+
+  prototype$G.rotatedPoints = function(angle, x, y) {
+    var {x1, y1, x2, y2} = this,
+        cos = Math.cos(angle),
+        sin = Math.sin(angle),
+        cx = x - x*cos + y*sin,
+        cy = y - x*sin - y*cos;
+
+    return [
+      cos*x1 - sin*y1 + cx, sin*x1 + cos*y1 + cy,
+      cos*x1 - sin*y2 + cx, sin*x1 + cos*y2 + cy,
+      cos*x2 - sin*y1 + cx, sin*x2 + cos*y1 + cy,
+      cos*x2 - sin*y2 + cx, sin*x2 + cos*y2 + cy
+    ];
+  };
+
+  prototype$G.union = function(b) {
+    if (b.x1 < this.x1) this.x1 = b.x1;
+    if (b.y1 < this.y1) this.y1 = b.y1;
+    if (b.x2 > this.x2) this.x2 = b.x2;
+    if (b.y2 > this.y2) this.y2 = b.y2;
+    return this;
+  };
+
+  prototype$G.intersect = function(b) {
+    if (b.x1 > this.x1) this.x1 = b.x1;
+    if (b.y1 > this.y1) this.y1 = b.y1;
+    if (b.x2 < this.x2) this.x2 = b.x2;
+    if (b.y2 < this.y2) this.y2 = b.y2;
+    return this;
+  };
+
+  prototype$G.encloses = function(b) {
+    return b && (
+      this.x1 <= b.x1 &&
+      this.x2 >= b.x2 &&
+      this.y1 <= b.y1 &&
+      this.y2 >= b.y2
+    );
+  };
+
+  prototype$G.alignsWith = function(b) {
+    return b && (
+      this.x1 == b.x1 ||
+      this.x2 == b.x2 ||
+      this.y1 == b.y1 ||
+      this.y2 == b.y2
+    );
+  };
+
+  prototype$G.intersects = function(b) {
+    return b && !(
+      this.x2 < b.x1 ||
+      this.x1 > b.x2 ||
+      this.y2 < b.y1 ||
+      this.y1 > b.y2
+    );
+  };
+
+  prototype$G.contains = function(x, y) {
+    return !(
+      x < this.x1 ||
+      x > this.x2 ||
+      y < this.y1 ||
+      y > this.y2
+    );
+  };
+
+  prototype$G.width = function() {
+    return this.x2 - this.x1;
+  };
+
+  prototype$G.height = function() {
+    return this.y2 - this.y1;
+  };
+
+  function Item(mark) {
+    this.mark = mark;
+    this.bounds = (this.bounds || new Bounds());
+  }
+
+  function GroupItem(mark) {
+    Item.call(this, mark);
+    this.items = (this.items || []);
+  }
+
+  inherits(GroupItem, Item);
+
+  function domCanvas(w, h) {
+    if (typeof document !== 'undefined' && document.createElement) {
+      var c = document.createElement('canvas');
+      if (c && c.getContext) {
+        c.width = w;
+        c.height = h;
+        return c;
+      }
+    }
+    return null;
+  }
+
+  function domImage() {
+    return typeof Image !== 'undefined' ? Image : null;
+  }
+
+  function ResourceLoader(customLoader) {
+    this._pending = 0;
+    this._loader = customLoader || loader();
+  }
+
+  var prototype$H = ResourceLoader.prototype;
+
+  prototype$H.pending = function() {
+    return this._pending;
+  };
+
+  function increment(loader) {
+    loader._pending += 1;
+  }
+
+  function decrement(loader) {
+    loader._pending -= 1;
+  }
+
+  prototype$H.sanitizeURL = function(uri) {
+    var loader = this;
+    increment(loader);
+
+    return loader._loader.sanitize(uri, {context:'href'})
+      .then(function(opt) {
+        decrement(loader);
+        return opt;
+      })
+      .catch(function() {
+        decrement(loader);
+        return null;
+      });
+  };
+
+  prototype$H.loadImage = function(uri) {
+    const loader = this,
+          Image = domImage();
+    increment(loader);
+
+    return loader._loader
+      .sanitize(uri, {context: 'image'})
+      .then(function(opt) {
+        const url = opt.href;
+        if (!url || !Image) throw {url: url};
+
+        const img = new Image();
+
+        // set crossOrigin only if cors is defined; empty string sets anonymous mode
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
+        const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
+        if (cors != null) img.crossOrigin = cors;
+
+        // attempt to load image resource
+        img.onload = () => decrement(loader);
+        img.onerror = () => decrement(loader);
+        img.src = url;
+
+        return img;
+      })
+      .catch(function(e) {
+        decrement(loader);
+        return {complete: false, width: 0, height: 0, src: e && e.url || ''};
+      });
+  };
+
+  prototype$H.ready = function() {
+    var loader = this;
+    return new Promise(function(accept) {
+      function poll(value) {
+        if (!loader.pending()) accept(value);
+        else setTimeout(function() { poll(true); }, 10);
+      }
+      poll(false);
+    });
+  };
+
   function boundStroke(bounds, item, miter) {
     if (item.stroke && item.opacity !== 0 && item.strokeOpacity !== 0) {
       const sw = item.strokeWidth != null ? +item.strokeWidth : 1;
@@ -10364,26 +10729,26 @@
     return context;
   }
 
-  function noop() {}
+  function noop$1() {}
 
-  function add$1(x, y) { bounds.add(x, y); }
+  function add$2(x, y) { bounds.add(x, y); }
 
-  function addL(x, y) { add$1(lx = x, ly = y); }
+  function addL(x, y) { add$2(lx = x, ly = y); }
 
-  function addX(x) { add$1(x, bounds.y1); }
+  function addX(x) { add$2(x, bounds.y1); }
 
-  function addY(y) { add$1(bounds.x1, y); }
+  function addY(y) { add$2(bounds.x1, y); }
 
-  context.beginPath = noop;
+  context.beginPath = noop$1;
 
-  context.closePath = noop;
+  context.closePath = noop$1;
 
   context.moveTo = addL;
 
   context.lineTo = addL;
 
   context.rect = function(x, y, w, h) {
-    add$1(x + w, y + h);
+    add$2(x + w, y + h);
     addL(x, y);
   };
 
@@ -10442,10 +10807,10 @@
 
     if (Math.abs(ea - sa) > circleThreshold) {
       // treat as full circle
-      add$1(cx - r, cy - r);
-      add$1(cx + r, cy + r);
+      add$2(cx - r, cy - r);
+      add$2(cx + r, cy + r);
     } else {
-      const update = a => add$1(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
+      const update = a => add$2(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
       let s, i;
 
       // sample end points
@@ -10504,7 +10869,7 @@
 
       // false if no hits in intersection region
       return false;
-    }
+    };
   }
 
   function intersectPoint(item, box) {
@@ -10560,7 +10925,7 @@
     context.globalCompositeOperation = item.blend || 'source-over';
   }
 
-  function v(value, dflt) {
+  function value$1(value, dflt) {
     return value == null ? dflt : value;
   }
 
@@ -10580,18 +10945,18 @@
 
     if (spec.gradient === 'radial') {
       gradient = context.createRadialGradient(
-        bounds.x1 + v(spec.x1, 0.5) * w,
-        bounds.y1 + v(spec.y1, 0.5) * h,
-        Math.max(w, h) * v(spec.r1, 0),
-        bounds.x1 + v(spec.x2, 0.5) * w,
-        bounds.y1 + v(spec.y2, 0.5) * h,
-        Math.max(w, h) * v(spec.r2, 0.5)
+        bounds.x1 + value$1(spec.x1, 0.5) * w,
+        bounds.y1 + value$1(spec.y1, 0.5) * h,
+        Math.max(w, h) * value$1(spec.r1, 0),
+        bounds.x1 + value$1(spec.x2, 0.5) * w,
+        bounds.y1 + value$1(spec.y2, 0.5) * h,
+        Math.max(w, h) * value$1(spec.r2, 0.5)
       );
     } else { // linear gradient
-      const x1 = v(spec.x1, 0),
-            y1 = v(spec.y1, 0),
-            x2 = v(spec.x2, 1),
-            y2 = v(spec.y2, 0);
+      const x1 = value$1(spec.x1, 0),
+            y1 = value$1(spec.y1, 0),
+            x2 = value$1(spec.x2, 1),
+            y2 = value$1(spec.y2, 0);
 
       if (x1 === x2 || y1 === y2 || w === h) {
         // axis aligned: use normal gradient
@@ -10665,7 +11030,7 @@
     }
   }
 
-  function compare$1(a, b) {
+  function compare$2(a, b) {
     return a.zindex - b.zindex || a.index - b.index;
   }
 
@@ -10682,7 +11047,7 @@
     }
 
     scene.zdirty = false;
-    return scene.zitems = output.sort(compare$1);
+    return scene.zitems = output.sort(compare$2);
   }
 
   function visit(scene, visitor) {
@@ -10971,7 +11336,7 @@
 
   var area$1 = markMultiItemPath('area', area, pickArea);
 
-  function clip(context, scene) {
+  function clip$1(context, scene) {
     var clip = scene.clip;
 
     context.save();
@@ -10993,32 +11358,8 @@
     context.clip();
   }
 
-  var clip_id = 1;
-
-  function resetSVGClipId() {
-    clip_id = 1;
-  }
-
-  function clip$1(renderer, item, size) {
-    var clip = item.clip,
-        defs = renderer._defs,
-        id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
-        c = defs.clipping[id] || (defs.clipping[id] = {id: id});
-
-    if (isFunction(clip)) {
-      c.path = clip(null);
-    } else if (hasCornerRadius(size)) {
-      c.path = rectangle(null, size, 0, 0);
-    } else {
-      c.width = size.width || 0;
-      c.height = size.height || 0;
-    }
-
-    return 'url(#' + id + ')';
-  }
-
   function offset$1(item) {
-    var sw = (sw = item.strokeWidth) != null ? sw : 1;
+    const sw = value$1(item.strokeWidth, 1);
     return item.strokeOffset != null ? item.strokeOffset
       : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1)
       : 0;
@@ -11029,17 +11370,19 @@
   }
 
   function emitRectangle(emit, item) {
-    var off = offset$1(item);
+    const off = offset$1(item);
     emit('d', rectangle(null, item, off, off));
   }
 
   function background(emit, item) {
     emit('class', 'background');
+    emit('aria-hidden', true);
     emitRectangle(emit, item);
   }
 
   function foreground(emit, item) {
     emit('class', 'foreground');
+    emit('aria-hidden', true);
     if (item.strokeForeground) {
       emitRectangle(emit, item);
     } else {
@@ -11048,14 +11391,14 @@
   }
 
   function content(emit, item, renderer) {
-    var url = item.clip ? clip$1(renderer, item, item) : null;
+    const url = item.clip ? clip(renderer, item, item) : null;
     emit('clip-path', url);
   }
 
   function bound(bounds, group) {
     if (!group.clip && group.items) {
-      var items = group.items;
-      for (var j=0, m=items.length; j<m; ++j) {
+      const items = group.items, m = items.length;
+      for (let j=0; j<m; ++j) {
         bounds.union(items[j].bounds);
       }
     }
@@ -11070,22 +11413,20 @@
   }
 
   function rectanglePath(context, group, x, y) {
-    var off = offset$1(group);
+    const off = offset$1(group);
     context.beginPath();
     rectangle(context, group, (x || 0) + off, (y || 0) + off);
   }
 
-  var hitBackground = hitPath(rectanglePath);
-  var hitForeground = hitPath(rectanglePath, false);
+  const hitBackground = hitPath(rectanglePath);
+  const hitForeground = hitPath(rectanglePath, false);
 
   function draw(context, scene, bounds) {
-    var renderer = this;
-
-    visit(scene, function(group) {
-      var gx = group.x || 0,
-          gy = group.y || 0,
-          fore = group.strokeForeground,
-          opacity = group.opacity == null ? 1 : group.opacity;
+    visit(scene, group => {
+      const gx = group.x || 0,
+            gy = group.y || 0,
+            fore = group.strokeForeground,
+            opacity = group.opacity == null ? 1 : group.opacity;
 
       // draw group background
       if ((group.stroke || group.fill) && opacity) {
@@ -11106,8 +11447,8 @@
       if (bounds) bounds.translate(-gx, -gy);
 
       // draw group contents
-      visit(group, function(item) {
-        renderer.draw(context, item, bounds);
+      visit(group, item => {
+        this.draw(context, item, bounds);
       });
 
       // restore graphics context
@@ -11130,12 +11471,11 @@
       return null;
     }
 
-    var handler = this,
-        cx = x * context.pixelRatio,
-        cy = y * context.pixelRatio;
+    const cx = x * context.pixelRatio,
+          cy = y * context.pixelRatio;
 
-    return pickVisit(scene, function(group) {
-      var hit, fore, ix, dx, dy, dw, dh, b, c;
+    return pickVisit(scene, group => {
+      let hit, fore, ix, dx, dy, dw, dh, b, c;
 
       // first hit test bounding box
       b = group.bounds;
@@ -11147,7 +11487,7 @@
       dw = dx + (group.width || 0);
       dh = dy + (group.height || 0);
       c = group.clip;
-      if (c && (gx < dx || gx > dw || gy < dx || gy > dh)) return;
+      if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
       // adjust coordinate system
       context.save();
@@ -11172,11 +11512,10 @@
       }
 
       // hit test against contained marks
-      hit = pickVisit(group, function(mark) {
-        return pickMark(mark, dx, dy)
-          ? handler.pick(mark, x, y, dx, dy)
-          : null;
-      });
+      hit = pickVisit(group, mark => pickMark(mark, dx, dy)
+        ? this.pick(mark, x, y, dx, dy)
+        : null
+      );
 
       // hit test against group background
       if (!hit && ix && (group.fill || (!fore && group.stroke))
@@ -11207,6 +11546,12 @@
     content:    content,
     background: background,
     foreground: foreground
+  };
+
+  var metadata = {
+    'version': '1.1',
+    'xmlns': 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
   };
 
   function getImage(item, renderer) {
@@ -11244,58 +11589,43 @@
   }
 
   function attr$1(emit, item, renderer) {
-    var image = getImage(item, renderer),
-        x = item.x || 0,
-        y = item.y || 0,
-        w = imageWidth(item, image),
-        h = imageHeight(item, image),
-        a = item.aspect === false ? 'none' : 'xMidYMid';
+    const img = getImage(item, renderer),
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h),
+          i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
 
-    x -= imageXOffset(item.align, w);
-    y -= imageYOffset(item.baseline, h);
-
-    if (!image.src && image.toDataURL) {
-      emit('href', image.toDataURL(), 'http://www.w3.org/1999/xlink', 'xlink:href');
-    } else {
-      emit('href', image.src || '', 'http://www.w3.org/1999/xlink', 'xlink:href');
-    }
+    emit('href', i, metadata['xmlns:xlink'], 'xlink:href');
     emit('transform', translate(x, y));
     emit('width', w);
     emit('height', h);
-    emit('preserveAspectRatio', a);
+    emit('preserveAspectRatio', item.aspect === false ? 'none' : 'xMidYMid');
   }
 
   function bound$1(bounds, item) {
-    var image = item.image,
-        x = item.x || 0,
-        y = item.y || 0,
-        w = imageWidth(item, image),
-        h = imageHeight(item, image);
-
-    x -= imageXOffset(item.align, w);
-    y -= imageYOffset(item.baseline, h);
+    const img = item.image,
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h);
 
     return bounds.set(x, y, x + w, y + h);
   }
 
   function draw$1(context, scene, bounds) {
-    var renderer = this;
-
-    visit(scene, function(item) {
+    visit(scene, item => {
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-      var image = getImage(item, renderer),
-          x = item.x || 0,
-          y = item.y || 0,
-          w = imageWidth(item, image),
-          h = imageHeight(item, image),
+      let img = getImage(item, this),
+          w = imageWidth(item, img),
+          h = imageHeight(item, img),
+          x = (item.x || 0) - imageXOffset(item.align, w),
+          y = (item.y || 0) - imageYOffset(item.baseline, h),
           opacity, ar0, ar1, t;
 
-      x -= imageXOffset(item.align, w);
-      y -= imageYOffset(item.baseline, h);
-
       if (item.aspect !== false) {
-        ar0 = image.width / image.height;
+        ar0 = img.width / img.height;
         ar1 = item.width / item.height;
         if (ar0 === ar0 && ar1 === ar1 && ar0 !== ar1) {
           if (ar1 < ar0) {
@@ -11310,11 +11640,11 @@
         }
       }
 
-      if (image.complete || image.toDataURL) {
+      if (img.complete || img.toDataURL) {
         blend(context, item);
         context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
         context.imageSmoothingEnabled = item.smooth !== false;
-        context.drawImage(image, x, y, w, h);
+        context.drawImage(img, x, y, w, h);
       }
     });
   }
@@ -11883,7 +12213,8 @@
     'size', 'shape',                                              // symbol
     'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',        // text
     'ellipsis', 'limit', 'lineBreak', 'lineHeight',
-    'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant'  // font
+    'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant', // font
+    'description', 'aria', 'ariaRole', 'ariaRoleDescription'      // aria
   ];
 
   function sceneToJSON(scene, indent) {
@@ -11941,7 +12272,7 @@
   };
 
   function createMark(def, group) {
-    return {
+    const mark = {
       bounds:      new Bounds(),
       clip:        !!def.clip,
       group:       group,
@@ -11952,6 +12283,16 @@
       role:        def.role || undefined,
       zindex:      def.zindex || 0
     };
+
+    // add accessibility properties if defined
+    if (def.aria != null) {
+      mark.aria = def.aria;
+    }
+    if (def.description) {
+      mark.description = def.description;
+    }
+
+    return mark;
   }
 
   // create a new DOM element
@@ -12048,7 +12389,7 @@
     handler.element().setAttribute('title', value || '');
   }
 
-  var prototype$J = Handler.prototype;
+  const prototype$J = Handler.prototype;
 
   /**
    * Initialize a new Handler instance.
@@ -12121,7 +12462,7 @@
    * @return {number} - The handler's array index or -1 if not registered.
    */
   prototype$J._handlerIndex = function(h, type, handler) {
-    for (var i = h ? h.length : 0; --i>=0;) {
+    for (let i = h ? h.length : 0; --i>=0;) {
       if (h[i].type === type && (!handler || h[i].handler === handler)) {
         return i;
       }
@@ -12138,11 +12479,11 @@
    * @return {Array} - A new array containing all registered event handlers.
    */
   prototype$J.handlers = function(type) {
-    var h = this._handlers, a = [], k;
+    const h = this._handlers, a = [];
     if (type) {
       a.push.apply(a, h[this.eventName(type)]);
     } else {
-      for (k in h) { a.push.apply(a, h[k]); }
+      for (const k in h) { a.push.apply(a, h[k]); }
     }
     return a;
   };
@@ -12154,8 +12495,8 @@
    * @return {string} - A string with the event type only.
    */
   prototype$J.eventName = function(name) {
-    var i = name.indexOf('.');
-    return i < 0 ? name : name.slice(0,i);
+    const i = name.indexOf('.');
+    return i < 0 ? name : name.slice(0, i);
   };
 
   /**
@@ -12167,10 +12508,10 @@
   prototype$J.handleHref = function(event, item, href) {
     this._loader
       .sanitize(href, {context:'href'})
-      .then(function(opt) {
-        var e = new MouseEvent(event.type, event),
-            a = domCreate(null, 'a');
-        for (var name in opt) a.setAttribute(name, opt[name]);
+      .then(opt => {
+        const e = new MouseEvent(event.type, event),
+              a = domCreate(null, 'a');
+        for (const name in opt) a.setAttribute(name, opt[name]);
         a.dispatchEvent(e);
       })
       .catch(function() { /* do nothing */ });
@@ -12186,7 +12527,7 @@
   prototype$J.handleTooltip = function(event, item, show) {
     if (item && item.tooltip != null) {
       item = resolveItem(item, event, this.canvas(), this._origin);
-      var value = (show && item && item.tooltip) || null;
+      const value = (show && item && item.tooltip) || null;
       this._tooltip.call(this._obj, this, event, item, value);
     }
   };
@@ -12200,15 +12541,17 @@
    *   right, and bottom properties.
    */
   prototype$J.getItemBoundingClientRect = function(item) {
-    if (!(el = this.canvas())) return;
+    const el = this.canvas();
+    if (!el) return;
 
-    var el, rect = el.getBoundingClientRect(),
-        origin = this._origin,
-        itemBounds = item.bounds,
-        x = itemBounds.x1 + origin[0] + rect.left,
-        y = itemBounds.y1 + origin[1] + rect.top,
-        w = itemBounds.width(),
-        h = itemBounds.height();
+    const rect = el.getBoundingClientRect(),
+          origin = this._origin,
+          bounds = item.bounds,
+          width = bounds.width(),
+          height = bounds.height();
+
+    let x = bounds.x1 + origin[0] + rect.left,
+        y = bounds.y1 + origin[1] + rect.top;
 
     // translate coordinate for each parent group
     while (item.mark && (item = item.mark.group)) {
@@ -12218,14 +12561,8 @@
 
     // return DOMRect-compatible bounding box
     return {
-      x:      x,
-      y:      y,
-      width:  w,
-      height: h,
-      left:   x,
-      top:    y,
-      right:  x + w,
-      bottom: y + h
+      x, y, width, height,
+      left: x, top: y, right: x + width, bottom: y + height
     };
   };
 
@@ -12411,60 +12748,95 @@
     return this._load('loadImage', uri);
   };
 
-  var Events = [
-    'keydown',
-    'keypress',
-    'keyup',
-    'dragenter',
-    'dragleave',
-    'dragover',
-    'mousedown',
-    'mouseup',
-    'mousemove',
-    'mouseout',
-    'mouseover',
-    'click',
-    'dblclick',
-    'wheel',
-    'mousewheel',
-    'touchstart',
-    'touchmove',
-    'touchend'
+  const KeyDownEvent = 'keydown';
+  const KeyPressEvent = 'keypress';
+  const KeyUpEvent = 'keyup';
+  const DragEnterEvent = 'dragenter';
+  const DragLeaveEvent = 'dragleave';
+  const DragOverEvent = 'dragover';
+  const MouseDownEvent = 'mousedown';
+  const MouseUpEvent = 'mouseup';
+  const MouseMoveEvent = 'mousemove';
+  const MouseOutEvent = 'mouseout';
+  const MouseOverEvent = 'mouseover';
+  const ClickEvent = 'click';
+  const DoubleClickEvent = 'dblclick';
+  const WheelEvent = 'wheel';
+  const MouseWheelEvent = 'mousewheel';
+  const TouchStartEvent = 'touchstart';
+  const TouchMoveEvent = 'touchmove';
+  const TouchEndEvent = 'touchend';
+
+  const Events = [
+    KeyDownEvent,
+    KeyPressEvent,
+    KeyUpEvent,
+    DragEnterEvent,
+    DragLeaveEvent,
+    DragOverEvent,
+    MouseDownEvent,
+    MouseUpEvent,
+    MouseMoveEvent,
+    MouseOutEvent,
+    MouseOverEvent,
+    ClickEvent,
+    DoubleClickEvent,
+    WheelEvent,
+    MouseWheelEvent,
+    TouchStartEvent,
+    TouchMoveEvent,
+    TouchEndEvent
   ];
 
-  var TooltipShowEvent = 'mousemove';
+  const TooltipShowEvent = MouseMoveEvent;
 
-  var TooltipHideEvent = 'mouseout';
+  const TooltipHideEvent = MouseOutEvent;
 
-  var HrefEvent = 'click';
+  const HrefEvent = ClickEvent;
 
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
     this._down = null;
     this._touch = null;
     this._first = true;
+    this._events = {};
   }
 
-  var prototype$L = inherits(CanvasHandler, Handler);
+  const prototype$L = inherits(CanvasHandler, Handler);
 
   prototype$L.initialize = function(el, origin, obj) {
-    // add event listeners
-    var canvas = this._canvas = el && domFind(el, 'canvas');
-    if (canvas) {
-      var that = this;
-      this.events.forEach(function(type) {
-        canvas.addEventListener(type, function(evt) {
-          if (prototype$L[type]) {
-            prototype$L[type].call(that, evt);
-          } else {
-            that.fire(type, evt);
-          }
-        });
-      });
-    }
+    this._canvas = el && domFind(el, 'canvas');
+
+    // add minimal events required for proper state management
+    [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
+      .forEach(type => eventListenerCheck(this, type));
 
     return Handler.prototype.initialize.call(this, el, origin, obj);
   };
+
+  const eventBundle = type => (
+    type === TouchStartEvent ||
+    type === TouchMoveEvent ||
+    type === TouchEndEvent
+  )
+  ? [TouchStartEvent, TouchMoveEvent, TouchEndEvent]
+  : [type];
+
+  // lazily add listeners to the canvas as needed
+  function eventListenerCheck(handler, type) {
+    eventBundle(type).forEach(_ => addEventListener(handler, _));
+  }
+
+  function addEventListener(handler, type) {
+    const canvas = handler.canvas();
+    if (canvas && !handler._events[type]) {
+      handler._events[type] = 1;
+      canvas.addEventListener(type, handler[type]
+        ? evt => handler[type](evt)
+        : evt => handler.fire(type, evt)
+      );
+    }
+  }
 
   // return the backing canvas instance
   prototype$L.canvas = function() {
@@ -12479,15 +12851,10 @@
   // supported events
   prototype$L.events = Events;
 
-  // to keep old versions of firefox happy
-  prototype$L.DOMMouseScroll = function(evt) {
-    this.fire('mousewheel', evt);
-  };
-
   function move(moveEvent, overEvent, outEvent) {
     return function(evt) {
-      var a = this._active,
-          p = this.pickEvent(evt);
+      const a = this._active,
+            p = this.pickEvent(evt);
 
       if (p === a) {
         // active item and picked item are the same
@@ -12513,20 +12880,25 @@
     };
   }
 
-  prototype$L.mousemove = move('mousemove', 'mouseover', 'mouseout');
-  prototype$L.dragover  = move('dragover', 'dragenter', 'dragleave');
+  // to keep old versions of firefox happy
+  prototype$L.DOMMouseScroll = function(evt) {
+    this.fire(MouseWheelEvent, evt);
+  };
 
-  prototype$L.mouseout  = inactive('mouseout');
-  prototype$L.dragleave = inactive('dragleave');
+  prototype$L.mousemove = move(MouseMoveEvent, MouseOverEvent, MouseOutEvent);
+  prototype$L.dragover  = move(DragOverEvent, DragEnterEvent, DragLeaveEvent);
+
+  prototype$L.mouseout  = inactive(MouseOutEvent);
+  prototype$L.dragleave = inactive(DragLeaveEvent);
 
   prototype$L.mousedown = function(evt) {
     this._down = this._active;
-    this.fire('mousedown', evt);
+    this.fire(MouseDownEvent, evt);
   };
 
   prototype$L.click = function(evt) {
     if (this._down === this._active) {
-      this.fire('click', evt);
+      this.fire(ClickEvent, evt);
       this._down = null;
     }
   };
@@ -12539,22 +12911,22 @@
       this._first = false;
     }
 
-    this.fire('touchstart', evt, true);
+    this.fire(TouchStartEvent, evt, true);
   };
 
   prototype$L.touchmove = function(evt) {
-    this.fire('touchmove', evt, true);
+    this.fire(TouchMoveEvent, evt, true);
   };
 
   prototype$L.touchend = function(evt) {
-    this.fire('touchend', evt, true);
+    this.fire(TouchEndEvent, evt, true);
     this._touch = null;
   };
 
   // fire an event
   prototype$L.fire = function(type, evt, touch) {
-    var a = touch ? this._touch : this._active,
-        h = this._handlers[type], i, len;
+    const a = touch ? this._touch : this._active,
+          h = this._handlers[type];
 
     // set event type relative to scenegraph items
     evt.vegaType = type;
@@ -12568,7 +12940,7 @@
 
     // invoke all registered handlers
     if (h) {
-      for (i=0, len=h.length; i<len; ++i) {
+      for (let i=0, len=h.length; i<len; ++i) {
         h[i].handler.call(this._obj, evt, a);
       }
     }
@@ -12576,11 +12948,12 @@
 
   // add an event handler
   prototype$L.on = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
+      eventListenerCheck(this, type);
       (h[name] || (h[name] = [])).push({
         type:    type,
         handler: handler
@@ -12592,9 +12965,9 @@
 
   // remove an event handler
   prototype$L.off = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       h.splice(i, 1);
@@ -12604,8 +12977,8 @@
   };
 
   prototype$L.pickEvent = function(evt) {
-    var p = point(evt, this._canvas),
-        o = this._origin;
+    const p = point(evt, this._canvas),
+          o = this._origin;
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
   };
 
@@ -12613,8 +12986,8 @@
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   prototype$L.pick = function(scene, x, y, gx, gy) {
-    var g = this.context(),
-        mark = Marks[scene.marktype];
+    const g = this.context(),
+          mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   };
 
@@ -12655,30 +13028,46 @@
 
   function CanvasRenderer(loader) {
     Renderer.call(this, loader);
+    this._options = {};
     this._redraw = false;
     this._dirty = new Bounds();
+    this._tempb = new Bounds();
   }
 
-  var prototype$M = inherits(CanvasRenderer, Renderer),
-      base = Renderer.prototype,
-      tempBounds$1 = new Bounds();
+  const prototype$M = inherits(CanvasRenderer, Renderer),
+        base = Renderer.prototype;
 
   prototype$M.initialize = function(el, width, height, origin, scaleFactor, options) {
-    this._options = options;
-    this._canvas = domCanvas(1, 1, options && options.type); // instantiate a small canvas
+    this._options = options || {};
 
-    if (el) {
+    this._canvas = this._options.externalContext
+      ? null
+      : domCanvas(1, 1, this._options.type); // instantiate a small canvas
+
+    if (el && this._canvas) {
       domClear(el, 0).appendChild(this._canvas);
       this._canvas.setAttribute('class', 'marks');
     }
+
     // this method will invoke resize to size the canvas appropriately
     return base.initialize.call(this, el, width, height, origin, scaleFactor);
   };
 
   prototype$M.resize = function(width, height, origin, scaleFactor) {
     base.resize.call(this, width, height, origin, scaleFactor);
-    resize(this._canvas, this._width, this._height,
-      this._origin, this._scale, this._options && this._options.context);
+
+    if (this._canvas) {
+      // configure canvas size and transform
+      resize(this._canvas, this._width, this._height,
+        this._origin, this._scale, this._options.context);
+    } else {
+      // external context needs to be scaled and positioned to origin
+      const ctx = this._options.externalContext;
+      if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
+      ctx.scale(this._scale, this._scale);
+      ctx.translate(this._origin[0], this._origin[1]);
+    }
+
     this._redraw = true;
     return this;
   };
@@ -12688,11 +13077,19 @@
   };
 
   prototype$M.context = function() {
-    return this._canvas ? this._canvas.getContext('2d') : null;
+    return this._options.externalContext
+      || (this._canvas ? this._canvas.getContext('2d') : null);
   };
 
   prototype$M.dirty = function(item) {
-    var b = translate$1(item.bounds, item.mark.group);
+    let b = this._tempb.clear().union(item.bounds),
+        g = item.mark.group;
+
+    while (g) {
+      b.translate(g.x || 0, g.y || 0);
+      g = g.mark.group;
+    }
+
     this._dirty.union(b);
   };
 
@@ -12716,36 +13113,23 @@
     return b;
   }
 
-  function viewBounds(origin, width, height) {
-    return tempBounds$1
-      .set(0, 0, width, height)
-      .translate(-origin[0], -origin[1]);
-  }
-
-  function translate$1(bounds, group) {
-    if (group == null) return bounds;
-    var b = tempBounds$1.clear().union(bounds);
-    for (; group != null; group = group.mark.group) {
-      b.translate(group.x || 0, group.y || 0);
-    }
-    return b;
-  }
+  const viewBounds = (origin, width, height) => new Bounds()
+    .set(0, 0, width, height)
+    .translate(-origin[0], -origin[1]);
 
   prototype$M._render = function(scene) {
-    var g = this.context(),
-        o = this._origin,
-        w = this._width,
-        h = this._height,
-        b = this._dirty;
+    const g = this.context(),
+          o = this._origin,
+          w = this._width,
+          h = this._height,
+          db = this._dirty,
+          vb = viewBounds(o, w, h);
 
     // setup
     g.save();
-    if (this._redraw || b.empty()) {
-      this._redraw = false;
-      b = viewBounds(o, w, h).expand(1);
-    } else {
-      b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o);
-    }
+    const b = this._redraw || db.empty()
+      ? (this._redraw = false, vb.expand(1))
+      : clipToBounds(g, vb.intersect(db), o);
 
     this.clear(-o[0], -o[1], w, h);
 
@@ -12754,21 +13138,28 @@
 
     // takedown
     g.restore();
+    db.clear();
 
-    this._dirty.clear();
     return this;
   };
 
   prototype$M.draw = function(ctx, scene, bounds) {
-    var mark = Marks[scene.marktype];
-    if (scene.clip) clip(ctx, scene);
+    const mark = Marks[scene.marktype];
+    if (scene.clip) clip$1(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds);
     if (scene.clip) ctx.restore();
   };
 
   prototype$M.clear = function(x, y, w, h) {
-    var g = this.context();
-    g.clearRect(x, y, w, h);
+    const opt = this._options,
+           g = this.context();
+
+    if (opt.type !== 'pdf' && !opt.externalContext) {
+      // calling clear rect voids vector output in pdf mode
+      // and could remove external context content (#2615)
+      g.clearRect(x, y, w, h);
+    }
+
     if (this._bgcolor != null) {
       g.fillStyle = this._bgcolor;
       g.fillRect(x, y, w, h);
@@ -12777,19 +13168,19 @@
 
   function SVGHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
-    var h = this;
-    h._hrefHandler = listener(h, function(evt, item) {
+    const h = this;
+    h._hrefHandler = listener(h, (evt, item) => {
       if (item && item.href) h.handleHref(evt, item, item.href);
     });
-    h._tooltipHandler = listener(h, function(evt, item) {
+    h._tooltipHandler = listener(h, (evt, item) => {
       h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
     });
   }
 
-  var prototype$N = inherits(SVGHandler, Handler);
+  const prototype$N = inherits(SVGHandler, Handler);
 
   prototype$N.initialize = function(el, origin, obj) {
-    var svg = this._svg;
+    let svg = this._svg;
     if (svg) {
       svg.removeEventListener(HrefEvent, this._hrefHandler);
       svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
@@ -12809,26 +13200,23 @@
   };
 
   // wrap an event listener for the SVG DOM
-  function listener(context, handler) {
-    return function(evt) {
-      var target = evt.target,
-          item = target.__data__;
-      evt.vegaType = evt.type;
-      item = Array.isArray(item) ? item[0] : item;
-      handler.call(context._obj, evt, item);
-    };
-  }
+  const listener = (context, handler) => evt => {
+    let item = evt.target.__data__;
+    item = Array.isArray(item) ? item[0] : item;
+    evt.vegaType = evt.type;
+    handler.call(context._obj, evt, item);
+  };
 
   // add an event handler
   prototype$N.on = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers,
-        i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type),
+          h = this._handlers,
+          i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
-      var x = {
-        type:     type,
-        handler:  handler,
+      const x = {
+        type,
+        handler,
         listener: listener(this, handler)
       };
 
@@ -12843,9 +13231,9 @@
 
   // remove an event handler
   prototype$N.off = function(type, handler) {
-    var name = this.eventName(type),
-        h = this._handlers[name],
-        i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type),
+          h = this._handlers[name],
+          i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       if (this._svg) {
@@ -12856,2480 +13244,6 @@
 
     return this;
   };
-
-  // generate string for an opening xml tag
-  // tag: the name of the xml tag
-  // attr: hash of attribute name-value pairs to include
-  // raw: additional raw string to include in tag markup
-  function openTag(tag, attr, raw) {
-    var s = '<' + tag, key, val;
-    if (attr) {
-      for (key in attr) {
-        val = attr[key];
-        if (val != null) {
-          s += ' ' + key + '="' + val + '"';
-        }
-      }
-    }
-    if (raw) s += ' ' + raw;
-    return s + '>';
-  }
-
-  // generate string for closing xml tag
-  // tag: the name of the xml tag
-  function closeTag(tag) {
-    return '</' + tag + '>';
-  }
-
-  var metadata = {
-    'version': '1.1',
-    'xmlns': 'http://www.w3.org/2000/svg',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
-  };
-
-  var styles = {
-    'fill':             'fill',
-    'fillOpacity':      'fill-opacity',
-    'stroke':           'stroke',
-    'strokeOpacity':    'stroke-opacity',
-    'strokeWidth':      'stroke-width',
-    'strokeCap':        'stroke-linecap',
-    'strokeJoin':       'stroke-linejoin',
-    'strokeDash':       'stroke-dasharray',
-    'strokeDashOffset': 'stroke-dashoffset',
-    'strokeMiterLimit': 'stroke-miterlimit',
-    'opacity':          'opacity',
-    'blend':            'mix-blend-mode'
-  };
-
-  var styleProperties = Object.keys(styles);
-
-  var ns = metadata.xmlns;
-
-  function SVGRenderer(loader) {
-    Renderer.call(this, loader);
-    this._dirtyID = 0;
-    this._dirty = [];
-    this._svg = null;
-    this._root = null;
-    this._defs = null;
-  }
-
-  var prototype$O = inherits(SVGRenderer, Renderer);
-  var base$1 = Renderer.prototype;
-
-  prototype$O.initialize = function(el, width, height, padding) {
-    if (el) {
-      this._svg = domChild(el, 0, 'svg', ns);
-      this._svg.setAttribute('class', 'marks');
-      domClear(el, 1);
-      // set the svg root group
-      this._root = domChild(this._svg, 0, 'g', ns);
-      domClear(this._svg, 1);
-    }
-
-    // create the svg definitions cache
-    this._defs = {
-      gradient: {},
-      clipping: {}
-    };
-
-    // set background color if defined
-    this.background(this._bgcolor);
-
-    return base$1.initialize.call(this, el, width, height, padding);
-  };
-
-  prototype$O.background = function(bgcolor) {
-    if (arguments.length && this._svg) {
-      this._svg.style.setProperty('background-color', bgcolor);
-    }
-    return base$1.background.apply(this, arguments);
-  };
-
-  prototype$O.resize = function(width, height, origin, scaleFactor) {
-    base$1.resize.call(this, width, height, origin, scaleFactor);
-
-    if (this._svg) {
-      this._svg.setAttribute('width', this._width * this._scale);
-      this._svg.setAttribute('height', this._height * this._scale);
-      this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
-      this._root.setAttribute('transform', 'translate(' + this._origin + ')');
-    }
-
-    this._dirty = [];
-
-    return this;
-  };
-
-  prototype$O.canvas = function() {
-    return this._svg;
-  };
-
-  prototype$O.svg = function() {
-    if (!this._svg) return null;
-
-    var attr = {
-      class:   'marks',
-      width:   this._width * this._scale,
-      height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
-    }
-
-    var bg = !this._bgcolor ? ''
-      : (openTag('rect', {
-          width:  this._width,
-          height: this._height,
-          style:  'fill: ' + this._bgcolor + ';'
-        }) + closeTag('rect'));
-
-    return openTag('svg', attr) + bg + this._svg.innerHTML + closeTag('svg');
-  };
-
-
-  // -- Render entry point --
-
-  prototype$O._render = function(scene) {
-    // perform spot updates and re-render markup
-    if (this._dirtyCheck()) {
-      if (this._dirtyAll) this._resetDefs();
-      this.draw(this._root, scene);
-      domClear(this._root, 1);
-    }
-
-    this.updateDefs();
-
-    this._dirty = [];
-    ++this._dirtyID;
-
-    return this;
-  };
-
-  // -- Manage SVG definitions ('defs') block --
-
-  prototype$O.updateDefs = function() {
-    var svg = this._svg,
-        defs = this._defs,
-        el = defs.el,
-        index = 0, id;
-
-    for (id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
-      index = updateGradient(el, defs.gradient[id], index);
-    }
-
-    for (id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, 0, 'defs', ns));
-      index = updateClipping(el, defs.clipping[id], index);
-    }
-
-    // clean-up
-    if (el) {
-      if (index === 0) {
-        svg.removeChild(el);
-        defs.el = null;
-      } else {
-        domClear(el, index);
-      }
-    }
-  };
-
-  function updateGradient(el, grad, index) {
-    var i, n, stop;
-
-    if (grad.gradient === 'radial') {
-      // SVG radial gradients automatically transform to normalized bbox
-      // coordinates, in a way that is cumbersome to replicate in canvas.
-      // We wrap the radial gradient in a pattern element, allowing us to
-      // maintain a circular gradient that matches what canvas provides.
-      var pt = domChild(el, index++, 'pattern', ns);
-      pt.setAttribute('id', patternPrefix + grad.id);
-      pt.setAttribute('viewBox', '0,0,1,1');
-      pt.setAttribute('width', '100%');
-      pt.setAttribute('height', '100%');
-      pt.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-
-      pt = domChild(pt, 0, 'rect', ns);
-      pt.setAttribute('width', '1');
-      pt.setAttribute('height', '1');
-      pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
-
-      el = domChild(el, index++, 'radialGradient', ns);
-      el.setAttribute('id', grad.id);
-      el.setAttribute('fx', grad.x1);
-      el.setAttribute('fy', grad.y1);
-      el.setAttribute('fr', grad.r1);
-      el.setAttribute('cx', grad.x2);
-      el.setAttribute('cy', grad.y2);
-      el.setAttribute( 'r', grad.r2);
-    } else {
-      el = domChild(el, index++, 'linearGradient', ns);
-      el.setAttribute('id', grad.id);
-      el.setAttribute('x1', grad.x1);
-      el.setAttribute('x2', grad.x2);
-      el.setAttribute('y1', grad.y1);
-      el.setAttribute('y2', grad.y2);
-    }
-
-    for (i=0, n=grad.stops.length; i<n; ++i) {
-      stop = domChild(el, i, 'stop', ns);
-      stop.setAttribute('offset', grad.stops[i].offset);
-      stop.setAttribute('stop-color', grad.stops[i].color);
-    }
-    domClear(el, i);
-
-    return index;
-  }
-
-  function updateClipping(el, clip, index) {
-    var mask;
-
-    el = domChild(el, index, 'clipPath', ns);
-    el.setAttribute('id', clip.id);
-
-    if (clip.path) {
-      mask = domChild(el, 0, 'path', ns);
-      mask.setAttribute('d', clip.path);
-    } else {
-      mask = domChild(el, 0, 'rect', ns);
-      mask.setAttribute('x', 0);
-      mask.setAttribute('y', 0);
-      mask.setAttribute('width', clip.width);
-      mask.setAttribute('height', clip.height);
-    }
-    domClear(el, 1);
-
-    return index + 1;
-  }
-
-  prototype$O._resetDefs = function() {
-    var def = this._defs;
-    def.gradient = {};
-    def.clipping = {};
-  };
-
-
-  // -- Manage rendering of items marked as dirty --
-
-  prototype$O.dirty = function(item) {
-    if (item.dirty !== this._dirtyID) {
-      item.dirty = this._dirtyID;
-      this._dirty.push(item);
-    }
-  };
-
-  prototype$O.isDirty = function(item) {
-    return this._dirtyAll
-      || !item._svg
-      || item.dirty === this._dirtyID;
-  };
-
-  prototype$O._dirtyCheck = function() {
-    this._dirtyAll = true;
-    var items = this._dirty;
-    if (!items.length || !this._dirtyID) return true;
-
-    var id = ++this._dirtyID,
-        item, mark, type, mdef, i, n, o;
-
-    for (i=0, n=items.length; i<n; ++i) {
-      item = items[i];
-      mark = item.mark;
-
-      if (mark.marktype !== type) {
-        // memoize mark instance lookup
-        type = mark.marktype;
-        mdef = Marks[type];
-      }
-
-      if (mark.zdirty && mark.dirty !== id) {
-        this._dirtyAll = false;
-        dirtyParents(item, id);
-        mark.items.forEach(function(i) { i.dirty = id; });
-      }
-      if (mark.zdirty) continue; // handle in standard drawing pass
-
-      if (item.exit) { // EXIT
-        if (mdef.nested && mark.items.length) {
-          // if nested mark with remaining points, update instead
-          o = mark.items[0];
-          if (o._svg) this._update(mdef, o._svg, o);
-        } else if (item._svg) {
-          // otherwise remove from DOM
-          o = item._svg.parentNode;
-          if (o) o.removeChild(item._svg);
-        }
-        item._svg = null;
-        continue;
-      }
-
-      item = (mdef.nested ? mark.items[0] : item);
-      if (item._update === id) continue; // already visited
-
-      if (!item._svg || !item._svg.ownerSVGElement) {
-        // ENTER
-        this._dirtyAll = false;
-        dirtyParents(item, id);
-      } else {
-        // IN-PLACE UPDATE
-        this._update(mdef, item._svg, item);
-      }
-      item._update = id;
-    }
-    return !this._dirtyAll;
-  };
-
-  function dirtyParents(item, id) {
-    for (; item && item.dirty !== id; item=item.mark.group) {
-      item.dirty = id;
-      if (item.mark && item.mark.dirty !== id) {
-        item.mark.dirty = id;
-      } else return;
-    }
-  }
-
-
-  // -- Construct & maintain scenegraph to SVG mapping ---
-
-  // Draw a mark container.
-  prototype$O.draw = function(el, scene, prev) {
-    if (!this.isDirty(scene)) return scene._svg;
-
-    var renderer = this,
-        svg = this._svg,
-        mdef = Marks[scene.marktype],
-        events = scene.interactive === false ? 'none' : null,
-        isGroup = mdef.tag === 'g',
-        sibling = null,
-        i = 0,
-        parent;
-
-    parent = bind(scene, el, prev, 'g', svg);
-    parent.setAttribute('class', cssClass(scene));
-    if (!isGroup) {
-      parent.style.setProperty('pointer-events', events);
-    }
-    if (scene.clip) {
-      parent.setAttribute('clip-path', clip$1(renderer, scene, scene.group));
-    } else {
-      parent.removeAttribute('clip-path');
-    }
-
-    function process(item) {
-      var dirty = renderer.isDirty(item),
-          node = bind(item, parent, sibling, mdef.tag, svg);
-
-      if (dirty) {
-        renderer._update(mdef, node, item);
-        if (isGroup) recurse(renderer, node, item);
-      }
-
-      sibling = node;
-      ++i;
-    }
-
-    if (mdef.nested) {
-      if (scene.items.length) process(scene.items[0]);
-    } else {
-      visit(scene, process);
-    }
-
-    domClear(parent, i);
-    return parent;
-  };
-
-  // Recursively process group contents.
-  function recurse(renderer, el, group) {
-    el = el.lastChild.previousSibling;
-    var prev, idx = 0;
-
-    visit(group, function(item) {
-      prev = renderer.draw(el, item, prev);
-      ++idx;
-    });
-
-    // remove any extraneous DOM elements
-    domClear(el, 1 + idx);
-  }
-
-  // Bind a scenegraph item to an SVG DOM element.
-  // Create new SVG elements as needed.
-  function bind(item, el, sibling, tag, svg) {
-    var node = item._svg, doc;
-
-    // create a new dom node if needed
-    if (!node) {
-      doc = el.ownerDocument;
-      node = domCreate(doc, tag, ns);
-      item._svg = node;
-
-      if (item.mark) {
-        node.__data__ = item;
-        node.__values__ = {fill: 'default'};
-
-        // if group, create background, content, and foreground elements
-        if (tag === 'g') {
-          var bg = domCreate(doc, 'path', ns);
-          node.appendChild(bg);
-          bg.__data__ = item;
-
-          var cg = domCreate(doc, 'g', ns);
-          node.appendChild(cg);
-          cg.__data__ = item;
-
-          var fg = domCreate(doc, 'path', ns);
-          node.appendChild(fg);
-          fg.__data__ = item;
-          fg.__values__ = {fill: 'default'};
-        }
-      }
-    }
-
-    // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
-    if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
-      el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
-    }
-
-    return node;
-  }
-
-  function siblingCheck(node, sibling) {
-    return node.parentNode
-      && node.parentNode.childNodes.length > 1
-      && node.previousSibling != sibling; // treat null/undefined the same
-  }
-
-
-  // -- Set attributes & styles on SVG elements ---
-
-  var element = null, // temp var for current SVG element
-      values = null;  // temp var for current values hash
-
-  // Extra configuration for certain mark types
-  var mark_extras = {
-    group: function(mdef, el, item) {
-      var fg, bg;
-
-      element = fg = el.childNodes[2];
-      values = fg.__values__;
-      mdef.foreground(emit, item, this);
-
-      values = el.__values__; // use parent's values hash
-      element = el.childNodes[1];
-      mdef.content(emit, item, this);
-
-      element = bg = el.childNodes[0];
-      mdef.background(emit, item, this);
-
-      var value = item.mark.interactive === false ? 'none' : null;
-      if (value !== values.events) {
-        fg.style.setProperty('pointer-events', value);
-        bg.style.setProperty('pointer-events', value);
-        values.events = value;
-      }
-
-      if (item.strokeForeground && item.stroke) {
-        const fill = item.fill;
-        fg.style.removeProperty('display');
-
-        // set style of background
-        this.style(bg, item);
-        bg.style.removeProperty('stroke');
-
-        // set style of foreground
-        if (fill) item.fill = null;
-        values = fg.__values__;
-        this.style(fg, item);
-        if (fill) item.fill = fill;
-
-        // leave element null to prevent downstream styling
-        element = null;
-      } else {
-        // ensure foreground is ignored
-        fg.style.setProperty('display', 'none');
-        fg.style.setProperty('fill', 'none');
-      }
-    },
-    image: function(mdef, el, item) {
-      if (item.smooth === false) {
-        setStyle(el, 'image-rendering', 'optimizeSpeed');
-        setStyle(el, 'image-rendering', 'pixelated');
-      } else {
-        setStyle(el, 'image-rendering', null);
-      }
-    },
-    text: function(mdef, el, item) {
-      var tl = textLines(item),
-          key, value, doc, lh;
-
-      if (isArray(tl)) {
-        // multi-line text
-        value = tl.map(_ => textValue(item, _));
-        key = value.join('\n'); // content cache key
-
-        if (key !== values.text) {
-          domClear(el, 0);
-          doc = el.ownerDocument;
-          lh = lineHeight(item);
-          value.forEach((t, i) => {
-            const ts = domCreate(doc, 'tspan', ns);
-            ts.__data__ = item; // data binding
-            ts.textContent = t;
-            if (i) {
-              ts.setAttribute('x', 0);
-              ts.setAttribute('dy', lh);
-            }
-            el.appendChild(ts);
-          });
-          values.text = key;
-        }
-      } else {
-        // single-line text
-        value = textValue(item, tl);
-        if (value !== values.text) {
-          el.textContent = value;
-          values.text = value;
-        }
-      }
-
-      setStyle(el, 'font-family', fontFamily(item));
-      setStyle(el, 'font-size', fontSize(item) + 'px');
-      setStyle(el, 'font-style', item.fontStyle);
-      setStyle(el, 'font-variant', item.fontVariant);
-      setStyle(el, 'font-weight', item.fontWeight);
-    }
-  };
-
-  function setStyle(el, name, value) {
-    if (value !== values[name]) {
-      if (value == null) {
-        el.style.removeProperty(name);
-      } else {
-        el.style.setProperty(name, value + '');
-      }
-      values[name] = value;
-    }
-  }
-
-  prototype$O._update = function(mdef, el, item) {
-    // set dom element and values cache
-    // provides access to emit method
-    element = el;
-    values = el.__values__;
-
-    // apply svg attributes
-    mdef.attr(emit, item, this);
-
-    // some marks need special treatment
-    var extra = mark_extras[mdef.type];
-    if (extra) extra.call(this, mdef, el, item);
-
-    // apply svg css styles
-    // note: element may be modified by 'extra' method
-    if (element) this.style(element, item);
-  };
-
-  function emit(name, value, ns) {
-    // early exit if value is unchanged
-    if (value === values[name]) return;
-
-    if (value != null) {
-      // if value is provided, update DOM attribute
-      if (ns) {
-        element.setAttributeNS(ns, name, value);
-      } else {
-        element.setAttribute(name, value);
-      }
-    } else {
-      // else remove DOM attribute
-      if (ns) {
-        element.removeAttributeNS(ns, name);
-      } else {
-        element.removeAttribute(name);
-      }
-    }
-
-    // note current value for future comparison
-    values[name] = value;
-  }
-
-  prototype$O.style = function(el, o) {
-    if (o == null) return;
-    var i, n, prop, name, value;
-
-    for (i=0, n=styleProperties.length; i<n; ++i) {
-      prop = styleProperties[i];
-      value = o[prop];
-
-      if (prop === 'font') {
-        value = fontFamily(o);
-      }
-
-      if (value === values[prop]) continue;
-
-      name = styles[prop];
-      if (value == null) {
-        if (name === 'fill') {
-          el.style.setProperty(name, 'none');
-        } else {
-          el.style.removeProperty(name);
-        }
-      } else {
-        if (isGradient(value)) {
-          value = gradientRef(value, this._defs.gradient, href());
-        }
-        el.style.setProperty(name, value + '');
-      }
-
-      values[prop] = value;
-    }
-  };
-
-  function href() {
-    var loc;
-    return typeof window === 'undefined' ? ''
-      : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
-      : loc.href;
-  }
-
-  function SVGStringRenderer(loader) {
-    Renderer.call(this, loader);
-
-    this._text = {
-      head: '',
-      bg:   '',
-      root: '',
-      foot: '',
-      defs: '',
-      body: ''
-    };
-
-    this._defs = {
-      gradient: {},
-      clipping: {}
-    };
-  }
-
-  var prototype$P = inherits(SVGStringRenderer, Renderer);
-  var base$2 = Renderer.prototype;
-
-  prototype$P.resize = function(width, height, origin, scaleFactor) {
-    base$2.resize.call(this, width, height, origin, scaleFactor);
-    var o = this._origin,
-        t = this._text;
-
-    var attr = {
-      class:   'marks',
-      width:   this._width * this._scale,
-      height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
-    }
-
-    t.head = openTag('svg', attr);
-
-    var bg = this._bgcolor;
-    if (bg === 'transparent' || bg === 'none') bg = null;
-
-    if (bg) {
-      t.bg = openTag('rect', {
-        width:  this._width,
-        height: this._height,
-        style:  'fill: ' + bg + ';'
-      }) + closeTag('rect');
-    } else {
-      t.bg = '';
-    }
-
-    t.root = openTag('g', {
-      transform: 'translate(' + o + ')'
-    });
-
-    t.foot = closeTag('g') + closeTag('svg');
-
-    return this;
-  };
-
-  prototype$P.background = function() {
-    var rv = base$2.background.apply(this, arguments);
-    if (arguments.length && this._text.head) {
-      this.resize(this._width, this._height, this._origin, this._scale);
-    }
-    return rv;
-  };
-
-  prototype$P.svg = function() {
-    var t = this._text;
-    return t.head + t.bg + t.defs + t.root + t.body + t.foot;
-  };
-
-  prototype$P._render = function(scene) {
-    this._text.body = this.mark(scene);
-    this._text.defs = this.buildDefs();
-    return this;
-  };
-
-  prototype$P.buildDefs = function() {
-    var all = this._defs,
-        defs = '',
-        i, id, def, tag, stops;
-
-    for (id in all.gradient) {
-      def = all.gradient[id];
-      stops = def.stops;
-
-      if (def.gradient === 'radial') {
-        // SVG radial gradients automatically transform to normalized bbox
-        // coordinates, in a way that is cumbersome to replicate in canvas.
-        // We wrap the radial gradient in a pattern element, allowing us to
-        // maintain a circular gradient that matches what canvas provides.
-
-        defs += openTag(tag = 'pattern', {
-          id: patternPrefix + id,
-          viewBox: '0,0,1,1',
-          width: '100%',
-          height: '100%',
-          preserveAspectRatio: 'xMidYMid slice'
-        });
-
-        defs += openTag('rect', {
-          width: '1',
-          height: '1',
-          fill: 'url(#' + id + ')'
-        }) + closeTag('rect');
-
-        defs += closeTag(tag);
-
-        defs += openTag(tag = 'radialGradient', {
-          id: id,
-          fx: def.x1,
-          fy: def.y1,
-          fr: def.r1,
-          cx: def.x2,
-          cy: def.y2,
-           r: def.r2
-        });
-      } else {
-        defs += openTag(tag = 'linearGradient', {
-          id: id,
-          x1: def.x1,
-          x2: def.x2,
-          y1: def.y1,
-          y2: def.y2
-        });
-      }
-
-      for (i=0; i<stops.length; ++i) {
-        defs += openTag('stop', {
-          offset: stops[i].offset,
-          'stop-color': stops[i].color
-        }) + closeTag('stop');
-      }
-
-      defs += closeTag(tag);
-    }
-
-    for (id in all.clipping) {
-      def = all.clipping[id];
-
-      defs += openTag('clipPath', {id: id});
-
-      if (def.path) {
-        defs += openTag('path', {
-          d: def.path
-        }) + closeTag('path');
-      } else {
-        defs += openTag('rect', {
-          x: 0,
-          y: 0,
-          width: def.width,
-          height: def.height
-        }) + closeTag('rect');
-      }
-
-      defs += closeTag('clipPath');
-    }
-
-    return (defs.length > 0) ? openTag('defs') + defs + closeTag('defs') : '';
-  };
-
-  var object;
-
-  function emit$1(name, value, ns, prefixed) {
-    object[prefixed || name] = value;
-  }
-
-  prototype$P.attributes = function(attr, item) {
-    object = {};
-    attr(emit$1, item, this);
-    return object;
-  };
-
-  prototype$P.href = function(item) {
-    var that = this,
-        href = item.href,
-        attr;
-
-    if (href) {
-      if (attr = that._hrefs && that._hrefs[href]) {
-        return attr;
-      } else {
-        that.sanitizeURL(href).then(function(attr) {
-          // rewrite to use xlink namespace
-          // note that this will be deprecated in SVG 2.0
-          attr['xlink:href'] = attr.href;
-          attr.href = null;
-          (that._hrefs || (that._hrefs = {}))[href] = attr;
-        });
-      }
-    }
-    return null;
-  };
-
-  prototype$P.mark = function(scene) {
-    var renderer = this,
-        mdef = Marks[scene.marktype],
-        tag  = mdef.tag,
-        defs = this._defs,
-        str = '',
-        style;
-
-    if (tag !== 'g' && scene.interactive === false) {
-      style = 'style="pointer-events: none;"';
-    }
-
-    // render opening group tag
-    str += openTag('g', {
-      'class': cssClass(scene),
-      'clip-path': scene.clip ? clip$1(renderer, scene, scene.group) : null
-    }, style);
-
-    // render contained elements
-    function process(item) {
-      var href = renderer.href(item);
-      if (href) str += openTag('a', href);
-
-      style = (tag !== 'g') ? applyStyles(item, scene, tag, defs) : null;
-      str += openTag(tag, renderer.attributes(mdef.attr, item), style);
-
-      if (tag === 'text') {
-        const tl = textLines(item);
-        if (isArray(tl)) {
-          // multi-line text
-          const attrs = {x: 0, dy: lineHeight(item)};
-          for (let i=0; i<tl.length; ++i) {
-            str += openTag('tspan', i ? attrs: null)
-              + escape_text(textValue(item, tl[i]))
-              + closeTag('tspan');
-          }
-        } else {
-          // single-line text
-          str += escape_text(textValue(item, tl));
-        }
-      } else if (tag === 'g') {
-        const fore = item.strokeForeground,
-              fill = item.fill,
-              stroke = item.stroke;
-
-        if (fore && stroke) {
-          item.stroke = null;
-        }
-
-        str += openTag('path', renderer.attributes(mdef.background, item),
-          applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
-
-        str += openTag('g', renderer.attributes(mdef.content, item))
-          + renderer.markGroup(item)
-          + closeTag('g');
-
-        if (fore && stroke) {
-          if (fill) item.fill = null;
-          item.stroke = stroke;
-
-          str += openTag('path', renderer.attributes(mdef.foreground, item),
-            applyStyles(item, scene, 'bgrect', defs)) + closeTag('path');
-
-          if (fill) item.fill = fill;
-        } else {
-          str += openTag('path', renderer.attributes(mdef.foreground, item),
-            applyStyles({}, scene, 'bgfore', defs)) + closeTag('path');
-        }
-      }
-
-      str += closeTag(tag);
-      if (href) str += closeTag('a');
-    }
-
-    if (mdef.nested) {
-      if (scene.items && scene.items.length) process(scene.items[0]);
-    } else {
-      visit(scene, process);
-    }
-
-    // render closing group tag
-    return str + closeTag('g');
-  };
-
-  prototype$P.markGroup = function(scene) {
-    var renderer = this,
-        str = '';
-
-    visit(scene, function(item) {
-      str += renderer.mark(item);
-    });
-
-    return str;
-  };
-
-  function applyStyles(o, mark, tag, defs) {
-    if (o == null) return '';
-    var i, n, prop, name, value, s = '';
-
-    if (tag === 'bgrect' && mark.interactive === false) {
-      s += 'pointer-events: none; ';
-    }
-
-    if (tag === 'bgfore') {
-      if (mark.interactive === false) {
-        s += 'pointer-events: none; ';
-      }
-      s += 'display: none; ';
-    }
-
-    if (tag === 'image') {
-      if (o.smooth === false) {
-        s += 'image-rendering: optimizeSpeed; image-rendering: pixelated; ';
-      }
-    }
-
-    if (tag === 'text') {
-      s += 'font-family: ' + fontFamily(o) + '; ';
-      s += 'font-size: ' + fontSize(o) + 'px; ';
-      if (o.fontStyle) s += 'font-style: ' + o.fontStyle + '; ';
-      if (o.fontVariant) s += 'font-variant: ' + o.fontVariant + '; ';
-      if (o.fontWeight) s += 'font-weight: ' + o.fontWeight + '; ';
-    }
-
-    for (i=0, n=styleProperties.length; i<n; ++i) {
-      prop = styleProperties[i];
-      name = styles[prop];
-      value = o[prop];
-
-      if (value == null) {
-        if (name === 'fill') {
-          s += 'fill: none; ';
-        }
-      } else if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
-        // transparent is not a legal SVG value, so map to none instead
-        s += name + ': none; ';
-      } else {
-        if (isGradient(value)) {
-          value = gradientRef(value, defs.gradient, '');
-        }
-        s += name + ': ' + value + '; ';
-      }
-    }
-
-    return s ? 'style="' + s.trim() + '"' : null;
-  }
-
-  function escape_text(s) {
-    return s.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-  }
-
-  var Canvas = 'canvas';
-  var PNG = 'png';
-  var SVG = 'svg';
-  var None$2 = 'none';
-
-  var RenderType = {
-    Canvas: Canvas,
-    PNG:    PNG,
-    SVG:    SVG,
-    None:   None$2
-  };
-
-  var modules = {};
-
-  modules[Canvas] = modules[PNG] = {
-    renderer: CanvasRenderer,
-    headless: CanvasRenderer,
-    handler:  CanvasHandler
-  };
-
-  modules[SVG] = {
-    renderer: SVGRenderer,
-    headless: SVGStringRenderer,
-    handler:  SVGHandler
-  };
-
-  modules[None$2] = {};
-
-  function renderModule(name, _) {
-    name = String(name || '').toLowerCase();
-    if (arguments.length > 1) {
-      modules[name] = _;
-      return this;
-    } else {
-      return modules[name];
-    }
-  }
-
-  function intersect(scene, bounds, filter) {
-    const hits = [], // intersection results
-          box = new Bounds().union(bounds), // defensive copy
-          type = scene.marktype;
-
-    return type ? intersectMark(scene, box, filter, hits)
-      : type === 'group' ? intersectGroup(scene, box, filter, hits)
-      : error('Intersect scene must be mark node or group item.');
-  }
-
-  function intersectMark(mark, box, filter, hits) {
-    if (visitMark(mark, box, filter)) {
-      const items = mark.items,
-            type = mark.marktype,
-            n = items.length;
-
-      let i = 0;
-
-      if (type === 'group') {
-        for (; i<n; ++i) {
-          intersectGroup(items[i], box, filter, hits);
-        }
-      } else {
-        for (const test = Marks[type].isect; i<n; ++i) {
-          let item = items[i];
-          if (intersectItem(item, box, test)) hits.push(item);
-        }
-      }
-    }
-    return hits;
-  }
-
-  function visitMark(mark, box, filter) {
-    // process if bounds intersect and if
-    // (1) mark is a group mark (so we must recurse), or
-    // (2) mark is interactive and passes filter
-    return mark.bounds && box.intersects(mark.bounds) && (
-      mark.marktype === 'group' ||
-      mark.interactive !== false && (!filter || filter(mark))
-    );
-  }
-
-  function intersectGroup(group, box, filter, hits) {
-    // test intersect against group
-    // skip groups by default unless filter says otherwise
-    if ((filter && filter(group.mark)) &&
-        intersectItem(group, box, Marks.group.isect)) {
-      hits.push(group);
-    }
-
-    // recursively test children marks
-    // translate box to group coordinate space
-    const marks = group.items,
-          n = marks && marks.length;
-
-    if (n) {
-      const x = group.x || 0,
-            y = group.y || 0;
-      box.translate(-x, -y);
-      for (let i=0; i<n; ++i) {
-        intersectMark(marks[i], box, filter, hits);
-      }
-      box.translate(x, y);
-    }
-
-    return hits;
-  }
-
-  function intersectItem(item, box, test) {
-    // test bounds enclosure, bounds intersection, then detailed test
-    const bounds = item.bounds;
-    return box.encloses(bounds) || (box.intersects(bounds) && test(item, box));
-  }
-
-  var clipBounds = new Bounds();
-
-  function boundClip(mark) {
-    var clip = mark.clip;
-
-    if (isFunction(clip)) {
-      clip(context(clipBounds.clear()));
-    } else if (clip) {
-      clipBounds.set(0, 0, mark.group.width, mark.group.height);
-    } else return;
-
-    mark.bounds.intersect(clipBounds);
-  }
-
-  var TOLERANCE = 1e-9;
-
-  function sceneEqual(a, b, key) {
-    return (a === b) ? true
-      : (key === 'path') ? pathEqual(a, b)
-      : (a instanceof Date && b instanceof Date) ? +a === +b
-      : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
-      : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
-      : (a == null || b == null) ? false
-      : objectEqual(a, b);
-  }
-
-  function pathEqual(a, b) {
-    return sceneEqual(pathParse(a), pathParse(b));
-  }
-
-  function objectEqual(a, b) {
-    var ka = Object.keys(a),
-        kb = Object.keys(b),
-        key, i;
-
-    if (ka.length !== kb.length) return false;
-
-    ka.sort();
-    kb.sort();
-
-    for (i = ka.length - 1; i >= 0; i--) {
-      if (ka[i] != kb[i]) return false;
-    }
-
-    for (i = ka.length - 1; i >= 0; i--) {
-      key = ka[i];
-      if (!sceneEqual(a[key], b[key], key)) return false;
-    }
-
-    return typeof a === typeof b;
-  }
-
-  /**
-   * Calculate bounding boxes for scenegraph items.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.mark - The scenegraph mark instance to bound.
-   */
-  function Bound(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$Q = inherits(Bound, Transform);
-
-  prototype$Q.transform = function(_, pulse) {
-    var view = pulse.dataflow,
-        mark = _.mark,
-        type = mark.marktype,
-        entry = Marks[type],
-        bound = entry.bound,
-        markBounds = mark.bounds, rebound;
-
-    if (entry.nested) {
-      // multi-item marks have a single bounds instance
-      if (mark.items.length) view.dirty(mark.items[0]);
-      markBounds = boundItem$1(mark, bound);
-      mark.items.forEach(function(item) {
-        item.bounds.clear().union(markBounds);
-      });
-    }
-
-    else if (type === Group || _.modified()) {
-      // operator parameters modified -> re-bound all items
-      // updates group bounds in response to modified group content
-      pulse.visit(pulse.MOD, function(item) { view.dirty(item); });
-      markBounds.clear();
-      mark.items.forEach(function(item) {
-        markBounds.union(boundItem$1(item, bound));
-      });
-
-      // force reflow for axes/legends/titles to propagate any layout changes
-      switch (mark.role) {
-        case AxisRole:
-        case LegendRole:
-        case TitleRole:
-          pulse.reflow();
-      }
-    }
-
-    else {
-      // incrementally update bounds, re-bound mark as needed
-      rebound = pulse.changed(pulse.REM);
-
-      pulse.visit(pulse.ADD, function(item) {
-        markBounds.union(boundItem$1(item, bound));
-      });
-
-      pulse.visit(pulse.MOD, function(item) {
-        rebound = rebound || markBounds.alignsWith(item.bounds);
-        view.dirty(item);
-        markBounds.union(boundItem$1(item, bound));
-      });
-
-      if (rebound) {
-        markBounds.clear();
-        mark.items.forEach(function(item) { markBounds.union(item.bounds); });
-      }
-    }
-
-    // ensure mark bounds do not exceed any clipping region
-    boundClip(mark);
-
-    return pulse.modifies('bounds');
-  };
-
-  function boundItem$1(item, bound, opt) {
-    return bound(item.bounds.clear(), item, opt);
-  }
-
-  var COUNTER_NAME = ':vega_identifier:';
-
-  /**
-   * Adds a unique identifier to all added tuples.
-   * This transform creates a new signal that serves as an id counter.
-   * As a result, the id counter is shared across all instances of this
-   * transform, generating unique ids across multiple data streams. In
-   * addition, this signal value can be included in a snapshot of the
-   * dataflow state, enabling correct resumption of id allocation.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {string} params.as - The field name for the generated identifier.
-   */
-  function Identifier(params) {
-    Transform.call(this, 0, params);
-  }
-
-  Identifier.Definition = {
-    "type": "Identifier",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "as", "type": "string", "required": true }
-    ]
-  };
-
-  var prototype$R = inherits(Identifier, Transform);
-
-  prototype$R.transform = function(_, pulse) {
-    var counter = getCounter(pulse.dataflow),
-        id = counter.value,
-        as = _.as;
-
-    pulse.visit(pulse.ADD, function(t) {
-      if (!t[as]) t[as] = ++id;
-    });
-
-    counter.set(this.value = id);
-    return pulse;
-  };
-
-  function getCounter(view) {
-    var counter = view._signals[COUNTER_NAME];
-    if (!counter) {
-      view._signals[COUNTER_NAME] = (counter = view.add(0));
-    }
-    return counter;
-  }
-
-  /**
-   * Bind scenegraph items to a scenegraph mark instance.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.markdef - The mark definition for creating the mark.
-   *   This is an object of legal scenegraph mark properties which *must* include
-   *   the 'marktype' property.
-   */
-  function Mark(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$S = inherits(Mark, Transform);
-
-  prototype$S.transform = function(_, pulse) {
-    var mark = this.value;
-
-    // acquire mark on first invocation, bind context and group
-    if (!mark) {
-      mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1(_), _.index);
-      mark.group.context = _.context;
-      if (!_.context.group) _.context.group = mark.group;
-      mark.source = this.source; // point to upstream collector
-      mark.clip = _.clip;
-      mark.interactive = _.interactive;
-      this.value = mark;
-    }
-
-    // initialize entering items
-    var Init = mark.marktype === Group ? GroupItem : Item;
-    pulse.visit(pulse.ADD, function(item) { Init.call(item, mark); });
-
-    // update clipping and/or interactive status
-    if (_.modified('clip') || _.modified('interactive')) {
-      mark.clip = _.clip;
-      mark.interactive = !!_.interactive;
-      mark.zdirty = true; // force scenegraph re-eval
-      pulse.reflow();
-    }
-
-    // bind items array to scenegraph mark
-    mark.items = pulse.source;
-    return pulse;
-  };
-
-  function lookup$1(_) {
-    var g = _.groups, p = _.parent;
-    return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
-      : g && p ? g.lookup(p)
-      : null;
-  }
-
-  /**
-   * Analyze items for overlap, changing opacity to hide items with
-   * overlapping bounding boxes. This transform will preserve at least
-   * two items (e.g., first and last) even if overlap persists.
-   * @param {object} params - The parameters for this operator.
-   * @param {function(*,*): number} [params.sort] - A comparator
-   *   function for sorting items.
-   * @param {object} [params.method] - The overlap removal method to apply.
-   *   One of 'parity' (default, hide every other item until there is no
-   *   more overlap) or 'greedy' (sequentially scan and hide and items that
-   *   overlap with the last visible item).
-   * @param {object} [params.boundScale] - A scale whose range should be used
-   *   to bound the items. Items exceeding the bounds of the scale range
-   *   will be treated as overlapping. If null or undefined, no bounds check
-   *   will be applied.
-   * @param {object} [params.boundOrient] - The orientation of the scale
-   *   (top, bottom, left, or right) used to bound items. This parameter is
-   *   ignored if boundScale is null or undefined.
-   * @param {object} [params.boundTolerance] - The tolerance in pixels for
-   *   bound inclusion testing (default 1). This specifies by how many pixels
-   *   an item's bounds may exceed the scale range bounds and not be culled.
-   * @constructor
-   */
-  function Overlap(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$T = inherits(Overlap, Transform);
-
-  var methods = {
-    parity: function(items) {
-      return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
-    },
-    greedy: function(items, sep) {
-      var a;
-      return items.filter((b, i) => {
-        if (!i || !intersect$1(a.bounds, b.bounds, sep)) {
-          a = b;
-          return 1;
-        } else {
-          return b.opacity = 0;
-        }
-      });
-    }
-  };
-
-  // compute bounding box intersection
-  // including padding pixels of separation
-  function intersect$1(a, b, sep) {
-    return sep > Math.max(
-      b.x1 - a.x2,
-      a.x1 - b.x2,
-      b.y1 - a.y2,
-      a.y1 - b.y2
-    );
-  }
-
-  function hasOverlap(items, pad) {
-    for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
-      if (intersect$1(a, b = items[i].bounds, pad)) return true;
-    }
-  }
-
-  function hasBounds(item) {
-    var b = item.bounds;
-    return b.width() > 1 && b.height() > 1;
-  }
-
-  function boundTest(scale, orient, tolerance) {
-    var range = scale.range(),
-        b = new Bounds();
-
-    if (orient === Top || orient === Bottom) {
-      b.set(range[0], -Infinity, range[1], +Infinity);
-    } else {
-      b.set(-Infinity, range[0], +Infinity, range[1]);
-    }
-    b.expand(tolerance || 1);
-
-    return item => b.encloses(item.bounds);
-  }
-
-  // reset all items to be fully opaque
-  function reset(source) {
-    source.forEach(item => item.opacity = 1);
-    return source;
-  }
-
-  // add all tuples to mod, fork pulse if parameters were modified
-  // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
-  function reflow(pulse, _) {
-    return pulse.reflow(_.modified()).modifies('opacity');
-  }
-
-  prototype$T.transform = function(_, pulse) {
-    var reduce = methods[_.method] || methods.parity,
-        source = pulse.materialize(pulse.SOURCE).source,
-        sep = _.separation || 0,
-        items, test, bounds;
-
-    if (!source || !source.length) return;
-
-    if (!_.method) {
-      // early exit if method is falsy
-      if (_.modified('method')) {
-        reset(source);
-        pulse = reflow(pulse, _);
-      }
-      return pulse;
-    }
-
-    if (_.sort) {
-      source = source.slice().sort(_.sort);
-    }
-
-    // skip labels with no content
-    source = source.filter(hasBounds);
-
-    items = reset(source);
-    pulse = reflow(pulse, _);
-
-    if (items.length >= 3 && hasOverlap(items, sep)) {
-      do {
-        items = reduce(items, sep);
-      } while (items.length >= 3 && hasOverlap(items, sep));
-
-      if (items.length < 3 && !peek(source).opacity) {
-        if (items.length > 1) peek(items).opacity = 0;
-        peek(source).opacity = 1;
-      }
-    }
-
-    if (_.boundScale && _.boundTolerance >= 0) {
-      test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-      source.forEach(item => {
-        if (!test(item)) item.opacity = 0;
-      });
-    }
-
-    // re-calculate mark bounds
-    bounds = items[0].mark.bounds.clear();
-    source.forEach(item => {
-      if (item.opacity) bounds.union(item.bounds);
-    });
-
-    return pulse;
-  };
-
-  /**
-   * Queue modified scenegraph items for rendering.
-   * @constructor
-   */
-  function Render(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$U = inherits(Render, Transform);
-
-  prototype$U.transform = function(_, pulse) {
-    var view = pulse.dataflow;
-
-    pulse.visit(pulse.ALL, function(item) { view.dirty(item); });
-
-    // set z-index dirty flag as needed
-    if (pulse.fields && pulse.fields['zindex']) {
-      var item = pulse.source && pulse.source[0];
-      if (item) item.mark.zdirty = true;
-    }
-  };
-
-  const tempBounds$2 = new Bounds();
-
-  function set(item, property, value) {
-    return item[property] === value ? 0
-      : (item[property] = value, 1);
-  }
-
-  function isYAxis(mark) {
-    var orient = mark.items[0].datum.orient;
-    return orient === Left || orient === Right;
-  }
-
-  function axisIndices(datum) {
-    var index = +datum.grid;
-    return [
-      datum.ticks  ? index++ : -1, // ticks index
-      datum.labels ? index++ : -1, // labels index
-      index + (+datum.domain)      // title index
-    ];
-  }
-
-  function axisLayout(view, axis, width, height) {
-    var item = axis.items[0],
-        datum = item.datum,
-        orient = datum.orient,
-        delta = datum.translate != null ? datum.translate : 0.5,
-        indices = axisIndices(datum),
-        range = item.range,
-        offset = item.offset,
-        position = item.position,
-        minExtent = item.minExtent,
-        maxExtent = item.maxExtent,
-        title = datum.title && item.items[indices[2]].items[0],
-        titlePadding = item.titlePadding,
-        bounds = item.bounds,
-        dl = title && multiLineOffset(title),
-        x = 0, y = 0, i, s;
-
-    tempBounds$2.clear().union(bounds);
-    bounds.clear();
-    if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
-    if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
-
-    // position axis group and title
-    switch (orient) {
-      case Top:
-        x = position || 0;
-        y = -offset;
-        s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-        bounds.add(0, -s).add(range, 0);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
-        break;
-      case Left:
-        x = -offset;
-        y = position || 0;
-        s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-        bounds.add(-s, 0).add(0, range);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
-        break;
-      case Right:
-        x = width + offset;
-        y = position || 0;
-        s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-        bounds.add(0, 0).add(s, range);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
-        break;
-      case Bottom:
-        x = position || 0;
-        y = height + offset;
-        s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-        bounds.add(0, 0).add(range, s);
-        if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
-        break;
-      default:
-        x = item.x;
-        y = item.y;
-    }
-
-    // update bounds
-    boundStroke(bounds.translate(x, y), item);
-
-    if (set(item, 'x', x + delta) | set(item, 'y', y + delta)) {
-      item.bounds = tempBounds$2;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
-    }
-
-    return item.mark.bounds.clear().union(bounds);
-  }
-
-  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
-    const b = title.bounds;
-
-    if (title.auto) {
-      const v = sign * (offset + dl + pad);
-      let dx = 0, dy = 0;
-
-      view.dirty(title);
-      isYAxis
-        ? dx = (title.x || 0) - (title.x = v)
-        : dy = (title.y || 0) - (title.y = v);
-      title.mark.bounds.clear().union(b.translate(-dx, -dy));
-      view.dirty(title);
-    }
-
-    bounds.union(b);
-  }
-
-  function gridLayoutGroups(group) {
-    var groups = group.items,
-        n = groups.length,
-        i = 0, mark, items;
-
-    var views = {
-      marks:      [],
-      rowheaders: [],
-      rowfooters: [],
-      colheaders: [],
-      colfooters: [],
-      rowtitle: null,
-      coltitle: null
-    };
-
-    // layout axes, gather legends, collect bounds
-    for (; i<n; ++i) {
-      mark = groups[i];
-      items = mark.items;
-      if (mark.marktype === Group) {
-        switch (mark.role) {
-          case AxisRole:
-          case LegendRole:
-          case TitleRole:
-            break;
-          case RowHeader: views.rowheaders.push(...items); break;
-          case RowFooter: views.rowfooters.push(...items); break;
-          case ColHeader: views.colheaders.push(...items); break;
-          case ColFooter: views.colfooters.push(...items); break;
-          case RowTitle:  views.rowtitle = items[0]; break;
-          case ColTitle:  views.coltitle = items[0]; break;
-          default:        views.marks.push(...items);
-        }
-      }
-    }
-
-    return views;
-  }
-
-  function bboxFlush(item) {
-    return new Bounds().set(0, 0, item.width || 0, item.height || 0);
-  }
-
-  function bboxFull(item) {
-    var b = item.bounds.clone();
-    return b.empty()
-      ? b.set(0, 0, 0, 0)
-      : b.translate(-(item.x || 0), -(item.y || 0));
-  }
-
-  function get$2(opt, key, d) {
-    var v = isObject(opt) ? opt[key] : opt;
-    return v != null ? v : (d !== undefined ? d : 0);
-  }
-
-  function offsetValue(v) {
-    return v < 0 ? Math.ceil(-v) : 0;
-  }
-
-  function gridLayout(view, groups, opt) {
-    var dirty = !opt.nodirty,
-        bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
-        bounds = tempBounds$2.set(0, 0, 0, 0),
-        alignCol = get$2(opt.align, Column),
-        alignRow = get$2(opt.align, Row),
-        padCol = get$2(opt.padding, Column),
-        padRow = get$2(opt.padding, Row),
-        ncols = opt.columns || groups.length,
-        nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-        n = groups.length,
-        xOffset = Array(n), xExtent = Array(ncols), xMax = 0,
-        yOffset = Array(n), yExtent = Array(nrows), yMax = 0,
-        dx = Array(n), dy = Array(n), boxes = Array(n),
-        m, i, c, r, b, g, px, py, x, y, offset;
-
-    for (i=0; i<ncols; ++i) xExtent[i] = 0;
-    for (i=0; i<nrows; ++i) yExtent[i] = 0;
-
-    // determine offsets for each group
-    for (i=0; i<n; ++i) {
-      g = groups[i];
-      b = boxes[i] = bbox(g);
-      g.x = g.x || 0; dx[i] = 0;
-      g.y = g.y || 0; dy[i] = 0;
-      c = i % ncols;
-      r = ~~(i / ncols);
-      xMax = Math.max(xMax, px = Math.ceil(b.x2));
-      yMax = Math.max(yMax, py = Math.ceil(b.y2));
-      xExtent[c] = Math.max(xExtent[c], px);
-      yExtent[r] = Math.max(yExtent[r], py);
-      xOffset[i] = padCol + offsetValue(b.x1);
-      yOffset[i] = padRow + offsetValue(b.y1);
-      if (dirty) view.dirty(groups[i]);
-    }
-
-    // set initial alignment offsets
-    for (i=0; i<n; ++i) {
-      if (i % ncols === 0) xOffset[i] = 0;
-      if (i < ncols) yOffset[i] = 0;
-    }
-
-    // enforce column alignment constraints
-    if (alignCol === Each) {
-      for (c=1; c<ncols; ++c) {
-        for (offset=0, i=c; i<n; i += ncols) {
-          if (offset < xOffset[i]) offset = xOffset[i];
-        }
-        for (i=c; i<n; i += ncols) {
-          xOffset[i] = offset + xExtent[c-1];
-        }
-      }
-    } else if (alignCol === All) {
-      for (offset=0, i=0; i<n; ++i) {
-        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
-      }
-      for (i=0; i<n; ++i) {
-        if (i % ncols) xOffset[i] = offset + xMax;
-      }
-    } else {
-      for (alignCol=false, c=1; c<ncols; ++c) {
-        for (i=c; i<n; i += ncols) {
-          xOffset[i] += xExtent[c-1];
-        }
-      }
-    }
-
-    // enforce row alignment constraints
-    if (alignRow === Each) {
-      for (r=1; r<nrows; ++r) {
-        for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
-          if (offset < yOffset[i]) offset = yOffset[i];
-        }
-        for (i=r*ncols; i<m; ++i) {
-          yOffset[i] = offset + yExtent[r-1];
-        }
-      }
-    } else if (alignRow === All) {
-      for (offset=0, i=ncols; i<n; ++i) {
-        if (offset < yOffset[i]) offset = yOffset[i];
-      }
-      for (i=ncols; i<n; ++i) {
-        yOffset[i] = offset + yMax;
-      }
-    } else {
-      for (alignRow=false, r=1; r<nrows; ++r) {
-        for (i=r*ncols, m=i+ncols; i<m; ++i) {
-          yOffset[i] += yExtent[r-1];
-        }
-      }
-    }
-
-    // perform horizontal grid layout
-    for (x=0, i=0; i<n; ++i) {
-      x = xOffset[i] + (i % ncols ? x : 0);
-      dx[i] += x - groups[i].x;
-    }
-
-    // perform vertical grid layout
-    for (c=0; c<ncols; ++c) {
-      for (y=0, i=c; i<n; i += ncols) {
-        y += yOffset[i];
-        dy[i] += y - groups[i].y;
-      }
-    }
-
-    // perform horizontal centering
-    if (alignCol && get$2(opt.center, Column) && nrows > 1) {
-      for (i=0; i<n; ++i) {
-        b = alignCol === All ? xMax : xExtent[i % ncols];
-        x = b - boxes[i].x2 - groups[i].x - dx[i];
-        if (x > 0) dx[i] += x / 2;
-      }
-    }
-
-    // perform vertical centering
-    if (alignRow && get$2(opt.center, Row) && ncols !== 1) {
-      for (i=0; i<n; ++i) {
-        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
-        y = b - boxes[i].y2 - groups[i].y - dy[i];
-        if (y > 0) dy[i] += y / 2;
-      }
-    }
-
-    // position grid relative to anchor
-    for (i=0; i<n; ++i) {
-      bounds.union(boxes[i].translate(dx[i], dy[i]));
-    }
-    x = get$2(opt.anchor, X);
-    y = get$2(opt.anchor, Y);
-    switch (get$2(opt.anchor, Column)) {
-      case End:    x -= bounds.width(); break;
-      case Middle: x -= bounds.width() / 2;
-    }
-    switch (get$2(opt.anchor, Row)) {
-      case End:    y -= bounds.height(); break;
-      case Middle: y -= bounds.height() / 2;
-    }
-    x = Math.round(x);
-    y = Math.round(y);
-
-    // update mark positions, bounds, dirty
-    bounds.clear();
-    for (i=0; i<n; ++i) {
-      groups[i].mark.bounds.clear();
-    }
-    for (i=0; i<n; ++i) {
-      g = groups[i];
-      g.x += (dx[i] += x);
-      g.y += (dy[i] += y);
-      bounds.union(g.mark.bounds.union(g.bounds.translate(dx[i], dy[i])));
-      if (dirty) view.dirty(g);
-    }
-
-    return bounds;
-  }
-
-  function trellisLayout(view, group, opt) {
-    var views = gridLayoutGroups(group),
-        groups = views.marks,
-        bbox = opt.bounds === Flush ? boundFlush : boundFull,
-        off = opt.offset,
-        ncols = opt.columns || groups.length,
-        nrows = ncols < 0 ? 1 : Math.ceil(groups.length / ncols),
-        cells = nrows * ncols,
-        x, y, x2, y2, anchor, band, offset;
-
-    // -- initial grid layout
-    const bounds = gridLayout(view, groups, opt);
-
-    // -- layout grid headers and footers --
-
-    // perform row header layout
-    if (views.rowheaders) {
-      band = get$2(opt.headerBand, Row, null);
-      x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$2(off, 'rowHeader'), min$1, 0, bbox, 'x1', 0, ncols, 1, band);
-    }
-
-    // perform column header layout
-    if (views.colheaders) {
-      band = get$2(opt.headerBand, Column, null);
-      y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$2(off, 'columnHeader'), min$1, 1, bbox, 'y1', 0, 1, ncols, band);
-    }
-
-    // perform row footer layout
-    if (views.rowfooters) {
-      band = get$2(opt.footerBand, Row, null);
-      x2 = layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get$2(off, 'rowFooter'), max$1, 0, bbox, 'x2', ncols-1, ncols, 1, band);
-    }
-
-    // perform column footer layout
-    if (views.colfooters) {
-      band = get$2(opt.footerBand, Column, null);
-      y2 = layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get$2(off, 'columnFooter'), max$1, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
-    }
-
-    // perform row title layout
-    if (views.rowtitle) {
-      anchor = get$2(opt.titleAnchor, Row);
-      offset = get$2(off, 'rowTitle');
-      offset = anchor === End ? x2 + offset : x - offset;
-      band = get$2(opt.titleBand, Row, 0.5);
-      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
-    }
-
-    // perform column title layout
-    if (views.coltitle) {
-      anchor = get$2(opt.titleAnchor, Column);
-      offset = get$2(off, 'columnTitle');
-      offset = anchor === End ? y2 + offset : y - offset;
-      band = get$2(opt.titleBand, Column, 0.5);
-      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
-    }
-  }
-
-  function boundFlush(item, field) {
-    return field === 'x1' ? (item.x || 0)
-      : field === 'y1' ? (item.y || 0)
-      : field === 'x2' ? (item.x || 0) + (item.width || 0)
-      : field === 'y2' ? (item.y || 0) + (item.height || 0)
-      : undefined;
-  }
-
-  function boundFull(item, field) {
-    return item.bounds[field];
-  }
-
-  // aggregation functions for grid margin determination
-  function min$1(a, b) { return Math.floor(Math.min(a, b)); }
-  function max$1(a, b) { return Math.ceil(Math.max(a, b)); }
-
-  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
-    var n = groups.length,
-        init = 0,
-        edge = 0,
-        i, j, k, m, b, h, g, x, y;
-
-    // if no groups, early exit and return 0
-    if (!n) return init;
-
-    // compute margin
-    for (i=start; i<n; i+=stride) {
-      if (groups[i]) init = agg(init, bound(groups[i], bf));
-    }
-
-    // if no headers, return margin calculation
-    if (!headers.length) return init;
-
-    // check if number of headers exceeds number of rows or columns
-    if (headers.length > limit) {
-      view.warn('Grid headers exceed limit: ' + limit);
-      headers = headers.slice(0, limit);
-    }
-
-    // apply offset
-    init += offset;
-
-    // clear mark bounds for all headers
-    for (j=0, m=headers.length; j<m; ++j) {
-      view.dirty(headers[j]);
-      headers[j].mark.bounds.clear();
-    }
-
-    // layout each header
-    for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
-      h = headers[j];
-      b = h.mark.bounds;
-
-      // search for nearest group to align to
-      // necessary if table has empty cells
-      for (k=i; k >= 0 && (g = groups[k]) == null; k-=back);
-
-      // assign coordinates and update bounds
-      if (isX) {
-        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
-        y = init;
-      } else {
-        x = init;
-        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
-      }
-      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
-      h.x = x;
-      h.y = y;
-      view.dirty(h);
-
-      // update current edge of layout bounds
-      edge = agg(edge, b[bf]);
-    }
-
-    return edge;
-  }
-
-  function layoutTitle(view, g, offset, isX, bounds, band) {
-    if (!g) return;
-    view.dirty(g);
-
-    // compute title coordinates
-    var x = offset, y = offset;
-    isX
-      ? (x = Math.round(bounds.x1 + band * bounds.width()))
-      : (y = Math.round(bounds.y1 + band * bounds.height()));
-
-    // assign coordinates and update bounds
-    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
-    g.mark.bounds.clear().union(g.bounds);
-    g.x = x;
-    g.y = y;
-
-    // queue title for redraw
-    view.dirty(g);
-  }
-
-  // utility for looking up legend layout configuration
-  function lookup$2(config, orient) {
-    const opt = config[orient] || {};
-    return (key, d) => opt[key] != null ? opt[key]
-      : config[key] != null ? config[key]
-      : d;
-  }
-
-  // if legends specify offset directly, use the maximum specified value
-  function offsets(legends, value) {
-    var max = -Infinity;
-    legends.forEach(item => {
-      if (item.offset != null) max = Math.max(max, item.offset);
-    });
-    return max > -Infinity ? max : value;
-  }
-
-  function legendParams(g, orient, config, xb, yb, w, h) {
-    const _ = lookup$2(config, orient),
-          offset = offsets(g, _('offset', 0)),
-          anchor = _('anchor', Start),
-          mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
-
-    const p = {
-      align:   Each,
-      bounds:  _('bounds', Flush),
-      columns: _('direction') === 'vertical' ? 1 : g.length,
-      padding: _('margin', 8),
-      center:  _('center'),
-      nodirty: true
-    };
-
-    switch (orient) {
-      case Left:
-        p.anchor = {
-          x: Math.floor(xb.x1) - offset, column: End,
-          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
-        };
-        break;
-      case Right:
-        p.anchor = {
-          x: Math.ceil(xb.x2) + offset,
-          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
-        };
-        break;
-      case Top:
-        p.anchor = {
-          y: Math.floor(yb.y1) - offset, row: End,
-          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
-        };
-        break;
-      case Bottom:
-        p.anchor = {
-          y: Math.ceil(yb.y2) + offset,
-          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
-        };
-        break;
-      case TopLeft:
-        p.anchor = {x: offset, y: offset};
-        break;
-      case TopRight:
-        p.anchor = {x: w - offset, y: offset, column: End};
-        break;
-      case BottomLeft:
-        p.anchor = {x: offset, y: h - offset, row: End};
-        break;
-      case BottomRight:
-        p.anchor = {x: w - offset, y: h - offset, column: End, row: End};
-        break;
-    }
-
-    return p;
-  }
-
-  function legendLayout(view, legend) {
-    var item = legend.items[0],
-        datum = item.datum,
-        orient = item.orient,
-        bounds = item.bounds,
-        x = item.x, y = item.y, w, h;
-
-    // cache current bounds for later comparison
-    item._bounds
-      ? item._bounds.clear().union(bounds)
-      : item._bounds = bounds.clone();
-    bounds.clear();
-
-    // adjust legend to accommodate padding and title
-    legendGroupLayout(view, item, item.items[0].items[0]);
-
-    // aggregate bounds to determine size, and include origin
-    bounds = legendBounds(item, bounds);
-    w = 2 * item.padding;
-    h = 2 * item.padding;
-    if (!bounds.empty()) {
-      w = Math.ceil(bounds.width() + w);
-      h = Math.ceil(bounds.height() + h);
-    }
-
-    if (datum.type === Symbols) {
-      legendEntryLayout(item.items[0].items[0].items[0].items);
-    }
-
-    if (orient !== None$1) {
-      item.x = x = 0;
-      item.y = y = 0;
-    }
-    item.width = w;
-    item.height = h;
-    boundStroke(bounds.set(x, y, x + w, y + h), item);
-    item.mark.bounds.clear().union(bounds);
-
-    return item;
-  }
-
-  function legendBounds(item, b) {
-    // aggregate item bounds
-    item.items.forEach(_ => b.union(_.bounds));
-
-    // anchor to legend origin
-    b.x1 = item.padding;
-    b.y1 = item.padding;
-
-    return b;
-  }
-
-  function legendGroupLayout(view, item, entry) {
-    var pad = item.padding,
-        ex = pad - entry.x,
-        ey = pad - entry.y;
-
-    if (!item.datum.title) {
-      if (ex || ey) translate$2(view, entry, ex, ey);
-    } else {
-      var title = item.items[1].items[0],
-          anchor = title.anchor,
-          tpad = item.titlePadding || 0,
-          tx = pad - title.x,
-          ty = pad - title.y;
-
-      switch (title.orient) {
-        case Left:
-          ex += Math.ceil(title.bounds.width()) + tpad;
-          break;
-        case Right:
-        case Bottom:
-          break;
-        default:
-          ey += title.bounds.height() + tpad;
-      }
-      if (ex || ey) translate$2(view, entry, ex, ey);
-
-      switch (title.orient) {
-        case Left:
-          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
-          break;
-        case Right:
-          tx += legendTitleOffset(item, entry, title, End, 0, 0) + tpad;
-          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
-          break;
-        case Bottom:
-          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
-          ty += legendTitleOffset(item, entry, title, End, -1, 0, 1) + tpad;
-          break;
-        default:
-          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
-      }
-      if (tx || ty) translate$2(view, title, tx, ty);
-
-      // translate legend if title pushes into negative coordinates
-      if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
-        translate$2(view, entry, -tx, 0);
-        translate$2(view, title, -tx, 0);
-      }
-    }
-  }
-
-  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
-    const grad = item.datum.type !== 'symbol',
-          vgrad = title.datum.vgrad,
-          e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
-          s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
-          u = vgrad && lr ? s : 0,
-          v = vgrad && lr ? 0 : s,
-          o = y <= 0 ? 0 : multiLineOffset(title);
-
-    return Math.round(anchor === Start ? u
-      : anchor === End ? (v - o)
-      : 0.5 * (s - o));
-  }
-
-  function translate$2(view, item, dx, dy) {
-    item.x += dx;
-    item.y += dy;
-    item.bounds.translate(dx, dy);
-    item.mark.bounds.translate(dx, dy);
-    view.dirty(item);
-  }
-
-  function legendEntryLayout(entries) {
-    // get max widths for each column
-    var widths = entries.reduce(function(w, g) {
-      w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
-      return w;
-    }, {});
-
-    // set dimensions of legend entry groups
-    entries.forEach(function(g) {
-      g.width  = widths[g.column];
-      g.height = g.bounds.y2 - g.y;
-    });
-  }
-
-  function titleLayout(view, mark, width, height, viewBounds) {
-    var group = mark.items[0],
-        frame = group.frame,
-        orient = group.orient,
-        anchor = group.anchor,
-        offset = group.offset,
-        padding = group.padding,
-        title = group.items[0].items[0],
-        subtitle = group.items[1] && group.items[1].items[0],
-        end = (orient === Left || orient === Right) ? height : width,
-        start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
-
-    if (frame !== Group) {
-      orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
-        : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
-        : (start = viewBounds.x1, end = viewBounds.x2);
-    } else if (orient === Left) {
-      start = height, end = 0;
-    }
-
-    pos = (anchor === Start) ? start
-      : (anchor === End) ? end
-      : (start + end) / 2;
-
-    if (subtitle && subtitle.text) {
-      // position subtitle
-      switch (orient) {
-        case Top:
-        case Bottom:
-          sy = title.bounds.height() + padding;
-          break;
-        case Left:
-          sx = title.bounds.width() + padding;
-          break;
-        case Right:
-          sx = -title.bounds.width() - padding;
-          break;
-      }
-
-      tempBounds$2.clear().union(subtitle.bounds);
-      tempBounds$2.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
-      if (set(subtitle, 'x', sx) | set(subtitle, 'y', sy)) {
-        view.dirty(subtitle);
-        subtitle.bounds.clear().union(tempBounds$2);
-        subtitle.mark.bounds.clear().union(tempBounds$2);
-        view.dirty(subtitle);
-      }
-
-      tempBounds$2.clear().union(subtitle.bounds);
-    } else {
-      tempBounds$2.clear();
-    }
-    tempBounds$2.union(title.bounds);
-
-    // position title group
-    switch (orient) {
-      case Top:
-        x = pos;
-        y = viewBounds.y1 - tempBounds$2.height() - offset;
-        break;
-      case Left:
-        x = viewBounds.x1 - tempBounds$2.width() - offset;
-        y = pos;
-        break;
-      case Right:
-        x = viewBounds.x2 + tempBounds$2.width() + offset;
-        y = pos;
-        break;
-      case Bottom:
-        x = pos;
-        y = viewBounds.y2 + offset;
-        break;
-      default:
-        x = group.x;
-        y = group.y;
-    }
-
-    if (set(group, 'x', x) | set(group, 'y', y)) {
-      tempBounds$2.translate(x, y);
-      view.dirty(group);
-      group.bounds.clear().union(tempBounds$2);
-      mark.bounds.clear().union(tempBounds$2);
-      view.dirty(group);
-    }
-    return group.bounds;
-  }
-
-  /**
-   * Layout view elements such as axes and legends.
-   * Also performs size adjustments.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.mark - Scenegraph mark of groups to layout.
-   */
-  function ViewLayout(params) {
-    Transform.call(this, null, params);
-  }
-
-  var prototype$V = inherits(ViewLayout, Transform);
-
-  prototype$V.transform = function(_, pulse) {
-    // TODO incremental update, output?
-    var view = pulse.dataflow;
-    _.mark.items.forEach(function(group) {
-      if (_.layout) trellisLayout(view, group, _.layout);
-      layoutGroup(view, group, _);
-    });
-    if (_.modified()) pulse.reflow();
-    return pulse;
-  };
-
-  function layoutGroup(view, group, _) {
-    var items = group.items,
-        width = Math.max(0, group.width || 0),
-        height = Math.max(0, group.height || 0),
-        viewBounds = new Bounds().set(0, 0, width, height),
-        xBounds = viewBounds.clone(),
-        yBounds = viewBounds.clone(),
-        legends = [], title,
-        mark, orient, b, i, n;
-
-    // layout axes, gather legends, collect bounds
-    for (i=0, n=items.length; i<n; ++i) {
-      mark = items[i];
-      switch (mark.role) {
-        case AxisRole:
-          b = isYAxis(mark) ? xBounds : yBounds;
-          b.union(axisLayout(view, mark, width, height));
-          break;
-        case TitleRole:
-          title = mark;
-          break;
-        case LegendRole:
-          legends.push(legendLayout(view, mark));
-          break;
-        case FrameRole:
-        case ScopeRole:
-        case RowHeader:
-        case RowFooter:
-        case RowTitle:
-        case ColHeader:
-        case ColFooter:
-        case ColTitle:
-          xBounds.union(mark.bounds);
-          yBounds.union(mark.bounds);
-          break;
-        default:
-          viewBounds.union(mark.bounds);
-      }
-    }
-
-    // layout legends, adjust viewBounds
-    if (legends.length) {
-      // group legends by orient
-      const l = {};
-      legends.forEach(item => {
-        orient = item.orient || Right;
-        if (orient !== None$1) (l[orient] || (l[orient] = [])).push(item);
-      });
-
-      // perform grid layout for each orient group
-      for (let orient in l) {
-        const g = l[orient];
-        gridLayout(view, g, legendParams(
-          g, orient, _.legends, xBounds, yBounds, width, height
-        ));
-      }
-
-      // update view bounds
-      legends.forEach(item => {
-        const b = item.bounds;
-
-        if (!b.equals(item._bounds)) {
-          item.bounds = item._bounds;
-          view.dirty(item); // dirty previous location
-          item.bounds = b;
-          view.dirty(item);
-        }
-
-        if (_.autosize && _.autosize.type === Fit) {
-          // For autosize fit, incorporate the orthogonal dimension only.
-          // Legends that overrun the chart area will then be clipped;
-          // otherwise the chart area gets reduced to nothing!
-          switch(item.orient) {
-            case Left:
-            case Right:
-              viewBounds.add(b.x1, 0).add(b.x2, 0);
-              break;
-            case Top:
-            case Bottom:
-              viewBounds.add(0, b.y1).add(0, b.y2);
-          }
-        } else {
-          viewBounds.union(b);
-        }
-      });
-    }
-
-    // combine bounding boxes
-    viewBounds.union(xBounds).union(yBounds);
-
-    // layout title, adjust bounds
-    if (title) {
-      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
-    }
-
-    // override aggregated view bounds if content is clipped
-    if (group.clip) {
-      viewBounds.set(0, 0, group.width || 0, group.height || 0);
-    }
-
-    // perform size adjustment
-    viewSizeLayout(view, group, viewBounds, _);
-  }
-
-  function viewSizeLayout(view, group, viewBounds, _) {
-    const auto = _.autosize || {},
-          type = auto.type;
-
-    if (view._autosize < 1 || !type) return;
-
-    let viewWidth = view._width,
-        viewHeight = view._height,
-        width  = Math.max(0, group.width || 0),
-        left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-        right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
-        height = Math.max(0, group.height || 0),
-        top    = Math.max(0, Math.ceil(-viewBounds.y1)),
-        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
-
-    if (auto.contains === Padding) {
-      const padding = view.padding();
-      viewWidth -= padding.left + padding.right;
-      viewHeight -= padding.top + padding.bottom;
-    }
-
-    if (type === None$1) {
-      left = 0;
-      top = 0;
-      width = viewWidth;
-      height = viewHeight;
-    }
-
-    else if (type === Fit) {
-      width = Math.max(0, viewWidth - left - right);
-      height = Math.max(0, viewHeight - top - bottom);
-    }
-
-    else if (type === FitX) {
-      width = Math.max(0, viewWidth - left - right);
-      viewHeight = height + top + bottom;
-    }
-
-    else if (type === FitY) {
-      viewWidth = width + left + right;
-      height = Math.max(0, viewHeight - top - bottom);
-    }
-
-    else if (type === Pad) {
-      viewWidth = width + left + right;
-      viewHeight = height + top + bottom;
-    }
-
-    view._resizeView(
-      viewWidth, viewHeight,
-      width, height,
-      [left, top],
-      auto.resize
-    );
-  }
-
-
-
-  var vtx = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    bound: Bound,
-    identifier: Identifier,
-    mark: Mark,
-    overlap: Overlap,
-    render: Render,
-    viewlayout: ViewLayout
-  });
 
   function bandSpace(count, paddingInner, paddingOuter) {
     var space = count - paddingInner + paddingOuter * 2;
@@ -15382,7 +13296,7 @@
         scale.invert(lo),
         scale.invert(hi)
       ];
-    }
+    };
   }
 
   function invertRangeExtent(scale) {
@@ -15414,7 +13328,7 @@
         lo[0] === undefined ? lo[1] : lo[0],
         hi[1] === undefined ? hi[0] : hi[1]
       ];
-    }
+    };
   }
 
   function initRange(domain, range) {
@@ -15620,7 +13534,7 @@
     return transformer()(identity$1, identity$1);
   }
 
-  function spanFormat(start, stop, count, specifier) {
+  function tickFormat(start, stop, count, specifier) {
     var step = tickStep(start, stop, count),
         precision;
     specifier = d3Format.formatSpecifier(specifier == null ? ",f" : specifier);
@@ -15657,7 +13571,7 @@
 
     scale.tickFormat = function(count, specifier) {
       var d = domain();
-      return spanFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
+      return tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
     };
 
     scale.nice = function(count) {
@@ -16677,7 +14591,7 @@
     };
 
     scale.tickFormat = function(count, specifier) {
-      return spanFormat(domain[0], peek(domain), count == null ? 10 : count, specifier);
+      return tickFormat(domain[0], peek(domain), count == null ? 10 : count, specifier);
     };
 
     scale.copy = function() {
@@ -16782,6 +14696,10 @@
 
   function isLogarithmic(key) {
     return hasType(key, Log);
+  }
+
+  function isTemporal(key) {
+    return hasType(key, Temporal);
   }
 
   function isInterpolating(key) {
@@ -16942,6 +14860,17 @@
     }
   }
 
+  var SymbolLegend  = 'symbol';
+  var DiscreteLegend = 'discrete';
+  var GradientLegend = 'gradient';
+
+  const defaultFormatter = value => isArray(value)
+    ? value.map(v => String(v))
+    : String(value);
+
+  const ascending$1 = (a, b) => a[1] - b[1];
+  const descending = (a, b) => b[1] - a[1];
+
   /**
    * Determine the tick count or interval function.
    * @param {Scale} scale - The scale for which to generate tick values.
@@ -16957,7 +14886,10 @@
         count = Math.max(count, scale.bins.length);
       }
       if (minStep != null) {
-        count = Math.min(count, ~~(span(scale.domain()) / minStep) || 1);
+        count = Math.min(
+          count,
+          Math.floor((span(scale.domain()) / minStep) || 1)
+        );
       }
     }
 
@@ -16985,25 +14917,32 @@
    * @return {Array<*>} - The filtered tick values.
    */
   function validTicks(scale, ticks, count) {
-    var range = scale.range(),
-        lo = Math.floor(range[0]),
-        hi = Math.ceil(peek(range));
+    let range = scale.range(),
+        lo = range[0],
+        hi = peek(range),
+        cmp = ascending$1;
 
     if (lo > hi) {
       range = hi;
       hi = lo;
       lo = range;
+      cmp = descending;
     }
 
-    ticks = ticks.filter(function(v) {
-      v = scale(v);
-      return lo <= v && v <= hi;
-    });
+    lo = Math.floor(lo);
+    hi = Math.ceil(hi);
+
+    // filter ticks to valid values within the range
+    // additionally sort ticks in range order (#2579)
+    ticks = ticks.map(v => [v, scale(v)])
+      .filter(_ => lo <= _[1] && _[1] <= hi)
+      .sort(cmp)
+      .map(_ => _[0]);
 
     if (count > 0 && ticks.length > 1) {
-      var endpoints = [ticks[0], peek(ticks)];
+      const endpoints = [ticks[0], peek(ticks)];
       while (ticks.length > count && ticks.length >= 3) {
-        ticks = ticks.filter(function(_, i) { return !(i % 2); });
+        ticks = ticks.filter((_, i) => !(i % 2));
       }
       if (ticks.length < 3) {
         ticks = endpoints;
@@ -17043,68 +14982,2862 @@
    *   time multi-format specifier object.
    * @return {function(*):string} - The generated label formatter.
    */
-  function tickFormat(scale, count, specifier, formatType, noSkip) {
-    var type = scale.type,
-        format = (type === Time || formatType === Time) ? timeFormat(specifier)
-          : (type === UTC || formatType === UTC) ? utcFormat(specifier)
-          : scale.tickFormat ? scale.tickFormat(count, specifier)
-          : specifier ? d3Format.format(specifier)
-          : String;
+  function tickFormat$1(locale, scale, count, specifier, formatType, noSkip) {
+    var type = scale.type;
+    let format = defaultFormatter;
 
-    if (isLogarithmic(type)) {
-      var logfmt = variablePrecision(specifier);
-      format = noSkip || scale.bins ? logfmt : filter$1(format, logfmt);
+    if (type === Time || formatType === Time) {
+      format = locale.timeFormat(specifier);
+    }
+    else if (type === UTC || formatType === UTC) {
+      format = locale.utcFormat(specifier);
+    }
+    else if (isLogarithmic(type)) {
+      const varfmt = locale.formatFloat(specifier);
+      if (noSkip || scale.bins) {
+        format = varfmt;
+      } else {
+        const test = tickLog(scale, count, false);
+        format = _ => test(_) ? varfmt(_) : '';
+      }
+    }
+    else if (scale.tickFormat) {
+      // if d3 scale has tickFormat, it must be continuous
+      const d = scale.domain();
+      format = locale.formatSpan(d[0], d[d.length - 1], count, specifier);
+    }
+    else if (specifier) {
+      format = locale.format(specifier);
     }
 
     return format;
   }
 
-  function filter$1(sourceFormat, targetFormat) {
-    return _ => sourceFormat(_) ? targetFormat(_) : '';
+  function tickLog(scale, count, values) {
+    const ticks = tickValues(scale, count),
+          base = scale.base(),
+          logb = Math.log(base),
+          k = Math.max(1, base * count / ticks.length);
+
+    // apply d3-scale's log format filter criteria
+    const test = d => {
+      let i = d / Math.pow(base, Math.round(Math.log(d) / logb));
+      if (i * base < base - 0.5) i *= base;
+      return i <= k;
+    };
+
+    return values ? ticks.filter(test) : test;
   }
 
-  function variablePrecision(specifier) {
-    var s = d3Format.formatSpecifier(specifier || ',');
+  const symbols$1 = {
+    [Quantile$1]:  'quantiles',
+    [Quantize]:  'thresholds',
+    [Threshold]: 'domain'
+  };
 
-    if (s.precision == null) {
-      s.precision = 12;
-      switch (s.type) {
-        case '%': s.precision -= 2; break;
-        case 'e': s.precision -= 1; break;
-      }
-      return trimZeroes(
-        d3Format.format(s),          // number format
-        d3Format.format('.1f')(1)[1] // decimal point character
-      );
-    } else {
-      return d3Format.format(s);
+  const formats$1 = {
+    [Quantile$1]:  'quantiles',
+    [Quantize]:  'domain'
+  };
+
+  function labelValues(scale, count) {
+    return scale.bins ? binValues(scale.bins)
+      : scale.type === Log ? tickLog(scale, count, true)
+      : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
+      : tickValues(scale, count);
+  }
+
+  function thresholdFormat(locale, scale, specifier) {
+    var _ = scale[formats$1[scale.type]](),
+        n = _.length,
+        d = n > 1 ? _[1] - _[0] : _[0], i;
+
+    for (i=1; i<n; ++i) {
+      d = Math.min(d, _[i] - _[i-1]);
     }
+
+    // tickCount = 3 ticks times 10 for increased resolution
+    return locale.formatSpan(0, d, 3 * 10, specifier);
   }
 
-  function trimZeroes(format, decimalChar) {
-    return function(x) {
-      var str = format(x),
-          dec = str.indexOf(decimalChar),
-          idx, end;
+  function thresholdValues(thresholds) {
+    const values = [-Infinity].concat(thresholds);
+    values.max = +Infinity;
+    return values;
+  }
 
-      if (dec < 0) return str;
+  function binValues(bins) {
+    const values = bins.slice(0, -1);
+    values.max = peek(bins);
+    return values;
+  }
 
-      idx = rightmostDigit(str, dec);
-      end = idx < str.length ? str.slice(idx) : '';
-      while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
+  function isDiscreteRange(scale) {
+    return symbols$1[scale.type] || scale.bins;
+  }
 
-      return str.slice(0, idx) + end;
+  function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
+    const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
+      ? thresholdFormat(locale, scale, specifier)
+      : tickFormat$1(locale, scale, count, specifier, formatType, noSkip);
+
+    return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format)
+      : type === DiscreteLegend ? formatDiscrete(format)
+      : formatPoint(format);
+  }
+
+  function formatRange(format) {
+    return (value, index, array) => {
+      var limit = get$2(array[index + 1], get$2(array.max, +Infinity)),
+          lo = formatValue(value, format),
+          hi = formatValue(limit, format);
+      return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
     };
   }
 
-  function rightmostDigit(str, dec) {
-    var i = str.lastIndexOf('e'), c;
-    if (i > 0) return i;
-    for (i=str.length; --i > dec;) {
-      c = str.charCodeAt(i);
-      if (c >= 48 && c <= 57) return i + 1; // is digit
+  function get$2(value, dflt) {
+    return value != null ? value : dflt;
+  }
+
+  function formatDiscrete(format) {
+    return (value, index) => index ? format(value) : null;
+  }
+
+  function formatPoint(format) {
+    return value => format(value);
+  }
+
+  function formatValue(value, format) {
+    return Number.isFinite(value) ? format(value) : null;
+  }
+
+  function labelFraction(scale) {
+    var domain = scale.domain(),
+        count = domain.length - 1,
+        lo = +domain[0],
+        hi = +peek(domain),
+        span = hi - lo;
+
+    if (scale.type === Threshold) {
+      const adjust = count ? span / count : 0.1;
+      lo -= adjust;
+      hi += adjust;
+      span = hi - lo;
+    }
+
+    return value => (value - lo) / span;
+  }
+
+  function format$1(locale, scale, specifier, formatType) {
+    const type = formatType || scale.type;
+
+    // replace abbreviated time specifiers to improve screen reader experience
+    if (isString(specifier) && isTemporal(type)) {
+      specifier = specifier.replace(/%a/g, '%A').replace(/%b/g, '%B');
+    }
+
+    return !specifier && type === Time  ? locale.timeFormat('%A, %d %B %Y, %X')
+      : !specifier && type === UTC ? locale.utcFormat('%A, %d %B %Y, %X UTC')
+      : labelFormat(locale, scale, 5, null, specifier, formatType, true);
+  }
+
+  function domainCaption(locale, scale, opt) {
+    opt = opt || {};
+    const max = Math.max(3, opt.maxlen || 7),
+          fmt = format$1(locale, scale, opt.format, opt.formatType);
+
+    // if scale breaks domain into bins, describe boundaries
+    if (isDiscretizing(scale.type)) {
+      const v = labelValues(scale).slice(1).map(fmt),
+            n = v.length;
+      return `${n} boundar${n === 1 ? 'y' : 'ies'}: ${v.join(', ')}`;
+    }
+
+    // if scale domain is discrete, list values
+    else if (isDiscrete(scale.type)) {
+      const d = scale.domain(),
+            n = d.length,
+            v = n > max
+              ? d.slice(0, max - 2).map(fmt).join(', ')
+                + ', ending with ' + d.slice(-1).map(fmt)
+              : d.map(fmt).join(', ');
+      return `${n} value${n === 1 ? '' : 's'}: ${v}`;
+    }
+
+    // if scale domain is continuous, describe value range
+    else {
+      const d = scale.domain();
+      return `values from ${fmt(d[0])} to ${fmt(peek(d))}`;
     }
   }
+
+  const ARIA_HIDDEN = 'aria-hidden';
+  const ARIA_LABEL = 'aria-label';
+  const ARIA_ROLE = 'role';
+  const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
+  const GRAPHICS_OBJECT = 'graphics-object';
+  const GRAPHICS_SYMBOL = 'graphics-symbol';
+
+  const bundle = (role, roledesc, label) => ({
+    [ARIA_ROLE]: role,
+    [ARIA_ROLEDESCRIPTION]: roledesc,
+    [ARIA_LABEL]: label || undefined
+  });
+
+  // these roles are covered by related roles
+  // we can ignore them, no need to generate attributes
+  const AriaIgnore = toSet([
+    'axis-domain',
+    'axis-grid',
+    'axis-label',
+    'axis-tick',
+    'axis-title',
+    'legend-band',
+    'legend-entry',
+    'legend-gradient',
+    'legend-label',
+    'legend-title',
+    'legend-symbol',
+    'title'
+  ]);
+
+  // aria attribute generators for guide roles
+  const AriaGuides = {
+    'axis': {desc: 'axis', caption: axisCaption},
+    'legend': {desc: 'legend', caption: legendCaption},
+    'title-text': {
+      desc: 'title',
+      caption: item => `Title text '${titleCaption(item)}'`
+    },
+    'title-subtitle': {
+      desc: 'subtitle',
+      caption: item => `Subtitle text '${titleCaption(item)}'`
+    }
+  };
+
+  // aria properties generated for mark item encoding channels
+  const AriaEncode = {
+    ariaRole: ARIA_ROLE,
+    ariaRoleDescription: ARIA_ROLEDESCRIPTION,
+    description: ARIA_LABEL
+  };
+
+  function ariaItemAttributes(emit, item) {
+    const hide = item.aria === false;
+    emit(ARIA_HIDDEN, hide || undefined);
+
+    if (hide || item.description == null) {
+      for (const prop in AriaEncode) {
+        emit(AriaEncode[prop], undefined);
+      }
+    } else {
+      const type = item.mark.marktype;
+      emit(
+        ARIA_LABEL,
+        item.description
+      );
+      emit(
+        ARIA_ROLE,
+        item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL)
+      );
+      emit(
+        ARIA_ROLEDESCRIPTION,
+        item.ariaRoleDescription || `${type} mark`
+      );
+    }
+  }
+
+  function ariaMarkAttributes(mark) {
+    return mark.aria === false ? { [ARIA_HIDDEN]: true }
+      : AriaIgnore[mark.role] ? null
+      : AriaGuides[mark.role] ? ariaGuide(mark, AriaGuides[mark.role])
+      : ariaMark(mark);
+  }
+
+  function ariaMark(mark) {
+    const type = mark.marktype;
+    const recurse = (
+      type === 'group' ||
+      type === 'text' ||
+      mark.items.some(_ => _.description != null && _.aria !== false)
+    );
+    return bundle(
+      recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
+      `${type} mark container`,
+      mark.description
+    );
+  }
+
+  function ariaGuide(mark, opt) {
+    try {
+      const item = mark.items[0],
+            caption = opt.caption || (() => '');
+      return bundle(
+        opt.role || GRAPHICS_SYMBOL,
+        opt.desc,
+        item.description || caption(item)
+      );
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function titleCaption(item) {
+    return array(item.text).join(' ');
+  }
+
+  function axisCaption(item) {
+    const datum = item.datum,
+          orient = item.orient,
+          title = datum.title ? extractTitle(item) : null,
+          ctx = item.context,
+          scale = ctx.scales[datum.scale].value,
+          locale = ctx.dataflow.locale(),
+          type = scale.type,
+          xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
+
+    return `${xy}-axis`
+      + (title ? ` titled '${title}'` : '')
+      + ` for a ${isDiscrete(type) ? 'discrete' : type} scale`
+      + ` with ${domainCaption(locale, scale, item)}`;
+  }
+
+  function legendCaption(item) {
+    const datum = item.datum,
+          title = datum.title ? extractTitle(item) : null,
+          type = `${datum.type || ''} legend`.trim(),
+          scales = datum.scales,
+          props = Object.keys(scales),
+          ctx = item.context,
+          scale = ctx.scales[scales[props[0]]].value,
+          locale = ctx.dataflow.locale();
+
+    return capitalize(type)
+      + (title ? ` titled '${title}'` : '')
+      + ` for ${channelCaption(props)}`
+      + ` with ${domainCaption(locale, scale, item)}`;
+  }
+
+  function extractTitle(item) {
+    try {
+      return array(peek(item.items).items[0].text).join(' ');
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function channelCaption(props) {
+    props = props.map(p => p + (p === 'fill' || p === 'stroke' ? ' color' : ''));
+    return props.length < 2 ? props[0]
+      : props.slice(0, -1).join(', ') + ' and ' + peek(props);
+  }
+
+  function capitalize(s) {
+    return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+  }
+
+  const attrText = val => (val + '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;');
+
+  /**
+   * Generate string for an opening xml tag.
+   * @param tag the name of the xml tag
+   * @param attr hash of attribute name-value pairs to include
+   * @param raw additional raw string to include in tag markup
+   */
+  function openTag(tag, attr, raw) {
+    var s = '<' + tag, key, val;
+    if (attr) {
+      for (key in attr) {
+        val = attr[key];
+        if (val != null) {
+          s += ' ' + key + '="' + attrText(val) + '"';
+        }
+      }
+    }
+    if (raw) s += ' ' + raw;
+    return s + '>';
+  }
+
+  /**
+   * Generate string for closing xml tag.
+   * @param tag the name of the xml tag
+   */
+  function closeTag(tag) {
+    return '</' + tag + '>';
+  }
+
+  const styles = {
+    fill:             'fill',
+    fillOpacity:      'fill-opacity',
+    stroke:           'stroke',
+    strokeOpacity:    'stroke-opacity',
+    strokeWidth:      'stroke-width',
+    strokeCap:        'stroke-linecap',
+    strokeJoin:       'stroke-linejoin',
+    strokeDash:       'stroke-dasharray',
+    strokeDashOffset: 'stroke-dashoffset',
+    strokeMiterLimit: 'stroke-miterlimit',
+    opacity:          'opacity',
+    blend:            'mix-blend-mode'
+  };
+
+  // ensure miter limit default is consistent with canvas (#2498)
+  const rootAttributes = {
+    'fill': 'none',
+    'stroke-miterlimit': 10
+  };
+
+  const RootIndex = 0,
+        ns = metadata.xmlns;
+
+  function SVGRenderer(loader) {
+    Renderer.call(this, loader);
+    this._dirtyID = 0;
+    this._dirty = [];
+    this._svg = null;
+    this._root = null;
+    this._defs = null;
+  }
+
+  var prototype$O = inherits(SVGRenderer, Renderer);
+  var base$1 = Renderer.prototype;
+
+  prototype$O.initialize = function(el, width, height, padding) {
+    // create the svg definitions cache
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
+
+    if (el) {
+      this._svg = domChild(el, 0, 'svg', ns);
+      this._svg.setAttribute('class', 'marks');
+      domClear(el, 1);
+
+      // set the svg root group
+      this._root = domChild(this._svg, RootIndex, 'g', ns);
+      for (const attr in rootAttributes) {
+        this._root.setAttribute(attr, rootAttributes[attr]);
+      }
+
+      // ensure no additional child elements
+      domClear(this._svg, RootIndex + 1);
+    }
+
+    // set background color if defined
+    this.background(this._bgcolor);
+
+    return base$1.initialize.call(this, el, width, height, padding);
+  };
+
+  prototype$O.background = function(bgcolor) {
+    if (arguments.length && this._svg) {
+      this._svg.style.setProperty('background-color', bgcolor);
+    }
+    return base$1.background.apply(this, arguments);
+  };
+
+  prototype$O.resize = function(width, height, origin, scaleFactor) {
+    base$1.resize.call(this, width, height, origin, scaleFactor);
+
+    if (this._svg) {
+      this._svg.setAttribute('width', this._width * this._scale);
+      this._svg.setAttribute('height', this._height * this._scale);
+      this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
+      this._root.setAttribute('transform', 'translate(' + this._origin + ')');
+    }
+
+    this._dirty = [];
+
+    return this;
+  };
+
+  prototype$O.canvas = function() {
+    return this._svg;
+  };
+
+  prototype$O.svg = function() {
+    if (!this._svg) return null;
+
+    var attr = {
+      class:   'marks',
+      width:   this._width * this._scale,
+      height:  this._height * this._scale,
+      viewBox: '0 0 ' + this._width + ' ' + this._height
+    };
+    for (var key in metadata) {
+      attr[key] = metadata[key];
+    }
+
+    var bg = !this._bgcolor ? ''
+      : (openTag('rect', {
+          width:  this._width,
+          height: this._height,
+          fill:   this._bgcolor
+        }) + closeTag('rect'));
+
+    return openTag('svg', attr)
+      + (this._defs.el ? this._defs.el.outerHTML : '')
+      + bg
+      + this._root.outerHTML
+      + closeTag('svg');
+  };
+
+
+  // -- Render entry point --
+
+  prototype$O._render = function(scene) {
+    // perform spot updates and re-render markup
+    if (this._dirtyCheck()) {
+      if (this._dirtyAll) this._resetDefs();
+      this.draw(this._root, scene);
+      domClear(this._root, 1);
+    }
+
+    this.updateDefs();
+
+    this._dirty = [];
+    ++this._dirtyID;
+
+    return this;
+  };
+
+  // -- Manage SVG definitions ('defs') block --
+
+  prototype$O.updateDefs = function() {
+    const svg = this._svg,
+          defs = this._defs;
+
+    let el = defs.el,
+        index = 0;
+
+    for (const id in defs.gradient) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
+      index = updateGradient(el, defs.gradient[id], index);
+    }
+
+    for (const id in defs.clipping) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
+      index = updateClipping(el, defs.clipping[id], index);
+    }
+
+    // clean-up
+    if (el) {
+      index === 0
+        ? (svg.removeChild(el), defs.el = null)
+        : domClear(el, index);
+    }
+  };
+
+  function updateGradient(el, grad, index) {
+    var i, n, stop;
+
+    if (grad.gradient === 'radial') {
+      // SVG radial gradients automatically transform to normalized bbox
+      // coordinates, in a way that is cumbersome to replicate in canvas.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
+      var pt = domChild(el, index++, 'pattern', ns);
+      pt.setAttribute('id', patternPrefix + grad.id);
+      pt.setAttribute('viewBox', '0,0,1,1');
+      pt.setAttribute('width', '100%');
+      pt.setAttribute('height', '100%');
+      pt.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+
+      pt = domChild(pt, 0, 'rect', ns);
+      pt.setAttribute('width', '1');
+      pt.setAttribute('height', '1');
+      pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
+
+      el = domChild(el, index++, 'radialGradient', ns);
+      el.setAttribute('id', grad.id);
+      el.setAttribute('fx', grad.x1);
+      el.setAttribute('fy', grad.y1);
+      el.setAttribute('fr', grad.r1);
+      el.setAttribute('cx', grad.x2);
+      el.setAttribute('cy', grad.y2);
+      el.setAttribute( 'r', grad.r2);
+    } else {
+      el = domChild(el, index++, 'linearGradient', ns);
+      el.setAttribute('id', grad.id);
+      el.setAttribute('x1', grad.x1);
+      el.setAttribute('x2', grad.x2);
+      el.setAttribute('y1', grad.y1);
+      el.setAttribute('y2', grad.y2);
+    }
+
+    for (i=0, n=grad.stops.length; i<n; ++i) {
+      stop = domChild(el, i, 'stop', ns);
+      stop.setAttribute('offset', grad.stops[i].offset);
+      stop.setAttribute('stop-color', grad.stops[i].color);
+    }
+    domClear(el, i);
+
+    return index;
+  }
+
+  function updateClipping(el, clip, index) {
+    var mask;
+
+    el = domChild(el, index, 'clipPath', ns);
+    el.setAttribute('id', clip.id);
+
+    if (clip.path) {
+      mask = domChild(el, 0, 'path', ns);
+      mask.setAttribute('d', clip.path);
+    } else {
+      mask = domChild(el, 0, 'rect', ns);
+      mask.setAttribute('x', 0);
+      mask.setAttribute('y', 0);
+      mask.setAttribute('width', clip.width);
+      mask.setAttribute('height', clip.height);
+    }
+    domClear(el, 1);
+
+    return index + 1;
+  }
+
+  prototype$O._resetDefs = function() {
+    var def = this._defs;
+    def.gradient = {};
+    def.clipping = {};
+  };
+
+
+  // -- Manage rendering of items marked as dirty --
+
+  prototype$O.dirty = function(item) {
+    if (item.dirty !== this._dirtyID) {
+      item.dirty = this._dirtyID;
+      this._dirty.push(item);
+    }
+  };
+
+  prototype$O.isDirty = function(item) {
+    return this._dirtyAll
+      || !item._svg
+      || item.dirty === this._dirtyID;
+  };
+
+  prototype$O._dirtyCheck = function() {
+    this._dirtyAll = true;
+    var items = this._dirty;
+    if (!items.length || !this._dirtyID) return true;
+
+    var id = ++this._dirtyID,
+        item, mark, type, mdef, i, n, o;
+
+    for (i=0, n=items.length; i<n; ++i) {
+      item = items[i];
+      mark = item.mark;
+
+      if (mark.marktype !== type) {
+        // memoize mark instance lookup
+        type = mark.marktype;
+        mdef = Marks[type];
+      }
+
+      if (mark.zdirty && mark.dirty !== id) {
+        this._dirtyAll = false;
+        dirtyParents(item, id);
+        mark.items.forEach(function(i) { i.dirty = id; });
+      }
+      if (mark.zdirty) continue; // handle in standard drawing pass
+
+      if (item.exit) { // EXIT
+        if (mdef.nested && mark.items.length) {
+          // if nested mark with remaining points, update instead
+          o = mark.items[0];
+          if (o._svg) this._update(mdef, o._svg, o);
+        } else if (item._svg) {
+          // otherwise remove from DOM
+          o = item._svg.parentNode;
+          if (o) o.removeChild(item._svg);
+        }
+        item._svg = null;
+        continue;
+      }
+
+      item = (mdef.nested ? mark.items[0] : item);
+      if (item._update === id) continue; // already visited
+
+      if (!item._svg || !item._svg.ownerSVGElement) {
+        // ENTER
+        this._dirtyAll = false;
+        dirtyParents(item, id);
+      } else {
+        // IN-PLACE UPDATE
+        this._update(mdef, item._svg, item);
+      }
+      item._update = id;
+    }
+    return !this._dirtyAll;
+  };
+
+  function dirtyParents(item, id) {
+    for (; item && item.dirty !== id; item=item.mark.group) {
+      item.dirty = id;
+      if (item.mark && item.mark.dirty !== id) {
+        item.mark.dirty = id;
+      } else return;
+    }
+  }
+
+
+  // -- Construct & maintain scenegraph to SVG mapping ---
+
+  // Draw a mark container.
+  prototype$O.draw = function(el, scene, prev) {
+    if (!this.isDirty(scene)) return scene._svg;
+
+    var svg = this._svg,
+        mdef = Marks[scene.marktype],
+        events = scene.interactive === false ? 'none' : null,
+        isGroup = mdef.tag === 'g',
+        sibling = null,
+        i = 0,
+        parent;
+
+    parent = bind(scene, el, prev, 'g', svg);
+    parent.setAttribute('class', cssClass(scene));
+
+    // apply aria attributes to parent container element
+    const aria = ariaMarkAttributes(scene);
+    for (const key in aria) setAttribute(parent, key, aria[key]);
+
+    if (!isGroup) {
+      setAttribute(parent, 'pointer-events', events);
+    }
+    setAttribute(parent, 'clip-path',
+      scene.clip ? clip(this, scene, scene.group) : null);
+
+    const process = item => {
+      const dirty = this.isDirty(item),
+            node = bind(item, parent, sibling, mdef.tag, svg);
+
+      if (dirty) {
+        this._update(mdef, node, item);
+        if (isGroup) recurse(this, node, item);
+      }
+
+      sibling = node;
+      ++i;
+    };
+
+    if (mdef.nested) {
+      if (scene.items.length) process(scene.items[0]);
+    } else {
+      visit(scene, process);
+    }
+
+    domClear(parent, i);
+    return parent;
+  };
+
+  // Recursively process group contents.
+  function recurse(renderer, el, group) {
+    el = el.lastChild.previousSibling;
+    let prev, idx = 0;
+
+    visit(group, item => {
+      prev = renderer.draw(el, item, prev);
+      ++idx;
+    });
+
+    // remove any extraneous DOM elements
+    domClear(el, 1 + idx);
+  }
+
+  // Bind a scenegraph item to an SVG DOM element.
+  // Create new SVG elements as needed.
+  function bind(item, el, sibling, tag, svg) {
+    let node = item._svg, doc;
+
+    // create a new dom node if needed
+    if (!node) {
+      doc = el.ownerDocument;
+      node = domCreate(doc, tag, ns);
+      item._svg = node;
+
+      if (item.mark) {
+        node.__data__ = item;
+        node.__values__ = {fill: 'default'};
+
+        // if group, create background, content, and foreground elements
+        if (tag === 'g') {
+          const bg = domCreate(doc, 'path', ns);
+          node.appendChild(bg);
+          bg.__data__ = item;
+
+          const cg = domCreate(doc, 'g', ns);
+          node.appendChild(cg);
+          cg.__data__ = item;
+
+          const fg = domCreate(doc, 'path', ns);
+          node.appendChild(fg);
+          fg.__data__ = item;
+          fg.__values__ = {fill: 'default'};
+        }
+      }
+    }
+
+    // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
+    if (node.ownerSVGElement !== svg || siblingCheck(node, sibling)) {
+      el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
+    }
+
+    return node;
+  }
+
+  function siblingCheck(node, sibling) {
+    return node.parentNode
+      && node.parentNode.childNodes.length > 1
+      && node.previousSibling != sibling; // treat null/undefined the same
+  }
+
+
+  // -- Set attributes & styles on SVG elements ---
+
+  var element = null, // temp var for current SVG element
+      values = null;  // temp var for current values hash
+
+  // Extra configuration for certain mark types
+  var mark_extras = {
+    group: function(mdef, el, item) {
+      const fg = element = el.childNodes[2];
+      values = fg.__values__;
+      mdef.foreground(emit, item, this);
+
+      values = el.__values__; // use parent's values hash
+      element = el.childNodes[1];
+      mdef.content(emit, item, this);
+
+      const bg = element = el.childNodes[0];
+      mdef.background(emit, item, this);
+
+      const value = item.mark.interactive === false ? 'none' : null;
+      if (value !== values.events) {
+        setAttribute(fg, 'pointer-events', value);
+        setAttribute(bg, 'pointer-events', value);
+        values.events = value;
+      }
+
+      if (item.strokeForeground && item.stroke) {
+        const fill = item.fill;
+        setAttribute(fg, 'display', null);
+
+        // set style of background
+        this.style(bg, item);
+        setAttribute(bg, 'stroke', null);
+
+        // set style of foreground
+        if (fill) item.fill = null;
+        values = fg.__values__;
+        this.style(fg, item);
+        if (fill) item.fill = fill;
+
+        // leave element null to prevent downstream styling
+        element = null;
+      } else {
+        // ensure foreground is ignored
+        setAttribute(fg, 'display', 'none');
+      }
+    },
+    image: function(mdef, el, item) {
+      if (item.smooth === false) {
+        setStyle(el, 'image-rendering', 'optimizeSpeed');
+        setStyle(el, 'image-rendering', 'pixelated');
+      } else {
+        setStyle(el, 'image-rendering', null);
+      }
+    },
+    text: function(mdef, el, item) {
+      let tl = textLines(item),
+          key, value, doc, lh;
+
+      if (isArray(tl)) {
+        // multi-line text
+        value = tl.map(_ => textValue(item, _));
+        key = value.join('\n'); // content cache key
+
+        if (key !== values.text) {
+          domClear(el, 0);
+          doc = el.ownerDocument;
+          lh = lineHeight(item);
+          value.forEach((t, i) => {
+            const ts = domCreate(doc, 'tspan', ns);
+            ts.__data__ = item; // data binding
+            ts.textContent = t;
+            if (i) {
+              ts.setAttribute('x', 0);
+              ts.setAttribute('dy', lh);
+            }
+            el.appendChild(ts);
+          });
+          values.text = key;
+        }
+      } else {
+        // single-line text
+        value = textValue(item, tl);
+        if (value !== values.text) {
+          el.textContent = value;
+          values.text = value;
+        }
+      }
+
+      setAttribute(el, 'font-family', fontFamily(item));
+      setAttribute(el, 'font-size', fontSize(item) + 'px');
+      setAttribute(el, 'font-style', item.fontStyle);
+      setAttribute(el, 'font-variant', item.fontVariant);
+      setAttribute(el, 'font-weight', item.fontWeight);
+    }
+  };
+
+  function setStyle(el, name, value) {
+    if (value !== values[name]) {
+      if (value == null) {
+        el.style.removeProperty(name);
+      } else {
+        el.style.setProperty(name, value + '');
+      }
+      values[name] = value;
+    }
+  }
+
+  prototype$O._update = function(mdef, el, item) {
+    // set dom element and values cache
+    // provides access to emit method
+    element = el;
+    values = el.__values__;
+
+    // apply aria-specific properties
+    ariaItemAttributes(emit, item);
+
+    // apply svg attributes
+    mdef.attr(emit, item, this);
+
+    // some marks need special treatment
+    const extra = mark_extras[mdef.type];
+    if (extra) extra.call(this, mdef, el, item);
+
+    // apply svg style attributes
+    // note: element may be modified by 'extra' method
+    if (element) this.style(element, item);
+  };
+
+  function emit(name, value, ns) {
+    // early exit if value is unchanged
+    if (value === values[name]) return;
+
+    // use appropriate method given namespace (ns)
+    if (ns) {
+      setAttributeNS(element, name, value, ns);
+    } else {
+      setAttribute(element, name, value);
+    }
+
+    // note current value for future comparison
+    values[name] = value;
+  }
+
+  function setAttribute(el, name, value) {
+    if (value != null) {
+      // if value is provided, update DOM attribute
+      el.setAttribute(name, value);
+    } else {
+      // else remove DOM attribute
+      el.removeAttribute(name);
+    }
+  }
+
+  function setAttributeNS(el, name, value, ns) {
+    if (value != null) {
+      // if value is provided, update DOM attribute
+      el.setAttributeNS(ns, name, value);
+    } else {
+      // else remove DOM attribute
+      el.removeAttributeNS(ns, name);
+    }
+  }
+
+  prototype$O.style = function(el, o) {
+    if (o == null) return;
+
+    for (const prop in styles) {
+      let value = prop === 'font' ? fontFamily(o) : o[prop];
+      if (value === values[prop]) continue;
+
+      const name = styles[prop];
+      if (value == null) {
+        el.removeAttribute(name);
+      } else {
+        if (isGradient(value)) {
+          value = gradientRef(value, this._defs.gradient, href());
+        }
+        el.setAttribute(name, value + '');
+      }
+
+      values[prop] = value;
+    }
+  };
+
+  function href() {
+    let loc;
+    return typeof window === 'undefined' ? ''
+      : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length)
+      : loc.href;
+  }
+
+  function SVGStringRenderer(loader) {
+    Renderer.call(this, loader);
+
+    this._text = {
+      head: '',
+      bg:   '',
+      root: '',
+      foot: '',
+      defs: '',
+      body: ''
+    };
+
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
+  }
+
+  var prototype$P = inherits(SVGStringRenderer, Renderer);
+  var base$2 = Renderer.prototype;
+
+  prototype$P.resize = function(width, height, origin, scaleFactor) {
+    base$2.resize.call(this, width, height, origin, scaleFactor);
+    var o = this._origin,
+        t = this._text;
+
+    var attr = {
+      class:   'marks',
+      width:   this._width * this._scale,
+      height:  this._height * this._scale,
+      viewBox: '0 0 ' + this._width + ' ' + this._height
+    };
+    for (var key in metadata) {
+      attr[key] = metadata[key];
+    }
+
+    t.head = openTag('svg', attr);
+
+    var bg = this._bgcolor;
+    if (bg === 'transparent' || bg === 'none') bg = null;
+
+    if (bg) {
+      t.bg = openTag('rect', {
+        width:  this._width,
+        height: this._height,
+        fill:   bg
+      }) + closeTag('rect');
+    } else {
+      t.bg = '';
+    }
+
+    t.root = openTag('g', extend(
+      {}, rootAttributes, {transform: 'translate(' + o + ')'}
+    ));
+
+    t.foot = closeTag('g') + closeTag('svg');
+
+    return this;
+  };
+
+  prototype$P.background = function() {
+    var rv = base$2.background.apply(this, arguments);
+    if (arguments.length && this._text.head) {
+      this.resize(this._width, this._height, this._origin, this._scale);
+    }
+    return rv;
+  };
+
+  prototype$P.svg = function() {
+    var t = this._text;
+    return t.head + t.defs + t.bg + t.root + t.body + t.foot;
+  };
+
+  prototype$P._render = function(scene) {
+    this._text.body = this.mark(scene);
+    this._text.defs = this.buildDefs();
+    return this;
+  };
+
+  prototype$P.buildDefs = function() {
+    let defs = '', tag;
+
+    for (const id in this._defs.gradient) {
+      const def = this._defs.gradient[id],
+            stops = def.stops;
+
+      if (def.gradient === 'radial') {
+        // SVG radial gradients automatically transform to normalized bbox
+        // coordinates, in a way that is cumbersome to replicate in canvas.
+        // We wrap the radial gradient in a pattern element, allowing us to
+        // maintain a circular gradient that matches what canvas provides.
+
+        defs += openTag(tag = 'pattern', {
+          id: patternPrefix + id,
+          viewBox: '0,0,1,1',
+          width: '100%',
+          height: '100%',
+          preserveAspectRatio: 'xMidYMid slice'
+        });
+
+        defs += openTag('rect', {
+          width:  '1',
+          height: '1',
+          fill:   'url(#' + id + ')'
+        }) + closeTag('rect');
+
+        defs += closeTag(tag);
+
+        defs += openTag(tag = 'radialGradient', {
+          id: id,
+          fx: def.x1,
+          fy: def.y1,
+          fr: def.r1,
+          cx: def.x2,
+          cy: def.y2,
+           r: def.r2
+        });
+      } else {
+        defs += openTag(tag = 'linearGradient', {
+          id: id,
+          x1: def.x1,
+          x2: def.x2,
+          y1: def.y1,
+          y2: def.y2
+        });
+      }
+
+      for (let i = 0; i < stops.length; ++i) {
+        defs += openTag('stop', {
+          offset: stops[i].offset,
+          'stop-color': stops[i].color
+        }) + closeTag('stop');
+      }
+
+      defs += closeTag(tag);
+    }
+
+    for (const id in this._defs.clipping) {
+      const def = this._defs.clipping[id];
+
+      defs += openTag('clipPath', {id: id});
+
+      if (def.path) {
+        defs += openTag('path', {
+          d: def.path
+        }) + closeTag('path');
+      } else {
+        defs += openTag('rect', {
+          x: 0,
+          y: 0,
+          width: def.width,
+          height: def.height
+        }) + closeTag('rect');
+      }
+
+      defs += closeTag('clipPath');
+    }
+
+    return defs ? (openTag('defs') + defs + closeTag('defs')) : '';
+  };
+
+  prototype$P.attr = function(scene, item, attrs, tag) {
+    const object = {},
+          emit = (name, value, ns, prefixed) => {
+            object[prefixed || name] = value;
+          };
+
+    // apply mark specific attributes
+    if (Array.isArray(attrs)) {
+      attrs.forEach(fn => fn(emit, item, this));
+    } else {
+      attrs(emit, item, this);
+    }
+
+    // apply style attributes
+    if (tag) {
+      applyStyles(object, item, scene, tag, this._defs);
+    }
+
+    return object;
+  };
+
+  prototype$P.href = function(item) {
+    var that = this,
+        href = item.href,
+        attr;
+
+    if (href) {
+      if (attr = that._hrefs && that._hrefs[href]) {
+        return attr;
+      } else {
+        that.sanitizeURL(href).then(attr => {
+          // rewrite to use xlink namespace
+          // note that this will be deprecated in SVG 2.0
+          attr['xlink:href'] = attr.href;
+          attr.href = null;
+          (that._hrefs || (that._hrefs = {}))[href] = attr;
+        });
+      }
+    }
+    return null;
+  };
+
+  prototype$P.mark = function(scene) {
+    const mdef = Marks[scene.marktype],
+          tag  = mdef.tag,
+          attrList = [ariaItemAttributes, mdef.attr];
+
+    let str = '';
+
+    // render opening group tag
+    str += openTag('g', extend(
+      {
+        'class': cssClass(scene),
+        'clip-path': scene.clip ? clip(this, scene, scene.group) : null
+      },
+      ariaMarkAttributes(scene),
+      {
+        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+      }
+    ));
+
+    // render contained elements
+    const process = item => {
+      const href = this.href(item);
+      if (href) str += openTag('a', href);
+
+      str += openTag(
+        tag,
+        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
+      );
+
+      if (tag === 'text') {
+        const tl = textLines(item);
+        if (isArray(tl)) {
+          // multi-line text
+          const attrs = {x: 0, dy: lineHeight(item)};
+          for (let i=0; i<tl.length; ++i) {
+            str += openTag('tspan', i ? attrs: null)
+              + escape_text(textValue(item, tl[i]))
+              + closeTag('tspan');
+          }
+        } else {
+          // single-line text
+          str += escape_text(textValue(item, tl));
+        }
+      } else if (tag === 'g') {
+        const fore = item.strokeForeground,
+              fill = item.fill,
+              stroke = item.stroke;
+
+        if (fore && stroke) {
+          item.stroke = null;
+        }
+
+        str += openTag(
+          'path',
+          this.attr(scene, item, mdef.background, 'bgrect')
+        ) + closeTag('path');
+
+        str += openTag('g', this.attr(scene, item, mdef.content))
+          + this.markGroup(item)
+          + closeTag('g');
+
+        if (fore && stroke) {
+          if (fill) item.fill = null;
+          item.stroke = stroke;
+
+          str += openTag(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgrect')
+          ) + closeTag('path');
+
+          if (fill) item.fill = fill;
+        } else {
+          str += openTag(
+            'path',
+            this.attr(scene, item, mdef.foreground, 'bgfore')
+          ) + closeTag('path');
+        }
+      }
+
+      str += closeTag(tag);
+      if (href) str += closeTag('a');
+    };
+
+    if (mdef.nested) {
+      if (scene.items && scene.items.length) process(scene.items[0]);
+    } else {
+      visit(scene, process);
+    }
+
+    // render closing group tag
+    return str + closeTag('g');
+  };
+
+  prototype$P.markGroup = function(scene) {
+    let str = '';
+    visit(scene, item => { str += this.mark(item); });
+    return str;
+  };
+
+  function applyStyles(s, item, scene, tag, defs) {
+    if (item == null) return s;
+
+    if (tag === 'bgrect' && scene.interactive === false) {
+      s['pointer-events'] = 'none';
+    }
+
+    if (tag === 'bgfore') {
+      if (scene.interactive === false) {
+        s['pointer-events'] = 'none';
+      }
+      s.display = 'none';
+      if (item.fill !== null) return s;
+    }
+
+    if (tag === 'image' && item.smooth === false) {
+      s.style = 'image-rendering: optimizeSpeed; image-rendering: pixelated;';
+    }
+
+    if (tag === 'text') {
+      s['font-family'] = fontFamily(item);
+      s['font-size'] = fontSize(item) + 'px';
+      if (item.fontStyle) s['font-style'] = item.fontStyle;
+      if (item.fontVariant) s['font-variant'] = item.fontVariant;
+      if (item.fontWeight) s['font-weight'] = item.fontWeight;
+    }
+
+    for (const prop in styles) {
+      let value = item[prop];
+      const name = styles[prop];
+
+      if (value === 'transparent' && (name === 'fill' || name === 'stroke')) ; else if (value != null) {
+        if (isGradient(value)) {
+          value = gradientRef(value, defs.gradient, '');
+        }
+        s[name] = value;
+      }
+    }
+
+    return s;
+  }
+
+  function escape_text(s) {
+    return s.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+  }
+
+  var Canvas = 'canvas';
+  var PNG = 'png';
+  var SVG = 'svg';
+  var None$2 = 'none';
+
+  var RenderType = {
+    Canvas: Canvas,
+    PNG:    PNG,
+    SVG:    SVG,
+    None:   None$2
+  };
+
+  var modules = {};
+
+  modules[Canvas] = modules[PNG] = {
+    renderer: CanvasRenderer,
+    headless: CanvasRenderer,
+    handler:  CanvasHandler
+  };
+
+  modules[SVG] = {
+    renderer: SVGRenderer,
+    headless: SVGStringRenderer,
+    handler:  SVGHandler
+  };
+
+  modules[None$2] = {};
+
+  function renderModule(name, _) {
+    name = String(name || '').toLowerCase();
+    if (arguments.length > 1) {
+      modules[name] = _;
+      return this;
+    } else {
+      return modules[name];
+    }
+  }
+
+  function intersect(scene, bounds, filter) {
+    const hits = [], // intersection results
+          box = new Bounds().union(bounds), // defensive copy
+          type = scene.marktype;
+
+    return type ? intersectMark(scene, box, filter, hits)
+      : type === 'group' ? intersectGroup(scene, box, filter, hits)
+      : error('Intersect scene must be mark node or group item.');
+  }
+
+  function intersectMark(mark, box, filter, hits) {
+    if (visitMark(mark, box, filter)) {
+      const items = mark.items,
+            type = mark.marktype,
+            n = items.length;
+
+      let i = 0;
+
+      if (type === 'group') {
+        for (; i<n; ++i) {
+          intersectGroup(items[i], box, filter, hits);
+        }
+      } else {
+        for (const test = Marks[type].isect; i<n; ++i) {
+          let item = items[i];
+          if (intersectItem(item, box, test)) hits.push(item);
+        }
+      }
+    }
+    return hits;
+  }
+
+  function visitMark(mark, box, filter) {
+    // process if bounds intersect and if
+    // (1) mark is a group mark (so we must recurse), or
+    // (2) mark is interactive and passes filter
+    return mark.bounds && box.intersects(mark.bounds) && (
+      mark.marktype === 'group' ||
+      mark.interactive !== false && (!filter || filter(mark))
+    );
+  }
+
+  function intersectGroup(group, box, filter, hits) {
+    // test intersect against group
+    // skip groups by default unless filter says otherwise
+    if ((filter && filter(group.mark)) &&
+        intersectItem(group, box, Marks.group.isect)) {
+      hits.push(group);
+    }
+
+    // recursively test children marks
+    // translate box to group coordinate space
+    const marks = group.items,
+          n = marks && marks.length;
+
+    if (n) {
+      const x = group.x || 0,
+            y = group.y || 0;
+      box.translate(-x, -y);
+      for (let i=0; i<n; ++i) {
+        intersectMark(marks[i], box, filter, hits);
+      }
+      box.translate(x, y);
+    }
+
+    return hits;
+  }
+
+  function intersectItem(item, box, test) {
+    // test bounds enclosure, bounds intersection, then detailed test
+    const bounds = item.bounds;
+    return box.encloses(bounds) || (box.intersects(bounds) && test(item, box));
+  }
+
+  var clipBounds = new Bounds();
+
+  function boundClip(mark) {
+    var clip = mark.clip;
+
+    if (isFunction(clip)) {
+      clip(context(clipBounds.clear()));
+    } else if (clip) {
+      clipBounds.set(0, 0, mark.group.width, mark.group.height);
+    } else return;
+
+    mark.bounds.intersect(clipBounds);
+  }
+
+  var TOLERANCE = 1e-9;
+
+  function sceneEqual(a, b, key) {
+    return (a === b) ? true
+      : (key === 'path') ? pathEqual(a, b)
+      : (a instanceof Date && b instanceof Date) ? +a === +b
+      : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
+      : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
+      : (a == null || b == null) ? false
+      : objectEqual(a, b);
+  }
+
+  function pathEqual(a, b) {
+    return sceneEqual(pathParse(a), pathParse(b));
+  }
+
+  function objectEqual(a, b) {
+    var ka = Object.keys(a),
+        kb = Object.keys(b),
+        key, i;
+
+    if (ka.length !== kb.length) return false;
+
+    ka.sort();
+    kb.sort();
+
+    for (i = ka.length - 1; i >= 0; i--) {
+      if (ka[i] != kb[i]) return false;
+    }
+
+    for (i = ka.length - 1; i >= 0; i--) {
+      key = ka[i];
+      if (!sceneEqual(a[key], b[key], key)) return false;
+    }
+
+    return typeof a === typeof b;
+  }
+
+  function resetSVGDefIds() {
+    resetSVGClipId();
+    resetSVGGradientId();
+  }
+
+  /**
+   * Calculate bounding boxes for scenegraph items.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.mark - The scenegraph mark instance to bound.
+   */
+  function Bound(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$Q = inherits(Bound, Transform);
+
+  prototype$Q.transform = function(_, pulse) {
+    var view = pulse.dataflow,
+        mark = _.mark,
+        type = mark.marktype,
+        entry = Marks[type],
+        bound = entry.bound,
+        markBounds = mark.bounds, rebound;
+
+    if (entry.nested) {
+      // multi-item marks have a single bounds instance
+      if (mark.items.length) view.dirty(mark.items[0]);
+      markBounds = boundItem$1(mark, bound);
+      mark.items.forEach(function(item) {
+        item.bounds.clear().union(markBounds);
+      });
+    }
+
+    else if (type === Group || _.modified()) {
+      // operator parameters modified -> re-bound all items
+      // updates group bounds in response to modified group content
+      pulse.visit(pulse.MOD, item => view.dirty(item));
+      markBounds.clear();
+      mark.items.forEach(item => markBounds.union(boundItem$1(item, bound)));
+
+      // force reflow for axes/legends/titles to propagate any layout changes
+      switch (mark.role) {
+        case AxisRole:
+        case LegendRole:
+        case TitleRole:
+          pulse.reflow();
+      }
+    }
+
+    else {
+      // incrementally update bounds, re-bound mark as needed
+      rebound = pulse.changed(pulse.REM);
+
+      pulse.visit(pulse.ADD, item => {
+        markBounds.union(boundItem$1(item, bound));
+      });
+
+      pulse.visit(pulse.MOD, item => {
+        rebound = rebound || markBounds.alignsWith(item.bounds);
+        view.dirty(item);
+        markBounds.union(boundItem$1(item, bound));
+      });
+
+      if (rebound) {
+        markBounds.clear();
+        mark.items.forEach(item => markBounds.union(item.bounds));
+      }
+    }
+
+    // ensure mark bounds do not exceed any clipping region
+    boundClip(mark);
+
+    return pulse.modifies('bounds');
+  };
+
+  function boundItem$1(item, bound, opt) {
+    return bound(item.bounds.clear(), item, opt);
+  }
+
+  var COUNTER_NAME = ':vega_identifier:';
+
+  /**
+   * Adds a unique identifier to all added tuples.
+   * This transform creates a new signal that serves as an id counter.
+   * As a result, the id counter is shared across all instances of this
+   * transform, generating unique ids across multiple data streams. In
+   * addition, this signal value can be included in a snapshot of the
+   * dataflow state, enabling correct resumption of id allocation.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {string} params.as - The field name for the generated identifier.
+   */
+  function Identifier(params) {
+    Transform.call(this, 0, params);
+  }
+
+  Identifier.Definition = {
+    'type': 'Identifier',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'as', 'type': 'string', 'required': true }
+    ]
+  };
+
+  var prototype$R = inherits(Identifier, Transform);
+
+  prototype$R.transform = function(_, pulse) {
+    var counter = getCounter(pulse.dataflow),
+        id = counter.value,
+        as = _.as;
+
+    pulse.visit(pulse.ADD, t => {
+      if (!t[as]) t[as] = ++id;
+    });
+
+    counter.set(this.value = id);
+    return pulse;
+  };
+
+  function getCounter(view) {
+    var counter = view._signals[COUNTER_NAME];
+    if (!counter) {
+      view._signals[COUNTER_NAME] = (counter = view.add(0));
+    }
+    return counter;
+  }
+
+  /**
+   * Bind scenegraph items to a scenegraph mark instance.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.markdef - The mark definition for creating the mark.
+   *   This is an object of legal scenegraph mark properties which *must* include
+   *   the 'marktype' property.
+   */
+  function Mark(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$S = inherits(Mark, Transform);
+
+  prototype$S.transform = function(_, pulse) {
+    var mark = this.value;
+
+    // acquire mark on first invocation, bind context and group
+    if (!mark) {
+      mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1(_), _.index);
+      mark.group.context = _.context;
+      if (!_.context.group) _.context.group = mark.group;
+      mark.source = this.source; // point to upstream collector
+      mark.clip = _.clip;
+      mark.interactive = _.interactive;
+      this.value = mark;
+    }
+
+    // initialize entering items
+    var Init = mark.marktype === Group ? GroupItem : Item;
+    pulse.visit(pulse.ADD, item => Init.call(item, mark));
+
+    // update clipping and/or interactive status
+    if (_.modified('clip') || _.modified('interactive')) {
+      mark.clip = _.clip;
+      mark.interactive = !!_.interactive;
+      mark.zdirty = true; // force scenegraph re-eval
+      pulse.reflow();
+    }
+
+    // bind items array to scenegraph mark
+    mark.items = pulse.source;
+    return pulse;
+  };
+
+  function lookup$1(_) {
+    var g = _.groups, p = _.parent;
+    return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
+      : g && p ? g.lookup(p)
+      : null;
+  }
+
+  /**
+   * Analyze items for overlap, changing opacity to hide items with
+   * overlapping bounding boxes. This transform will preserve at least
+   * two items (e.g., first and last) even if overlap persists.
+   * @param {object} params - The parameters for this operator.
+   * @param {function(*,*): number} [params.sort] - A comparator
+   *   function for sorting items.
+   * @param {object} [params.method] - The overlap removal method to apply.
+   *   One of 'parity' (default, hide every other item until there is no
+   *   more overlap) or 'greedy' (sequentially scan and hide and items that
+   *   overlap with the last visible item).
+   * @param {object} [params.boundScale] - A scale whose range should be used
+   *   to bound the items. Items exceeding the bounds of the scale range
+   *   will be treated as overlapping. If null or undefined, no bounds check
+   *   will be applied.
+   * @param {object} [params.boundOrient] - The orientation of the scale
+   *   (top, bottom, left, or right) used to bound items. This parameter is
+   *   ignored if boundScale is null or undefined.
+   * @param {object} [params.boundTolerance] - The tolerance in pixels for
+   *   bound inclusion testing (default 1). This specifies by how many pixels
+   *   an item's bounds may exceed the scale range bounds and not be culled.
+   * @constructor
+   */
+  function Overlap(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$T = inherits(Overlap, Transform);
+
+  var methods = {
+    parity: items => {
+      return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
+    },
+    greedy: (items, sep) => {
+      var a;
+      return items.filter((b, i) => {
+        if (!i || !intersect$1(a.bounds, b.bounds, sep)) {
+          a = b;
+          return 1;
+        } else {
+          return b.opacity = 0;
+        }
+      });
+    }
+  };
+
+  // compute bounding box intersection
+  // including padding pixels of separation
+  function intersect$1(a, b, sep) {
+    return sep > Math.max(
+      b.x1 - a.x2,
+      a.x1 - b.x2,
+      b.y1 - a.y2,
+      a.y1 - b.y2
+    );
+  }
+
+  function hasOverlap(items, pad) {
+    for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
+      if (intersect$1(a, b = items[i].bounds, pad)) return true;
+    }
+  }
+
+  function hasBounds(item) {
+    var b = item.bounds;
+    return b.width() > 1 && b.height() > 1;
+  }
+
+  function boundTest(scale, orient, tolerance) {
+    var range = scale.range(),
+        b = new Bounds();
+
+    if (orient === Top || orient === Bottom) {
+      b.set(range[0], -Infinity, range[1], +Infinity);
+    } else {
+      b.set(-Infinity, range[0], +Infinity, range[1]);
+    }
+    b.expand(tolerance || 1);
+
+    return item => b.encloses(item.bounds);
+  }
+
+  // reset all items to be fully opaque
+  function reset(source) {
+    source.forEach(item => item.opacity = 1);
+    return source;
+  }
+
+  // add all tuples to mod, fork pulse if parameters were modified
+  // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
+  function reflow(pulse, _) {
+    return pulse.reflow(_.modified()).modifies('opacity');
+  }
+
+  prototype$T.transform = function(_, pulse) {
+    var reduce = methods[_.method] || methods.parity,
+        source = pulse.materialize(pulse.SOURCE).source,
+        sep = _.separation || 0,
+        items, test, bounds;
+
+    if (!source || !source.length) return;
+
+    if (!_.method) {
+      // early exit if method is falsy
+      if (_.modified('method')) {
+        reset(source);
+        pulse = reflow(pulse, _);
+      }
+      return pulse;
+    }
+
+    // skip labels with no content
+    source = source.filter(hasBounds);
+
+    // early exit, nothing to do
+    if (!source.length) return;
+
+    if (_.sort) {
+      source = source.slice().sort(_.sort);
+    }
+
+    items = reset(source);
+    pulse = reflow(pulse, _);
+
+    if (items.length >= 3 && hasOverlap(items, sep)) {
+      do {
+        items = reduce(items, sep);
+      } while (items.length >= 3 && hasOverlap(items, sep));
+
+      if (items.length < 3 && !peek(source).opacity) {
+        if (items.length > 1) peek(items).opacity = 0;
+        peek(source).opacity = 1;
+      }
+    }
+
+    if (_.boundScale && _.boundTolerance >= 0) {
+      test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
+      source.forEach(item => {
+        if (!test(item)) item.opacity = 0;
+      });
+    }
+
+    // re-calculate mark bounds
+    bounds = items[0].mark.bounds.clear();
+    source.forEach(item => {
+      if (item.opacity) bounds.union(item.bounds);
+    });
+
+    return pulse;
+  };
+
+  /**
+   * Queue modified scenegraph items for rendering.
+   * @constructor
+   */
+  function Render(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$U = inherits(Render, Transform);
+
+  prototype$U.transform = function(_, pulse) {
+    var view = pulse.dataflow;
+
+    pulse.visit(pulse.ALL, item => view.dirty(item));
+
+    // set z-index dirty flag as needed
+    if (pulse.fields && pulse.fields['zindex']) {
+      var item = pulse.source && pulse.source[0];
+      if (item) item.mark.zdirty = true;
+    }
+  };
+
+  const tempBounds$1 = new Bounds();
+
+  function set$1(item, property, value) {
+    return item[property] === value ? 0
+      : (item[property] = value, 1);
+  }
+
+  function isYAxis(mark) {
+    var orient = mark.items[0].orient;
+    return orient === Left || orient === Right;
+  }
+
+  function axisIndices(datum) {
+    var index = +datum.grid;
+    return [
+      datum.ticks  ? index++ : -1, // ticks index
+      datum.labels ? index++ : -1, // labels index
+      index + (+datum.domain)      // title index
+    ];
+  }
+
+  function axisLayout(view, axis, width, height) {  
+    var item = axis.items[0],
+        datum = item.datum,
+        delta = item.translate != null ? item.translate : 0.5,
+        orient = item.orient,
+        indices = axisIndices(datum),
+        range = item.range,
+        offset = item.offset,
+        position = item.position,
+        minExtent = item.minExtent,
+        maxExtent = item.maxExtent,
+        title = datum.title && item.items[indices[2]].items[0],
+        titlePadding = item.titlePadding,
+        bounds = item.bounds,
+        dl = title && multiLineOffset(title),
+        x = 0, y = 0, i, s;
+
+    tempBounds$1.clear().union(bounds);
+    bounds.clear();
+    if ((i=indices[0]) > -1) bounds.union(item.items[i].bounds);
+    if ((i=indices[1]) > -1) bounds.union(item.items[i].bounds);
+
+    // position axis group and title
+    switch (orient) {
+      case Top:
+        x = position || 0;
+        y = -offset;
+        s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
+        bounds.add(0, -s).add(range, 0);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
+        break;
+      case Left:
+        x = -offset;
+        y = position || 0;
+        s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
+        bounds.add(-s, 0).add(0, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
+        break;
+      case Right:
+        x = width + offset;
+        y = position || 0;
+        s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
+        bounds.add(0, 0).add(s, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
+        break;
+      case Bottom:
+        x = position || 0;
+        y = height + offset;
+        s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
+        bounds.add(0, 0).add(range, s);
+        if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
+        break;
+      default:
+        x = item.x;
+        y = item.y;
+    }
+
+    // update bounds
+    boundStroke(bounds.translate(x, y), item);
+
+    if (set$1(item, 'x', x + delta) | set$1(item, 'y', y + delta)) {
+      item.bounds = tempBounds$1;
+      view.dirty(item);
+      item.bounds = bounds;
+      view.dirty(item);
+    }
+
+    return item.mark.bounds.clear().union(bounds);
+  }
+
+  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
+    const b = title.bounds;
+
+    if (title.auto) {
+      const v = sign * (offset + dl + pad);
+      let dx = 0, dy = 0;
+
+      view.dirty(title);
+      isYAxis
+        ? dx = (title.x || 0) - (title.x = v)
+        : dy = (title.y || 0) - (title.y = v);
+      title.mark.bounds.clear().union(b.translate(-dx, -dy));
+      view.dirty(title);
+    }
+
+    bounds.union(b);
+  }
+
+  // aggregation functions for grid margin determination
+  const min$1 = (a, b) => Math.floor(Math.min(a, b));
+  const max$1 = (a, b) => Math.ceil(Math.max(a, b));
+
+  function gridLayoutGroups(group) {
+    var groups = group.items,
+        n = groups.length,
+        i = 0, mark, items;
+
+    var views = {
+      marks:      [],
+      rowheaders: [],
+      rowfooters: [],
+      colheaders: [],
+      colfooters: [],
+      rowtitle: null,
+      coltitle: null
+    };
+
+    // layout axes, gather legends, collect bounds
+    for (; i<n; ++i) {
+      mark = groups[i];
+      items = mark.items;
+      if (mark.marktype === Group) {
+        switch (mark.role) {
+          case AxisRole:
+          case LegendRole:
+          case TitleRole:
+            break;
+          case RowHeader: views.rowheaders.push(...items); break;
+          case RowFooter: views.rowfooters.push(...items); break;
+          case ColHeader: views.colheaders.push(...items); break;
+          case ColFooter: views.colfooters.push(...items); break;
+          case RowTitle:  views.rowtitle = items[0]; break;
+          case ColTitle:  views.coltitle = items[0]; break;
+          default:        views.marks.push(...items);
+        }
+      }
+    }
+
+    return views;
+  }
+
+  function bboxFlush(item) {
+    return new Bounds().set(0, 0, item.width || 0, item.height || 0);
+  }
+
+  function bboxFull(item) {
+    var b = item.bounds.clone();
+    return b.empty()
+      ? b.set(0, 0, 0, 0)
+      : b.translate(-(item.x || 0), -(item.y || 0));
+  }
+
+  function get$3(opt, key, d) {
+    var v = isObject(opt) ? opt[key] : opt;
+    return v != null ? v : (d !== undefined ? d : 0);
+  }
+
+  function offsetValue(v) {
+    return v < 0 ? Math.ceil(-v) : 0;
+  }
+
+  function gridLayout(view, groups, opt) {
+    var dirty = !opt.nodirty,
+        bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
+        bounds = tempBounds$1.set(0, 0, 0, 0),
+        alignCol = get$3(opt.align, Column),
+        alignRow = get$3(opt.align, Row),
+        padCol = get$3(opt.padding, Column),
+        padRow = get$3(opt.padding, Row),
+        ncols = opt.columns || groups.length,
+        nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
+        n = groups.length,
+        xOffset = Array(n), xExtent = Array(ncols), xMax = 0,
+        yOffset = Array(n), yExtent = Array(nrows), yMax = 0,
+        dx = Array(n), dy = Array(n), boxes = Array(n),
+        m, i, c, r, b, g, px, py, x, y, offset;
+
+    for (i=0; i<ncols; ++i) xExtent[i] = 0;
+    for (i=0; i<nrows; ++i) yExtent[i] = 0;
+
+    // determine offsets for each group
+    for (i=0; i<n; ++i) {
+      g = groups[i];
+      b = boxes[i] = bbox(g);
+      g.x = g.x || 0; dx[i] = 0;
+      g.y = g.y || 0; dy[i] = 0;
+      c = i % ncols;
+      r = ~~(i / ncols);
+      xMax = Math.max(xMax, px = Math.ceil(b.x2));
+      yMax = Math.max(yMax, py = Math.ceil(b.y2));
+      xExtent[c] = Math.max(xExtent[c], px);
+      yExtent[r] = Math.max(yExtent[r], py);
+      xOffset[i] = padCol + offsetValue(b.x1);
+      yOffset[i] = padRow + offsetValue(b.y1);
+      if (dirty) view.dirty(groups[i]);
+    }
+
+    // set initial alignment offsets
+    for (i=0; i<n; ++i) {
+      if (i % ncols === 0) xOffset[i] = 0;
+      if (i < ncols) yOffset[i] = 0;
+    }
+
+    // enforce column alignment constraints
+    if (alignCol === Each) {
+      for (c=1; c<ncols; ++c) {
+        for (offset=0, i=c; i<n; i += ncols) {
+          if (offset < xOffset[i]) offset = xOffset[i];
+        }
+        for (i=c; i<n; i += ncols) {
+          xOffset[i] = offset + xExtent[c-1];
+        }
+      }
+    } else if (alignCol === All) {
+      for (offset=0, i=0; i<n; ++i) {
+        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i=0; i<n; ++i) {
+        if (i % ncols) xOffset[i] = offset + xMax;
+      }
+    } else {
+      for (alignCol=false, c=1; c<ncols; ++c) {
+        for (i=c; i<n; i += ncols) {
+          xOffset[i] += xExtent[c-1];
+        }
+      }
+    }
+
+    // enforce row alignment constraints
+    if (alignRow === Each) {
+      for (r=1; r<nrows; ++r) {
+        for (offset=0, i=r*ncols, m=i+ncols; i<m; ++i) {
+          if (offset < yOffset[i]) offset = yOffset[i];
+        }
+        for (i=r*ncols; i<m; ++i) {
+          yOffset[i] = offset + yExtent[r-1];
+        }
+      }
+    } else if (alignRow === All) {
+      for (offset=0, i=ncols; i<n; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i=ncols; i<n; ++i) {
+        yOffset[i] = offset + yMax;
+      }
+    } else {
+      for (alignRow=false, r=1; r<nrows; ++r) {
+        for (i=r*ncols, m=i+ncols; i<m; ++i) {
+          yOffset[i] += yExtent[r-1];
+        }
+      }
+    }
+
+    // perform horizontal grid layout
+    for (x=0, i=0; i<n; ++i) {
+      x = xOffset[i] + (i % ncols ? x : 0);
+      dx[i] += x - groups[i].x;
+    }
+
+    // perform vertical grid layout
+    for (c=0; c<ncols; ++c) {
+      for (y=0, i=c; i<n; i += ncols) {
+        y += yOffset[i];
+        dy[i] += y - groups[i].y;
+      }
+    }
+
+    // perform horizontal centering
+    if (alignCol && get$3(opt.center, Column) && nrows > 1) {
+      for (i=0; i<n; ++i) {
+        b = alignCol === All ? xMax : xExtent[i % ncols];
+        x = b - boxes[i].x2 - groups[i].x - dx[i];
+        if (x > 0) dx[i] += x / 2;
+      }
+    }
+
+    // perform vertical centering
+    if (alignRow && get$3(opt.center, Row) && ncols !== 1) {
+      for (i=0; i<n; ++i) {
+        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
+        y = b - boxes[i].y2 - groups[i].y - dy[i];
+        if (y > 0) dy[i] += y / 2;
+      }
+    }
+
+    // position grid relative to anchor
+    for (i=0; i<n; ++i) {
+      bounds.union(boxes[i].translate(dx[i], dy[i]));
+    }
+    x = get$3(opt.anchor, X);
+    y = get$3(opt.anchor, Y);
+    switch (get$3(opt.anchor, Column)) {
+      case End:    x -= bounds.width(); break;
+      case Middle: x -= bounds.width() / 2;
+    }
+    switch (get$3(opt.anchor, Row)) {
+      case End:    y -= bounds.height(); break;
+      case Middle: y -= bounds.height() / 2;
+    }
+    x = Math.round(x);
+    y = Math.round(y);
+
+    // update mark positions, bounds, dirty
+    bounds.clear();
+    for (i=0; i<n; ++i) {
+      groups[i].mark.bounds.clear();
+    }
+    for (i=0; i<n; ++i) {
+      g = groups[i];
+      g.x += (dx[i] += x);
+      g.y += (dy[i] += y);
+      bounds.union(g.mark.bounds.union(g.bounds.translate(dx[i], dy[i])));
+      if (dirty) view.dirty(g);
+    }
+
+    return bounds;
+  }
+
+  function trellisLayout(view, group, opt) {
+    var views = gridLayoutGroups(group),
+        groups = views.marks,
+        bbox = opt.bounds === Flush ? boundFlush : boundFull,
+        off = opt.offset,
+        ncols = opt.columns || groups.length,
+        nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
+        cells = nrows * ncols,
+        x, y, x2, y2, anchor, band, offset;
+
+    // -- initial grid layout
+    const bounds = gridLayout(view, groups, opt);
+    if (bounds.empty()) bounds.set(0, 0, 0, 0); // empty grid
+
+    // -- layout grid headers and footers --
+
+    // perform row header layout
+    if (views.rowheaders) {
+      band = get$3(opt.headerBand, Row, null);
+      x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$3(off, 'rowHeader'), min$1, 0, bbox, 'x1', 0, ncols, 1, band);
+    }
+
+    // perform column header layout
+    if (views.colheaders) {
+      band = get$3(opt.headerBand, Column, null);
+      y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$3(off, 'columnHeader'), min$1, 1, bbox, 'y1', 0, 1, ncols, band);
+    }
+
+    // perform row footer layout
+    if (views.rowfooters) {
+      band = get$3(opt.footerBand, Row, null);
+      x2 = layoutHeaders(view, views.rowfooters, groups, ncols, nrows,  get$3(off, 'rowFooter'), max$1, 0, bbox, 'x2', ncols-1, ncols, 1, band);
+    }
+
+    // perform column footer layout
+    if (views.colfooters) {
+      band = get$3(opt.footerBand, Column, null);
+      y2 = layoutHeaders(view, views.colfooters, groups, ncols, ncols,  get$3(off, 'columnFooter'), max$1, 1, bbox, 'y2', cells-ncols, 1, ncols, band);
+    }
+
+    // perform row title layout
+    if (views.rowtitle) {
+      anchor = get$3(opt.titleAnchor, Row);
+      offset = get$3(off, 'rowTitle');
+      offset = anchor === End ? x2 + offset : x - offset;
+      band = get$3(opt.titleBand, Row, 0.5);
+      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
+    }
+
+    // perform column title layout
+    if (views.coltitle) {
+      anchor = get$3(opt.titleAnchor, Column);
+      offset = get$3(off, 'columnTitle');
+      offset = anchor === End ? y2 + offset : y - offset;
+      band = get$3(opt.titleBand, Column, 0.5);
+      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
+    }
+  }
+
+  function boundFlush(item, field) {
+    return field === 'x1' ? (item.x || 0)
+      : field === 'y1' ? (item.y || 0)
+      : field === 'x2' ? (item.x || 0) + (item.width || 0)
+      : field === 'y2' ? (item.y || 0) + (item.height || 0)
+      : undefined;
+  }
+
+  function boundFull(item, field) {
+    return item.bounds[field];
+  }
+
+  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
+    var n = groups.length,
+        init = 0,
+        edge = 0,
+        i, j, k, m, b, h, g, x, y;
+
+    // if no groups, early exit and return 0
+    if (!n) return init;
+
+    // compute margin
+    for (i=start; i<n; i+=stride) {
+      if (groups[i]) init = agg(init, bound(groups[i], bf));
+    }
+
+    // if no headers, return margin calculation
+    if (!headers.length) return init;
+
+    // check if number of headers exceeds number of rows or columns
+    if (headers.length > limit) {
+      view.warn('Grid headers exceed limit: ' + limit);
+      headers = headers.slice(0, limit);
+    }
+
+    // apply offset
+    init += offset;
+
+    // clear mark bounds for all headers
+    for (j=0, m=headers.length; j<m; ++j) {
+      view.dirty(headers[j]);
+      headers[j].mark.bounds.clear();
+    }
+
+    // layout each header
+    for (i=start, j=0, m=headers.length; j<m; ++j, i+=stride) {
+      h = headers[j];
+      b = h.mark.bounds;
+
+      // search for nearest group to align to
+      // necessary if table has empty cells
+      for (k=i; k >= 0 && (g = groups[k]) == null; k-=back);
+
+      // assign coordinates and update bounds
+      if (isX) {
+        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
+        y = init;
+      } else {
+        x = init;
+        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
+      }
+      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+      h.x = x;
+      h.y = y;
+      view.dirty(h);
+
+      // update current edge of layout bounds
+      edge = agg(edge, b[bf]);
+    }
+
+    return edge;
+  }
+
+  function layoutTitle(view, g, offset, isX, bounds, band) {
+    if (!g) return;
+    view.dirty(g);
+
+    // compute title coordinates
+    var x = offset, y = offset;
+    isX
+      ? (x = Math.round(bounds.x1 + band * bounds.width()))
+      : (y = Math.round(bounds.y1 + band * bounds.height()));
+
+    // assign coordinates and update bounds
+    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+    g.mark.bounds.clear().union(g.bounds);
+    g.x = x;
+    g.y = y;
+
+    // queue title for redraw
+    view.dirty(g);
+  }
+
+  // utility for looking up legend layout configuration
+  function lookup$2(config, orient) {
+    const opt = config[orient] || {};
+    return (key, d) => opt[key] != null ? opt[key]
+      : config[key] != null ? config[key]
+      : d;
+  }
+
+  // if legends specify offset directly, use the maximum specified value
+  function offsets(legends, value) {
+    var max = -Infinity;
+    legends.forEach(item => {
+      if (item.offset != null) max = Math.max(max, item.offset);
+    });
+    return max > -Infinity ? max : value;
+  }
+
+  function legendParams(g, orient, config, xb, yb, w, h) {
+    const _ = lookup$2(config, orient),
+          offset = offsets(g, _('offset', 0)),
+          anchor = _('anchor', Start),
+          mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
+
+    const p = {
+      align:   Each,
+      bounds:  _('bounds', Flush),
+      columns: _('direction') === 'vertical' ? 1 : g.length,
+      padding: _('margin', 8),
+      center:  _('center'),
+      nodirty: true
+    };
+
+    switch (orient) {
+      case Left:
+        p.anchor = {
+          x: Math.floor(xb.x1) - offset, column: End,
+          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        };
+        break;
+      case Right:
+        p.anchor = {
+          x: Math.ceil(xb.x2) + offset,
+          y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        };
+        break;
+      case Top:
+        p.anchor = {
+          y: Math.floor(yb.y1) - offset, row: End,
+          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        };
+        break;
+      case Bottom:
+        p.anchor = {
+          y: Math.ceil(yb.y2) + offset,
+          x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        };
+        break;
+      case TopLeft:
+        p.anchor = {x: offset, y: offset};
+        break;
+      case TopRight:
+        p.anchor = {x: w - offset, y: offset, column: End};
+        break;
+      case BottomLeft:
+        p.anchor = {x: offset, y: h - offset, row: End};
+        break;
+      case BottomRight:
+        p.anchor = {x: w - offset, y: h - offset, column: End, row: End};
+        break;
+    }
+
+    return p;
+  }
+
+  function legendLayout(view, legend) {
+    var item = legend.items[0],
+        datum = item.datum,
+        orient = item.orient,
+        bounds = item.bounds,
+        x = item.x, y = item.y, w, h;
+
+    // cache current bounds for later comparison
+    item._bounds
+      ? item._bounds.clear().union(bounds)
+      : item._bounds = bounds.clone();
+    bounds.clear();
+
+    // adjust legend to accommodate padding and title
+    legendGroupLayout(view, item, item.items[0].items[0]);
+
+    // aggregate bounds to determine size, and include origin
+    bounds = legendBounds(item, bounds);
+    w = 2 * item.padding;
+    h = 2 * item.padding;
+    if (!bounds.empty()) {
+      w = Math.ceil(bounds.width() + w);
+      h = Math.ceil(bounds.height() + h);
+    }
+
+    if (datum.type === Symbols) {
+      legendEntryLayout(item.items[0].items[0].items[0].items);
+    }
+
+    if (orient !== None$1) {
+      item.x = x = 0;
+      item.y = y = 0;
+    }
+    item.width = w;
+    item.height = h;
+    boundStroke(bounds.set(x, y, x + w, y + h), item);
+    item.mark.bounds.clear().union(bounds);
+
+    return item;
+  }
+
+  function legendBounds(item, b) {
+    // aggregate item bounds
+    item.items.forEach(_ => b.union(_.bounds));
+
+    // anchor to legend origin
+    b.x1 = item.padding;
+    b.y1 = item.padding;
+
+    return b;
+  }
+
+  function legendGroupLayout(view, item, entry) {
+    var pad = item.padding,
+        ex = pad - entry.x,
+        ey = pad - entry.y;
+
+    if (!item.datum.title) {
+      if (ex || ey) translate$1(view, entry, ex, ey);
+    } else {
+      var title = item.items[1].items[0],
+          anchor = title.anchor,
+          tpad = item.titlePadding || 0,
+          tx = pad - title.x,
+          ty = pad - title.y;
+
+      switch (title.orient) {
+        case Left:
+          ex += Math.ceil(title.bounds.width()) + tpad;
+          break;
+        case Right:
+        case Bottom:
+          break;
+        default:
+          ey += title.bounds.height() + tpad;
+      }
+      if (ex || ey) translate$1(view, entry, ex, ey);
+
+      switch (title.orient) {
+        case Left:
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
+          break;
+        case Right:
+          tx += legendTitleOffset(item, entry, title, End, 0, 0) + tpad;
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
+          break;
+        case Bottom:
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+          ty += legendTitleOffset(item, entry, title, End, -1, 0, 1) + tpad;
+          break;
+        default:
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+      }
+      if (tx || ty) translate$1(view, title, tx, ty);
+
+      // translate legend if title pushes into negative coordinates
+      if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
+        translate$1(view, entry, -tx, 0);
+        translate$1(view, title, -tx, 0);
+      }
+    }
+  }
+
+  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
+    const grad = item.datum.type !== 'symbol',
+          vgrad = title.datum.vgrad,
+          e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
+          s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
+          u = vgrad && lr ? s : 0,
+          v = vgrad && lr ? 0 : s,
+          o = y <= 0 ? 0 : multiLineOffset(title);
+
+    return Math.round(anchor === Start ? u
+      : anchor === End ? (v - o)
+      : 0.5 * (s - o));
+  }
+
+  function translate$1(view, item, dx, dy) {
+    item.x += dx;
+    item.y += dy;
+    item.bounds.translate(dx, dy);
+    item.mark.bounds.translate(dx, dy);
+    view.dirty(item);
+  }
+
+  function legendEntryLayout(entries) {
+    // get max widths for each column
+    var widths = entries.reduce((w, g) => {
+      w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
+      return w;
+    }, {});
+
+    // set dimensions of legend entry groups
+    entries.forEach(g => {
+      g.width  = widths[g.column];
+      g.height = g.bounds.y2 - g.y;
+    });
+  }
+
+  function titleLayout(view, mark, width, height, viewBounds) {
+    var group = mark.items[0],
+        frame = group.frame,
+        orient = group.orient,
+        anchor = group.anchor,
+        offset = group.offset,
+        padding = group.padding,
+        title = group.items[0].items[0],
+        subtitle = group.items[1] && group.items[1].items[0],
+        end = (orient === Left || orient === Right) ? height : width,
+        start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
+
+    if (frame !== Group) {
+      orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)
+        : orient === Right ? (start = viewBounds.y1, end = viewBounds.y2)
+        : (start = viewBounds.x1, end = viewBounds.x2);
+    } else if (orient === Left) {
+      start = height, end = 0;
+    }
+
+    pos = (anchor === Start) ? start
+      : (anchor === End) ? end
+      : (start + end) / 2;
+
+    if (subtitle && subtitle.text) {
+      // position subtitle
+      switch (orient) {
+        case Top:
+        case Bottom:
+          sy = title.bounds.height() + padding;
+          break;
+        case Left:
+          sx = title.bounds.width() + padding;
+          break;
+        case Right:
+          sx = -title.bounds.width() - padding;
+          break;
+      }
+
+      tempBounds$1.clear().union(subtitle.bounds);
+      tempBounds$1.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+      if (set$1(subtitle, 'x', sx) | set$1(subtitle, 'y', sy)) {
+        view.dirty(subtitle);
+        subtitle.bounds.clear().union(tempBounds$1);
+        subtitle.mark.bounds.clear().union(tempBounds$1);
+        view.dirty(subtitle);
+      }
+
+      tempBounds$1.clear().union(subtitle.bounds);
+    } else {
+      tempBounds$1.clear();
+    }
+    tempBounds$1.union(title.bounds);
+
+    // position title group
+    switch (orient) {
+      case Top:
+        x = pos;
+        y = viewBounds.y1 - tempBounds$1.height() - offset;
+        break;
+      case Left:
+        x = viewBounds.x1 - tempBounds$1.width() - offset;
+        y = pos;
+        break;
+      case Right:
+        x = viewBounds.x2 + tempBounds$1.width() + offset;
+        y = pos;
+        break;
+      case Bottom:
+        x = pos;
+        y = viewBounds.y2 + offset;
+        break;
+      default:
+        x = group.x;
+        y = group.y;
+    }
+
+    if (set$1(group, 'x', x) | set$1(group, 'y', y)) {
+      tempBounds$1.translate(x, y);
+      view.dirty(group);
+      group.bounds.clear().union(tempBounds$1);
+      mark.bounds.clear().union(tempBounds$1);
+      view.dirty(group);
+    }
+    return group.bounds;
+  }
+
+  /**
+   * Layout view elements such as axes and legends.
+   * Also performs size adjustments.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.mark - Scenegraph mark of groups to layout.
+   */
+  function ViewLayout(params) {
+    Transform.call(this, null, params);
+  }
+
+  var prototype$V = inherits(ViewLayout, Transform);
+
+  prototype$V.transform = function(_, pulse) {
+    var view = pulse.dataflow;
+    _.mark.items.forEach(group => {
+      if (_.layout) trellisLayout(view, group, _.layout);
+      layoutGroup(view, group, _);
+    });
+    return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
+  };
+
+  function shouldReflow(group) {
+    // We typically should reflow if layout is invoked (#2568), as child items
+    // may have resized and reflow ensures group bounds are re-calculated.
+    // However, legend entries have a special exception to avoid instability.
+    // For example, if a selected legend symbol gains a stroke on hover,
+    // we don't want to re-position subsequent elements in the legend.
+    return group && group.mark.role !== 'legend-entry';
+  }
+
+  function layoutGroup(view, group, _) {
+    var items = group.items,
+        width = Math.max(0, group.width || 0),
+        height = Math.max(0, group.height || 0),
+        viewBounds = new Bounds().set(0, 0, width, height),
+        xBounds = viewBounds.clone(),
+        yBounds = viewBounds.clone(),
+        legends = [], title,
+        mark, orient, b, i, n;
+
+    // layout axes, gather legends, collect bounds
+    for (i=0, n=items.length; i<n; ++i) {
+      mark = items[i];
+      switch (mark.role) {
+        case AxisRole:
+          b = isYAxis(mark) ? xBounds : yBounds;
+          b.union(axisLayout(view, mark, width, height));
+          break;
+        case TitleRole:
+          title = mark;
+          break;
+        case LegendRole:
+          legends.push(legendLayout(view, mark));
+          break;
+        case FrameRole:
+        case ScopeRole:
+        case RowHeader:
+        case RowFooter:
+        case RowTitle:
+        case ColHeader:
+        case ColFooter:
+        case ColTitle:
+          xBounds.union(mark.bounds);
+          yBounds.union(mark.bounds);
+          break;
+        default:
+          viewBounds.union(mark.bounds);
+      }
+    }
+
+    // layout legends, adjust viewBounds
+    if (legends.length) {
+      // group legends by orient
+      const l = {};
+      legends.forEach(item => {
+        orient = item.orient || Right;
+        if (orient !== None$1) (l[orient] || (l[orient] = [])).push(item);
+      });
+
+      // perform grid layout for each orient group
+      for (let orient in l) {
+        const g = l[orient];
+        gridLayout(view, g, legendParams(
+          g, orient, _.legends, xBounds, yBounds, width, height
+        ));
+      }
+
+      // update view bounds
+      legends.forEach(item => {
+        const b = item.bounds;
+
+        if (!b.equals(item._bounds)) {
+          item.bounds = item._bounds;
+          view.dirty(item); // dirty previous location
+          item.bounds = b;
+          view.dirty(item);
+        }
+
+        if (_.autosize && _.autosize.type === Fit) {
+          // For autosize fit, incorporate the orthogonal dimension only.
+          // Legends that overrun the chart area will then be clipped;
+          // otherwise the chart area gets reduced to nothing!
+          switch(item.orient) {
+            case Left:
+            case Right:
+              viewBounds.add(b.x1, 0).add(b.x2, 0);
+              break;
+            case Top:
+            case Bottom:
+              viewBounds.add(0, b.y1).add(0, b.y2);
+          }
+        } else {
+          viewBounds.union(b);
+        }
+      });
+    }
+
+    // combine bounding boxes
+    viewBounds.union(xBounds).union(yBounds);
+
+    // layout title, adjust bounds
+    if (title) {
+      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
+    }
+
+    // override aggregated view bounds if content is clipped
+    if (group.clip) {
+      viewBounds.set(0, 0, group.width || 0, group.height || 0);
+    }
+
+    // perform size adjustment
+    viewSizeLayout(view, group, viewBounds, _);
+  }
+
+  function viewSizeLayout(view, group, viewBounds, _) {
+    const auto = _.autosize || {},
+          type = auto.type;
+
+    if (view._autosize < 1 || !type) return;
+
+    let viewWidth = view._width,
+        viewHeight = view._height,
+        width  = Math.max(0, group.width || 0),
+        left   = Math.max(0, Math.ceil(-viewBounds.x1)),
+        right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+        height = Math.max(0, group.height || 0),
+        top    = Math.max(0, Math.ceil(-viewBounds.y1)),
+        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+
+    if (auto.contains === Padding) {
+      const padding = view.padding();
+      viewWidth -= padding.left + padding.right;
+      viewHeight -= padding.top + padding.bottom;
+    }
+
+    if (type === None$1) {
+      left = 0;
+      top = 0;
+      width = viewWidth;
+      height = viewHeight;
+    }
+
+    else if (type === Fit) {
+      width = Math.max(0, viewWidth - left - right);
+      height = Math.max(0, viewHeight - top - bottom);
+    }
+
+    else if (type === FitX) {
+      width = Math.max(0, viewWidth - left - right);
+      viewHeight = height + top + bottom;
+    }
+
+    else if (type === FitY) {
+      viewWidth = width + left + right;
+      height = Math.max(0, viewHeight - top - bottom);
+    }
+
+    else if (type === Pad) {
+      viewWidth = width + left + right;
+      viewHeight = height + top + bottom;
+    }
+
+    view._resizeView(
+      viewWidth, viewHeight,
+      width, height,
+      [left, top],
+      auto.resize
+    );
+  }
+
+  var vtx = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    bound: Bound,
+    identifier: Identifier,
+    mark: Mark,
+    overlap: Overlap,
+    render: Render,
+    viewlayout: ViewLayout
+  });
 
   /**
    * Generates axis ticks for visualizing a spatial scale.
@@ -17133,12 +17866,13 @@
       return pulse.StopPropagation;
     }
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+    var locale = pulse.dataflow.locale(),
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         ticks = this.value,
         scale = _.scale,
         tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
         count = tickCount(scale, tally, _.minstep),
-        format = _.format || tickFormat(scale, count, _.formatSpecifier, _.formatType, !!_.values),
+        format = _.format || tickFormat$1(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
         values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
     if (ticks) out.rem = ticks;
@@ -17185,8 +17919,10 @@
     return ingest({});
   }
 
-  function isExit(t) {
-    return t.exit;
+  function newMap(key) {
+    const map = fastmap().test(t => t.exit);
+    map.lookup = t => map.get(key(t));
+    return map;
   }
 
   prototype$X.transform = function(_, pulse) {
@@ -17208,13 +17944,12 @@
 
     if (!map) {
       pulse = pulse.addAll();
-      this.value = map = fastmap().test(isExit);
-      map.lookup = function(t) { return map.get(key(t)); };
+      this.value = map = newMap(key);
     }
 
-    pulse.visit(pulse.ADD, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.ADD, t => {
+      const k = key(t);
+      let x = map.get(k);
 
       if (x) {
         if (x.exit) {
@@ -17224,7 +17959,8 @@
           out.mod.push(x);
         }
       } else {
-        map.set(k, (x = item(t)));
+        x = item(t);
+        map.set(k, x);
         out.add.push(x);
       }
 
@@ -17232,9 +17968,9 @@
       x.exit = false;
     });
 
-    pulse.visit(pulse.MOD, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.MOD, t => {
+      const k = key(t),
+            x = map.get(k);
 
       if (x) {
         x.datum = t;
@@ -17242,9 +17978,9 @@
       }
     });
 
-    pulse.visit(pulse.REM, function(t) {
-      var k = key(t),
-          x = map.get(k);
+    pulse.visit(pulse.REM, t => {
+      const k = key(t),
+            x = map.get(k);
 
       if (t === x.datum && !x.exit) {
         out.rem.push(x);
@@ -17255,7 +17991,9 @@
 
     if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
 
-    if (_.clean && map.empty > df.cleanThreshold) df.runAfter(map.clean);
+    if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
+      df.runAfter(map.clean);
+    }
 
     return out;
   };
@@ -17337,131 +18075,6 @@
     return out.changed() ? out : pulse.StopPropagation;
   };
 
-  var Symbols$1  = 'symbol';
-  var Discrete$1 = 'discrete';
-  var Gradient$1 = 'gradient';
-
-  const symbols$1 = {
-    [Quantile$1]:  'quantiles',
-    [Quantize]:  'thresholds',
-    [Threshold]: 'domain'
-  };
-
-  const formats$1 = {
-    [Quantile$1]:  'quantiles',
-    [Quantize]:  'domain'
-  };
-
-  function labelValues(scale, count) {
-    return scale.bins ? binValues(scale.bins)
-      : scale.type === Log ? logValues(scale, count)
-      : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]())
-      : tickValues(scale, count);
-  }
-
-  function logValues(scale, count) {
-    var ticks = tickValues(scale, count),
-        base = scale.base(),
-        logb = Math.log(base),
-        k = Math.max(1, base * count / ticks.length);
-
-    // apply d3-scale's log format filter criteria
-    return ticks.filter(d => {
-      var i = d / Math.pow(base, Math.round(Math.log(d) / logb));
-      if (i * base < base - 0.5) i *= base;
-      return i <= k;
-    });
-  }
-
-  function thresholdFormat(scale, specifier) {
-    var _ = scale[formats$1[scale.type]](),
-        n = _.length,
-        d = n > 1 ? _[1] - _[0] : _[0], i;
-
-    for (i=1; i<n; ++i) {
-      d = Math.min(d, _[i] - _[i-1]);
-    }
-
-    // 3 ticks times 10 for increased resolution
-    return spanFormat(0, d, 3 * 10, specifier);
-  }
-
-  function thresholdValues(thresholds) {
-    const values = [-Infinity].concat(thresholds);
-    values.max = +Infinity;
-
-    return values;
-  }
-
-  function binValues(bins) {
-    const values = bins.slice(0, -1);
-    values.max = peek(bins);
-
-    return values;
-  }
-
-  function isDiscreteRange(scale) {
-    return symbols$1[scale.type] || scale.bins;
-  }
-
-  function labelFormat(scale, count, type, specifier, formatType, noSkip) {
-    const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
-      ? thresholdFormat(scale, specifier)
-      : tickFormat(scale, count, specifier, formatType, noSkip);
-
-    return type === Symbols$1 && isDiscreteRange(scale) ? formatRange(format)
-      : type === Discrete$1 ? formatDiscrete(format)
-      : formatPoint(format);
-  }
-
-  function formatRange(format) {
-    return function(value, index, array) {
-      var limit = get$3(array[index + 1], get$3(array.max, +Infinity)),
-          lo = formatValue(value, format),
-          hi = formatValue(limit, format);
-      return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
-    };
-  }
-
-  function get$3(value, dflt) {
-    return value != null ? value : dflt;
-  }
-
-  function formatDiscrete(format) {
-    return function(value, index) {
-      return index ? format(value) : null;
-    }
-  }
-
-  function formatPoint(format) {
-    return function(value) {
-      return format(value);
-    };
-  }
-
-  function formatValue(value, format) {
-    return Number.isFinite(value) ? format(value) : null;
-  }
-
-  function labelFraction(scale) {
-    var domain = scale.domain(),
-        count = domain.length - 1,
-        lo = +domain[0],
-        hi = +peek(domain),
-        span = hi - lo;
-
-    if (scale.type === Threshold) {
-      var adjust = count ? span / count : 0.1;
-      lo -= adjust;
-      hi += adjust;
-      span = hi - lo;
-    }
-
-    return function(value) {
-      return (value - lo) / span;
-    };
-  }
-
   /**
    * Generates legend entries for visualizing a scale.
    * @constructor
@@ -17491,20 +18104,21 @@
       return pulse.StopPropagation;
     }
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+    var locale = pulse.dataflow.locale(),
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         items = this.value,
-        type  = _.type || Symbols$1,
+        type  = _.type || SymbolLegend,
         scale = _.scale,
         limit = +_.limit,
         count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        lskip = !!_.values || type === Symbols$1,
-        format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
+        lskip = !!_.values || type === SymbolLegend,
+        format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
         values = _.values || labelValues(scale, count),
         domain, fraction, size, offset, ellipsis;
 
     if (items) out.rem = items;
 
-    if (type === Symbols$1) {
+    if (type === SymbolLegend) {
       if (limit && values.length > limit) {
         pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
         items = values.slice(0, limit - 1);
@@ -17548,7 +18162,7 @@
       }
     }
 
-    else if (type === Gradient$1) {
+    else if (type === GradientLegend) {
       domain = scale.domain(),
       fraction = scaleFraction(scale, domain[0], peek(domain));
 
@@ -17620,19 +18234,19 @@
   }
 
   LinkPath.Definition = {
-    "type": "LinkPath",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "sourceX", "type": "field", "default": "source.x" },
-      { "name": "sourceY", "type": "field", "default": "source.y" },
-      { "name": "targetX", "type": "field", "default": "target.x" },
-      { "name": "targetY", "type": "field", "default": "target.y" },
-      { "name": "orient", "type": "enum", "default": "vertical",
-        "values": ["horizontal", "vertical", "radial"] },
-      { "name": "shape", "type": "enum", "default": "line",
-        "values": ["line", "arc", "curve", "diagonal", "orthogonal"] },
-      { "name": "require", "type": "signal" },
-      { "name": "as", "type": "string", "default": "path" }
+    'type': 'LinkPath',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'sourceX', 'type': 'field', 'default': 'source.x' },
+      { 'name': 'sourceY', 'type': 'field', 'default': 'source.y' },
+      { 'name': 'targetX', 'type': 'field', 'default': 'target.x' },
+      { 'name': 'targetY', 'type': 'field', 'default': 'target.y' },
+      { 'name': 'orient', 'type': 'enum', 'default': 'vertical',
+        'values': ['horizontal', 'vertical', 'radial'] },
+      { 'name': 'shape', 'type': 'enum', 'default': 'line',
+        'values': ['line', 'arc', 'curve', 'diagonal', 'orthogonal'] },
+      { 'name': 'require', 'type': 'signal' },
+      { 'name': 'as', 'type': 'string', 'default': 'path' }
     ]
   };
 
@@ -17774,14 +18388,14 @@
   }
 
   Pie.Definition = {
-    "type": "Pie",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "startAngle", "type": "number", "default": 0 },
-      { "name": "endAngle", "type": "number", "default": 6.283185307179586 },
-      { "name": "sort", "type": "boolean", "default": false },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["startAngle", "endAngle"] }
+    'type': 'Pie',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'startAngle', 'type': 'number', 'default': 0 },
+      { 'name': 'endAngle', 'type': 'number', 'default': 6.283185307179586 },
+      { 'name': 'sort', 'type': 'boolean', 'default': false },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['startAngle', 'endAngle'] }
     ]
   };
 
@@ -17930,10 +18544,9 @@
 
       if (_.domainMid != null) {
         mid = _.domainMid;
-        if (mid < domain[0] || mid > domain[n]) {
-          df.warn('Scale domainMid exceeds domain min or max.', mid);
-        }
-        domain.splice(n, 0, mid);
+        const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
+        if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+        domain.splice(i, 0, mid);
       }
     }
 
@@ -18167,14 +18780,14 @@
   }
 
   Stack.Definition = {
-    "type": "Stack",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "sort", "type": "compare" },
-      { "name": "offset", "type": "enum", "default": Zero, "values": [Zero, Center, Normalize] },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": DefOutput }
+    'type': 'Stack',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'offset', 'type': 'enum', 'default': Zero, 'values': [Zero, Center, Normalize] },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': DefOutput }
     ]
   };
 
@@ -18282,8 +18895,6 @@
     return groups;
   }
 
-
-
   var encode = /*#__PURE__*/Object.freeze({
     __proto__: null,
     axisticks: AxisTicks,
@@ -18294,11 +18905,10 @@
     pie: Pie,
     scale: Scale,
     sortitems: SortItems,
-    stack: Stack,
-    validTicks: validTicks
+    stack: Stack
   });
 
-  function noop$1() {}
+  function noop$2() {}
 
   const cases = [
     [],
@@ -18467,13 +19077,13 @@
 
     contours.size = function(_) {
       if (!arguments.length) return [dx, dy];
-      var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-      if (!(_0 > 0) || !(_1 > 0)) error('invalid size');
+      var _0 = Math.floor(_[0]), _1 = Math.floor(_[1]);
+      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
       return dx = _0, dy = _1, contours;
     };
 
     contours.smooth = function(_) {
-      return arguments.length ? (smooth = _ ? smoothLinear : noop$1, contours) : smooth === smoothLinear;
+      return arguments.length ? (smooth = _ ? smoothLinear : noop$2, contours) : smooth === smoothLinear;
     };
 
     return contours;
@@ -18559,19 +19169,19 @@
   }
 
   Isocontour.Definition = {
-    "type": "Isocontour",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "thresholds", "type": "number", "array": true },
-      { "name": "levels", "type": "number" },
-      { "name": "nice", "type": "boolean", "default": false },
-      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-      { "name": "zero", "type": "boolean", "default": true },
-      { "name": "smooth", "type": "boolean", "default": true },
-      { "name": "scale", "type": "number", "expr": true },
-      { "name": "translate", "type": "number", "array": true, "expr": true },
-      { "name": "as", "type": "string", "null": true, "default": "contour" }
+    'type': 'Isocontour',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'thresholds', 'type': 'number', 'array': true },
+      { 'name': 'levels', 'type': 'number' },
+      { 'name': 'nice', 'type': 'boolean', 'default': false },
+      { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+      { 'name': 'zero', 'type': 'boolean', 'default': true },
+      { 'name': 'smooth', 'type': 'boolean', 'default': true },
+      { 'name': 'scale', 'type': 'number', 'expr': true },
+      { 'name': 'translate', 'type': 'number', 'array': true, 'expr': true },
+      { 'name': 'as', 'type': 'string', 'null': true, 'default': 'contour' }
     ]
   };
 
@@ -18750,8 +19360,8 @@
 
     density.size = function(_) {
       if (!arguments.length) return [dx, dy];
-      var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-      if (!(_0 >= 0) && !(_0 >= 0)) error('invalid size');
+      var _0 = +_[0], _1 = +_[1];
+      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
       return dx = _0, dy = _1, density;
     };
 
@@ -18839,18 +19449,18 @@
   }
 
   KDE2D.Definition = {
-    "type": "KDE2D",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-      { "name": "x", "type": "field", "required": true },
-      { "name": "y", "type": "field", "required": true },
-      { "name": "weight", "type": "field" },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "cellSize", "type": "number" },
-      { "name": "bandwidth", "type": "number", "array": true, "length": 2 },
-      { "name": "counts", "type": "boolean", "default": false },
-      { "name": "as", "type": "string", "default": "grid"}
+    'type': 'KDE2D',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+      { 'name': 'x', 'type': 'field', 'required': true },
+      { 'name': 'y', 'type': 'field', 'required': true },
+      { 'name': 'weight', 'type': 'field' },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'cellSize', 'type': 'number' },
+      { 'name': 'bandwidth', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'counts', 'type': 'boolean', 'default': false },
+      { 'name': 'as', 'type': 'string', 'default': 'grid'}
     ]
   };
 
@@ -18948,20 +19558,20 @@
   }
 
   Contour.Definition = {
-    "type": "Contour",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-      { "name": "values", "type": "number", "array": true },
-      { "name": "x", "type": "field" },
-      { "name": "y", "type": "field" },
-      { "name": "weight", "type": "field" },
-      { "name": "cellSize", "type": "number" },
-      { "name": "bandwidth", "type": "number" },
-      { "name": "count", "type": "number" },
-      { "name": "nice", "type": "boolean", "default": false },
-      { "name": "thresholds", "type": "number", "array": true },
-      { "name": "smooth", "type": "boolean", "default": true }
+    'type': 'Contour',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+      { 'name': 'values', 'type': 'number', 'array': true },
+      { 'name': 'x', 'type': 'field' },
+      { 'name': 'y', 'type': 'field' },
+      { 'name': 'weight', 'type': 'field' },
+      { 'name': 'cellSize', 'type': 'number' },
+      { 'name': 'bandwidth', 'type': 'number' },
+      { 'name': 'count', 'type': 'number' },
+      { 'name': 'nice', 'type': 'boolean', 'default': false },
+      { 'name': 'thresholds', 'type': 'number', 'array': true },
+      { 'name': 'smooth', 'type': 'boolean', 'default': true }
     ]
   };
 
@@ -19017,11 +19627,11 @@
   }
 
   GeoJSON.Definition = {
-    "type": "GeoJSON",
-    "metadata": {},
-    "params": [
-      { "name": "fields", "type": "field", "array": true, "length": 2 },
-      { "name": "geojson", "type": "field" },
+    'type': 'GeoJSON',
+    'metadata': {},
+    'params': [
+      { 'name': 'fields', 'type': 'field', 'array': true, 'length': 2 },
+      { 'name': 'geojson', 'type': 'field' }
     ]
   };
 
@@ -19231,13 +19841,13 @@
   }
 
   GeoPath.Definition = {
-    "type": "GeoPath",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "projection", "type": "projection" },
-      { "name": "field", "type": "field" },
-      { "name": "pointRadius", "type": "number", "expr": true },
-      { "name": "as", "type": "string", "default": "path" }
+    'type': 'GeoPath',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'projection', 'type': 'projection' },
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'pointRadius', 'type': 'number', 'expr': true },
+      { 'name': 'as', 'type': 'string', 'default': 'path' }
     ]
   };
 
@@ -19294,12 +19904,12 @@
   }
 
   GeoPoint.Definition = {
-    "type": "GeoPoint",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "projection", "type": "projection", "required": true },
-      { "name": "fields", "type": "field", "array": true, "required": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": 2, "default": ["x", "y"] }
+    'type': 'GeoPoint',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'projection', 'type': 'projection', 'required': true },
+      { 'name': 'fields', 'type': 'field', 'array': true, 'required': true, 'length': 2 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['x', 'y'] }
     ]
   };
 
@@ -19352,13 +19962,13 @@
   }
 
   GeoShape.Definition = {
-    "type": "GeoShape",
-    "metadata": {"modifies": true, "nomod": true},
-    "params": [
-      { "name": "projection", "type": "projection" },
-      { "name": "field", "type": "field", "default": "datum" },
-      { "name": "pointRadius", "type": "number", "expr": true },
-      { "name": "as", "type": "string", "default": "shape" }
+    'type': 'GeoShape',
+    'metadata': {'modifies': true, 'nomod': true},
+    'params': [
+      { 'name': 'projection', 'type': 'projection' },
+      { 'name': 'field', 'type': 'field', 'default': 'datum' },
+      { 'name': 'pointRadius', 'type': 'number', 'expr': true },
+      { 'name': 'as', 'type': 'string', 'default': 'shape' }
     ]
   };
 
@@ -19413,19 +20023,19 @@
   }
 
   Graticule.Definition = {
-    "type": "Graticule",
-    "metadata": {"changes": true, "generates": true},
-    "params": [
-      { "name": "extent", "type": "array", "array": true, "length": 2,
-        "content": {"type": "number", "array": true, "length": 2} },
-      { "name": "extentMajor", "type": "array", "array": true, "length": 2,
-        "content": {"type": "number", "array": true, "length": 2} },
-      { "name": "extentMinor", "type": "array", "array": true, "length": 2,
-        "content": {"type": "number", "array": true, "length": 2} },
-      { "name": "step", "type": "number", "array": true, "length": 2 },
-      { "name": "stepMajor", "type": "number", "array": true, "length": 2, "default": [90, 360] },
-      { "name": "stepMinor", "type": "number", "array": true, "length": 2, "default": [10, 10] },
-      { "name": "precision", "type": "number", "default": 2.5 }
+    'type': 'Graticule',
+    'metadata': {'changes': true, 'generates': true},
+    'params': [
+      { 'name': 'extent', 'type': 'array', 'array': true, 'length': 2,
+        'content': {'type': 'number', 'array': true, 'length': 2} },
+      { 'name': 'extentMajor', 'type': 'array', 'array': true, 'length': 2,
+        'content': {'type': 'number', 'array': true, 'length': 2} },
+      { 'name': 'extentMinor', 'type': 'array', 'array': true, 'length': 2,
+        'content': {'type': 'number', 'array': true, 'length': 2} },
+      { 'name': 'step', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'stepMajor', 'type': 'number', 'array': true, 'length': 2, 'default': [90, 360] },
+      { 'name': 'stepMinor', 'type': 'number', 'array': true, 'length': 2, 'default': [10, 10] },
+      { 'name': 'precision', 'type': 'number', 'default': 2.5 }
     ]
   };
 
@@ -19478,14 +20088,14 @@
   }
 
   Heatmap.Definition = {
-    "type": "heatmap",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "color", "type": "string", "expr": true},
-      { "name": "opacity", "type": "number", "expr": true},
-      { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-      { "name": "as", "type": "string", "default": "image" }
+    'type': 'heatmap',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'color', 'type': 'string', 'expr': true},
+      { 'name': 'opacity', 'type': 'number', 'expr': true},
+      { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+      { 'name': 'as', 'type': 'string', 'default': 'image' }
     ]
   };
 
@@ -19613,11 +20223,11 @@
     if (!proj || _.modified('type')) {
       this.value = (proj = create$2(_.type));
       projectionProperties.forEach(function(prop) {
-        if (_[prop] != null) set$1(proj, prop, _[prop]);
+        if (_[prop] != null) set$2(proj, prop, _[prop]);
       });
     } else {
       projectionProperties.forEach(function(prop) {
-        if (_.modified(prop)) set$1(proj, prop, _[prop]);
+        if (_.modified(prop)) set$2(proj, prop, _[prop]);
       });
     }
 
@@ -19639,7 +20249,7 @@
     return constructor();
   }
 
-  function set$1(proj, key, value) {
+  function set$2(proj, key, value) {
      if (isFunction(proj[key])) proj[key](value);
   }
 
@@ -19659,8 +20269,6 @@
           d => d.type === Feature ? d : {type: Feature, geometry: d}
         );
   }
-
-
 
   var geo = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -19704,70 +20312,70 @@
   }
 
   Force.Definition = {
-    "type": "Force",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "static", "type": "boolean", "default": false },
-      { "name": "restart", "type": "boolean", "default": false },
-      { "name": "iterations", "type": "number", "default": 300 },
-      { "name": "alpha", "type": "number", "default": 1 },
-      { "name": "alphaMin", "type": "number", "default": 0.001 },
-      { "name": "alphaTarget", "type": "number", "default": 0 },
-      { "name": "velocityDecay", "type": "number", "default": 0.4 },
-      { "name": "forces", "type": "param", "array": true,
-        "params": [
+    'type': 'Force',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'static', 'type': 'boolean', 'default': false },
+      { 'name': 'restart', 'type': 'boolean', 'default': false },
+      { 'name': 'iterations', 'type': 'number', 'default': 300 },
+      { 'name': 'alpha', 'type': 'number', 'default': 1 },
+      { 'name': 'alphaMin', 'type': 'number', 'default': 0.001 },
+      { 'name': 'alphaTarget', 'type': 'number', 'default': 0 },
+      { 'name': 'velocityDecay', 'type': 'number', 'default': 0.4 },
+      { 'name': 'forces', 'type': 'param', 'array': true,
+        'params': [
           {
-            "key": {"force": "center"},
-            "params": [
-              { "name": "x", "type": "number", "default": 0 },
-              { "name": "y", "type": "number", "default": 0 }
+            'key': {'force': 'center'},
+            'params': [
+              { 'name': 'x', 'type': 'number', 'default': 0 },
+              { 'name': 'y', 'type': 'number', 'default': 0 }
             ]
           },
           {
-            "key": {"force": "collide"},
-            "params": [
-              { "name": "radius", "type": "number", "expr": true },
-              { "name": "strength", "type": "number", "default": 0.7 },
-              { "name": "iterations", "type": "number", "default": 1 }
+            'key': {'force': 'collide'},
+            'params': [
+              { 'name': 'radius', 'type': 'number', 'expr': true },
+              { 'name': 'strength', 'type': 'number', 'default': 0.7 },
+              { 'name': 'iterations', 'type': 'number', 'default': 1 }
             ]
           },
           {
-            "key": {"force": "nbody"},
-            "params": [
-              { "name": "strength", "type": "number", "default": -30 },
-              { "name": "theta", "type": "number", "default": 0.9 },
-              { "name": "distanceMin", "type": "number", "default": 1 },
-              { "name": "distanceMax", "type": "number" }
+            'key': {'force': 'nbody'},
+            'params': [
+              { 'name': 'strength', 'type': 'number', 'default': -30 },
+              { 'name': 'theta', 'type': 'number', 'default': 0.9 },
+              { 'name': 'distanceMin', 'type': 'number', 'default': 1 },
+              { 'name': 'distanceMax', 'type': 'number' }
             ]
           },
           {
-            "key": {"force": "link"},
-            "params": [
-              { "name": "links", "type": "data" },
-              { "name": "id", "type": "field" },
-              { "name": "distance", "type": "number", "default": 30, "expr": true },
-              { "name": "strength", "type": "number", "expr": true },
-              { "name": "iterations", "type": "number", "default": 1 }
+            'key': {'force': 'link'},
+            'params': [
+              { 'name': 'links', 'type': 'data' },
+              { 'name': 'id', 'type': 'field' },
+              { 'name': 'distance', 'type': 'number', 'default': 30, 'expr': true },
+              { 'name': 'strength', 'type': 'number', 'expr': true },
+              { 'name': 'iterations', 'type': 'number', 'default': 1 }
             ]
           },
           {
-            "key": {"force": "x"},
-            "params": [
-              { "name": "strength", "type": "number", "default": 0.1 },
-              { "name": "x", "type": "field" }
+            'key': {'force': 'x'},
+            'params': [
+              { 'name': 'strength', 'type': 'number', 'default': 0.1 },
+              { 'name': 'x', 'type': 'field' }
             ]
           },
           {
-            "key": {"force": "y"},
-            "params": [
-              { "name": "strength", "type": "number", "default": 0.1 },
-              { "name": "y", "type": "field" }
+            'key': {'force': 'y'},
+            'params': [
+              { 'name': 'strength', 'type': 'number', 'default': 0.1 },
+              { 'name': 'y', 'type': 'field' }
             ]
           }
         ] },
       {
-        "name": "as", "type": "string", "array": true, "modify": false,
-        "default": ForceOutput
+        'name': 'as', 'type': 'string', 'array': true, 'modify': false,
+        'default': ForceOutput
       }
     ]
   };
@@ -19839,7 +20447,7 @@
   };
 
   function rerun(df, op) {
-    return function() { df.touch(op).run(); }
+    return function() { df.touch(op).run(); };
   }
 
   function simulation(nodes, _) {
@@ -19915,8 +20523,6 @@
     f(isFunction(v) ? function(d) { return v(d, _); } : v);
   }
 
-
-
   var force = /*#__PURE__*/Object.freeze({
     __proto__: null,
     force: Force
@@ -19948,11 +20554,11 @@
   }
 
   Nest.Definition = {
-    "type": "Nest",
-    "metadata": {"treesource": true, "changes": true},
-    "params": [
-      { "name": "keys", "type": "field", "array": true },
-      { "name": "generate", "type": "boolean" }
+    'type': 'Nest',
+    'metadata': {'treesource': true, 'changes': true},
+    'params': [
+      { 'name': 'keys', 'type': 'field', 'array': true },
+      { 'name': 'generate', 'type': 'boolean' }
     ]
   };
 
@@ -20129,15 +20735,15 @@
   }
 
   Pack.Definition = {
-    "type": "Pack",
-    "metadata": {"tree": true, "modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "sort", "type": "compare" },
-      { "name": "padding", "type": "number", "default": 0 },
-      { "name": "radius", "type": "field", "default": null },
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$1.length, "default": Output$1 }
+    'type': 'Pack',
+    'metadata': {'tree': true, 'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'padding', 'type': 'number', 'default': 0 },
+      { 'name': 'radius', 'type': 'field', 'default': null },
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': Output$1.length, 'default': Output$1 }
     ]
   };
 
@@ -20162,15 +20768,15 @@
   }
 
   Partition.Definition = {
-    "type": "Partition",
-    "metadata": {"tree": true, "modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "sort", "type": "compare" },
-      { "name": "padding", "type": "number", "default": 0 },
-      { "name": "round", "type": "boolean", "default": false },
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$2.length, "default": Output$2 }
+    'type': 'Partition',
+    'metadata': {'tree': true, 'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'padding', 'type': 'number', 'default': 0 },
+      { 'name': 'round', 'type': 'boolean', 'default': false },
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': Output$2.length, 'default': Output$2 }
     ]
   };
 
@@ -20195,11 +20801,11 @@
   }
 
   Stratify.Definition = {
-    "type": "Stratify",
-    "metadata": {"treesource": true},
-    "params": [
-      { "name": "key", "type": "field", "required": true },
-      { "name": "parentKey", "type": "field", "required": true  }
+    'type': 'Stratify',
+    'metadata': {'treesource': true},
+    'params': [
+      { 'name': 'key', 'type': 'field', 'required': true },
+      { 'name': 'parentKey', 'type': 'field', 'required': true  }
     ]
   };
 
@@ -20254,16 +20860,16 @@
   }
 
   Tree.Definition = {
-    "type": "Tree",
-    "metadata": {"tree": true, "modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "sort", "type": "compare" },
-      { "name": "method", "type": "enum", "default": "tidy", "values": ["tidy", "cluster"] },
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "nodeSize", "type": "number", "array": true, "length": 2 },
-      { "name": "separation", "type": "boolean", "default": true },
-      { "name": "as", "type": "string", "array": true, "length": Output$3.length, "default": Output$3 }
+    'type': 'Tree',
+    'metadata': {'tree': true, 'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'method', 'type': 'enum', 'default': 'tidy', 'values': ['tidy', 'cluster'] },
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'nodeSize', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'separation', 'type': 'boolean', 'default': true },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': Output$3.length, 'default': Output$3 }
     ]
   };
 
@@ -20294,9 +20900,9 @@
   }
 
   TreeLinks.Definition = {
-    "type": "TreeLinks",
-    "metadata": {"tree": true, "generates": true, "changes": true},
-    "params": []
+    'type': 'TreeLinks',
+    'metadata': {'tree': true, 'generates': true, 'changes': true},
+    'params': []
   };
 
   var prototype$1k = inherits(TreeLinks, Transform);
@@ -20364,24 +20970,24 @@
   }
 
   Treemap.Definition = {
-    "type": "Treemap",
-    "metadata": {"tree": true, "modifies": true},
-    "params": [
-      { "name": "field", "type": "field" },
-      { "name": "sort", "type": "compare" },
-      { "name": "method", "type": "enum", "default": "squarify",
-        "values": ["squarify", "resquarify", "binary", "dice", "slice", "slicedice"] },
-      { "name": "padding", "type": "number", "default": 0 },
-      { "name": "paddingInner", "type": "number", "default": 0 },
-      { "name": "paddingOuter", "type": "number", "default": 0 },
-      { "name": "paddingTop", "type": "number", "default": 0 },
-      { "name": "paddingRight", "type": "number", "default": 0 },
-      { "name": "paddingBottom", "type": "number", "default": 0 },
-      { "name": "paddingLeft", "type": "number", "default": 0 },
-      { "name": "ratio", "type": "number", "default": 1.618033988749895 },
-      { "name": "round", "type": "boolean", "default": false },
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "as", "type": "string", "array": true, "length": Output$4.length, "default": Output$4 }
+    'type': 'Treemap',
+    'metadata': {'tree': true, 'modifies': true},
+    'params': [
+      { 'name': 'field', 'type': 'field' },
+      { 'name': 'sort', 'type': 'compare' },
+      { 'name': 'method', 'type': 'enum', 'default': 'squarify',
+        'values': ['squarify', 'resquarify', 'binary', 'dice', 'slice', 'slicedice'] },
+      { 'name': 'padding', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingInner', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingOuter', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingTop', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingRight', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingBottom', 'type': 'number', 'default': 0 },
+      { 'name': 'paddingLeft', 'type': 'number', 'default': 0 },
+      { 'name': 'ratio', 'type': 'number', 'default': 1.618033988749895 },
+      { 'name': 'round', 'type': 'boolean', 'default': false },
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': Output$4.length, 'default': Output$4 }
     ]
   };
 
@@ -20411,8 +21017,6 @@
   ];
 
   prototype$1l.fields = Output$4;
-
-
 
   var tree = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -20464,14 +21068,14 @@
   }
 
   Loess.Definition = {
-    "type": "Loess",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "x", "type": "field", "required": true },
-      { "name": "y", "type": "field", "required": true },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "bandwidth", "type": "number", "default": 0.3 },
-      { "name": "as", "type": "string", "array": true }
+    'type': 'Loess',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'x', 'type': 'field', 'required': true },
+      { 'name': 'y', 'type': 'field', 'required': true },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'bandwidth', 'type': 'number', 'default': 0.3 },
+      { 'name': 'as', 'type': 'string', 'array': true }
     ]
   };
 
@@ -20536,17 +21140,17 @@
   }
 
   Regression.Definition = {
-    "type": "Regression",
-    "metadata": {"generates": true},
-    "params": [
-      { "name": "x", "type": "field", "required": true },
-      { "name": "y", "type": "field", "required": true },
-      { "name": "groupby", "type": "field", "array": true },
-      { "name": "method", "type": "string", "default": "linear", "values": Object.keys(Methods$1) },
-      { "name": "order", "type": "number", "default": 3 },
-      { "name": "extent", "type": "number", "array": true, "length": 2 },
-      { "name": "params", "type": "boolean", "default": false },
-      { "name": "as", "type": "string", "array": true }
+    'type': 'Regression',
+    'metadata': {'generates': true},
+    'params': [
+      { 'name': 'x', 'type': 'field', 'required': true },
+      { 'name': 'y', 'type': 'field', 'required': true },
+      { 'name': 'groupby', 'type': 'field', 'array': true },
+      { 'name': 'method', 'type': 'string', 'default': 'linear', 'values': Object.keys(Methods$1) },
+      { 'name': 'order', 'type': 'number', 'default': 3 },
+      { 'name': 'extent', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'params', 'type': 'boolean', 'default': false },
+      { 'name': 'as', 'type': 'string', 'array': true }
     ]
   };
 
@@ -20624,8 +21228,6 @@
 
     return out;
   };
-
-
 
   var reg = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -21290,7 +21892,7 @@
     renderCell(i, context) {
       const buffer = context == null ? context = new Path : undefined;
       const points = this._clip(i);
-      if (points === null) return;
+      if (points === null || !points.length) return;
       context.moveTo(points[0], points[1]);
       let n = points.length;
       while (points[0] === points[n-2] && points[1] === points[n-1] && n > 1) n -= 2;
@@ -21305,7 +21907,7 @@
       const {delaunay: {points}} = this;
       for (let i = 0, n = points.length / 2; i < n; ++i) {
         const cell = this.cellPolygon(i);
-        if (cell) yield cell;
+        if (cell) cell.index = i, yield cell;
       }
     }
     cellPolygon(i) {
@@ -21502,7 +22104,7 @@
     }
   }
 
-  const tau = 2 * Math.PI;
+  const tau = 2 * Math.PI, pow$2 = Math.pow;
 
   function pointX(p) {
     return p[0];
@@ -21557,7 +22159,7 @@
           .sort((i, j) => points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1]); // for exact neighbors
         const e = this.collinear[0], f = this.collinear[this.collinear.length - 1],
           bounds = [ points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1] ],
-          r = 1e-8 * Math.sqrt((bounds[3] - bounds[1])**2 + (bounds[2] - bounds[0])**2);
+          r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
         for (let i = 0, n = points.length / 2; i < n; ++i) {
           const p = jitter(points[2 * i], points[2 * i + 1], r);
           points[2 * i] = p[0];
@@ -21636,12 +22238,12 @@
       const {inedges, hull, _hullIndex, halfedges, triangles, points} = this;
       if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
       let c = i;
-      let dc = (x - points[i * 2]) ** 2 + (y - points[i * 2 + 1]) ** 2;
+      let dc = pow$2(x - points[i * 2], 2) + pow$2(y - points[i * 2 + 1], 2);
       const e0 = inedges[i];
       let e = e0;
       do {
         let t = triangles[e];
-        const dt = (x - points[t * 2]) ** 2 + (y - points[t * 2 + 1]) ** 2;
+        const dt = pow$2(x - points[t * 2], 2) + pow$2(y - points[t * 2 + 1], 2);
         if (dt < dc) dc = dt, c = t;
         e = e % 3 === 2 ? e - 2 : e + 1;
         if (triangles[e] !== i) break; // bad triangulation
@@ -21649,7 +22251,7 @@
         if (e === -1) {
           e = hull[(_hullIndex[i] + 1) % hull.length];
           if (e !== t) {
-            if ((x - points[e * 2]) ** 2 + (y - points[e * 2 + 1]) ** 2 < dc) return e;
+            if (pow$2(x - points[e * 2], 2) + pow$2(y - points[e * 2 + 1], 2) < dc) return e;
           }
           break;
         }
@@ -21747,16 +22349,16 @@
   }
 
   Voronoi$1.Definition = {
-    "type": "Voronoi",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "x", "type": "field", "required": true },
-      { "name": "y", "type": "field", "required": true },
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "extent", "type": "array", "array": true, "length": 2,
-        "default": [[-1e5, -1e5], [1e5, 1e5]],
-        "content": {"type": "number", "array": true, "length": 2} },
-      { "name": "as", "type": "string", "default": "path" }
+    'type': 'Voronoi',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'x', 'type': 'field', 'required': true },
+      { 'name': 'y', 'type': 'field', 'required': true },
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'extent', 'type': 'array', 'array': true, 'length': 2,
+        'default': [[-1e5, -1e5], [1e5, 1e5]],
+        'content': {'type': 'number', 'array': true, 'length': 2} },
+      { 'name': 'as', 'type': 'string', 'default': 'path' }
     ]
   };
 
@@ -21798,8 +22400,6 @@
 
     return 'M' + p.slice(0, n + 1).join('L') + 'Z';
   }
-
-
 
   var voronoi = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -21904,13 +22504,13 @@
 
     function getContext(canvas) {
       canvas.width = canvas.height = 1;
-      var ratio = Math.sqrt(canvas.getContext("2d").getImageData(0, 0, 1, 1).data.length >> 2);
+      var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2);
       canvas.width = (cw << 5) / ratio;
       canvas.height = ch / ratio;
 
-      var context = canvas.getContext("2d");
-      context.fillStyle = context.strokeStyle = "red";
-      context.textAlign = "center";
+      var context = canvas.getContext('2d');
+      context.fillStyle = context.strokeStyle = 'red';
+      context.textAlign = 'center';
 
       return {context: context, ratio: ratio};
     }
@@ -22083,8 +22683,8 @@
     while (++di < n) {
       d = data[di];
       c.save();
-      c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
-      w = c.measureText(d.text + "m").width * ratio;
+      c.font = d.style + ' ' + d.weight + ' ' + ~~((d.size + 1) / ratio) + 'px ' + d.font;
+      w = c.measureText(d.text + 'm').width * ratio;
       h = d.size << 1;
       if (d.rotate) {
         var sr = Math.sin(d.rotate * cloudRadians),
@@ -22228,7 +22828,7 @@
   }
 
   function functor(d) {
-    return typeof d === "function" ? d : function() { return d; };
+    return typeof d === 'function' ? d : function() { return d; };
   }
 
   var spirals = {
@@ -22245,20 +22845,20 @@
   }
 
   Wordcloud.Definition = {
-    "type": "Wordcloud",
-    "metadata": {"modifies": true},
-    "params": [
-      { "name": "size", "type": "number", "array": true, "length": 2 },
-      { "name": "font", "type": "string", "expr": true, "default": "sans-serif" },
-      { "name": "fontStyle", "type": "string", "expr": true, "default": "normal" },
-      { "name": "fontWeight", "type": "string", "expr": true, "default": "normal" },
-      { "name": "fontSize", "type": "number", "expr": true, "default": 14 },
-      { "name": "fontSizeRange", "type": "number", "array": "nullable", "default": [10, 50] },
-      { "name": "rotate", "type": "number", "expr": true, "default": 0 },
-      { "name": "text", "type": "field" },
-      { "name": "spiral", "type": "string", "values": ["archimedean", "rectangular"] },
-      { "name": "padding", "type": "number", "expr": true },
-      { "name": "as", "type": "string", "array": true, "length": 7, "default": Output$5 }
+    'type': 'Wordcloud',
+    'metadata': {'modifies': true},
+    'params': [
+      { 'name': 'size', 'type': 'number', 'array': true, 'length': 2 },
+      { 'name': 'font', 'type': 'string', 'expr': true, 'default': 'sans-serif' },
+      { 'name': 'fontStyle', 'type': 'string', 'expr': true, 'default': 'normal' },
+      { 'name': 'fontWeight', 'type': 'string', 'expr': true, 'default': 'normal' },
+      { 'name': 'fontSize', 'type': 'number', 'expr': true, 'default': 14 },
+      { 'name': 'fontSizeRange', 'type': 'number', 'array': 'nullable', 'default': [10, 50] },
+      { 'name': 'rotate', 'type': 'number', 'expr': true, 'default': 0 },
+      { 'name': 'text', 'type': 'field' },
+      { 'name': 'spiral', 'type': 'string', 'values': ['archimedean', 'rectangular'] },
+      { 'name': 'padding', 'type': 'number', 'expr': true },
+      { 'name': 'as', 'type': 'string', 'array': true, 'length': 7, 'default': Output$5 }
     ]
   };
 
@@ -22338,8 +22938,6 @@
 
     return pulse.reflow(mod).modifies(as);
   };
-
-
 
   var wordcloud = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -22614,12 +23212,12 @@
   }
 
   CrossFilter.Definition = {
-    "type": "CrossFilter",
-    "metadata": {},
-    "params": [
-      { "name": "fields", "type": "field", "array": true, "required": true },
-      { "name": "query", "type": "array", "array": true, "required": true,
-        "content": {"type": "number", "array": true, "length": 2} }
+    'type': 'CrossFilter',
+    'metadata': {},
+    'params': [
+      { 'name': 'fields', 'type': 'field', 'array': true, 'required': true },
+      { 'name': 'query', 'type': 'array', 'array': true, 'required': true,
+        'content': {'type': 'number', 'array': true, 'length': 2} }
     ]
   };
 
@@ -22993,13 +23591,13 @@
   }
 
   ResolveFilter.Definition = {
-    "type": "ResolveFilter",
-    "metadata": {},
-    "params": [
-      { "name": "ignore", "type": "number", "required": true,
-        "description": "A bit mask indicating which filters to ignore." },
-      { "name": "filter", "type": "object", "required": true,
-        "description": "Per-tuple filter bitmaps from a CrossFilter transform." }
+    'type': 'ResolveFilter',
+    'metadata': {},
+    'params': [
+      { 'name': 'ignore', 'type': 'number', 'required': true,
+        'description': 'A bit mask indicating which filters to ignore.' },
+      { 'name': 'filter', 'type': 'object', 'required': true,
+        'description': 'Per-tuple filter bitmaps from a CrossFilter transform.' }
     ]
   };
 
@@ -23051,21 +23649,20 @@
     return output.filter(output.SOURCE, function(t) { return pass(t._index); });
   };
 
-
-
   var xf = /*#__PURE__*/Object.freeze({
     __proto__: null,
     crossfilter: CrossFilter,
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.10.0";
+  var version = "5.13.0";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
     const el = view.container();
     if (el) {
-      el.setAttribute('role', 'figure');
+      el.setAttribute('role', 'graphics-document');
+      el.setAttribute('aria-roleDescription', 'visualization');
       ariaLabel(el, view.description());
     }
   }
@@ -23086,31 +23683,31 @@
     }, { bg: view._signals.background });
   }
 
-  var Default = 'default';
+  const Default = 'default';
 
   function cursor(view) {
-    var cursor = view._signals.cursor;
-
-    // add cursor signal to dataflow, if needed
-    if (!cursor) {
-      view._signals.cursor = (cursor = view.add({user: Default, item: null}));
-    }
+    // get cursor signal, add to dataflow if needed
+    const cursor = view._signals.cursor || (view._signals.cursor = view.add({
+      user: Default,
+      item: null
+    }));
 
     // evaluate cursor on each mousemove event
     view.on(view.events('view', 'mousemove'), cursor,
       function(_, event) {
-        var value = cursor.value,
-            user = value ? (isString(value) ? value : value.user) : Default,
-            item = event.item && event.item.cursor || null;
+        const value = cursor.value,
+              user = value ? (isString(value) ? value : value.user) : Default,
+              item = event.item && event.item.cursor || null;
 
-        return (value && user === value.user && item == value.item) ? value
+        return (value && user === value.user && item == value.item)
+          ? value
           : {user: user, item: item};
       }
     );
 
     // when cursor signal updates, set visible cursor
     view.add(null, function(_) {
-      var user = _.cursor,
+      let user = _.cursor,
           item = this.value;
 
       if (!isString(user)) {
@@ -23118,17 +23715,21 @@
         user = user.user;
       }
 
-      setCursor(user && user !== Default ? user : (item || user));
+      setCursor(view, user && user !== Default ? user : (item || user));
 
       return item;
     }, {cursor: cursor});
   }
 
-  function setCursor(cursor) {
-    // set cursor on document body
-    // this ensures cursor applies even if dragging out of view
-    if (typeof document !== 'undefined' && document.body) {
-      document.body.style.cursor = cursor;
+  function setCursor(view, cursor) {
+    const el = view.globalCursor()
+      ? (typeof document !== 'undefined' && document.body)
+      : view.container();
+
+    if (el) {
+      return cursor == null
+        ? el.style.removeProperty('cursor')
+        : (el.style.cursor = cursor);
     }
   }
 
@@ -23469,10 +24070,9 @@
     return el;
   }
 
-  var BindClass = 'vega-bind',
-      NameClass = 'vega-bind-name',
-      RadioClass = 'vega-bind-radio',
-      OptionClass = 'vega-option-';
+  const BindClass = 'vega-bind',
+        NameClass = 'vega-bind-name',
+        RadioClass = 'vega-bind-radio';
 
   /**
    * Bind a signal to an external HTML input element. The resulting two-way
@@ -23490,15 +24090,15 @@
   function bind$1(view, el, binding) {
     if (!el) return;
 
-    var param = binding.param,
-        bind = binding.state;
+    const param = binding.param;
+    let bind = binding.state;
 
     if (!bind) {
       bind = binding.state = {
         elements: null,
         active: false,
         set: null,
-        update: function(value) {
+        update: value => {
           if (value !== view.signal(param.signal)) {
             view.runAsync(null, function() {
               bind.source = true;
@@ -23515,7 +24115,7 @@
     generate(bind, el, param, view.signal(param.signal));
 
     if (!bind.active) {
-      view.on(view._signals[param.signal], null, function() {
+      view.on(view._signals[param.signal], null, () => {
         bind.source
           ? (bind.source = false)
           : bind.set(view.signal(param.signal));
@@ -23530,16 +24130,20 @@
    * Generate an HTML input form element and bind it to a signal.
    */
   function generate(bind, el, param, value) {
-    var div = element$1('div', {'class': BindClass});
+    const div = element$1('div', {'class': BindClass});
 
-    div.appendChild(element$1('span',
+    const wrapper = param.input === 'radio'
+      ? div
+      : div.appendChild(element$1('label'));
+
+    wrapper.appendChild(element$1('span',
       {'class': NameClass},
       (param.name || param.signal)
     ));
 
     el.appendChild(div);
 
-    var input = form;
+    let input = form;
     switch (param.input) {
       case 'checkbox': input = checkbox; break;
       case 'select':   input = select; break;
@@ -23547,7 +24151,7 @@
       case 'range':    input = range; break;
     }
 
-    input(bind, div, param, value);
+    input(bind, wrapper, param, value);
   }
 
   /**
@@ -23555,9 +24159,9 @@
    * The input type is controlled via user-provided parameters.
    */
   function form(bind, el, param, value) {
-    var node = element$1('input');
+    const node = element$1('input');
 
-    for (var key in param) {
+    for (const key in param) {
       if (key !== 'signal' && key !== 'element') {
         node.setAttribute(key === 'input' ? 'type' : key, param[key]);
       }
@@ -23566,55 +24170,49 @@
     node.value = value;
 
     el.appendChild(node);
-
-    node.addEventListener('input', function() {
-      bind.update(node.value);
-    });
+    node.addEventListener('input', () => bind.update(node.value));
 
     bind.elements = [node];
-    bind.set = function(value) { node.value = value; };
+    bind.set = value => node.value = value;
   }
 
   /**
    * Generates a checkbox input element.
    */
   function checkbox(bind, el, param, value) {
-    var attr = {type: 'checkbox', name: param.signal};
+    const attr = {type: 'checkbox', name: param.signal};
     if (value) attr.checked = true;
-    var node = element$1('input', attr);
+    const node = element$1('input', attr);
 
     el.appendChild(node);
-
-    node.addEventListener('change', function() {
-      bind.update(node.checked);
-    });
+    node.addEventListener('change', () => bind.update(node.checked));
 
     bind.elements = [node];
-    bind.set = function(value) { node.checked = !!value || null; };
+    bind.set = value => node.checked = !!value || null;
   }
 
   /**
    * Generates a selection list input element.
    */
   function select(bind, el, param, value) {
-    var node = element$1('select', {name: param.signal}),
-        label = param.labels || [];
+    const node = element$1('select', {name: param.signal}),
+          labels = param.labels || [];
 
-    param.options.forEach(function(option, i) {
-      var attr = {value: option};
+    param.options.forEach((option, i) => {
+      const attr = {value: option};
       if (valuesEqual(option, value)) attr.selected = true;
-      node.appendChild(element$1('option', attr, (label[i] || option)+''));
+      node.appendChild(element$1('option', attr, (labels[i] || option)+''));
     });
 
     el.appendChild(node);
 
-    node.addEventListener('change', function() {
+    node.addEventListener('change', () => {
       bind.update(param.options[node.selectedIndex]);
     });
 
     bind.elements = [node];
-    bind.set = function(value) {
-      for (var i=0, n=param.options.length; i<n; ++i) {
+    bind.set = value => {
+      for (let i = 0, n = param.options.length; i < n; ++i) {
         if (valuesEqual(param.options[i], value)) {
           node.selectedIndex = i; return;
         }
@@ -23626,39 +24224,33 @@
    * Generates a radio button group.
    */
   function radio(bind, el, param, value) {
-    var group = element$1('span', {'class': RadioClass}),
-        label = param.labels || [];
+    const group = element$1('span', {'class': RadioClass}),
+          labels = param.labels || [];
 
     el.appendChild(group);
 
-    bind.elements = param.options.map(function(option, i) {
-      var id = OptionClass + param.signal + '-' + option;
-
-      var attr = {
-        id:    id,
+    bind.elements = param.options.map((option, i) => {
+      const attr = {
         type:  'radio',
         name:  param.signal,
         value: option
       };
       if (valuesEqual(option, value)) attr.checked = true;
 
-      var input = element$1('input', attr);
+      const input = element$1('input', attr);
+      input.addEventListener('change', () => bind.update(option));
 
-      input.addEventListener('change', function() {
-        bind.update(option);
-      });
-
-      group.appendChild(input);
-      group.appendChild(element$1('label', {'for': id}, (label[i] || option)+''));
+      const label = element$1('label', {}, (labels[i] || option)+'');
+      label.prepend(input);
+      group.appendChild(label);
 
       return input;
     });
 
-    bind.set = function(value) {
-      var nodes = bind.elements,
-          i = 0,
-          n = nodes.length;
-      for (; i<n; ++i) {
+    bind.set = value => {
+      const nodes = bind.elements,
+            n = nodes.length;
+      for (let i = 0; i < n; ++i) {
         if (valuesEqual(nodes[i].value, value)) nodes[i].checked = true;
       }
     };
@@ -23670,11 +24262,11 @@
   function range(bind, el, param, value) {
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
-    var max = param.max != null ? param.max : Math.max(100, +value) || 100,
-        min = param.min || Math.min(0, max, +value) || 0,
-        step = param.step || tickStep(min, max, 100);
+    const max = param.max != null ? param.max : Math.max(100, +value) || 100,
+          min = param.min || Math.min(0, max, +value) || 0,
+          step = param.step || tickStep(min, max, 100);
 
-    var node = element$1('input', {
+    const node = element$1('input', {
       type:  'range',
       name:  param.signal,
       min:   min,
@@ -23683,24 +24275,24 @@
     });
     node.value = value;
 
-    var label = element$1('label', {}, +value);
+    const span = element$1('span', {}, +value);
 
     el.appendChild(node);
-    el.appendChild(label);
+    el.appendChild(span);
 
-    function update() {
-      label.textContent = node.value;
+    const update = () => {
+      span.textContent = node.value;
       bind.update(+node.value);
-    }
+    };
 
     // subscribe to both input and change
     node.addEventListener('input', update);
     node.addEventListener('change', update);
 
     bind.elements = [node];
-    bind.set = function(value) {
+    bind.set = value => {
       node.value = value;
-      label.textContent = value;
+      span.textContent = value;
     };
   }
 
@@ -23767,7 +24359,7 @@
     // initialize signal bindings
     if (el && config !== 'none') {
       elBind = elBind ? (view._elBind = lookup$4(view, elBind))
-        : el.appendChild(element$1('div', {'class': 'vega-bindings'}));
+        : el.appendChild(element$1('form', {'class': 'vega-bindings'}));
 
       view._bind.forEach(function(_) {
         if (_.param.element && config !== 'container') {
@@ -23882,6 +24474,77 @@
     const r = await renderHeadless(this, RenderType.SVG, scaleFactor);
     return r.svg();
   }
+
+  function data$1(name) {
+    const data = this.context.data[name];
+    return data ? data.values.value : [];
+  }
+
+  function indata(name, field, value) {
+    const index = this.context.data[name]['index:' + field],
+          entry = index ? index.value.get(value) : undefined;
+    return entry ? entry.count : entry;
+  }
+
+  function setdata(name, tuples) {
+    const df = this.context.dataflow,
+          data = this.context.data[name],
+          input = data.input;
+
+    df.pulse(input, df.changeset().remove(truthy).insert(tuples));
+    return 1;
+  }
+
+  function encode$1(item, name, retval) {
+    if (item) {
+      const df = this.context.dataflow,
+            target = item.mark.source;
+      df.pulse(target, df.changeset().encode(item, name));
+    }
+    return retval !== undefined ? retval : item;
+  }
+
+  const wrap = method => function(value, spec) {
+    const locale = this.context.dataflow.locale();
+    return locale[method](spec)(value);
+  };
+
+  const format$2 = wrap('format');
+  const timeFormat = wrap('timeFormat');
+  const utcFormat = wrap('utcFormat');
+  const timeParse = wrap('timeParse');
+  const utcParse = wrap('utcParse');
+
+  var dateObj = new Date(2000, 0, 1);
+
+  function time$1(month, day, specifier) {
+    if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
+    dateObj.setYear(2000);
+    dateObj.setMonth(month);
+    dateObj.setDate(day);
+    return timeFormat.call(this, dateObj, specifier);
+  }
+
+  function monthFormat(month) {
+    return time$1.call(this, month, 1, '%B');
+  }
+
+  function monthAbbrevFormat(month) {
+    return time$1.call(this, month, 1, '%b');
+  }
+
+  function dayFormat(day) {
+    return time$1.call(this, 0, 2 + day, '%A');
+  }
+
+  function dayAbbrevFormat(day) {
+    return time$1.call(this, 0, 2 + day, '%a');
+  }
+
+  const DataPrefix   = ':';
+  const IndexPrefix  = '@';
+  const ScalePrefix  = '%';
+  const SignalPrefix = '$';
 
   var RawCode = 'RawCode';
   var Literal = 'Literal';
@@ -24031,9 +24694,9 @@
       DISABLED = 'Disabled.';
 
   // See also tools/generate-unicode-regex.py.
-  var RegexNonAsciiIdentifierStart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0800-\\u0815\\u081A\\u0824\\u0828\\u0840-\\u0858\\u08A0-\\u08B2\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971-\\u0980\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC-\\u0EDF\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1AA7\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BBA-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u1CF5\\u1CF6\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u209C\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CEE\\u2CF2\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005-\\u3007\\u3021-\\u3029\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA66E\\uA67F-\\uA69D\\uA6A0-\\uA6EF\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uA9CF\\uA9E0-\\uA9E4\\uA9E6-\\uA9EF\\uA9FA-\\uA9FE\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA76\\uAA7A\\uAA7E-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEA\\uAAF2-\\uAAF4\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABE2\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]"),
+  var RegexNonAsciiIdentifierStart = new RegExp('[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0800-\\u0815\\u081A\\u0824\\u0828\\u0840-\\u0858\\u08A0-\\u08B2\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971-\\u0980\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC-\\u0EDF\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1AA7\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BBA-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u1CF5\\u1CF6\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u209C\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CEE\\u2CF2\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005-\\u3007\\u3021-\\u3029\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA66E\\uA67F-\\uA69D\\uA6A0-\\uA6EF\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uA9CF\\uA9E0-\\uA9E4\\uA9E6-\\uA9EF\\uA9FA-\\uA9FE\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA76\\uAA7A\\uAA7E-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEA\\uAAF2-\\uAAF4\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABE2\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]'),
       // eslint-disable-next-line no-misleading-character-class
-      RegexNonAsciiIdentifierPart = new RegExp("[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0300-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u0483-\\u0487\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0610-\\u061A\\u0620-\\u0669\\u066E-\\u06D3\\u06D5-\\u06DC\\u06DF-\\u06E8\\u06EA-\\u06FC\\u06FF\\u0710-\\u074A\\u074D-\\u07B1\\u07C0-\\u07F5\\u07FA\\u0800-\\u082D\\u0840-\\u085B\\u08A0-\\u08B2\\u08E4-\\u0963\\u0966-\\u096F\\u0971-\\u0983\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BC-\\u09C4\\u09C7\\u09C8\\u09CB-\\u09CE\\u09D7\\u09DC\\u09DD\\u09DF-\\u09E3\\u09E6-\\u09F1\\u0A01-\\u0A03\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A3C\\u0A3E-\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A59-\\u0A5C\\u0A5E\\u0A66-\\u0A75\\u0A81-\\u0A83\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABC-\\u0AC5\\u0AC7-\\u0AC9\\u0ACB-\\u0ACD\\u0AD0\\u0AE0-\\u0AE3\\u0AE6-\\u0AEF\\u0B01-\\u0B03\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3C-\\u0B44\\u0B47\\u0B48\\u0B4B-\\u0B4D\\u0B56\\u0B57\\u0B5C\\u0B5D\\u0B5F-\\u0B63\\u0B66-\\u0B6F\\u0B71\\u0B82\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BBE-\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCD\\u0BD0\\u0BD7\\u0BE6-\\u0BEF\\u0C00-\\u0C03\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D-\\u0C44\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C58\\u0C59\\u0C60-\\u0C63\\u0C66-\\u0C6F\\u0C81-\\u0C83\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBC-\\u0CC4\\u0CC6-\\u0CC8\\u0CCA-\\u0CCD\\u0CD5\\u0CD6\\u0CDE\\u0CE0-\\u0CE3\\u0CE6-\\u0CEF\\u0CF1\\u0CF2\\u0D01-\\u0D03\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D-\\u0D44\\u0D46-\\u0D48\\u0D4A-\\u0D4E\\u0D57\\u0D60-\\u0D63\\u0D66-\\u0D6F\\u0D7A-\\u0D7F\\u0D82\\u0D83\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0DCA\\u0DCF-\\u0DD4\\u0DD6\\u0DD8-\\u0DDF\\u0DE6-\\u0DEF\\u0DF2\\u0DF3\\u0E01-\\u0E3A\\u0E40-\\u0E4E\\u0E50-\\u0E59\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB9\\u0EBB-\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EC8-\\u0ECD\\u0ED0-\\u0ED9\\u0EDC-\\u0EDF\\u0F00\\u0F18\\u0F19\\u0F20-\\u0F29\\u0F35\\u0F37\\u0F39\\u0F3E-\\u0F47\\u0F49-\\u0F6C\\u0F71-\\u0F84\\u0F86-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u1000-\\u1049\\u1050-\\u109D\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u135D-\\u135F\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1714\\u1720-\\u1734\\u1740-\\u1753\\u1760-\\u176C\\u176E-\\u1770\\u1772\\u1773\\u1780-\\u17D3\\u17D7\\u17DC\\u17DD\\u17E0-\\u17E9\\u180B-\\u180D\\u1810-\\u1819\\u1820-\\u1877\\u1880-\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1920-\\u192B\\u1930-\\u193B\\u1946-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19B0-\\u19C9\\u19D0-\\u19D9\\u1A00-\\u1A1B\\u1A20-\\u1A5E\\u1A60-\\u1A7C\\u1A7F-\\u1A89\\u1A90-\\u1A99\\u1AA7\\u1AB0-\\u1ABD\\u1B00-\\u1B4B\\u1B50-\\u1B59\\u1B6B-\\u1B73\\u1B80-\\u1BF3\\u1C00-\\u1C37\\u1C40-\\u1C49\\u1C4D-\\u1C7D\\u1CD0-\\u1CD2\\u1CD4-\\u1CF6\\u1CF8\\u1CF9\\u1D00-\\u1DF5\\u1DFC-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u200C\\u200D\\u203F\\u2040\\u2054\\u2071\\u207F\\u2090-\\u209C\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D7F-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2DE0-\\u2DFF\\u2E2F\\u3005-\\u3007\\u3021-\\u302F\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u3099\\u309A\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA62B\\uA640-\\uA66F\\uA674-\\uA67D\\uA67F-\\uA69D\\uA69F-\\uA6F1\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA827\\uA840-\\uA873\\uA880-\\uA8C4\\uA8D0-\\uA8D9\\uA8E0-\\uA8F7\\uA8FB\\uA900-\\uA92D\\uA930-\\uA953\\uA960-\\uA97C\\uA980-\\uA9C0\\uA9CF-\\uA9D9\\uA9E0-\\uA9FE\\uAA00-\\uAA36\\uAA40-\\uAA4D\\uAA50-\\uAA59\\uAA60-\\uAA76\\uAA7A-\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEF\\uAAF2-\\uAAF6\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABEA\\uABEC\\uABED\\uABF0-\\uABF9\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE00-\\uFE0F\\uFE20-\\uFE2D\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF10-\\uFF19\\uFF21-\\uFF3A\\uFF3F\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]");
+      RegexNonAsciiIdentifierPart = new RegExp('[\\xAA\\xB5\\xBA\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0300-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u0483-\\u0487\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0610-\\u061A\\u0620-\\u0669\\u066E-\\u06D3\\u06D5-\\u06DC\\u06DF-\\u06E8\\u06EA-\\u06FC\\u06FF\\u0710-\\u074A\\u074D-\\u07B1\\u07C0-\\u07F5\\u07FA\\u0800-\\u082D\\u0840-\\u085B\\u08A0-\\u08B2\\u08E4-\\u0963\\u0966-\\u096F\\u0971-\\u0983\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BC-\\u09C4\\u09C7\\u09C8\\u09CB-\\u09CE\\u09D7\\u09DC\\u09DD\\u09DF-\\u09E3\\u09E6-\\u09F1\\u0A01-\\u0A03\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A3C\\u0A3E-\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A59-\\u0A5C\\u0A5E\\u0A66-\\u0A75\\u0A81-\\u0A83\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABC-\\u0AC5\\u0AC7-\\u0AC9\\u0ACB-\\u0ACD\\u0AD0\\u0AE0-\\u0AE3\\u0AE6-\\u0AEF\\u0B01-\\u0B03\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3C-\\u0B44\\u0B47\\u0B48\\u0B4B-\\u0B4D\\u0B56\\u0B57\\u0B5C\\u0B5D\\u0B5F-\\u0B63\\u0B66-\\u0B6F\\u0B71\\u0B82\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BBE-\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCD\\u0BD0\\u0BD7\\u0BE6-\\u0BEF\\u0C00-\\u0C03\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D-\\u0C44\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C58\\u0C59\\u0C60-\\u0C63\\u0C66-\\u0C6F\\u0C81-\\u0C83\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBC-\\u0CC4\\u0CC6-\\u0CC8\\u0CCA-\\u0CCD\\u0CD5\\u0CD6\\u0CDE\\u0CE0-\\u0CE3\\u0CE6-\\u0CEF\\u0CF1\\u0CF2\\u0D01-\\u0D03\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D-\\u0D44\\u0D46-\\u0D48\\u0D4A-\\u0D4E\\u0D57\\u0D60-\\u0D63\\u0D66-\\u0D6F\\u0D7A-\\u0D7F\\u0D82\\u0D83\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0DCA\\u0DCF-\\u0DD4\\u0DD6\\u0DD8-\\u0DDF\\u0DE6-\\u0DEF\\u0DF2\\u0DF3\\u0E01-\\u0E3A\\u0E40-\\u0E4E\\u0E50-\\u0E59\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB9\\u0EBB-\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EC8-\\u0ECD\\u0ED0-\\u0ED9\\u0EDC-\\u0EDF\\u0F00\\u0F18\\u0F19\\u0F20-\\u0F29\\u0F35\\u0F37\\u0F39\\u0F3E-\\u0F47\\u0F49-\\u0F6C\\u0F71-\\u0F84\\u0F86-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u1000-\\u1049\\u1050-\\u109D\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u135D-\\u135F\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1714\\u1720-\\u1734\\u1740-\\u1753\\u1760-\\u176C\\u176E-\\u1770\\u1772\\u1773\\u1780-\\u17D3\\u17D7\\u17DC\\u17DD\\u17E0-\\u17E9\\u180B-\\u180D\\u1810-\\u1819\\u1820-\\u1877\\u1880-\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1920-\\u192B\\u1930-\\u193B\\u1946-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19B0-\\u19C9\\u19D0-\\u19D9\\u1A00-\\u1A1B\\u1A20-\\u1A5E\\u1A60-\\u1A7C\\u1A7F-\\u1A89\\u1A90-\\u1A99\\u1AA7\\u1AB0-\\u1ABD\\u1B00-\\u1B4B\\u1B50-\\u1B59\\u1B6B-\\u1B73\\u1B80-\\u1BF3\\u1C00-\\u1C37\\u1C40-\\u1C49\\u1C4D-\\u1C7D\\u1CD0-\\u1CD2\\u1CD4-\\u1CF6\\u1CF8\\u1CF9\\u1D00-\\u1DF5\\u1DFC-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u200C\\u200D\\u203F\\u2040\\u2054\\u2071\\u207F\\u2090-\\u209C\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D7F-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2DE0-\\u2DFF\\u2E2F\\u3005-\\u3007\\u3021-\\u302F\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u3099\\u309A\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA62B\\uA640-\\uA66F\\uA674-\\uA67D\\uA67F-\\uA69D\\uA69F-\\uA6F1\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA827\\uA840-\\uA873\\uA880-\\uA8C4\\uA8D0-\\uA8D9\\uA8E0-\\uA8F7\\uA8FB\\uA900-\\uA92D\\uA930-\\uA953\\uA960-\\uA97C\\uA980-\\uA9C0\\uA9CF-\\uA9D9\\uA9E0-\\uA9FE\\uAA00-\\uAA36\\uAA40-\\uAA4D\\uAA50-\\uAA59\\uAA60-\\uAA76\\uAA7A-\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEF\\uAAF2-\\uAAF6\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABEA\\uABEC\\uABED\\uABF0-\\uABF9\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE00-\\uFE0F\\uFE20-\\uFE2D\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF10-\\uFF19\\uFF21-\\uFF3A\\uFF3F\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]');
 
   // Ensure the condition is true, otherwise throw an error.
   // This is only to have a better contract semantic, i.e. another safety net
@@ -25104,8 +25767,7 @@
   // 11.1 Primary Expressions
 
   var legalKeywords = {
-    "if": 1,
-    "this": 1
+    'if': 1
   };
 
   function parsePrimaryExpression() {
@@ -25433,7 +26095,7 @@
     var expr = parseExpression();
 
     if (lookahead.type !== TokenEOF) {
-      throw new Error("Unexpect token after expression.");
+      throw new Error('Unexpect token after expression.');
     }
     return expr;
   }
@@ -25694,6 +26356,389 @@
     return codegen;
   }
 
+  function dataVisitor(name, args, scope, params) {
+    if (args[0].type !== Literal) {
+      error('First argument to data functions must be a string literal.');
+    }
+
+    const data = args[0].value,
+          dataName = DataPrefix + data;
+
+    if (!hasOwnProperty(dataName, params)) {
+      try {
+        params[dataName] = scope.getData(data).tuplesRef();
+      } catch (err) {
+        // if data set does not exist, there's nothing to track
+      }
+    }
+  }
+
+  function indataVisitor(name, args, scope, params) {
+    if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
+    if (args[1].type !== Literal) error('Second argument to indata must be a string literal.');
+
+    const data = args[0].value,
+          field = args[1].value,
+          indexName = IndexPrefix + field;
+
+    if (!hasOwnProperty(indexName, params)) {
+      params[indexName] = scope.getData(data).indataRef(scope, field);
+    }
+  }
+
+  function scaleVisitor(name, args, scope, params) {
+    if (args[0].type === Literal) {
+      // add scale dependency
+      addScaleDependency(scope, params, args[0].value);
+    } else {
+      // indirect scale lookup; add all scales as parameters
+      for (name in scope.scales) {
+        addScaleDependency(scope, params, name);
+      }
+    }
+  }
+
+  function addScaleDependency(scope, params, name) {
+    const scaleName = ScalePrefix + name;
+    if (!hasOwnProperty(params, scaleName)) {
+      try {
+        params[scaleName] = scope.scaleRef(name);
+      } catch (err) {
+        // TODO: error handling? warning?
+      }
+    }
+  }
+
+  function getScale(name, ctx) {
+    let s;
+    return isFunction(name) ? name
+      : isString(name) ? (s = ctx.scales[name]) && s.value
+      : undefined;
+  }
+
+  function internalScaleFunctions(codegen, fnctx, visitors) {
+    // add helper method to the 'this' expression function context
+    fnctx.__bandwidth = s => s && s.bandwidth ? s.bandwidth() : 0;
+
+    // register AST visitors for internal scale functions
+    visitors._bandwidth = scaleVisitor;
+    visitors._range = scaleVisitor;
+    visitors._scale = scaleVisitor;
+
+    // resolve scale reference directly to the signal hash argument
+    const ref = arg => '_[' + (
+      arg.type === Literal
+        ? $(ScalePrefix + arg.value)
+        : $(ScalePrefix) + '+' + codegen(arg)
+    ) + ']';
+
+    // define and return internal scale function code generators
+    // these internal functions are called by mark encoders
+    return {
+      _bandwidth: args => `this.__bandwidth(${ref(args[0])})`,
+      _range: args => `${ref(args[0])}.range()`,
+      _scale: args => `${ref(args[0])}(${codegen(args[1])})`
+    };
+  }
+
+  function geoMethod(methodName, globalMethod) {
+    return function(projection, geojson, group) {
+      if (projection) {
+        // projection defined, use it
+        const p = getScale(projection, (group || this).context);
+        return p && p.path[methodName](geojson);
+      } else {
+        // projection undefined, use global method
+        return globalMethod(geojson);
+      }
+    };
+  }
+
+  const geoArea = geoMethod('area', d3Geo.geoArea);
+  const geoBounds = geoMethod('bounds', d3Geo.geoBounds);
+  const geoCentroid = geoMethod('centroid', d3Geo.geoCentroid);
+
+  function inScope(item) {
+    let group = this.context.group,
+        value = false;
+
+    if (group) while (item) {
+      if (item === group) { value = true; break; }
+      item = item.mark.group;
+    }
+    return value;
+  }
+
+  function log$3(df, method, args) {
+    try {
+      df[method].apply(df, ['EXPRESSION'].concat([].slice.call(args)));
+    } catch (err) {
+      df.warn(err);
+    }
+    return args[args.length-1];
+  }
+
+  function warn() {
+    return log$3(this.context.dataflow, 'warn', arguments);
+  }
+
+  function info() {
+    return log$3(this.context.dataflow, 'info', arguments);
+  }
+
+  function debug() {
+    return log$3(this.context.dataflow, 'debug', arguments);
+  }
+
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  function channel_luminance_value(channelValue) {
+    const val = channelValue / 255;
+    if (val <= 0.03928) {
+      return val / 12.92;
+    }
+    return Math.pow((val + 0.055) / 1.055, 2.4);
+  }
+
+  function luminance(color) {
+    const c = d3Color.rgb(color),
+          r = channel_luminance_value(c.r),
+          g = channel_luminance_value(c.g),
+          b = channel_luminance_value(c.b);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  function contrast(color1, color2) {
+    const lum1 = luminance(color1),
+          lum2 = luminance(color2),
+          lumL = Math.max(lum1, lum2),
+          lumD = Math.min(lum1, lum2);
+    return (lumL + 0.05) / (lumD + 0.05);
+  }
+
+  function merge$2() {
+    var args = [].slice.call(arguments);
+    args.unshift({});
+    return extend.apply(null, args);
+  }
+
+  function equal(a, b) {
+    return a === b || a !== a && b !== b ? true
+      : isArray(a) ? (
+          isArray(b) && a.length === b.length ? equalArray(a, b) : false
+        )
+      : isObject(a) && isObject(b) ? equalObject(a, b)
+      : false;
+  }
+
+  function equalArray(a, b) {
+    for (let i=0, n=a.length; i<n; ++i) {
+      if (!equal(a[i], b[i])) return false;
+    }
+    return true;
+  }
+
+  function equalObject(a, b) {
+    for (let key in a) {
+      if (!equal(a[key], b[key])) return false;
+    }
+    return true;
+  }
+
+  function removePredicate(props) {
+    return _ => equalObject(props, _);
+  }
+
+  function modify(name, insert, remove, toggle, modify, values) {
+    let df = this.context.dataflow,
+        data = this.context.data[name],
+        input = data.input,
+        changes = data.changes,
+        stamp = df.stamp(),
+        predicate, key;
+
+    if (df._trigger === false || !(input.value.length || insert || toggle)) {
+      // nothing to do!
+      return 0;
+    }
+
+    if (!changes || changes.stamp < stamp) {
+      data.changes = (changes = df.changeset());
+      changes.stamp = stamp;
+      df.runAfter(function() {
+        data.modified = true;
+        df.pulse(input, changes).run();
+      }, true, 1);
+    }
+
+    if (remove) {
+      predicate = remove === true ? truthy
+        : (isArray(remove) || isTuple(remove)) ? remove
+        : removePredicate(remove);
+      changes.remove(predicate);
+    }
+
+    if (insert) {
+      changes.insert(insert);
+    }
+
+    if (toggle) {
+      predicate = removePredicate(toggle);
+      if (input.value.some(predicate)) {
+        changes.remove(predicate);
+      } else {
+        changes.insert(toggle);
+      }
+    }
+
+    if (modify) {
+      for (key in values) {
+        changes.modify(modify, key, values[key]);
+      }
+    }
+
+    return 1;
+  }
+
+  function pinchDistance(event) {
+    const t = event.touches,
+          dx = t[0].clientX - t[1].clientX,
+          dy = t[0].clientY - t[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function pinchAngle(event) {
+    const t = event.touches;
+    return Math.atan2(
+      t[0].clientY - t[1].clientY,
+      t[0].clientX - t[1].clientX
+    );
+  }
+
+  function bandspace(count, paddingInner, paddingOuter) {
+    return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
+  }
+
+  function bandwidth(name, group) {
+    const s = getScale(name, (group || this).context);
+    return s && s.bandwidth ? s.bandwidth() : 0;
+  }
+
+  function copy$2(name, group) {
+    const s = getScale(name, (group || this).context);
+    return s ? s.copy() : undefined;
+  }
+
+  function domain(name, group) {
+    const s = getScale(name, (group || this).context);
+    return s ? s.domain() : [];
+  }
+
+  function invert(name, range, group) {
+    const s = getScale(name, (group || this).context);
+    return !s ? undefined
+      : isArray(range) ? (s.invertRange || s.invert)(range)
+      : (s.invert || s.invertExtent)(range);
+  }
+
+  function range$1(name, group) {
+    const s = getScale(name, (group || this).context);
+    return s && s.range ? s.range() : [];
+  }
+
+  function scale$3(name, value, group) {
+    const s = getScale(name, (group || this).context);
+    return s ? s(value) : undefined;
+  }
+
+  function scaleGradient(scale, p0, p1, count, group) {
+    scale = getScale(scale, (group || this).context);
+
+    const gradient = Gradient(p0, p1);
+
+    let stops = scale.domain(),
+        min = stops[0],
+        max = peek(stops),
+        fraction = identity;
+
+    if (!(max - min)) {
+      // expand scale if domain has zero span, fix #1479
+      scale = (scale.interpolator
+        ? scale$2('sequential')().interpolator(scale.interpolator())
+        : scale$2('linear')().interpolate(scale.interpolate()).range(scale.range())
+      ).domain([min=0, max=1]);
+    } else {
+      fraction = scaleFraction(scale, min, max);
+    }
+
+    if (scale.ticks) {
+      stops = scale.ticks(+count || 15);
+      if (min !== stops[0]) stops.unshift(min);
+      if (max !== peek(stops)) stops.push(max);
+    }
+
+    stops.forEach(_ => gradient.stop(fraction(_), scale(_)));
+
+    return gradient;
+  }
+
+  function geoShape(projection, geojson, group) {
+    const p = getScale(projection, (group || this).context);
+    return function(context) {
+      return p ? p.path.context(context)(geojson) : '';
+    };
+  }
+
+  function pathShape(path) {
+    let p = null;
+    return function(context) {
+      return context
+        ? pathRender(context, (p = p || pathParse(path)))
+        : path;
+    };
+  }
+
+  const datum = d => d.data;
+
+  function treeNodes(name, context) {
+    const tree = data$1.call(context, name);
+    return tree.root && tree.root.lookup || {};
+  }
+
+  function treePath(name, source, target) {
+    const nodes = treeNodes(name, this),
+          s = nodes[source],
+          t = nodes[target];
+    return s && t ? s.path(t).map(datum) : undefined;
+  }
+
+  function treeAncestors(name, node) {
+    const n = treeNodes(name, this)[node];
+    return n ? n.ancestors().map(datum) : undefined;
+  }
+
+  const _window = () => (typeof window !== 'undefined' && window) || null;
+
+  function screen() {
+    const w = _window();
+    return w ? w.screen : {};
+  }
+
+  function windowSize() {
+    const w = _window();
+    return w
+      ? [w.innerWidth, w.innerHeight]
+      : [undefined, undefined];
+  }
+
+  function containerSize() {
+    const view = this.context.dataflow,
+          el = view.container && view.container();
+    return el
+      ? [el.clientWidth, el.clientHeight]
+      : [undefined, undefined];
+  }
+
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
@@ -25907,8 +26952,8 @@
     }
   };
 
-  const DataPrefix = ':',
-        IndexPrefix = '@';
+  const DataPrefix$1 = ':',
+        IndexPrefix$1 = '@';
 
   function selectionVisitor(name, args, scope, params) {
     if (args[0].type !== Literal) error('First argument to selection functions must be a string literal.');
@@ -25916,8 +26961,8 @@
     const data = args[0].value,
           op = args.length >= 2 && peek(args).value,
           field = 'unit',
-          indexName = IndexPrefix + field,
-          dataName = DataPrefix + data;
+          indexName = IndexPrefix$1 + field,
+          dataName = DataPrefix$1 + data;
 
     // eslint-disable-next-line no-prototype-builtins
     if (op === Intersect && !hasOwnProperty(params, indexName)) {
@@ -25930,189 +26975,6 @@
     }
   }
 
-  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
-  function channel_luminance_value(channelValue) {
-    const val = channelValue / 255;
-    if (val <= 0.03928) {
-      return val / 12.92;
-    }
-    return Math.pow((val + 0.055) / 1.055, 2.4);
-  }
-
-  function luminance(color) {
-    const c = d3Color.rgb(color),
-          r = channel_luminance_value(c.r),
-          g = channel_luminance_value(c.g),
-          b = channel_luminance_value(c.b);
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  }
-
-  // https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
-  function contrast(color1, color2) {
-    const lum1 = luminance(color1),
-          lum2 = luminance(color2),
-          lumL = Math.max(lum1, lum2),
-          lumD = Math.min(lum1, lum2);
-    return (lumL + 0.05) / (lumD + 0.05);
-  }
-
-  function data$1(name) {
-    const data = this.context.data[name];
-    return data ? data.values.value : [];
-  }
-
-  function indata(name, field, value) {
-    const index = this.context.data[name]['index:' + field],
-          entry = index ? index.value.get(value) : undefined;
-    return entry ? entry.count : entry;
-  }
-
-  function setdata(name, tuples) {
-    const df = this.context.dataflow,
-          data = this.context.data[name],
-          input = data.input;
-
-    df.pulse(input, df.changeset().remove(truthy).insert(tuples));
-    return 1;
-  }
-
-  function encode$1(item, name, retval) {
-    if (item) {
-      const df = this.context.dataflow,
-            target = item.mark.source;
-      df.pulse(target, df.changeset().encode(item, name));
-    }
-    return retval !== undefined ? retval : item;
-  }
-
-  const formatCache = {};
-
-  function formatter$1(type, method, specifier) {
-    let k = type + ':' + specifier,
-        e = formatCache[k];
-    if (!e || e[0] !== method) {
-      formatCache[k] = (e = [method, method(specifier)]);
-    }
-    return e[1];
-  }
-
-  function format$1(_, specifier) {
-    return formatter$1('format', d3Format.format, specifier)(_);
-  }
-
-  function timeFormat$1(_, specifier) {
-    return formatter$1('timeFormat', timeFormat, specifier)(_);
-  }
-
-  function utcFormat$1(_, specifier) {
-    return formatter$1('utcFormat', utcFormat, specifier)(_);
-  }
-
-  function timeParse(_, specifier) {
-    return formatter$1('timeParse', d3TimeFormat.timeParse, specifier)(_);
-  }
-
-  function utcParse(_, specifier) {
-    return formatter$1('utcParse', d3TimeFormat.utcParse, specifier)(_);
-  }
-
-  var dateObj = new Date(2000, 0, 1);
-
-  function time$1(month, day, specifier) {
-    if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
-    dateObj.setYear(2000);
-    dateObj.setMonth(month);
-    dateObj.setDate(day);
-    return timeFormat$1(dateObj, specifier);
-  }
-
-  function monthFormat(month) {
-    return time$1(month, 1, '%B');
-  }
-
-  function monthAbbrevFormat(month) {
-    return time$1(month, 1, '%b');
-  }
-
-  function dayFormat(day) {
-    return time$1(0, 2 + day, '%A');
-  }
-
-  function dayAbbrevFormat(day) {
-    return time$1(0, 2 + day, '%a');
-  }
-
-  function getScale(name, ctx) {
-    let s;
-    return isFunction(name) ? name
-      : isString(name) ? (s = ctx.scales[name]) && s.value
-      : undefined;
-  }
-
-  function range$1(name, group) {
-    const s = getScale(name, (group || this).context);
-    return s && s.range ? s.range() : [];
-  }
-
-  function domain(name, group) {
-    const s = getScale(name, (group || this).context);
-    return s ? s.domain() : [];
-  }
-
-  function bandwidth(name, group) {
-    const s = getScale(name, (group || this).context);
-    return s && s.bandwidth ? s.bandwidth() : 0;
-  }
-
-  function bandspace(count, paddingInner, paddingOuter) {
-    return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
-  }
-
-  function copy$2(name, group) {
-    const s = getScale(name, (group || this).context);
-    return s ? s.copy() : undefined;
-  }
-
-  function scale$3(name, value, group) {
-    const s = getScale(name, (group || this).context);
-    return s && value !== undefined ? s(value) : undefined;
-  }
-
-  function invert(name, range, group) {
-    const s = getScale(name, (group || this).context);
-    return !s ? undefined
-      : isArray(range) ? (s.invertRange || s.invert)(range)
-      : (s.invert || s.invertExtent)(range);
-  }
-
-  function geoMethod(methodName, globalMethod) {
-    return function(projection, geojson, group) {
-      if (projection) {
-        // projection defined, use it
-        const p = getScale(projection, (group || this).context);
-        return p && p.path[methodName](geojson);
-      } else {
-        // projection undefined, use global method
-        return globalMethod(geojson);
-      }
-    };
-  }
-
-  const geoArea = geoMethod('area', d3Geo.geoArea);
-  const geoBounds = geoMethod('bounds', d3Geo.geoBounds);
-  const geoCentroid = geoMethod('centroid', d3Geo.geoCentroid);
-
-  function inScope(item) {
-    let group = this.context.group,
-        value = false;
-
-    if (group) while (item) {
-      if (item === group) { value = true; break; }
-      item = item.mark.group;
-    }
-    return value;
-  }
-
   function intersect$2(b, opt, group) {
     if (!b) return [];
 
@@ -26120,10 +26982,10 @@
           box = new Bounds().set(u[0], u[1], v[0], v[1]),
           scene = group || this.context.dataflow.scenegraph().root;
 
-    return intersect(scene, box, filter$2(opt));
+    return intersect(scene, box, filter$1(opt));
   }
 
-  function filter$2(opt) {
+  function filter$1(opt) {
     let p = null;
 
     if (opt) {
@@ -26134,273 +26996,6 @@
     }
 
     return p;
-  }
-
-  function log$3(df, method, args) {
-    try {
-      df[method].apply(df, ['EXPRESSION'].concat([].slice.call(args)));
-    } catch (err) {
-      df.warn(err);
-    }
-    return args[args.length-1];
-  }
-
-  function warn() {
-    return log$3(this.context.dataflow, 'warn', arguments);
-  }
-
-  function info() {
-    return log$3(this.context.dataflow, 'info', arguments);
-  }
-
-  function debug() {
-    return log$3(this.context.dataflow, 'debug', arguments);
-  }
-
-  function merge$2() {
-    var args = [].slice.call(arguments);
-    args.unshift({});
-    return extend.apply(null, args);
-  }
-
-  function equal(a, b) {
-    return a === b || a !== a && b !== b ? true
-      : isArray(a) ? (
-          isArray(b) && a.length === b.length ? equalArray(a, b) : false
-        )
-      : isObject(a) && isObject(b) ? equalObject(a, b)
-      : false;
-  }
-
-  function equalArray(a, b) {
-    for (let i=0, n=a.length; i<n; ++i) {
-      if (!equal(a[i], b[i])) return false;
-    }
-    return true;
-  }
-
-  function equalObject(a, b) {
-    for (let key in a) {
-      if (!equal(a[key], b[key])) return false;
-    }
-    return true;
-  }
-
-  function removePredicate(props) {
-    return _ => equalObject(props, _);
-  }
-
-  function modify(name, insert, remove, toggle, modify, values) {
-    let df = this.context.dataflow,
-        data = this.context.data[name],
-        input = data.input,
-        changes = data.changes,
-        stamp = df.stamp(),
-        predicate, key;
-
-    if (df._trigger === false || !(input.value.length || insert || toggle)) {
-      // nothing to do!
-      return 0;
-    }
-
-    if (!changes || changes.stamp < stamp) {
-      data.changes = (changes = df.changeset());
-      changes.stamp = stamp;
-      df.runAfter(function() {
-        data.modified = true;
-        df.pulse(input, changes).run();
-      }, true, 1);
-    }
-
-    if (remove) {
-      predicate = remove === true ? truthy
-        : (isArray(remove) || isTuple(remove)) ? remove
-        : removePredicate(remove);
-      changes.remove(predicate);
-    }
-
-    if (insert) {
-      changes.insert(insert);
-    }
-
-    if (toggle) {
-      predicate = removePredicate(toggle);
-      if (input.value.some(predicate)) {
-        changes.remove(predicate);
-      } else {
-        changes.insert(toggle);
-      }
-    }
-
-    if (modify) {
-      for (key in values) {
-        changes.modify(modify, key, values[key]);
-      }
-    }
-
-    return 1;
-  }
-
-  function pinchDistance(event) {
-    const t = event.touches,
-          dx = t[0].clientX - t[1].clientX,
-          dy = t[0].clientY - t[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function pinchAngle(event) {
-    const t = event.touches;
-    return Math.atan2(
-      t[0].clientY - t[1].clientY,
-      t[0].clientX - t[1].clientX
-    );
-  }
-
-  function scaleGradient(scale, p0, p1, count, group) {
-    scale = getScale(scale, (group || this).context);
-
-    const gradient = Gradient(p0, p1);
-
-    let stops = scale.domain(),
-        min = stops[0],
-        max = peek(stops),
-        fraction = identity;
-
-    if (!(max - min)) {
-      // expand scale if domain has zero span, fix #1479
-      scale = (scale.interpolator
-        ? scale$2('sequential')().interpolator(scale.interpolator())
-        : scale$2('linear')().interpolate(scale.interpolate()).range(scale.range())
-      ).domain([min=0, max=1]);
-    } else {
-      fraction = scaleFraction(scale, min, max);
-    }
-
-    if (scale.ticks) {
-      stops = scale.ticks(+count || 15);
-      if (min !== stops[0]) stops.unshift(min);
-      if (max !== peek(stops)) stops.push(max);
-    }
-
-    stops.forEach(_ => gradient.stop(fraction(_), scale(_)));
-
-    return gradient;
-  }
-
-  function geoShape(projection, geojson, group) {
-    const p = getScale(projection, (group || this).context);
-    return function(context) {
-      return p ? p.path.context(context)(geojson) : '';
-    }
-  }
-
-  function pathShape(path) {
-    let p = null;
-    return function(context) {
-      return context
-        ? pathRender(context, (p = p || pathParse(path)))
-        : path;
-    };
-  }
-
-  const EMPTY = {};
-
-  function datum(d) { return d.data; }
-
-  function treeNodes(name, context) {
-    const tree = data$1.call(context, name);
-    return tree.root && tree.root.lookup || EMPTY;
-  }
-
-  function treePath(name, source, target) {
-    const nodes = treeNodes(name, this),
-          s = nodes[source],
-          t = nodes[target];
-    return s && t ? s.path(t).map(datum) : undefined;
-  }
-
-  function treeAncestors(name, node) {
-    const n = treeNodes(name, this)[node];
-    return n ? n.ancestors().map(datum) : undefined;
-  }
-
-  const _window = (typeof window !== 'undefined' && window) || null;
-
-  function screen() {
-    return _window ? _window.screen : {};
-  }
-
-  function windowSize() {
-    return _window
-      ? [_window.innerWidth, _window.innerHeight]
-      : [undefined, undefined];
-  }
-
-  function containerSize() {
-    const view = this.context.dataflow,
-          el = view.container && view.container();
-    return el
-      ? [el.clientWidth, el.clientHeight]
-      : [undefined, undefined];
-  }
-
-  const DataPrefix$1   = ':';
-  const IndexPrefix$1  = '@';
-  const ScalePrefix  = '%';
-  const SignalPrefix = '$';
-
-  function dataVisitor(name, args, scope, params) {
-    if (args[0].type !== Literal) {
-      error('First argument to data functions must be a string literal.');
-    }
-
-    const data = args[0].value,
-          dataName = DataPrefix$1 + data;
-
-    if (!hasOwnProperty(dataName, params)) {
-      try {
-        params[dataName] = scope.getData(data).tuplesRef();
-      } catch (err) {
-        // if data set does not exist, there's nothing to track
-      }
-    }
-  }
-
-  function indataVisitor(name, args, scope, params) {
-    if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
-    if (args[1].type !== Literal) error('Second argument to indata must be a string literal.');
-
-    const data = args[0].value,
-          field = args[1].value,
-          indexName = IndexPrefix$1 + field;
-
-    if (!hasOwnProperty(indexName, params)) {
-      params[indexName] = scope.getData(data).indataRef(scope, field);
-    }
-  }
-
-  function scaleVisitor(name, args, scope, params) {
-    if (args[0].type === Literal) {
-      // add scale dependency
-      addScaleDependency(scope, params, args[0].value);
-    }
-    else if (args[0].type === Identifier$1) {
-      // indirect scale lookup; add all scales as parameters
-      for (name in scope.scales) {
-        addScaleDependency(scope, params, name);
-      }
-    }
-  }
-
-  function addScaleDependency(scope, params, name) {
-    const scaleName = ScalePrefix + name;
-    if (!hasOwnProperty(params, scaleName)) {
-      try {
-        params[scaleName] = scope.scaleRef(name);
-      } catch (err) {
-        // TODO: error handling? warning?
-      }
-    }
   }
 
   // Expression function context object
@@ -26447,12 +27042,12 @@
     luminance,
     contrast,
     sequence,
-    format: format$1,
-    utcFormat: utcFormat$1,
+    format: format$2,
+    utcFormat,
     utcParse,
     utcOffset,
     utcSequence,
-    timeFormat: timeFormat$1,
+    timeFormat,
     timeParse,
     timeOffset,
     timeSequence,
@@ -26463,6 +27058,10 @@
     dayAbbrevFormat,
     quarter,
     utcquarter,
+    week,
+    utcweek,
+    dayofyear,
+    utcdayofyear,
     warn,
     info,
     debug,
@@ -26500,6 +27099,7 @@
     const fn = functions(codegen);
     eventFunctions.forEach(name => fn[name] = eventPrefix + name);
     for (let name in functionContext) { fn[name] = thisPrefix + name; }
+    extend(fn, internalScaleFunctions(codegen, functionContext, astVisitors));
     return fn;
   }
 
@@ -26547,7 +27147,7 @@
     blacklist:  ['_'],
     whitelist:  ['datum', 'event', 'item'],
     fieldvar:   'datum',
-    globalvar:  function(id) { return '_[' + $(SignalPrefix + id) + ']'; },
+    globalvar:  id => '_[' + $(SignalPrefix + id) + ']',
     functions:  buildFunctions,
     constants:  constants,
     visitors:   astVisitors
@@ -26555,10 +27155,135 @@
 
   var codeGenerator = codegen(codegenParams);
 
+  function parseExpression$1(expr, scope) {
+    var params = {}, ast, gen;
+
+    // parse the expression to an abstract syntax tree (ast)
+    try {
+      expr = isString(expr) ? expr : ($(expr) + '');
+      ast = parse$3(expr);
+    } catch (err) {
+      error('Expression parse error: ' + expr);
+    }
+
+    // analyze ast function calls for dependencies
+    ast.visit(node => {
+      if (node.type !== CallExpression) return;
+      var name = node.callee.name,
+          visit = codegenParams.visitors[name];
+      if (visit) visit(name, node.arguments, scope, params);
+    });
+
+    // perform code generation
+    gen = codeGenerator(ast);
+
+    // collect signal dependencies
+    gen.globals.forEach(name => {
+      var signalName = SignalPrefix + name;
+      if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
+        params[signalName] = scope.signalRef(name);
+      }
+    });
+
+    // return generated expression code and dependencies
+    return {
+      $expr:   extend({code: gen.code}, scope.options.ast ? {ast} : null),
+      $fields: gen.fields,
+      $params: params
+    };
+  }
+
   /**
-   * Parse an expression given the argument signature and body code.
+   * Parse a serialized dataflow specification.
    */
-  function expression(args, code, ctx) {
+  function parse$4(spec) {
+    const ctx = this,
+          operators = spec.operators || [];
+
+    // parse background
+    if (spec.background) {
+      ctx.background = spec.background;
+    }
+
+    // parse event configuration
+    if (spec.eventConfig) {
+      ctx.eventConfig = spec.eventConfig;
+    }
+
+    // parse locale configuration
+    if (spec.locale) {
+      ctx.locale = spec.locale;
+    }
+
+    // parse operators
+    operators.forEach(entry => ctx.parseOperator(entry));
+
+    // parse operator parameters
+    operators.forEach(entry => ctx.parseOperatorParameters(entry));
+
+    // parse streams
+    (spec.streams || []).forEach(entry => ctx.parseStream(entry));
+
+    // parse updates
+    (spec.updates || []).forEach(entry => ctx.parseUpdate(entry));
+
+    return ctx.resolve();
+  }
+
+  const Skip = toSet(['rule']),
+        Swap = toSet(['group', 'image', 'rect']);
+
+  function adjustSpatial(encode, marktype) {
+    let code = '';
+
+    if (Skip[marktype]) return code;
+
+    if (encode.x2) {
+      if (encode.x) {
+        if (Swap[marktype]) {
+          code += 'if(o.x>o.x2)$=o.x,o.x=o.x2,o.x2=$;';
+        }
+        code += 'o.width=o.x2-o.x;';
+      } else {
+        code += 'o.x=o.x2-(o.width||0);';
+      }
+    }
+
+    if (encode.xc) {
+      code += 'o.x=o.xc-(o.width||0)/2;';
+    }
+
+    if (encode.y2) {
+      if (encode.y) {
+        if (Swap[marktype]) {
+          code += 'if(o.y>o.y2)$=o.y,o.y=o.y2,o.y2=$;';
+        }
+        code += 'o.height=o.y2-o.y;';
+      } else {
+        code += 'o.y=o.y2-(o.height||0);';
+      }
+    }
+
+    if (encode.yc) {
+      code += 'o.y=o.yc-(o.height||0)/2;';
+    }
+
+    return code;
+  }
+
+  function canonicalType(type) {
+    return (type + '').toLowerCase();
+  }
+
+  function isOperator(type) {
+     return canonicalType(type) === 'operator';
+  }
+
+  function isCollect(type) {
+    return canonicalType(type) === 'collect';
+  }
+
+  function expression(ctx, args, code) {
     // wrap code in return statement if expression does not terminate
     if (code[code.length-1] !== ';') {
       code = 'return(' + code + ');';
@@ -26567,55 +27292,133 @@
     return ctx && ctx.functions ? fn.bind(ctx.functions) : fn;
   }
 
+  // generate code for comparing a single field
+  function _compare(u, v, lt, gt) {
+    return `((u = ${u}) < (v = ${v}) || u == null) && v != null ? ${lt}
+  : (u > v || v == null) && u != null ? ${gt}
+  : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? ${lt}
+  : v !== v && u === u ? ${gt} : `;
+  }
+
+  var expressionCodegen = {
+    /**
+     * Parse an expression used to update an operator value.
+     */
+    operator: (ctx, expr) => expression(ctx, ['_'], expr.code),
+
+    /**
+     * Parse an expression provided as an operator parameter value.
+     */
+    parameter: (ctx, expr) => expression(ctx, ['datum', '_'], expr.code),
+
+    /**
+     * Parse an expression applied to an event stream.
+     */
+    event: (ctx, expr) => expression(ctx, ['event'], expr.code),
+
+    /**
+     * Parse an expression used to handle an event-driven operator update.
+     */
+    handler: (ctx, expr) => {
+      const code = `var datum=event.item&&event.item.datum;return ${expr.code};`;
+      return expression(ctx, ['_', 'event'], code);
+    },
+
+    /**
+     * Parse an expression that performs visual encoding.
+     */
+    encode: (ctx, encode) => {
+      const {marktype, channels} = encode;
+
+      let code = 'var o=item,datum=o.datum,m=0,$;';
+      for (const name in channels) {
+        const o ='o[' + $(name) + ']';
+        code += `$=${channels[name].code};if(${o}!==$)${o}=$,m=1;`;
+      }
+      code += adjustSpatial(channels, marktype);
+      code += 'return m;';
+
+      return expression(ctx, ['item', '_'], code);
+    },
+
+    /**
+     * Optimized code generators for access and comparison.
+     */
+    codegen: {
+      get(path) {
+        const ref = `[${path.map($).join('][')}]`;
+        const get = Function('_', `return _${ref};`);
+        get.path = ref;
+        return get;
+      },
+      comparator(fields, orders) {
+        let t;
+        const map = (f, i) => {
+          const o = orders[i];
+          let u, v;
+          if (f.path) {
+            u = `a${f.path}`;
+            v = `b${f.path}`;
+          } else {
+            (t = t || {})['f'+i] = f;
+            u = `this.f${i}(a)`;
+            v = `this.f${i}(b)`;
+          }
+          return _compare(u, v, -o, o);
+        };
+
+        const fn = Function('a', 'b', 'var u, v; return '
+          + fields.map(map).join('') + '0;');
+        return t ? fn.bind(t) : fn;
+      }
+    }
+  };
+
   /**
-   * Parse an expression used to update an operator value.
+   * Parse a dataflow operator.
    */
-  function operatorExpression(code, ctx) {
-    return expression(['_'], code, ctx);
+  function parseOperator(spec) {
+    const ctx = this;
+    if (isOperator(spec.type) || !spec.type) {
+      ctx.operator(
+        spec,
+        spec.update ? ctx.operatorExpression(spec.update) : null
+      );
+    } else {
+      ctx.transform(spec, spec.type);
+    }
   }
 
   /**
-   * Parse an expression provided as an operator parameter value.
+   * Parse and assign operator parameters.
    */
-  function parameterExpression(code, ctx) {
-    return expression(['datum', '_'], code, ctx);
-  }
-
-  /**
-   * Parse an expression applied to an event stream.
-   */
-  function eventExpression(code, ctx) {
-    return expression(['event'], code, ctx);
-  }
-
-  /**
-   * Parse an expression used to handle an event-driven operator update.
-   */
-  function handlerExpression(code, ctx) {
-    return expression(['_', 'event'], code, ctx);
-  }
-
-  /**
-   * Parse an expression that performs visual encoding.
-   */
-  function encodeExpression(code, ctx) {
-    return expression(['item', '_'], code, ctx);
+  function parseOperatorParameters(spec) {
+    const ctx = this;
+    if (spec.params) {
+      const op = ctx.get(spec.id);
+      if (!op) error('Invalid operator id: ' + spec.id);
+      ctx.dataflow.connect(op, op.parameters(
+        ctx.parseParameters(spec.params),
+        spec.react,
+        spec.initonly
+      ));
+    }
   }
 
   /**
    * Parse a set of operator parameters.
    */
-  function parseParameters(spec, ctx, params) {
+  function parseParameters(spec, params) {
     params = params || {};
-    var key, value;
+    const ctx = this;
 
-    for (key in spec) {
-      value = spec[key];
-
+    for (const key in spec) {
+      const value = spec[key];
       params[key] = isArray(value)
-        ? value.map(function(v) { return parseParameter(v, ctx, params); })
+        ? value.map(v => parseParameter(v, ctx, params))
         : parseParameter(value, ctx, params);
     }
+
     return params;
   }
 
@@ -26625,12 +27428,13 @@
   function parseParameter(spec, ctx, params) {
     if (!spec || !isObject(spec)) return spec;
 
-    for (var i=0, n=PARSERS.length, p; i<n; ++i) {
+    for (let i=0, n=PARSERS.length, p; i<n; ++i) {
       p = PARSERS[i];
       if (hasOwnProperty(spec, p.key)) {
         return p.parse(spec, ctx, params);
       }
     }
+
     return spec;
   }
 
@@ -26659,19 +27463,22 @@
    */
   function getExpression(_, ctx, params) {
     if (_.$params) { // parse expression parameters
-      parseParameters(_.$params, ctx, params);
+      ctx.parseParameters(_.$params, params);
     }
-    var k = 'e:' + _.$expr + '_' + _.$name;
-    return ctx.fn[k]
-      || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
+    const k = 'e:' + _.$expr.code + '_' + _.$name;
+    return ctx.fn[k] || (ctx.fn[k] = accessor(
+      ctx.parameterExpression(_.$expr),
+      _.$fields,
+      _.$name
+    ));
   }
 
   /**
    * Resolve a key accessor reference.
    */
   function getKey(_, ctx) {
-    var k = 'k:' + _.$key + '_' + (!!_.$flat);
-    return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat));
+    const k = 'k:' + _.$key + '_' + (!!_.$flat);
+    return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat, ctx.expr.codegen));
   }
 
   /**
@@ -26679,8 +27486,8 @@
    */
   function getField$1(_, ctx) {
     if (!_.$field) return null;
-    var k = 'f:' + _.$field + '_' + _.$name;
-    return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name));
+    const k = 'f:' + _.$field + '_' + _.$name;
+    return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name, ctx.expr.codegen));
   }
 
   /**
@@ -26689,23 +27496,21 @@
   function getCompare(_, ctx) {
     // As of Vega 5.5.3, $tupleid sort is no longer used.
     // Keep here for now for backwards compatibility.
-    var k = 'c:' + _.$compare + '_' + _.$order,
-        c = array(_.$compare).map(function(_) {
-          return (_ && _.$tupleid) ? tupleid : _;
-        });
-    return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order));
+    const k = 'c:' + _.$compare + '_' + _.$order,
+          c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
+    return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order, ctx.expr.codegen));
   }
 
   /**
    * Resolve an encode operator reference.
    */
   function getEncode(_, ctx) {
-    var spec = _.$encode,
-        encode = {}, name, enc;
+    const spec = _.$encode,
+          encode = {};
 
-    for (name in spec) {
-      enc = spec[name];
-      encode[name] = accessor(encodeExpression(enc.$expr, ctx), enc.$fields);
+    for (const name in spec) {
+      const enc = spec[name];
+      encode[name] = accessor(ctx.encodeExpression(enc.$expr), enc.$fields);
       encode[name].output = enc.$output;
     }
     return encode;
@@ -26722,12 +27527,13 @@
    * Resolve a recursive subflow specification.
    */
   function getSubflow(_, ctx) {
-    var spec = _.$subflow;
+    const spec = _.$subflow;
     return function(dataflow, key, parent) {
-      var subctx = parse$4(spec, ctx.fork()),
-          op = subctx.get(spec.operators[0].id),
-          p = subctx.signals.parent;
+      const subctx = ctx.fork().parse(spec),
+            op = subctx.get(spec.operators[0].id),
+            p = subctx.signals.parent;
       if (p) p.set(parent);
+      op.detachSubflow = () => ctx.detach(subctx);
       return op;
     };
   }
@@ -26739,49 +27545,12 @@
     return tupleid;
   }
 
-  function canonicalType(type) {
-    return (type + '').toLowerCase();
-  }
-  function isOperator(type) {
-     return canonicalType(type) === 'operator';
-  }
-
-  function isCollect(type) {
-    return canonicalType(type) === 'collect';
-  }
-
-  /**
-   * Parse a dataflow operator.
-   */
-  function parseOperator(spec, ctx) {
-    if (isOperator(spec.type) || !spec.type) {
-      ctx.operator(spec,
-        spec.update ? operatorExpression(spec.update, ctx) : null);
-    } else {
-      ctx.transform(spec, spec.type);
-    }
-  }
-
-  /**
-   * Parse and assign operator parameters.
-   */
-  function parseOperatorParameters(spec, ctx) {
-    if (spec.params) {
-      var op = ctx.get(spec.id);
-      if (!op) error('Invalid operator id: ' + spec.id);
-      ctx.dataflow.connect(op, op.parameters(
-        parseParameters(spec.params, ctx),
-        spec.react,
-        spec.initonly
-      ));
-    }
-  }
-
   /**
    * Parse an event stream specification.
    */
-  function parseStream(spec, ctx) {
-    var filter = spec.filter != null ? eventExpression(spec.filter, ctx) : undefined,
+  function parseStream(spec) {
+    var ctx = this,
+        filter = spec.filter != null ? ctx.eventExpression(spec.filter) : undefined,
         stream = spec.stream != null ? ctx.get(spec.stream) : undefined,
         args;
 
@@ -26789,12 +27558,12 @@
       stream = ctx.events(spec.source, spec.type, filter);
     }
     else if (spec.merge) {
-      args = spec.merge.map(ctx.get.bind(ctx));
+      args = spec.merge.map(_ => ctx.get(_));
       stream = args[0].merge.apply(args[0], args.slice(1));
     }
 
     if (spec.between) {
-      args = spec.between.map(ctx.get.bind(ctx));
+      args = spec.between.map(_ => ctx.get(_));
       stream = stream.between(args[0], args[1]);
     }
 
@@ -26822,8 +27591,9 @@
   /**
    * Parse an event-driven operator update.
    */
-  function parseUpdate(spec, ctx) {
-    var srcid = isObject(srcid = spec.source) ? srcid.$ref : srcid,
+  function parseUpdate(spec) {
+    var ctx = this,
+        srcid = isObject(srcid = spec.source) ? srcid.$ref : srcid,
         source = ctx.get(srcid),
         target = null,
         update = spec.update,
@@ -26831,59 +27601,18 @@
 
     if (!source) error('Source not defined: ' + spec.source);
 
-    if (spec.target && spec.target.$expr) {
-      target = eventExpression(spec.target.$expr, ctx);
-    } else {
-      target = ctx.get(spec.target);
-    }
+    target = spec.target && spec.target.$expr
+      ? ctx.eventExpression(spec.target.$expr)
+      : ctx.get(spec.target);
 
     if (update && update.$expr) {
       if (update.$params) {
-        params = parseParameters(update.$params, ctx);
+        params = ctx.parseParameters(update.$params);
       }
-      update = handlerExpression(update.$expr, ctx);
+      update = ctx.handlerExpression(update.$expr);
     }
 
     ctx.update(spec, source, target, update, params);
-  }
-
-  /**
-   * Parse a serialized dataflow specification.
-   */
-  function parse$4(spec, ctx) {
-    var operators = spec.operators || [];
-
-    // parse background
-    if (spec.background) {
-      ctx.background = spec.background;
-    }
-
-    // parse event configuration
-    if (spec.eventConfig) {
-      ctx.eventConfig = spec.eventConfig;
-    }
-
-    // parse operators
-    operators.forEach(function(entry) {
-      parseOperator(entry, ctx);
-    });
-
-    // parse operator parameters
-    operators.forEach(function(entry) {
-      parseOperatorParameters(entry, ctx);
-    });
-
-    // parse streams
-    (spec.streams || []).forEach(function(entry) {
-      parseStream(entry, ctx);
-    });
-
-    // parse updates
-    (spec.updates || []).forEach(function(entry) {
-      parseUpdate(entry, ctx);
-    });
-
-    return ctx.resolve();
   }
 
   var SKIP$3 = {skip: true};
@@ -26894,7 +27623,7 @@
 
     if (options.signals) {
       var signals = (state.signals = {});
-      Object.keys(ctx.signals).forEach(function(key) {
+      Object.keys(ctx.signals).forEach(key => {
         var op = ctx.signals[key];
         if (options.signals(key, op)) {
           signals[key] = op.value;
@@ -26904,7 +27633,7 @@
 
     if (options.data) {
       var data = (state.data = {});
-      Object.keys(ctx.data).forEach(function(key) {
+      Object.keys(ctx.data).forEach(key => {
         var dataset = ctx.data[key];
         if (options.data(key, dataset)) {
           data[key] = dataset.input.value;
@@ -26913,9 +27642,7 @@
     }
 
     if (ctx.subcontext && options.recurse !== false) {
-      state.subcontext = ctx.subcontext.map(function(ctx) {
-        return ctx.getState(options);
-      });
+      state.subcontext = ctx.subcontext.map(ctx => ctx.getState(options));
     }
 
     return state;
@@ -26927,18 +27654,18 @@
         data = state.data,
         signals = state.signals;
 
-    Object.keys(signals || {}).forEach(function(key) {
+    Object.keys(signals || {}).forEach(key => {
       df.update(ctx.signals[key], signals[key], SKIP$3);
     });
 
-    Object.keys(data || {}).forEach(function(key) {
+    Object.keys(data || {}).forEach(key => {
       df.pulse(
         ctx.data[key].input,
         df.changeset().remove(truthy).insert(data[key])
       );
     });
 
-    (state.subcontext  || []).forEach(function(substate, i) {
+    (state.subcontext  || []).forEach((substate, i) => {
       var subctx = ctx.subcontext[i];
       if (subctx) subctx.setState(substate);
     });
@@ -26949,14 +27676,15 @@
    * Enables lookup of parsed operators, event streams, accessors, etc.
    * Provides a 'fork' method for creating child contexts for subflows.
    */
-  function context$2(df, transforms, functions) {
-    return new Context(df, transforms, functions);
+  function context$2(df, transforms, functions, expr) {
+    return new Context(df, transforms, functions, expr);
   }
 
-  function Context(df, transforms, functions) {
+  function Context(df, transforms, functions, expr) {
     this.dataflow = df;
     this.transforms = transforms;
     this.events = df.events.bind(df);
+    this.expr = expr || expressionCodegen,
     this.signals = {};
     this.scales = {};
     this.nodes = {};
@@ -26968,11 +27696,11 @@
     }
   }
 
-  function ContextFork(ctx) {
+  function Subcontext(ctx) {
     this.dataflow = ctx.dataflow;
     this.transforms = ctx.transforms;
-    this.functions = ctx.functions;
     this.events = ctx.events;
+    this.expr = ctx.expr;
     this.signals = Object.create(ctx.signals);
     this.scales = Object.create(ctx.scales);
     this.nodes = Object.create(ctx.nodes);
@@ -26984,26 +27712,36 @@
     }
   }
 
-  Context.prototype = ContextFork.prototype = {
-    fork: function() {
-      var ctx = new ContextFork(this);
+  Context.prototype = Subcontext.prototype = {
+    fork() {
+      const ctx = new Subcontext(this);
       (this.subcontext || (this.subcontext = [])).push(ctx);
       return ctx;
     },
-    get: function(id) {
+    detach(ctx) {
+      this.subcontext = this.subcontext.filter(c => c !== ctx);
+
+      // disconnect all nodes in the subcontext
+      // wipe out targets first for better efficiency
+      const keys = Object.keys(ctx.nodes);
+      for (const key of keys) ctx.nodes[key]._targets = null;
+      for (const key of keys) ctx.nodes[key].detach();
+      ctx.nodes = null;
+    },
+    get(id) {
       return this.nodes[id];
     },
-    set: function(id, node) {
+    set(id, node) {
       return this.nodes[id] = node;
     },
-    add: function(spec, op) {
-      var ctx = this,
-          df = ctx.dataflow,
-          data;
+    add(spec, op) {
+      const ctx = this,
+            df = ctx.dataflow,
+            data = spec.value;
 
       ctx.set(spec.id, op);
 
-      if (isCollect(spec.type) && (data = spec.value)) {
+      if (isCollect(spec.type) && data) {
         if (data.$ingest) {
           df.ingest(op, data.$ingest, data.$format);
         } else if (data.$request) {
@@ -27023,7 +27761,7 @@
           df.connect(p, [op]);
           op.targets().add(p);
         } else {
-          (ctx.unresolved = ctx.unresolved || []).push(function() {
+          (ctx.unresolved = ctx.unresolved || []).push(() => {
             p = ctx.get(spec.parent.$ref);
             df.connect(p, [op]);
             op.targets().add(p);
@@ -27040,36 +27778,62 @@
       }
 
       if (spec.data) {
-        for (var name in spec.data) {
-          data = ctx.data[name] || (ctx.data[name] = {});
-          spec.data[name].forEach(function(role) { data[role] = op; });
+        for (const name in spec.data) {
+          const data = ctx.data[name] || (ctx.data[name] = {});
+          spec.data[name].forEach(role => data[role] = op);
         }
       }
     },
-    resolve: function() {
-      (this.unresolved || []).forEach(function(fn) { fn(); });
+    resolve() {
+      (this.unresolved || []).forEach(fn => fn());
       delete this.unresolved;
       return this;
     },
-    operator: function(spec, update) {
+    operator(spec, update) {
       this.add(spec, this.dataflow.add(spec.value, update));
     },
-    transform: function(spec, type) {
+    transform(spec, type) {
       this.add(spec, this.dataflow.add(this.transforms[canonicalType(type)]));
     },
-    stream: function(spec, stream) {
+    stream(spec, stream) {
       this.set(spec.id, stream);
     },
-    update: function(spec, stream, target, update, params) {
+    update(spec, stream, target, update, params) {
       this.dataflow.on(stream, target, update, params, spec.options);
     },
-    getState: getState,
-    setState: setState
+
+    // expression parsing
+    operatorExpression(expr) {
+      return this.expr.operator(this, expr);
+    },
+    parameterExpression(expr) {
+      return this.expr.parameter(this, expr);
+    },
+    eventExpression(expr) {
+      return this.expr.event(this, expr);
+    },
+    handlerExpression(expr) {
+      return this.expr.handler(this, expr);
+    },
+    encodeExpression(encode) {
+      return this.expr.encode(this, encode);
+    },
+
+    // parse methods
+    parse: parse$4,
+    parseOperator,
+    parseOperatorParameters,
+    parseParameters,
+    parseStream,
+    parseUpdate,
+
+    // state methods
+    getState,
+    setState
   };
 
-  function runtime(view, spec, functions) {
-    var fn = functions || functionContext;
-    return parse$4(spec, context$2(view, transforms, fn));
+  function runtime(view, spec, expr) {
+    return context$2(view, transforms, functionContext, expr).parse(spec);
   }
 
   function scale$4(name) {
@@ -27083,7 +27847,7 @@
   var Width = 'width',
       Height = 'height',
       Padding$1 = 'padding',
-      Skip = {skip: true};
+      Skip$1 = {skip: true};
 
   function viewWidth(view, width) {
     var a = view.autosize(),
@@ -27146,14 +27910,14 @@
       // width value changed: update signal, skip resize op
       if (view.width() !== width) {
         rerun = 1;
-        view.signal(Width, width, Skip); // set width, skip update calc
+        view.signal(Width, width, Skip$1); // set width, skip update calc
         view._resizeWidth.skip(true); // skip width resize handler
       }
 
       // height value changed: update signal, skip resize op
       if (view.height() !== height) {
         rerun = 1;
-        view.signal(Height, height, Skip); // set height, skip update calc
+        view.signal(Height, height, Skip$1); // set height, skip update calc
         view._resizeHeight.skip(true); // skip height resize handler
       }
 
@@ -27271,30 +28035,35 @@
    * should also invoke the initialize method (e.g., to set the parent
    * DOM element in browser-based deployment) and then invoke the run
    * method to evaluate the dataflow graph. Rendering will automatically
-   * be peformed upon dataflow runs.
+   * be performed upon dataflow runs.
    * @constructor
    * @param {object} spec - The Vega dataflow runtime specification.
    */
   function View(spec, options) {
-    var view = this;
+    const view = this;
     options = options || {};
 
     Dataflow.call(view);
     if (options.loader) view.loader(options.loader);
     if (options.logger) view.logger(options.logger);
     if (options.logLevel != null) view.logLevel(options.logLevel);
+    if (options.locale || spec.locale) {
+      const loc = extend({}, spec.locale, options.locale);
+      view.locale(locale(loc.number, loc.time));
+    }
 
     view._el = null;
     view._elBind = null;
     view._renderType = options.renderer || RenderType.Canvas;
     view._scenegraph = new Scenegraph();
-    var root = view._scenegraph.root;
+    const root = view._scenegraph.root;
 
     // initialize renderer, handler and event management
     view._renderer = null;
     view._tooltip = options.tooltip || defaultTooltip$1,
     view._redraw = true;
     view._handler = new CanvasHandler().scene(root);
+    view._globalCursor = false;
     view._preventDefault = false;
     view._timers = [];
     view._eventListeners = [];
@@ -27302,17 +28071,16 @@
 
     // initialize event configuration
     view._eventConfig = initializeEventConfig(spec.eventConfig);
+    view.globalCursor(view._eventConfig.globalCursor);
 
     // initialize dataflow graph
-    var ctx = runtime(view, spec, options.functions);
+    const ctx = runtime(view, spec, options.expr);
     view._runtime = ctx;
     view._signals = ctx.signals;
-    view._bind = (spec.bindings || []).map(function(_) {
-      return {
-        state: null,
-        param: extend({}, _)
-      };
-    });
+    view._bind = (spec.bindings || []).map(_ => ({
+      state: null,
+      param: extend({}, _)
+    }));
 
     // initialize scenegraph
     if (ctx.root) ctx.root.set(root);
@@ -27536,18 +28304,15 @@
   };
 
   function findOperatorHandler(op, handler) {
-    var t = op._targets || [],
-        h = t.filter(function(op) {
-              var u = op._update;
-              return u && u.handler === handler;
-            });
+    const h = (op._targets || [])
+      .filter(op => op._update && op._update.handler === handler);
     return h.length ? h[0] : null;
   }
 
   function addOperatorListener(view, name, op, handler) {
     var h = findOperatorHandler(op, handler);
     if (!h) {
-      h = trap(this, function() { handler(name, op.value); });
+      h = trap(view, () => handler(name, op.value));
       h.handler = handler;
       view.on(op, null, h);
     }
@@ -27574,6 +28339,19 @@
 
   prototype$1s.removeDataListener = function(name, handler) {
     return removeOperatorListener(this, dataref(this, name).values, handler);
+  };
+
+  prototype$1s.globalCursor = function(_) {
+    if (arguments.length) {
+      if (this._globalCursor !== !!_) {
+        const prev = setCursor(this, null); // clear previous cursor
+        this._globalCursor = !!_;
+        if (prev) setCursor(this, prev); // swap cursor
+      }
+      return this;
+    } else {
+      return this._globalCursor;
+    }
   };
 
   prototype$1s.preventDefault = function(_) {
@@ -27630,6 +28408,325 @@
         };
   }
 
+  const encoder = _ => isObject(_) && !isArray(_)
+    ? extend({}, _)
+    : {value: _};
+
+  function addEncode(object, name, value, set) {
+    if (value != null) {
+      // Always assign signal to update, even if the signal is from the enter block
+      if (isObject(value) && !isArray(value)) {
+        object.update[name] = value;
+      } else {
+        object[set || 'enter'][name] = {value: value};
+      }
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  function addEncoders(object, enter, update) {
+    for (const name in enter) {
+      addEncode(object, name, enter[name]);
+    }
+    for (const name in update) {
+      addEncode(object, name, update[name], 'update');
+    }
+  }
+
+  function extendEncode(encode, extra, skip) {
+    for (const name in extra) {
+      if (skip && hasOwnProperty(skip, name)) continue;
+      encode[name] = extend(encode[name] || {}, extra[name]);
+    }
+    return encode;
+  }
+
+  function has(key, encode) {
+    return encode && (
+      (encode.enter && encode.enter[key]) ||
+      (encode.update && encode.update[key])
+    );
+  }
+
+  var MarkRole = 'mark';
+  var FrameRole$1 = 'frame';
+  var ScopeRole$1 = 'scope';
+
+  var AxisRole$1 = 'axis';
+  var AxisDomainRole = 'axis-domain';
+  var AxisGridRole = 'axis-grid';
+  var AxisLabelRole = 'axis-label';
+  var AxisTickRole = 'axis-tick';
+  var AxisTitleRole = 'axis-title';
+
+  var LegendRole$1 = 'legend';
+  var LegendBandRole = 'legend-band';
+  var LegendEntryRole = 'legend-entry';
+  var LegendGradientRole = 'legend-gradient';
+  var LegendLabelRole = 'legend-label';
+  var LegendSymbolRole = 'legend-symbol';
+  var LegendTitleRole = 'legend-title';
+
+  var TitleRole$1 = 'title';
+  var TitleTextRole = 'title-text';
+  var TitleSubtitleRole = 'title-subtitle';
+
+  function applyDefaults(encode, type, role, style, config) {
+    const defaults = {}, enter = {};
+    let update, key, skip, props;
+
+    // if text mark, apply global lineBreak settings (#2370)
+    key = 'lineBreak';
+    if (type === 'text' && config[key] != null && !has(key, encode)) {
+      applyDefault(defaults, key, config[key]);
+    }
+
+    // ignore legend and axis roles
+    if (role == 'legend' || String(role).startsWith('axis')) {
+      role = null;
+    }
+
+    // resolve mark config
+    props = role === FrameRole$1 ? config.group
+      : (role === MarkRole) ? extend({}, config.mark, config[type])
+      : null;
+
+    for (key in props) {
+      // do not apply defaults if relevant fields are defined
+      skip = has(key, encode)
+        || (key === 'fill' || key === 'stroke')
+        && (has('fill', encode) || has('stroke', encode));
+
+      if (!skip) applyDefault(defaults, key, props[key]);
+    }
+
+    // resolve styles, apply with increasing precedence
+    array(style).forEach(name => {
+      const props = config.style && config.style[name];
+      for (const key in props) {
+        if (!has(key, encode)) {
+          applyDefault(defaults, key, props[key]);
+        }
+      }
+    });
+
+    encode = extend({}, encode); // defensive copy
+    for (key in defaults) {
+      props = defaults[key];
+      if (props.signal) {
+        (update = update || {})[key] = props;
+      } else {
+        enter[key] = props;
+      }
+    }
+
+    encode.enter = extend(enter, encode.enter);
+    if (update) encode.update = extend(update, encode.update);
+
+    return encode;
+  }
+
+  function applyDefault(defaults, key, value) {
+    defaults[key] = value && value.signal
+      ? {signal: value.signal}
+      : {value: value};
+  }
+
+  const scaleRef = scale => isString(scale) ? $(scale)
+    : scale.signal ? `(${scale.signal})`
+    : field$1(scale);
+
+  function entry(enc) {
+    if (enc.gradient != null) {
+      return gradient$1(enc);
+    }
+
+    let value = enc.signal ? `(${enc.signal})`
+      : enc.color ? color$1(enc.color)
+      : enc.field != null ? field$1(enc.field)
+      : enc.value !== undefined ? $(enc.value)
+      : undefined;
+
+    if (enc.scale != null) {
+      value = scale$5(enc, value);
+    }
+
+    if (value === undefined) {
+      value = null;
+    }
+
+    if (enc.exponent != null) {
+      value = `pow(${value},${property(enc.exponent)})`;
+    }
+
+    if (enc.mult != null) {
+      value += `*${property(enc.mult)}`;
+    }
+
+    if (enc.offset != null) {
+      value += `+${property(enc.offset)}`;
+    }
+
+    if (enc.round) {
+      value = `round(${value})`;
+    }
+
+    return value;
+  }
+
+  const _color = (type, x, y, z) =>
+    `(${type}(${[x, y, z].map(entry).join(',')})+'')`;
+
+  function color$1(enc) {
+    return (enc.c) ? _color('hcl', enc.h, enc.c, enc.l)
+      : (enc.h || enc.s) ? _color('hsl', enc.h, enc.s, enc.l)
+      : (enc.l || enc.a) ? _color('lab', enc.l, enc.a, enc.b)
+      : (enc.r || enc.g || enc.b) ? _color('rgb', enc.r, enc.g, enc.b)
+      : null;
+  }
+
+  function gradient$1(enc) {
+    // map undefined to null; expression lang does not allow undefined
+    const args = [enc.start, enc.stop, enc.count]
+      .map(_ => _ == null ? null : $(_));
+
+    // trim null inputs from the end
+    while (args.length && peek(args) == null) args.pop();
+
+    args.unshift(scaleRef(enc.gradient));
+    return `gradient(${args.join(',')})`;
+  }
+
+  function property(property) {
+    return isObject(property) ? '(' + entry(property) + ')' : property;
+  }
+
+  function field$1(ref) {
+    return resolveField(isObject(ref) ? ref : {datum: ref});
+  }
+
+  function resolveField(ref) {
+    let object, level, field;
+
+    if (ref.signal) {
+      object = 'datum';
+      field = ref.signal;
+    } else if (ref.group || ref.parent) {
+      level = Math.max(1, ref.level || 1);
+      object = 'item';
+
+      while (level-- > 0) {
+        object += '.mark.group';
+      }
+
+      if (ref.parent) {
+        field = ref.parent;
+        object += '.datum';
+      } else {
+        field = ref.group;
+      }
+    } else if (ref.datum) {
+      object = 'datum';
+      field = ref.datum;
+    } else {
+      error('Invalid field reference: ' + $(ref));
+    }
+
+    if (!ref.signal) {
+      field = isString(field)
+        ? splitAccessPath(field).map($).join('][')
+        : resolveField(field);
+    }
+
+    return object + '[' + field + ']';
+  }
+
+  function scale$5(enc, value) {
+    const scale = scaleRef(enc.scale);
+
+    if (enc.range != null) {
+      // pull value from scale range
+      value = `lerp(_range(${scale}), ${+enc.range})`;
+    } else {
+      // run value through scale and/or pull scale bandwidth
+      if (value !== undefined) value = `_scale(${scale}, ${value})`;
+
+      if (enc.band) {
+        value = (value ? value + '+' : '')
+          + `_bandwidth(${scale})`
+          + (+enc.band === 1 ? '' : '*' + property(enc.band));
+
+        if (enc.extra) {
+          // include logic to handle extraneous elements
+          value = `(datum.extra ? _scale(${scale}, datum.extra.value) : ${value})`;
+        }
+      }
+
+      if (value == null) value = '0';
+    }
+
+    return value;
+  }
+
+  function rule$1(enc) {
+    let code = '';
+
+    enc.forEach(rule => {
+      const value = entry(rule);
+      code += rule.test ? `(${rule.test})?${value}:` : value;
+    });
+
+    // if no else clause, terminate with null (#1366)
+    if (peek(code) === ':') {
+      code += 'null';
+    }
+
+    return code;
+  }
+
+  function parseEncode(encode, type, role, style, scope, params) {
+    const enc = {};
+    params = params || {};
+    params.encoders = {$encode: enc};
+
+    encode = applyDefaults(encode, type, role, style, scope.config);
+    for (const key in encode) {
+      enc[key] = parseBlock(encode[key], type, params, scope);
+    }
+
+    return params;
+  }
+
+  function parseBlock(block, marktype, params, scope) {
+    const channels = {},
+          fields = {};
+
+    for (const name in block) {
+      if (block[name] != null) { // skip any null entries
+        channels[name] = parse$5(expr(block[name]), scope, params, fields);
+      }
+    }
+
+    return {
+      $expr:   {marktype, channels},
+      $fields: Object.keys(fields),
+      $output: Object.keys(block)
+    };
+  }
+
+  function expr(enc) {
+    return isArray(enc) ? rule$1(enc) : entry(enc);
+  }
+
+  function parse$5(code, scope, params, fields) {
+    const expr = parseExpression$1(code, scope);
+    expr.$fields.forEach(name => fields[name] = 1);
+    extend(params, expr.$params);
+    return expr.$expr;
+  }
+
   var OUTER = 'outer',
       OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
 
@@ -27655,44 +28752,6 @@
     }
   }
 
-  function parseExpression$1(expr, scope, preamble) {
-    var params = {}, ast, gen;
-
-    // parse the expression to an abstract syntax tree (ast)
-    try {
-      expr = isString(expr) ? expr : ($(expr) + '');
-      ast = parse$3(expr);
-    } catch (err) {
-      error('Expression parse error: ' + expr);
-    }
-
-    // analyze ast function calls for dependencies
-    ast.visit(function visitor(node) {
-      if (node.type !== CallExpression) return;
-      var name = node.callee.name,
-          visit = codegenParams.visitors[name];
-      if (visit) visit(name, node.arguments, scope, params);
-    });
-
-    // perform code generation
-    gen = codeGenerator(ast);
-
-    // collect signal dependencies
-    gen.globals.forEach(function(name) {
-      var signalName = SignalPrefix + name;
-      if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
-        params[signalName] = scope.signalRef(name);
-      }
-    });
-
-    // return generated expression code and dependencies
-    return {
-      $expr:   preamble ? preamble + 'return(' + gen.code + ');' : gen.code,
-      $fields: gen.fields,
-      $params: params
-    };
-  }
-
   function Entry(type, value, params, parent) {
     this.id = -1;
     this.type = type;
@@ -27701,12 +28760,12 @@
     if (parent) this.parent = parent;
   }
 
-  function entry(type, value, params, parent) {
+  function entry$1(type, value, params, parent) {
     return new Entry(type, value, params, parent);
   }
 
   function operator(value, params) {
-    return entry('operator', value, params);
+    return entry$1('operator', value, params);
   }
 
   // -----
@@ -27774,7 +28833,7 @@
     return false;
   }
 
-  function value$1(specValue, defaultValue) {
+  function value$2(specValue, defaultValue) {
     return specValue != null ? specValue : defaultValue;
   }
 
@@ -27848,7 +28907,7 @@
       param.push('inScope(event.item)');
     }
     if (param.length) {
-      entry.filter = parseExpression$1('(' + param.join(')&&(') + ')').$expr;
+      entry.filter = parseExpression$1('(' + param.join(')&&(') + ')', scope).$expr;
     }
 
     if ((param = stream.throttle) != null) {
@@ -28083,7 +29142,11 @@
     });
   }
 
-  var preamble = 'var datum=event.item&&event.item.datum;';
+  // bypass expression parser for internal operator references
+  const OP_VALUE_EXPR = {
+    code: '_.$value',
+    ast: {type: 'Identifier', value: 'value'}
+  };
 
   function parseUpdate$1(spec, scope, target) {
     var events = spec.events,
@@ -28121,12 +29184,12 @@
     }
 
     // resolve update value
-    entry.update = isString(update) ? parseExpression$1(update, scope, preamble)
-      : update.expr != null ? parseExpression$1(update.expr, scope, preamble)
+    entry.update = isString(update) ? parseExpression$1(update, scope)
+      : update.expr != null ? parseExpression$1(update.expr, scope)
       : update.value != null ? update.value
       : update.signal != null ? {
-          $expr:   '_.value',
-          $params: {value: scope.signalRef(update.signal)}
+          $expr:   OP_VALUE_EXPR,
+          $params: {$value: scope.signalRef(update.signal)}
         }
       : error('Invalid signal update specification.');
 
@@ -28181,11 +29244,8 @@
     }
   }
 
-  function transform$2(name) {
-    return function(params, value, parent) {
-      return entry(name, value, params || undefined, parent);
-    };
-  }
+  const transform$2 = name => (params, value, parent) =>
+    entry$1(name, value, params || undefined, parent);
 
   var Aggregate$1 = transform$2('aggregate');
   var AxisTicks$1 = transform$2('axisticks');
@@ -28525,7 +29585,6 @@
   const Offset = 'offset';
   const Perc   = 'perc';
   const Perc2  = 'perc2';
-  const Size   = 'size';
   const Value  = 'value';
 
   const GuideLabelStyle = 'guide-label';
@@ -28533,23 +29592,31 @@
   const GroupTitleStyle = 'group-title';
   const GroupSubtitleStyle = 'group-subtitle';
 
-  const Symbols$2 = 'symbol';
-  const Gradient$2 = 'gradient';
-  const Discrete$2 = 'discrete';
+  const Symbols$1 = 'symbol';
+  const Gradient$1 = 'gradient';
+  const Discrete$1 = 'discrete';
+
+  const Size = 'size';
+  const Shape = 'shape';
+  const Fill = 'fill';
+  const Stroke = 'stroke';
+  const StrokeWidth = 'strokeWidth';
+  const StrokeDash = 'strokeDash';
+  const Opacity = 'opacity';
 
   // Encoding channels supported by legends
   // In priority order of 'canonical' scale
   const LegendScales = [
-    'size',
-    'shape',
-    'fill',
-    'stroke',
-    'strokeWidth',
-    'strokeDash',
-    'opacity'
+    Size,
+    Shape,
+    Fill,
+    Stroke,
+    StrokeWidth,
+    StrokeDash,
+    Opacity
   ];
 
-  const Skip$1 = {
+  const Skip$2 = {
     name: 1,
     style: 1,
     interactive: 1
@@ -28558,458 +29625,39 @@
   const zero$1 = {value: 0};
   const one$1 = {value: 1};
 
-  var Skip$2 = toSet(['rule']),
-      Swap = toSet(['group', 'image', 'rect']);
-
-  function adjustSpatial(encode, marktype) {
-    var code = '';
-
-    if (Skip$2[marktype]) return code;
-
-    if (encode.x2) {
-      if (encode.x) {
-        if (Swap[marktype]) {
-          code += 'if(o.x>o.x2)$=o.x,o.x=o.x2,o.x2=$;';
-        }
-        code += 'o.width=o.x2-o.x;';
-      } else {
-        code += 'o.x=o.x2-(o.width||0);';
-      }
-    }
-
-    if (encode.xc) {
-      code += 'o.x=o.xc-(o.width||0)/2;';
-    }
-
-    if (encode.y2) {
-      if (encode.y) {
-        if (Swap[marktype]) {
-          code += 'if(o.y>o.y2)$=o.y,o.y=o.y2,o.y2=$;';
-        }
-        code += 'o.height=o.y2-o.y;';
-      } else {
-        code += 'o.y=o.y2-(o.height||0);';
-      }
-    }
-
-    if (encode.yc) {
-      code += 'o.y=o.yc-(o.height||0)/2;';
-    }
-
-    return code;
-  }
-
-  function color$1(enc, scope, params, fields) {
-    function color(type, x, y, z) {
-      var a = entry$1(null, x, scope, params, fields),
-          b = entry$1(null, y, scope, params, fields),
-          c = entry$1(null, z, scope, params, fields);
-      return 'this.' + type + '(' + [a, b, c].join(',') + ').toString()';
-    }
-
-    return (enc.c) ? color('hcl', enc.h, enc.c, enc.l)
-      : (enc.h || enc.s) ? color('hsl', enc.h, enc.s, enc.l)
-      : (enc.l || enc.a) ? color('lab', enc.l, enc.a, enc.b)
-      : (enc.r || enc.g || enc.b) ? color('rgb', enc.r, enc.g, enc.b)
-      : null;
-  }
-
-  function expression$1(code, scope, params, fields) {
-    var expr = parseExpression$1(code, scope);
-    expr.$fields.forEach(function(name) { fields[name] = 1; });
-    extend(params, expr.$params);
-    return expr.$expr;
-  }
-
-  function field$1(ref, scope, params, fields) {
-    return resolve$1(isObject(ref) ? ref : {datum: ref}, scope, params, fields);
-  }
-
-  function resolve$1(ref, scope, params, fields) {
-    var object, level, field;
-
-    if (ref.signal) {
-      object = 'datum';
-      field = expression$1(ref.signal, scope, params, fields);
-    } else if (ref.group || ref.parent) {
-      level = Math.max(1, ref.level || 1);
-      object = 'item';
-
-      while (level-- > 0) {
-        object += '.mark.group';
-      }
-
-      if (ref.parent) {
-        field = ref.parent;
-        object += '.datum';
-      } else {
-        field = ref.group;
-      }
-    } else if (ref.datum) {
-      object = 'datum';
-      field = ref.datum;
-    } else {
-      error('Invalid field reference: ' + $(ref));
-    }
-
-    if (!ref.signal) {
-      if (isString(field)) {
-        fields[field] = 1; // TODO review field tracking?
-        field = splitAccessPath(field).map($).join('][');
-      } else {
-        field = resolve$1(field, scope, params, fields);
-      }
-    }
-
-    return object + '[' + field + ']';
-  }
-
-  function property(property, scope, params, fields) {
-    return isObject(property)
-        ? '(' + entry$1(null, property, scope, params, fields) + ')'
-        : property;
-  }
-
-  function scale$5(enc, value, scope, params, fields) {
-    var scale = getScale$1(enc.scale, scope, params, fields),
-        interp, func, flag;
-
-    if (enc.range != null) {
-      // pull value from scale range
-      interp = +enc.range;
-      func = scale + '.range()';
-      value = (interp === 0) ? (func + '[0]')
-        : '($=' + func + ',' + ((interp === 1) ? '$[$.length-1]'
-        : '$[0]+' + interp + '*($[$.length-1]-$[0])') + ')';
-    } else {
-      // run value through scale and/or pull scale bandwidth
-      if (value !== undefined) value = scale + '(' + value + ')';
-
-      if (enc.band && (flag = hasBandwidth(enc.scale, scope))) {
-        func = scale + '.bandwidth';
-
-        if (enc.band.signal) {
-          interp = func + '()*' + property(enc.band, scope, params, fields);
-        } else {
-          interp = +enc.band;
-          interp = func + '()' + (interp===1 ? '' : '*' + interp);
-        }
-
-        // if we don't know the scale type, check for bandwidth
-        if (flag < 0) interp = '(' + func + '?' + interp + ':0)';
-
-        value = (value ? value + '+' : '') + interp;
-
-        if (enc.extra) {
-          // include logic to handle extraneous elements
-          value = '(datum.extra?' + scale + '(datum.extra.value):' + value + ')';
-        }
-      }
-
-      if (value == null) value = '0';
-    }
-
-    return value;
-  }
-
-  function hasBandwidth(name, scope) {
-    if (!isString(name)) return -1;
-    var type = scope.scaleType(name);
-    return type === 'band' || type === 'point' ? 1 : 0;
-  }
-
-  function getScale$1(name, scope, params, fields) {
-    var scaleName;
-
-    if (isString(name)) {
-      // direct scale lookup; add scale as parameter
-      scaleName = ScalePrefix + name;
-      if (!hasOwnProperty(params, scaleName)) {
-        params[scaleName] = scope.scaleRef(name);
-      }
-      scaleName = $(scaleName);
-    } else {
-      // indirect scale lookup; add all scales as parameters
-      for (scaleName in scope.scales) {
-        params[ScalePrefix + scaleName] = scope.scaleRef(scaleName);
-      }
-      scaleName = $(ScalePrefix) + '+'
-        + (name.signal
-          ? '(' + expression$1(name.signal, scope, params, fields) + ')'
-          : field$1(name, scope, params, fields));
-    }
-
-    return '_[' + scaleName + ']';
-  }
-
-  function gradient$1(enc, scope, params, fields) {
-    return 'this.gradient('
-      + getScale$1(enc.gradient, scope, params, fields)
-      + ',' + $(enc.start)
-      + ',' + $(enc.stop)
-      + ',' + $(enc.count)
-      + ')';
-  }
-
-  function entry$1(channel, enc, scope, params, fields) {
-    if (enc.gradient != null) {
-      return gradient$1(enc, scope, params, fields);
-    }
-
-    var value = enc.signal ? expression$1(enc.signal, scope, params, fields)
-      : enc.color ? color$1(enc.color, scope, params, fields)
-      : enc.field != null ? field$1(enc.field, scope, params, fields)
-      : enc.value !== undefined ? $(enc.value)
-      : undefined;
-
-    if (enc.scale != null) {
-      value = scale$5(enc, value, scope, params, fields);
-    }
-
-    if (value === undefined) {
-      value = null;
-    }
-
-    if (enc.exponent != null) {
-      value = 'Math.pow(' + value + ','
-        + property(enc.exponent, scope, params, fields) + ')';
-    }
-
-    if (enc.mult != null) {
-      value += '*' + property(enc.mult, scope, params, fields);
-    }
-
-    if (enc.offset != null) {
-      value += '+' + property(enc.offset, scope, params, fields);
-    }
-
-    if (enc.round) {
-      value = 'Math.round(' + value + ')';
-    }
-
-    return value;
-  }
-
-  function set$2(obj, key, value) {
-    const o = obj + '[' + $(key) + ']';
-    return `$=${value};if(${o}!==$)${o}=$,m=1;`;
-  }
-
-  function rule$1(channel, rules, scope, params, fields) {
-    var code = '';
-
-    rules.forEach(function(rule) {
-      var value = entry$1(channel, rule, scope, params, fields);
-      code += rule.test
-        ? expression$1(rule.test, scope, params, fields) + '?' + value + ':'
-        : value;
-    });
-
-    // if no else clause, terminate with null (vega/vega#1366)
-    if (peek(code) === ':') {
-      code += 'null';
-    }
-
-    return set$2('o', channel, code);
-  }
-
-  function parseEncode(encode, marktype, params, scope) {
-    var fields = {},
-        code = 'var o=item,datum=o.datum,m=0,$;',
-        channel, enc, value;
-
-    for (channel in encode) {
-      enc = encode[channel];
-      if (isArray(enc)) { // rule
-        code += rule$1(channel, enc, scope, params, fields);
-      } else {
-        value = entry$1(channel, enc, scope, params, fields);
-        code += set$2('o', channel, value);
-      }
-    }
-
-    code += adjustSpatial(encode, marktype);
-    code += 'return m;';
-
-    return {
-      $expr:   code,
-      $fields: Object.keys(fields),
-      $output: Object.keys(encode)
-    };
-  }
-
-  var MarkRole = 'mark';
-  var FrameRole$1 = 'frame';
-  var ScopeRole$1 = 'scope';
-
-  var AxisRole$1 = 'axis';
-  var AxisDomainRole = 'axis-domain';
-  var AxisGridRole = 'axis-grid';
-  var AxisLabelRole = 'axis-label';
-  var AxisTickRole = 'axis-tick';
-  var AxisTitleRole = 'axis-title';
-
-  var LegendRole$1 = 'legend';
-  var LegendBandRole = 'legend-band';
-  var LegendEntryRole = 'legend-entry';
-  var LegendGradientRole = 'legend-gradient';
-  var LegendLabelRole = 'legend-label';
-  var LegendSymbolRole = 'legend-symbol';
-  var LegendTitleRole = 'legend-title';
-
-  var TitleRole$1 = 'title';
-  var TitleTextRole = 'title-text';
-  var TitleSubtitleRole = 'title-subtitle';
-
-  function encoder(_) {
-    return isObject(_) && !isArray(_) ? extend({}, _) : {value: _};
-  }
-
-  function addEncode(object, name, value, set) {
-    if (value != null) {
-      if (isObject(value) && !isArray(value)) {
-        object.update[name] = value;
-      } else {
-        object[set || 'enter'][name] = {value: value};
-      }
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
-  function addEncoders(object, enter, update) {
-    for (let name in enter) {
-      addEncode(object, name, enter[name]);
-    }
-    for (let name in update) {
-      addEncode(object, name, update[name], 'update');
-    }
-  }
-
-  function extendEncode(encode, extra, skip) {
-    for (var name in extra) {
-      if (skip && hasOwnProperty(skip, name)) continue;
-      encode[name] = extend(encode[name] || {}, extra[name]);
-    }
-    return encode;
-  }
-
-  function encoders(encode, type, role, style, scope, params) {
-    var enc, key;
-    params = params || {};
-    params.encoders = {$encode: (enc = {})};
-
-    encode = applyDefaults(encode, type, role, style, scope.config);
-
-    for (key in encode) {
-      enc[key] = parseEncode(encode[key], type, params, scope);
-    }
-
-    return params;
-  }
-
-  function applyDefaults(encode, type, role, style, config) {
-    var defaults = {}, enter = {}, update, key, skip, props;
-
-    // if text mark, apply global lineBreak settings (#2370)
-    key = 'lineBreak';
-    if (type === 'text' && config[key] != null && !has(key, encode)) {
-      applyDefault(defaults, key, config[key]);
-    }
-
-    // ignore legend and axis roles
-    if (role == 'legend' || String(role).indexOf('axis') === 0) {
-      role = null;
-    }
-
-    // resolve mark config
-    props = role === FrameRole$1 ? config.group
-      : (role === MarkRole) ? extend({}, config.mark, config[type])
-      : null;
-
-    for (key in props) {
-      // do not apply defaults if relevant fields are defined
-      skip = has(key, encode)
-        || (key === 'fill' || key === 'stroke')
-        && (has('fill', encode) || has('stroke', encode));
-
-      if (!skip) applyDefault(defaults, key, props[key]);
-    }
-
-    // resolve styles, apply with increasing precedence
-    array(style).forEach(function(name) {
-      var props = config.style && config.style[name];
-      for (var key in props) {
-        if (!has(key, encode)) {
-          applyDefault(defaults, key, props[key]);
-        }
-      }
-    });
-
-    encode = extend({}, encode); // defensive copy
-    for (key in defaults) {
-      props = defaults[key];
-      if (props.signal) {
-        (update = update || {})[key] = props;
-      } else {
-        enter[key] = props;
-      }
-    }
-
-    encode.enter = extend(enter, encode.enter);
-    if (update) encode.update = extend(update, encode.update);
-
-    return encode;
-  }
-
-  function applyDefault(defaults, key, value) {
-    defaults[key] = value && value.signal
-      ? {signal: value.signal}
-      : {value: value};
-  }
-
-  function has(key, encode) {
-    return encode && (
-      (encode.enter && encode.enter[key]) ||
-      (encode.update && encode.update[key])
-    );
-  }
-
-  function guideMark(type, role, style, key, dataRef, encode, extras) {
-    return {
-      type:  type,
-      name:  extras ? extras.name : undefined,
-      role:  role,
-      style: (extras && extras.style) || style,
-      key:   key,
-      from:  dataRef,
-      interactive: !!(extras && extras.interactive),
-      encode: extendEncode(encode, extras, Skip$1)
-    };
+  var GroupMark = 'group';
+  var RectMark = 'rect';
+  var RuleMark = 'rule';
+  var SymbolMark = 'symbol';
+  var TextMark = 'text';
+
+  function guideGroup(mark) {
+    mark.type = GroupMark;
+    mark.interactive = mark.interactive || false;
+    return mark;
   }
 
   function lookup$5(spec, config) {
-    const _ = (name, dflt) => value$1(spec[name], value$1(config[name], dflt));
+    const _ = (name, dflt) => value$2(spec[name], value$2(config[name], dflt));
 
-    _.isVertical = s => Vertical === value$1(
+    _.isVertical = s => Vertical === value$2(
       spec.direction,
       config.direction || (s ? config.symbolDirection : config.gradientDirection)
     );
 
-    _.gradientLength = () => value$1(
+    _.gradientLength = () => value$2(
       spec.gradientLength,
       config.gradientLength || config.gradientWidth
     );
 
-    _.gradientThickness = () => value$1(
+    _.gradientThickness = () => value$2(
       spec.gradientThickness,
       config.gradientThickness || config.gradientHeight
     );
 
-    _.entryColumns = () => value$1(
+    _.entryColumns = () => value$2(
       spec.columns,
-      value$1(config.columns, +_.isVertical(true))
+      value$2(config.columns, +_.isVertical(true))
     );
 
     return _;
@@ -29029,7 +29677,7 @@
   }
 
   function anchorExpr(s, e, m) {
-    return `item.anchor === "${Start$1}" ? ${s} : item.anchor === "${End$1}" ? ${e} : ${m}`;
+    return `item.anchor === '${Start$1}' ? ${s} : item.anchor === '${End$1}' ? ${e} : ${m}`;
   }
 
   const alignExpr = anchorExpr(
@@ -29049,10 +29697,10 @@
       extra = _('tickExtra');
     } else if (v.signal) {
       // if signal, augment code to interpret values
-      band = {signal: `(${v.signal})==='extent'?1:0.5`};
-      extra = {signal: `(${v.signal})==='extent'?true:false`};
+      band = {signal: `(${v.signal}) === 'extent' ? 1 : 0.5`};
+      extra = {signal: `(${v.signal}) === 'extent'`};
       if (!isObject(offset)) {
-        offset = {signal: `(${v.signal})==='extent'?0:${offset}`};
+        offset = {signal: `(${v.signal}) === 'extent' ? 0 : ${offset}`};
       }
     } else if (v === 'extent') {
       // if constant, simply set values
@@ -29071,14 +29719,20 @@
     return !offset ? value
       : !value ? offset
       : !isObject(value) ? { value, offset }
-      : { ...value, offset: extendOffset(value.offset, offset) };
+      : Object.assign({}, value, { offset: extendOffset(value.offset, offset) });
   }
 
-  var GroupMark = 'group';
-  var RectMark = 'rect';
-  var RuleMark = 'rule';
-  var SymbolMark = 'symbol';
-  var TextMark = 'text';
+  function guideMark(mark, extras) {
+    if (extras) {
+      mark.name = extras.name;
+      mark.style = extras.style || mark.style;
+      mark.interactive = !!extras.interactive;
+      mark.encode = extendEncode(mark.encode, extras, Skip$2);
+    } else {
+      mark.interactive = false;
+    }
+    return mark;
+  }
 
   function legendGradient(spec, scale, config, userEncode) {
     var _ = lookup$5(spec, config),
@@ -29123,7 +29777,11 @@
       opacity:     _('gradientOpacity')
     });
 
-    return guideMark(RectMark, LegendGradientRole, null, undefined, undefined, encode, userEncode);
+    return guideMark({
+      type: RectMark,
+      role: LegendGradientRole,
+      encode
+    }, userEncode);
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
@@ -29159,7 +29817,13 @@
       opacity:     _('gradientOpacity')
     });
 
-    return guideMark(RectMark, LegendBandRole, null, Value, dataRef, encode, userEncode);
+    return guideMark({
+      type: RectMark,
+      role: LegendBandRole,
+      key:  Value,
+      from: dataRef,
+      encode
+    }, userEncode);
   }
 
   const alignExpr$1 = `datum.${Perc}<=0?"${Left$1}":datum.${Perc}>=1?"${Right$1}":"${Center$1}"`,
@@ -29171,7 +29835,6 @@
         thickness = encoder(_.gradientThickness()),
         length = _.gradientLength(),
         overlap = _('labelOverlap'),
-        separation = _('labelSeparation'),
         encode, enter, update, u, v, adjust = '';
 
     encode = {
@@ -29194,7 +29857,7 @@
       fontSize:    _('labelFontSize'),
       fontStyle:   _('labelFontStyle'),
       fontWeight:  _('labelFontWeight'),
-      limit:       value$1(spec.labelLimit, config.gradientLabelLimit)
+      limit:       value$2(spec.labelLimit, config.gradientLabelLimit)
     });
 
     if (vertical) {
@@ -29210,31 +29873,24 @@
     enter[u] = update[u] = {signal: adjust + 'datum.' + Perc, mult: length};
 
     enter[v] = update[v] = thickness;
-    thickness.offset = value$1(spec.labelOffset, config.gradientLabelOffset) || 0;
+    thickness.offset = value$2(spec.labelOffset, config.gradientLabelOffset) || 0;
 
-    spec = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
-    if (overlap) {
-      spec.overlap = {
-        separation: separation,
-        method: overlap,
-        order: 'datum.' + Index
-      };
-    }
-    return spec;
-  }
+    overlap = overlap ? {
+      separation: _('labelSeparation'),
+      method: overlap,
+      order: 'datum.' + Index
+    } : undefined;
 
-  function guideGroup(role, style, name, dataRef, interactive, encode, marks, layout) {
-    return {
-      type: GroupMark,
-      name: name,
-      role: role,
-      style: style,
+    // type, role, style, key, dataRef, encode, extras
+    return guideMark({
+      type:  TextMark,
+      role:  LegendLabelRole,
+      style: GuideLabelStyle,
+      key:   Value,
       from: dataRef,
-      interactive: interactive || false,
-      encode: encode,
-      marks: marks,
-      layout: layout
-    };
+      encode,
+      overlap
+    }, userEncode);
   }
 
   // userEncode is top-level, includes entries, symbols, labels
@@ -29297,11 +29953,14 @@
       }
     });
 
-    symbols = guideMark(
-      SymbolMark, LegendSymbolRole, null,
-      Value, valueRef, encode, userEncode.symbols
-    );
-    if (height) symbols.clip = true;
+    symbols = guideMark({
+      type: SymbolMark,
+      role: LegendSymbolRole,
+      key:  Value,
+      from: valueRef,
+      clip: height ? true : undefined,
+      encode
+    }, userEncode.symbols);
 
     // -- LEGEND LABELS --
     labelOffset = encoder(symbolOffset);
@@ -29336,10 +29995,14 @@
       limit:       _('labelLimit')
     });
 
-    labels = guideMark(
-      TextMark, LegendLabelRole, GuideLabelStyle,
-      Value, valueRef, encode, userEncode.labels
-    );
+    labels = guideMark({
+      type:  TextMark,
+      role:  LegendLabelRole,
+      style: GuideLabelStyle,
+      key:   Value,
+      from:  valueRef,
+      encode
+    }, userEncode.labels);
 
     // -- LEGEND ENTRY GROUPS --
     encode = {
@@ -29374,12 +30037,15 @@
     // facet legend entries into sub-groups
     dataRef = {facet: {data: dataRef, name: 'value', groupby: Index}};
 
-    spec = guideGroup(
-      ScopeRole$1, null, name, dataRef, interactive,
-      extendEncode(encode, entries, Skip$1), [symbols, labels]
-    );
-    spec.sort = sort;
-    return spec;
+    return guideGroup({
+      role:   ScopeRole$1,
+      from:   dataRef,
+      encode: extendEncode(encode, entries, Skip$2),
+      marks:  [symbols, labels],
+      name,
+      interactive,
+      sort
+    });
   }
 
   function legendSymbolLayout(spec, config) {
@@ -29443,10 +30109,16 @@
       lineHeight:  _('titleLineHeight')
     }, { // require update
       align:       _('titleAlign'),
-      baseline:    _('titleBaseline'),
+      baseline:    _('titleBaseline')
     });
 
-    return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+    return guideMark({
+      type:  TextMark,
+      role:  LegendTitleRole,
+      style: GuideTitleStyle,
+      from:  dataRef,
+      encode
+    }, userEncode);
   }
 
   function clip$2(clip, scope) {
@@ -29482,10 +30154,12 @@
 
   function definition$1(spec) {
     return {
-      marktype:    spec.type,
-      name:        spec.name || undefined,
-      role:        spec.role || getRole(spec),
-      zindex:      +spec.zindex || undefined
+      marktype:     spec.type,
+      name:         spec.name || undefined,
+      role:         spec.role || getRole(spec),
+      zindex:       +spec.zindex || undefined,
+      aria:         spec.aria,
+      description:  spec.description
     };
   }
 
@@ -29502,7 +30176,7 @@
     var def = definition(spec.type);
     if (!def) error('Unrecognized transform type: ' + $(spec.type));
 
-    var t = entry(def.type.toLowerCase(), null, parseParameters$1(def, spec, scope));
+    var t = entry$1(def.type.toLowerCase(), null, parseParameters$1(def, spec, scope));
     if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
     t.metadata = def.metadata || {};
 
@@ -29643,7 +30317,7 @@
   }
 
   function isCompare(_) {
-    return _ === 'compare'
+    return _ === 'compare';
   }
 
   function parseData(from, group, scope) {
@@ -29801,7 +30475,7 @@
         ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
         : {field: scope.fieldRef(field), pulse: ref(ds.output)};
       if (sort) params.sort = scope.sortRef(counts);
-      op = scope.add(entry(optype, undefined, params));
+      op = scope.add(entry$1(optype, undefined, params));
       if (index) ds.index[field] = op;
       v = ref(op);
       if (k != null) cache[k] = v;
@@ -29870,7 +30544,7 @@
 
     // parse faceted subflow
     op.params.subflow = {
-      $subflow: parseSpec(spec, subscope).toRuntime()
+      $subflow: subscope.parse(spec).toRuntime()
     };
   }
 
@@ -29883,7 +30557,7 @@
 
     // parse group mark subflow
     op.params.subflow = {
-      $subflow: parseSpec(spec, subscope).toRuntime()
+      $subflow: subscope.parse(spec).toRuntime()
     };
   }
 
@@ -29946,7 +30620,7 @@
     markRef = ref(op);
 
     // add visual encoders
-    op = enc = scope.add(Encode$1(encoders(
+    op = enc = scope.add(Encode$1(parseEncode(
       spec.encode, spec.type, role, spec.style, scope,
       {mod: false, pulse: markRef}
     )));
@@ -30001,7 +30675,7 @@
       scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
       facet ? parseFacet(spec, scope, input)          // explicit facet
           : nested ? parseSubflow(spec, scope, input) // standard mark group
-          : parseSpec(spec, scope); // guide group, we can avoid nested scopes
+          : scope.parse(spec); // guide group, we can avoid nested scopes
       scope.popState();
 
       if (nested) { if (layout) ops.push(layout); ops.push(bound); }
@@ -30063,11 +30737,14 @@
         interactive = legendEncode.interactive,
         style = legendEncode.style,
         _ = lookup$5(spec, config),
+        scales = {}, scale = 0,
         entryEncode, entryLayout, params, children,
-        type, datum, dataRef, entryRef, group;
+        type, datum, dataRef, entryRef;
 
-    // resolve 'canonical' scale name
-    var scale = LegendScales.reduce(function(a, b) { return a || spec[b]; }, 0);
+    // resolve scales and 'canonical' scale name
+    LegendScales.forEach(s => spec[s]
+      ? (scales[s] = spec[s], scale = scale || spec[s]) : 0
+    );
     if (!scale) error('Missing valid scale for legend.');
 
     // resolve legend type (symbol, gradient, or discrete gradient)
@@ -30076,6 +30753,7 @@
     // single-element data source for legend group
     datum = {
       title:  spec.title != null,
+      scales: scales,
       type:   type,
       vgrad:  type !== 'symbol' &&  _.isVertical()
     };
@@ -30083,7 +30761,7 @@
 
     // encoding properties for legend group
     legendEncode = extendEncode(
-      buildLegendEncode(_, config), legendEncode, Skip$1
+      buildLegendEncode(_, spec, config), legendEncode, Skip$2
     );
 
     // encoding properties for legend entry sub-group
@@ -30102,7 +30780,7 @@
     })));
 
     // continuous gradient legend
-    if (type === Gradient$2) {
+    if (type === Gradient$1) {
       children = [
         legendGradient(spec, scale, config, encode.gradient),
         legendGradientLabels(spec, config, encode.labels, entryRef)
@@ -30114,7 +30792,7 @@
     }
 
     // discrete gradient legend
-    else if (type === Discrete$2) {
+    else if (type === Discrete$1) {
       children = [
         legendGradientDiscrete(spec, scale, config, encode.gradient, entryRef),
         legendGradientLabels(spec, config, encode.labels, entryRef)
@@ -30134,8 +30812,14 @@
 
     // generate legend marks
     children = [
-      guideGroup(LegendEntryRole, null, null, dataRef, interactive,
-                 entryEncode, children, entryLayout)
+      guideGroup({
+        role: LegendEntryRole,
+        from: dataRef,
+        encode: entryEncode,
+        marks: children,
+        layout: entryLayout,
+        interactive
+      })
     ];
 
     // include legend title if defined
@@ -30143,26 +30827,36 @@
       children.push(legendTitle(spec, config, encode.title, dataRef));
     }
 
-    // build legend specification
-    group = guideGroup(LegendRole$1, style, name, dataRef, interactive, legendEncode, children);
-    if (spec.zindex) group.zindex = spec.zindex;
-
     // parse legend specification
-    return parseMark(group, scope);
+    return parseMark(
+      guideGroup({
+        role:        LegendRole$1,
+        from:        dataRef,
+        encode:      legendEncode,
+        marks:       children,
+        aria:        _('aria'),
+        description: _('description'),
+        zindex:      _('zindex'),
+        name,
+        interactive,
+        style
+      }),
+      scope
+    );
   }
 
   function legendType(spec, scaleType) {
-    var type = spec.type || Symbols$2;
+    var type = spec.type || Symbols$1;
 
     if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
-      type = isContinuous(scaleType) ? Gradient$2
-        : isDiscretizing(scaleType) ? Discrete$2
-        : Symbols$2;
+      type = isContinuous(scaleType) ? Gradient$1
+        : isDiscretizing(scaleType) ? Discrete$1
+        : Symbols$1;
     }
 
-    return type !== Gradient$2 ? type
-      : isDiscretizing(scaleType) ? Discrete$2
-      : Gradient$2;
+    return type !== Gradient$1 ? type
+      : isDiscretizing(scaleType) ? Discrete$1
+      : Gradient$1;
   }
 
   function scaleCount(spec) {
@@ -30171,7 +30865,7 @@
     }, 0);
   }
 
-  function buildLegendEncode(_, config) {
+  function buildLegendEncode(_, spec, config) {
     var encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
@@ -30186,6 +30880,10 @@
       strokeDash:   config.strokeDash,
       x:            _('legendX'),
       y:            _('legendY'),
+
+      // accessibility support
+      format:       spec.format,
+      formatType:   spec.formatType
     });
 
     return encode;
@@ -30224,10 +30922,11 @@
         interactive = userEncode.interactive,
         style = userEncode.style,
         children = [],
-        dataRef, group;
+        datum, dataRef;
 
     // single-element data source for group title
-    dataRef = ref(scope.add(Collect$1(null, [{}])));
+    datum = {};
+    dataRef = ref(scope.add(Collect$1(null, [datum])));
 
     // include title text
     children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
@@ -30237,13 +30936,22 @@
       children.push(buildSubTitle(spec, _, encode.subtitle, dataRef));
     }
 
-    // build title specification
-    group = guideGroup(TitleRole$1, style, name, dataRef, interactive,
-                       groupEncode(_, userEncode), children);
-    if (spec.zindex) group.zindex = spec.zindex;
-
     // parse title specification
-    return parseMark(group, scope);
+    return parseMark(
+      guideGroup({
+        role:        TitleRole$1,
+        from:        dataRef,
+        encode:      groupEncode(_, userEncode),
+        marks:       children,
+        aria:        _('aria'),
+        description: _('description'),
+        zindex:      _('zindex'),
+        name,
+        interactive,
+        style
+      }),
+      scope
+    );
   }
 
   // provide backwards-compatibility for title custom encode;
@@ -30261,17 +30969,17 @@
     var encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
-      orient:     _('orient'),
-      anchor:     _('anchor'),
-      align:      {signal: alignExpr},
-      angle:      {signal: angleExpr},
-      limit:      _('limit'),
-      frame:      _('frame'),
-      offset:     _('offset') || 0,
-      padding:    _('subtitlePadding')
+      orient:      _('orient'),
+      anchor:      _('anchor'),
+      align:       {signal: alignExpr},
+      angle:       {signal: angleExpr},
+      limit:       _('limit'),
+      frame:       _('frame'),
+      offset:      _('offset') || 0,
+      padding:     _('subtitlePadding')
     });
 
-    return extendEncode(encode, userEncode, Skip$1);
+    return extendEncode(encode, userEncode, Skip$2);
   }
 
   function buildTitle(spec, _, userEncode, dataRef) {
@@ -30303,8 +31011,13 @@
       baseline:   _('baseline')
     });
 
-    return guideMark(TextMark, TitleTextRole, GroupTitleStyle,
-                     null, dataRef, encode, userEncode);
+    return guideMark({
+      type: TextMark,
+      role: TitleTextRole,
+      style: GroupTitleStyle,
+      from: dataRef,
+      encode
+    }, userEncode);
   }
 
   function buildSubTitle(spec, _, userEncode, dataRef) {
@@ -30336,8 +31049,13 @@
       baseline:   _('baseline')
     });
 
-    return guideMark(TextMark, TitleSubtitleRole, GroupSubtitleStyle,
-                     null, dataRef, encode, userEncode);
+    return guideMark({
+      type:  TextMark,
+      role:  TitleSubtitleRole,
+      style: GroupSubtitleStyle,
+      from:  dataRef,
+      encode
+    }, userEncode);
   }
 
   function parseData$1(data, scope) {
@@ -30451,22 +31169,195 @@
     });
   }
 
+  const isX = orient => orient === Bottom$1 || orient === Top$1;
+
+  // get sign coefficient based on axis orient
+  const getSign = (orient, a, b) => isSignal(orient)
+    ? ifLeftTopExpr(orient.signal, a, b)
+    : orient === Left$1 || orient === Top$1 ? a : b;
+
+  // condition on axis x-direction
+  const ifX = (orient, a, b) => isSignal(orient)
+    ? ifXEnc(orient.signal, a, b)
+    : isX(orient) ? a : b;
+
+  // condition on axis y-direction
+  const ifY = (orient, a, b) => isSignal(orient)
+    ? ifYEnc(orient.signal, a, b)
+    : isX(orient) ? b : a;
+
+  const ifTop = (orient, a, b) => isSignal(orient)
+    ? ifTopExpr(orient.signal, a, b)
+    : orient === Top$1 ? {value: a} : {value: b};
+
+  const ifRight = (orient, a, b) => isSignal(orient)
+    ? ifRightExpr(orient.signal, a, b)
+    : orient === Right$1 ? {value: a} : {value: b};
+
+  const ifXEnc = ($orient, a, b) => ifEnc(
+    `${$orient} === '${Top$1}' || ${$orient} === '${Bottom$1}'`, a, b
+  );
+
+  const ifYEnc = ($orient, a, b) => ifEnc(
+    `${$orient} !== '${Top$1}' && ${$orient} !== '${Bottom$1}'`, a, b
+  );
+
+  const ifLeftTopExpr = ($orient, a, b) => ifExpr(
+    `${$orient} === '${Left$1}' || ${$orient} === '${Top$1}'`, a, b
+  );
+
+  const ifTopExpr = ($orient, a, b) => ifExpr(
+    `${$orient} === '${Top$1}'`, a, b
+  );
+
+  const ifRightExpr = ($orient, a, b) => ifExpr(
+    `${$orient} === '${Right$1}'`, a, b
+  );
+
+  const ifEnc = (test, a, b) => {
+    // ensure inputs are encoder objects (or null)
+    a = a != null ? encoder(a) : a;
+    b = b != null ? encoder(b) : b;
+
+    if (isSimple(a) && isSimple(b)) {
+      // if possible generate simple signal expression
+      a = a ? (a.signal || $(a.value)) : null;
+      b = b ? (b.signal || $(b.value)) : null;
+      return {signal: `${test} ? (${a}) : (${b})`};
+    } else {
+      // otherwise generate rule set
+      return [extend({test}, a)].concat(b || []);
+    }
+  };
+
+  const isSimple = enc => (
+    enc == null || Object.keys(enc).length === 1
+  );
+
+  const ifExpr = (test, a, b) => ({
+    signal: `${test} ? (${toExpr(a)}) : (${toExpr(b)})`
+  });
+
+  const ifOrient = ($orient, t, b, l, r) => ({
+    signal: (l != null ? `${$orient} === '${Left$1}' ? (${toExpr(l)}) : ` : '')
+          + (b != null ? `${$orient} === '${Bottom$1}' ? (${toExpr(b)}) : ` : '')
+          + (r != null ? `${$orient} === '${Right$1}' ? (${toExpr(r)}) : ` : '')
+          + (t != null ? `${$orient} === '${Top$1}' ? (${toExpr(t)}) : ` : '')
+          + '(null)'
+  });
+
+  const toExpr = v => isSignal(v)
+    ? v.signal
+    : v == null ? null : $(v);
+
+  const mult = (sign, value) => value === 0 ? 0 : isSignal(sign)
+    ? {signal: `(${sign.signal}) * ${value}`}
+    : {value: sign * value};
+
+  const patch = (value, base) => {
+    const s = value.signal;
+    return s && s.endsWith('(null)')
+      ? {signal: s.slice(0, -6) + base.signal}
+      : value;
+  };
+
+  function fallback(prop, config, axisConfig, style) {
+    let styleProp;
+
+    if (config && hasOwnProperty(config, prop)) {
+      return config[prop];
+    }
+    else if (hasOwnProperty(axisConfig, prop)) {
+      return axisConfig[prop];
+    }
+    else if (prop.startsWith('title')) {
+      switch (prop) {
+        case 'titleColor':
+          styleProp = 'fill';
+          break;
+        case 'titleFont':
+        case 'titleFontSize':
+        case 'titleFontWeight':
+          styleProp = prop[5].toLowerCase() + prop.slice(6);
+      }
+      return style[GuideTitleStyle][styleProp];
+    }
+    else if (prop.startsWith('label')) {
+      switch (prop) {
+        case 'labelColor':
+          styleProp = 'fill';
+          break;
+        case 'labelFont':
+        case 'labelFontSize':
+          styleProp = prop[5].toLowerCase() + prop.slice(6);
+      }
+      return style[GuideLabelStyle][styleProp];
+    }
+
+    return null;
+  }
+
+  function keys$1(objects) {
+    const map = {};
+    for (const obj of objects) {
+      if (!obj) continue;
+      for (const key in obj) map[key] = 1;
+    }
+    return Object.keys(map);
+  }
+
   function axisConfig(spec, scope) {
     var config = scope.config,
+        style = config.style,
+        axis = config.axis,
+        band = scope.scaleType(spec.scale) === 'band' && config.axisBand,
         orient = spec.orient,
-        xy = (orient === Top$1 || orient === Bottom$1) ? config.axisX : config.axisY,
-        or = config['axis' + orient[0].toUpperCase() + orient.slice(1)],
-        band = scope.scaleType(spec.scale) === 'band' && config.axisBand;
+        xy, or, key;
 
-    return (xy || or || band)
-      ? extend({}, config.axis, xy, or, band)
-      : config.axis;
+    if (isSignal(orient)) {
+      const xyKeys = keys$1([
+              config.axisX, config.axisY
+            ]),
+            orientKeys = keys$1([
+              config.axisTop, config.axisBottom,
+              config.axisLeft, config.axisRight
+            ]);
+
+      xy = {};
+      for (key of xyKeys) {
+        xy[key] = ifX(
+          orient,
+          fallback(key, config.axisX, axis, style),
+          fallback(key, config.axisY, axis, style)
+        );
+      }
+
+      or = {};
+      for (key of orientKeys) {
+        or[key] = ifOrient(
+          orient.signal,
+          fallback(key, config.axisTop, axis, style),
+          fallback(key, config.axisBottom, axis, style),
+          fallback(key, config.axisLeft, axis, style),
+          fallback(key, config.axisRight, axis, style)
+        );
+      }
+    } else {
+      xy = (orient === Top$1 || orient === Bottom$1) ? config.axisX : config.axisY;
+      or = config['axis' + orient[0].toUpperCase() + orient.slice(1)];
+    }
+
+    var result = (xy || or || band)
+      ? extend({}, axis, xy, or, band)
+      : axis;
+
+    return result;
   }
 
   function axisDomain(spec, config, userEncode, dataRef) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
-        encode, enter, update, u, u2, v;
+        encode, enter, update;
 
     encode = {
       enter: enter = {opacity: zero$1},
@@ -30476,26 +31367,28 @@
 
     addEncoders(encode, {
       stroke:           _('domainColor'),
+      strokeCap:        _('domainCap'),
       strokeDash:       _('domainDash'),
       strokeDashOffset: _('domainDashOffset'),
       strokeWidth:      _('domainWidth'),
       strokeOpacity:    _('domainOpacity')
     });
 
-    if (orient === Top$1 || orient === Bottom$1) {
-      u = 'x';
-      v = 'y';
-    } else {
-      u = 'y';
-      v = 'x';
-    }
-    u2 = u + '2';
+    const pos0 = position(spec, 0);
+    const pos1 = position(spec, 1);
 
-    enter[v] = zero$1;
-    update[u] = enter[u] = position(spec, 0);
-    update[u2] = enter[u2] = position(spec, 1);
+    enter.x = update.x = ifX(orient, pos0, zero$1);
+    enter.x2 = update.x2 = ifX(orient, pos1);
 
-    return guideMark(RuleMark, AxisDomainRole, null, null, dataRef, encode, userEncode);
+    enter.y = update.y = ifY(orient, pos0, zero$1);
+    enter.y2 = update.y2 = ifY(orient, pos1);
+
+    return guideMark({
+      type: RuleMark,
+      role: AxisDomainRole,
+      from: dataRef,
+      encode
+    }, userEncode);
   }
 
   function position(spec, pos) {
@@ -30506,9 +31399,10 @@
     var _ = lookup$5(spec, config),
         orient = spec.orient,
         vscale = spec.gridScale,
-        sign = (orient === Left$1 || orient === Top$1) ? 1 : -1,
+        sign = getSign(orient, 1, -1),
         offset = offsetValue$1(spec.offset, sign),
-        encode, enter, exit, update, tickPos, u, v, v2, s;
+        encode, enter, exit, update,
+        tickPos, gridStart, gridEnd, sz;
 
     encode = {
       enter: enter = {opacity: zero$1},
@@ -30518,6 +31412,7 @@
 
     addEncoders(encode, {
       stroke:           _('gridColor'),
+      strokeCap:        _('gridCap'),
       strokeDash:       _('gridDash'),
       strokeDashOffset: _('gridDashOffset'),
       strokeOpacity:    _('gridOpacity'),
@@ -30533,45 +31428,49 @@
       round:  _('tickRound')
     };
 
-    if (orient === Top$1 || orient === Bottom$1) {
-      u = 'x';
-      v = 'y';
-      s = 'height';
-    } else {
-      u = 'y';
-      v = 'x';
-      s = 'width';
-    }
-    v2 = v + '2';
+    sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
 
-    update[u] = enter[u] = exit[u] = tickPos;
+    gridStart = vscale
+      ? {scale: vscale, range: 0, mult: sign, offset: offset}
+      : {value: 0, offset: offset};
 
-    if (vscale) {
-      update[v] = enter[v] = {scale: vscale, range: 0, mult: sign, offset: offset};
-      update[v2] = enter[v2] = {scale: vscale, range: 1, mult: sign, offset: offset};
-    } else {
-      update[v] = enter[v] = {value: 0, offset: offset};
-      update[v2] = enter[v2] = {signal: s, mult: sign, offset: offset};
-    }
+    gridEnd = vscale
+      ? {scale: vscale, range: 1, mult: sign, offset: offset}
+      : extend(sz, {mult: sign, offset: offset});
 
-    return guideMark(RuleMark, AxisGridRole, null, Value, dataRef, encode, userEncode);
+    enter.x = update.x = ifX(orient, tickPos, gridStart);
+    enter.y = update.y = ifY(orient, tickPos, gridStart);
+    enter.x2 = update.x2 = ifY(orient, gridEnd);
+    enter.y2 = update.y2 = ifX(orient, gridEnd);
+    exit.x = ifX(orient, tickPos);
+    exit.y = ifY(orient, tickPos);
+
+    return guideMark({
+      type: RuleMark,
+      role: AxisGridRole,
+      key:  Value,
+      from: dataRef,
+      encode
+     }, userEncode);
   }
 
   function offsetValue$1(offset, sign)  {
     if (sign === 1) ; else if (!isObject(offset)) {
-      offset = sign * (offset || 0);
+      offset = isSignal(sign)
+        ? {signal: `(${sign.signal}) * (${offset || 0})`}
+        : sign * (offset || 0);
     } else {
-      var entry = offset = extend({}, offset);
-
+      let entry = offset = extend({}, offset);
       while (entry.mult != null) {
         if (!isObject(entry.mult)) {
-          entry.mult *= sign;
+          entry.mult = isSignal(sign) // no offset if sign === 1
+            ? {signal: `(${entry.mult}) * (${sign.signal})`}
+            : entry.mult * sign;
           return offset;
         } else {
           entry = entry.mult = extend({}, entry.mult);
         }
       }
-
       entry.mult = sign;
     }
 
@@ -30581,7 +31480,7 @@
   function axisTicks(spec, config, userEncode, dataRef, size, band) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
-        sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
+        sign = getSign(orient, -1, 1),
         encode, enter, exit, update, tickSize, tickPos;
 
     encode = {
@@ -30592,6 +31491,7 @@
 
     addEncoders(encode, {
       stroke:           _('tickColor'),
+      strokeCap:        _('tickCap'),
       strokeDash:       _('tickDash'),
       strokeDashOffset: _('tickDashOffset'),
       strokeOpacity:    _('tickOpacity'),
@@ -30610,17 +31510,21 @@
       round:  _('tickRound')
     };
 
-    if (orient === Top$1 || orient === Bottom$1) {
-      update.y = enter.y = zero$1;
-      update.y2 = enter.y2 = tickSize;
-      update.x = enter.x = exit.x = tickPos;
-    } else {
-      update.x = enter.x = zero$1;
-      update.x2 = enter.x2 = tickSize;
-      update.y = enter.y = exit.y = tickPos;
-    }
+    update.y = enter.y = ifX(orient, zero$1, tickPos);
+    update.y2 = enter.y2 = ifX(orient, tickSize);
+    exit.x = ifX(orient, tickPos);
 
-    return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
+    update.x = enter.x = ifY(orient, zero$1, tickPos);
+    update.x2 = enter.x2 = ifY(orient, tickSize);
+    exit.y = ifY(orient, tickPos);
+
+    return guideMark({
+      type: RuleMark,
+      role: AxisTickRole,
+      key:  Value,
+      from: dataRef,
+      encode
+    }, userEncode);
   }
 
   function flushExpr(scale, threshold, a, b, c) {
@@ -30634,16 +31538,15 @@
   function axisLabels(spec, config, userEncode, dataRef, size, band) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
-        sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
-        isXAxis = (orient === Top$1 || orient === Bottom$1),
         scale = spec.scale,
+        sign = getSign(orient, -1, 1),
         flush = deref(_('labelFlush')),
         flushOffset = deref(_('labelFlushOffset')),
         flushOn = flush === 0 || !!flush,
         labelAlign = _('labelAlign'),
         labelBaseline = _('labelBaseline'),
-        encode, enter, tickSize, tickPos, align, baseline, offset,
-        bound, overlap, separation;
+        encode, enter, update, tickSize, tickPos,
+        align, baseline, bound, overlap, offsetExpr;
 
     tickSize = encoder(size);
     tickSize.mult = sign;
@@ -30657,35 +31560,38 @@
       offset: extendOffset(band.offset, _('labelOffset'))
     };
 
-    if (isXAxis) {
-      align = labelAlign || (flushOn
+    align = ifX(orient,
+      flushOn
         ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-        : 'center');
-      baseline = labelBaseline || (orient === Top$1 ? 'bottom' : 'top');
-      offset = !labelAlign;
-    } else {
-      align = labelAlign || (orient === Right$1 ? 'left' : 'right');
-      baseline = labelBaseline || (flushOn
-        ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-        : 'middle');
-      offset = !labelBaseline;
-    }
+        : {value: 'center'},
+      ifRight(orient, 'left', 'right')
+    );
 
-    offset = offset && flushOn && flushOffset
-      ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
-      : null;
+    baseline = ifX(orient,
+      ifTop(orient, 'bottom', 'top'),
+      flushOn
+        ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
+        : {value: 'middle'}
+    );
+
+    offsetExpr = flushExpr(scale, flush, `-(${flushOffset})`, flushOffset, 0);
+    flushOn = flushOn && flushOffset;
+
+    enter = {
+      opacity: zero$1,
+      x: ifX(orient, tickPos, tickSize),
+      y: ifY(orient, tickPos, tickSize)
+    };
 
     encode = {
-      enter: enter = {
-        opacity: zero$1,
-        x: isXAxis ? tickPos : tickSize,
-        y: isXAxis ? tickSize : tickPos
-      },
-      update: {
+      enter: enter,
+      update: update = {
         opacity: one$1,
         text: {field: Label},
         x: enter.x,
-        y: enter.y
+        y: enter.y,
+        align,
+        baseline
       },
       exit: {
         opacity: zero$1,
@@ -30695,9 +31601,11 @@
     };
 
     addEncoders(encode, {
-      [isXAxis ? 'dx' : 'dy']: offset,
-      align:       align,
-      baseline:    baseline,
+      dx: !labelAlign && flushOn ? ifX(orient, offsetExpr) : null,
+      dy: !labelBaseline && flushOn ? ifY(orient, offsetExpr) : null
+    });
+
+    addEncoders(encode, {
       angle:       _('labelAngle'),
       fill:        _('labelColor'),
       fillOpacity: _('labelOpacity'),
@@ -30707,38 +31615,50 @@
       fontStyle:   _('labelFontStyle'),
       limit:       _('labelLimit'),
       lineHeight:  _('labelLineHeight')
+    }, {
+      align:       labelAlign,
+      baseline:    labelBaseline
     });
 
     bound   = _('labelBound');
     overlap = _('labelOverlap');
-    separation = _('labelSeparation');
-
-    spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
 
     // if overlap method or bound defined, request label overlap removal
-    if (overlap || bound) {
-      spec.overlap = {
-        separation: separation,
-        method: overlap,
-        order: 'datum.index',
-        bound: bound ? {scale: scale, orient: orient, tolerance: bound} : null
-      };
+    overlap = overlap || bound ? {
+      separation: _('labelSeparation'),
+      method: overlap,
+      order: 'datum.index',
+      bound: bound ? {scale, orient, tolerance: bound} : null
+    } : undefined;
+
+    if (update.align !== align) {
+      update.align = patch(update.align, align);
+    }
+    if (update.baseline !== baseline) {
+      update.baseline = patch(update.baseline, baseline);
     }
 
-    return spec;
+    return guideMark({
+      type:  TextMark,
+      role:  AxisLabelRole,
+      style: GuideLabelStyle,
+      key:   Value,
+      from:  dataRef,
+      encode,
+      overlap
+    }, userEncode);
   }
 
   function axisTitle(spec, config, userEncode, dataRef) {
     var _ = lookup$5(spec, config),
         orient = spec.orient,
-        sign = (orient === Left$1 || orient === Top$1) ? -1 : 1,
-        horizontal = (orient === Top$1 || orient === Bottom$1),
+        sign = getSign(orient, -1, 1),
         encode, enter, update, titlePos;
 
     encode = {
       enter: enter = {
         opacity: zero$1,
-        anchor: encoder(_('titleAnchor')),
+        anchor: encoder(_('titleAnchor', null)),
         align: {signal: alignExpr}
       },
       update: update = extend({}, enter, {
@@ -30754,19 +31674,14 @@
       signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
     };
 
-    if (horizontal) {
-      update.x = titlePos;
-      enter.angle = {value: 0};
-      enter.baseline = {value: orient === Top$1 ? 'bottom' : 'top'};
-    } else {
-      update.y = titlePos;
-      enter.angle = {value: sign * 90};
-      enter.baseline = {value: 'bottom'};
-    }
+    update.x = ifX(orient, titlePos);
+    update.y = ifY(orient, titlePos);
+    enter.angle = ifX(orient, zero$1, mult(sign, 90));
+    enter.baseline = ifX(orient, ifTop(orient, Bottom$1, Top$1), {value: Bottom$1});
+    update.angle = enter.angle;
+    update.baseline = enter.baseline;
 
     addEncoders(encode, {
-      angle:       _('titleAngle'),
-      baseline:    _('titleBaseline'),
       fill:        _('titleColor'),
       fillOpacity: _('titleOpacity'),
       font:        _('titleFont'),
@@ -30776,18 +31691,36 @@
       limit:       _('titleLimit'),
       lineHeight:  _('titleLineHeight')
     }, { // require update
-      align:       _('titleAlign')
+      align:       _('titleAlign'),
+      angle:       _('titleAngle'),
+      baseline:    _('titleBaseline')
     });
 
-    !addEncode(encode, 'x', _('titleX'), 'update')
-      && !horizontal && !has('x', userEncode)
-      && (encode.enter.auto = {value: true});
+    autoLayout(_, orient, encode, userEncode);
+    encode.update.align = patch(encode.update.align, enter.align);
+    encode.update.angle = patch(encode.update.angle, enter.angle);
+    encode.update.baseline = patch(encode.update.baseline, enter.baseline);
 
-    !addEncode(encode, 'y', _('titleY'), 'update')
-      && horizontal && !has('y', userEncode)
-      && (encode.enter.auto = {value: true});
+    return guideMark({
+      type:  TextMark,
+      role:  AxisTitleRole,
+      style: GuideTitleStyle,
+      from:  dataRef,
+      encode
+    }, userEncode);
+  }
 
-    return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+  function autoLayout(_, orient, encode, userEncode) {
+    const auto = (value, dim) => value != null
+      ? (encode.update[dim] = patch(encoder(value), encode.update[dim]), false)
+      : !has(dim, userEncode) ? true : false;
+
+    const autoY = auto(_('titleX'), 'x'),
+          autoX = auto(_('titleY'), 'y');
+
+    encode.enter.auto = autoX === autoY
+      ? encoder(autoX)
+      : ifX(orient, encoder(autoX), encoder(autoY));
   }
 
   function parseAxis(spec, scope) {
@@ -30799,31 +31732,23 @@
         style = axisEncode.style,
         _ = lookup$5(spec, config),
         band = tickBand(_),
-        datum, dataRef, ticksRef, size, group, children;
+        datum, dataRef, ticksRef, size, children;
 
     // single-element data source for axis group
     datum = {
-      orient: spec.orient,
+      scale:  spec.scale,
       ticks:  !!_('ticks'),
       labels: !!_('labels'),
       grid:   !!_('grid'),
       domain: !!_('domain'),
-      title:  spec.title != null,
-      translate: _('translate')
+      title:  spec.title != null
     };
     dataRef = ref(scope.add(Collect$1({}, [datum])));
 
     // encoding properties for axis group item
-    axisEncode = extendEncode({
-      update: {
-        offset:       encoder(_('offset') || 0),
-        position:     encoder(value$1(spec.position, 0)),
-        titlePadding: encoder(_('titlePadding')),
-        minExtent:    encoder(_('minExtent')),
-        maxExtent:    encoder(_('maxExtent')),
-        range:        {signal: `abs(span(range("${spec.scale}")))`}
-      }
-    }, encode.axis, Skip$1);
+    axisEncode = extendEncode(
+      buildAxisEncode(_, spec), axisEncode, Skip$2
+    );
 
     // data source for axis ticks
     ticksRef = ref(scope.add(AxisTicks$1({
@@ -30866,15 +31791,46 @@
       children.push(axisTitle(spec, config, encode.title, dataRef));
     }
 
-    // build axis specification
-    group = guideGroup(AxisRole$1, style, name, dataRef, interactive, axisEncode, children);
-    if (spec.zindex) group.zindex = spec.zindex;
-
     // parse axis specification
-    return parseMark(group, scope);
+    return parseMark(
+      guideGroup({
+        role:        AxisRole$1,
+        from:        dataRef,
+        encode:      axisEncode,
+        marks:       children,
+        aria:        _('aria'),
+        description: _('description'),
+        zindex:      _('zindex'),
+        name,
+        interactive,
+        style
+      }),
+      scope
+    );
   }
 
-  function parseSpec(spec, scope, preprocessed) {
+  function buildAxisEncode(_, spec) {
+    var encode = {enter: {}, update: {}};
+
+    addEncoders(encode, {
+      orient:       _('orient'),
+      offset:       _('offset') || 0,
+      position:     value$2(spec.position, 0),
+      titlePadding: _('titlePadding'),
+      minExtent:    _('minExtent'),
+      maxExtent:    _('maxExtent'),
+      range:        {signal: `abs(span(range("${spec.scale}")))`},
+      translate:    _('translate'),
+
+      // accessibility support
+      format:       spec.format,
+      formatType:   spec.formatType
+    });
+
+    return encode;
+  }
+
+  function parseScope(spec, scope, preprocessed) {
     var signals = array(spec.signals),
         scales = array(spec.scales);
 
@@ -30914,37 +31870,47 @@
     return scope;
   }
 
+  const rootEncode = spec => extendEncode(
+    {
+      enter: {
+        x: {value: 0},
+        y: {value: 0}
+      },
+      update: {
+        width: {signal: 'width'},
+        height: {signal: 'height'}
+      }
+    },
+    spec
+  );
+
   function parseView(spec, scope) {
-    var config = scope.config,
-        op, input, encode, parent, root, signals;
+    const config = scope.config;
 
     // add scenegraph root
-    root = ref(scope.root = scope.add(operator()));
+    const root = ref(scope.root = scope.add(operator()));
 
     // parse top-level signal definitions
-    signals = collectSignals(spec, config);
+    const signals = collectSignals(spec, config);
     signals.forEach(_ => parseSignal(_, scope));
 
-    // assign description, event and legend configuration
+    // assign description, event, legend, and locale configuration
     scope.description = spec.description || config.description;
     scope.eventConfig = config.events;
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
+    scope.locale = config.locale;
 
     // store root group item
-    input = scope.add(Collect$1());
+    const input = scope.add(Collect$1());
 
     // encode root group item
-    encode = extendEncode({
-      enter: { x: {value: 0}, y: {value: 0} },
-      update: { width: {signal: 'width'}, height: {signal: 'height'} }
-    }, spec.encode);
-
-    encode = scope.add(Encode$1(
-      encoders(encode, GroupMark, FrameRole$1, spec.style, scope, {pulse: ref(input)}))
-    );
+    const encode = scope.add(Encode$1(parseEncode(
+      rootEncode(spec.encode), GroupMark, FrameRole$1,
+      spec.style, scope, {pulse: ref(input)}
+    )));
 
     // perform view layout
-    parent = scope.add(ViewLayout$1({
+    const parent = scope.add(ViewLayout$1({
       layout:   scope.objectProperty(spec.layout),
       legends:  scope.legends,
       autosize: scope.signalRef('autosize'),
@@ -30955,11 +31921,11 @@
 
     // parse remainder of specification
     scope.pushState(ref(encode), ref(parent), null);
-    parseSpec(spec, scope, signals);
+    parseScope(spec, scope, signals);
     scope.operators.push(parent);
 
     // bound / render / sieve root item
-    op = scope.add(Bound$1({mark: root, pulse: ref(parent)}));
+    let op = scope.add(Bound$1({mark: root, pulse: ref(parent)}));
     op = scope.add(Render$1({pulse: ref(op)}));
     op = scope.add(Sieve$1({pulse: ref(op)}));
 
@@ -30990,7 +31956,7 @@
    * overwriting existing 'value' or 'update' properties.
    */
   function collectSignals(spec, config) {
-    const _ = name => value$1(spec[name], config[name]),
+    const _ = name => value$2(spec[name], config[name]),
           signals = [
             signalObject('background', _('background')),
             signalObject('autosize', parseAutosize(_('autosize'))),
@@ -31024,8 +31990,9 @@
     return signals;
   }
 
-  function Scope$1(config) {
-    this.config = config;
+  function Scope$1(config, options) {
+    this.config = config || {};
+    this.options = options || {};
 
     this.bindings = [];
     this.field = {};
@@ -31039,6 +32006,7 @@
     this.updates = [];
     this.operators = [];
     this.eventConfig = null;
+    this.locale = null;
 
     this._id = 0;
     this._subid = 0;
@@ -31052,6 +32020,7 @@
 
   function Subscope(scope) {
     this.config = scope.config;
+    this.options = scope.options;
     this.legends = scope.legends;
 
     this.field = Object.create(scope.field);
@@ -31079,6 +32048,10 @@
 
   // ----
 
+  prototype$1u.parse = function(spec) {
+    return parseScope(spec, this);
+  };
+
   prototype$1u.fork = function() {
     return new Subscope(this);
   };
@@ -31095,7 +32068,8 @@
       streams:     this.streams,
       updates:     this.updates,
       bindings:    this.bindings,
-      eventConfig: this.eventConfig
+      eventConfig: this.eventConfig,
+      locale:      this.locale
     };
   };
 
@@ -31451,20 +32425,20 @@
     return this.addData(name, DataScope.fromEntries(this, entries));
   };
 
-  var defaultFont = 'sans-serif',
-      defaultSymbolSize = 30,
-      defaultStrokeWidth = 2,
-      defaultColor = '#4c78a8',
-      black = '#000',
-      gray = '#888',
-      lightGray = '#ddd';
-
   /**
    * Standard configuration defaults for Vega specification parsing.
    * Users can provide their own (sub-)set of these default values
    * by passing in a config object to the top-level parse method.
    */
   function defaults() {
+    const defaultFont = 'sans-serif',
+          defaultSymbolSize = 30,
+          defaultStrokeWidth = 2,
+          defaultColor = '#4c78a8',
+          black = '#000',
+          gray = '#888',
+          lightGray = '#ddd';
+
     return {
       // default visualization description
       description: 'Vega visualization',
@@ -31494,17 +32468,29 @@
       // defaults for basic mark types
       // each subset accepts mark properties (fill, stroke, etc)
       mark: null,
-      arc: { fill: defaultColor },
-      area: { fill: defaultColor },
+      arc: {
+        fill: defaultColor
+      },
+      area: {
+        fill: defaultColor
+      },
       image: null,
       line: {
         stroke: defaultColor,
         strokeWidth: defaultStrokeWidth
       },
-      path: { stroke: defaultColor },
-      rect: { fill: defaultColor },
-      rule: { stroke: black },
-      shape: { stroke: defaultColor },
+      path: {
+        stroke: defaultColor
+      },
+      rect: {
+        fill: defaultColor
+      },
+      rule: {
+        stroke: black
+      },
+      shape: {
+        stroke: defaultColor
+      },
       symbol: {
         fill: defaultColor,
         size: 64
@@ -31513,6 +32499,10 @@
         fill: black,
         font: defaultFont,
         fontSize: 11
+      },
+      trail: {
+        fill: defaultColor,
+        size: defaultStrokeWidth
       },
 
       // style definitions
@@ -31677,58 +32667,58 @@
     };
   }
 
-  function parse$5(spec, config) {
+  function parse$6(spec, config, options) {
     if (!isObject(spec)) {
       error('Input Vega specification must be an object.');
     }
 
     config = mergeConfig(defaults(), config, spec.config);
-    return parseView(spec, new Scope$1(config)).toRuntime();
+    return parseView(spec, new Scope$1(config, options)).toRuntime();
   }
 
   // -- Transforms -----
   extend(transforms, tx, vtx, encode, geo, force, tree, reg, voronoi, wordcloud, xf);
 
-  Object.defineProperty(exports, 'timeFormatLocale', {
-    enumerable: true,
-    get: function () {
-      return d3TimeFormat.timeFormatDefaultLocale;
-    }
-  });
-  Object.defineProperty(exports, 'formatLocale', {
-    enumerable: true,
-    get: function () {
-      return d3Format.formatDefaultLocale;
-    }
-  });
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;
   exports.CanvasRenderer = CanvasRenderer;
+  exports.DATE = DATE;
+  exports.DAY = DAY;
+  exports.DAYOFYEAR = DAYOFYEAR;
   exports.Dataflow = Dataflow;
   exports.Debug = Debug;
   exports.Error = Error$1;
   exports.EventStream = EventStream;
   exports.Gradient = Gradient;
   exports.GroupItem = GroupItem;
+  exports.HOURS = HOURS;
   exports.Handler = Handler;
   exports.Info = Info;
   exports.Item = Item;
+  exports.MILLISECONDS = MILLISECONDS;
+  exports.MINUTES = MINUTES;
+  exports.MONTH = MONTH;
   exports.Marks = Marks;
   exports.MultiPulse = MultiPulse;
   exports.None = None;
   exports.Operator = Operator;
   exports.Parameters = Parameters;
   exports.Pulse = Pulse;
+  exports.QUARTER = QUARTER;
   exports.RenderType = RenderType;
   exports.Renderer = Renderer;
   exports.ResourceLoader = ResourceLoader;
+  exports.SECONDS = SECONDS;
   exports.SVGHandler = SVGHandler;
   exports.SVGRenderer = SVGRenderer;
   exports.SVGStringRenderer = SVGStringRenderer;
   exports.Scenegraph = Scenegraph;
+  exports.TIME_UNITS = TIME_UNITS;
   exports.Transform = Transform;
   exports.View = View;
+  exports.WEEK = WEEK;
   exports.Warn = Warn;
+  exports.YEAR = YEAR;
   exports.accessor = accessor;
   exports.accessorFields = accessorFields;
   exports.accessorName = accessorName;
@@ -31749,7 +32739,9 @@
   exports.cumulativeLogNormal = cumulativeLogNormal;
   exports.cumulativeNormal = cumulativeNormal;
   exports.cumulativeUniform = cumulativeUniform;
+  exports.dayofyear = dayofyear;
   exports.debounce = debounce;
+  exports.defaultLocale = defaultLocale;
   exports.definition = definition;
   exports.densityLogNormal = densityLogNormal;
   exports.densityNormal = densityNormal;
@@ -31772,6 +32764,7 @@
   exports.fontFamily = fontFamily;
   exports.fontSize = fontSize;
   exports.format = format;
+  exports.formatLocale = numberFormatDefaultLocale;
   exports.formats = formats;
   exports.hasOwnProperty = hasOwnProperty;
   exports.id = id;
@@ -31802,6 +32795,7 @@
   exports.lerp = lerp;
   exports.lineHeight = lineHeight;
   exports.loader = loader;
+  exports.locale = locale;
   exports.logger = logger;
   exports.lruCache = lruCache;
   exports.merge = merge;
@@ -31814,7 +32808,7 @@
   exports.panLog = panLog;
   exports.panPow = panPow;
   exports.panSymlog = panSymlog;
-  exports.parse = parse$5;
+  exports.parse = parse$6;
   exports.pathCurves = curves;
   exports.pathEqual = pathEqual;
   exports.pathParse = pathParse;
@@ -31849,9 +32843,10 @@
   exports.regressionQuad = regressionQuad;
   exports.renderModule = renderModule;
   exports.repeat = repeat;
+  exports.resetDefaultLocale = resetDefaultLocale;
   exports.resetSVGClipId = resetSVGClipId;
+  exports.resetSVGDefIds = resetSVGDefIds;
   exports.responseType = responseType;
-  exports.runtime = parse$4;
   exports.runtimeContext = context$2;
   exports.sampleCurve = sampleCurve;
   exports.sampleLogNormal = sampleLogNormal;
@@ -31872,7 +32867,7 @@
   exports.textMetrics = textMetrics;
   exports.timeBin = timeBin;
   exports.timeFloor = timeFloor;
-  exports.timeFormat = timeFormat;
+  exports.timeFormatLocale = timeFormatDefaultLocale;
   exports.timeInterval = timeInterval;
   exports.timeOffset = timeOffset;
   exports.timeSequence = timeSequence;
@@ -31890,13 +32885,15 @@
   exports.tupleid = tupleid;
   exports.typeParsers = typeParsers;
   exports.utcFloor = utcFloor;
-  exports.utcFormat = utcFormat;
   exports.utcInterval = utcInterval;
   exports.utcOffset = utcOffset;
   exports.utcSequence = utcSequence;
+  exports.utcdayofyear = utcdayofyear;
   exports.utcquarter = utcquarter;
+  exports.utcweek = utcweek;
   exports.version = version;
   exports.visitArray = visitArray;
+  exports.week = week;
   exports.writeConfig = writeConfig;
   exports.zero = zero;
   exports.zoomLinear = zoomLinear;

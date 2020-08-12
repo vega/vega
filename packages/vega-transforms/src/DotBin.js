@@ -1,5 +1,5 @@
 import {partition} from './util/util';
-import {stableCompare, Transform} from 'vega-dataflow';
+import {Transform, stableCompare} from 'vega-dataflow';
 import {dotbin} from 'vega-statistics';
 import {extent, identity, inherits, span} from 'vega-util';
 
@@ -23,14 +23,14 @@ export default function DotBin(params) {
 }
 
 DotBin.Definition = {
-  "type": "DotBin",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "step", "type": "number" },
-    { "name": "smooth", "type": "boolean", "default": false },
-    { "name": "as", "type": "string", "default": Output }
+  'type': 'DotBin',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'step', 'type': 'number' },
+    { 'name': 'smooth', 'type': 'boolean', 'default': false },
+    { 'name': 'as', 'type': 'string', 'default': Output }
   ]
 };
 

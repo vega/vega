@@ -42,7 +42,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | gradientStrokeColor | {% include type t="Color" %}  | Stroke color of the color gradient border. |
 | gradientStrokeWidth | {% include type t="Number" %} | Stroke width of the color gradient border. |
 | labelAlign    | {% include type t="String" %}  | Horizontal text alignment for legend labels. |
-| labelBaseline | {% include type t="String" %}  | Vertical text baseline for legend labels. |
+| labelBaseline | {% include type t="String" %}  | Vertical text baseline for legend labels. One of `alphabetic` (default), `top`, `middle`, `bottom`, `line-top`, or `line-bottom`. The `line-top` and `line-bottom` values {% include tag ver="5.10" %} operate similarly to `top` and `bottom`, but are calculated relative to the *lineHeight* rather than *fontSize* alone. |
 | labelColor    | {% include type t="Color" %}   | Text color for legend labels. |
 | labelFont     | {% include type t="String" %}  | Font name for legend labels. |
 | labelFontSize | {% include type t="Number" %}  | Font size in pixels for legend labels. |
@@ -70,19 +70,30 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | title         | {% include type t="String|String[]" %}  | The title for the legend (none by default). For versions {% include tag ver="5.7" %}, a string array specifies a title with multiple lines of text.|
 | titleAnchor   | {% include type t="String" %}  | The anchor position for placing the legend title. One of `"start"`, `"middle"`, `"end"`, or `null` (default, for automatic determination). For example, with a _titleOrient_ of `"top"` these anchor positions map to a left-, center-, or right-aligned title relative to the legend contents. {% include tag ver="5.0" %} |
 | titleAlign    | {% include type t="String" %}  | Horizontal text alignment of the legend title. One of `"left"`, `"center"`, or `"right"`. If specified, this value overrides automatic alignment based on the _titleOrient_ and _titleAnchor_ values. |
-| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the legend title. One of `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
+| titleBaseline | {% include type t="String" %}  | Vertical text baseline of the legend title. One of `alphabetic` (default), `top`, `middle`, `bottom`, `line-top`, or `line-bottom`. The `line-top` and `line-bottom` values {% include tag ver="5.10" %} operate similarly to `top` and `bottom`, but are calculated relative to the *lineHeight* rather than *fontSize* alone. If specified, this value overrides the automatic baseline based on the _titleOrient_ and _titleAnchor_ values. |
 | titleColor    | {% include type t="Color" %}   | Text color of the legend title. |
 | titleFont     | {% include type t="String" %}  | Font name of the legend title. |
 | titleFontSize | {% include type t="Number" %}  | Font size in pixels of the legend title. |
 | titleFontStyle  | {% include type t="String" %} | Font style of the legend title (e.g., `normal` or `italic`). {% include tag ver="5.0" %} |
 | titleFontWeight | {% include type t="String|Number" %} | Font weight of the legend title. |
 | titleLimit    | {% include type t="Number" %} | The maximum allowed length in pixels of the legend title. |
-| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
+| titleLineHeight | {% include type t="Number" %} | Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline. {% include tag ver="5.7" %} |
 | titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
 | titleOrient   | {% include type t="String" %}  | The orientation of the title legend, determining where it is placed relative to the legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values. The array entries should be legal values in the backing scale domain.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. The default value is `0`.|
+
+### Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| aria          | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree. |
+| description   | {% include type t="String" %}  | A text description of this legend for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. |
+
+### Themes and Configuration
 
 To create themes, new default values for legend properties can be set using a [config](../config/#legends) object. The config object also supports [customized layout](../config/#legends-layout) behavior for collections of legends with the same *orient* value.
 
@@ -101,9 +112,9 @@ Valid settings for the legend _orient_ parameter.
 | `top-right`    | Place the legend inside the upper right corner of the chart.|
 | `bottom-left`  | Place the legend inside the lower left corner of the chart.|
 | `bottom-right` | Place the legend inside the lower right corner of the chart.|
-| `none`         | Do not perform automatic layout. Allows custom layout by setting the `x` and `y` properties within a `legend` encoding block.|
+| `none`         | Do not perform automatic layout. Allows custom layout by setting the *legendX* and *legendY* properties of the legend.|
 
-_Multiple legends_: If multiple legends have a `left` or `right` orientation, they will be vertically ordered. If multiple legends have a `top` or `bottom` orientation, they will be horizontally ordered. In all other cases, legends will be drawn on top of each other when placed in the same location.
+_Multiple legends_: If multiple legends have a `left` or `right` orientation, they will be vertically ordered by default. If multiple legends have a `top` or `bottom` orientation, they will be horizontally ordered by default. In all other cases, legends will be drawn on top of each other when placed in the same location. The multiple legend layout can be customized by setting the [legend layout config](../config/#legends-layout).
 
 _Legend offset_: In the case of `left`, `right`, `top` and `bottom` orientation, the _offset_ parameter determines how far away the legend is placed from the rest of the chart. If the orientation is `none`, the _offset_ parameter is ignored. For all other settings, the _offset_ determines the distance the legend is moved inward from a corner of the data rectangle.
 
@@ -169,4 +180,4 @@ The following example shows how to set custom fonts and a border on a legend for
 ]
 ```
 
-Custom text can be defined using the `text` property for `labels`. For example, one could define an ordinal scale that serves as a lookup table from a backing `value` to legend label text. In addition, one can set the `x` and `y` properties for the `legend` to perform custom positioning when _orient_ is `none`.
+Custom text can be defined using the `text` property for `labels`. For example, one could define an ordinal scale that serves as a lookup table from a backing `value` to legend label text. Note: to perform custom positioning when _orient_ is `none`, use the top-level *legendX* and *legendY* properties, do not use `x` and `y` properties within a custom encoding block.

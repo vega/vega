@@ -6,9 +6,9 @@ import {default as vg_trail} from './trail';
 
 import {
   arc as d3_arc,
-  symbol as d3_symbol,
   area as d3_area,
-  line as d3_line
+  line as d3_line,
+  symbol as d3_symbol
 } from 'd3-shape';
 
 function value(a, b) {

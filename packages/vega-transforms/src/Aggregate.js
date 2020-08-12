@@ -1,7 +1,7 @@
 import {groupkey} from './util/AggregateKeys';
-import {createMeasure, compileMeasures, measureName, ValidAggregateOps} from './util/AggregateOps';
+import {ValidAggregateOps, compileMeasures, createMeasure, measureName} from './util/AggregateOps';
 import TupleStore from './util/TupleStore';
-import {ingest, replace, Transform} from 'vega-dataflow';
+import {Transform, ingest, replace} from 'vega-dataflow';
 import {accessorFields, accessorName, array, error, inherits} from 'vega-util';
 
 /**
@@ -40,16 +40,16 @@ export default function Aggregate(params) {
 }
 
 Aggregate.Definition = {
-  "type": "Aggregate",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "ops", "type": "enum", "array": true, "values": ValidAggregateOps },
-    { "name": "fields", "type": "field", "null": true, "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true },
-    { "name": "drop", "type": "boolean", "default": true },
-    { "name": "cross", "type": "boolean", "default": false },
-    { "name": "key", "type": "field" }
+  'type': 'Aggregate',
+  'metadata': {'generates': true, 'changes': true},
+  'params': [
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
+    { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
+    { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
+    { 'name': 'drop', 'type': 'boolean', 'default': true },
+    { 'name': 'cross', 'type': 'boolean', 'default': false },
+    { 'name': 'key', 'type': 'field' }
   ]
 };
 
@@ -83,6 +83,10 @@ prototype.transform = function(_, pulse) {
   if (_.cross && aggr._dims.length > 1) {
     aggr._drop = false;
     aggr.cross();
+  }
+
+  if (pulse.clean() && aggr._drop) {
+    out.clean(true).runAfter(() => this.clean());
   }
 
   return aggr.changes(out);
@@ -258,6 +262,15 @@ prototype.newtuple = function(t, p) {
   }
 
   return p ? replace(p.tuple, x) : ingest(x);
+};
+
+prototype.clean = function() {
+  const cells = this.value;
+  for (const key in cells) {
+    if (cells[key].num === 0) {
+      delete cells[key];
+    }
+  }
 };
 
 // -- Process Tuples -----

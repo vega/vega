@@ -1,6 +1,6 @@
 {
   "name": "vega-event-selector",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A CSS-inspired language to select, sequence, and compose DOM events.",
   "keywords": [
     "vega",
@@ -19,7 +19,7 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   }

@@ -334,7 +334,8 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 100.5
+                      "y": 100.5,
+                      "orient": "bottom"
                     }
                   ],
                   "zindex": 0
@@ -639,7 +640,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Delay Histogram"
         },
         {
           "marktype": "group",
@@ -968,7 +970,8 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 100.5
+                      "y": 100.5,
+                      "orient": "bottom"
                     }
                   ],
                   "zindex": 0
@@ -1264,7 +1267,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Time Histogram"
         },
         {
           "marktype": "group",
@@ -1593,7 +1597,8 @@
                         }
                       ],
                       "x": 0.5,
-                      "y": 100.5
+                      "y": 100.5,
+                      "orient": "bottom"
                     }
                   ],
                   "zindex": 0
@@ -1880,7 +1885,8 @@
               "fill": "transparent"
             }
           ],
-          "zindex": 0
+          "zindex": 0,
+          "description": "Distance Histogram"
         }
       ],
       "x": 0,

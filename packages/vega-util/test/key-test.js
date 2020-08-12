@@ -44,7 +44,7 @@ tape('key creates a key accessor', function(t) {
 });
 
 tape('key respects the "flat" argument', function(t) {
-  var _ = {"d.e": 1, "d[e]": 2, d:{0:5, e:4}}, k;
+  var _ = {'d.e': 1, 'd[e]': 2, d:{0:5, e:4}}, k;
 
   k = vega.key('d.e', false);
   t.equal(typeof k, 'function');

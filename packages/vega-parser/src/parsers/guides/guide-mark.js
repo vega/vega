@@ -1,15 +1,14 @@
 import {Skip} from './constants';
-import {extendEncode} from '../encode/encode-util';
+import {extendEncode} from '../encode/util';
 
-export default function(type, role, style, key, dataRef, encode, extras) {
-  return {
-    type:  type,
-    name:  extras ? extras.name : undefined,
-    role:  role,
-    style: (extras && extras.style) || style,
-    key:   key,
-    from:  dataRef,
-    interactive: !!(extras && extras.interactive),
-    encode: extendEncode(encode, extras, Skip)
-  };
+export default function(mark, extras) {
+  if (extras) {
+    mark.name = extras.name;
+    mark.style = extras.style || mark.style;
+    mark.interactive = !!extras.interactive;
+    mark.encode = extendEncode(mark.encode, extras, Skip);
+  } else {
+    mark.interactive = false;
+  }
+  return mark;
 }

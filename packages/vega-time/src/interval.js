@@ -1,32 +1,33 @@
 import {
-  YEAR,
-  QUARTER,
-  MONTH,
-  WEEK,
   DATE,
   DAY,
+  DAYOFYEAR,
   HOURS,
+  MILLISECONDS,
   MINUTES,
+  MONTH,
+  QUARTER,
   SECONDS,
-  MILLISECONDS
+  WEEK,
+  YEAR
 } from './units';
 
 import {
+  timeDay,
+  timeHour,
   timeMillisecond,
   timeMinute,
-  timeSecond,
-  timeHour,
-  timeDay,
-  timeWeek,
   timeMonth,
+  timeSecond,
+  timeWeek,
   timeYear,
-  utcMillisecond,
-  utcSecond,
-  utcMinute,
-  utcHour,
   utcDay,
-  utcWeek,
+  utcHour,
+  utcMillisecond,
+  utcMinute,
   utcMonth,
+  utcSecond,
+  utcWeek,
   utcYear
 } from 'd3-time';
 
@@ -37,6 +38,7 @@ const timeIntervals = {
   [WEEK]:         timeWeek,
   [DATE]:         timeDay,
   [DAY]:          timeDay,
+  [DAYOFYEAR]:    timeDay,
   [HOURS]:        timeHour,
   [MINUTES]:      timeMinute,
   [SECONDS]:      timeSecond,
@@ -50,6 +52,7 @@ const utcIntervals = {
   [WEEK]:         utcWeek,
   [DATE]:         utcDay,
   [DAY]:          utcDay,
+  [DAYOFYEAR]:    utcDay,
   [HOURS]:        utcHour,
   [MINUTES]:      utcMinute,
   [SECONDS]:      utcSecond,

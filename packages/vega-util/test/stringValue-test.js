@@ -31,7 +31,7 @@ tape('stringValue maps values', function(t) {
   });
 
   // should handle special characters in strings
-  tests = ["\ntest", // newline
+  tests = ['\ntest', // newline
     '\u0000',
     '\u2028', // line separator
     '\u2029' // paragraph separator

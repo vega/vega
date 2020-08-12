@@ -14,5 +14,5 @@ export default function(scale) {
       scale.invert(lo),
       scale.invert(hi)
     ];
-  }
+  };
 }

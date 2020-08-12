@@ -1,4 +1,3 @@
-import {tickCount} from './ticks';
 import {Transform} from 'vega-dataflow';
 import {
   error, inherits, isArray, isFunction, isString, peek, stringValue,
@@ -6,20 +5,34 @@ import {
 } from 'vega-util';
 
 import {
-  Ordinal, Band, Point, Sequential, Diverging,
-  Linear, Log, Pow, Sqrt, Symlog, Time, UTC,
-  Quantile, Quantize, Threshold, BinOrdinal,
-  isContinuous,
-  isInterpolating,
-  isLogarithmic,
+  Band,
+  BinOrdinal,
+  Diverging,
+  Linear,
+  Log,
+  Ordinal,
+  Point,
+  Pow,
+  Quantile,
+  Quantize,
+  Sequential,
+  Sqrt,
+  Symlog,
+  Threshold,
+  Time,
+  UTC,
   bandSpace,
-  interpolateColors,
-  interpolateRange,
   interpolate as getInterpolate,
   scale as getScale,
   scheme as getScheme,
+  interpolateColors,
+  interpolateRange,
+  isContinuous,
+  isInterpolating,
+  isLogarithmic,
+  quantizeInterpolator,
   scaleImplicit,
-  quantizeInterpolator
+  tickCount
 } from 'vega-scale';
 
 import {range as sequence} from 'd3-array';
@@ -140,10 +153,9 @@ function configureDomain(scale, _, df) {
 
     if (_.domainMid != null) {
       mid = _.domainMid;
-      if (mid < domain[0] || mid > domain[n]) {
-        df.warn('Scale domainMid exceeds domain min or max.', mid);
-      }
-      domain.splice(n, 0, mid);
+      const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
+      if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+      domain.splice(i, 0, mid);
     }
   }
 

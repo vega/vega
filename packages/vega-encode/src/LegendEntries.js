@@ -1,8 +1,9 @@
-import {labelFormat, labelFraction, labelValues} from './labels';
-import {Symbols, Gradient} from './legend-types';
-import {tickCount} from './ticks';
 import {Transform, ingest} from 'vega-dataflow';
-import {scaleFraction} from 'vega-scale';
+import {
+  GradientLegend, SymbolLegend,
+  labelFormat, labelFraction, labelValues,
+  scaleFraction, tickCount
+} from 'vega-scale';
 import {constant, inherits, isFunction, peek} from 'vega-util';
 
 /**
@@ -34,20 +35,21 @@ prototype.transform = function(_, pulse) {
     return pulse.StopPropagation;
   }
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+  var locale = pulse.dataflow.locale(),
+      out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
       items = this.value,
-      type  = _.type || Symbols,
+      type  = _.type || SymbolLegend,
       scale = _.scale,
       limit = +_.limit,
       count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-      lskip = !!_.values || type === Symbols,
-      format = _.format || labelFormat(scale, count, type, _.formatSpecifier, _.formatType, lskip),
-      values = _.values || labelValues(scale, count, type),
+      lskip = !!_.values || type === SymbolLegend,
+      format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
+      values = _.values || labelValues(scale, count),
       domain, fraction, size, offset, ellipsis;
 
   if (items) out.rem = items;
 
-  if (type === Symbols) {
+  if (type === SymbolLegend) {
     if (limit && values.length > limit) {
       pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
       items = values.slice(0, limit - 1);
@@ -91,7 +93,7 @@ prototype.transform = function(_, pulse) {
     }
   }
 
-  else if (type === Gradient) {
+  else if (type === GradientLegend) {
     domain = scale.domain(),
     fraction = scaleFraction(scale, domain[0], peek(domain));
 

@@ -5,7 +5,8 @@ const {createWriteStream} = require('fs'),
 
 render('pdf', function(canvas, arg) {
   const file = arg._[1] || null,
+        config = arg.test ? {creationDate: new Date(2012, 0, 1)} : undefined,
         out = file ? createWriteStream(file) : process.stdout,
-        stream = canvas.createPDFStream();
+        stream = canvas.createPDFStream(config);
   stream.on('data', chunk => { out.write(chunk); });
 }, {type: 'pdf', context: {textDrawingMode: 'glyph'}});

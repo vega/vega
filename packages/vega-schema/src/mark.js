@@ -1,6 +1,6 @@
 import {
-  allOf, array, def, enums, not, object, oneOf, ref,
-  booleanType, stringType, booleanOrSignal, stringOrSignal
+  allOf, array, booleanOrSignal, booleanType, def, enums, not, object,
+  oneOf, ref, stringOrSignal, stringType
 } from './util';
 
 // types defined elsewhere
@@ -64,6 +64,8 @@ const mark = object({
   _type_: marktypeRef,
   role: stringType,
   name: stringType,
+  description: stringType,
+  aria: booleanType,
   style: styleRef,
   key: stringType,
   clip: markclipRef,

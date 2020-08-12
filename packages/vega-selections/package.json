@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -18,12 +18,12 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-selections.js -c -m -o build/vega-selections.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-expression": "^2.6.1",
-    "vega-util": "^1.11.0"
+    "vega-expression": "^2.6.4",
+    "vega-util": "^1.13.2"
   }
 }

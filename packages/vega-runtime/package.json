@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "5.0.2",
+  "version": "6.1.0",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -19,13 +19,13 @@
     "build": "yarn rollup",
     "postbuild": "terser build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-dataflow": "^5.1.1",
-    "vega-util": "^1.11.0"
+    "vega-dataflow": "^5.7.0",
+    "vega-util": "^1.14.0"
   },
   "devDependencies": {
     "vega-encode": "*",

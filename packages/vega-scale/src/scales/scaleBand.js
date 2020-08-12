@@ -1,5 +1,5 @@
 import bandSpace from './bandSpace';
-import {range as sequence, bisectRight} from 'd3-array';
+import {bisectRight, range as sequence} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 
 export function band() {

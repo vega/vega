@@ -1,5 +1,5 @@
 import {partition} from './util/util';
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {quantiles} from 'vega-statistics';
 import {accessorName, inherits} from 'vega-util';
 import {range} from 'd3-array';
@@ -25,14 +25,14 @@ export default function Quantile(params) {
 }
 
 Quantile.Definition = {
-  "type": "Quantile",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "field", "type": "field", "required": true },
-    { "name": "probs", "type": "number", "array": true },
-    { "name": "step", "type": "number", "default": 0.01 },
-    { "name": "as", "type": "string", "array": true, "default": ["prob", "value"] }
+  'type': 'Quantile',
+  'metadata': {'generates': true, 'changes': true},
+  'params': [
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'probs', 'type': 'number', 'array': true },
+    { 'name': 'step', 'type': 'number', 'default': 0.01 },
+    { 'name': 'as', 'type': 'string', 'array': true, 'default': ['prob', 'value'] }
   ]
 };
 

@@ -58,6 +58,7 @@ Properties defined in the top-level scope of the configuration object.
 | width         | {% include type t="Number|Signal" %} | The width in pixels of the data rectangle. {% include tag ver="5.10" %} |
 | height        | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. {% include tag ver="5.10" %} |
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
+| locale        | {% include type t="Object" %}        | Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../api/locale). Locale definitions provided in the config block may be overridden by the View constructor *locale* option. {% include tag ver="5.12" %} |
 | lineBreak     | {% include type t="String|Signal" %} | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the `lineBreak` mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid. {% include tag ver="5.10" %} |
 
 ### Usage
@@ -73,6 +74,31 @@ Set default view background and chart plotting area background colors:
 }
 ```
 
+Set the number and time format locale to German:
+
+```json
+{
+  "locale": {
+    "number": {
+      "decimal": ",",
+      "thousands": ".",
+      "grouping": [3],
+      "currency": ["", " €"]
+    },
+    "time": {
+      "dateTime": "%A, der %e. %B %Y, %X",
+      "date": "%d.%m.%Y",
+      "time": "%H:%M:%S",
+      "periods": ["AM", "PM"],
+      "days": ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+      "shortDays": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+      "months": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+      "shortMonths": [ "Jan", "Feb", "Mrz", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+    }
+  }
+}
+```
+
 [Back to Top](#reference)
 
 
@@ -84,6 +110,7 @@ Properties for event handling configuration, defined within an `"events"` proper
 | :------------ | :-----------------------------------: | :------------- |
 | bind          | {% include type t="String" %}         | Configuration control for binding input DOM elements to signals. The available options are `"any"` (default, all bindings are allowed), `"container"` (use only the view container DOM element for all bindings, suppressing per-binding selectors), and `"none"` (suppresses all input bindings). {% include tag ver="5.5" %}|
 | defaults      | {% include type t="Object" %}         | An object describing which events that originate within the Vega view should have their default behavior suppressed by invoking the [event.preventDefault](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method. The _defaults_ object should have a single property: either `"prevent"` (to indicate which events should have default behavior suppressed) or `"allow"` (to indicate only those events whose default behavior should be allowed). This property accepts either a boolean value (to prevent/allow all events) or an array of event type strings.|
+| globalCursor  | {% include type t="Boolean" %}        | Configuration control for dynamic cursor setting. If `false` (default), the cursor is set for the Vega View element only. If `true`, the cursor is set globally for the entire document body. The default value of `false` avoids performance issues in browsers that recalculate styles in response to cursor changes. {% include tag ver="5.13" %}|
 | selector      | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for external sources specified using a CSS selector. If a boolean value, `true` (default) permits selector event listeners, `false` disallows all selector events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
 | timer         | {% include type t="Boolean" %}        | Configuration control for event listeners for a `"timer"` source. One of `true` (default) to permit timer event listeners, or `false` to disallow timer events. {% include tag ver="5.5" %}|
 | view          | {% include type t="Boolean|String[]" %} | Configuration control for event listeners for the Vega `"view"` source. If a boolean value, `true` (default) permits view event listeners, `false` disallows all view events. If a string array, the entries specify a whitelist of which event types (such as `"mousemove"` or `"wheel"`) are allowed. {% include tag ver="5.5" %}|
@@ -197,12 +224,14 @@ Additional property blocks can target more specific axis types based on the orie
 | :-------------- | :-----------------------------: | :------------- |
 | bandPosition    | {% include type t="Number" %}   | An interpolation fraction indicating where, for `band` scales, axis ticks should be positioned. A value of `0` places ticks at the left edge of their bands. A value of `0.5` places ticks in the middle of their bands. |
 | domain          | {% include type t="Boolean" %}  | Boolean flag indicating if axis domain line should be included by default. |
+| domainCap       | {% include type t="String" %}   | The stroke cap for the axis domain line. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | domainColor     | {% include type t="Color" %}    | Color of axis domain line. |
 | domainDash      | {% include type t="Number[]" %} | Stroke dash of axis domain lines (or `[]` for solid lines). {% include tag ver="5.0" %} |
 | domainDashOffset| {% include type t="Number" %}   | The pixel offset at which to start the domain dash array. {% include tag ver="5.0" %} |
 | domainOpacity   | {% include type t="Number" %}   | Opacity of axis domain line. {% include tag ver="4.1" %} |
 | domainWidth     | {% include type t="Number" %}   | Stroke width of axis domain line. |
 | grid            | {% include type t="Boolean" %}  | Boolean flag indicating if axis grid lines should be included by default. |
+| gridCap         | {% include type t="String" %}   | The stroke cap for axis grid lines. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | gridColor       | {% include type t="Color" %}    | Color of axis grid lines. |
 | gridDash        | {% include type t="Number[]" %} | Stroke dash of axis grid lines (or `[]` for solid lines). |
 | gridDashOffset  | {% include type t="Number" %}   | The pixel offset at which to start the grid dash array. {% include tag ver="5.0" %} |
@@ -231,6 +260,7 @@ Additional property blocks can target more specific axis types based on the orie
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |
 | tickBand        | {% include type t="String" %}   | Indicates the type of tick style to use in conjunction with band scales. One of `"center"` (default) to center ticks in the middle of the band interval, or `"extent"` to place ticks at band extents (interval boundaries). If specified, this property may override the settings of `bandPosition`, `tickExtra`, and `tickOffset`. {% include tag ver="5.8" %} |
+| tickCap         | {% include type t="String" %}   | The stroke cap for axis tick marks. One of `"butt"` (default), `"round"` or `"square"`. {% include tag ver="5.11" %} |
 | tickColor       | {% include type t="Color" %}    | Color of axis ticks. |
 | tickDash        | {% include type t="Number[]" %} | Stroke dash of axis tick marks (or `[]` for solid lines). {% include tag ver="5.0" %} |
 | tickDashOffset  | {% include type t="Number" %}   | The pixel offset at which to start the tick mark dash array. {% include tag ver="5.0" %} |
@@ -256,6 +286,16 @@ Additional property blocks can target more specific axis types based on the orie
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
 | translate       | {% include type t="Number" %}   | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates, in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
+| zindex          | {% include type t="Number" %}   | The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups. With a value of `0` axes and grid lines are drawn _behind_ any marks defined in the same specification level. Higher values (`1`) cause axes and grid lines to be drawn on top of marks. {% include tag ver="5.11" %} |
+
+### <a name="axes-accessibility"></a>Axis Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the axis from the ARIA accessibility tree. {% include tag ver="5.11" %}|
+| description           | {% include type t="String" %}   | A text description of this axis for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. {% include tag ver="5.11" %}|
 
 ### Usage
 
@@ -346,6 +386,16 @@ Properties defining default settings for legends. These properties are defined u
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
+| zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
+
+### <a name="legends-accessibility"></a>Legend Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the legend from the ARIA accessibility tree. {% include tag ver="5.11" %}|
+| description           | {% include type t="String" %}   | A text description of this legend for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. If the description is unspecified it will be automatically generated. {% include tag ver="5.11" %}|
 
 ### <a name="legends-layout"></a>Legend Layout Properties {% include tag ver="5.0" %}
 
@@ -426,7 +476,16 @@ Properties defining default settings for titles. These properties are defined un
 | subtitleFontStyle     | {% include type t="String" %}   | Font style of the subtitle text (e.g., `normal` or `italic`). {% include tag ver="5.7" %} |
 | subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
 | subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
-| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %}|
+| subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %} |
+| zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
+
+### <a name="title-accessibility"></a>Title Accessibility Properties
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output.
+
+| Property              | Type                            | Description    |
+| :-------------------- | :-----------------------------: | :------------- |
+| aria                  | {% include type t="Boolean" %}  | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the title from the ARIA accessibility tree. {% include tag ver="5.11" %}|
 
 ### Usage
 

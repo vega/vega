@@ -18,6 +18,7 @@ The date-time utilities support a set of pre-defined time units. A single _unit_
 - `'date'` - Calendar day of the month (January 1, January 2, _etc._).
 - `'week'` - Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 - `'day'` - Day of the week (Sunday, Monday, _etc._).
+- `'dayofyear'` - Day of the year (1, 2, ..., 365, _etc._).
 - `'hours'` - Hours of the day (12:00am, 1:00am, _etc_.).
 - `'minutes'` - Minutes in an hour (12:00, 12:01, _etc_.).
 - `'seconds'` - Seconds in a minute (12:00:00, 12:00:01, _etc_.).
@@ -70,32 +71,7 @@ The supported options properties are:
 - _extent_: (required) A two-element (`[min, max]`) array indicating the date range over which the bin values are defined.
 - _maxbins_: The maximum number of allowable bins (default `40`).
 
-
 ### Local Time Utilities
-
-<a name="timeFormat" href="#timeFormat">#</a>
-vega.<b>timeFormat</b>([<i>specifier</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
-
-Returns a function that takes a date or timestamp as input and returns a formatted string in the local timezone. If a string-valued format _specifier_ is provided, it must follow the [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) syntax. In this case, this method is equivalent to d3-time-format's [timeFormat](https://github.com/d3/d3-time-format/#timeFormat) method.
-
-If an object-valued _specifier_ is provided, a multi-format function will be generated, which selects among different format specifiers based on the granularity of the input date value (that is, values residing on a year, month, date, _etc._, boundary can all be formatted differently). The input object should use proper time unit strings for keys. If no time format _specifier_ is provided, a default multi-format function is returned, equivalent to using the following _specifier_:
-
-```json
-{
-  "year": "%Y",
-  "quarter": "%B",
-  "month": "%B",
-  "week": "%b %d",
-  "date": "%a %d",
-  "hours": "%I %p",
-  "minutes": "%I:%M",
-  "seconds": ":%S",
-  "milliseconds": ".%L"
-}
-```
-
-If an input _specifier_ object omits any of these key values, a default value will be used. Note that for this method the `"date"` and `"day"` units are interchangeable; if both are defined the `"date"` entry take precedence.
 
 <a name="timeFloor" href="#timeFloor">#</a>
 vega.<b>timeFloor</b>(<i>units</i>[, <i>step</i>])
@@ -121,15 +97,19 @@ vega.<b>timeSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>])
 
 Returns an array of Date instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time _unit_ in the local timezone. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
 
+<a name="dayofyear" href="#dayofyear">#</a>
+vega.<b>dayofyear</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the one-based day of the year for the given _date_, which should be either a `Date` object or timestamp value.
+
+<a name="week" href="#week">#</a>
+vega.<b>week</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the week number of the year for the given _date_, which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
 ### UTC Time Utilities
-
-<a name="utcFormat" href="#utcFormat">#</a>
-vega.<b>utcFormat</b>([<i>specifier</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
-
-Returns a function that takes a date or timestamp as input and returns a formatted string in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC). If a string-valued format _specifier_ is provided, it must follow the [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) syntax. In this case, this method is equivalent to d3-time-format's [utcFormat](https://github.com/d3/d3-time-format/#utcFormat) method.
-
-This method also accepts object-valued _specifiers_ for creating multi-format functions. If no argumennts are provided, a defualt multi-format function will be returned. For more details, see the [timeFormat](#timeFormat) method documentation.
 
 <a name="utcFloor" href="#utcFloor">#</a>
 vega.<b>utcFloor</b>(<i>units</i>[, <i>step</i>])
@@ -154,3 +134,15 @@ vega.<b>utcSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/interval.js "Source")
 
 Returns an array of Date instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time _unit_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC). The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
+
+<a name="utcdayofyear" href="#utcdayofyear">#</a>
+vega.<b>utcdayofyear</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the one-based day of the year for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value.
+
+<a name="utcweek" href="#utcweek">#</a>
+vega.<b>utcweek</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the week number of the year for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.

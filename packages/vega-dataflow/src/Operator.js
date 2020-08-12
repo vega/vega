@@ -188,6 +188,25 @@ prototype.marshall = function(stamp) {
 };
 
 /**
+ * Detach this operator from the dataflow.
+ * Unregisters listeners on upstream dependencies.
+ */
+prototype.detach = function() {
+  var argops = this._argops,
+      i, n, item, op;
+
+  if (argops) {
+    for (i=0, n=argops.length; i<n; ++i) {
+      item = argops[i];
+      op = item.op;
+      if (op._targets) {
+        op._targets.remove(this);
+      }
+    }
+  }
+};
+
+/**
  * Delegate method to perform operator processing.
  * Subclasses can override this method to perform custom processing.
  * By default, it marshalls parameters and calls the update function

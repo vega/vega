@@ -6,13 +6,13 @@ var rollup = require('rollup'),
 rollup.rollup({
   input: 'index.js',
   external: Object.keys(dependencies),
-  plugins: [json()],
-}).then(function(bundle) {
+  plugins: [json()]
+}).then(bundle => {
   return bundle.write({
     file: 'build/' + output,
     format: 'cjs'
   });
-}).then(function() {
+}).then(() => {
   // eslint-disable-next-line
   console.warn('↳ build/' + output);
 }).catch(abort);

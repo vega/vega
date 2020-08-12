@@ -28,5 +28,5 @@ export default function(idFunc, source, input) {
       }
       return data;
     }
-  }
+  };
 }

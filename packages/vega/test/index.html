@@ -21,8 +21,9 @@
       canvas, svg { border: 1px dashed #ccc; }
       .vega-bind { line-height: 18px; margin-bottom: 2px; }
       .vega-bind-name { display: inline-block; width: 100px; }
-      .vega-bind input[type="range"] { width: 400px; }
-      .vega-bind label { margin: 0 0.5em 0 2px; }
+      .vega-bind input[type="range"] { width: 400px; margin-right: 0.5em; }
+      .vega-bind input[type="radio"] { margin-right: 4px; }
+      .vega-bind-radio label { margin-right: 0.5em; }
     </style>
   </head>
   <body>
@@ -112,9 +113,11 @@ async function load(name) {
     console.log('LOAD', name);
 
     if (view) view.finalize(); // finalize existing view
+
+    const t0 = Date.now();
     runtime = vega.parse(spec);
     view = await new vega.View(runtime, options).runAsync();
-    console.log('INIT', name);
+    console.log('INIT', name, Date.now() - t0);
   } catch (err) {
     console.error(err, err.stack);
   }

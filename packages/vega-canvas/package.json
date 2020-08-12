@@ -1,6 +1,6 @@
 {
   "name": "vega-canvas",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Canvas and Image utilities.",
   "keywords": [
     "vega",
@@ -19,7 +19,7 @@
     "prebuild": "rimraf build && mkdir build",
     "build": "yarn rollup",
     "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js index.browser.js src test",
+    "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
   },

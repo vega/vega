@@ -1,19 +1,25 @@
 import DataScope from './DataScope';
-import {
-  aggrField, Ascending, compareRef, Entry, isExpr, isSignal,
-  fieldRef, keyRef, operator, ref
-} from './util';
-import parseExpression from './parsers/expression';
+
 import {
   Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve
 } from './transforms';
+
+import {
+  Ascending, Entry, aggrField, compareRef, fieldRef, isExpr,
+  isSignal, keyRef, operator, ref
+} from './util';
+
+import parseScope from './parsers/scope';
+import {parseExpression} from 'vega-functions';
+
 import {
   array, error, extend, hasOwnProperty,
-  isArray, isString, isObject, peek, stringValue
+  isArray, isObject, isString, peek, stringValue
 } from 'vega-util';
 
-export default function Scope(config) {
-  this.config = config;
+export default function Scope(config, options) {
+  this.config = config || {};
+  this.options = options || {};
 
   this.bindings = [];
   this.field = {};
@@ -27,6 +33,7 @@ export default function Scope(config) {
   this.updates = [];
   this.operators = [];
   this.eventConfig = null;
+  this.locale = null;
 
   this._id = 0;
   this._subid = 0;
@@ -40,6 +47,7 @@ export default function Scope(config) {
 
 function Subscope(scope) {
   this.config = scope.config;
+  this.options = scope.options;
   this.legends = scope.legends;
 
   this.field = Object.create(scope.field);
@@ -67,6 +75,10 @@ var prototype = Scope.prototype = Subscope.prototype;
 
 // ----
 
+prototype.parse = function(spec) {
+  return parseScope(spec, this);
+};
+
 prototype.fork = function() {
   return new Subscope(this);
 };
@@ -83,7 +95,8 @@ prototype.toRuntime = function() {
     streams:     this.streams,
     updates:     this.updates,
     bindings:    this.bindings,
-    eventConfig: this.eventConfig
+    eventConfig: this.eventConfig,
+    locale:      this.locale
   };
 };
 
@@ -373,7 +386,7 @@ prototype.exprRef = function(code, name) {
   var params = {expr: parseExpression(code, this)};
   if (name) params.expr.$name = name;
   return ref(this.add(Expression(params)));
-}
+};
 
 prototype.addBinding = function(name, bind) {
   if (!this.bindings) {

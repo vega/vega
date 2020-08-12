@@ -1,14 +1,15 @@
-import {Top, Left, Bottom, Value, zero, one} from './constants';
+import {getSign, ifX, ifY} from './axis-util';
+import {Value, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {RuleMark} from '../marks/marktypes';
 import {AxisTickRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 
 export default function(spec, config, userEncode, dataRef, size, band) {
   var _ = lookup(spec, config),
       orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
+      sign = getSign(orient, -1, 1),
       encode, enter, exit, update, tickSize, tickPos;
 
   encode = {
@@ -19,6 +20,7 @@ export default function(spec, config, userEncode, dataRef, size, band) {
 
   addEncoders(encode, {
     stroke:           _('tickColor'),
+    strokeCap:        _('tickCap'),
     strokeDash:       _('tickDash'),
     strokeDashOffset: _('tickDashOffset'),
     strokeOpacity:    _('tickOpacity'),
@@ -37,15 +39,19 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     round:  _('tickRound')
   };
 
-  if (orient === Top || orient === Bottom) {
-    update.y = enter.y = zero;
-    update.y2 = enter.y2 = tickSize;
-    update.x = enter.x = exit.x = tickPos;
-  } else {
-    update.x = enter.x = zero;
-    update.x2 = enter.x2 = tickSize;
-    update.y = enter.y = exit.y = tickPos;
-  }
+  update.y = enter.y = ifX(orient, zero, tickPos);
+  update.y2 = enter.y2 = ifX(orient, tickSize);
+  exit.x = ifX(orient, tickPos);
 
-  return guideMark(RuleMark, AxisTickRole, null, Value, dataRef, encode, userEncode);
+  update.x = enter.x = ifY(orient, zero, tickPos);
+  update.x2 = enter.x2 = ifY(orient, tickSize);
+  exit.y = ifY(orient, tickPos);
+
+  return guideMark({
+    type: RuleMark,
+    role: AxisTickRole,
+    key:  Value,
+    from: dataRef,
+    encode
+  }, userEncode);
 }

@@ -6,11 +6,11 @@ var tape = require('tape'),
 
 tape('Parser parses dataflow specs', function(t) {
   var values = [
-    {"x": 1,  "y": 28},
-    {"x": 2,  "y": 43},
-    {"x": 3,  "y": 81},
-    {"x": 4,  "y": 19},
-    {"x": 4,  "y": 20}
+    {'x': 1,  'y': 28},
+    {'x': 2,  'y': 43},
+    {'x': 3,  'y': 81},
+    {'x': 4,  'y': 19},
+    {'x': 4,  'y': 20}
   ];
   var spec = {operators: [
     {id:0, type:'Operator', value:500},
@@ -25,7 +25,7 @@ tape('Parser parses dataflow specs', function(t) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, transforms)),
+      ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes,
       ids = Object.keys(ops);
 

@@ -1,6 +1,6 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, error, inherits} from 'vega-util';
-import {mean, min, max, median} from 'd3-array';
+import {max, mean, median, min} from 'd3-array';
 
 var Methods = {
   value: 'value',
@@ -36,16 +36,16 @@ export default function Impute(params) {
 }
 
 Impute.Definition = {
-  "type": "Impute",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "field", "type": "field", "required": true },
-    { "name": "key", "type": "field", "required": true },
-    { "name": "keyvals", "array": true },
-    { "name": "groupby", "type": "field", "array": true },
-    { "name": "method", "type": "enum", "default": "value",
-      "values": ["value", "mean", "median", "max", "min"] },
-    { "name": "value", "default": 0 }
+  'type': 'Impute',
+  'metadata': {'changes': true},
+  'params': [
+    { 'name': 'field', 'type': 'field', 'required': true },
+    { 'name': 'key', 'type': 'field', 'required': true },
+    { 'name': 'keyvals', 'array': true },
+    { 'name': 'groupby', 'type': 'field', 'array': true },
+    { 'name': 'method', 'type': 'enum', 'default': 'value',
+      'values': ['value', 'mean', 'median', 'max', 'min'] },
+    { 'name': 'value', 'default': 0 }
   ]
 };
 

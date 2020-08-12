@@ -1,5 +1,9 @@
 var gradient_id = 0;
 
+export function resetSVGGradientId() {
+  gradient_id = 0;
+}
+
 export const patternPrefix = 'p_';
 
 export function isGradient(value) {

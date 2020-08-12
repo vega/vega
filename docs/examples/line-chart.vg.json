@@ -95,10 +95,10 @@
             },
             "update": {
               "interpolate": {"signal": "interpolate"},
-              "fillOpacity": {"value": 1}
+              "strokeOpacity": {"value": 1}
             },
             "hover": {
-              "fillOpacity": {"value": 0.5}
+              "strokeOpacity": {"value": 0.5}
             }
           }
         }

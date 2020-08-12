@@ -116,7 +116,7 @@ tape('Parser should allow literal object expressions', function(t) {
         type: 'Property',
         kind: 'init',
         key: {type: 'Identifier', name: 'b'},
-        value: {type: 'Literal', value: "c", raw: '"c"'}
+        value: {type: 'Literal', value: 'c', raw: '"c"'}
       }
     ]
   });
@@ -188,7 +188,7 @@ tape('Parser should allow comparison expressions', function(t) {
     operator: '<',
     left: {type: 'Literal', value: 1, raw: '1'},
     right: {type: 'Literal', value: 2, raw: '2'}
-  })
+  });
   t.doesNotThrow(parse('1 > 2'));
   t.doesNotThrow(parse('1 <= 2'));
   t.doesNotThrow(parse('1 >= 2'));
@@ -256,7 +256,7 @@ tape('Parser should allow member expressions', function(t) {
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'b', member: true}
-  })
+  });
   t.doesNotThrow(parse('a["b"]'));
   t.doesNotThrow(parse('a["two words"]'));
   t.deepEqual(parse('a.true')(), {
@@ -264,7 +264,7 @@ tape('Parser should allow member expressions', function(t) {
     computed: false,
     object: {type: 'Identifier', name: 'a'},
     property: {type: 'Identifier', name: 'true', member: true}
-  })
+  });
   t.doesNotThrow(parse('a.function'));
   t.doesNotThrow(parse('a.null'));
 
@@ -287,7 +287,7 @@ tape('Parser should allow call expressions', function(t) {
       {type: 'Literal', value: 1, raw: '1'},
       {type: 'Literal', value: 2, raw: '2'}
     ]
-  })
+  });
   t.doesNotThrow(parse('A()'));
   t.doesNotThrow(parse('A(0,1,2)'));
   t.doesNotThrow(parse('foo.bar(0,1,2)'));
@@ -535,10 +535,10 @@ tape('Parser should parse escape sequences', function(t) {
 
 tape('Parser should ignore whitespace', function(t) {
   var tree = {
-    type: "BinaryExpression",
-    operator: "+",
-    left: {type: "Literal", value: 1, raw: "1"},
-    right: {type: "Literal", value: 2, raw: "2"}
+    type: 'BinaryExpression',
+    operator: '+',
+    left: {type: 'Literal', value: 1, raw: '1'},
+    right: {type: 'Literal', value: 2, raw: '2'}
   };
   t.deepEqual(parse('1+ 2')(), tree);
   t.deepEqual(parse('1+\n2')(), tree);

@@ -84,7 +84,7 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 
 <a name="sampleUniform" href="#sampleUniform">#</a>
 vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
@@ -135,7 +135,7 @@ Once created, *mean* and *stdev* values can be accessed or modified using the `m
 
 <a name="randomUniform" href="#randomUniform">#</a>
 vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Creates a distribution object representing a [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 

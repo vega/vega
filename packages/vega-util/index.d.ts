@@ -143,14 +143,16 @@ export function truncate(a: string, length: number,
 // Logging
 
 export interface LoggerInterface {
-  level: (_: number) => number | LoggerInterface;
-  error(...args: readonly any[]): LoggerInterface;
-  warn(...args: readonly any[]): LoggerInterface;
-  info(...args: readonly any[]): LoggerInterface;
-  debug(...args: readonly any[]): LoggerInterface;
+  level(_: number): this;
+  level(): number;
+  error(...args: readonly any[]): this;
+  warn(...args: readonly any[]): this;
+  info(...args: readonly any[]): this;
+  debug(...args: readonly any[]): this;
 }
 
 export const None: number;
+export const Error: number;
 export const Warn: number;
 export const Info: number;
 export const Debug: number;

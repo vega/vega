@@ -1,6 +1,6 @@
 import {
-  array, allOf, def, oneOf, object, ref,
-  anyType, booleanType, stringType, signalRef
+  allOf, anyType, array, booleanType, def, object,
+  oneOf, ref, signalRef, stringType
 } from './util';
 
 // types defined elsewhere
@@ -45,4 +45,4 @@ export default {
     listener,
     onEvents
   }
-}
+};

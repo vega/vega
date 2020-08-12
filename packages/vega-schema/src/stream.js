@@ -1,6 +1,6 @@
 import {
-  array, allOf, def, oneOf, object, ref,
-  booleanType, numberType, stringType
+  allOf, array, booleanType, def, numberType, object,
+  oneOf, ref, stringType
 } from './util';
 
 // types defined elsewhere

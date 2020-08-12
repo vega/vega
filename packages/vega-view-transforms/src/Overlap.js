@@ -1,4 +1,4 @@
-import {Top, Bottom} from './constants';
+import {Bottom, Top} from './constants';
 import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
 import {inherits, peek} from 'vega-util';
@@ -33,10 +33,10 @@ export default function Overlap(params) {
 var prototype = inherits(Overlap, Transform);
 
 var methods = {
-  parity: function(items) {
+  parity: items => {
     return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
   },
-  greedy: function(items, sep) {
+  greedy: (items, sep) => {
     var a;
     return items.filter((b, i) => {
       if (!i || !intersect(a.bounds, b.bounds, sep)) {
@@ -114,12 +114,15 @@ prototype.transform = function(_, pulse) {
     return pulse;
   }
 
+  // skip labels with no content
+  source = source.filter(hasBounds);
+
+  // early exit, nothing to do
+  if (!source.length) return;
+
   if (_.sort) {
     source = source.slice().sort(_.sort);
   }
-
-  // skip labels with no content
-  source = source.filter(hasBounds);
 
   items = reset(source);
   pulse = reflow(pulse, _);

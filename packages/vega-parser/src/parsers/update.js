@@ -1,10 +1,14 @@
-import parseExpression from './expression';
 import parseStream from './stream';
 import {Scope, View} from '../util';
 import {selector} from 'vega-event-selector';
+import {parseExpression} from 'vega-functions';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
-var preamble = 'var datum=event.item&&event.item.datum;';
+// bypass expression parser for internal operator references
+const OP_VALUE_EXPR = {
+  code: '_.$value',
+  ast: {type: 'Identifier', value: 'value'}
+};
 
 export default function(spec, scope, target) {
   var events = spec.events,
@@ -42,12 +46,12 @@ export default function(spec, scope, target) {
   }
 
   // resolve update value
-  entry.update = isString(update) ? parseExpression(update, scope, preamble)
-    : update.expr != null ? parseExpression(update.expr, scope, preamble)
+  entry.update = isString(update) ? parseExpression(update, scope)
+    : update.expr != null ? parseExpression(update.expr, scope)
     : update.value != null ? update.value
     : update.signal != null ? {
-        $expr:   '_.value',
-        $params: {value: scope.signalRef(update.signal)}
+        $expr:   OP_VALUE_EXPR,
+        $params: {$value: scope.signalRef(update.signal)}
       }
     : error('Invalid signal update specification.');
 

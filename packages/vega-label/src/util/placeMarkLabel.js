@@ -74,14 +74,14 @@ export default function($, bitmaps, anchors, offsets) {
     }
 
     return false;
-  }
+  };
 }
 
 // Test if a label with the given dimensions can be added without overlap
 function test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside) {
   return !(
     bm0.outOfBounds(_x1, _y1, _x2, _y2) ||
-    (isInside
+    (isInside && bm1
       ? bm1.getRange(_x1, _y1, _x2, _y2) || !isInMarkBound(x1, y1, x2, y2, boundary)
       : bm0.getRange(_x1, _y1, _x2, _y2))
   );
