@@ -120,5 +120,10 @@ EventStream.prototype = {
     a.targets().add(stream(null, null, () => active = true));
     b.targets().add(stream(null, null, () => active = false));
     return this.filter(() => active);
+  },
+
+  detach() {
+    // no-op for handling detach requests
+    // ensures compatibility with operators (#2753)
   }
 };
