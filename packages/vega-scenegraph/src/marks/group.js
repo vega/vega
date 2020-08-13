@@ -73,6 +73,7 @@ function rectanglePath(context, group, x, y) {
 
 const hitBackground = hitPath(rectanglePath);
 const hitForeground = hitPath(rectanglePath, false);
+const hitCorner = hitPath(rectanglePath, true);
 
 function draw(context, scene, bounds) {
   visit(scene, group => {
@@ -149,7 +150,7 @@ function pick(context, scene, x, y, gx, gy) {
     dy = gy - dy;
 
     // test background for rounded corner clip
-    if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
+    if (c && hasCornerRadius(group) && !hitCorner(context, group, cx, cy)) {
       context.restore();
       return null;
     }
