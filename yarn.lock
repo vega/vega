@@ -7993,10 +7993,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vega-datasets@^1.30.4:
-  version "1.30.4"
-  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.30.4.tgz#59693c595da2c779d1f9dc63c4dcb51ac12aae4f"
-  integrity sha512-rC1sgThPL8OjkHT4KTB3Oa4vB2gHxnAs4TsUSdLEx/EB4RZUqaudpgQbGuLwBkN1bPaM41vZybOpGniq+aITmA==
+vega-datasets@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-2.1.0.tgz#98298db5d14a381f72ca4b1fa9ab1bbe153aaf38"
+  integrity sha512-ajIfGt2quFEVNtByDIb5tyM+vP3lth1F8GuVAU88g6N2ucnAImyO/9xWyaZF04quZEAGpbJB/c2tbzfZlqM09g==
 
 verror@1.10.0:
   version "1.10.0"
