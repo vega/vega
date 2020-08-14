@@ -6,8 +6,13 @@ export const encoder = _ => isObject(_) && !isArray(_)
 
 export function addEncode(object, name, value, set) {
   if (value != null) {
+    const isEncoder = (
+      (isObject(value) && !isArray(value)) ||
+      (isArray(value) && value.length && isObject(value[0]))
+    );
+
     // Always assign signal to update, even if the signal is from the enter block
-    if (isObject(value) && !isArray(value)) {
+    if (isEncoder) {
       object.update[name] = value;
     } else {
       object[set || 'enter'][name] = {value: value};
