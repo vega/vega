@@ -14,16 +14,8 @@ export default function(type, shape, isect) {
   }
 
   function bound(bounds, item) {
-    var x = item.x || 0,
-        y = item.y || 0;
-
-    shape(context(bounds), item);
-    boundStroke(bounds, item).translate(x, y);
-    if (item.angle) {
-      bounds.rotate(item.angle * DegToRad, x, y);
-    }
-
-    return bounds;
+    shape(context(bounds, item.angle), item);
+    return boundStroke(bounds, item).translate(item.x || 0, item.y || 0);
   }
 
   function draw(context, item) {
