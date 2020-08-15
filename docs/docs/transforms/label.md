@@ -12,18 +12,19 @@ Label transform on a text mark repositions each text to be a label, appearing ne
 
 ## Transform Parameters
 
-| Property      |                  Type                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                |
-| :------------ | :------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sort          |      {% include type t="Field" %}      | The field indicating order of labels to be placed (**greater** will be placed **after**).                                                                                                                                                                                                                                                                                                                                  |
-| padding       |     {% include type t="Number" %}      | The amount of pixels label can extend pass chart bounding box. **Default value:** `0`                                                                                                                                                                                                                                                                                                                                      |
-| size          |    {% include type t="Number[]" %}     | {% include required %} The size of the chart in format `[width, height]`. **This size have to match with the chart size**.                                                                                                                                                                                                                                                                                                     |
-| anchor        | {% include type t="String|String[]" %} | The list of anchor points of each label relative to its base mark's bounding box. The available options include `"top-left"`, `"left"`, `"bottom-left"`, `"top"`, `"bottom"`, `"top-right"`, `"right"`, `"bottom-right"`, `"middle"`. Can also be specified as a single anchor point. **Default value:** `["top-left", "left", "bottom-left", "top", "bottom", "top-right", "right", "bottom-right"]`                          |
-| offset        | {% include type t="Number|Number[]" %} | The list of offset of labels relative to its base mark's bounding box for each anchor point. This property can also be specified as a single number for a constant offset through every anchor point. **Default value:** `[1, 1, 1, 1, 1, 1, 1, 1]`                                                                                                                                                                            |
-| avoidMarks    |    {% include type t="String[]" %}     | The list of marks that labels need to not collide with. **Default value:** `[]` |
-| avoidBaseMark |     {% include type t="Boolean" %}     | The flag to specify if each label can collide with its base mark. **Default value:** `true`                                                                                                                  |
-| lineAnchor    |     {% include type t="String" %}      | When labeling group-line mark, you can only have one label per 1 line. `lineAnchor` specify if you want the labels to be at the start (`"start"`) or at the end (`"end"`) of the line. **Note**: this property only works with group line mark as the base mark. **Default value:** `"end"`                                                                                                                                |
-| markIndex     |     {% include type t="Number" %}      | `markIndex` is used to specify which mark in the group mark you want to label because group mark can have more than 1 mark in the group. Regularly, `markIndex` is used with group-line and group-area mark. **Note**: `markIndex` only works with group mark as the base mark. **Default value:** `0`                                                                                                                     |
-| as            |    {% include type t="String[]" %}     | The output fields written by the transform. The default is `['x', 'y', 'opacity', 'align', 'baseline', 'originalOpacity', 'transformed']`                                                                                                                                                                                                                                                                                  |
+| Property      |                  Type                  | Description                                                                                                                                                                                                                                                                                                                                                                                               |
+| :------------ | :------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sort          |      {% include type t="Field" %}      | The field indicating order of labels to be placed (**greater** will be placed **after**).                                                                                                                                                                                                                                                                                                                 |
+| padding       |     {% include type t="Number" %}      | The amount of pixels label can extend pass chart bounding box. **Default value:** `0`                                                                                                                                                                                                                                                                                                                     |
+| size          |    {% include type t="Number[]" %}     | {% include required %} The size of the chart in format `[width, height]`. **This size have to match with the chart size**.                                                                                                                                                                                                                                                                                |
+| anchor        | {% include type t="String|String[]" %} | The list of anchor directions of each label relative to its base mark's bounding box. The available options include `"top-left"`, `"left"`, `"bottom-left"`, `"top"`, `"bottom"`, `"top-right"`, `"right"`, `"bottom-right"`, `"middle"`. Can also be specified as a single anchor point. **Default value:** `["top-left", "left", "bottom-left", "top", "bottom", "top-right", "right", "bottom-right"]` |
+| offset        | {% include type t="Number|Number[]" %} | The list of offset of labels relative to its base mark's bounding box for each anchor direction. This property can also be specified as a single number for a constant offset through every anchor point. **Default value:** `[1, 1, 1, 1, 1, 1, 1, 1]`                                                                                                                                                   |
+| avoidMarks    |    {% include type t="String[]" %}     | The list of marks that labels need to not collide with. **Default value:** `[]`                                                                                                                                                                                                                                                                                                                           |
+| avoidBaseMark |     {% include type t="Boolean" %}     | The flag to specify if each label can collide with its base mark. **Default value:** `true`                                                                                                                                                                                                                                                                                                               |
+| lineAnchor    |     {% include type t="String" %}      | The anchor position of labels on a group-line chart. One line contains one label. `lineAnchor` can be either `"start"` or `"end"` of lines. **Note**: this property only works with group line mark as the base mark. **Default value:** `"end"`                                                                                                                                                          |
+| markIndex     |     {% include type t="Number" %}      | The index of a mark in a group mark to use as base mark. When a group mark is used as base mark, `markIndex` is used to specify which mark in the group mark you want to label. **Note**: `markIndex` only works with group mark as the base mark. **Default value:** `0`                                                                                                                                 |
+| method        |     {% include type t="String" %}      | The algorithm uses for labeling area chart. The available methods include `'floodfill'`, `'reduced-search'`, and `'naive'`. **Note**: `method` only works with group area mark as the base mark. **Default value:** `'naive'`                                                                                                                                                                                                                                                  |
+| as            |    {% include type t="String[]" %}     | The output fields written by the transform. The default is `['x', 'y', 'opacity', 'align', 'baseline']`                                                                                                                                                                                                                                                                                                   |
 
 ## Usage
 
@@ -31,11 +32,13 @@ Label transform on a text mark repositions each text to be a label, appearing ne
 
 {% include embed spec="label-examples/basic-concept-no-label" %}
 
-In this scatter plot example, we can add labels to each point by adding a text mark with the same `x` and `y` encoding channels to the chart. Since `x` and `y` encoding channels of the text mark follow the ones from the symbol mark (as we call this base mark), we can use reactive geometry to get information from the symbol mark and only modify the text.
+In this scatter plot example, we can add labels to each point by adding a text mark with the same `x` and `y` encoding channels to the chart.
+Since `x` and `y` encoding channels of the text mark follow the ones from the symbol mark (as we call this base mark), we can use reactive geometry to get information from the symbol mark and only modify the text.
 
 {% include embed spec="label-examples/basic-concept-no-transform" %}
 
-Even though reactive geometry anables the text mark to be placed at the same position as its base mark, it cannot prevent the texts from colliding into each other and to their base mark. We can, then, use label-transfrom to rearrange the text to be nicely spaced without collision.
+Even though reactive geometry anables the text mark to be placed at the same position as its base mark, it cannot prevent the texts from colliding into each other and to their base mark.
+We can, then, use label-transfrom to rearrange the text to be nicely spaced without collision.
 
 {% include embed spec="label-examples/basic-concept-transformed" %}
 
@@ -43,13 +46,20 @@ For better readability, we can also add ticks to indicate which label is belong 
 
 {% include embed spec="label-examples/basic-concept-with-tick" %}
 
-In scatter plot, labeling can be done by having text mark that takes in data from the the symbol mark name `"basePoint"`(or what we call base mark). The text mark recieves all the information including position and bounding box of each point in `"basePoint"`. Then, we transform the text mark with label transform so that the labels spaced out nicely near the point it is representing and not colliding into each other.
+In scatter plot, labeling can be done by having text mark that takes in data from the the symbol mark name `"basePoint"`(or what we call base mark).
+The text mark recieves all the information including position and bounding box of each point in `"basePoint"`.
+Then, we transform the text mark with label transform so that the labels spaced out nicely near the point it is representing and not colliding into each other.
 
-**Note** the reason that we do not have `x` and `y` channels in the text mark's encoding is that the label transform will replace the `x` and `y` channels of the text mark anyway. The label transform will use the position bounding box of each point in `"basePoint"` to decide the position of each label.
+**Note** the reason that we do not have `x` and `y` channels in the text mark's encoding is that the label transform will replace the `x` and `y` channels of the text mark anyway.
+The label transform will use the position bounding box of each point in `"basePoint"` to decide the position of each label.
 
 ### Label in area chart
 
-Placing labels in area charts is a special case. In area charts, the area mark is in a group mark, and we also want our labels to be inside area they belong to. For this reason, we have to create a text mark outside the group mark and use the group mark as the base mark. Then in the property of a label, we have to set `markIndex` to the index of the area mark in the group mark, so label-transform will know which mark in the group is the base mark. Then, we have to set `avoidBaseMark` to `false` because we want to place a label inside its area. The example of labels in area chart is in the [examples](./#examples) section.
+Placing labels in area charts is a special case.
+In area charts, the area mark is in a group mark, and we also want our labels to be inside area they belong to.
+For this reason, we have to create a text mark outside the group mark and use the group mark as the base mark.
+Then in the property of a label, we have to set `markIndex` to the index of the area mark in the group mark, so label-transform will know which mark in the group is the base mark.
+Then, we have to set `avoidBaseMark` to `false` because we want to place a label inside its area. The example of labels in area chart is in the [examples](./#examples) section.
 
 ### <a name="padding"></a>Example of using padding
 
@@ -57,9 +67,11 @@ Placing labels in area charts is a special case. In area charts, the area mark i
 
 ### <a name="anchoroffset"></a>Anchor and Offset
 
-`anchor` and `offset` are parallel arrays to specify possible positions of each label in relation to its data point bounding box. For example, when `anchor = ["top", "left", "right", "bottom"]` and `offset = [1, 2, 3, 4]`, the possible positions of each label in relation to its data point bounding box are top with offset=1, left with offset=2, right with offset=3, bottom with offset=4.
+`anchor` and `offset` are parallel arrays to specify possible positions of each label in relation to its data point bounding box.
+For example, when `anchor = ["top", "left", "right", "bottom"]` and `offset = [1, 2, 3, 4]`, the possible positions of each label in relation to its data point bounding box are top with offset=1, left with offset=2, right with offset=3, bottom with offset=4.
 
-When the arrays of `anchor` and `offset` have different size, vega transform will auto pad the small array using the last element. For example, `anchor = ["top", "bottom", "left"]` and `offset = [1, 2, 3, 4, 5, 6]`, the padded `anchor` is `["top", "bottom", "left", "left", "left", "left"]`.
+When the arrays of `anchor` and `offset` have different size, vega transform will auto pad the small array using the last element.
+For example, `anchor = ["top", "bottom", "left"]` and `offset = [1, 2, 3, 4, 5, 6]`, the padded `anchor` is `["top", "bottom", "left", "left", "left", "left"]`.
 
 ## <a name="examples"></a>Examples of Vega-Label
 
@@ -71,9 +83,12 @@ When the arrays of `anchor` and `offset` have different size, vega transform wil
 
 Groups of area are used as the base mark, but `avoidBaseMark` flag is `false`, so labels can collide with their marks, but not to each other.
 
-This example is from Vega [Job Voyager Example](../../../examples/job-voyager/). In the original example, each label is placed at the position that has the widest vertical space in the area. Vertical space is a good estimate of the largest area to be placing label; however, there can be some edge cases that vertical space does not well represent the area for placing label.
+This example is from Vega [Job Voyager Example](../../../examples/job-voyager/).
+In the original example, each label is placed at the position that has the widest vertical space in the area.
+Vertical space is a good estimate of the largest area to be placing label; however, there can be some edge cases that vertical space does not well represent the area for placing label.
 
-When adding label using text with label transform, each label is placed at the position that has the largest rectangle (with the same ratio as the label) fitting in the area. This method is better because label transform considers both horizontal and vertical space, so it is more likely for the label to be placed completely inside the area.
+When adding label using text with label transform, each label is placed at the position that has the largest rectangle (with the same ratio as the label) fitting in the area.
+This method is better because label transform considers both horizontal and vertical space, so it is more likely for the label to be placed completely inside the area.
 
 ### With line
 
@@ -83,7 +98,9 @@ When adding label using text with label transform, each label is placed at the p
 
 Symbol is used as the base mark to label, and line is the mark to avoid when labeling.
 
-This example is from Vega [Connected Scatter Plot Example](../../../examples/connected-scatter-plot/). In the original example, the position of each label is pre-calculated into the dataset. Therefore, both the dataset and the vega spec depend on each other.
+This example is from Vega [Connected Scatter Plot Example](../../../examples/connected-scatter-plot/).
+In the original example, the position of each label is pre-calculated into the dataset.
+Therefore, both the dataset and the vega spec depend on each other.
 
 By adding label using text with label transform, the position of each label is calculated based on the object in the chart, so making changes to dataset or vega spec is more flexible.
 
@@ -93,7 +110,11 @@ By adding label using text with label transform, the position of each label is c
 
 Groups of line are used as the base mark to label, so one label is placed at the end of each line.
 
-This example is inspired by Vega-Lite [Carbon Dioxide in the Atmosphere](https://vega.github.io/vega-lite/examples/layer_line_co2_concentration.html). In the original, Vega-Lite example, we need to find the start and the end data points of each line, and mark them as start/end. Then, place labels twice. First time, place each label at the lower-right of its data point, and filter out all the labels except the starting labels. Second time, do the same but place each label at the upper-right of its data point, and filter out all the labels except the end labels. This process is complicated, and may cause inefficiency by transforming and filtering out most of the labels.
+This example is inspired by Vega-Lite [Carbon Dioxide in the Atmosphere](https://vega.github.io/vega-lite/examples/layer_line_co2_concentration.html).
+In the original, Vega-Lite example, we need to find the start and the end data points of each line, and mark them as start/end.
+Then, place labels twice. First time, place each label at the lower-right of its data point, and filter out all the labels except the starting labels.
+Second time, do the same but place each label at the upper-right of its data point, and filter out all the labels except the end labels.
+This process is complicated, and may cause inefficiency by transforming and filtering out most of the labels.
 
 By adding label using text with label transform in Vega, labels are automatically positioned at the end of each lines when the text mark's data is backed by the group-line mark using reactive geometry.
 
@@ -103,17 +124,22 @@ By adding label using text with label transform in Vega, labels are automaticall
 
 {% include embed spec="label-examples/label_rect_stack" %}
 
-Rect is used as the base mark to label. There are 2 sets of labels in this chart. The first label is the overall height of each combined bars, and label positions is set to the outer top of each bar. The second label is the height of each bar, and label position is set to the inner top of each bar.
+Rect is used as the base mark to label. There are 2 sets of labels in this chart.
+The first label is the overall height of each combined bars, and label positions is set to the outer top of each bar.
+The second label is the height of each bar, and label position is set to the inner top of each bar.
 
-This example is inspired by Vega [Stacked Bar Chart Example](../../../examples/stacked-bar-chart/). The original example does not have label on the chart.
+This example is inspired by Vega [Stacked Bar Chart Example](../../../examples/stacked-bar-chart/).
+The original example does not have label on the chart.
 
-When adding label using text with label transform, labels are placed in the available position, and they are hidden when there is not enough space (collision with the bar itself). The example is at the blue bars at `x = 3, 7` and the orange bars at `x = 8, 9`.
+When adding label using text with label transform, labels are placed in the available position, and they are hidden when there is not enough space (collision with the bar itself).
+The example is at the blue bars at `x = 3, 7` and the orange bars at `x = 8, 9`.
 
 #### In Bar Chart - Bar Chart Example
 
 {% include embed spec="label-examples/label_rect" %}
 
-Rect is used as the base mark to label. The label position is set to inner right of each bar as default, and outer right if bar is too small.
+Rect is used as the base mark to label.
+The label position is set to inner right of each bar as default, and outer right if bar is too small.
 
 ### With interactive chart
 
@@ -121,4 +147,6 @@ Rect is used as the base mark to label. The label position is set to inner right
 
 {% include embed spec="label-examples/label_scatter_interactive" %}
 
-Label-transform can also be used with interactive chart. Labling algorithm is implemented with greedy approach, so that the calculation is fast and deliver smooth experience when using with interactive chart. In this interactive scatter plot, label is hidden when (1) there are too many data point clustering and it is not possible to place the label near the data point, and (2) when the data point is out of chart bounding box.
+Label-transform can also be used with interactive chart.
+Labling algorithm is implemented with greedy approach, so that the calculation is fast and deliver smooth experience when using with interactive chart.
+In this interactive scatter plot, label is hidden when (1) there are too many data point clustering and it is not possible to place the label near the data point, and (2) when the data point is out of chart bounding box.
