@@ -5,10 +5,9 @@ permalink: /docs/transforms/label/index.html
 ---
 
 The **label** transform repositions text marks so that they do not collide with each other and other elements in the chart.
-The elements that labels do not collide with include all the marks listed in `avoidMarks` property and the mark that is used as the data (as explained in [reactive geometry](../../marks/#reactivegeom)) of the text mark this label transform is transforming.
+The elements that labels do not collide with include all the marks listed in `avoidMarks` property and the mark that is used as the data (as explained in [reactive geometry](../../marks/#reactivegeom)) of the text marks this `label-transform` is transforming.
 
-The label transform is useful for labeling data points by creating a text mark that takes in data from the mark that represents the data point (we call this mark the "base mark").
-Label transform on a text mark repositions each text to be a label, appearing near the data point (of the base mark) it represents.
+The `label-transform` is useful for labeling marks by repositioning a text mark to appear near the mark (we will call this the "base mark") it represents.
 
 ## Transform Parameters
 
@@ -32,26 +31,23 @@ Label transform on a text mark repositions each text to be a label, appearing ne
 
 {% include embed spec="label-examples/basic-concept-no-label" %}
 
-In this scatter plot example, we can add labels to each point by adding a text mark with the same `x` and `y` encoding channels to the chart.
-Since `x` and `y` encoding channels of the text mark follow the ones from the symbol mark (as we call this base mark), we can use reactive geometry to get information from the symbol mark and only modify the text.
+In this scatter plot example, we want to label each symbol mark.
+We can add a label to each symbol by adding a text mark, using the same `x` and `y` field from the symbol mark (base mark).
+To access `x` and `y` field from the base mark, we use reactive geometry by using the name of the symbol mark as the data for the text mark (label).
+The text mark recieves all the information including position and bounding box of the symbol mark.
 
 {% include embed spec="label-examples/basic-concept-no-transform" %}
 
-Even though reactive geometry anables the text mark to be placed at the same position as its base mark, it cannot prevent the texts from colliding into each other and to their base mark.
-We can, then, use label-transfrom to rearrange the text to be nicely spaced without collision.
+Even though reactive geometry enables each text mark to be placed at the same position as its base mark, it cannot prevent the texts from colliding into each other and to its base mark.
+Then, we can use `label-transfrom` to rearrange each text to be nearby the symbol it represents and do not overlap with each other and base marks.
+The `label-transform` will use the position bounding box of each symbol mark to decide the position of the representing text mark.
 
 {% include embed spec="label-examples/basic-concept-transformed" %}
 
-For better readability, we can also add ticks to indicate which label is belong to which point.
+For better readability, we can also add ticks to indicate which text mark belongs to which symbol.
 
 {% include embed spec="label-examples/basic-concept-with-tick" %}
 
-In scatter plot, labeling can be done by having text mark that takes in data from the the symbol mark name `"basePoint"`(or what we call base mark).
-The text mark recieves all the information including position and bounding box of each point in `"basePoint"`.
-Then, we transform the text mark with label transform so that the labels spaced out nicely near the point it is representing and not colliding into each other.
-
-**Note** the reason that we do not have `x` and `y` channels in the text mark's encoding is that the label transform will replace the `x` and `y` channels of the text mark anyway.
-The label transform will use the position bounding box of each point in `"basePoint"` to decide the position of each label.
 
 ### Label in area chart
 
