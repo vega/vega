@@ -192,9 +192,9 @@ function set(t) {
 }
 
 export function compileMeasures(agg, field) {
-  var get = field || identity,
-      ops = resolve(agg),
-      out = agg.slice().sort(compareIndex);
+  const get = field || identity,
+        ops = resolve(agg),
+        out = agg.slice().sort(compareIndex);
 
   function ctr(cell) {
     this._ops = ops;

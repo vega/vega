@@ -7,7 +7,7 @@ export default function TupleStore(key) {
   this.reset();
 }
 
-var prototype = TupleStore.prototype;
+const prototype = TupleStore.prototype;
 
 prototype.reset = function() {
   this._add = [];
@@ -29,7 +29,7 @@ prototype.values = function() {
   this._get = null;
   if (this._rem.length === 0) return this._add;
 
-  var a = this._add,
+  let a = this._add,
       r = this._rem,
       k = this._key,
       n = a.length,
@@ -56,7 +56,7 @@ prototype.values = function() {
 // memoizing statistics methods
 
 prototype.distinct = function(get) {
-  var v = this.values(),
+  let v = this.values(),
       n = v.length,
       map = {},
       count = 0, s;
@@ -74,8 +74,8 @@ prototype.distinct = function(get) {
 
 prototype.extent = function(get) {
   if (this._get !== get || !this._ext) {
-    var v = this.values(),
-        i = extentIndex(v, get);
+    const v = this.values(),
+          i = extentIndex(v, get);
     this._ext = [v[i[0]], v[i[1]]];
     this._get = get;
   }
@@ -91,12 +91,12 @@ prototype.argmax = function(get) {
 };
 
 prototype.min = function(get) {
-  var m = this.extent(get)[0];
+  const m = this.extent(get)[0];
   return m != null ? get(m) : undefined;
 };
 
 prototype.max = function(get) {
-  var m = this.extent(get)[1];
+  const m = this.extent(get)[1];
   return m != null ? get(m) : undefined;
 };
 

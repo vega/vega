@@ -145,4 +145,4 @@ function find(field, data, index) {
   return -1;
 }
 
-export var ValidWindowOps = Object.keys(WindowOps);
+export const ValidWindowOps = Object.keys(WindowOps);

@@ -1,6 +1,6 @@
 export function multikey(f) {
-  return function(x) {
-    var n = f.length,
+  return x => {
+    let n = f.length,
         i = 1,
         k = String(f[0](x));
 
