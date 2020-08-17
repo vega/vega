@@ -3,14 +3,12 @@ import {accessorName} from 'vega-util';
 // use either provided alias or accessor field name
 export function fieldNames(fields, as) {
   if (!fields) return null;
-  return fields.map(function(f, i) {
-    return as[i] || accessorName(f);
-  });
+  return fields.map((f, i) => as[i] || accessorName(f));
 }
 
 export function partition(data, groupby, field) {
-  var groups = [],
-      get = function(f) { return f(t); },
+  let groups = [],
+      get = f => f(t),
       map, i, n, t, k, g;
 
   // partition data points into groups
