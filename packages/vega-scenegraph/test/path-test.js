@@ -125,6 +125,27 @@ tape('pathParse should skip NaN parameters', function(t) {
   t.end();
 });
 
+tape('pathParse should handle concatenated decimals', function(t) {
+  var s = 'M.5.5l.3.3';
+  var p = [['M',.5,.5], ['l',.3,.3]];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
+tape('pathParse should handle implicit M lineTo', function(t) {
+  var s = 'M0,0 1,1 2,2';
+  var p = [['M',0,0], ['L',1,1], ['L',2,2]];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
+tape('pathParse should handle implicit m lineTo', function(t) {
+  var s = 'm0,0 1,1 2,2';
+  var p = [['m',0,0], ['l',1,1], ['l',2,2]];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
 tape('boundContext should calculate paths bounds', function(t) {
   for (var i=0; i<paths.length; ++i) {
     var p = pathParse(paths[i]);
