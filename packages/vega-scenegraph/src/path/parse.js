@@ -1,9 +1,15 @@
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
-var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-    regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
+const cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
+      regexp = [
+        /([MLHVCSQTAZmlhvcsqtaz])/g,
+        /###/,
+        /(\.\d+)(\.\d)/g,
+        /(\d)([-+])/g,
+        /\s|,|###/
+      ];
 
 export default function(pathstr) {
-  var result = [],
+  let result = [],
       path,
       curr,
       chunks,
@@ -23,8 +29,9 @@ export default function(pathstr) {
     chunks = curr
       .slice(1)
       .trim()
-      .replace(regexp[2],'$1###$2')
-      .split(regexp[3]);
+      .replace(regexp[2], '$1###$2')
+      .replace(regexp[3], '$1###$2')
+      .split(regexp[4]);
     cmd = curr.charAt(0);
 
     parsed = [cmd];
@@ -35,8 +42,14 @@ export default function(pathstr) {
     }
 
     len = cmdlen[cmd.toLowerCase()];
-    if (parsed.length-1 > len) {
-      for (j=1, m=parsed.length; j<m; j+=len) {
+    if (parsed.length - 1 > len) {
+      let j = 1, m = parsed.length;
+      result.push([cmd].concat(parsed.slice(j, j += len)));
+
+      // handle implicit lineTo (#2803)
+      cmd = cmd === 'M' ? 'L' : cmd === 'm' ? 'l' : cmd;
+
+      for (; j < m; j += len) {
         result.push([cmd].concat(parsed.slice(j, j+len)));
       }
     }
