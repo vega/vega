@@ -3,13 +3,13 @@ import context from '../bound/boundContext';
 import {intersectPath} from '../util/intersect';
 import {drawAll} from '../util/canvas/draw';
 import {pickPath} from '../util/canvas/pick';
-import {transformItem} from '../util/svg/transform';
+import {rotateItem} from '../util/svg/transform';
 import {DegToRad} from '../util/constants';
 
 export default function(type, shape, isect) {
 
   function attr(emit, item) {
-    emit('transform', transformItem(item));
+    emit('transform', rotateItem(item));
     emit('d', shape(null, item));
   }
 
