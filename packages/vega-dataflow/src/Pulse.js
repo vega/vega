@@ -173,11 +173,16 @@ Pulse.prototype = {
    */
   addAll() {
     let p = this;
-    if (!p.source || p.source.length === p.add.length) {
+    const reuse = !p.source
+      || p.add === p.rem // special case for indexed set (e.g., crossfilter)
+      || (!p.rem.length && p.source.length === p.add.length);
+
+    if (reuse) {
       return p;
     } else {
       p = new Pulse(this.dataflow).init(this);
       p.add = p.source;
+      p.rem = []; // new operators can ignore rem #2769
       return p;
     }
   },
