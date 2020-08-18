@@ -30,7 +30,7 @@ inherits(Identifier, Transform, {
   transform(_, pulse) {
     const counter = getCounter(pulse.dataflow),
           as = _.as;
-    let id = counter.value;
+    const id = counter.value;
 
     pulse.visit(pulse.ADD, t => (t[as] = t[as] || ++id));
     counter.set(this.value = id);
