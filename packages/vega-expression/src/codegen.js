@@ -13,8 +13,8 @@ function stripQuotes(s) {
 export default function(opt) {
   opt = opt || {};
 
-  const whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
-        blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
+  const allowed = opt.allowed ? toSet(opt.allowed) : {},
+        forbidden = opt.forbidden ? toSet(opt.forbidden) : {},
         constants = opt.constants || Constants,
         functions = (opt.functions || Functions)(visit),
         globalvar = opt.globalvar,
@@ -41,11 +41,11 @@ export default function(opt) {
       const id = n.name;
       if (memberDepth > 0) {
         return id;
-      } else if (hasOwnProperty(blacklist, id)) {
+      } else if (hasOwnProperty(forbidden, id)) {
         return error('Illegal identifier: ' + id);
       } else if (hasOwnProperty(constants, id)) {
         return constants[id];
-      } else if (hasOwnProperty(whitelist, id)) {
+      } else if (hasOwnProperty(allowed, id)) {
         return id;
       } else {
         globals[id] = 1;

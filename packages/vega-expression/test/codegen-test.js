@@ -44,7 +44,7 @@ tape('Evaluate expressions without white or black list', t => {
 
 tape('Evaluate expressions with black list', t => {
   var codegen = vega.codegen({
-    blacklist: ['a', 'b', 'c'],
+    forbidden: ['a', 'b', 'c'],
     globalvar: 'global',
     fieldvar:  'd'
   });
@@ -60,12 +60,12 @@ tape('Evaluate expressions with black list', t => {
     return function() { return evaluate(str); };
   };
 
-  // should not allow blacklisted ids
+  // should not allow forbiddened ids
   t.throws(evaluate.fn('a'));
   t.throws(evaluate.fn('b'));
   t.throws(evaluate.fn('c'));
 
-  // should allow non-blacklisted ids
+  // should allow non-forbiddened ids
   t.doesNotThrow(evaluate.fn('d'));
   t.doesNotThrow(evaluate.fn('global'));
 
@@ -74,7 +74,7 @@ tape('Evaluate expressions with black list', t => {
 
 tape('Evaluate expressions with white list', t => {
   var codegen = vega.codegen({
-    whitelist: ['datum', 'event', 'signals'],
+    allowed: ['datum', 'event', 'signals'],
     globalvar: 'global'
   });
 
@@ -83,7 +83,7 @@ tape('Evaluate expressions with white list', t => {
     const evt = {type: 'mousemove'};
     const value = codegen(vega.parse(str));
     if (value.globals.length > 0) {
-      throw Error('Found non-whitelisted global identifier.');
+      throw Error('Found non-alloweded global identifier.');
     }
     const fn = Function('datum', 'event', 'signals', 'return (' + value.code + ')');
     return fn(datum, evt);
@@ -287,7 +287,7 @@ tape('Evaluate expressions with white list', t => {
   t.throws(evaluate.fn('Math.random()'));
   t.throws(evaluate.fn('Array.prototype.slice.call([])'));
 
-  // should not allow top-level identifiers outside whitelist
+  // should not allow top-level identifiers outside allowed
   t.throws(evaluate.fn('Math'));
   t.throws(evaluate.fn('Array'));
   t.throws(evaluate.fn('String'));
@@ -296,7 +296,7 @@ tape('Evaluate expressions with white list', t => {
   t.throws(evaluate.fn('a'));
   t.throws(evaluate.fn('datum[Math]'));
 
-  // should allow nested identifiers outside whitelist
+  // should allow nested identifiers outside allowed
   t.doesNotThrow(evaluate.fn('datum.eval'));
   t.doesNotThrow(evaluate.fn('datum.Math'));
   t.doesNotThrow(evaluate.fn('datum.a.eval'));
