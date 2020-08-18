@@ -1,8 +1,31 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-timer')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-timer'], factory) :
-  (global = global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
 }(this, (function (exports, d3Dsv, topojsonClient, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Timer) { 'use strict';
+
+  function _interopNamespace(e) {
+    if (e && e.__esModule) { return e; } else {
+      var n = Object.create(null);
+      if (e) {
+        Object.keys(e).forEach(function (k) {
+          if (k !== 'default') {
+            var d = Object.getOwnPropertyDescriptor(e, k);
+            Object.defineProperty(n, k, d.get ? d : {
+              enumerable: true,
+              get: function () {
+                return e[k];
+              }
+            });
+          }
+        });
+      }
+      n['default'] = e;
+      return Object.freeze(n);
+    }
+  }
+
+  var $__namespace = /*#__PURE__*/_interopNamespace($$1);
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -41,7 +64,7 @@
   }
 
   function splitAccessPath(p) {
-    var path = [],
+    let path = [],
         q = null,
         b = 0,
         n = p.length,
@@ -112,35 +135,33 @@
     );
   }
 
-  var empty = [];
+  const id = field('id');
 
-  var id = field('id');
+  const identity = accessor(function(_) { return _; }, [], 'identity');
 
-  var identity = accessor(function(_) { return _; }, empty, 'identity');
+  const zero = accessor(function() { return 0; }, [], 'zero');
 
-  var zero = accessor(function() { return 0; }, empty, 'zero');
+  const one = accessor(function() { return 1; }, [], 'one');
 
-  var one = accessor(function() { return 1; }, empty, 'one');
+  const truthy = accessor(function() { return true; }, [], 'true');
 
-  var truthy = accessor(function() { return true; }, empty, 'true');
-
-  var falsy = accessor(function() { return false; }, empty, 'false');
+  const falsy = accessor(function() { return false; }, [], 'false');
 
   function log(method, level, input) {
-    var args = [level].concat([].slice.call(input));
+    const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
   }
 
-  var None  = 0;
-  var Error$1 = 1;
-  var Warn  = 2;
-  var Info  = 3;
-  var Debug = 4;
+  const None  = 0;
+  const Error$1 = 1;
+  const Warn  = 2;
+  const Info  = 3;
+  const Debug = 4;
 
   function logger(_, method) {
-    var level = _ || None;
+    let level = _ || None;
     return {
-      level: function(_) {
+      level(_) {
         if (arguments.length) {
           level = +_;
           return this;
@@ -148,19 +169,19 @@
           return level;
         }
       },
-      error: function() {
+      error() {
         if (level >= Error$1) log(method || 'error', 'ERROR', arguments);
         return this;
       },
-      warn: function() {
+      warn() {
         if (level >= Warn) log(method || 'warn', 'WARN', arguments);
         return this;
       },
-      info: function() {
+      info() {
         if (level >= Info) log(method || 'log', 'INFO', arguments);
         return this;
       },
-      debug: function() {
+      debug() {
         if (level >= Debug) log(method || 'log', 'DEBUG', arguments);
         return this;
       }
@@ -177,7 +198,7 @@
 
   function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
-      for (var key in source) {
+      for (const key in source) {
         if (key === 'signals') {
           // for signals, we merge the signals arrays
           // source signals take precedence over
@@ -188,7 +209,7 @@
           // for legend block, recurse for the layout entry only
           // for style block, recurse for all properties
           // otherwise, no recursion: objects overwrite, no merging
-          var r = key === 'legend' ? {layout: 1}
+          const r = key === 'legend' ? {layout: 1}
             : key === 'style' ? true
             : null;
           writeConfig(out, key, source[key], r);
@@ -201,7 +222,7 @@
   function writeConfig(output, key, value, recurse) {
     if (!isLegalKey(key)) return;
 
-    var k, o;
+    let k, o;
     if (isObject(value) && !isArray(value)) {
       o = isObject(output[key]) ? output[key] : (output[key] = {});
       for (k in value) {
@@ -241,32 +262,25 @@
     return _ == null || _ === '' ? null : +_;
   }
 
-  function exp(sign) {
-    return function(x) { return sign * Math.exp(x); };
-  }
+  const exp = sign =>
+    x => sign * Math.exp(x);
 
-  function log$1(sign) {
-    return function(x) { return Math.log(sign * x); };
-  }
+  const log$1 = sign =>
+    x => Math.log(sign * x);
 
-  function symlog(c) {
-    return function(x) { return Math.sign(x) * Math.log1p(Math.abs(x / c)); };
-  }
+  const symlog = c =>
+    x => Math.sign(x) * Math.log1p(Math.abs(x / c));
 
-  function symexp(c) {
-    return function(x) { return Math.sign(x) * Math.expm1(Math.abs(x)) * c; };
-  }
+  const symexp = c =>
+    x => Math.sign(x) * Math.expm1(Math.abs(x)) * c;
 
-  function pow(exponent) {
-    return function(x) {
-      return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
-    };
-  }
+  const pow = exponent =>
+    x => x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
 
   function pan(domain, delta, lift, ground) {
-    var d0 = lift(domain[0]),
-        d1 = lift(peek(domain)),
-        dd = (d1 - d0) * delta;
+    const d0 = lift(domain[0]),
+          d1 = lift(peek(domain)),
+          dd = (d1 - d0) * delta;
 
     return [
       ground(d0 - dd),
@@ -292,9 +306,9 @@
   }
 
   function zoom(domain, anchor, scale, lift, ground) {
-    var d0 = lift(domain[0]),
-        d1 = lift(peek(domain)),
-        da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
+    const d0 = lift(domain[0]),
+          d1 = lift(peek(domain)),
+          da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
 
     return [
       ground(da + (d0 - da) * scale),
@@ -307,7 +321,7 @@
   }
 
   function zoomLog(domain, anchor, scale) {
-    var sign = Math.sign(domain[0]);
+    const sign = Math.sign(domain[0]);
     return zoom(domain, anchor, scale, log$1(sign), exp(sign));
   }
 
@@ -339,7 +353,7 @@
    * If the span exceeds (max - min), the range [min, max] is returned.
    */
   function clampRange(range, min, max) {
-    var lo = range[0],
+    let lo = range[0],
         hi = range[1],
         span;
 
@@ -383,7 +397,7 @@
       : accessor(gen(get, ord), Object.keys(fmap));
   }
 
-  const compare$1 = (u, v) => (u < v || u == null) && v != null ? -1
+  const ascending = (u, v) => (u < v || u == null) && v != null ? -1
     : (u > v || v == null) && u != null ? 1
     : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? -1
     : v !== v && u === u ? 1
@@ -394,7 +408,7 @@
     : compareN(fields, orders, fields.length);
 
   const compare1 = (field, order) => function(a, b) {
-    return compare$1(field(a), field(b)) * order;
+    return ascending(field(a), field(b)) * order;
   };
 
   const compareN = (fields, orders, n) => {
@@ -403,33 +417,30 @@
       let f, c = 0, i = -1;
       while (c === 0 && ++i < n) {
         f = fields[i];
-        c = compare$1(f(a), f(b));
+        c = ascending(f(a), f(b));
       }
       return c * orders[i];
     };
   };
 
   function constant(_) {
-    return isFunction(_) ? _ : function() { return _; };
+    return isFunction(_) ? _ : () => _;
   }
 
   function debounce(delay, handler) {
-    var tid, evt;
+    let tid;
 
-    function callback() {
-      handler(evt);
-      tid = evt = null;
-    }
-
-    return function(e) {
-      evt = e;
+    return e => {
       if (tid) clearTimeout(tid);
-      tid = setTimeout(callback, delay);
+      tid = setTimeout(
+        () => (handler(e), tid = null),
+        delay
+      );
     };
   }
 
   function extend(_) {
-    for (var x, k, i=1, len=arguments.length; i<len; ++i) {
+    for (let x, k, i=1, len=arguments.length; i<len; ++i) {
       x = arguments[i];
       for (k in x) { _[k] = x[k]; }
     }
@@ -441,7 +452,7 @@
    * form [min, max]. Ignores null, undefined, and NaN values.
    */
   function extent(array, f) {
-    var i = 0, n, v, min, max;
+    let i = 0, n, v, min, max;
 
     if (array && (n = array.length)) {
       if (f == null) {
@@ -479,7 +490,7 @@
   }
 
   function extentIndex(array, f) {
-    var i = -1,
+    let i = -1,
         n = array.length,
         a, b, c, u, v;
 
@@ -540,10 +551,10 @@
     return hop.call(object, property);
   }
 
-  var NULL = {};
+  const NULL = {};
 
   function fastmap(input) {
-    var obj = {},
+    let obj = {},
         map,
         test;
 
@@ -588,7 +599,7 @@
         }
       },
       clean() {
-        var next = {},
+        let next = {},
             size = 0,
             key, value;
         for (key in obj) {
@@ -614,7 +625,7 @@
   function flush(range, value, threshold, left, right, center) {
     if (!threshold && threshold !== 0) return center;
 
-    var a = range[0],
+    let a = range[0],
         b = peek(range),
         t = +threshold,
         l, r;
@@ -632,10 +643,10 @@
     return l < r && l <= t ? left : r <= t ? right : center;
   }
 
-  function inherits(child, parent) {
-    var proto = (child.prototype = Object.create(parent.prototype));
+  function inherits(child, parent, members) {
+    const proto = (child.prototype = Object.create(parent.prototype));
     proto.constructor = child;
-    return proto;
+    return extend(proto, members);
   }
 
   /**
@@ -644,7 +655,7 @@
    * of inclusive (true) or exclusive (false) comparisons.
    */
   function inrange(value, range, left, right) {
-    var r0 = range[0], r1 = range[range.length-1], t;
+    let r0 = range[0], r1 = range[range.length-1], t;
     if (r0 > r1) {
       t = r0;
       r0 = r1;
@@ -751,13 +762,13 @@
   }
 
   function merge(compare, array0, array1, output) {
-    var n0 = array0.length,
-        n1 = array1.length;
+    const n0 = array0.length,
+          n1 = array1.length;
 
     if (!n1) return array0;
     if (!n0) return array1;
 
-    var merged = output || new array0.constructor(n0 + n1),
+    let merged = output || new array0.constructor(n0 + n1),
         i0 = 0, i1 = 0, i = 0;
 
     for (; i0<n0 && i1<n1; ++i) {
@@ -778,15 +789,15 @@
   }
 
   function repeat(str, reps) {
-    var s = '';
+    let s = '';
     while (--reps >= 0) s += str;
     return s;
   }
 
   function pad(str, length, padchar, align) {
-    var c = padchar || ' ',
-        s = str + '',
-        n = length - s.length;
+    const c = padchar || ' ',
+          s = str + '',
+          n = length - s.length;
 
     return n <= 0 ? s
       : align === 'left' ? repeat(c, n) + s
@@ -815,9 +826,8 @@
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
   }
 
-  function defaultParser(_) {
-    return isNumber(_) ? _ : isDate(_) ? _ : Date.parse(_);
-  }
+  const defaultParser = _ =>
+    isNumber(_) ? _ : isDate(_) ? _ : Date.parse(_);
 
   function toDate(_, parser) {
     parser = parser || defaultParser;
@@ -829,15 +839,17 @@
   }
 
   function toSet(_) {
-    for (var s={}, i=0, n=_.length; i<n; ++i) s[_[i]] = true;
+    const s = {},
+          n = _.length;
+    for (let i=0; i<n; ++i) s[_[i]] = true;
     return s;
   }
 
   function truncate(str, length, align, ellipsis) {
-    var e = ellipsis != null ? ellipsis : '\u2026',
-        s = str + '',
-        n = s.length,
-        l = Math.max(0, length - e.length);
+    const e = ellipsis != null ? ellipsis : '\u2026',
+          s = str + '',
+          n = s.length,
+          l = Math.max(0, length - e.length);
 
     return n <= length ? s
       : align === 'left' ? e + s.slice(n - l)
@@ -848,7 +860,7 @@
   function visitArray(array, filter, visitor) {
     if (array) {
       if (filter) {
-        var i = 0, n = array.length, t;
+        let i = 0, n = array.length, t;
         for (; i<n; ++i) {
           if (t = filter(array[i])) visitor(t, i, array);
         }
@@ -859,12 +871,12 @@
   }
 
   function UniqueList(idFunc) {
-    var $ = idFunc || identity,
-        list = [],
-        ids = {};
+    const $ = idFunc || identity,
+          list = [],
+          ids = {};
 
-    list.add = function(_) {
-      var id = $(_);
+    list.add = _ => {
+      const id = $(_);
       if (!ids[id]) {
         ids[id] = 1;
         list.push(_);
@@ -872,13 +884,12 @@
       return list;
     };
 
-    list.remove = function(_) {
-      var id = $(_), idx;
+    list.remove = _ => {
+      const id = $(_);
       if (ids[id]) {
         ids[id] = 0;
-        if ((idx = list.indexOf(_)) >= 0) {
-          list.splice(idx, 1);
-        }
+        const idx = list.indexOf(_);
+        if (idx >= 0) list.splice(idx, 1);
       }
       return list;
     };
@@ -898,8 +909,8 @@
     try { await callback(df); } catch (err) { df.error(err); }
   }
 
-  var TUPLE_ID_KEY = Symbol('vega_id'),
-      TUPLE_ID = 1;
+  const TUPLE_ID_KEY = Symbol('vega_id');
+  let TUPLE_ID = 1;
 
   /**
    * Checks if an input value is a registered tuple.
@@ -940,7 +951,7 @@
    * @return {object} The ingested data tuple.
    */
   function ingest(datum) {
-    var t = (datum === Object(datum)) ? datum : {data: datum};
+    const t = (datum === Object(datum)) ? datum : {data: datum};
     return tupleid(t) ? t : setid(t, TUPLE_ID++);
   }
 
@@ -960,7 +971,7 @@
    * @return {object} The derived tuple.
    */
   function rederive(t, d) {
-    for (var k in t) d[k] = t[k];
+    for (const k in t) d[k] = t[k];
     return d;
   }
 
@@ -992,7 +1003,7 @@
   }
 
   function changeset() {
-    var add = [],  // insert tuples
+    let add = [],  // insert tuples
         rem = [],  // remove tuples
         mod = [],  // modify tuples
         remp = [], // remove by predicate
@@ -1002,19 +1013,19 @@
 
     return {
       constructor: changeset,
-      insert: function(t) {
-        var d = array(t), i = 0, n = d.length;
+      insert(t) {
+        let d = array(t), i = 0, n = d.length;
         for (; i<n; ++i) add.push(d[i]);
         return this;
       },
-      remove: function(t) {
-        var a = isFunction(t) ? remp : rem,
+      remove(t) {
+        let a = isFunction(t) ? remp : rem,
             d = array(t), i = 0, n = d.length;
         for (; i<n; ++i) a.push(d[i]);
         return this;
       },
-      modify: function(t, field, value) {
-        var m = {field: field, value: constant(value)};
+      modify(t, field, value) {
+        let m = {field: field, value: constant(value)};
         if (isFunction(t)) {
           m.filter = t;
           modp.push(m);
@@ -1024,21 +1035,21 @@
         }
         return this;
       },
-      encode: function(t, set) {
+      encode(t, set) {
         if (isFunction(t)) modp.push({filter: t, field: set});
         else mod.push({tuple: t, field: set});
         return this;
       },
-      clean: function(value) {
+      clean(value) {
         clean = value;
         return this;
       },
-      reflow: function() {
+      reflow() {
         reflow = true;
         return this;
       },
-      pulse: function(pulse, tuples) {
-        var cur = {}, out = {}, i, n, m, f, t, id;
+      pulse(pulse, tuples) {
+        let cur = {}, out = {}, i, n, m, f, t, id;
 
         // build lookup table of current tuples
         for (i=0, n=tuples.length; i<n; ++i) {
@@ -1054,7 +1065,7 @@
         // process predicate-based removals
         for (i=0, n=remp.length; i<n; ++i) {
           f = remp[i];
-          tuples.forEach(function(t) {
+          tuples.forEach(t => {
             if (f(t)) cur[tupleid(t)] = -1;
           });
         }
@@ -1105,7 +1116,7 @@
         for (i=0, n=modp.length; i<n; ++i) {
           m = modp[i];
           f = m.filter;
-          tuples.forEach(function(t) {
+          tuples.forEach(t => {
             if (f(t) && cur[tupleid(t)] > 0) {
               modify(t, m.field, m.value);
             }
@@ -1117,7 +1128,7 @@
         // otherwise, populate mod with modified tuples only
         if (reflow) {
           pulse.mod = rem.length || remp.length
-            ? tuples.filter(function(t) { return cur[tupleid(t)] > 0; })
+            ? tuples.filter(t => cur[tupleid(t)] > 0)
             : tuples.slice();
         } else {
           for (id in out) pulse.mod.push(out[id]);
@@ -1133,7 +1144,7 @@
     };
   }
 
-  var CACHE = '_:mod:_';
+  const CACHE = '_:mod:_';
 
   /**
    * Hash that tracks modifications to assigned values.
@@ -1143,80 +1154,81 @@
     Object.defineProperty(this, CACHE, {writable: true, value: {}});
   }
 
-  var prototype = Parameters.prototype;
+  Parameters.prototype = {
+    /**
+     * Set a parameter value. If the parameter value changes, the parameter
+     * will be recorded as modified.
+     * @param {string} name - The parameter name.
+     * @param {number} index - The index into an array-value parameter. Ignored if
+     *   the argument is undefined, null or less than zero.
+     * @param {*} value - The parameter value to set.
+     * @param {boolean} [force=false] - If true, records the parameter as modified
+     *   even if the value is unchanged.
+     * @return {Parameters} - This parameter object.
+     */
+    set(name, index, value, force) {
+      const o = this,
+            v = o[name],
+            mod = o[CACHE];
 
-  /**
-   * Set a parameter value. If the parameter value changes, the parameter
-   * will be recorded as modified.
-   * @param {string} name - The parameter name.
-   * @param {number} index - The index into an array-value parameter. Ignored if
-   *   the argument is undefined, null or less than zero.
-   * @param {*} value - The parameter value to set.
-   * @param {boolean} [force=false] - If true, records the parameter as modified
-   *   even if the value is unchanged.
-   * @return {Parameters} - This parameter object.
-   */
-  prototype.set = function(name, index, value, force) {
-    var o = this,
-        v = o[name],
-        mod = o[CACHE];
-
-    if (index != null && index >= 0) {
-      if (v[index] !== value || force) {
-        v[index] = value;
-        mod[index + ':' + name] = -1;
-        mod[name] = -1;
+      if (index != null && index >= 0) {
+        if (v[index] !== value || force) {
+          v[index] = value;
+          mod[index + ':' + name] = -1;
+          mod[name] = -1;
+        }
+      } else if (v !== value || force) {
+        o[name] = value;
+        mod[name] = isArray(value) ? 1 + value.length : -1;
       }
-    } else if (v !== value || force) {
-      o[name] = value;
-      mod[name] = isArray(value) ? 1 + value.length : -1;
-    }
 
-    return o;
-  };
+      return o;
+    },
 
-  /**
-   * Tests if one or more parameters has been modified. If invoked with no
-   * arguments, returns true if any parameter value has changed. If the first
-   * argument is array, returns trues if any parameter name in the array has
-   * changed. Otherwise, tests if the given name and optional array index has
-   * changed.
-   * @param {string} name - The parameter name to test.
-   * @param {number} [index=undefined] - The parameter array index to test.
-   * @return {boolean} - Returns true if a queried parameter was modified.
-   */
-  prototype.modified = function(name, index) {
-    var mod = this[CACHE], k;
-    if (!arguments.length) {
-      for (k in mod) { if (mod[k]) return true; }
-      return false;
-    } else if (isArray(name)) {
-      for (k=0; k<name.length; ++k) {
-        if (mod[name[k]]) return true;
+    /**
+     * Tests if one or more parameters has been modified. If invoked with no
+     * arguments, returns true if any parameter value has changed. If the first
+     * argument is array, returns trues if any parameter name in the array has
+     * changed. Otherwise, tests if the given name and optional array index has
+     * changed.
+     * @param {string} name - The parameter name to test.
+     * @param {number} [index=undefined] - The parameter array index to test.
+     * @return {boolean} - Returns true if a queried parameter was modified.
+     */
+    modified(name, index) {
+      let mod = this[CACHE], k;
+      if (!arguments.length) {
+        for (k in mod) { if (mod[k]) return true; }
+        return false;
+      } else if (isArray(name)) {
+        for (k=0; k<name.length; ++k) {
+          if (mod[name[k]]) return true;
+        }
+        return false;
       }
-      return false;
+      return (index != null && index >= 0)
+        ? (index + 1 < mod[name] || !!mod[index + ':' + name])
+        : !!mod[name];
+    },
+
+    /**
+     * Clears the modification records. After calling this method,
+     * all parameters are considered unmodified.
+     */
+    clear() {
+      this[CACHE] = {};
+      return this;
     }
-    return (index != null && index >= 0)
-      ? (index + 1 < mod[name] || !!mod[index + ':' + name])
-      : !!mod[name];
   };
 
-  /**
-   * Clears the modification records. After calling this method,
-   * all parameters are considered unmodified.
-   */
-  prototype.clear = function() {
-    this[CACHE] = {};
-    return this;
-  };
+  let OP_ID = 0;
 
-  var OP_ID = 0;
-  var PULSE = 'pulse';
-  var NO_PARAMS = new Parameters();
+  const PULSE = 'pulse',
+        NO_PARAMS = new Parameters();
 
   // Boolean Flags
-  var SKIP     = 1,
-      MODIFIED = 2;
+  const SKIP     = 1,
+        MODIFIED = 2;
 
   /**
    * An Operator is a processing node in a dataflow graph.
@@ -1249,216 +1261,217 @@
     if (params) this.parameters(params, react);
   }
 
-  var prototype$1 = Operator.prototype;
-
-  /**
-   * Returns a list of target operators dependent on this operator.
-   * If this list does not exist, it is created and then returned.
-   * @return {UniqueList}
-   */
-  prototype$1.targets = function() {
-    return this._targets || (this._targets = UniqueList(id));
-  };
-
-  /**
-   * Sets the value of this operator.
-   * @param {*} value - the value to set.
-   * @return {Number} Returns 1 if the operator value has changed
-   *   according to strict equality, returns 0 otherwise.
-   */
-  prototype$1.set = function(value) {
-    if (this.value !== value) {
-      this.value = value;
-      return 1;
-    } else {
-      return 0;
-    }
-  };
-
   function flag(bit) {
     return function(state) {
-      var f = this.flags;
+      const f = this.flags;
       if (arguments.length === 0) return !!(f & bit);
       this.flags = state ? (f | bit) : (f & ~bit);
       return this;
     };
   }
 
-  /**
-   * Indicates that operator evaluation should be skipped on the next pulse.
-   * This operator will still propagate incoming pulses, but its update function
-   * will not be invoked. The skip flag is reset after every pulse, so calling
-   * this method will affect processing of the next pulse only.
-   */
-  prototype$1.skip = flag(SKIP);
+  Operator.prototype = {
 
-  /**
-   * Indicates that this operator's value has been modified on its most recent
-   * pulse. Normally modification is checked via strict equality; however, in
-   * some cases it is more efficient to update the internal state of an object.
-   * In those cases, the modified flag can be used to trigger propagation. Once
-   * set, the modification flag persists across pulses until unset. The flag can
-   * be used with the last timestamp to test if a modification is recent.
-   */
-  prototype$1.modified = flag(MODIFIED);
+    /**
+     * Returns a list of target operators dependent on this operator.
+     * If this list does not exist, it is created and then returned.
+     * @return {UniqueList}
+     */
+    targets() {
+      return this._targets || (this._targets = UniqueList(id));
+    },
 
-  /**
-   * Sets the parameters for this operator. The parameter values are analyzed for
-   * operator instances. If found, this operator will be added as a dependency
-   * of the parameterizing operator. Operator values are dynamically marshalled
-   * from each operator parameter prior to evaluation. If a parameter value is
-   * an array, the array will also be searched for Operator instances. However,
-   * the search does not recurse into sub-arrays or object properties.
-   * @param {object} params - A hash of operator parameters.
-   * @param {boolean} [react=true] - A flag indicating if this operator should
-   *   automatically update (react) when parameter values change. In other words,
-   *   this flag determines if the operator registers itself as a listener on
-   *   any upstream operators included in the parameters.
-   * @param {boolean} [initonly=false] - A flag indicating if this operator
-   *   should calculate an update only upon its initiatal evaluation, then
-   *   deregister dependencies and suppress all future update invocations.
-   * @return {Operator[]} - An array of upstream dependencies.
-   */
-  prototype$1.parameters = function(params, react, initonly) {
-    react = react !== false;
-    var self = this,
-        argval = (self._argval = self._argval || new Parameters()),
-        argops = (self._argops = self._argops || []),
-        deps = [],
-        name, value, n, i;
-
-    function add(name, index, value) {
-      if (value instanceof Operator) {
-        if (value !== self) {
-          if (react) value.targets().add(self);
-          deps.push(value);
-        }
-        argops.push({op:value, name:name, index:index});
+    /**
+     * Sets the value of this operator.
+     * @param {*} value - the value to set.
+     * @return {Number} Returns 1 if the operator value has changed
+     *   according to strict equality, returns 0 otherwise.
+     */
+    set(value) {
+      if (this.value !== value) {
+        this.value = value;
+        return 1;
       } else {
-        argval.set(name, index, value);
+        return 0;
       }
-    }
+    },
 
-    for (name in params) {
-      value = params[name];
+    /**
+     * Indicates that operator evaluation should be skipped on the next pulse.
+     * This operator will still propagate incoming pulses, but its update function
+     * will not be invoked. The skip flag is reset after every pulse, so calling
+     * this method will affect processing of the next pulse only.
+     */
+    skip: flag(SKIP),
 
-      if (name === PULSE) {
-        array(value).forEach(function(op) {
-          if (!(op instanceof Operator)) {
-            error('Pulse parameters must be operator instances.');
-          } else if (op !== self) {
-            op.targets().add(self);
-            deps.push(op);
+    /**
+     * Indicates that this operator's value has been modified on its most recent
+     * pulse. Normally modification is checked via strict equality; however, in
+     * some cases it is more efficient to update the internal state of an object.
+     * In those cases, the modified flag can be used to trigger propagation. Once
+     * set, the modification flag persists across pulses until unset. The flag can
+     * be used with the last timestamp to test if a modification is recent.
+     */
+    modified: flag(MODIFIED),
+
+    /**
+     * Sets the parameters for this operator. The parameter values are analyzed for
+     * operator instances. If found, this operator will be added as a dependency
+     * of the parameterizing operator. Operator values are dynamically marshalled
+     * from each operator parameter prior to evaluation. If a parameter value is
+     * an array, the array will also be searched for Operator instances. However,
+     * the search does not recurse into sub-arrays or object properties.
+     * @param {object} params - A hash of operator parameters.
+     * @param {boolean} [react=true] - A flag indicating if this operator should
+     *   automatically update (react) when parameter values change. In other words,
+     *   this flag determines if the operator registers itself as a listener on
+     *   any upstream operators included in the parameters.
+     * @param {boolean} [initonly=false] - A flag indicating if this operator
+     *   should calculate an update only upon its initiatal evaluation, then
+     *   deregister dependencies and suppress all future update invocations.
+     * @return {Operator[]} - An array of upstream dependencies.
+     */
+    parameters(params, react, initonly) {
+      react = react !== false;
+      let argval = (this._argval = this._argval || new Parameters()),
+          argops = (this._argops = this._argops || []),
+          deps = [],
+          name, value, n, i;
+
+      const add = (name, index, value) => {
+        if (value instanceof Operator) {
+          if (value !== this) {
+            if (react) value.targets().add(this);
+            deps.push(value);
           }
-        });
-        self.source = value;
-      } else if (isArray(value)) {
-        argval.set(name, -1, Array(n = value.length));
-        for (i=0; i<n; ++i) add(name, i, value[i]);
-      } else {
-        add(name, -1, value);
-      }
-    }
+          argops.push({op:value, name:name, index:index});
+        } else {
+          argval.set(name, index, value);
+        }
+      };
 
-    this.marshall().clear(); // initialize values
-    if (initonly) argops.initonly = true;
+      for (name in params) {
+        value = params[name];
 
-    return deps;
-  };
-
-  /**
-   * Internal method for marshalling parameter values.
-   * Visits each operator dependency to pull the latest value.
-   * @return {Parameters} A Parameters object to pass to the update function.
-   */
-  prototype$1.marshall = function(stamp) {
-    var argval = this._argval || NO_PARAMS,
-        argops = this._argops, item, i, n, op, mod;
-
-    if (argops) {
-      for (i=0, n=argops.length; i<n; ++i) {
-        item = argops[i];
-        op = item.op;
-        mod = op.modified() && op.stamp === stamp;
-        argval.set(item.name, item.index, op.value, mod);
+        if (name === PULSE) {
+          array(value).forEach(op => {
+            if (!(op instanceof Operator)) {
+              error('Pulse parameters must be operator instances.');
+            } else if (op !== this) {
+              op.targets().add(this);
+              deps.push(op);
+            }
+          });
+          this.source = value;
+        } else if (isArray(value)) {
+          argval.set(name, -1, Array(n = value.length));
+          for (i=0; i<n; ++i) add(name, i, value[i]);
+        } else {
+          add(name, -1, value);
+        }
       }
 
-      if (argops.initonly) {
-        for (i=0; i<n; ++i) {
+      this.marshall().clear(); // initialize values
+      if (initonly) argops.initonly = true;
+
+      return deps;
+    },
+
+    /**
+     * Internal method for marshalling parameter values.
+     * Visits each operator dependency to pull the latest value.
+     * @return {Parameters} A Parameters object to pass to the update function.
+     */
+    marshall(stamp) {
+      let argval = this._argval || NO_PARAMS,
+          argops = this._argops,
+          item, i, n, op, mod;
+
+      if (argops) {
+        for (i=0, n=argops.length; i<n; ++i) {
           item = argops[i];
-          item.op.targets().remove(this);
+          op = item.op;
+          mod = op.modified() && op.stamp === stamp;
+          argval.set(item.name, item.index, op.value, mod);
         }
-        this._argops = null;
-        this._update = null;
-      }
-    }
-    return argval;
-  };
 
-  /**
-   * Detach this operator from the dataflow.
-   * Unregisters listeners on upstream dependencies.
-   */
-  prototype$1.detach = function() {
-    var argops = this._argops,
-        i, n, item, op;
-
-    if (argops) {
-      for (i=0, n=argops.length; i<n; ++i) {
-        item = argops[i];
-        op = item.op;
-        if (op._targets) {
-          op._targets.remove(this);
+        if (argops.initonly) {
+          for (i=0; i<n; ++i) {
+            item = argops[i];
+            item.op.targets().remove(this);
+          }
+          this._argops = null;
+          this._update = null;
         }
       }
-    }
-  };
+      return argval;
+    },
 
-  /**
-   * Delegate method to perform operator processing.
-   * Subclasses can override this method to perform custom processing.
-   * By default, it marshalls parameters and calls the update function
-   * if that function is defined. If the update function does not
-   * change the operator value then StopPropagation is returned.
-   * If no update function is defined, this method does nothing.
-   * @param {Pulse} pulse - the current dataflow pulse.
-   * @return The output pulse or StopPropagation. A falsy return value
-   *   (including undefined) will let the input pulse pass through.
-   */
-  prototype$1.evaluate = function(pulse) {
-    var update = this._update;
-    if (update) {
-      var params = this.marshall(pulse.stamp),
-          v = update.call(this, params, pulse);
+    /**
+     * Detach this operator from the dataflow.
+     * Unregisters listeners on upstream dependencies.
+     */
+    detach() {
+      let argops = this._argops,
+          i, n, item, op;
 
-      params.clear();
-      if (v !== this.value) {
-        this.value = v;
-      } else if (!this.modified()) {
-        return pulse.StopPropagation;
+      if (argops) {
+        for (i=0, n=argops.length; i<n; ++i) {
+          item = argops[i];
+          op = item.op;
+          if (op._targets) {
+            op._targets.remove(this);
+          }
+        }
       }
-    }
-  };
+    },
 
-  /**
-   * Run this operator for the current pulse. If this operator has already
-   * been run at (or after) the pulse timestamp, returns StopPropagation.
-   * Internally, this method calls {@link evaluate} to perform processing.
-   * If {@link evaluate} returns a falsy value, the input pulse is returned.
-   * This method should NOT be overridden, instead overrride {@link evaluate}.
-   * @param {Pulse} pulse - the current dataflow pulse.
-   * @return the output pulse for this operator (or StopPropagation)
-   */
-  prototype$1.run = function(pulse) {
-    if (pulse.stamp < this.stamp) return pulse.StopPropagation;
-    var rv;
-    if (this.skip()) {
-      this.skip(false);
-      rv = 0;
-    } else {
-      rv = this.evaluate(pulse);
+    /**
+     * Delegate method to perform operator processing.
+     * Subclasses can override this method to perform custom processing.
+     * By default, it marshalls parameters and calls the update function
+     * if that function is defined. If the update function does not
+     * change the operator value then StopPropagation is returned.
+     * If no update function is defined, this method does nothing.
+     * @param {Pulse} pulse - the current dataflow pulse.
+     * @return The output pulse or StopPropagation. A falsy return value
+     *   (including undefined) will let the input pulse pass through.
+     */
+    evaluate(pulse) {
+      const update = this._update;
+      if (update) {
+        const params = this.marshall(pulse.stamp),
+              v = update.call(this, params, pulse);
+
+        params.clear();
+        if (v !== this.value) {
+          this.value = v;
+        } else if (!this.modified()) {
+          return pulse.StopPropagation;
+        }
+      }
+    },
+
+    /**
+     * Run this operator for the current pulse. If this operator has already
+     * been run at (or after) the pulse timestamp, returns StopPropagation.
+     * Internally, this method calls {@link evaluate} to perform processing.
+     * If {@link evaluate} returns a falsy value, the input pulse is returned.
+     * This method should NOT be overridden, instead overrride {@link evaluate}.
+     * @param {Pulse} pulse - the current dataflow pulse.
+     * @return the output pulse for this operator (or StopPropagation)
+     */
+    run(pulse) {
+      if (pulse.stamp < this.stamp) return pulse.StopPropagation;
+      let rv;
+      if (this.skip()) {
+        this.skip(false);
+        rv = 0;
+      } else {
+        rv = this.evaluate(pulse);
+      }
+      return (this.pulse = rv || pulse);
     }
-    return (this.pulse = rv || pulse);
   };
 
   /**
@@ -1478,8 +1491,8 @@
    * @return {Operator} - The added operator.
    */
   function add(init, update, params, react) {
-    var shift = 1,
-      op;
+    let shift = 1,
+        op;
 
     if (init instanceof Operator) {
       op = init;
@@ -1512,7 +1525,7 @@
    *   to the target operator.
    */
   function connect(target, sources) {
-    var targetRank = target.rank, i, n;
+    let targetRank = target.rank, i, n;
 
     for (i=0, n=sources.length; i<n; ++i) {
       if (targetRank < sources[i].rank) {
@@ -1522,7 +1535,7 @@
     }
   }
 
-  var STREAM_ID = 0;
+  let STREAM_ID = 0;
 
   /**
    * Models an event stream.
@@ -1555,93 +1568,98 @@
     return new EventStream(filter, apply, receive);
   }
 
-  var prototype$2 = EventStream.prototype;
+  EventStream.prototype = {
+    _filter: truthy,
 
-  prototype$2._filter = truthy;
+    _apply: identity,
 
-  prototype$2._apply = identity;
+    targets() {
+      return this._targets || (this._targets = UniqueList(id));
+    },
 
-  prototype$2.targets = function() {
-    return this._targets || (this._targets = UniqueList(id));
-  };
+    consume(_) {
+      if (!arguments.length) return !!this._consume;
+      this._consume = !!_;
+      return this;
+    },
 
-  prototype$2.consume = function(_) {
-    if (!arguments.length) return !!this._consume;
-    this._consume = !!_;
-    return this;
-  };
+    receive(evt) {
+      if (this._filter(evt)) {
+        let val = (this.value = this._apply(evt)),
+            trg = this._targets,
+            n = trg ? trg.length : 0,
+            i = 0;
 
-  prototype$2.receive = function(evt) {
-    if (this._filter(evt)) {
-      var val = (this.value = this._apply(evt)),
-          trg = this._targets,
-          n = trg ? trg.length : 0,
-          i = 0;
+        for (; i<n; ++i) trg[i].receive(val);
 
-      for (; i<n; ++i) trg[i].receive(val);
-
-      if (this._consume) {
-        evt.preventDefault();
-        evt.stopPropagation();
+        if (this._consume) {
+          evt.preventDefault();
+          evt.stopPropagation();
+        }
       }
-    }
-  };
+    },
 
-  prototype$2.filter = function(filter) {
-    var s = stream(filter);
-    this.targets().add(s);
-    return s;
-  };
+    filter(filter) {
+      const s = stream(filter);
+      this.targets().add(s);
+      return s;
+    },
 
-  prototype$2.apply = function(apply) {
-    var s = stream(null, apply);
-    this.targets().add(s);
-    return s;
-  };
+    apply(apply) {
+      const s = stream(null, apply);
+      this.targets().add(s);
+      return s;
+    },
 
-  prototype$2.merge = function() {
-    var s = stream();
+    merge() {
+      const s = stream();
 
-    this.targets().add(s);
-    for (var i=0, n=arguments.length; i<n; ++i) {
-      arguments[i].targets().add(s);
-    }
-
-    return s;
-  };
-
-  prototype$2.throttle = function(pause) {
-    var t = -1;
-    return this.filter(function() {
-      var now = Date.now();
-      if ((now - t) > pause) {
-        t = now;
-        return 1;
-      } else {
-        return 0;
+      this.targets().add(s);
+      for (let i=0, n=arguments.length; i<n; ++i) {
+        arguments[i].targets().add(s);
       }
-    });
-  };
 
-  prototype$2.debounce = function(delay) {
-    var s = stream();
+      return s;
+    },
 
-    this.targets().add(stream(null, null,
-      debounce(delay, function(e) {
-        var df = e.dataflow;
-        s.receive(e);
-        if (df && df.run) df.run();
-      })
-    ));
+    throttle(pause) {
+      let t = -1;
+      return this.filter(() => {
+        const now = Date.now();
+        if ((now - t) > pause) {
+          t = now;
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    },
 
-    return s;
-  };
+    debounce(delay) {
+      const s = stream();
 
-  prototype$2.between = function(a, b) {
-    var active = false;
-    a.targets().add(stream(null, null, function() { active = true; }));
-    b.targets().add(stream(null, null, function() { active = false; }));
-    return this.filter(function() { return active; });
+      this.targets().add(stream(null, null,
+        debounce(delay, e => {
+          const df = e.dataflow;
+          s.receive(e);
+          if (df && df.run) df.run();
+        })
+      ));
+
+      return s;
+    },
+
+    between(a, b) {
+      let active = false;
+      a.targets().add(stream(null, null, () => active = true));
+      b.targets().add(stream(null, null, () => active = false));
+      return this.filter(() => active);
+    },
+
+    detach() {
+      // no-op for handling detach requests
+      // ensures compatibility with operators (#2753)
+    }
   };
 
   /**
@@ -1656,7 +1674,7 @@
    * @return {EventStream}
    */
   function events(source, type, filter, apply) {
-    var df = this,
+    let df = this,
         s = stream(filter, apply),
         send = function(e) {
           e.dataflow = df;
@@ -1676,7 +1694,7 @@
       sources = array(source);
     }
 
-    for (var i=0, n=sources.length; i<n; ++i) {
+    for (let i=0, n=sources.length; i<n; ++i) {
       sources[i].addEventListener(type, send);
     }
 
@@ -1707,16 +1725,14 @@
    *   return {object} - A new loader instance.
    */
   function loaderFactory(fetch, fs) {
-    return function(options) {
-      return {
-        options: options || {},
-        sanitize: sanitize,
-        load: load,
-        fileAccess: !!fs,
-        file: fileLoader(fs),
-        http: httpLoader(fetch)
-      };
-    };
+    return options => ({
+      options: options || {},
+      sanitize: sanitize,
+      load: load,
+      fileAccess: !!fs,
+      file: fileLoader(fs),
+      http: httpLoader(fetch)
+    });
   }
 
   /**
@@ -1828,14 +1844,12 @@
    */
   function fileLoader(fs) {
     return fs
-      ? function(filename) {
-          return new Promise(function(accept, reject) {
-            fs.readFile(filename, function(error, data) {
-              if (error) reject(error);
-              else accept(data);
-            });
+      ? filename => new Promise((accept, reject) => {
+          fs.readFile(filename, (error, data) => {
+            if (error) reject(error);
+            else accept(data);
           });
-        }
+        })
       : fileReject;
   }
 
@@ -1876,7 +1890,20 @@
     error('No HTTP fetch method available.');
   }
 
-  var typeParsers = {
+  const isValid = _ => _ != null && _ === _;
+
+  const isBoolean$1 = _ => _ === 'true'
+    || _ === 'false'
+    || _ === true
+    || _ === false;
+
+  const isDate$1 = _ => !Number.isNaN(Date.parse(_));
+
+  const isNumber$1 = _ => !Number.isNaN(+_) && !(_ instanceof Date);
+
+  const isInteger = _ => isNumber$1(_) && Number.isInteger(+_);
+
+  const typeParsers = {
     boolean: toBoolean,
     integer: toNumber,
     number:  toNumber,
@@ -1885,14 +1912,14 @@
     unknown: identity
   };
 
-  var typeTests = [
+  const typeTests = [
     isBoolean$1,
     isInteger,
     isNumber$1,
     isDate$1
   ];
 
-  var typeList = [
+  const typeList = [
     'boolean',
     'integer',
     'number',
@@ -1927,28 +1954,6 @@
       types[field] = inferType(data, field);
       return types;
     }, {});
-  }
-
-  // -- Type Checks ----
-
-  function isValid(_) {
-    return _ != null && _ === _;
-  }
-
-  function isBoolean$1(_) {
-    return _ === 'true' || _ === 'false' || _ === true || _ === false;
-  }
-
-  function isDate$1(_) {
-    return !Number.isNaN(Date.parse(_));
-  }
-
-  function isNumber$1(_) {
-    return !Number.isNaN(+_) && !(_ instanceof Date);
-  }
-
-  function isInteger(_) {
-    return isNumber$1(_) && Number.isInteger(+_);
   }
 
   function delimitedFormat(delimiter) {
@@ -2049,7 +2054,7 @@
     return spec => cache[spec] || (cache[spec] = method(spec));
   }
 
-  function ascending(a, b) {
+  function ascending$1(a, b) {
     return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
   }
 
@@ -2081,11 +2086,11 @@
 
   function ascendingComparator(f) {
     return function(d, x) {
-      return ascending(f(d), x);
+      return ascending$1(f(d), x);
     };
   }
 
-  var ascendingBisect = bisector(ascending);
+  var ascendingBisect = bisector(ascending$1);
   var bisectRight = ascendingBisect.right;
   var bisectLeft = ascendingBisect.left;
 
@@ -2230,7 +2235,7 @@
 
   // Based on https://github.com/mourner/quickselect
   // ISC license, Copyright 2018 Vladimir Agafonkin.
-  function quickselect(array, k, left = 0, right = array.length - 1, compare = ascending) {
+  function quickselect(array, k, left = 0, right = array.length - 1, compare = ascending$1) {
     while (right > left) {
       if (right - left > 600) {
         const n = right - left + 1;
@@ -2366,7 +2371,7 @@
 
   function trimZeroes(numberFormat, decimalChar) {
     return x => {
-      var str = numberFormat(x),
+      let str = numberFormat(x),
           dec = str.indexOf(decimalChar),
           idx, end;
 
@@ -2381,7 +2386,7 @@
   }
 
   function rightmostDigit(str, dec) {
-    var i = str.lastIndexOf('e'), c;
+    let i = str.lastIndexOf('e'), c;
     if (i > 0) return i;
     for (i=str.length; --i > dec;) {
       c = str.charCodeAt(i);
@@ -2397,7 +2402,7 @@
       format,
       formatPrefix,
       formatFloat(spec) {
-        var s = d3Format.formatSpecifier(spec || ',');
+        const s = d3Format.formatSpecifier(spec || ',');
         if (s.precision == null) {
           s.precision = 12;
           switch (s.type) {
@@ -2599,7 +2604,7 @@
 
   function localDate(y, m, d, H, M, S, L) {
     if (0 <= y && y < 100) {
-      var date = new Date(-1, m, d, H, M, S, L);
+      const date = new Date(-1, m, d, H, M, S, L);
       date.setFullYear(y);
       return date;
     }
@@ -2631,7 +2636,7 @@
 
   function utcDate(y, m, d, H, M, S, L) {
     if (0 <= y && y < 100) {
-      var date = new Date(Date.UTC(-1, m, d, H, M, S, L));
+      const date = new Date(Date.UTC(-1, m, d, H, M, S, L));
       date.setUTCFullYear(d.y);
       return date;
     }
@@ -2984,14 +2989,14 @@
     timeParser = timeParser || locale.timeParse;
     utcParser = utcParser || locale.utcParse;
 
-    var fields = data.columns || Object.keys(data[0]),
+    let fields = data.columns || Object.keys(data[0]),
         parsers, datum, field, i, j, n, m;
 
     if (types === 'auto') types = inferTypes(data, fields);
 
     fields = Object.keys(types);
-    parsers = fields.map(function(field) {
-      var type = types[field],
+    parsers = fields.map(field => {
+      let type = types[field],
           parts, pattern;
 
       if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
@@ -3097,12 +3102,12 @@
   }
 
   function loadPending(df) {
-    var pending = new Promise(function(a) { accept = a; }),
-        accept;
+    let accept,
+        pending = new Promise(a => accept = a);
 
     pending.requests = 0;
 
-    pending.done = function() {
+    pending.done = () => {
       if (--pending.requests === 0) {
         df._pending = null;
         accept(df);
@@ -3112,7 +3117,7 @@
     return (df._pending = pending);
   }
 
-  var SKIP$1 = {skip: true};
+  const SKIP$1 = {skip: true};
 
   /**
    * Perform operator updates in response to events. Applies an
@@ -3141,13 +3146,13 @@
    * @return {Dataflow}
    */
   function on(source, target, update, params, options) {
-    var fn = source instanceof Operator ? onOperator : onStream;
+    const fn = source instanceof Operator ? onOperator : onStream;
     fn(this, source, target, update, params, options);
     return this;
   }
 
   function onStream(df, stream, target, update, params, options) {
-    var opt = extend({}, options, SKIP$1), func, op;
+    let opt = extend({}, options, SKIP$1), func, op;
 
     if (!isFunction(target)) target = constant(target);
 
@@ -3215,7 +3220,7 @@
    * @param {Operator} op - The operator to re-rank.
    */
   function rerank(op) {
-    var queue = [op],
+    let queue = [op],
         cur, list, i;
 
     while (queue.length) {
@@ -3279,287 +3284,17 @@
     this.encode = encode || null;
   }
 
-  const prototype$3 = Pulse.prototype;
+  function materialize(data, filter) {
+    const out = [];
+    visitArray(data, filter, _ => out.push(_));
+    return out;
+  }
 
-  /**
-   * Sentinel value indicating pulse propagation should stop.
-   */
-  prototype$3.StopPropagation = StopPropagation;
-
-  /**
-   * Boolean flag indicating ADD (added) tuples.
-   */
-  prototype$3.ADD = ADD;
-
-  /**
-   * Boolean flag indicating REM (removed) tuples.
-   */
-  prototype$3.REM = REM;
-
-  /**
-   * Boolean flag indicating MOD (modified) tuples.
-   */
-  prototype$3.MOD = MOD;
-
-  /**
-   * Boolean flag indicating ADD (added) and REM (removed) tuples.
-   */
-  prototype$3.ADD_REM = ADD_REM;
-
-  /**
-   * Boolean flag indicating ADD (added) and MOD (modified) tuples.
-   */
-  prototype$3.ADD_MOD = ADD_MOD;
-
-  /**
-   * Boolean flag indicating ADD, REM and MOD tuples.
-   */
-  prototype$3.ALL = ALL;
-
-  /**
-   * Boolean flag indicating all tuples in a data source
-   * except for the ADD, REM and MOD tuples.
-   */
-  prototype$3.REFLOW = REFLOW;
-
-  /**
-   * Boolean flag indicating a 'pass-through' to a
-   * backing data source, ignoring ADD, REM and MOD tuples.
-   */
-  prototype$3.SOURCE = SOURCE;
-
-  /**
-   * Boolean flag indicating that source data should be
-   * suppressed when creating a forked pulse.
-   */
-  prototype$3.NO_SOURCE = NO_SOURCE;
-
-  /**
-   * Boolean flag indicating that field modifications should be
-   * suppressed when creating a forked pulse.
-   */
-  prototype$3.NO_FIELDS = NO_FIELDS;
-
-  /**
-   * Creates a new pulse based on the values of this pulse.
-   * The dataflow, time stamp and field modification values are copied over.
-   * By default, new empty ADD, REM and MOD arrays are created.
-   * @param {number} flags - Integer of boolean flags indicating which (if any)
-   *   tuple arrays should be copied to the new pulse. The supported flag values
-   *   are ADD, REM and MOD. Array references are copied directly: new array
-   *   instances are not created.
-   * @return {Pulse} - The forked pulse instance.
-   * @see init
-   */
-  prototype$3.fork = function(flags) {
-    return new Pulse(this.dataflow).init(this, flags);
-  };
-
-  /**
-   * Creates a copy of this pulse with new materialized array
-   * instances for the ADD, REM, MOD, and SOURCE arrays.
-   * The dataflow, time stamp and field modification values are copied over.
-   * @return {Pulse} - The cloned pulse instance.
-   * @see init
-   */
-  prototype$3.clone = function() {
-    const p = this.fork(ALL);
-    p.add = p.add.slice();
-    p.rem = p.rem.slice();
-    p.mod = p.mod.slice();
-    if (p.source) p.source = p.source.slice();
-    return p.materialize(ALL | SOURCE);
-  };
-
-  /**
-   * Returns a pulse that adds all tuples from a backing source. This is
-   * useful for cases where operators are added to a dataflow after an
-   * upstream data pipeline has already been processed, ensuring that
-   * new operators can observe all tuples within a stream.
-   * @return {Pulse} - A pulse instance with all source tuples included
-   *   in the add array. If the current pulse already has all source
-   *   tuples in its add array, it is returned directly. If the current
-   *   pulse does not have a backing source, it is returned directly.
-   */
-  prototype$3.addAll = function() {
-    let p = this;
-    if (!p.source || p.source.length === p.add.length) {
-      return p;
-    } else {
-      p = new Pulse(this.dataflow).init(this);
-      p.add = p.source;
-      return p;
-    }
-  };
-
-  /**
-   * Initialize this pulse based on the values of another pulse. This method
-   * is used internally by {@link fork} to initialize a new forked tuple.
-   * The dataflow, time stamp and field modification values are copied over.
-   * By default, new empty ADD, REM and MOD arrays are created.
-   * @param {Pulse} src - The source pulse to copy from.
-   * @param {number} flags - Integer of boolean flags indicating which (if any)
-   *   tuple arrays should be copied to the new pulse. The supported flag values
-   *   are ADD, REM and MOD. Array references are copied directly: new array
-   *   instances are not created. By default, source data arrays are copied
-   *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
-   * @return {Pulse} - Returns this Pulse instance.
-   */
-  prototype$3.init = function(src, flags) {
-    const p = this;
-    p.stamp = src.stamp;
-    p.encode = src.encode;
-
-    if (src.fields && !(flags & NO_FIELDS)) {
-      p.fields = src.fields;
-    }
-
-    if (flags & ADD) {
-      p.addF = src.addF;
-      p.add = src.add;
-    } else {
-      p.addF = null;
-      p.add = [];
-    }
-
-    if (flags & REM) {
-      p.remF = src.remF;
-      p.rem = src.rem;
-    } else {
-      p.remF = null;
-      p.rem = [];
-    }
-
-    if (flags & MOD) {
-      p.modF = src.modF;
-      p.mod = src.mod;
-    } else {
-      p.modF = null;
-      p.mod = [];
-    }
-
-    if (flags & NO_SOURCE) {
-      p.srcF = null;
-      p.source = null;
-    } else {
-      p.srcF = src.srcF;
-      p.source = src.source;
-      if (src.cleans) p.cleans = src.cleans;
-    }
-
-    return p;
-  };
-
-  /**
-   * Schedules a function to run after pulse propagation completes.
-   * @param {function} func - The function to run.
-   */
-  prototype$3.runAfter = function(func) {
-    this.dataflow.runAfter(func);
-  };
-
-  /**
-   * Indicates if tuples have been added, removed or modified.
-   * @param {number} [flags] - The tuple types (ADD, REM or MOD) to query.
-   *   Defaults to ALL, returning true if any tuple type has changed.
-   * @return {boolean} - Returns true if one or more queried tuple types have
-   *   changed, false otherwise.
-   */
-  prototype$3.changed = function(flags) {
-    var f = flags || ALL;
-    return ((f & ADD) && this.add.length)
-        || ((f & REM) && this.rem.length)
-        || ((f & MOD) && this.mod.length);
-  };
-
-  /**
-   * Forces a "reflow" of tuple values, such that all tuples in the backing
-   * source are added to the MOD set, unless already present in the ADD set.
-   * @param {boolean} [fork=false] - If true, returns a forked copy of this
-   *   pulse, and invokes reflow on that derived pulse.
-   * @return {Pulse} - The reflowed pulse instance.
-   */
-  prototype$3.reflow = function(fork) {
-    if (fork) return this.fork(ALL).reflow();
-
-    var len = this.add.length,
-        src = this.source && this.source.length;
-    if (src && src !== len) {
-      this.mod = this.source;
-      if (len) this.filter(MOD, filter(this, ADD));
-    }
-    return this;
-  };
-
-  /**
-   * Get/set metadata to pulse requesting garbage collection
-   * to reclaim currently unused resources.
-   */
-  prototype$3.clean = function(value) {
-    if (arguments.length) {
-      this.cleans = !!value;
-      return this;
-    } else {
-      return this.cleans;
-    }
-  };
-
-  /**
-   * Marks one or more data field names as modified to assist dependency
-   * tracking and incremental processing by transform operators.
-   * @param {string|Array<string>} _ - The field(s) to mark as modified.
-   * @return {Pulse} - This pulse instance.
-   */
-  prototype$3.modifies = function(_) {
-    var hash = this.fields || (this.fields = {});
-    if (isArray(_)) {
-      _.forEach(f => hash[f] = true);
-    } else {
-      hash[_] = true;
-    }
-    return this;
-  };
-
-  /**
-   * Checks if one or more data fields have been modified during this pulse
-   * propagation timestamp.
-   * @param {string|Array<string>} _ - The field(s) to check for modified.
-   * @param {boolean} nomod - If true, will check the modified flag even if
-   *   no mod tuples exist. If false (default), mod tuples must be present.
-   * @return {boolean} - Returns true if any of the provided fields has been
-   *   marked as modified, false otherwise.
-   */
-  prototype$3.modified = function(_, nomod) {
-    var fields = this.fields;
-    return !((nomod || this.mod.length) && fields) ? false
-      : !arguments.length ? !!fields
-      : isArray(_) ? _.some(f => fields[f])
-      : fields[_];
-  };
-
-  /**
-   * Adds a filter function to one more tuple sets. Filters are applied to
-   * backing tuple arrays, to determine the actual set of tuples considered
-   * added, removed or modified. They can be used to delay materialization of
-   * a tuple set in order to avoid expensive array copies. In addition, the
-   * filter functions can serve as value transformers: unlike standard predicate
-   * function (which return boolean values), Pulse filters should return the
-   * actual tuple value to process. If a tuple set is already filtered, the
-   * new filter function will be appended into a conjuntive ('and') query.
-   * @param {number} flags - Flags indicating the tuple set(s) to filter.
-   * @param {function(*):object} filter - Filter function that will be applied
-   *   to the tuple set array, and should return a data tuple if the value
-   *   should be included in the tuple set, and falsy (or null) otherwise.
-   * @return {Pulse} - Returns this pulse instance.
-   */
-  prototype$3.filter = function(flags, filter) {
-    var p = this;
-    if (flags & ADD) p.addF = addFilter(p.addF, filter);
-    if (flags & REM) p.remF = addFilter(p.remF, filter);
-    if (flags & MOD) p.modF = addFilter(p.modF, filter);
-    if (flags & SOURCE) p.srcF = addFilter(p.srcF, filter);
-    return p;
-  };
+  function filter(pulse, flags) {
+    const map = {};
+    pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
+    return t => map[tupleid(t)] ? null : t;
+  }
 
   function addFilter(a, b) {
     return a
@@ -3567,78 +3302,354 @@
       : b;
   }
 
-  /**
-   * Materialize one or more tuple sets in this pulse. If the tuple set(s) have
-   * a registered filter function, it will be applied and the tuple set(s) will
-   * be replaced with materialized tuple arrays.
-   * @param {number} flags - Flags indicating the tuple set(s) to materialize.
-   * @return {Pulse} - Returns this pulse instance.
-   */
-  prototype$3.materialize = function(flags) {
-    flags = flags || ALL;
-    var p = this;
-    if ((flags & ADD) && p.addF) {
-      p.add = materialize(p.add, p.addF);
-      p.addF = null;
-    }
-    if ((flags & REM) && p.remF) {
-      p.rem = materialize(p.rem, p.remF);
-      p.remF = null;
-    }
-    if ((flags & MOD) && p.modF) {
-      p.mod = materialize(p.mod, p.modF);
-      p.modF = null;
-    }
-    if ((flags & SOURCE) && p.srcF) {
-      p.source = p.source.filter(p.srcF);
-      p.srcF = null;
-    }
-    return p;
-  };
+  Pulse.prototype = {
 
-  function materialize(data, filter) {
-    var out = [];
-    visitArray(data, filter, _ => out.push(_));
-    return out;
-  }
+    /**
+     * Sentinel value indicating pulse propagation should stop.
+     */
+    StopPropagation,
 
-  function filter(pulse, flags) {
-    var map = {};
-    pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
-    return t => map[tupleid(t)] ? null : t;
-  }
+    /**
+     * Boolean flag indicating ADD (added) tuples.
+     */
+    ADD,
 
-  /**
-   * Visit one or more tuple sets in this pulse.
-   * @param {number} flags - Flags indicating the tuple set(s) to visit.
-   *   Legal values are ADD, REM, MOD and SOURCE (if a backing data source
-   *   has been set).
-   * @param {function(object):*} - Visitor function invoked per-tuple.
-   * @return {Pulse} - Returns this pulse instance.
-   */
-  prototype$3.visit = function(flags, visitor) {
-    var p = this, v = visitor, src, sum;
+    /**
+     * Boolean flag indicating REM (removed) tuples.
+     */
+    REM,
 
-    if (flags & SOURCE) {
-      visitArray(p.source, p.srcF, v);
+    /**
+     * Boolean flag indicating MOD (modified) tuples.
+     */
+    MOD,
+
+    /**
+     * Boolean flag indicating ADD (added) and REM (removed) tuples.
+     */
+    ADD_REM,
+
+    /**
+     * Boolean flag indicating ADD (added) and MOD (modified) tuples.
+     */
+    ADD_MOD,
+
+    /**
+     * Boolean flag indicating ADD, REM and MOD tuples.
+     */
+    ALL,
+
+    /**
+     * Boolean flag indicating all tuples in a data source
+     * except for the ADD, REM and MOD tuples.
+     */
+    REFLOW,
+
+    /**
+     * Boolean flag indicating a 'pass-through' to a
+     * backing data source, ignoring ADD, REM and MOD tuples.
+     */
+    SOURCE,
+
+    /**
+     * Boolean flag indicating that source data should be
+     * suppressed when creating a forked pulse.
+     */
+    NO_SOURCE,
+
+    /**
+     * Boolean flag indicating that field modifications should be
+     * suppressed when creating a forked pulse.
+     */
+    NO_FIELDS,
+
+    /**
+     * Creates a new pulse based on the values of this pulse.
+     * The dataflow, time stamp and field modification values are copied over.
+     * By default, new empty ADD, REM and MOD arrays are created.
+     * @param {number} flags - Integer of boolean flags indicating which (if any)
+     *   tuple arrays should be copied to the new pulse. The supported flag values
+     *   are ADD, REM and MOD. Array references are copied directly: new array
+     *   instances are not created.
+     * @return {Pulse} - The forked pulse instance.
+     * @see init
+     */
+    fork(flags) {
+      return new Pulse(this.dataflow).init(this, flags);
+    },
+
+    /**
+     * Creates a copy of this pulse with new materialized array
+     * instances for the ADD, REM, MOD, and SOURCE arrays.
+     * The dataflow, time stamp and field modification values are copied over.
+     * @return {Pulse} - The cloned pulse instance.
+     * @see init
+     */
+    clone() {
+      const p = this.fork(ALL);
+      p.add = p.add.slice();
+      p.rem = p.rem.slice();
+      p.mod = p.mod.slice();
+      if (p.source) p.source = p.source.slice();
+      return p.materialize(ALL | SOURCE);
+    },
+
+    /**
+     * Returns a pulse that adds all tuples from a backing source. This is
+     * useful for cases where operators are added to a dataflow after an
+     * upstream data pipeline has already been processed, ensuring that
+     * new operators can observe all tuples within a stream.
+     * @return {Pulse} - A pulse instance with all source tuples included
+     *   in the add array. If the current pulse already has all source
+     *   tuples in its add array, it is returned directly. If the current
+     *   pulse does not have a backing source, it is returned directly.
+     */
+    addAll() {
+      let p = this;
+      const reuse = !p.source
+        || p.add === p.rem // special case for indexed set (e.g., crossfilter)
+        || (!p.rem.length && p.source.length === p.add.length);
+
+      if (reuse) {
+        return p;
+      } else {
+        p = new Pulse(this.dataflow).init(this);
+        p.add = p.source;
+        p.rem = []; // new operators can ignore rem #2769
+        return p;
+      }
+    },
+
+    /**
+     * Initialize this pulse based on the values of another pulse. This method
+     * is used internally by {@link fork} to initialize a new forked tuple.
+     * The dataflow, time stamp and field modification values are copied over.
+     * By default, new empty ADD, REM and MOD arrays are created.
+     * @param {Pulse} src - The source pulse to copy from.
+     * @param {number} flags - Integer of boolean flags indicating which (if any)
+     *   tuple arrays should be copied to the new pulse. The supported flag values
+     *   are ADD, REM and MOD. Array references are copied directly: new array
+     *   instances are not created. By default, source data arrays are copied
+     *   to the new pulse. Use the NO_SOURCE flag to enforce a null source.
+     * @return {Pulse} - Returns this Pulse instance.
+     */
+    init(src, flags) {
+      const p = this;
+      p.stamp = src.stamp;
+      p.encode = src.encode;
+
+      if (src.fields && !(flags & NO_FIELDS)) {
+        p.fields = src.fields;
+      }
+
+      if (flags & ADD) {
+        p.addF = src.addF;
+        p.add = src.add;
+      } else {
+        p.addF = null;
+        p.add = [];
+      }
+
+      if (flags & REM) {
+        p.remF = src.remF;
+        p.rem = src.rem;
+      } else {
+        p.remF = null;
+        p.rem = [];
+      }
+
+      if (flags & MOD) {
+        p.modF = src.modF;
+        p.mod = src.mod;
+      } else {
+        p.modF = null;
+        p.mod = [];
+      }
+
+      if (flags & NO_SOURCE) {
+        p.srcF = null;
+        p.source = null;
+      } else {
+        p.srcF = src.srcF;
+        p.source = src.source;
+        if (src.cleans) p.cleans = src.cleans;
+      }
+
+      return p;
+    },
+
+    /**
+     * Schedules a function to run after pulse propagation completes.
+     * @param {function} func - The function to run.
+     */
+    runAfter(func) {
+      this.dataflow.runAfter(func);
+    },
+
+    /**
+     * Indicates if tuples have been added, removed or modified.
+     * @param {number} [flags] - The tuple types (ADD, REM or MOD) to query.
+     *   Defaults to ALL, returning true if any tuple type has changed.
+     * @return {boolean} - Returns true if one or more queried tuple types have
+     *   changed, false otherwise.
+     */
+    changed(flags) {
+      const f = flags || ALL;
+      return ((f & ADD) && this.add.length)
+          || ((f & REM) && this.rem.length)
+          || ((f & MOD) && this.mod.length);
+    },
+
+    /**
+     * Forces a "reflow" of tuple values, such that all tuples in the backing
+     * source are added to the MOD set, unless already present in the ADD set.
+     * @param {boolean} [fork=false] - If true, returns a forked copy of this
+     *   pulse, and invokes reflow on that derived pulse.
+     * @return {Pulse} - The reflowed pulse instance.
+     */
+    reflow(fork) {
+      if (fork) return this.fork(ALL).reflow();
+
+      const len = this.add.length,
+            src = this.source && this.source.length;
+      if (src && src !== len) {
+        this.mod = this.source;
+        if (len) this.filter(MOD, filter(this, ADD));
+      }
+      return this;
+    },
+
+    /**
+     * Get/set metadata to pulse requesting garbage collection
+     * to reclaim currently unused resources.
+     */
+    clean(value) {
+      if (arguments.length) {
+        this.cleans = !!value;
+        return this;
+      } else {
+        return this.cleans;
+      }
+    },
+
+    /**
+     * Marks one or more data field names as modified to assist dependency
+     * tracking and incremental processing by transform operators.
+     * @param {string|Array<string>} _ - The field(s) to mark as modified.
+     * @return {Pulse} - This pulse instance.
+     */
+    modifies(_) {
+      const hash = this.fields || (this.fields = {});
+      if (isArray(_)) {
+        _.forEach(f => hash[f] = true);
+      } else {
+        hash[_] = true;
+      }
+      return this;
+    },
+
+    /**
+     * Checks if one or more data fields have been modified during this pulse
+     * propagation timestamp.
+     * @param {string|Array<string>} _ - The field(s) to check for modified.
+     * @param {boolean} nomod - If true, will check the modified flag even if
+     *   no mod tuples exist. If false (default), mod tuples must be present.
+     * @return {boolean} - Returns true if any of the provided fields has been
+     *   marked as modified, false otherwise.
+     */
+    modified(_, nomod) {
+      const fields = this.fields;
+      return !((nomod || this.mod.length) && fields) ? false
+        : !arguments.length ? !!fields
+        : isArray(_) ? _.some(f => fields[f])
+        : fields[_];
+    },
+
+    /**
+     * Adds a filter function to one more tuple sets. Filters are applied to
+     * backing tuple arrays, to determine the actual set of tuples considered
+     * added, removed or modified. They can be used to delay materialization of
+     * a tuple set in order to avoid expensive array copies. In addition, the
+     * filter functions can serve as value transformers: unlike standard predicate
+     * function (which return boolean values), Pulse filters should return the
+     * actual tuple value to process. If a tuple set is already filtered, the
+     * new filter function will be appended into a conjuntive ('and') query.
+     * @param {number} flags - Flags indicating the tuple set(s) to filter.
+     * @param {function(*):object} filter - Filter function that will be applied
+     *   to the tuple set array, and should return a data tuple if the value
+     *   should be included in the tuple set, and falsy (or null) otherwise.
+     * @return {Pulse} - Returns this pulse instance.
+     */
+    filter(flags, filter) {
+      const p = this;
+      if (flags & ADD) p.addF = addFilter(p.addF, filter);
+      if (flags & REM) p.remF = addFilter(p.remF, filter);
+      if (flags & MOD) p.modF = addFilter(p.modF, filter);
+      if (flags & SOURCE) p.srcF = addFilter(p.srcF, filter);
+      return p;
+    },
+
+    /**
+     * Materialize one or more tuple sets in this pulse. If the tuple set(s) have
+     * a registered filter function, it will be applied and the tuple set(s) will
+     * be replaced with materialized tuple arrays.
+     * @param {number} flags - Flags indicating the tuple set(s) to materialize.
+     * @return {Pulse} - Returns this pulse instance.
+     */
+    materialize(flags) {
+      flags = flags || ALL;
+      const p = this;
+      if ((flags & ADD) && p.addF) {
+        p.add = materialize(p.add, p.addF);
+        p.addF = null;
+      }
+      if ((flags & REM) && p.remF) {
+        p.rem = materialize(p.rem, p.remF);
+        p.remF = null;
+      }
+      if ((flags & MOD) && p.modF) {
+        p.mod = materialize(p.mod, p.modF);
+        p.modF = null;
+      }
+      if ((flags & SOURCE) && p.srcF) {
+        p.source = p.source.filter(p.srcF);
+        p.srcF = null;
+      }
+      return p;
+    },
+
+    /**
+     * Visit one or more tuple sets in this pulse.
+     * @param {number} flags - Flags indicating the tuple set(s) to visit.
+     *   Legal values are ADD, REM, MOD and SOURCE (if a backing data source
+     *   has been set).
+     * @param {function(object):*} - Visitor function invoked per-tuple.
+     * @return {Pulse} - Returns this pulse instance.
+     */
+    visit(flags, visitor) {
+      let p = this, v = visitor, src, sum;
+
+      if (flags & SOURCE) {
+        visitArray(p.source, p.srcF, v);
+        return p;
+      }
+
+      if (flags & ADD) visitArray(p.add, p.addF, v);
+      if (flags & REM) visitArray(p.rem, p.remF, v);
+      if (flags & MOD) visitArray(p.mod, p.modF, v);
+
+      if ((flags & REFLOW) && (src = p.source)) {
+        sum = p.add.length + p.mod.length;
+        if (sum === src.length) ; else if (sum) {
+          visitArray(src, filter(p, ADD_MOD), v);
+        } else {
+          // if no add/rem/mod tuples, visit source
+          visitArray(src, p.srcF, v);
+        }
+      }
+
       return p;
     }
-
-    if (flags & ADD) visitArray(p.add, p.addF, v);
-    if (flags & REM) visitArray(p.rem, p.remF, v);
-    if (flags & MOD) visitArray(p.mod, p.modF, v);
-
-    if ((flags & REFLOW) && (src = p.source)) {
-      sum = p.add.length + p.mod.length;
-      if (sum === src.length) ; else if (sum) {
-        visitArray(src, filter(p, ADD_MOD), v);
-      } else {
-        // if no add/rem/mod tuples, visit source
-        visitArray(src, p.srcF, v);
-      }
-    }
-
-    return p;
   };
 
   /**
@@ -3654,7 +3665,7 @@
    * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
    */
   function MultiPulse(dataflow, stamp, pulses, encode) {
-    var p = this,
+    let p = this,
         c = 0,
         pulse, hash, i, n, f;
 
@@ -3681,68 +3692,62 @@
     this.changes = c;
   }
 
-  var prototype$4 = inherits(MultiPulse, Pulse);
-
-  /**
-   * Creates a new pulse based on the values of this pulse.
-   * The dataflow, time stamp and field modification values are copied over.
-   * @return {Pulse}
-   */
-  prototype$4.fork = function(flags) {
-    var p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
-    if (flags !== undefined) {
-      if (flags & p.ADD) {
-        this.visit(p.ADD, function(t) { return p.add.push(t); });
+  inherits(MultiPulse, Pulse, {
+    /**
+     * Creates a new pulse based on the values of this pulse.
+     * The dataflow, time stamp and field modification values are copied over.
+     * @return {Pulse}
+     */
+    fork(flags) {
+      const p = new Pulse(this.dataflow).init(this, flags & this.NO_FIELDS);
+      if (flags !== undefined) {
+        if (flags & p.ADD) this.visit(p.ADD, t => p.add.push(t));
+        if (flags & p.REM) this.visit(p.REM, t => p.rem.push(t));
+        if (flags & p.MOD) this.visit(p.MOD, t => p.mod.push(t));
       }
-      if (flags & p.REM) {
-        this.visit(p.REM, function(t) { return p.rem.push(t); });
-      }
-      if (flags & p.MOD) {
-        this.visit(p.MOD, function(t) { return p.mod.push(t); });
-      }
-    }
-    return p;
-  };
+      return p;
+    },
 
-  prototype$4.changed = function(flags) {
-    return this.changes & flags;
-  };
+    changed(flags) {
+      return this.changes & flags;
+    },
 
-  prototype$4.modified = function(_) {
-    var p = this, fields = p.fields;
-    return !(fields && (p.changes & p.MOD)) ? 0
-      : isArray(_) ? _.some(function(f) { return fields[f]; })
-      : fields[_];
-  };
+    modified(_) {
+      const p = this, fields = p.fields;
+      return !(fields && (p.changes & p.MOD)) ? 0
+        : isArray(_) ? _.some(function(f) { return fields[f]; })
+        : fields[_];
+    },
 
-  prototype$4.filter = function() {
-    error('MultiPulse does not support filtering.');
-  };
+    filter() {
+      error('MultiPulse does not support filtering.');
+    },
 
-  prototype$4.materialize = function() {
-    error('MultiPulse does not support materialization.');
-  };
+    materialize() {
+      error('MultiPulse does not support materialization.');
+    },
 
-  prototype$4.visit = function(flags, visitor) {
-    var p = this,
-        pulses = p.pulses,
-        n = pulses.length,
-        i = 0;
+    visit(flags, visitor) {
+      let p = this,
+          pulses = p.pulses,
+          n = pulses.length,
+          i = 0;
 
-    if (flags & p.SOURCE) {
-      for (; i<n; ++i) {
-        pulses[i].visit(flags, visitor);
-      }
-    } else {
-      for (; i<n; ++i) {
-        if (pulses[i].stamp === p.stamp) {
+      if (flags & p.SOURCE) {
+        for (; i<n; ++i) {
           pulses[i].visit(flags, visitor);
         }
+      } else {
+        for (; i<n; ++i) {
+          if (pulses[i].stamp === p.stamp) {
+            pulses[i].visit(flags, visitor);
+          }
+        }
       }
-    }
 
-    return p;
-  };
+      return p;
+    }
+  });
 
   /* eslint-disable require-atomic-updates */
 
@@ -3975,7 +3980,7 @@
    *   dataflow graph is dynamically modified and the operator rank changes.
    */
   function enqueue(op, force) {
-    var q = op.stamp < this._clock;
+    const q = op.stamp < this._clock;
     if (q) op.stamp = this._clock;
     if (q || force) {
       op.qrank = op.rank;
@@ -3996,8 +4001,8 @@
    *   annotate the returned pulse. See {@link run} for more information.
    */
   function getPulse(op, encode) {
-    var s = op.source,
-        stamp = this._clock;
+    const s = op.source,
+          stamp = this._clock;
 
     return s && isArray(s)
       ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)
@@ -4016,7 +4021,7 @@
     return p;
   }
 
-  var NO_OPT = {skip: false, force: false};
+  const NO_OPT = {skip: false, force: false};
 
   /**
    * Touches an operator, scheduling it to be evaluated. If invoked outside of
@@ -4031,7 +4036,7 @@
    * @return {Dataflow}
    */
   function touch(op, options) {
-    var opt = options || NO_OPT;
+    const opt = options || NO_OPT;
     if (this._pulse) {
       // if in midst of propagation, add to priority queue
       this._enqueue(op);
@@ -4055,7 +4060,7 @@
    * @return {Dataflow}
    */
   function update(op, value, options) {
-    var opt = options || NO_OPT;
+    const opt = options || NO_OPT;
     if (op.set(value) || opt.force) {
       this.touch(op, opt);
     }
@@ -4079,8 +4084,8 @@
   function pulse(op, changeset, options) {
     this.touch(op, options || NO_OPT);
 
-    var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
-        t = op.pulse && op.pulse.source || [];
+    const p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
+          t = op.pulse && op.pulse.source || [];
 
     p.target = op;
     this._input[op.id] = changeset.pulse(p, t);
@@ -4089,7 +4094,7 @@
   }
 
   function Heap(cmp) {
-    var nodes = [];
+    let nodes = [];
     return {
       clear: () => nodes = [],
       size: () => nodes.length,
@@ -4099,7 +4104,7 @@
         return siftdown(nodes, 0, nodes.length - 1, cmp);
       },
       pop: () => {
-        var last = nodes.pop(), item;
+        let last = nodes.pop(), item;
         if (nodes.length) {
           item = nodes[0];
           nodes[0] = last;
@@ -4113,7 +4118,7 @@
   }
 
   function siftdown(array, start, idx, cmp) {
-    var item, parent, pidx;
+    let item, parent, pidx;
 
     item = array[idx];
     while (idx > start) {
@@ -4130,7 +4135,7 @@
   }
 
   function siftup(array, idx, cmp) {
-    var start = idx,
+    let start = idx,
         end = array.length,
         item = array[idx],
         cidx = (idx << 1) + 1, ridx;
@@ -4173,155 +4178,154 @@
     this._postrun = [];
   }
 
-  var prototype$5 = Dataflow.prototype;
-
-  /**
-   * The current timestamp of this dataflow. This value reflects the
-   * timestamp of the previous dataflow run. The dataflow is initialized
-   * with a stamp value of 0. The initial run of the dataflow will have
-   * a timestap of 1, and so on. This value will match the
-   * {@link Pulse.stamp} property.
-   * @return {number} - The current timestamp value.
-   */
-  prototype$5.stamp = function() {
-    return this._clock;
-  };
-
-  /**
-   * Gets or sets the loader instance to use for data file loading. A
-   * loader object must provide a "load" method for loading files and a
-   * "sanitize" method for checking URL/filename validity. Both methods
-   * should accept a URI and options hash as arguments, and return a Promise
-   * that resolves to the loaded file contents (load) or a hash containing
-   * sanitized URI data with the sanitized url assigned to the "href" property
-   * (sanitize).
-   * @param {object} _ - The loader instance to use.
-   * @return {object|Dataflow} - If no arguments are provided, returns
-   *   the current loader instance. Otherwise returns this Dataflow instance.
-   */
-  prototype$5.loader = function(_) {
-    if (arguments.length) {
-      this._loader = _;
-      return this;
-    } else {
-      return this._loader;
-    }
-  };
-
-  /**
-   * Gets or sets the locale instance to use for formatting and parsing
-   * string values. The locale object should be provided by the
-   * vega-format library, and include methods such as format, timeFormat,
-   * utcFormat, timeParse, and utcParse.
-   * @param {object} _ - The locale instance to use.
-   * @return {object|Dataflow} - If no arguments are provided, returns
-   *   the current locale instance. Otherwise returns this Dataflow instance.
-   */
-  prototype$5.locale = function(_) {
-    if (arguments.length) {
-      this._locale = _;
-      return this;
-    } else {
-      return this._locale;
-    }
-  };
-
-  /**
-   * Empty entry threshold for garbage cleaning. Map data structures will
-   * perform cleaning once the number of empty entries exceeds this value.
-   */
-  prototype$5.cleanThreshold = 1e4;
-
-  // OPERATOR REGISTRATION
-  prototype$5.add = add;
-  prototype$5.connect = connect;
-  prototype$5.rank = rank;
-  prototype$5.rerank = rerank;
-
-  // OPERATOR UPDATES
-  prototype$5.pulse = pulse;
-  prototype$5.touch = touch;
-  prototype$5.update = update;
-  prototype$5.changeset = changeset;
-
-  // DATA LOADING
-  prototype$5.ingest = ingest$1;
-  prototype$5.parse  = parse$1;
-  prototype$5.preload = preload;
-  prototype$5.request = request;
-
-  // EVENT HANDLING
-  prototype$5.events = events;
-  prototype$5.on = on;
-
-  // PULSE PROPAGATION
-  prototype$5.evaluate = evaluate;
-  prototype$5.run = run;
-  prototype$5.runAsync = runAsync;
-  prototype$5.runAfter = runAfter;
-  prototype$5._enqueue = enqueue;
-  prototype$5._getPulse = getPulse;
-
-  // LOGGING AND ERROR HANDLING
-
   function logMethod(method) {
     return function() {
       return this._log[method].apply(this, arguments);
     };
   }
 
-  /**
-   * Get or set the logger instance used to log messages. If no arguments are
-   * provided, returns the current logger instance. Otherwise, sets the logger
-   * and return this Dataflow instance. Provided loggers must support the full
-   * API of logger objects generated by the vega-util logger method. Note that
-   * by default the log level of the new logger will be used; use the logLevel
-   * method to adjust the log level as needed.
-   */
-  prototype$5.logger = function(logger) {
-    if (arguments.length) {
-      this._log = logger;
-      return this;
-    } else {
-      return this._log;
-    }
+  Dataflow.prototype = {
+
+    /**
+     * The current timestamp of this dataflow. This value reflects the
+     * timestamp of the previous dataflow run. The dataflow is initialized
+     * with a stamp value of 0. The initial run of the dataflow will have
+     * a timestap of 1, and so on. This value will match the
+     * {@link Pulse.stamp} property.
+     * @return {number} - The current timestamp value.
+     */
+    stamp() {
+      return this._clock;
+    },
+
+    /**
+     * Gets or sets the loader instance to use for data file loading. A
+     * loader object must provide a "load" method for loading files and a
+     * "sanitize" method for checking URL/filename validity. Both methods
+     * should accept a URI and options hash as arguments, and return a Promise
+     * that resolves to the loaded file contents (load) or a hash containing
+     * sanitized URI data with the sanitized url assigned to the "href" property
+     * (sanitize).
+     * @param {object} _ - The loader instance to use.
+     * @return {object|Dataflow} - If no arguments are provided, returns
+     *   the current loader instance. Otherwise returns this Dataflow instance.
+     */
+    loader(_) {
+      if (arguments.length) {
+        this._loader = _;
+        return this;
+      } else {
+        return this._loader;
+      }
+    },
+
+    /**
+     * Gets or sets the locale instance to use for formatting and parsing
+     * string values. The locale object should be provided by the
+     * vega-format library, and include methods such as format, timeFormat,
+     * utcFormat, timeParse, and utcParse.
+     * @param {object} _ - The locale instance to use.
+     * @return {object|Dataflow} - If no arguments are provided, returns
+     *   the current locale instance. Otherwise returns this Dataflow instance.
+     */
+    locale(_) {
+      if (arguments.length) {
+        this._locale = _;
+        return this;
+      } else {
+        return this._locale;
+      }
+    },
+
+    /**
+     * Get or set the logger instance used to log messages. If no arguments are
+     * provided, returns the current logger instance. Otherwise, sets the logger
+     * and return this Dataflow instance. Provided loggers must support the full
+     * API of logger objects generated by the vega-util logger method. Note that
+     * by default the log level of the new logger will be used; use the logLevel
+     * method to adjust the log level as needed.
+     */
+    logger(logger) {
+      if (arguments.length) {
+        this._log = logger;
+        return this;
+      } else {
+        return this._log;
+      }
+    },
+
+    /**
+     * Logs an error message. By default, logged messages are written to console
+     * output. The message will only be logged if the current log level is high
+     * enough to permit error messages.
+     */
+    error: logMethod('error'),
+
+    /**
+     * Logs a warning message. By default, logged messages are written to console
+     * output. The message will only be logged if the current log level is high
+     * enough to permit warning messages.
+     */
+    warn: logMethod('warn'),
+
+    /**
+     * Logs a information message. By default, logged messages are written to
+     * console output. The message will only be logged if the current log level is
+     * high enough to permit information messages.
+     */
+    info: logMethod('info'),
+
+    /**
+     * Logs a debug message. By default, logged messages are written to console
+     * output. The message will only be logged if the current log level is high
+     * enough to permit debug messages.
+     */
+    debug: logMethod('debug'),
+
+    /**
+     * Get or set the current log level. If an argument is provided, it
+     * will be used as the new log level.
+     * @param {number} [level] - Should be one of None, Warn, Info
+     * @return {number} - The current log level.
+     */
+    logLevel: logMethod('level'),
+
+    /**
+     * Empty entry threshold for garbage cleaning. Map data structures will
+     * perform cleaning once the number of empty entries exceeds this value.
+     */
+    cleanThreshold: 1e4,
+
+    // OPERATOR REGISTRATION
+    add,
+    connect,
+    rank,
+    rerank,
+
+    // OPERATOR UPDATES
+    pulse,
+    touch,
+    update,
+    changeset,
+
+    // DATA LOADING
+    ingest: ingest$1,
+    parse: parse$1,
+    preload,
+    request,
+
+    // EVENT HANDLING
+    events,
+    on,
+
+    // PULSE PROPAGATION
+    evaluate,
+    run,
+    runAsync,
+    runAfter,
+    _enqueue: enqueue,
+    _getPulse: getPulse
   };
-
-  /**
-   * Logs an error message. By default, logged messages are written to console
-   * output. The message will only be logged if the current log level is high
-   * enough to permit error messages.
-   */
-  prototype$5.error = logMethod('error');
-
-  /**
-   * Logs a warning message. By default, logged messages are written to console
-   * output. The message will only be logged if the current log level is high
-   * enough to permit warning messages.
-   */
-  prototype$5.warn = logMethod('warn');
-
-  /**
-   * Logs a information message. By default, logged messages are written to
-   * console output. The message will only be logged if the current log level is
-   * high enough to permit information messages.
-   */
-  prototype$5.info = logMethod('info');
-
-  /**
-   * Logs a debug message. By default, logged messages are written to console
-   * output. The message will only be logged if the current log level is high
-   * enough to permit debug messages.
-   */
-  prototype$5.debug = logMethod('debug');
-
-  /**
-   * Get or set the current log level. If an argument is provided, it
-   * will be used as the new log level.
-   * @param {number} [level] - Should be one of None, Warn, Info
-   * @return {number} - The current log level.
-   */
-  prototype$5.logLevel = logMethod('level');
 
   /**
    * Abstract class for operators that process data tuples.
@@ -4335,64 +4339,64 @@
     Operator.call(this, init, null, params);
   }
 
-  var prototype$6 = inherits(Transform, Operator);
+  inherits(Transform, Operator, {
+    /**
+     * Overrides {@link Operator.evaluate} for transform operators.
+     * Internally, this method calls {@link evaluate} to perform processing.
+     * If {@link evaluate} returns a falsy value, the input pulse is returned.
+     * This method should NOT be overridden, instead overrride {@link evaluate}.
+     * @param {Pulse} pulse - the current dataflow pulse.
+     * @return the output pulse for this operator (or StopPropagation)
+     */
+    run(pulse) {
+      if (pulse.stamp < this.stamp) return pulse.StopPropagation;
 
-  /**
-   * Overrides {@link Operator.evaluate} for transform operators.
-   * Internally, this method calls {@link evaluate} to perform processing.
-   * If {@link evaluate} returns a falsy value, the input pulse is returned.
-   * This method should NOT be overridden, instead overrride {@link evaluate}.
-   * @param {Pulse} pulse - the current dataflow pulse.
-   * @return the output pulse for this operator (or StopPropagation)
-   */
-  prototype$6.run = function(pulse) {
-    if (pulse.stamp < this.stamp) return pulse.StopPropagation;
+      let rv;
+      if (this.skip()) {
+        this.skip(false);
+      } else {
+        rv = this.evaluate(pulse);
+      }
+      rv = rv || pulse;
 
-    var rv;
-    if (this.skip()) {
-      this.skip(false);
-    } else {
-      rv = this.evaluate(pulse);
-    }
-    rv = rv || pulse;
+      if (rv.then) {
+        rv = rv.then(_ => this.pulse =_);
+      } else if (rv !== pulse.StopPropagation) {
+        this.pulse = rv;
+      }
 
-    if (rv.then) {
-      rv = rv.then(_ => this.pulse =_);
-    } else if (rv !== pulse.StopPropagation) {
-      this.pulse = rv;
-    }
+      return rv;
+    },
 
-    return rv;
-  };
+    /**
+     * Overrides {@link Operator.evaluate} for transform operators.
+     * Marshalls parameter values and then invokes {@link transform}.
+     * @param {Pulse} pulse - the current dataflow pulse.
+     * @return {Pulse} The output pulse (or StopPropagation). A falsy return
+         value (including undefined) will let the input pulse pass through.
+    */
+    evaluate(pulse) {
+      const params = this.marshall(pulse.stamp),
+            out = this.transform(params, pulse);
+      params.clear();
+      return out;
+    },
 
-  /**
-   * Overrides {@link Operator.evaluate} for transform operators.
-   * Marshalls parameter values and then invokes {@link transform}.
-   * @param {Pulse} pulse - the current dataflow pulse.
-   * @return {Pulse} The output pulse (or StopPropagation). A falsy return
-       value (including undefined) will let the input pulse pass through.
-   */
-  prototype$6.evaluate = function(pulse) {
-    var params = this.marshall(pulse.stamp),
-        out = this.transform(params, pulse);
-    params.clear();
-    return out;
-  };
+    /**
+     * Process incoming pulses.
+     * Subclasses should override this method to implement transforms.
+     * @param {Parameters} _ - The operator parameter values.
+     * @param {Pulse} pulse - The current dataflow pulse.
+     * @return {Pulse} The output pulse (or StopPropagation). A falsy return
+     *   value (including undefined) will let the input pulse pass through.
+     */
+    transform() {}
+  });
 
-  /**
-   * Process incoming pulses.
-   * Subclasses should override this method to implement transforms.
-   * @param {Parameters} _ - The operator parameter values.
-   * @param {Pulse} pulse - The current dataflow pulse.
-   * @return {Pulse} The output pulse (or StopPropagation). A falsy return
-   *   value (including undefined) will let the input pulse pass through.
-   */
-  prototype$6.transform = function() {};
-
-  var transforms = {};
+  const transforms = {};
 
   function definition(type) {
-    var t = transform(type);
+    const t = transform(type);
     return t && t.Definition || null;
   }
 
@@ -4402,8 +4406,8 @@
   }
 
   function multikey(f) {
-    return function(x) {
-      var n = f.length,
+    return x => {
+      let n = f.length,
           i = 1,
           k = String(f[0](x));
 
@@ -4613,9 +4617,9 @@
   }
 
   function compileMeasures(agg, field) {
-    var get = field || identity,
-        ops = resolve(agg),
-        out = agg.slice().sort(compareIndex);
+    const get = field || identity,
+          ops = resolve(agg),
+          out = agg.slice().sort(compareIndex);
 
     function ctr(cell) {
       this._ops = ops;
@@ -4653,11 +4657,11 @@
   }
 
   function quantiles(array, p, f) {
-    var values = Float64Array.from(numbers$1(array, f));
+    const values = Float64Array.from(numbers$1(array, f));
 
     // don't depend on return value from typed array sort call
     // protects against undefined sort results in Safari (vega/vega-lite#4964)
-    values.sort(ascending);
+    values.sort(ascending$1);
 
     return p.map(_ => quantileSorted(values, _));
   }
@@ -4669,7 +4673,7 @@
   // Scott, D. W. (1992) Multivariate Density Estimation:
   // Theory, Practice, and Visualization. Wiley.
   function bandwidthNRD(array, f) {
-    var n = array.length,
+    let n = array.length,
         v = deviation(array, f),
         q = quartiles(array, f),
         h = (q[2] - q[0]) / 1.34;
@@ -4681,7 +4685,7 @@
 
   function bin(_) {
     // determine range
-    var maxb = _.maxbins || 20,
+    let maxb = _.maxbins || 20,
         base = _.base || 10,
         logb = Math.log(base),
         div  = _.divide || [5, 2],
@@ -4743,7 +4747,7 @@
   function bootstrapCI(array, samples, alpha, f) {
     if (!array.length) return [undefined, undefined];
 
-    var values = Float64Array.from(numbers$1(array, f)),
+    let values = Float64Array.from(numbers$1(array, f)),
         n = values.length,
         m = samples,
         a, i, j, mu;
@@ -4755,7 +4759,7 @@
       mu[j] = a / n;
     }
 
-    mu.sort(ascending);
+    mu.sort(ascending$1);
 
     return [
       quantile(mu, alpha/2),
@@ -4842,44 +4846,40 @@
       min = 0;
     }
 
-    var dist = {},
-        a, b, d;
+    let a, b, d;
 
-    dist.min = function(_) {
-      if (arguments.length) {
-        a = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return a;
+    const dist = {
+      min(_) {
+        if (arguments.length) {
+          a = _ || 0;
+          d = b - a;
+          return dist;
+        } else {
+          return a;
+        }
+      },
+      max(_) {
+        if (arguments.length) {
+          b = _ || 0;
+          d = b - a;
+          return dist;
+        } else {
+          return b;
+        }
+      },
+      sample() {
+        return a + Math.floor(d * exports.random());
+      },
+      pdf(x) {
+        return (x === Math.floor(x) && x >= a && x < b) ? 1 / d : 0;
+      },
+      cdf(x) {
+        const v = Math.floor(x);
+        return v < a ? 0 : v >= b ? 1 : (v - a + 1) / d;
+      },
+      icdf(p) {
+        return (p >= 0 && p <= 1) ? a - 1 + Math.floor(p * d) : NaN;
       }
-    };
-
-    dist.max = function(_) {
-      if (arguments.length) {
-        b = _ || 0;
-        d = b - a;
-        return dist;
-      } else {
-        return b;
-      }
-    };
-
-    dist.sample = function() {
-      return a + Math.floor(d * exports.random());
-    };
-
-    dist.pdf = function(x) {
-      return (x === Math.floor(x) && x >= a && x < b) ? 1 / d : 0;
-    };
-
-    dist.cdf = function(x) {
-      var v = Math.floor(x);
-      return v < a ? 0 : v >= b ? 1 : (v - a + 1) / d;
-    };
-
-    dist.icdf = function(p) {
-      return (p >= 0 && p <= 1) ? a - 1 + Math.floor(p * d) : NaN;
     };
 
     return dist.min(min).max(max);
@@ -5048,77 +5048,79 @@
   }
 
   function randomNormal(mean, stdev) {
-    var mu,
-        sigma,
-        dist = {
-          mean: function(_) {
-            if (arguments.length) {
-              mu = _ || 0;
-              return dist;
-            } else {
-              return mu;
-            }
-          },
-          stdev: function(_) {
-            if (arguments.length) {
-              sigma = _ == null ? 1 : _;
-              return dist;
-            } else {
-              return sigma;
-            }
-          },
-          sample: () => sampleNormal(mu, sigma),
-          pdf: value => densityNormal(value, mu, sigma),
-          cdf: value => cumulativeNormal(value, mu, sigma),
-          icdf: p => quantileNormal(p, mu, sigma)
-        };
+    let mu, sigma;
+
+    const dist = {
+      mean(_) {
+        if (arguments.length) {
+          mu = _ || 0;
+          return dist;
+        } else {
+          return mu;
+        }
+      },
+      stdev(_) {
+        if (arguments.length) {
+          sigma = _ == null ? 1 : _;
+          return dist;
+        } else {
+          return sigma;
+        }
+      },
+      sample: () => sampleNormal(mu, sigma),
+      pdf: value => densityNormal(value, mu, sigma),
+      cdf: value => cumulativeNormal(value, mu, sigma),
+      icdf: p => quantileNormal(p, mu, sigma)
+    };
 
     return dist.mean(mean).stdev(stdev);
   }
 
-  // TODO: support for additional kernels?
   function randomKDE(support, bandwidth) {
-    var kernel = randomNormal(),
-        dist = {},
-        n = 0;
+    const kernel = randomNormal();
+    let n = 0;
 
-    dist.data = function(_) {
-      if (arguments.length) {
-        support = _;
-        n = _ ? _.length : 0;
-        return dist.bandwidth(bandwidth);
-      } else {
-        return support;
+    const dist = {
+      data(_) {
+        if (arguments.length) {
+          support = _;
+          n = _ ? _.length : 0;
+          return dist.bandwidth(bandwidth);
+        } else {
+          return support;
+        }
+      },
+
+      bandwidth(_) {
+        if (!arguments.length) return bandwidth;
+        bandwidth = _;
+        if (!bandwidth && support) bandwidth = bandwidthNRD(support);
+        return dist;
+      },
+
+      sample() {
+        return support[~~(exports.random() * n)] + bandwidth * kernel.sample();
+      },
+
+      pdf(x) {
+        let y = 0, i = 0;
+        for (; i<n; ++i) {
+          y += kernel.pdf((x - support[i]) / bandwidth);
+        }
+        return y / bandwidth / n;
+      },
+
+      cdf(x) {
+        let y = 0, i = 0;
+        for (; i<n; ++i) {
+          y += kernel.cdf((x - support[i]) / bandwidth);
+        }
+        return y / n;
+      },
+
+      icdf() {
+        throw Error('KDE icdf not supported.');
       }
-    };
-
-    dist.bandwidth = function(_) {
-      if (!arguments.length) return bandwidth;
-      bandwidth = _;
-      if (!bandwidth && support) bandwidth = bandwidthNRD(support);
-      return dist;
-    };
-
-    dist.sample = function() {
-      return support[~~(exports.random() * n)] + bandwidth * kernel.sample();
-    };
-
-    dist.pdf = function(x) {
-      for (var y=0, i=0; i<n; ++i) {
-        y += kernel.pdf((x - support[i]) / bandwidth);
-      }
-      return y / bandwidth / n;
-    };
-
-    dist.cdf = function(x) {
-      for (var y=0, i=0; i<n; ++i) {
-        y += kernel.cdf((x - support[i]) / bandwidth);
-      }
-      return y / n;
-    };
-
-    dist.icdf = function() {
-      throw Error('KDE icdf not supported.');
     };
 
     return dist.data(support);
@@ -5147,96 +5149,100 @@
   }
 
   function randomLogNormal(mean, stdev) {
-    var mu,
-        sigma,
-        dist = {
-          mean: function(_) {
-            if (arguments.length) {
-              mu = _ || 0;
-              return dist;
-            } else {
-              return mu;
-            }
-          },
-          stdev: function(_) {
-            if (arguments.length) {
-              sigma = _ == null ? 1 : _;
-              return dist;
-            } else {
-              return sigma;
-            }
-          },
-          sample: () => sampleLogNormal(mu, sigma),
-          pdf: value => densityLogNormal(value, mu, sigma),
-          cdf: value => cumulativeLogNormal(value, mu, sigma),
-          icdf: p => quantileLogNormal(p, mu, sigma)
-        };
+    let mu, sigma;
+
+    const dist = {
+      mean(_) {
+        if (arguments.length) {
+          mu = _ || 0;
+          return dist;
+        } else {
+          return mu;
+        }
+      },
+      stdev(_) {
+        if (arguments.length) {
+          sigma = _ == null ? 1 : _;
+          return dist;
+        } else {
+          return sigma;
+        }
+      },
+      sample: () => sampleLogNormal(mu, sigma),
+      pdf: value => densityLogNormal(value, mu, sigma),
+      cdf: value => cumulativeLogNormal(value, mu, sigma),
+      icdf: p => quantileLogNormal(p, mu, sigma)
+    };
 
     return dist.mean(mean).stdev(stdev);
   }
 
   function randomMixture(dists, weights) {
-    var dist = {}, m = 0, w;
+    let m = 0, w;
 
     function normalize(x) {
-      var w = [], sum = 0, i;
+      let w = [], sum = 0, i;
       for (i=0; i<m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
       for (i=0; i<m; ++i) { w[i] /= sum; }
       return w;
     }
 
-    dist.weights = function(_) {
-      if (arguments.length) {
-        w = normalize(weights = (_ || []));
-        return dist;
-      }
-      return weights;
-    };
-
-    dist.distributions = function(_) {
-      if (arguments.length) {
-        if (_) {
-          m = _.length;
-          dists = _;
-        } else {
-          m = 0;
-          dists = [];
+    const dist = {
+      weights(_) {
+        if (arguments.length) {
+          w = normalize(weights = (_ || []));
+          return dist;
         }
-        return dist.weights(weights);
+        return weights;
+      },
+
+      distributions(_) {
+        if (arguments.length) {
+          if (_) {
+            m = _.length;
+            dists = _;
+          } else {
+            m = 0;
+            dists = [];
+          }
+          return dist.weights(weights);
+        }
+        return dists;
+      },
+
+      sample() {
+        let r = exports.random(),
+            d = dists[m-1],
+            v = w[0],
+            i = 0;
+
+        // first select distribution
+        for (; i<m-1; v += w[++i]) {
+          if (r < v) { d = dists[i]; break; }
+        }
+        // then sample from it
+        return d.sample();
+      },
+
+      pdf(x) {
+        let p = 0, i = 0;
+        for (; i<m; ++i) {
+          p += w[i] * dists[i].pdf(x);
+        }
+        return p;
+      },
+
+      cdf(x) {
+        let p = 0, i = 0;
+        for (; i<m; ++i) {
+          p += w[i] * dists[i].cdf(x);
+        }
+        return p;
+      },
+
+      icdf() {
+        throw Error('Mixture icdf not supported.');
       }
-      return dists;
-    };
-
-    dist.sample = function() {
-      var r = exports.random(),
-          d = dists[m-1],
-          v = w[0],
-          i = 0;
-
-      // first select distribution
-      for (; i<m-1; v += w[++i]) {
-        if (r < v) { d = dists[i]; break; }
-      }
-      // then sample from it
-      return d.sample();
-    };
-
-    dist.pdf = function(x) {
-      for (var p=0, i=0; i<m; ++i) {
-        p += w[i] * dists[i].pdf(x);
-      }
-      return p;
-    };
-
-    dist.cdf = function(x) {
-      for (var p=0, i=0; i<m; ++i) {
-        p += w[i] * dists[i].cdf(x);
-      }
-      return p;
-    };
-
-    dist.icdf = function() {
-      throw Error('Mixture icdf not supported.');
     };
 
     return dist.distributions(dists).weights(weights);
@@ -5275,29 +5281,30 @@
   }
 
   function randomUniform(min, max) {
-    var a, b,
-        dist = {
-          min: function(_) {
-            if (arguments.length) {
-              a = _ || 0;
-              return dist;
-            } else {
-              return a;
-            }
-          },
-          max: function(_) {
-            if (arguments.length) {
-              b = _ == null ? 1 : _;
-              return dist;
-            } else {
-              return b;
-            }
-          },
-          sample: () => sampleUniform(a, b),
-          pdf: value => densityUniform(value, a, b),
-          cdf: value => cumulativeUniform(value, a, b),
-          icdf: p => quantileUniform(p, a, b)
-        };
+    let a, b;
+
+    const dist = {
+      min(_) {
+        if (arguments.length) {
+          a = _ || 0;
+          return dist;
+        } else {
+          return a;
+        }
+      },
+      max(_) {
+        if (arguments.length) {
+          b = _ == null ? 1 : _;
+          return dist;
+        } else {
+          return b;
+        }
+      },
+      sample: () => sampleUniform(a, b),
+      pdf: value => densityUniform(value, a, b),
+      cdf: value => cumulativeUniform(value, a, b),
+      icdf: p => quantileUniform(p, a, b)
+    };
 
     if (max == null) {
       max = (min == null ? 1 : min);
@@ -5810,9 +5817,9 @@
     this.reset();
   }
 
-  var prototype$7 = TupleStore.prototype;
+  const prototype = TupleStore.prototype;
 
-  prototype$7.reset = function() {
+  prototype.reset = function() {
     this._add = [];
     this._rem = [];
     this._ext = null;
@@ -5820,19 +5827,19 @@
     this._q = null;
   };
 
-  prototype$7.add = function(v) {
+  prototype.add = function(v) {
     this._add.push(v);
   };
 
-  prototype$7.rem = function(v) {
+  prototype.rem = function(v) {
     this._rem.push(v);
   };
 
-  prototype$7.values = function() {
+  prototype.values = function() {
     this._get = null;
     if (this._rem.length === 0) return this._add;
 
-    var a = this._add,
+    let a = this._add,
         r = this._rem,
         k = this._key,
         n = a.length,
@@ -5858,8 +5865,8 @@
 
   // memoizing statistics methods
 
-  prototype$7.distinct = function(get) {
-    var v = this.values(),
+  prototype.distinct = function(get) {
+    let v = this.values(),
         n = v.length,
         map = {},
         count = 0, s;
@@ -5875,35 +5882,35 @@
     return count;
   };
 
-  prototype$7.extent = function(get) {
+  prototype.extent = function(get) {
     if (this._get !== get || !this._ext) {
-      var v = this.values(),
-          i = extentIndex(v, get);
+      const v = this.values(),
+            i = extentIndex(v, get);
       this._ext = [v[i[0]], v[i[1]]];
       this._get = get;
     }
     return this._ext;
   };
 
-  prototype$7.argmin = function(get) {
+  prototype.argmin = function(get) {
     return this.extent(get)[0] || {};
   };
 
-  prototype$7.argmax = function(get) {
+  prototype.argmax = function(get) {
     return this.extent(get)[1] || {};
   };
 
-  prototype$7.min = function(get) {
-    var m = this.extent(get)[0];
+  prototype.min = function(get) {
+    const m = this.extent(get)[0];
     return m != null ? get(m) : undefined;
   };
 
-  prototype$7.max = function(get) {
-    var m = this.extent(get)[1];
+  prototype.max = function(get) {
+    const m = this.extent(get)[1];
     return m != null ? get(m) : undefined;
   };
 
-  prototype$7.quartile = function(get) {
+  prototype.quartile = function(get) {
     if (this._get !== get || !this._q) {
       this._q = quartiles(this.values(), get);
       this._get = get;
@@ -5911,19 +5918,19 @@
     return this._q;
   };
 
-  prototype$7.q1 = function(get) {
+  prototype.q1 = function(get) {
     return this.quartile(get)[0];
   };
 
-  prototype$7.q2 = function(get) {
+  prototype.q2 = function(get) {
     return this.quartile(get)[1];
   };
 
-  prototype$7.q3 = function(get) {
+  prototype.q3 = function(get) {
     return this.quartile(get)[2];
   };
 
-  prototype$7.ci = function(get) {
+  prototype.ci = function(get) {
     if (this._get !== get || !this._ci) {
       this._ci = bootstrapCI(this.values(), 1000, 0.05, get);
       this._get = get;
@@ -5931,11 +5938,11 @@
     return this._ci;
   };
 
-  prototype$7.ci0 = function(get) {
+  prototype.ci0 = function(get) {
     return this.ci(get)[0];
   };
 
-  prototype$7.ci1 = function(get) {
+  prototype.ci1 = function(get) {
     return this.ci(get)[1];
   };
 
@@ -5988,314 +5995,312 @@
     ]
   };
 
-  var prototype$8 = inherits(Aggregate, Transform);
+  inherits(Aggregate, Transform, {
+    transform(_, pulse) {
+      const aggr = this,
+            out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+            mod = _.modified();
 
-  prototype$8.transform = function(_, pulse) {
-    var aggr = this,
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        mod = _.modified();
+      aggr.stamp = out.stamp;
 
-    aggr.stamp = out.stamp;
+      if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
+        aggr._prev = aggr.value;
+        aggr.value = mod ? aggr.init(_) : {};
+        pulse.visit(pulse.SOURCE, t => aggr.add(t));
+      } else {
+        aggr.value = aggr.value || aggr.init(_);
+        pulse.visit(pulse.REM, t => aggr.rem(t));
+        pulse.visit(pulse.ADD, t => aggr.add(t));
+      }
 
-    if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
-      aggr._prev = aggr.value;
-      aggr.value = mod ? aggr.init(_) : {};
-      pulse.visit(pulse.SOURCE, t => aggr.add(t));
-    } else {
-      aggr.value = aggr.value || aggr.init(_);
-      pulse.visit(pulse.REM, t => aggr.rem(t));
-      pulse.visit(pulse.ADD, t => aggr.add(t));
-    }
+      // Indicate output fields and return aggregate tuples.
+      out.modifies(aggr._outputs);
 
-    // Indicate output fields and return aggregate tuples.
-    out.modifies(aggr._outputs);
+      // Should empty cells be dropped?
+      aggr._drop = _.drop !== false;
 
-    // Should empty cells be dropped?
-    aggr._drop = _.drop !== false;
+      // If domain cross-product requested, generate empty cells as needed
+      // and ensure that empty cells are not dropped
+      if (_.cross && aggr._dims.length > 1) {
+        aggr._drop = false;
+        aggr.cross();
+      }
 
-    // If domain cross-product requested, generate empty cells as needed
-    // and ensure that empty cells are not dropped
-    if (_.cross && aggr._dims.length > 1) {
-      aggr._drop = false;
-      aggr.cross();
-    }
+      if (pulse.clean() && aggr._drop) {
+        out.clean(true).runAfter(() => this.clean());
+      }
 
-    if (pulse.clean() && aggr._drop) {
-      out.clean(true).runAfter(() => this.clean());
-    }
+      return aggr.changes(out);
+    },
 
-    return aggr.changes(out);
-  };
+    cross() {
+      const aggr = this,
+            curr = aggr.value,
+            dims = aggr._dnames,
+            vals = dims.map(() => ({})),
+            n = dims.length;
 
-  prototype$8.cross = function() {
-    var aggr = this,
-        curr = aggr.value,
-        dims = aggr._dnames,
-        vals = dims.map(function() { return {}; }),
-        n = dims.length;
-
-    // collect all group-by domain values
-    function collect(cells) {
-      var key, i, t, v;
-      for (key in cells) {
-        t = cells[key].tuple;
-        for (i=0; i<n; ++i) {
-          vals[i][(v = t[dims[i]])] = v;
+      // collect all group-by domain values
+      function collect(cells) {
+        let key, i, t, v;
+        for (key in cells) {
+          t = cells[key].tuple;
+          for (i=0; i<n; ++i) {
+            vals[i][(v = t[dims[i]])] = v;
+          }
         }
       }
-    }
-    collect(aggr._prev);
-    collect(curr);
+      collect(aggr._prev);
+      collect(curr);
 
-    // iterate over key cross-product, create cells as needed
-    function generate(base, tuple, index) {
-      var name = dims[index],
-          v = vals[index++],
-          k, key;
+      // iterate over key cross-product, create cells as needed
+      function generate(base, tuple, index) {
+        const name = dims[index],
+            v = vals[index++];
 
-      for (k in v) {
-        tuple[name] = v[k];
-        key = base ? base + '|' + k : k;
-        if (index < n) generate(key, tuple, index);
-        else if (!curr[key]) aggr.cell(key, tuple);
-      }
-    }
-    generate('', {}, 0);
-  };
-
-  prototype$8.init = function(_) {
-    // initialize input and output fields
-    var inputs = (this._inputs = []),
-        outputs = (this._outputs = []),
-        inputMap = {};
-
-    function inputVisit(get) {
-      var fields = array(accessorFields(get)),
-          i = 0, n = fields.length, f;
-      for (; i<n; ++i) {
-        if (!inputMap[f=fields[i]]) {
-          inputMap[f] = 1;
-          inputs.push(f);
+        for (const k in v) {
+          const key = base ? base + '|' + k : k;
+          tuple[name] = v[k];
+          if (index < n) generate(key, tuple, index);
+          else if (!curr[key]) aggr.cell(key, tuple);
         }
       }
-    }
+      generate('', {}, 0);
+    },
 
-    // initialize group-by dimensions
-    this._dims = array(_.groupby);
-    this._dnames = this._dims.map(function(d) {
-      var dname = accessorName(d);
-      inputVisit(d);
-      outputs.push(dname);
-      return dname;
-    });
-    this.cellkey = _.key ? _.key : groupkey(this._dims);
+    init(_) {
+      // initialize input and output fields
+      const inputs = (this._inputs = []),
+            outputs = (this._outputs = []),
+            inputMap = {};
 
-    // initialize aggregate measures
-    this._countOnly = true;
-    this._counts = [];
-    this._measures = [];
-
-    var fields = _.fields || [null],
-        ops = _.ops || ['count'],
-        as = _.as || [],
-        n = fields.length,
-        map = {},
-        field, op, m, mname, outname, i;
-
-    if (n !== ops.length) {
-      error('Unmatched number of fields and aggregate ops.');
-    }
-
-    for (i=0; i<n; ++i) {
-      field = fields[i];
-      op = ops[i];
-
-      if (field == null && op !== 'count') {
-        error('Null aggregate field specified.');
-      }
-      mname = accessorName(field);
-      outname = measureName(op, mname, as[i]);
-      outputs.push(outname);
-
-      if (op === 'count') {
-        this._counts.push(outname);
-        continue;
+      function inputVisit(get) {
+        let fields = array(accessorFields(get)),
+            i = 0, n = fields.length, f;
+        for (; i<n; ++i) {
+          if (!inputMap[f=fields[i]]) {
+            inputMap[f] = 1;
+            inputs.push(f);
+          }
+        }
       }
 
-      m = map[mname];
-      if (!m) {
-        inputVisit(field);
-        m = (map[mname] = []);
-        m.field = field;
-        this._measures.push(m);
+      // initialize group-by dimensions
+      this._dims = array(_.groupby);
+      this._dnames = this._dims.map(function(d) {
+        var dname = accessorName(d);
+        inputVisit(d);
+        outputs.push(dname);
+        return dname;
+      });
+      this.cellkey = _.key ? _.key : groupkey(this._dims);
+
+      // initialize aggregate measures
+      this._countOnly = true;
+      this._counts = [];
+      this._measures = [];
+
+      let fields = _.fields || [null],
+          ops = _.ops || ['count'],
+          as = _.as || [],
+          n = fields.length,
+          map = {},
+          field, op, m, mname, outname, i;
+
+      if (n !== ops.length) {
+        error('Unmatched number of fields and aggregate ops.');
       }
 
-      if (op !== 'count') this._countOnly = false;
-      m.push(createMeasure(op, outname));
-    }
-
-    this._measures = this._measures.map(function(m) {
-      return compileMeasures(m, m.field);
-    });
-
-    return {}; // aggregation cells (this.value)
-  };
-
-  // -- Cell Management -----
-
-  prototype$8.cellkey = groupkey();
-
-  prototype$8.cell = function(key, t) {
-    var cell = this.value[key];
-    if (!cell) {
-      cell = this.value[key] = this.newcell(key, t);
-      this._adds[this._alen++] = cell;
-    } else if (cell.num === 0 && this._drop && cell.stamp < this.stamp) {
-      cell.stamp = this.stamp;
-      this._adds[this._alen++] = cell;
-    } else if (cell.stamp < this.stamp) {
-      cell.stamp = this.stamp;
-      this._mods[this._mlen++] = cell;
-    }
-    return cell;
-  };
-
-  prototype$8.newcell = function(key, t) {
-    var cell = {
-      key:   key,
-      num:   0,
-      agg:   null,
-      tuple: this.newtuple(t, this._prev && this._prev[key]),
-      stamp: this.stamp,
-      store: false
-    };
-
-    if (!this._countOnly) {
-      var measures = this._measures,
-          n = measures.length, i;
-
-      cell.agg = Array(n);
       for (i=0; i<n; ++i) {
-        cell.agg[i] = new measures[i](cell);
+        field = fields[i];
+        op = ops[i];
+
+        if (field == null && op !== 'count') {
+          error('Null aggregate field specified.');
+        }
+        mname = accessorName(field);
+        outname = measureName(op, mname, as[i]);
+        outputs.push(outname);
+
+        if (op === 'count') {
+          this._counts.push(outname);
+          continue;
+        }
+
+        m = map[mname];
+        if (!m) {
+          inputVisit(field);
+          m = (map[mname] = []);
+          m.field = field;
+          this._measures.push(m);
+        }
+
+        if (op !== 'count') this._countOnly = false;
+        m.push(createMeasure(op, outname));
       }
-    }
 
-    if (cell.store) {
-      cell.data = new TupleStore();
-    }
+      this._measures = this._measures.map(function(m) {
+        return compileMeasures(m, m.field);
+      });
 
-    return cell;
-  };
+      return {}; // aggregation cells (this.value)
+    },
 
-  prototype$8.newtuple = function(t, p) {
-    var names = this._dnames,
-        dims = this._dims,
-        x = {}, i, n;
+    // -- Cell Management -----
 
-    for (i=0, n=dims.length; i<n; ++i) {
-      x[names[i]] = dims[i](t);
-    }
+    cellkey: groupkey(),
 
-    return p ? replace(p.tuple, x) : ingest(x);
-  };
-
-  prototype$8.clean = function() {
-    const cells = this.value;
-    for (const key in cells) {
-      if (cells[key].num === 0) {
-        delete cells[key];
+    cell(key, t) {
+      let cell = this.value[key];
+      if (!cell) {
+        cell = this.value[key] = this.newcell(key, t);
+        this._adds[this._alen++] = cell;
+      } else if (cell.num === 0 && this._drop && cell.stamp < this.stamp) {
+        cell.stamp = this.stamp;
+        this._adds[this._alen++] = cell;
+      } else if (cell.stamp < this.stamp) {
+        cell.stamp = this.stamp;
+        this._mods[this._mlen++] = cell;
       }
-    }
-  };
+      return cell;
+    },
 
-  // -- Process Tuples -----
+    newcell(key, t) {
+      const cell = {
+        key:   key,
+        num:   0,
+        agg:   null,
+        tuple: this.newtuple(t, this._prev && this._prev[key]),
+        stamp: this.stamp,
+        store: false
+      };
 
-  prototype$8.add = function(t) {
-    var key = this.cellkey(t),
-        cell = this.cell(key, t),
-        agg, i, n;
+      if (!this._countOnly) {
+        const measures = this._measures,
+              n = measures.length;
 
-    cell.num += 1;
-    if (this._countOnly) return;
-
-    if (cell.store) cell.data.add(t);
-
-    agg = cell.agg;
-    for (i=0, n=agg.length; i<n; ++i) {
-      agg[i].add(agg[i].get(t), t);
-    }
-  };
-
-  prototype$8.rem = function(t) {
-    var key = this.cellkey(t),
-        cell = this.cell(key, t),
-        agg, i, n;
-
-    cell.num -= 1;
-    if (this._countOnly) return;
-
-    if (cell.store) cell.data.rem(t);
-
-    agg = cell.agg;
-    for (i=0, n=agg.length; i<n; ++i) {
-      agg[i].rem(agg[i].get(t), t);
-    }
-  };
-
-  prototype$8.celltuple = function(cell) {
-    var tuple = cell.tuple,
-        counts = this._counts,
-        agg, i, n;
-
-    // consolidate stored values
-    if (cell.store) {
-      cell.data.values();
-    }
-
-    // update tuple properties
-    for (i=0, n=counts.length; i<n; ++i) {
-      tuple[counts[i]] = cell.num;
-    }
-    if (!this._countOnly) {
-      agg = cell.agg;
-      for (i=0, n=agg.length; i<n; ++i) {
-        agg[i].set(tuple);
+        cell.agg = Array(n);
+        for (let i=0; i<n; ++i) {
+          cell.agg[i] = new measures[i](cell);
+        }
       }
+
+      if (cell.store) {
+        cell.data = new TupleStore();
+      }
+
+      return cell;
+    },
+
+    newtuple(t, p) {
+      const names = this._dnames,
+            dims = this._dims,
+            n = dims.length,
+            x = {};
+
+      for (let i=0; i<n; ++i) {
+        x[names[i]] = dims[i](t);
+      }
+
+      return p ? replace(p.tuple, x) : ingest(x);
+    },
+
+    clean() {
+      const cells = this.value;
+      for (const key in cells) {
+        if (cells[key].num === 0) {
+          delete cells[key];
+        }
+      }
+    },
+
+    // -- Process Tuples -----
+
+    add(t) {
+      const key = this.cellkey(t),
+            cell = this.cell(key, t);
+
+      cell.num += 1;
+      if (this._countOnly) return;
+
+      if (cell.store) cell.data.add(t);
+
+      const agg = cell.agg;
+      for (let i=0, n=agg.length; i<n; ++i) {
+        agg[i].add(agg[i].get(t), t);
+      }
+    },
+
+    rem(t) {
+      const key = this.cellkey(t),
+            cell = this.cell(key, t);
+
+      cell.num -= 1;
+      if (this._countOnly) return;
+
+      if (cell.store) cell.data.rem(t);
+
+      const agg = cell.agg;
+      for (let i=0, n=agg.length; i<n; ++i) {
+        agg[i].rem(agg[i].get(t), t);
+      }
+    },
+
+    celltuple(cell) {
+      const tuple = cell.tuple,
+            counts = this._counts;
+
+      // consolidate stored values
+      if (cell.store) {
+        cell.data.values();
+      }
+
+      // update tuple properties
+      for (let i=0, n=counts.length; i<n; ++i) {
+        tuple[counts[i]] = cell.num;
+      }
+      if (!this._countOnly) {
+        const agg = cell.agg;
+        for (let i=0, n=agg.length; i<n; ++i) {
+          agg[i].set(tuple);
+        }
+      }
+
+      return tuple;
+    },
+
+    changes(out) {
+      const adds = this._adds,
+            mods = this._mods,
+            prev = this._prev,
+            drop = this._drop,
+            add = out.add,
+            rem = out.rem,
+            mod = out.mod;
+
+      let cell, key, i, n;
+
+      if (prev) for (key in prev) {
+        cell = prev[key];
+        if (!drop || cell.num) rem.push(cell.tuple);
+      }
+
+      for (i=0, n=this._alen; i<n; ++i) {
+        add.push(this.celltuple(adds[i]));
+        adds[i] = null; // for garbage collection
+      }
+
+      for (i=0, n=this._mlen; i<n; ++i) {
+        cell = mods[i];
+        (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
+        mods[i] = null; // for garbage collection
+      }
+
+      this._alen = this._mlen = 0; // reset list of active cells
+      this._prev = null;
+      return out;
     }
-
-    return tuple;
-  };
-
-  prototype$8.changes = function(out) {
-    var adds = this._adds,
-        mods = this._mods,
-        prev = this._prev,
-        drop = this._drop,
-        add = out.add,
-        rem = out.rem,
-        mod = out.mod,
-        cell, key, i, n;
-
-    if (prev) for (key in prev) {
-      cell = prev[key];
-      if (!drop || cell.num) rem.push(cell.tuple);
-    }
-
-    for (i=0, n=this._alen; i<n; ++i) {
-      add.push(this.celltuple(adds[i]));
-      adds[i] = null; // for garbage collection
-    }
-
-    for (i=0, n=this._mlen; i<n; ++i) {
-      cell = mods[i];
-      (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
-      mods[i] = null; // for garbage collection
-    }
-
-    this._alen = this._mlen = 0; // reset list of active cells
-    this._prev = null;
-    return out;
-  };
+  });
 
   // epsilon bias to offset floating point error (#1737)
   const EPSILON = 1e-14;
@@ -6332,96 +6337,96 @@
     ]
   };
 
-  var prototype$9 = inherits(Bin, Transform);
+  inherits(Bin, Transform, {
+    transform(_, pulse) {
+      const band = _.interval !== false,
+          bins = this._bins(_),
+          start = bins.start,
+          step = bins.step,
+          as = _.as || ['bin0', 'bin1'],
+          b0 = as[0],
+          b1 = as[1];
 
-  prototype$9.transform = function(_, pulse) {
-    var band = _.interval !== false,
-        bins = this._bins(_),
-        start = bins.start,
-        step = bins.step,
-        as = _.as || ['bin0', 'bin1'],
-        b0 = as[0],
-        b1 = as[1],
-        flag;
+      let flag;
+      if (_.modified()) {
+        pulse = pulse.reflow(true);
+        flag = pulse.SOURCE;
+      } else {
+        flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
+      }
 
-    if (_.modified()) {
-      pulse = pulse.reflow(true);
-      flag = pulse.SOURCE;
-    } else {
-      flag = pulse.modified(accessorFields(_.field)) ? pulse.ADD_MOD : pulse.ADD;
+      pulse.visit(flag, band
+        ? t => {
+            const v = bins(t);
+            // minimum bin value (inclusive)
+            t[b0] = v;
+            // maximum bin value (exclusive)
+            // use convoluted math for better floating point agreement
+            // see https://github.com/vega/vega/issues/830
+            // infinite values propagate through this formula! #2227
+            t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+          }
+        : t => t[b0] = bins(t)
+      );
+
+      return pulse.modifies(band ? as : b0);
+    },
+
+    _bins(_) {
+      if (this.value && !_.modified()) {
+        return this.value;
+      }
+
+      let field = _.field,
+          bins  = bin(_),
+          step  = bins.step,
+          start = bins.start,
+          stop  = start + Math.ceil((bins.stop - start) / step) * step,
+          a, d;
+
+      if ((a = _.anchor) != null) {
+        d = a - (start + step * Math.floor((a - start) / step));
+        start += d;
+        stop += d;
+      }
+
+      const f = function(t) {
+        let v = toNumber(field(t));
+        return v == null ? null
+          : v < start ? -Infinity
+          : v > stop ? +Infinity
+          : (
+              v = Math.max(start, Math.min(v, stop - step)),
+              start + step * Math.floor(EPSILON + (v - start) / step)
+            );
+      };
+
+      f.start = start;
+      f.stop = bins.stop;
+      f.step = step;
+
+      return this.value = accessor(
+        f,
+        accessorFields(field),
+        _.name || 'bin_' + accessorName(field)
+      );
     }
-
-    pulse.visit(flag, band
-      ? function(t) {
-          var v = bins(t);
-          // minimum bin value (inclusive)
-          t[b0] = v;
-          // maximum bin value (exclusive)
-          // use convoluted math for better floating point agreement
-          // see https://github.com/vega/vega/issues/830
-          // infinite values propagate through this formula! #2227
-          t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
-        }
-      : function(t) { t[b0] = bins(t); }
-    );
-
-    return pulse.modifies(band ? as : b0);
-  };
-
-  prototype$9._bins = function(_) {
-    if (this.value && !_.modified()) {
-      return this.value;
-    }
-
-    var field = _.field,
-        bins  = bin(_),
-        step  = bins.step,
-        start = bins.start,
-        stop  = start + Math.ceil((bins.stop - start) / step) * step,
-        a, d;
-
-    if ((a = _.anchor) != null) {
-      d = a - (start + step * Math.floor((a - start) / step));
-      start += d;
-      stop += d;
-    }
-
-    var f = function(t) {
-      var v = toNumber(field(t));
-      return v == null ? null
-        : v < start ? -Infinity
-        : v > stop ? +Infinity
-        : (
-            v = Math.max(start, Math.min(v, stop - step)),
-            start + step * Math.floor(EPSILON + (v - start) / step)
-          );
-    };
-
-    f.start = start;
-    f.stop = bins.stop;
-    f.step = step;
-
-    return this.value = accessor(
-      f,
-      accessorFields(field),
-      _.name || 'bin_' + accessorName(field)
-    );
-  };
+  });
 
   function SortedList(idFunc, source, input) {
-    var $ = idFunc,
+    let $ = idFunc,
         data = source || [],
         add = input || [],
         rem = {},
         cnt = 0;
 
     return {
-      add: function(t) { add.push(t); },
-      remove: function(t) { rem[$(t)] = ++cnt; },
-      size: function() { return data.length; },
-      data: function(compare, resort) {
+      add: t => add.push(t),
+      remove: t => rem[$(t)] = ++cnt,
+      size: () => data.length,
+      data: (compare, resort) => {
         if (cnt) {
-          data = data.filter(function(t) { return !rem[$(t)]; });
+          data = data.filter(t => !rem[$(t)]);
           rem = {};
           cnt = 0;
         }
@@ -6458,27 +6463,27 @@
     ]
   };
 
-  var prototype$a = inherits(Collect, Transform);
+  inherits(Collect, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.ALL),
+            list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
+            sort = _.sort,
+            mod = pulse.changed() || (sort &&
+                  (_.modified('sort') || pulse.modified(sort.fields)));
 
-  prototype$a.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        list = SortedList(tupleid, this.value, out.materialize(out.ADD).add),
-        sort = _.sort,
-        mod = pulse.changed() || (sort &&
-              (_.modified('sort') || pulse.modified(sort.fields)));
+      out.visit(out.REM, list.remove);
 
-    out.visit(out.REM, list.remove);
+      this.modified(mod);
+      this.value = out.source = list.data(stableCompare(sort), mod);
 
-    this.modified(mod);
-    this.value = out.source = list.data(stableCompare(sort), mod);
+      // propagate tree root if defined
+      if (pulse.source && pulse.source.root) {
+        this.value.root = pulse.source.root;
+      }
 
-    // propagate tree root if defined
-    if (pulse.source && pulse.source.root) {
-      this.value.root = pulse.source.root;
+      return out;
     }
-
-    return out;
-  };
+  });
 
   /**
    * Generates a comparator function.
@@ -6533,86 +6538,84 @@
     return text.match(match);
   }
 
-  var prototype$b = inherits(CountPattern, Transform);
-
-  prototype$b.transform = function(_, pulse) {
-    function process(update) {
-      return function(tuple) {
+  inherits(CountPattern, Transform, {
+    transform(_, pulse) {
+      const process = update => tuple => {
         var tokens = tokenize(get(tuple), _.case, match) || [], t;
         for (var i=0, n=tokens.length; i<n; ++i) {
           if (!stop.test(t = tokens[i])) update(t);
         }
       };
-    }
 
-    var init = this._parameterCheck(_, pulse),
-        counts = this._counts,
-        match = this._match,
-        stop = this._stop,
-        get = _.field,
-        as = _.as || ['text', 'count'],
-        add = process(function(t) { counts[t] = 1 + (counts[t] || 0); }),
-        rem = process(function(t) { counts[t] -= 1; });
+      const init = this._parameterCheck(_, pulse),
+            counts = this._counts,
+            match = this._match,
+            stop = this._stop,
+            get = _.field,
+            as = _.as || ['text', 'count'],
+            add = process(t => counts[t] = 1 + (counts[t] || 0)),
+            rem = process(t => counts[t] -= 1);
 
-    if (init) {
-      pulse.visit(pulse.SOURCE, add);
-    } else {
-      pulse.visit(pulse.ADD, add);
-      pulse.visit(pulse.REM, rem);
-    }
-
-    return this._finish(pulse, as); // generate output tuples
-  };
-
-  prototype$b._parameterCheck = function(_, pulse) {
-    var init = false;
-
-    if (_.modified('stopwords') || !this._stop) {
-      this._stop = new RegExp('^' + (_.stopwords || '') + '$', 'i');
-      init = true;
-    }
-
-    if (_.modified('pattern') || !this._match) {
-      this._match = new RegExp((_.pattern || '[\\w\']+'), 'g');
-      init = true;
-    }
-
-    if (_.modified('field') || pulse.modified(_.field.fields)) {
-      init = true;
-    }
-
-    if (init) this._counts = {};
-    return init;
-  };
-
-  prototype$b._finish = function(pulse, as) {
-    var counts = this._counts,
-        tuples = this._tuples || (this._tuples = {}),
-        text = as[0],
-        count = as[1],
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        w, t, c;
-
-    for (w in counts) {
-      t = tuples[w];
-      c = counts[w] || 0;
-      if (!t && c) {
-        tuples[w] = (t = ingest({}));
-        t[text] = w;
-        t[count] = c;
-        out.add.push(t);
-      } else if (c === 0) {
-        if (t) out.rem.push(t);
-        counts[w] = null;
-        tuples[w] = null;
-      } else if (t[count] !== c) {
-        t[count] = c;
-        out.mod.push(t);
+      if (init) {
+        pulse.visit(pulse.SOURCE, add);
+      } else {
+        pulse.visit(pulse.ADD, add);
+        pulse.visit(pulse.REM, rem);
       }
-    }
 
-    return out.modifies(as);
-  };
+      return this._finish(pulse, as); // generate output tuples
+    },
+
+    _parameterCheck(_, pulse) {
+      let init = false;
+
+      if (_.modified('stopwords') || !this._stop) {
+        this._stop = new RegExp('^' + (_.stopwords || '') + '$', 'i');
+        init = true;
+      }
+
+      if (_.modified('pattern') || !this._match) {
+        this._match = new RegExp((_.pattern || '[\\w\']+'), 'g');
+        init = true;
+      }
+
+      if (_.modified('field') || pulse.modified(_.field.fields)) {
+        init = true;
+      }
+
+      if (init) this._counts = {};
+      return init;
+    },
+
+    _finish(pulse, as) {
+      let counts = this._counts,
+          tuples = this._tuples || (this._tuples = {}),
+          text = as[0],
+          count = as[1],
+          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          w, t, c;
+
+      for (w in counts) {
+        t = tuples[w];
+        c = counts[w] || 0;
+        if (!t && c) {
+          tuples[w] = (t = ingest({}));
+          t[text] = w;
+          t[count] = c;
+          out.add.push(t);
+        } else if (c === 0) {
+          if (t) out.rem.push(t);
+          counts[w] = null;
+          tuples[w] = null;
+        } else if (t[count] !== c) {
+          t[count] = c;
+          out.mod.push(t);
+        }
+      }
+
+      return out.modifies(as);
+    }
+  });
 
   /**
    * Perform a cross-product of a tuple stream with itself.
@@ -6635,29 +6638,29 @@
     ]
   };
 
-  var prototype$c = inherits(Cross, Transform);
+  inherits(Cross, Transform, {
+    transform(_, pulse) {
+      let out = pulse.fork(pulse.NO_SOURCE),
+          data = this.value,
+          as = _.as || ['a', 'b'],
+          a = as[0], b = as[1],
+          reset = !data
+              || pulse.changed(pulse.ADD_REM)
+              || _.modified('as')
+              || _.modified('filter');
 
-  prototype$c.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE),
-        data = this.value,
-        as = _.as || ['a', 'b'],
-        a = as[0], b = as[1],
-        reset = !data
-            || pulse.changed(pulse.ADD_REM)
-            || _.modified('as')
-            || _.modified('filter');
+      if (reset) {
+        if (data) out.rem = data;
+        data = pulse.materialize(pulse.SOURCE).source;
+        out.add = this.value = cross(data, a, b, _.filter || truthy);
+      } else {
+        out.mod = data;
+      }
 
-    if (reset) {
-      if (data) out.rem = data;
-      data = pulse.materialize(pulse.SOURCE).source;
-      out.add = this.value = cross(data, a, b, _.filter || truthy);
-    } else {
-      out.mod = data;
+      out.source = this.value;
+      return out.modifies(as);
     }
-
-    out.source = this.value;
-    return out.modifies(as);
-  };
+  });
 
   function cross(input, a, b, filter) {
     var data = [],
@@ -6681,7 +6684,7 @@
     return data;
   }
 
-  var Distributions = {
+  const Distributions = {
     kde:       randomKDE,
     mixture:   randomMixture,
     normal:    randomNormal,
@@ -6689,9 +6692,9 @@
     uniform:   randomUniform
   };
 
-  var DISTRIBUTIONS = 'distributions',
-      FUNCTION = 'function',
-      FIELD = 'field';
+  const DISTRIBUTIONS = 'distributions',
+        FUNCTION = 'function',
+        FIELD = 'field';
 
   /**
    * Parse a parameter object for a probability distribution.
@@ -6705,14 +6708,14 @@
    * @return {object} - The output distribution object.
    */
   function parse$2(def, data) {
-    var func = def[FUNCTION];
+    const func = def[FUNCTION];
     if (!hasOwnProperty(Distributions, func)) {
       error('Unknown distribution function: ' + func);
     }
 
-    var d = Distributions[func]();
+    const d = Distributions[func]();
 
-    for (var name in def) {
+    for (const name in def) {
       // if data field, extract values
       if (name === FIELD) {
         d.data((def.from || data()).map(def[name]));
@@ -6720,7 +6723,7 @@
 
       // if distribution mixture, recurse to parse each definition
       else if (name === DISTRIBUTIONS) {
-        d[name](def[name].map(function(_) { return parse$2(_, data); }));
+        d[name](def[name].map(_ => parse$2(_, data)));
       }
 
       // otherwise, simply set the parameter
@@ -6818,56 +6821,55 @@
     ]
   };
 
-  var prototype$d = inherits(Density, Transform);
+  inherits(Density, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
-  prototype$d.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        let dist = parse$2(_.distribution, source(pulse)),
+            minsteps = _.steps || _.minsteps || 25,
+            maxsteps = _.steps || _.maxsteps || 200,
+            method = _.method || 'pdf';
 
-    if (!this.value || pulse.changed() || _.modified()) {
-      var dist = parse$2(_.distribution, source(pulse)),
-          minsteps = _.steps || _.minsteps || 25,
-          maxsteps = _.steps || _.maxsteps || 200,
-          method = _.method || 'pdf';
+        if (method !== 'pdf' && method !== 'cdf') {
+          error('Invalid density method: ' + method);
+        }
+        if (!_.extent && !dist.data) {
+          error('Missing density extent parameter.');
+        }
+        method = dist[method];
 
-      if (method !== 'pdf' && method !== 'cdf') {
-        error('Invalid density method: ' + method);
+        const as = _.as || ['value', 'density'],
+              domain = _.extent || extent(dist.data()),
+              values = sampleCurve(method, domain, minsteps, maxsteps)
+                .map(v => {
+                  const tuple = {};
+                  tuple[as[0]] = v[0];
+                  tuple[as[1]] = v[1];
+                  return ingest(tuple);
+                });
+
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
       }
-      if (!_.extent && !dist.data) {
-        error('Missing density extent parameter.');
-      }
-      method = dist[method];
 
-      var as = _.as || ['value', 'density'],
-          domain = _.extent || extent(dist.data()),
-          values = sampleCurve(method, domain, minsteps, maxsteps).map(v => {
-            var tuple = {};
-            tuple[as[0]] = v[0];
-            tuple[as[1]] = v[1];
-            return ingest(tuple);
-          });
-
-      if (this.value) out.rem = this.value;
-      this.value = out.add = out.source = values;
+      return out;
     }
-
-    return out;
-  };
+  });
 
   function source(pulse) {
-    return function() { return pulse.materialize(pulse.SOURCE).source; };
+    return () => pulse.materialize(pulse.SOURCE).source;
   }
 
   // use either provided alias or accessor field name
   function fieldNames(fields, as) {
     if (!fields) return null;
-    return fields.map(function(f, i) {
-      return as[i] || accessorName(f);
-    });
+    return fields.map((f, i) => as[i] || accessorName(f));
   }
 
   function partition(data, groupby, field) {
-    var groups = [],
-        get = function(f) { return f(t); },
+    let groups = [],
+        get = f => f(t),
         map, i, n, t, k, g;
 
     // partition data points into groups
@@ -6921,45 +6923,43 @@
     ]
   };
 
-  const prototype$e = inherits(DotBin, Transform);
+  const autostep = (data, field) => span(extent(data, field)) / 30;
 
-  prototype$e.transform = function(_, pulse) {
-    if (this.value && !(_.modified() || pulse.changed())) {
-      return pulse; // early exit
-    }
-
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(pulse.source, _.groupby, identity),
-          smooth = _.smooth || false,
-          field = _.field,
-          step = _.step || autostep(source, field),
-          sort = stableCompare((a, b) => field(a) - field(b)),
-          as = _.as || Output,
-          n = groups.length;
-
-    // compute dotplot bins per group
-    let min = Infinity, max = -Infinity, i = 0, j;
-    for (; i<n; ++i) {
-      const g = groups[i].sort(sort);
-      j = -1;
-      for (const v of dotbin(g, step, smooth, field)) {
-        if (v < min) min = v;
-        if (v > max) max = v;
-        g[++j][as] = v;
+  inherits(DotBin, Transform, {
+    transform(_, pulse) {
+      if (this.value && !(_.modified() || pulse.changed())) {
+        return pulse; // early exit
       }
+
+      const source = pulse.materialize(pulse.SOURCE).source,
+            groups = partition(pulse.source, _.groupby, identity),
+            smooth = _.smooth || false,
+            field = _.field,
+            step = _.step || autostep(source, field),
+            sort = stableCompare((a, b) => field(a) - field(b)),
+            as = _.as || Output,
+            n = groups.length;
+
+      // compute dotplot bins per group
+      let min = Infinity, max = -Infinity, i = 0, j;
+      for (; i<n; ++i) {
+        const g = groups[i].sort(sort);
+        j = -1;
+        for (const v of dotbin(g, step, smooth, field)) {
+          if (v < min) min = v;
+          if (v > max) max = v;
+          g[++j][as] = v;
+        }
+      }
+
+      this.value = {
+        start: min,
+        stop: max,
+        step: step
+      };
+      return pulse.reflow(true).modifies(as);
     }
-
-    this.value = {
-      start: min,
-      stop: max,
-      step: step
-    };
-    return pulse.reflow(true).modifies(as);
-  };
-
-  function autostep(data, field) {
-    return span(extent(data, field)) / 30;
-  }
+  });
 
   /**
    * Wraps an expression function with access to external parameters.
@@ -6978,7 +6978,7 @@
   inherits(Expression, Operator);
 
   function update$2(_) {
-    var expr = _.expr;
+    const expr = _.expr;
     return this.value && !_.modified('expr')
       ? this.value
       : accessor(
@@ -7006,41 +7006,41 @@
     ]
   };
 
-  var prototype$f = inherits(Extent, Transform);
+  inherits(Extent, Transform, {
+    transform(_, pulse) {
+      let extent = this.value,
+          field = _.field,
+          min = extent[0],
+          max = extent[1],
+          mod;
 
-  prototype$f.transform = function(_, pulse) {
-    var extent = this.value,
-        field = _.field,
-        min = extent[0],
-        max = extent[1],
-        mod;
+      mod = pulse.changed()
+        || pulse.modified(field.fields)
+        || _.modified('field');
 
-    mod = pulse.changed()
-       || pulse.modified(field.fields)
-       || _.modified('field');
-
-    if (mod || min == null) {
-      min = +Infinity;
-      max = -Infinity;
-    }
-
-    pulse.visit(mod ? pulse.SOURCE : pulse.ADD, function(t) {
-      var v = toNumber(field(t));
-      if (v != null) {
-        // NaNs will fail all comparisons!
-        if (v < min) min = v;
-        if (v > max) max = v;
+      if (mod || min == null) {
+        min = +Infinity;
+        max = -Infinity;
       }
-    });
 
-    if (!Number.isFinite(min) || !Number.isFinite(max)) {
-      let name = accessorName(field);
-      if (name) name = ` for field "${name}"`;
-      pulse.dataflow.warn(`Infinite extent${name}: [${min}, ${max}]`);
-      min = max = undefined;
+      pulse.visit(mod ? pulse.SOURCE : pulse.ADD, t => {
+        let v = toNumber(field(t));
+        if (v != null) {
+          // NaNs will fail all comparisons!
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+      });
+
+      if (!Number.isFinite(min) || !Number.isFinite(max)) {
+        let name = accessorName(field);
+        if (name) name = ` for field "${name}"`;
+        pulse.dataflow.warn(`Infinite extent${name}: [${min}, ${max}]`);
+        min = max = undefined;
+      }
+      this.value = [min, max];
     }
-    this.value = [min, max];
-  };
+  });
 
   /**
    * Provides a bridge between a parent transform and a target subflow that
@@ -7055,62 +7055,62 @@
     this.count = 0;
   }
 
-  var prototype$g = inherits(Subflow, Operator);
+  inherits(Subflow, Operator, {
+    /**
+     * Routes pulses from this subflow to a target transform.
+     * @param {Transform} target - A transform that receives the subflow of tuples.
+     */
+    connect(target) {
+      this.detachSubflow = target.detachSubflow;
+      this.targets().add(target);
+      return (target.source = this);
+    },
 
-  /**
-   * Routes pulses from this subflow to a target transform.
-   * @param {Transform} target - A transform that receives the subflow of tuples.
-   */
-  prototype$g.connect = function(target) {
-    this.detachSubflow = target.detachSubflow;
-    this.targets().add(target);
-    return (target.source = this);
-  };
+    /**
+     * Add an 'add' tuple to the subflow pulse.
+     * @param {Tuple} t - The tuple being added.
+     */
+    add(t) {
+      this.count += 1;
+      this.value.add.push(t);
+    },
 
-  /**
-   * Add an 'add' tuple to the subflow pulse.
-   * @param {Tuple} t - The tuple being added.
-   */
-  prototype$g.add = function(t) {
-    this.count += 1;
-    this.value.add.push(t);
-  };
+    /**
+     * Add a 'rem' tuple to the subflow pulse.
+     * @param {Tuple} t - The tuple being removed.
+     */
+    rem(t) {
+      this.count -= 1;
+      this.value.rem.push(t);
+    },
 
-  /**
-   * Add a 'rem' tuple to the subflow pulse.
-   * @param {Tuple} t - The tuple being removed.
-   */
-  prototype$g.rem = function(t) {
-    this.count -= 1;
-    this.value.rem.push(t);
-  };
+    /**
+     * Add a 'mod' tuple to the subflow pulse.
+     * @param {Tuple} t - The tuple being modified.
+     */
+    mod(t) {
+      this.value.mod.push(t);
+    },
 
-  /**
-   * Add a 'mod' tuple to the subflow pulse.
-   * @param {Tuple} t - The tuple being modified.
-   */
-  prototype$g.mod = function(t) {
-    this.value.mod.push(t);
-  };
+    /**
+     * Re-initialize this operator's pulse value.
+     * @param {Pulse} pulse - The pulse to copy from.
+     * @see Pulse.init
+     */
+    init(pulse) {
+      this.value.init(pulse, pulse.NO_SOURCE);
+    },
 
-  /**
-   * Re-initialize this operator's pulse value.
-   * @param {Pulse} pulse - The pulse to copy from.
-   * @see Pulse.init
-   */
-  prototype$g.init = function(pulse) {
-    this.value.init(pulse, pulse.NO_SOURCE);
-  };
-
-  /**
-   * Evaluate this operator. This method overrides the
-   * default behavior to simply return the contained pulse value.
-   * @return {Pulse}
-   */
-  prototype$g.evaluate = function() {
-    // assert: this.value.stamp === pulse.stamp
-    return this.value;
-  };
+    /**
+     * Evaluate this operator. This method overrides the
+     * default behavior to simply return the contained pulse value.
+     * @return {Pulse}
+     */
+    evaluate() {
+      // assert: this.value.stamp === pulse.stamp
+      return this.value;
+    }
+  });
 
   /**
    * Facets a dataflow into a set of subflows based on a key.
@@ -7135,119 +7135,119 @@
     };
   }
 
-  const prototype$h = inherits(Facet, Transform);
+  inherits(Facet, Transform, {
+    activate(flow) {
+      this._targets[this._targets.active++] = flow;
+    },
 
-  prototype$h.activate = function(flow) {
-    this._targets[this._targets.active++] = flow;
-  };
+    // parent argument provided by PreFacet subclass
+    subflow(key, flow, pulse, parent) {
+      let flows = this.value,
+          sf = hasOwnProperty(flows, key) && flows[key],
+          df, p;
 
-  // parent argument provided by PreFacet subclass
-  prototype$h.subflow = function(key, flow, pulse, parent) {
-    let flows = this.value,
-        sf = hasOwnProperty(flows, key) && flows[key],
-        df, p;
-
-    if (!sf) {
-      p = parent || (p = this._group[key]) && p.tuple;
-      df = pulse.dataflow;
-      sf = new Subflow(pulse.fork(pulse.NO_SOURCE), this);
-      df.add(sf).connect(flow(df, key, p));
-      flows[key] = sf;
-      this.activate(sf);
-    } else if (sf.value.stamp < pulse.stamp) {
-      sf.init(pulse);
-      this.activate(sf);
-    }
-
-    return sf;
-  };
-
-  prototype$h.clean = function() {
-    const flows = this.value;
-    for (const key in flows) {
-      if (flows[key].count === 0) {
-        const detach = flows[key].detachSubflow;
-        if (detach) detach();
-        delete flows[key];
+      if (!sf) {
+        p = parent || (p = this._group[key]) && p.tuple;
+        df = pulse.dataflow;
+        sf = new Subflow(pulse.fork(pulse.NO_SOURCE), this);
+        df.add(sf).connect(flow(df, key, p));
+        flows[key] = sf;
+        this.activate(sf);
+      } else if (sf.value.stamp < pulse.stamp) {
+        sf.init(pulse);
+        this.activate(sf);
       }
-    }
-  };
 
-  prototype$h.initTargets = function() {
-    const a = this._targets,
-          n = a.length;
-    for (let i=0; i<n && a[i] != null; ++i) {
-      a[i] = null; // ensure old flows can be garbage collected
-    }
-    a.active = 0;
-  };
+      return sf;
+    },
 
-  prototype$h.transform = function(_, pulse) {
-    const df = pulse.dataflow,
-          key = _.key,
-          flow = _.subflow,
-          cache = this._keys,
-          rekey = _.modified('key'),
-          subflow = key => this.subflow(key, flow, pulse);
-
-    this._group = _.group || {};
-    this.initTargets(); // reset list of active subflows
-
-    pulse.visit(pulse.REM, t => {
-      const id = tupleid(t),
-             k = cache.get(id);
-      if (k !== undefined) {
-        cache.delete(id);
-        subflow(k).rem(t);
+    clean() {
+      const flows = this.value;
+      for (const key in flows) {
+        if (flows[key].count === 0) {
+          const detach = flows[key].detachSubflow;
+          if (detach) detach();
+          delete flows[key];
+        }
       }
-    });
+    },
 
-    pulse.visit(pulse.ADD, t => {
-      const k = key(t);
-      cache.set(tupleid(t), k);
-      subflow(k).add(t);
-    });
+    initTargets() {
+      const a = this._targets,
+            n = a.length;
+      for (let i=0; i<n && a[i] != null; ++i) {
+        a[i] = null; // ensure old flows can be garbage collected
+      }
+      a.active = 0;
+    },
 
-    if (rekey || pulse.modified(key.fields)) {
-      pulse.visit(pulse.MOD, t => {
+    transform(_, pulse) {
+      const df = pulse.dataflow,
+            key = _.key,
+            flow = _.subflow,
+            cache = this._keys,
+            rekey = _.modified('key'),
+            subflow = key => this.subflow(key, flow, pulse);
+
+      this._group = _.group || {};
+      this.initTargets(); // reset list of active subflows
+
+      pulse.visit(pulse.REM, t => {
         const id = tupleid(t),
-              k0 = cache.get(id),
-              k1 = key(t);
-        if (k0 === k1) {
-          subflow(k1).mod(t);
-        } else {
-          cache.set(id, k1);
-          subflow(k0).rem(t);
-          subflow(k1).add(t);
+              k = cache.get(id);
+        if (k !== undefined) {
+          cache.delete(id);
+          subflow(k).rem(t);
         }
       });
-    } else if (pulse.changed(pulse.MOD)) {
-      pulse.visit(pulse.MOD, t => {
-        subflow(cache.get(tupleid(t))).mod(t);
+
+      pulse.visit(pulse.ADD, t => {
+        const k = key(t);
+        cache.set(tupleid(t), k);
+        subflow(k).add(t);
       });
-    }
 
-    if (rekey) {
-      pulse.visit(pulse.REFLOW, t => {
-        const id = tupleid(t),
-              k0 = cache.get(id),
-              k1 = key(t);
-        if (k0 !== k1) {
-          cache.set(id, k1);
-          subflow(k0).rem(t);
-          subflow(k1).add(t);
-        }
-      });
-    }
+      if (rekey || pulse.modified(key.fields)) {
+        pulse.visit(pulse.MOD, t => {
+          const id = tupleid(t),
+                k0 = cache.get(id),
+                k1 = key(t);
+          if (k0 === k1) {
+            subflow(k1).mod(t);
+          } else {
+            cache.set(id, k1);
+            subflow(k0).rem(t);
+            subflow(k1).add(t);
+          }
+        });
+      } else if (pulse.changed(pulse.MOD)) {
+        pulse.visit(pulse.MOD, t => {
+          subflow(cache.get(tupleid(t))).mod(t);
+        });
+      }
 
-    if (pulse.clean()) {
-      df.runAfter(() => { this.clean(); cache.clean(); });
-    } else if (cache.empty > df.cleanThreshold) {
-      df.runAfter(cache.clean);
-    }
+      if (rekey) {
+        pulse.visit(pulse.REFLOW, t => {
+          const id = tupleid(t),
+                k0 = cache.get(id),
+                k1 = key(t);
+          if (k0 !== k1) {
+            cache.set(id, k1);
+            subflow(k0).rem(t);
+            subflow(k1).add(t);
+          }
+        });
+      }
 
-    return pulse;
-  };
+      if (pulse.clean()) {
+        df.runAfter(() => { this.clean(); cache.clean(); });
+      } else if (cache.empty > df.cleanThreshold) {
+        df.runAfter(cache.clean);
+      }
+
+      return pulse;
+    }
+  });
 
   /**
    * Generates one or more field accessor functions.
@@ -7266,7 +7266,7 @@
 
   function update$3(_) {
     return (this.value && !_.modified()) ? this.value
-      : isArray(_.name) ? array(_.name).map(function(f) { return field(f); })
+      : isArray(_.name) ? array(_.name).map(f => field(f))
       : field(_.name, _.as);
   }
 
@@ -7289,54 +7289,54 @@
     ]
   };
 
-  var prototype$i = inherits(Filter, Transform);
+  inherits(Filter, Transform, {
+    transform(_, pulse) {
+      let df = pulse.dataflow,
+          cache = this.value, // cache ids of filtered tuples
+          output = pulse.fork(),
+          add = output.add,
+          rem = output.rem,
+          mod = output.mod,
+          test = _.expr,
+          isMod = true;
 
-  prototype$i.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        cache = this.value, // cache ids of filtered tuples
-        output = pulse.fork(),
-        add = output.add,
-        rem = output.rem,
-        mod = output.mod,
-        test = _.expr,
-        isMod = true;
+      pulse.visit(pulse.REM, t => {
+        var id = tupleid(t);
+        if (!cache.has(id)) rem.push(t);
+        else cache.delete(id);
+      });
 
-    pulse.visit(pulse.REM, function(t) {
-      var id = tupleid(t);
-      if (!cache.has(id)) rem.push(t);
-      else cache.delete(id);
-    });
+      pulse.visit(pulse.ADD, t => {
+        if (test(t, _)) add.push(t);
+        else cache.set(tupleid(t), 1);
+      });
 
-    pulse.visit(pulse.ADD, function(t) {
-      if (test(t, _)) add.push(t);
-      else cache.set(tupleid(t), 1);
-    });
-
-    function revisit(t) {
-      var id = tupleid(t),
-          b = test(t, _),
-          s = cache.get(id);
-      if (b && s) {
-        cache.delete(id);
-        add.push(t);
-      } else if (!b && !s) {
-        cache.set(id, 1);
-        rem.push(t);
-      } else if (isMod && b && !s) {
-        mod.push(t);
+      function revisit(t) {
+        const id = tupleid(t),
+              b = test(t, _),
+              s = cache.get(id);
+        if (b && s) {
+          cache.delete(id);
+          add.push(t);
+        } else if (!b && !s) {
+          cache.set(id, 1);
+          rem.push(t);
+        } else if (isMod && b && !s) {
+          mod.push(t);
+        }
       }
+
+      pulse.visit(pulse.MOD, revisit);
+
+      if (_.modified()) {
+        isMod = false;
+        pulse.visit(pulse.REFLOW, revisit);
+      }
+
+      if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+      return output;
     }
-
-    pulse.visit(pulse.MOD, revisit);
-
-    if (_.modified()) {
-      isMod = false;
-      pulse.visit(pulse.REFLOW, revisit);
-    }
-
-    if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
-    return output;
-  };
+  });
 
   /**
    * Flattens array-typed field values into new data objects.
@@ -7366,40 +7366,40 @@
     ]
   };
 
-  var prototype$j = inherits(Flatten, Transform);
+  inherits(Flatten, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE),
+            fields = _.fields,
+            as = fieldNames(fields, _.as || []),
+            index = _.index || null,
+            m = as.length;
 
-  prototype$j.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE),
-        fields = _.fields,
-        as = fieldNames(fields, _.as || []),
-        index = _.index || null,
-        m = as.length;
+      // remove any previous results
+      out.rem = this.value;
 
-    // remove any previous results
-    out.rem = this.value;
+      // generate flattened tuples
+      pulse.visit(pulse.SOURCE, t => {
+        let arrays = fields.map(f => f(t)),
+            maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
+            i = 0, j, d, v;
 
-    // generate flattened tuples
-    pulse.visit(pulse.SOURCE, function(t) {
-      var arrays = fields.map(f => f(t)),
-          maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
-          i = 0, j, d, v;
-
-      for (; i<maxlen; ++i) {
-        d = derive(t);
-        for (j=0; j<m; ++j) {
-          d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+        for (; i<maxlen; ++i) {
+          d = derive(t);
+          for (j=0; j<m; ++j) {
+            d[as[j]] = (v = arrays[j][i]) == null ? null : v;
+          }
+          if (index) {
+            d[index] = i;
+          }
+          out.add.push(d);
         }
-        if (index) {
-          d[index] = i;
-        }
-        out.add.push(d);
-      }
-    });
+      });
 
-    this.value = out.source = out.add;
-    if (index) out.modifies(index);
-    return out.modifies(as);
-  };
+      this.value = out.source = out.add;
+      if (index) out.modifies(index);
+      return out.modifies(as);
+    }
+  });
 
   /**
    * Folds one more tuple fields into multiple tuples in which the field
@@ -7424,31 +7424,31 @@
     ]
   };
 
-  var prototype$k = inherits(Fold, Transform);
+  inherits(Fold, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE),
+            fields = _.fields,
+            fnames = fields.map(accessorName),
+            as = _.as || ['key', 'value'],
+            k = as[0],
+            v = as[1],
+            n = fields.length;
 
-  prototype$k.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE),
-        fields = _.fields,
-        fnames = fields.map(accessorName),
-        as = _.as || ['key', 'value'],
-        k = as[0],
-        v = as[1],
-        n = fields.length;
+      out.rem = this.value;
 
-    out.rem = this.value;
+      pulse.visit(pulse.SOURCE, t => {
+        for (let i=0, d; i<n; ++i) {
+          d = derive(t);
+          d[k] = fnames[i];
+          d[v] = fields[i](t);
+          out.add.push(d);
+        }
+      });
 
-    pulse.visit(pulse.SOURCE, function(t) {
-      for (var i=0, d; i<n; ++i) {
-        d = derive(t);
-        d[k] = fnames[i];
-        d[v] = fields[i](t);
-        out.add.push(d);
-      }
-    });
-
-    this.value = out.source = out.add;
-    return out.modifies(as);
-  };
+      this.value = out.source = out.add;
+      return out.modifies(as);
+    }
+  });
 
   /**
    * Invokes a function for each data tuple and saves the results as a new field.
@@ -7473,28 +7473,28 @@
     ]
   };
 
-  var prototype$l = inherits(Formula, Transform);
+  inherits(Formula, Transform, {
+    transform (_, pulse) {
+      const func = _.expr,
+            as = _.as,
+            mod = _.modified(),
+            flag = _.initonly ? pulse.ADD
+              : mod ? pulse.SOURCE
+              : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
+              : pulse.ADD;
 
-  prototype$l.transform = function(_, pulse) {
-    var func = _.expr,
-        as = _.as,
-        mod = _.modified(),
-        flag = _.initonly ? pulse.ADD
-          : mod ? pulse.SOURCE
-          : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
-          : pulse.ADD;
+      if (mod) {
+        // parameters updated, need to reflow
+        pulse = pulse.materialize().reflow(true);
+      }
 
-    if (mod) {
-      // parameters updated, need to reflow
-      pulse = pulse.materialize().reflow(true);
+      if (!_.initonly) {
+        pulse.modifies(as);
+      }
+
+      return pulse.visit(flag, t => t[as] = func(t, _));
     }
-
-    if (!_.initonly) {
-      pulse.modifies(as);
-    }
-
-    return pulse.visit(flag, t => t[as] = func(t, _));
-  };
+  });
 
   /**
    * Generates data tuples using a provided generator function.
@@ -7510,38 +7510,38 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$m = inherits(Generate, Transform);
+  inherits(Generate, Transform, {
+    transform(_, pulse) {
+      let data = this.value,
+          out = pulse.fork(pulse.ALL),
+          num = _.size - data.length,
+          gen = _.generator,
+          add, rem, t;
 
-  prototype$m.transform = function(_, pulse) {
-    var data = this.value,
-        out = pulse.fork(pulse.ALL),
-        num = _.size - data.length,
-        gen = _.generator,
-        add, rem, t;
-
-    if (num > 0) {
-      // need more tuples, generate and add
-      for (add=[]; --num >= 0;) {
-        add.push(t = ingest(gen(_)));
-        data.push(t);
+      if (num > 0) {
+        // need more tuples, generate and add
+        for (add=[]; --num >= 0;) {
+          add.push(t = ingest(gen(_)));
+          data.push(t);
+        }
+        out.add = out.add.length
+          ? out.materialize(out.ADD).add.concat(add)
+          : add;
+      } else {
+        // need fewer tuples, remove
+        rem = data.slice(0, -num);
+        out.rem = out.rem.length
+          ? out.materialize(out.REM).rem.concat(rem)
+          : rem;
+        data = data.slice(-num);
       }
-      out.add = out.add.length
-        ? out.materialize(out.ADD).add.concat(add)
-        : add;
-    } else {
-      // need fewer tuples, remove
-      rem = data.slice(0, -num);
-      out.rem = out.rem.length
-        ? out.materialize(out.REM).rem.concat(rem)
-        : rem;
-      data = data.slice(-num);
+
+      out.source = this.value = data;
+      return out;
     }
+  });
 
-    out.source = this.value = data;
-    return out;
-  };
-
-  var Methods = {
+  const Methods = {
     value: 'value',
     median: median,
     mean: mean,
@@ -7549,7 +7549,7 @@
     max: max
   };
 
-  var Empty = [];
+  const Empty = [];
 
   /**
    * Impute missing values.
@@ -7588,8 +7588,6 @@
     ]
   };
 
-  var prototype$n = inherits(Impute, Transform);
-
   function getValue(_) {
     var m = _.method || Methods.value, v;
 
@@ -7597,7 +7595,7 @@
       error('Unrecognized imputation method: ' + m);
     } else if (m === Methods.value) {
       v = _.value !== undefined ? _.value : 0;
-      return function() { return v; };
+      return () => v;
     } else {
       return Methods[m];
     }
@@ -7605,58 +7603,60 @@
 
   function getField(_) {
     var f = _.field;
-    return function(t) { return t ? f(t) : NaN; };
+    return t => t ? f(t) : NaN;
   }
 
-  prototype$n.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        impute = getValue(_),
-        field = getField(_),
-        fName = accessorName(_.field),
-        kName = accessorName(_.key),
-        gNames = (_.groupby || []).map(accessorName),
-        groups = partition$1(pulse.source, _.groupby, _.key, _.keyvals),
-        curr = [],
-        prev = this.value,
-        m = groups.domain.length,
-        group, value, gVals, kVal, g, i, j, l, n, t;
+  inherits(Impute, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ALL),
+          impute = getValue(_),
+          field = getField(_),
+          fName = accessorName(_.field),
+          kName = accessorName(_.key),
+          gNames = (_.groupby || []).map(accessorName),
+          groups = partition$1(pulse.source, _.groupby, _.key, _.keyvals),
+          curr = [],
+          prev = this.value,
+          m = groups.domain.length,
+          group, value, gVals, kVal, g, i, j, l, n, t;
 
-    for (g=0, l=groups.length; g<l; ++g) {
-      group = groups[g];
-      gVals = group.values;
-      value = NaN;
+      for (g=0, l=groups.length; g<l; ++g) {
+        group = groups[g];
+        gVals = group.values;
+        value = NaN;
 
-      // add tuples for missing values
-      for (j=0; j<m; ++j) {
-        if (group[j] != null) continue;
-        kVal = groups.domain[j];
+        // add tuples for missing values
+        for (j=0; j<m; ++j) {
+          if (group[j] != null) continue;
+          kVal = groups.domain[j];
 
-        t = {_impute: true};
-        for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
-        t[kName] = kVal;
-        t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
+          t = {_impute: true};
+          for (i=0, n=gVals.length; i<n; ++i) t[gNames[i]] = gVals[i];
+          t[kName] = kVal;
+          t[fName] = Number.isNaN(value) ? (value = impute(group, field)) : value;
 
-        curr.push(ingest(t));
+          curr.push(ingest(t));
+        }
       }
+
+      // update pulse with imputed tuples
+      if (curr.length) out.add = out.materialize(out.ADD).add.concat(curr);
+      if (prev.length) out.rem = out.materialize(out.REM).rem.concat(prev);
+      this.value = curr;
+
+      return out;
     }
-
-    // update pulse with imputed tuples
-    if (curr.length) out.add = out.materialize(out.ADD).add.concat(curr);
-    if (prev.length) out.rem = out.materialize(out.REM).rem.concat(prev);
-    this.value = curr;
-
-    return out;
-  };
+  });
 
   function partition$1(data, groupby, key, keyvals) {
-    var get = function(f) { return f(t); },
+    var get = f => f(t),
         groups = [],
         domain = keyvals ? keyvals.slice() : [],
         kMap = {},
         gMap = {}, gVals, gKey,
         group, i, j, k, n, t;
 
-    domain.forEach(function(k, i) { kMap[k] = i + 1; });
+    domain.forEach((k, i) => kMap[k] = i + 1);
 
     for (i=0, n=data.length; i<n; ++i) {
       t = data[i];
@@ -7697,51 +7697,51 @@
     ]
   };
 
-  var prototype$o = inherits(JoinAggregate, Aggregate);
+  inherits(JoinAggregate, Aggregate, {
+    transform(_, pulse) {
+      let aggr = this,
+          mod = _.modified(),
+          cells;
 
-  prototype$o.transform = function(_, pulse) {
-    var aggr = this,
-        mod = _.modified(),
-        cells;
+      // process all input tuples to calculate aggregates
+      if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
+        cells = aggr.value = mod ? aggr.init(_) : {};
+        pulse.visit(pulse.SOURCE, t => aggr.add(t));
+      } else {
+        cells = aggr.value = aggr.value || this.init(_);
+        pulse.visit(pulse.REM, t => aggr.rem(t));
+        pulse.visit(pulse.ADD, t => aggr.add(t));
+      }
 
-    // process all input tuples to calculate aggregates
-    if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
-      cells = aggr.value = mod ? aggr.init(_) : {};
-      pulse.visit(pulse.SOURCE, function(t) { aggr.add(t); });
-    } else {
-      cells = aggr.value = aggr.value || this.init(_);
-      pulse.visit(pulse.REM, function(t) { aggr.rem(t); });
-      pulse.visit(pulse.ADD, function(t) { aggr.add(t); });
+      // update aggregation cells
+      aggr.changes();
+
+      // write aggregate values to input tuples
+      pulse.visit(pulse.SOURCE, t => {
+        extend(t, cells[aggr.cellkey(t)].tuple);
+      });
+
+      return pulse.reflow(mod).modifies(this._outputs);
+    },
+
+    changes() {
+      let adds = this._adds,
+          mods = this._mods,
+          i, n;
+
+      for (i=0, n=this._alen; i<n; ++i) {
+        this.celltuple(adds[i]);
+        adds[i] = null; // for garbage collection
+      }
+
+      for (i=0, n=this._mlen; i<n; ++i) {
+        this.celltuple(mods[i]);
+        mods[i] = null; // for garbage collection
+      }
+
+      this._alen = this._mlen = 0; // reset list of active cells
     }
-
-    // update aggregation cells
-    aggr.changes();
-
-    // write aggregate values to input tuples
-    pulse.visit(pulse.SOURCE, function(t) {
-      extend(t, cells[aggr.cellkey(t)].tuple);
-    });
-
-    return pulse.reflow(mod).modifies(this._outputs);
-  };
-
-  prototype$o.changes = function() {
-    var adds = this._adds,
-        mods = this._mods,
-        i, n;
-
-    for (i=0, n=this._alen; i<n; ++i) {
-      this.celltuple(adds[i]);
-      adds[i] = null; // for garbage collection
-    }
-
-    for (i=0, n=this._mlen; i<n; ++i) {
-      this.celltuple(mods[i]);
-      mods[i] = null; // for garbage collection
-    }
-
-    this._alen = this._mlen = 0; // reset list of active cells
-  };
+  });
 
   /**
    * Compute kernel density estimates (KDE) for one or more data groups.
@@ -7796,55 +7796,56 @@
     ]
   };
 
-  var prototype$p = inherits(KDE, Transform);
+  inherits(KDE, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
-  prototype$p.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        const source = pulse.materialize(pulse.SOURCE).source,
+              groups = partition(source, _.groupby, _.field),
+              names = (_.groupby || []).map(accessorName),
+              bandwidth = _.bandwidth,
+              method = _.cumulative ? 'cdf' : 'pdf',
+              as = _.as || ['value', 'density'],
+              values = [];
 
-    if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition(source, _.groupby, _.field),
-            names = (_.groupby || []).map(accessorName),
-            bandwidth = _.bandwidth,
-            method = _.cumulative ? 'cdf' : 'pdf',
-            as = _.as || ['value', 'density'],
-            values = [];
+        let domain = _.extent,
+            minsteps = _.steps || _.minsteps || 25,
+            maxsteps = _.steps || _.maxsteps || 200;
 
-      let domain = _.extent,
-          minsteps = _.steps || _.minsteps || 25,
-          maxsteps = _.steps || _.maxsteps || 200;
+        if (method !== 'pdf' && method !== 'cdf') {
+          error('Invalid density method: ' + method);
+        }
 
-      if (method !== 'pdf' && method !== 'cdf') {
-        error('Invalid density method: ' + method);
-      }
+        if (_.resolve === 'shared') {
+          if (!domain) domain = extent(source, _.field);
+          minsteps = maxsteps = _.steps || maxsteps;
+        }
 
-      if (_.resolve === 'shared') {
-        if (!domain) domain = extent(source, _.field);
-        minsteps = maxsteps = _.steps || maxsteps;
-      }
+        groups.forEach(g => {
+          const density = randomKDE(g, bandwidth)[method],
+                scale = _.counts ? g.length : 1,
+                local = domain || extent(g);
 
-      groups.forEach(g => {
-        const density = randomKDE(g, bandwidth)[method],
-              scale = _.counts ? g.length : 1,
-              local = domain || extent(g);
-
-        sampleCurve(density, local, minsteps, maxsteps).forEach(v => {
-          const t = {};
-          for (let i=0; i<names.length; ++i) {
-            t[names[i]] = g.dims[i];
-          }
-          t[as[0]] = v[0];
-          t[as[1]] = v[1] * scale;
-          values.push(ingest(t));
+          sampleCurve(density, local, minsteps, maxsteps)
+            .forEach(v => {
+              const t = {};
+              for (let i=0; i<names.length; ++i) {
+                t[names[i]] = g.dims[i];
+              }
+              t[as[0]] = v[0];
+              t[as[1]] = v[1] * scale;
+              values.push(ingest(t));
+            });
         });
-      });
 
-      if (this.value) out.rem = this.value;
-      this.value = out.add = out.source = values;
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
+      }
+
+      return out;
     }
-
-    return out;
-  };
+  });
 
   /**
    * Generates a key function.
@@ -7878,34 +7879,34 @@
     this._pending = null;
   }
 
-  var prototype$q = inherits(Load, Transform);
+  inherits(Load, Transform, {
+    transform(_, pulse) {
+      const df = pulse.dataflow;
 
-  prototype$q.transform = function(_, pulse) {
-    const df = pulse.dataflow;
+      if (this._pending) {
+        // update state and return pulse
+        return output$1(this, pulse, this._pending);
+      }
 
-    if (this._pending) {
-      // update state and return pulse
-      return output$1(this, pulse, this._pending);
+      if (stop(_)) return pulse.StopPropagation;
+
+      if (_.values) {
+        // parse and ingest values, return output pulse
+        return output$1(this, pulse, df.parse(_.values, _.format));
+      } else if (_.async) {
+        // return promise for non-blocking async loading
+        const p = df.request(_.url, _.format).then(res => {
+          this._pending = array(res.data);
+          return df => df.touch(this);
+        });
+        return {async: p};
+      } else {
+        // return promise for synchronous loading
+        return df.request(_.url, _.format)
+          .then(res => output$1(this, pulse, array(res.data)));
+      }
     }
-
-    if (stop(_)) return pulse.StopPropagation;
-
-    if (_.values) {
-      // parse and ingest values, return output pulse
-      return output$1(this, pulse, df.parse(_.values, _.format));
-    } else if (_.async) {
-      // return promise for non-blocking async loading
-      const p = df.request(_.url, _.format).then(res => {
-        this._pending = array(res.data);
-        return df => df.touch(this);
-      });
-      return {async: p};
-    } else {
-      // return promise for synchronous loading
-      return df.request(_.url, _.format)
-        .then(res => output$1(this, pulse, array(res.data)));
-    }
-  };
+  });
 
   function stop(_) {
     return _.modified('async') && !(
@@ -7951,61 +7952,61 @@
     ]
   };
 
-  var prototype$r = inherits(Lookup, Transform);
+  inherits(Lookup, Transform, {
+    transform(_, pulse) {
+      let out = pulse,
+          as = _.as,
+          keys = _.fields,
+          index = _.index,
+          values = _.values,
+          defaultValue = _.default==null ? null : _.default,
+          reset = _.modified(),
+          flag = reset ? pulse.SOURCE : pulse.ADD,
+          n = keys.length,
+          set, m, mods;
 
-  prototype$r.transform = function(_, pulse) {
-    var out = pulse,
-        as = _.as,
-        keys = _.fields,
-        index = _.index,
-        values = _.values,
-        defaultValue = _.default==null ? null : _.default,
-        reset = _.modified(),
-        flag = reset ? pulse.SOURCE : pulse.ADD,
-        n = keys.length,
-        set, m, mods;
+      if (values) {
+        m = values.length;
 
-    if (values) {
-      m = values.length;
-
-      if (n > 1 && !as) {
-        error('Multi-field lookup requires explicit "as" parameter.');
-      }
-      if (as && as.length !== n * m) {
-        error('The "as" parameter has too few output field names.');
-      }
-      as = as || values.map(accessorName);
-
-      set = function(t) {
-        for (var i=0, k=0, j, v; i<n; ++i) {
-          v = index.get(keys[i](t));
-          if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
-          else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+        if (n > 1 && !as) {
+          error('Multi-field lookup requires explicit "as" parameter.');
         }
-      };
-    } else {
-      if (!as) {
-        error('Missing output field names.');
+        if (as && as.length !== n * m) {
+          error('The "as" parameter has too few output field names.');
+        }
+        as = as || values.map(accessorName);
+
+        set = function(t) {
+          for (var i=0, k=0, j, v; i<n; ++i) {
+            v = index.get(keys[i](t));
+            if (v == null) for (j=0; j<m; ++j, ++k) t[as[k]] = defaultValue;
+            else for (j=0; j<m; ++j, ++k) t[as[k]] = values[j](v);
+          }
+        };
+      } else {
+        if (!as) {
+          error('Missing output field names.');
+        }
+
+        set = function(t) {
+          for (var i=0, v; i<n; ++i) {
+            v = index.get(keys[i](t));
+            t[as[i]] = v==null ? defaultValue : v;
+          }
+        };
       }
 
-      set = function(t) {
-        for (var i=0, v; i<n; ++i) {
-          v = index.get(keys[i](t));
-          t[as[i]] = v==null ? defaultValue : v;
-        }
-      };
-    }
+      if (reset) {
+        out = pulse.reflow(true);
+      } else {
+        mods = keys.some(k =>pulse.modified(k.fields));
+        flag |= (mods ? pulse.MOD : 0);
+      }
+      pulse.visit(flag, set);
 
-    if (reset) {
-      out = pulse.reflow(true);
-    } else {
-      mods = keys.some(function(k) { return pulse.modified(k.fields); });
-      flag |= (mods ? pulse.MOD : 0);
+      return out.modifies(as);
     }
-    pulse.visit(flag, set);
-
-    return out.modifies(as);
-  };
+  });
 
   /**
    * Computes global min/max extents over a collection of extents.
@@ -8024,7 +8025,7 @@
       return this.value;
     }
 
-    var min = +Infinity,
+    let min = +Infinity,
         max = -Infinity,
         ext = _.extents,
         i, n, e;
@@ -8052,7 +8053,7 @@
   function update$6(_) {
     return (this.value && !_.modified())
       ? this.value
-      : _.values.reduce(function(data, _) { return data.concat(_); }, []);
+      : _.values.reduce((data, _) => data.concat(_), []);
   }
 
   /**
@@ -8065,13 +8066,13 @@
     Transform.call(this, null, params);
   }
 
-  inherits(Params, Transform);
-
-  Params.prototype.transform = function(_, pulse) {
-    this.modified(_.modified());
-    this.value = _;
-    return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
-  };
+  inherits(Params, Transform, {
+    transform(_, pulse) {
+      this.modified(_.modified());
+      this.value = _;
+      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS); // do not pass tuples
+    }
+  });
 
   /**
    * Aggregate and pivot selected field values to become new fields.
@@ -8106,23 +8107,22 @@
     ]
   };
 
-  var prototype$s = inherits(Pivot, Aggregate);
-
-  prototype$s._transform = prototype$s.transform;
-
-  prototype$s.transform = function(_, pulse) {
-    return this._transform(aggregateParams(_, pulse), pulse);
-  };
+  inherits(Pivot, Aggregate, {
+    _transform: Aggregate.prototype.transform,
+    transform(_, pulse) {
+      return this._transform(aggregateParams(_, pulse), pulse);
+    }
+  });
 
   // Shoehorn a pivot transform into an aggregate transform!
   // First collect all unique pivot field values.
   // Then generate aggregate fields for each output pivot field.
   function aggregateParams(_, pulse) {
-    var key    = _.field,
-        value  = _.value,
-        op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
-        fields = accessorFields(key).concat(accessorFields(value)),
-        keys   = pivotKeys(key, _.limit || 0, pulse);
+    const key    = _.field,
+          value  = _.value,
+          op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
+          fields = accessorFields(key).concat(accessorFields(value)),
+          keys   = pivotKeys(key, _.limit || 0, pulse);
 
     // if data stream content changes, pivot fields may change
     // flag parameter modification to ensure re-initialization
@@ -8142,7 +8142,7 @@
   // Output NaN for non-existent values; aggregator will ignore!
   function get(k, key, value, fields) {
     return accessor(
-      function(d) { return key(d) === k ? value(d) : NaN; },
+      d => key(d) === k ? value(d) : NaN,
       fields,
       k + ''
     );
@@ -8150,24 +8150,18 @@
 
   // Collect (and optionally limit) all unique pivot values.
   function pivotKeys(key, limit, pulse) {
-    var map = {},
-        list = [];
+    const map = {},
+          list = [];
 
-    pulse.visit(pulse.SOURCE, function(t) {
-      var k = key(t);
+    pulse.visit(pulse.SOURCE, t => {
+      const k = key(t);
       if (!map[k]) {
         map[k] = 1;
         list.push(k);
       }
     });
 
-    // TODO? Move this comparator to vega-util?
-    list.sort(function(u, v) {
-      return (u<v||u==null) && v!=null ? -1
-        : (u>v||v==null) && u!=null ? 1
-        : ((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))!==u && v===v ? -1
-        : v!==v && u===u ? 1 : 0;
-    });
+    list.sort(ascending);
 
     return limit ? list.slice(0, limit) : list;
   }
@@ -8185,46 +8179,46 @@
     Facet.call(this, params);
   }
 
-  const prototype$t = inherits(PreFacet, Facet);
+  inherits(PreFacet, Facet, {
+    transform(_, pulse) {
+      const flow = _.subflow,
+            field = _.field,
+            subflow = t => this.subflow(tupleid(t), flow, pulse, t);
 
-  prototype$t.transform = function(_, pulse) {
-    const flow = _.subflow,
-          field = _.field,
-          subflow = t => this.subflow(tupleid(t), flow, pulse, t);
+      if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
+        error('PreFacet does not support field modification.');
+      }
 
-    if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
-      error('PreFacet does not support field modification.');
+      this.initTargets(); // reset list of active subflows
+
+      if (field) {
+        pulse.visit(pulse.MOD, t => {
+          const sf = subflow(t);
+          field(t).forEach(_ => sf.mod(_));
+        });
+
+        pulse.visit(pulse.ADD, t => {
+          const sf = subflow(t);
+          field(t).forEach(_ => sf.add(ingest(_)));
+        });
+
+        pulse.visit(pulse.REM, t => {
+          const sf = subflow(t);
+          field(t).forEach(_ => sf.rem(_));
+        });
+      } else {
+        pulse.visit(pulse.MOD, t => subflow(t).mod(t));
+        pulse.visit(pulse.ADD, t => subflow(t).add(t));
+        pulse.visit(pulse.REM, t => subflow(t).rem(t));
+      }
+
+      if (pulse.clean()) {
+        pulse.runAfter(() => this.clean());
+      }
+
+      return pulse;
     }
-
-    this.initTargets(); // reset list of active subflows
-
-    if (field) {
-      pulse.visit(pulse.MOD, t => {
-        const sf = subflow(t);
-        field(t).forEach(_ => sf.mod(_));
-      });
-
-      pulse.visit(pulse.ADD, t => {
-        const sf = subflow(t);
-        field(t).forEach(_ => sf.add(ingest(_)));
-      });
-
-      pulse.visit(pulse.REM, t => {
-        const sf = subflow(t);
-        field(t).forEach(_ => sf.rem(_));
-      });
-    } else {
-      pulse.visit(pulse.MOD, t => subflow(t).mod(t));
-      pulse.visit(pulse.ADD, t => subflow(t).add(t));
-      pulse.visit(pulse.REM, t => subflow(t).rem(t));
-    }
-
-    if (pulse.clean()) {
-      pulse.runAfter(() => this.clean());
-    }
-
-    return pulse;
-  };
+  });
 
   /**
    * Performs a relational projection, copying selected fields from source
@@ -8251,46 +8245,46 @@
     ]
   };
 
-  var prototype$u = inherits(Project, Transform);
+  inherits(Project, Transform, {
+    transform(_, pulse) {
+      let fields = _.fields,
+          as = fieldNames(_.fields, _.as || []),
+          derive = fields
+            ? (s, t) => project(s, t, fields, as)
+            : rederive,
+          out, lut;
 
-  prototype$u.transform = function(_, pulse) {
-    var fields = _.fields,
-        as = fieldNames(_.fields, _.as || []),
-        derive = fields
-          ? function(s, t) { return project(s, t, fields, as); }
-          : rederive,
-        out, lut;
+      if (this.value) {
+        lut = this.value;
+      } else {
+        pulse = pulse.addAll();
+        lut = this.value = {};
+      }
 
-    if (this.value) {
-      lut = this.value;
-    } else {
-      pulse = pulse.addAll();
-      lut = this.value = {};
+      out = pulse.fork(pulse.NO_SOURCE);
+
+      pulse.visit(pulse.REM, t => {
+        const id = tupleid(t);
+        out.rem.push(lut[id]);
+        lut[id] = null;
+      });
+
+      pulse.visit(pulse.ADD, t => {
+        const dt = derive(t, ingest({}));
+        lut[tupleid(t)] = dt;
+        out.add.push(dt);
+      });
+
+      pulse.visit(pulse.MOD, t => {
+        out.mod.push(derive(t, lut[tupleid(t)]));
+      });
+
+      return out;
     }
-
-    out = pulse.fork(pulse.NO_SOURCE);
-
-    pulse.visit(pulse.REM, function(t) {
-      var id = tupleid(t);
-      out.rem.push(lut[id]);
-      lut[id] = null;
-    });
-
-    pulse.visit(pulse.ADD, function(t) {
-      var dt = derive(t, ingest({}));
-      lut[tupleid(t)] = dt;
-      out.add.push(dt);
-    });
-
-    pulse.visit(pulse.MOD, function(t) {
-      out.mod.push(derive(t, lut[tupleid(t)]));
-    });
-
-    return out;
-  };
+  });
 
   function project(s, t, fields, as) {
-    for (var i=0, n=fields.length; i<n; ++i) {
+    for (let i=0, n=fields.length; i<n; ++i) {
       t[as[i]] = fields[i](s);
     }
     return t;
@@ -8307,14 +8301,14 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$v = inherits(Proxy, Transform);
-
-  prototype$v.transform = function(_, pulse) {
-    this.value = _.value;
-    return _.modified('value')
-      ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-      : pulse.StopPropagation;
-  };
+  inherits(Proxy, Transform, {
+    transform(_, pulse) {
+      this.value = _.value;
+      return _.modified('value')
+        ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
+        : pulse.StopPropagation;
+    }
+  });
 
   /**
    * Generates sample quantile values from an input data stream.
@@ -8348,46 +8342,46 @@
     ]
   };
 
-  var prototype$w = inherits(Quantile, Transform);
+  const EPSILON$1 = 1e-14;
 
-  var EPSILON$1 = 1e-14;
+  inherits(Quantile, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+            as = _.as || ['prob', 'value'];
 
-  prototype$w.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        as = _.as || ['prob', 'value'];
+      if (this.value && !_.modified() && !pulse.changed()) {
+        out.source = this.value;
+        return out;
+      }
 
-    if (this.value && !_.modified() && !pulse.changed()) {
-      out.source = this.value;
+      const source = pulse.materialize(pulse.SOURCE).source,
+            groups = partition(source, _.groupby, _.field),
+            names = (_.groupby || []).map(accessorName),
+            values = [],
+            step = _.step || 0.01,
+            p = _.probs || sequence(step/2, 1 - EPSILON$1, step),
+            n = p.length;
+
+      groups.forEach(g => {
+        const q = quantiles(g, p);
+
+        for (let i=0; i<n; ++i) {
+          const t = {};
+          for (let i=0; i<names.length; ++i) {
+            t[names[i]] = g.dims[i];
+          }
+          t[as[0]] = p[i];
+          t[as[1]] = q[i];
+          values.push(ingest(t));
+        }
+      });
+
+      if (this.value) out.rem = this.value;
+      this.value = out.add = out.source = values;
+
       return out;
     }
-
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby, _.field),
-          names = (_.groupby || []).map(accessorName),
-          values = [],
-          step = _.step || 0.01,
-          p = _.probs || sequence(step/2, 1 - EPSILON$1, step),
-          n = p.length;
-
-    groups.forEach(g => {
-      const q = quantiles(g, p);
-
-      for (let i=0; i<n; ++i) {
-        const t = {};
-        for (let i=0; i<names.length; ++i) {
-          t[names[i]] = g.dims[i];
-        }
-        t[as[0]] = p[i];
-        t[as[1]] = q[i];
-        values.push(ingest(t));
-      }
-    });
-
-    if (this.value) out.rem = this.value;
-    this.value = out.add = out.source = values;
-
-    return out;
-  };
+  });
 
   /**
    * Relays a data stream between data processing pipelines.
@@ -8403,47 +8397,47 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$x = inherits(Relay, Transform);
+  inherits(Relay, Transform, {
+    transform(_, pulse) {
+      let out, lut;
 
-  prototype$x.transform = function(_, pulse) {
-    var out, lut;
+      if (this.value) {
+        lut = this.value;
+      } else {
+        out = pulse = pulse.addAll();
+        lut = this.value = {};
+      }
 
-    if (this.value) {
-      lut = this.value;
-    } else {
-      out = pulse = pulse.addAll();
-      lut = this.value = {};
+      if (_.derive) {
+        out = pulse.fork(pulse.NO_SOURCE);
+
+        pulse.visit(pulse.REM, t => {
+          const id = tupleid(t);
+          out.rem.push(lut[id]);
+          lut[id] = null;
+        });
+
+        pulse.visit(pulse.ADD, t => {
+          const dt = derive(t);
+          lut[tupleid(t)] = dt;
+          out.add.push(dt);
+        });
+
+        pulse.visit(pulse.MOD, t => {
+          const dt = lut[tupleid(t)];
+          for (const k in t) {
+            dt[k] = t[k];
+            // down stream writes may overwrite re-derived tuples
+            // conservatively mark all source fields as modified
+            out.modifies(k);
+          }
+          out.mod.push(dt);
+        });
+      }
+
+      return out;
     }
-
-    if (_.derive) {
-      out = pulse.fork(pulse.NO_SOURCE);
-
-      pulse.visit(pulse.REM, t => {
-        var id = tupleid(t);
-        out.rem.push(lut[id]);
-        lut[id] = null;
-      });
-
-      pulse.visit(pulse.ADD, t => {
-        var dt = derive(t);
-        lut[tupleid(t)] = dt;
-        out.add.push(dt);
-      });
-
-      pulse.visit(pulse.MOD, t => {
-        var dt = lut[tupleid(t)], k;
-        for (k in t) {
-          dt[k] = t[k];
-          // down stream writes may overwrite re-derived tuples
-          // conservatively mark all source fields as modified
-          out.modifies(k);
-        }
-        out.mod.push(dt);
-      });
-    }
-
-    return out;
-  };
+  });
 
   /**
    * Samples tuples passing through this operator.
@@ -8465,91 +8459,89 @@
     ]
   };
 
-  var prototype$y = inherits(Sample, Transform);
+  inherits(Sample, Transform, {
+    transform(_, pulse) {
+      let out = pulse.fork(pulse.NO_SOURCE),
+          mod = _.modified('size'),
+          num = _.size,
+          res = this.value,
+          cnt = this.count,
+          cap = 0,
+          map = res.reduce((m, t) => (m[tupleid(t)] = 1, m), {});
 
-  prototype$y.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE),
-        mod = _.modified('size'),
-        num = _.size,
-        res = this.value,
-        cnt = this.count,
-        cap = 0,
-        map = res.reduce(function(m, t) {
-          m[tupleid(t)] = 1;
-          return m;
-        }, {});
+      // sample reservoir update function
+      function update(t) {
+        let p, idx;
 
-    // sample reservoir update function
-    function update(t) {
-      var p, idx;
-
-      if (res.length < num) {
-        res.push(t);
-      } else {
-        idx = ~~((cnt + 1) * exports.random());
-        if (idx < res.length && idx >= cap) {
-          p = res[idx];
-          if (map[tupleid(p)]) out.rem.push(p); // eviction
-          res[idx] = t;
+        if (res.length < num) {
+          res.push(t);
+        } else {
+          idx = ~~((cnt + 1) * exports.random());
+          if (idx < res.length && idx >= cap) {
+            p = res[idx];
+            if (map[tupleid(p)]) out.rem.push(p); // eviction
+            res[idx] = t;
+          }
         }
+        ++cnt;
       }
-      ++cnt;
-    }
 
-    if (pulse.rem.length) {
-      // find all tuples that should be removed, add to output
-      pulse.visit(pulse.REM, function(t) {
-        var id = tupleid(t);
-        if (map[id]) {
-          map[id] = -1;
-          out.rem.push(t);
+      if (pulse.rem.length) {
+        // find all tuples that should be removed, add to output
+        pulse.visit(pulse.REM, t => {
+          const id = tupleid(t);
+          if (map[id]) {
+            map[id] = -1;
+            out.rem.push(t);
+          }
+          --cnt;
+        });
+
+        // filter removed tuples out of the sample reservoir
+        res = res.filter(t => map[tupleid(t)] !== -1);
+      }
+
+      if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
+        // replenish sample if backing data source is available
+        cap = cnt = res.length;
+        pulse.visit(pulse.SOURCE, t => {
+          // update, but skip previously sampled tuples
+          if (!map[tupleid(t)]) update(t);
+        });
+        cap = -1;
+      }
+
+      if (mod && res.length > num) {
+        const n = res.length-num;
+        for (let i=0; i<n; ++i) {
+          map[tupleid(res[i])] = -1;
+          out.rem.push(res[i]);
         }
-        --cnt;
-      });
-
-      // filter removed tuples out of the sample reservoir
-      res = res.filter(function(t) { return map[tupleid(t)] !== -1; });
-    }
-
-    if ((pulse.rem.length || mod) && res.length < num && pulse.source) {
-      // replenish sample if backing data source is available
-      cap = cnt = res.length;
-      pulse.visit(pulse.SOURCE, function(t) {
-        // update, but skip previously sampled tuples
-        if (!map[tupleid(t)]) update(t);
-      });
-      cap = -1;
-    }
-
-    if (mod && res.length > num) {
-      for (var i=0, n=res.length-num; i<n; ++i) {
-        map[tupleid(res[i])] = -1;
-        out.rem.push(res[i]);
+        res = res.slice(n);
       }
-      res = res.slice(n);
-    }
 
-    if (pulse.mod.length) {
-      // propagate modified tuples in the sample reservoir
-      pulse.visit(pulse.MOD, function(t) {
-        if (map[tupleid(t)]) out.mod.push(t);
-      });
-    }
+      if (pulse.mod.length) {
+        // propagate modified tuples in the sample reservoir
+        pulse.visit(pulse.MOD, t => {
+          if (map[tupleid(t)]) out.mod.push(t);
+        });
+      }
 
-    if (pulse.add.length) {
-      // update sample reservoir
-      pulse.visit(pulse.ADD, update);
-    }
+      if (pulse.add.length) {
+        // update sample reservoir
+        pulse.visit(pulse.ADD, update);
+      }
 
-    if (pulse.add.length || cap < 0) {
-      // output newly added tuples
-      out.add = res.filter(function(t) { return !map[tupleid(t)]; });
-    }
+      if (pulse.add.length || cap < 0) {
+        // output newly added tuples
+        out.add = res.filter(t => !map[tupleid(t)]);
+      }
 
-    this.count = cnt;
-    this.value = out.source = res;
-    return out;
-  };
+      this.count = cnt;
+      this.value = out.source = res;
+      return out;
+    }
+  });
 
   /**
    * Generates data tuples for a specified sequence range of numbers.
@@ -8574,26 +8566,26 @@
     ]
   };
 
-  var prototype$z = inherits(Sequence, Transform);
+  inherits(Sequence, Transform, {
+    transform(_, pulse) {
+      if (this.value && !_.modified()) return;
 
-  prototype$z.transform = function(_, pulse) {
-    if (this.value && !_.modified()) return;
+      const out = pulse.materialize().fork(pulse.MOD),
+            as = _.as || 'data';
 
-    var out = pulse.materialize().fork(pulse.MOD),
-        as = _.as || 'data';
+      out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
 
-    out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
+      this.value = sequence(_.start, _.stop, _.step || 1).map(v => {
+        const t = {};
+        t[as] = v;
+        return ingest(t);
+      });
 
-    this.value = sequence(_.start, _.stop, _.step || 1).map(function(v) {
-      var t = {};
-      t[as] = v;
-      return ingest(t);
-    });
+      out.add = pulse.add.concat(this.value);
 
-    out.add = pulse.add.concat(this.value);
-
-    return out;
-  };
+      return out;
+    }
+  });
 
   /**
    * Propagates a new pulse without any tuples so long as the input
@@ -8606,14 +8598,14 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$A = inherits(Sieve, Transform);
-
-  prototype$A.transform = function(_, pulse) {
-    this.value = pulse.source;
-    return pulse.changed()
-      ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
-      : pulse.StopPropagation;
-  };
+  inherits(Sieve, Transform, {
+    transform(_, pulse) {
+      this.value = pulse.source;
+      return pulse.changed()
+        ? pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS)
+        : pulse.StopPropagation;
+    }
+  });
 
   /**
    * Discretize dates to specific time units.
@@ -8642,72 +8634,72 @@
     ]
   };
 
-  var prototype$B = inherits(TimeUnit, Transform);
+  inherits(TimeUnit, Transform, {
+    transform(_, pulse) {
+      let field = _.field,
+          band = _.interval !== false,
+          utc = _.timezone === 'utc',
+          floor = this._floor(_, pulse),
+          offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+          as = _.as || OUTPUT,
+          u0 = as[0],
+          u1 = as[1],
+          min = floor.start || Infinity,
+          max = floor.stop || -Infinity,
+          step = floor.step,
+          flag = pulse.ADD;
 
-  prototype$B.transform = function(_, pulse) {
-    var field = _.field,
-        band = _.interval !== false,
-        utc = _.timezone === 'utc',
-        floor = this._floor(_, pulse),
-        offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
-        as = _.as || OUTPUT,
-        u0 = as[0],
-        u1 = as[1],
-        min = floor.start || Infinity,
-        max = floor.stop || -Infinity,
-        step = floor.step,
-        flag = pulse.ADD;
-
-    if (_.modified() || pulse.modified(accessorFields(field))) {
-      pulse = pulse.reflow(true);
-      flag = pulse.SOURCE;
-      min = Infinity;
-      max = -Infinity;
-    }
-
-    pulse.visit(flag, function(t) {
-      var v = field(t), a, b;
-      if (v == null) {
-        t[u0] = null;
-        if (band) t[u1] = null;
-      } else {
-        t[u0] = a = b = floor(v);
-        if (band) t[u1] = b = offset(a, step);
-        if (a < min) min = a;
-        if (b > max) max = b;
+      if (_.modified() || pulse.modified(accessorFields(field))) {
+        pulse = pulse.reflow(true);
+        flag = pulse.SOURCE;
+        min = Infinity;
+        max = -Infinity;
       }
-    });
 
-    floor.start = min;
-    floor.stop = max;
-
-    return pulse.modifies(band ? as : u0);
-  };
-
-  prototype$B._floor = function(_, pulse) {
-    const utc = _.timezone === 'utc';
-
-    // get parameters
-    let {units, step} = _.units
-      ? {units: _.units, step: _.step || 1}
-      : timeBin({
-        extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
-        maxbins: _.maxbins
+      pulse.visit(flag, t => {
+        let v = field(t), a, b;
+        if (v == null) {
+          t[u0] = null;
+          if (band) t[u1] = null;
+        } else {
+          t[u0] = a = b = floor(v);
+          if (band) t[u1] = b = offset(a, step);
+          if (a < min) min = a;
+          if (b > max) max = b;
+        }
       });
 
-    // check / standardize time units
-    units = timeUnits(units);
+      floor.start = min;
+      floor.stop = max;
 
-    const prev = this.value || {},
-          floor = (utc ? utcFloor : timeFloor)(units, step);
+      return pulse.modifies(band ? as : u0);
+    },
 
-    floor.unit = peek(units);
-    floor.units = units;
-    floor.step = step;
-    floor.start = prev.start;
-    floor.stop = prev.stop;
-    return this.value = floor;
-  };
+    _floor(_, pulse) {
+      const utc = _.timezone === 'utc';
+
+      // get parameters
+      let {units, step} = _.units
+        ? {units: _.units, step: _.step || 1}
+        : timeBin({
+          extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
+          maxbins: _.maxbins
+        });
+
+      // check / standardize time units
+      units = timeUnits(units);
+
+      const prev = this.value || {},
+            floor = (utc ? utcFloor : timeFloor)(units, step);
+
+      floor.unit = peek(units);
+      floor.units = units;
+      floor.step = step;
+      floor.start = prev.start;
+      floor.stop = prev.stop;
+      return this.value = floor;
+    }
+  });
 
   /**
    * An index that maps from unique, string-coerced, field values to tuples.
@@ -8720,30 +8712,30 @@
     Transform.call(this, fastmap(), params);
   }
 
-  var prototype$C = inherits(TupleIndex, Transform);
+  inherits(TupleIndex, Transform, {
+    transform(_, pulse) {
+      const df = pulse.dataflow,
+          field = _.field,
+          index = this.value,
+          set = t => index.set(field(t), t);
 
-  prototype$C.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        field = _.field,
-        index = this.value,
-        mod = true;
+      let mod = true;
 
-    function set(t) { index.set(field(t), t); }
+      if (_.modified('field') || pulse.modified(field.fields)) {
+        index.clear();
+        pulse.visit(pulse.SOURCE, set);
+      } else if (pulse.changed()) {
+        pulse.visit(pulse.REM, t => index.delete(field(t)));
+        pulse.visit(pulse.ADD, set);
+      } else {
+        mod = false;
+      }
 
-    if (_.modified('field') || pulse.modified(field.fields)) {
-      index.clear();
-      pulse.visit(pulse.SOURCE, set);
-    } else if (pulse.changed()) {
-      pulse.visit(pulse.REM, function(t) { index.delete(field(t)); });
-      pulse.visit(pulse.ADD, set);
-    } else {
-      mod = false;
+      this.modified(mod);
+      if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
+      return pulse.fork();
     }
-
-    this.modified(mod);
-    if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
-    return pulse.fork();
-  };
+  });
 
   /**
    * Extracts an array of values. Assumes the source data has already been
@@ -8759,21 +8751,21 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$D = inherits(Values, Transform);
+  inherits(Values, Transform, {
+    transform(_, pulse) {
+      const run = !this.value
+        || _.modified('field')
+        || _.modified('sort')
+        || pulse.changed()
+        || (_.sort && pulse.modified(_.sort.fields));
 
-  prototype$D.transform = function(_, pulse) {
-    var run = !this.value
-      || _.modified('field')
-      || _.modified('sort')
-      || pulse.changed()
-      || (_.sort && pulse.modified(_.sort.fields));
-
-    if (run) {
-      this.value = (_.sort
-        ? pulse.source.slice().sort(stableCompare(_.sort))
-        : pulse.source).map(_.field);
+      if (run) {
+        this.value = (_.sort
+          ? pulse.source.slice().sort(stableCompare(_.sort))
+          : pulse.source).map(_.field);
+      }
     }
-  };
+  });
 
   function WindowOp(op, field, param, as) {
     let fn = WindowOps[op](field, param);
@@ -8920,7 +8912,7 @@
     return -1;
   }
 
-  var ValidWindowOps = Object.keys(WindowOps);
+  const ValidWindowOps = Object.keys(WindowOps);
 
   function WindowState(_) {
     let self = this,
@@ -8982,14 +8974,14 @@
     self.inputs = Object.keys(inputs);
   }
 
-  const prototype$E = WindowState.prototype;
+  const prototype$1 = WindowState.prototype;
 
-  prototype$E.init = function() {
+  prototype$1.init = function() {
     this.windows.forEach(_ => _.init());
     if (this.cell) this.cell.init();
   };
 
-  prototype$E.update = function(w, t) {
+  prototype$1.update = function(w, t) {
     let self = this,
         cell = self.cell,
         wind = self.windows,
@@ -9101,77 +9093,73 @@
     ]
   };
 
-  var prototype$F = inherits(Window, Transform);
+  inherits(Window, Transform, {
+    transform(_, pulse) {
+      this.stamp = pulse.stamp;
 
-  prototype$F.transform = function(_, pulse) {
-    var self = this,
-        state = self.state,
-        mod = _.modified(),
-        cmp = stableCompare(_.sort),
-        i, n;
+      const mod = _.modified(),
+            cmp = stableCompare(_.sort),
+            key = groupkey(_.groupby),
+            group = t => this.group(key(t));
 
-    this.stamp = pulse.stamp;
+      // initialize window state
+      let state = this.state;
+      if (!state || mod) {
+        state = this.state = new WindowState(_);
+      }
 
-    // initialize window state
-    if (!state || mod) {
-      state = self.state = new WindowState(_);
+      // partition input tuples
+      if (mod || pulse.modified(state.inputs)) {
+        this.value = {};
+        pulse.visit(pulse.SOURCE, t => group(t).add(t));
+      } else {
+        pulse.visit(pulse.REM, t => group(t).remove(t));
+        pulse.visit(pulse.ADD, t => group(t).add(t));
+      }
+
+      // perform window calculations for each modified partition
+      for (let i=0, n=this._mlen; i<n; ++i) {
+        processPartition(this._mods[i], state, cmp, _);
+      }
+      this._mlen = 0;
+      this._mods = [];
+
+      // TODO don't reflow everything?
+      return pulse.reflow(mod).modifies(state.outputs);
+    },
+
+    group(key) {
+      let self = this,
+          group = self.value[key];
+
+      if (!group) {
+        group = self.value[key] = SortedList(tupleid);
+        group.stamp = -1;
+      }
+
+      if (group.stamp < self.stamp) {
+        group.stamp = self.stamp;
+        self._mods[self._mlen++] = group;
+      }
+
+      return group;
     }
-
-    // retrieve group for a tuple
-    var key = groupkey(_.groupby);
-    function group(t) { return self.group(key(t)); }
-
-    // partition input tuples
-    if (mod || pulse.modified(state.inputs)) {
-      self.value = {};
-      pulse.visit(pulse.SOURCE, function(t) { group(t).add(t); });
-    } else {
-      pulse.visit(pulse.REM, function(t) { group(t).remove(t); });
-      pulse.visit(pulse.ADD, function(t) { group(t).add(t); });
-    }
-
-    // perform window calculations for each modified partition
-    for (i=0, n=self._mlen; i<n; ++i) {
-      processPartition(self._mods[i], state, cmp, _);
-    }
-    self._mlen = 0;
-    self._mods = [];
-
-    // TODO don't reflow everything?
-    return pulse.reflow(mod).modifies(state.outputs);
-  };
-
-  prototype$F.group = function(key) {
-    var self = this,
-        group = self.value[key];
-
-    if (!group) {
-      group = self.value[key] = SortedList(tupleid);
-      group.stamp = -1;
-    }
-
-    if (group.stamp < self.stamp) {
-      group.stamp = self.stamp;
-      self._mods[self._mlen++] = group;
-    }
-
-    return group;
-  };
+  });
 
   function processPartition(list, state, cmp, _) {
-    var sort = _.sort,
-        range = sort && !_.ignorePeers,
-        frame = _.frame || [null, 0],
-        data = list.data(cmp), // use cmp for stable sort
-        n = data.length,
-        i = 0,
-        b = range ? bisector(sort) : null,
-        w = {
-          i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
-          data: data, compare: sort || constant(-1)
-        };
+    const sort = _.sort,
+          range = sort && !_.ignorePeers,
+          frame = _.frame || [null, 0],
+          data = list.data(cmp), // use cmp for stable sort
+          n = data.length,
+          b = range ? bisector(sort) : null,
+          w = {
+            i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
+            data: data, compare: sort || constant(-1)
+          };
 
-    for (state.init(); i<n; ++i) {
+    state.init();
+    for (let i=0; i<n; ++i) {
       setWindow(w, frame, i, n);
       if (range) adjustRange(w, b);
       state.update(w, data[i]);
@@ -9188,11 +9176,11 @@
 
   // if frame type is 'range', adjust window for peer values
   function adjustRange(w, bisect) {
-    var r0 = w.i0,
-        r1 = w.i1 - 1,
-        c = w.compare,
-        d = w.data,
-        n = d.length - 1;
+    const r0 = w.i0,
+          r1 = w.i1 - 1,
+          c = w.compare,
+          d = w.data,
+          n = d.length - 1;
 
     if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect.left(d, d[r0]);
     if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);
@@ -9354,7 +9342,7 @@
     };
   }
 
-  var lookup = {
+  const lookup = {
     'basis': {
       curve: d3Shape.curveBasis
     },
@@ -9438,11 +9426,17 @@
   }
 
   // Path parsing and rendering code adapted from fabric.js -- Thanks!
-  var cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-      regexp = [/([MLHVCSQTAZmlhvcsqtaz])/g, /###/, /(\d)([-+])/g, /\s|,|###/];
+  const cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
+        regexp = [
+          /([MLHVCSQTAZmlhvcsqtaz])/g,
+          /###/,
+          /(\.\d+)(\.\d)/g,
+          /(\d)([-+])/g,
+          /\s|,|###/
+        ];
 
   function pathParse(pathstr) {
-    var result = [],
+    let result = [],
         path,
         curr,
         chunks,
@@ -9462,8 +9456,9 @@
       chunks = curr
         .slice(1)
         .trim()
-        .replace(regexp[2],'$1###$2')
-        .split(regexp[3]);
+        .replace(regexp[2], '$1###$2')
+        .replace(regexp[3], '$1###$2')
+        .split(regexp[4]);
       cmd = curr.charAt(0);
 
       parsed = [cmd];
@@ -9474,8 +9469,14 @@
       }
 
       len = cmdlen[cmd.toLowerCase()];
-      if (parsed.length-1 > len) {
-        for (j=1, m=parsed.length; j<m; j+=len) {
+      if (parsed.length - 1 > len) {
+        let j = 1, m = parsed.length;
+        result.push([cmd].concat(parsed.slice(j, j += len)));
+
+        // handle implicit lineTo (#2803)
+        cmd = cmd === 'M' ? 'L' : cmd === 'm' ? 'l' : cmd;
+
+        for (; j < m; j += len) {
           result.push([cmd].concat(parsed.slice(j, j+len)));
         }
       }
@@ -10370,16 +10371,16 @@
   }
 
   function area(context, items) {
-    var item = items[0],
-        interp = item.interpolate || 'linear';
+    const item = items[0],
+          interp = item.interpolate || 'linear';
     return (item.orient === 'horizontal' ? areahShape : areavShape)
       .curve(curves(interp, item.orient, item.tension))
       .context(context)(items);
   }
 
   function line(context, items) {
-    var item = items[0],
-        interp = item.interpolate || 'linear';
+    const item = items[0],
+          interp = item.interpolate || 'linear';
     return lineShape.curve(curves(interp, item.orient, item.tension))
       .context(context)(items);
   }
@@ -10430,178 +10431,178 @@
     if (b) this.union(b);
   }
 
-  var prototype$G = Bounds.prototype;
+  Bounds.prototype = {
+    clone() {
+      return new Bounds(this);
+    },
 
-  prototype$G.clone = function() {
-    return new Bounds(this);
-  };
+    clear() {
+      this.x1 = +Number.MAX_VALUE;
+      this.y1 = +Number.MAX_VALUE;
+      this.x2 = -Number.MAX_VALUE;
+      this.y2 = -Number.MAX_VALUE;
+      return this;
+    },
 
-  prototype$G.clear = function() {
-    this.x1 = +Number.MAX_VALUE;
-    this.y1 = +Number.MAX_VALUE;
-    this.x2 = -Number.MAX_VALUE;
-    this.y2 = -Number.MAX_VALUE;
-    return this;
-  };
+    empty() {
+      return (
+        this.x1 === +Number.MAX_VALUE &&
+        this.y1 === +Number.MAX_VALUE &&
+        this.x2 === -Number.MAX_VALUE &&
+        this.y2 === -Number.MAX_VALUE
+      );
+    },
 
-  prototype$G.empty = function() {
-    return (
-      this.x1 === +Number.MAX_VALUE &&
-      this.y1 === +Number.MAX_VALUE &&
-      this.x2 === -Number.MAX_VALUE &&
-      this.y2 === -Number.MAX_VALUE
-    );
-  };
+    equals(b) {
+      return (
+        this.x1 === b.x1 &&
+        this.y1 === b.y1 &&
+        this.x2 === b.x2 &&
+        this.y2 === b.y2
+      );
+    },
 
-  prototype$G.equals = function(b) {
-    return (
-      this.x1 === b.x1 &&
-      this.y1 === b.y1 &&
-      this.x2 === b.x2 &&
-      this.y2 === b.y2
-    );
-  };
+    set(x1, y1, x2, y2) {
+      if (x2 < x1) {
+        this.x2 = x1;
+        this.x1 = x2;
+      } else {
+        this.x1 = x1;
+        this.x2 = x2;
+      }
+      if (y2 < y1) {
+        this.y2 = y1;
+        this.y1 = y2;
+      } else {
+        this.y1 = y1;
+        this.y2 = y2;
+      }
+      return this;
+    },
 
-  prototype$G.set = function(x1, y1, x2, y2) {
-    if (x2 < x1) {
-      this.x2 = x1;
-      this.x1 = x2;
-    } else {
-      this.x1 = x1;
-      this.x2 = x2;
+    add(x, y) {
+      if (x < this.x1) this.x1 = x;
+      if (y < this.y1) this.y1 = y;
+      if (x > this.x2) this.x2 = x;
+      if (y > this.y2) this.y2 = y;
+      return this;
+    },
+
+    expand(d) {
+      this.x1 -= d;
+      this.y1 -= d;
+      this.x2 += d;
+      this.y2 += d;
+      return this;
+    },
+
+    round() {
+      this.x1 = Math.floor(this.x1);
+      this.y1 = Math.floor(this.y1);
+      this.x2 = Math.ceil(this.x2);
+      this.y2 = Math.ceil(this.y2);
+      return this;
+    },
+
+    scale(s) {
+      this.x1 *= s;
+      this.y1 *= s;
+      this.x2 *= s;
+      this.y2 *= s;
+      return this;
+    },
+
+    translate(dx, dy) {
+      this.x1 += dx;
+      this.x2 += dx;
+      this.y1 += dy;
+      this.y2 += dy;
+      return this;
+    },
+
+    rotate(angle, x, y) {
+      const p = this.rotatedPoints(angle, x, y);
+      return this.clear()
+        .add(p[0], p[1])
+        .add(p[2], p[3])
+        .add(p[4], p[5])
+        .add(p[6], p[7]);
+    },
+
+    rotatedPoints(angle, x, y) {
+      var {x1, y1, x2, y2} = this,
+          cos = Math.cos(angle),
+          sin = Math.sin(angle),
+          cx = x - x * cos + y * sin,
+          cy = y - x * sin - y * cos;
+
+      return [
+        cos * x1 - sin * y1 + cx, sin * x1 + cos * y1 + cy,
+        cos * x1 - sin * y2 + cx, sin * x1 + cos * y2 + cy,
+        cos * x2 - sin * y1 + cx, sin * x2 + cos * y1 + cy,
+        cos * x2 - sin * y2 + cx, sin * x2 + cos * y2 + cy
+      ];
+    },
+
+    union(b) {
+      if (b.x1 < this.x1) this.x1 = b.x1;
+      if (b.y1 < this.y1) this.y1 = b.y1;
+      if (b.x2 > this.x2) this.x2 = b.x2;
+      if (b.y2 > this.y2) this.y2 = b.y2;
+      return this;
+    },
+
+    intersect(b) {
+      if (b.x1 > this.x1) this.x1 = b.x1;
+      if (b.y1 > this.y1) this.y1 = b.y1;
+      if (b.x2 < this.x2) this.x2 = b.x2;
+      if (b.y2 < this.y2) this.y2 = b.y2;
+      return this;
+    },
+
+    encloses(b) {
+      return b && (
+        this.x1 <= b.x1 &&
+        this.x2 >= b.x2 &&
+        this.y1 <= b.y1 &&
+        this.y2 >= b.y2
+      );
+    },
+
+    alignsWith(b) {
+      return b && (
+        this.x1 == b.x1 ||
+        this.x2 == b.x2 ||
+        this.y1 == b.y1 ||
+        this.y2 == b.y2
+      );
+    },
+
+    intersects(b) {
+      return b && !(
+        this.x2 < b.x1 ||
+        this.x1 > b.x2 ||
+        this.y2 < b.y1 ||
+        this.y1 > b.y2
+      );
+    },
+
+    contains(x, y) {
+      return !(
+        x < this.x1 ||
+        x > this.x2 ||
+        y < this.y1 ||
+        y > this.y2
+      );
+    },
+
+    width() {
+      return this.x2 - this.x1;
+    },
+
+    height() {
+      return this.y2 - this.y1;
     }
-    if (y2 < y1) {
-      this.y2 = y1;
-      this.y1 = y2;
-    } else {
-      this.y1 = y1;
-      this.y2 = y2;
-    }
-    return this;
-  };
-
-  prototype$G.add = function(x, y) {
-    if (x < this.x1) this.x1 = x;
-    if (y < this.y1) this.y1 = y;
-    if (x > this.x2) this.x2 = x;
-    if (y > this.y2) this.y2 = y;
-    return this;
-  };
-
-  prototype$G.expand = function(d) {
-    this.x1 -= d;
-    this.y1 -= d;
-    this.x2 += d;
-    this.y2 += d;
-    return this;
-  };
-
-  prototype$G.round = function() {
-    this.x1 = Math.floor(this.x1);
-    this.y1 = Math.floor(this.y1);
-    this.x2 = Math.ceil(this.x2);
-    this.y2 = Math.ceil(this.y2);
-    return this;
-  };
-
-  prototype$G.scale = function(s) {
-    this.x1 *= s;
-    this.y1 *= s;
-    this.x2 *= s;
-    this.y2 *= s;
-    return this;
-  };
-
-  prototype$G.translate = function(dx, dy) {
-    this.x1 += dx;
-    this.x2 += dx;
-    this.y1 += dy;
-    this.y2 += dy;
-    return this;
-  };
-
-  prototype$G.rotate = function(angle, x, y) {
-    const p = this.rotatedPoints(angle, x, y);
-    return this.clear()
-      .add(p[0], p[1])
-      .add(p[2], p[3])
-      .add(p[4], p[5])
-      .add(p[6], p[7]);
-  };
-
-  prototype$G.rotatedPoints = function(angle, x, y) {
-    var {x1, y1, x2, y2} = this,
-        cos = Math.cos(angle),
-        sin = Math.sin(angle),
-        cx = x - x*cos + y*sin,
-        cy = y - x*sin - y*cos;
-
-    return [
-      cos*x1 - sin*y1 + cx, sin*x1 + cos*y1 + cy,
-      cos*x1 - sin*y2 + cx, sin*x1 + cos*y2 + cy,
-      cos*x2 - sin*y1 + cx, sin*x2 + cos*y1 + cy,
-      cos*x2 - sin*y2 + cx, sin*x2 + cos*y2 + cy
-    ];
-  };
-
-  prototype$G.union = function(b) {
-    if (b.x1 < this.x1) this.x1 = b.x1;
-    if (b.y1 < this.y1) this.y1 = b.y1;
-    if (b.x2 > this.x2) this.x2 = b.x2;
-    if (b.y2 > this.y2) this.y2 = b.y2;
-    return this;
-  };
-
-  prototype$G.intersect = function(b) {
-    if (b.x1 > this.x1) this.x1 = b.x1;
-    if (b.y1 > this.y1) this.y1 = b.y1;
-    if (b.x2 < this.x2) this.x2 = b.x2;
-    if (b.y2 < this.y2) this.y2 = b.y2;
-    return this;
-  };
-
-  prototype$G.encloses = function(b) {
-    return b && (
-      this.x1 <= b.x1 &&
-      this.x2 >= b.x2 &&
-      this.y1 <= b.y1 &&
-      this.y2 >= b.y2
-    );
-  };
-
-  prototype$G.alignsWith = function(b) {
-    return b && (
-      this.x1 == b.x1 ||
-      this.x2 == b.x2 ||
-      this.y1 == b.y1 ||
-      this.y2 == b.y2
-    );
-  };
-
-  prototype$G.intersects = function(b) {
-    return b && !(
-      this.x2 < b.x1 ||
-      this.x1 > b.x2 ||
-      this.y2 < b.y1 ||
-      this.y1 > b.y2
-    );
-  };
-
-  prototype$G.contains = function(x, y) {
-    return !(
-      x < this.x1 ||
-      x > this.x2 ||
-      y < this.y1 ||
-      y > this.y2
-    );
-  };
-
-  prototype$G.width = function() {
-    return this.x2 - this.x1;
-  };
-
-  prototype$G.height = function() {
-    return this.y2 - this.y1;
   };
 
   function Item(mark) {
@@ -10618,7 +10619,7 @@
 
   function domCanvas(w, h) {
     if (typeof document !== 'undefined' && document.createElement) {
-      var c = document.createElement('canvas');
+      const c = document.createElement('canvas');
       if (c && c.getContext) {
         c.width = w;
         c.height = h;
@@ -10628,20 +10629,13 @@
     return null;
   }
 
-  function domImage() {
-    return typeof Image !== 'undefined' ? Image : null;
-  }
+  const domImage = () =>
+    typeof Image !== 'undefined' ? Image : null;
 
   function ResourceLoader(customLoader) {
     this._pending = 0;
     this._loader = customLoader || loader();
   }
-
-  var prototype$H = ResourceLoader.prototype;
-
-  prototype$H.pending = function() {
-    return this._pending;
-  };
 
   function increment(loader) {
     loader._pending += 1;
@@ -10651,61 +10645,67 @@
     loader._pending -= 1;
   }
 
-  prototype$H.sanitizeURL = function(uri) {
-    var loader = this;
-    increment(loader);
+  ResourceLoader.prototype = {
+    pending() {
+      return this._pending;
+    },
 
-    return loader._loader.sanitize(uri, {context:'href'})
-      .then(function(opt) {
-        decrement(loader);
-        return opt;
-      })
-      .catch(function() {
-        decrement(loader);
-        return null;
+    sanitizeURL(uri) {
+      var loader = this;
+      increment(loader);
+
+      return loader._loader.sanitize(uri, {context:'href'})
+        .then(function(opt) {
+          decrement(loader);
+          return opt;
+        })
+        .catch(function() {
+          decrement(loader);
+          return null;
+        });
+    },
+
+    loadImage(uri) {
+      const loader = this,
+            Image = domImage();
+      increment(loader);
+
+      return loader._loader
+        .sanitize(uri, {context: 'image'})
+        .then(function(opt) {
+          const url = opt.href;
+          if (!url || !Image) throw {url: url};
+
+          const img = new Image();
+
+          // set crossOrigin only if cors is defined; empty string sets anonymous mode
+          // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
+          const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
+          if (cors != null) img.crossOrigin = cors;
+
+          // attempt to load image resource
+          img.onload = () => decrement(loader);
+          img.onerror = () => decrement(loader);
+          img.src = url;
+
+          return img;
+        })
+        .catch(function(e) {
+          decrement(loader);
+          return {complete: false, width: 0, height: 0, src: e && e.url || ''};
+        });
+    },
+
+    ready() {
+      var loader = this;
+      return new Promise(function(accept) {
+        function poll(value) {
+          if (!loader.pending()) accept(value);
+          else setTimeout(function() { poll(true); }, 10);
+        }
+        poll(false);
       });
-  };
-
-  prototype$H.loadImage = function(uri) {
-    const loader = this,
-          Image = domImage();
-    increment(loader);
-
-    return loader._loader
-      .sanitize(uri, {context: 'image'})
-      .then(function(opt) {
-        const url = opt.href;
-        if (!url || !Image) throw {url: url};
-
-        const img = new Image();
-
-        // set crossOrigin only if cors is defined; empty string sets anonymous mode
-        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
-        const cors = hasOwnProperty(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
-        if (cors != null) img.crossOrigin = cors;
-
-        // attempt to load image resource
-        img.onload = () => decrement(loader);
-        img.onerror = () => decrement(loader);
-        img.src = url;
-
-        return img;
-      })
-      .catch(function(e) {
-        decrement(loader);
-        return {complete: false, width: 0, height: 0, src: e && e.url || ''};
-      });
-  };
-
-  prototype$H.ready = function() {
-    var loader = this;
-    return new Promise(function(accept) {
-      function poll(value) {
-        if (!loader.pending()) accept(value);
-        else setTimeout(function() { poll(true); }, 10);
-      }
-      poll(false);
-    });
+    }
   };
 
   function boundStroke(bounds, item, miter) {
@@ -10721,53 +10721,121 @@
     return item.strokeJoin && item.strokeJoin !== 'miter' ? 0 : strokeWidth;
   }
 
-  var bounds, lx, ly,
-      circleThreshold = Tau - 1e-8;
+  const circleThreshold = Tau - 1e-8;
+  let bounds, lx, ly, rot, ma, mb, mc, md;
 
-  function context(_) {
+  const add$2 = (x, y) => bounds.add(x, y);
+  const addL = (x, y) => add$2(lx = x, ly = y);
+  const addX = x => add$2(x, bounds.y1);
+  const addY = y => add$2(bounds.x1, y);
+
+  const px = (x, y) => ma * x + mc * y;
+  const py = (x, y) => mb * x + md * y;
+  const addp = (x, y) => add$2(px(x, y), py(x, y));
+  const addpL = (x, y) => addL(px(x, y), py(x, y));
+
+  function boundContext(_, deg) {
     bounds = _;
+    if (deg) {
+      rot = deg * DegToRad;
+      ma = md = Math.cos(rot);
+      mb = Math.sin(rot);
+      mc = -mb;
+    } else {
+      ma = md = 1;
+      rot = mb = mc = 0;
+    }
     return context;
   }
 
-  function noop$1() {}
+  const context = {
+    beginPath() {},
+    closePath() {},
 
-  function add$2(x, y) { bounds.add(x, y); }
+    moveTo: addpL,
+    lineTo: addpL,
 
-  function addL(x, y) { add$2(lx = x, ly = y); }
+    rect(x, y, w, h) {
+      if (rot) {
+        addp(x + w, y);
+        addp(x + w, y + h);
+        addp(x, y + h);
+        addpL(x, y);
+      } else {
+        add$2(x + w, y + h);
+        addL(x, y);
+      }
+    },
 
-  function addX(x) { add$2(x, bounds.y1); }
+    quadraticCurveTo(x1, y1, x2, y2) {
+      const px1 = px(x1, y1),
+            py1 = py(x1, y1),
+            px2 = px(x2, y2),
+            py2 = py(x2, y2);
+      quadExtrema(lx, px1, px2, addX);
+      quadExtrema(ly, py1, py2, addY);
+      addL(px2, py2);
+    },
 
-  function addY(y) { add$2(bounds.x1, y); }
+    bezierCurveTo(x1, y1, x2, y2, x3, y3) {
+      const px1 = px(x1, y1),
+            py1 = py(x1, y1),
+            px2 = px(x2, y2),
+            py2 = py(x2, y2),
+            px3 = px(x3, y3),
+            py3 = py(x3, y3);
+      cubicExtrema(lx, px1, px2, px3, addX);
+      cubicExtrema(ly, py1, py2, py3, addY);
+      addL(px3, py3);
+    },
 
-  context.beginPath = noop$1;
+    arc(cx, cy, r, sa, ea, ccw) {
+      sa += rot;
+      ea += rot;
 
-  context.closePath = noop$1;
+      // store last point on path
+      lx = r * Math.cos(ea) + cx;
+      ly = r * Math.sin(ea) + cy;
 
-  context.moveTo = addL;
+      if (Math.abs(ea - sa) > circleThreshold) {
+        // treat as full circle
+        add$2(cx - r, cy - r);
+        add$2(cx + r, cy + r);
+      } else {
+        const update = a => add$2(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
+        let s, i;
 
-  context.lineTo = addL;
+        // sample end points
+        update(sa);
+        update(ea);
 
-  context.rect = function(x, y, w, h) {
-    add$2(x + w, y + h);
-    addL(x, y);
-  };
+        // sample interior points aligned with 90 degrees
+        if (ea !== sa) {
+          sa = sa % Tau; if (sa < 0) sa += Tau;
+          ea = ea % Tau; if (ea < 0) ea += Tau;
 
-  context.quadraticCurveTo = function(x1, y1, x2, y2) {
-    quadExtrema(lx, x1, x2, addX);
-    quadExtrema(ly, y1, y2, addY);
-    addL(x2, y2);
+          if (ea < sa) {
+            ccw = !ccw; // flip direction
+            s = sa; sa = ea; ea = s; // swap end-points
+          }
+
+          if (ccw) {
+            ea -= Tau;
+            s = sa - (sa % HalfPi);
+            for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
+          } else {
+            s = sa - (sa % HalfPi) + HalfPi;
+            for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
+          }
+        }
+      }
+    }
   };
 
   function quadExtrema(x0, x1, x2, cb) {
     const t = (x0 - x1) / (x0 + x2 - 2 * x1);
     if (0 < t && t < 1) cb(x0 + (x1 - x0) * t);
   }
-
-  context.bezierCurveTo = function(x1, y1, x2, y2, x3, y3) {
-    cubicExtrema(lx, x1, x2, x3, addX);
-    cubicExtrema(ly, y1, y2, y3, addY);
-    addL(x3, y3);
-  };
 
   function cubicExtrema(x0, x1, x2, x3, cb) {
     const a = x3 - x0 + 3 * x1 - 3 * x2,
@@ -10799,45 +10867,6 @@
     const s = 1 - t, s2 = s * s, t2 = t * t;
     return (s2 * s * x0) + (3 * s2 * t * x1) + (3 * s * t2 * x2) + (t2 * t * x3);
   }
-
-  context.arc = function(cx, cy, r, sa, ea, ccw) {
-    // store last point on path
-    lx = r * Math.cos(ea) + cx;
-    ly = r * Math.sin(ea) + cy;
-
-    if (Math.abs(ea - sa) > circleThreshold) {
-      // treat as full circle
-      add$2(cx - r, cy - r);
-      add$2(cx + r, cy + r);
-    } else {
-      const update = a => add$2(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
-      let s, i;
-
-      // sample end points
-      update(sa);
-      update(ea);
-
-      // sample interior points aligned with 90 degrees
-      if (ea !== sa) {
-        sa = sa % Tau; if (sa < 0) sa += Tau;
-        ea = ea % Tau; if (ea < 0) ea += Tau;
-
-        if (ea < sa) {
-          ccw = !ccw; // flip direction
-          s = sa; sa = ea; ea = s; // swap end-points
-        }
-
-        if (ccw) {
-          ea -= Tau;
-          s = sa - (sa % HalfPi);
-          for (i=0; i<4 && s>ea; ++i, s-=HalfPi) update(s);
-        } else {
-          s = sa - (sa % HalfPi) + HalfPi;
-          for (i=0; i<4 && s<ea; ++i, s=s+HalfPi) update(s);
-        }
-      }
-    }
-  };
 
   var context$1 = (context$1 = domCanvas(1,1))
     ? context$1.getContext('2d')
@@ -11030,7 +11059,7 @@
     }
   }
 
-  function compare$2(a, b) {
+  function compare$1(a, b) {
     return a.zindex - b.zindex || a.index - b.index;
   }
 
@@ -11047,7 +11076,7 @@
     }
 
     scene.zdirty = false;
-    return scene.zitems = output.sort(compare$2);
+    return scene.zitems = output.sort(compare$1);
   }
 
   function visit(scene, visitor) {
@@ -11181,30 +11210,27 @@
     return translate(item.x || 0, item.y || 0);
   }
 
+  function rotateItem(item) {
+    return translate(item.x || 0, item.y || 0)
+      + (item.angle ? ' ' + rotate(item.angle) : '');
+  }
+
   function transformItem(item) {
     return translate(item.x || 0, item.y || 0)
       + (item.angle ? ' ' + rotate(item.angle) : '')
-      + (item.scaleX || item.scaleY ? ' ' + scale$1(item.scaleX || 1, item.scaleY || 1) : '');   
+      + (item.scaleX || item.scaleY ? ' ' + scale$1(item.scaleX || 1, item.scaleY || 1) : '');
   }
 
   function markItemPath(type, shape, isect) {
 
     function attr(emit, item) {
-      emit('transform', transformItem(item));
+      emit('transform', rotateItem(item));
       emit('d', shape(null, item));
     }
 
     function bound(bounds, item) {
-      var x = item.x || 0,
-          y = item.y || 0;
-
-      shape(context(bounds), item);
-      boundStroke(bounds, item).translate(x, y);
-      if (item.angle) {
-        bounds.rotate(item.angle * DegToRad, x, y);
-      }
-
-      return bounds;
+      shape(boundContext(bounds, item.angle), item);
+      return boundStroke(bounds, item).translate(item.x || 0, item.y || 0);
     }
 
     function draw(context, item) {
@@ -11295,7 +11321,7 @@
       if (items.length === 0) {
         return bounds;
       } else {
-        shape(context(bounds), items);
+        shape(boundContext(bounds), items);
         return boundStroke(bounds, items[0]);
       }
     }
@@ -11420,6 +11446,7 @@
 
   const hitBackground = hitPath(rectanglePath);
   const hitForeground = hitPath(rectanglePath, false);
+  const hitCorner = hitPath(rectanglePath, true);
 
   function draw(context, scene, bounds) {
     visit(scene, group => {
@@ -11496,7 +11523,7 @@
       dy = gy - dy;
 
       // test background for rounded corner clip
-      if (c && hasCornerRadius(group) && !hitBackground(context, group, cx, cy)) {
+      if (c && hasCornerRadius(group) && !hitCorner(context, group, cx, cy)) {
         context.restore();
         return null;
       }
@@ -11549,9 +11576,9 @@
   };
 
   var metadata = {
-    'version': '1.1',
     'xmlns': 'http://www.w3.org/2000/svg',
-    'xmlns:xlink': 'http://www.w3.org/1999/xlink'
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+    'version': '1.1'
   };
 
   function getImage(item, renderer) {
@@ -11702,15 +11729,9 @@
   }
 
   function bound$2(bounds, item) {
-    path(context(bounds), item)
+    return path(boundContext(bounds, item.angle), item)
       ? bounds.set(0, 0, 0, 0)
       : boundStroke(bounds, item, true);
-
-    if (item.angle) {
-      bounds.rotate(item.angle * DegToRad, item.x || 0, item.y || 0);
-    }
-
-    return bounds;
   }
 
   var path$1 = {
@@ -12033,7 +12054,7 @@
       dx -= (w / 2);
     } else if (a === 'right') {
       dx -= w;
-    }
+    } else ;
 
     bounds.set(dx+=x, dy+=y, dx+w, dy+h);
 
@@ -12257,18 +12278,18 @@
     }
   }
 
-  var prototype$I = Scenegraph.prototype;
+  Scenegraph.prototype = {
+    toJSON(indent) {
+      return sceneToJSON(this.root, indent || 0);
+    },
 
-  prototype$I.toJSON = function(indent) {
-    return sceneToJSON(this.root, indent || 0);
-  };
-
-  prototype$I.mark = function(markdef, group, index) {
-    group = group || this.root.items[0];
-    var mark = createMark(markdef, group);
-    group.items[index] = mark;
-    if (mark.zindex) mark.group.zdirty = true;
-    return mark;
+    mark(markdef, group, index) {
+      group = group || this.root.items[0];
+      var mark = createMark(markdef, group);
+      group.items[index] = mark;
+      if (mark.zindex) mark.group.zdirty = true;
+      return mark;
+    }
   };
 
   function createMark(def, group) {
@@ -12389,181 +12410,181 @@
     handler.element().setAttribute('title', value || '');
   }
 
-  const prototype$J = Handler.prototype;
+  Handler.prototype = {
+    /**
+     * Initialize a new Handler instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {object} [obj] - Optional context object that should serve as
+     *   the "this" context for event callbacks.
+     * @return {Handler} - This handler instance.
+     */
+    initialize(el, origin, obj) {
+      this._el = el;
+      this._obj = obj || null;
+      return this.origin(origin);
+    },
 
-  /**
-   * Initialize a new Handler instance.
-   * @param {DOMElement} el - The containing DOM element for the display.
-   * @param {Array<number>} origin - The origin of the display, in pixels.
-   *   The coordinate system will be translated to this point.
-   * @param {object} [obj] - Optional context object that should serve as
-   *   the "this" context for event callbacks.
-   * @return {Handler} - This handler instance.
-   */
-  prototype$J.initialize = function(el, origin, obj) {
-    this._el = el;
-    this._obj = obj || null;
-    return this.origin(origin);
-  };
+    /**
+     * Returns the parent container element for a visualization.
+     * @return {DOMElement} - The containing DOM element.
+     */
+    element() {
+      return this._el;
+    },
 
-  /**
-   * Returns the parent container element for a visualization.
-   * @return {DOMElement} - The containing DOM element.
-   */
-  prototype$J.element = function() {
-    return this._el;
-  };
+    /**
+     * Returns the scene element (e.g., canvas or SVG) of the visualization
+     * Subclasses must override if the first child is not the scene element.
+     * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
+     */
+    canvas() {
+      return this._el && this._el.firstChild;
+    },
 
-  /**
-   * Returns the scene element (e.g., canvas or SVG) of the visualization
-   * Subclasses must override if the first child is not the scene element.
-   * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
-   */
-  prototype$J.canvas = function() {
-    return this._el && this._el.firstChild;
-  };
-
-  /**
-   * Get / set the origin coordinates of the visualization.
-   */
-  prototype$J.origin = function(origin) {
-    if (arguments.length) {
-      this._origin = origin || [0, 0];
-      return this;
-    } else {
-      return this._origin.slice();
-    }
-  };
-
-  /**
-   * Get / set the scenegraph root.
-   */
-  prototype$J.scene = function(scene) {
-    if (!arguments.length) return this._scene;
-    this._scene = scene;
-    return this;
-  };
-
-  /**
-   * Add an event handler. Subclasses should override this method.
-   */
-  prototype$J.on = function(/*type, handler*/) {};
-
-  /**
-   * Remove an event handler. Subclasses should override this method.
-   */
-  prototype$J.off = function(/*type, handler*/) {};
-
-  /**
-   * Utility method for finding the array index of an event handler.
-   * @param {Array} h - An array of registered event handlers.
-   * @param {string} type - The event type.
-   * @param {function} handler - The event handler instance to find.
-   * @return {number} - The handler's array index or -1 if not registered.
-   */
-  prototype$J._handlerIndex = function(h, type, handler) {
-    for (let i = h ? h.length : 0; --i>=0;) {
-      if (h[i].type === type && (!handler || h[i].handler === handler)) {
-        return i;
+    /**
+     * Get / set the origin coordinates of the visualization.
+     */
+    origin(origin) {
+      if (arguments.length) {
+        this._origin = origin || [0, 0];
+        return this;
+      } else {
+        return this._origin.slice();
       }
+    },
+
+    /**
+     * Get / set the scenegraph root.
+     */
+    scene(scene) {
+      if (!arguments.length) return this._scene;
+      this._scene = scene;
+      return this;
+    },
+
+    /**
+     * Add an event handler. Subclasses should override this method.
+     */
+    on(/*type, handler*/) {},
+
+    /**
+     * Remove an event handler. Subclasses should override this method.
+     */
+    off(/*type, handler*/) {},
+
+    /**
+     * Utility method for finding the array index of an event handler.
+     * @param {Array} h - An array of registered event handlers.
+     * @param {string} type - The event type.
+     * @param {function} handler - The event handler instance to find.
+     * @return {number} - The handler's array index or -1 if not registered.
+     */
+    _handlerIndex(h, type, handler) {
+      for (let i = h ? h.length : 0; --i>=0;) {
+        if (h[i].type === type && (!handler || h[i].handler === handler)) {
+          return i;
+        }
+      }
+      return -1;
+    },
+
+    /**
+     * Returns an array with registered event handlers.
+     * @param {string} [type] - The event type to query. Any annotations
+     *   are ignored; for example, for the argument "click.foo", ".foo" will
+     *   be ignored and the method returns all "click" handlers. If type is
+     *   null or unspecified, this method returns handlers for all types.
+     * @return {Array} - A new array containing all registered event handlers.
+     */
+    handlers(type) {
+      const h = this._handlers, a = [];
+      if (type) {
+        a.push.apply(a, h[this.eventName(type)]);
+      } else {
+        for (const k in h) { a.push.apply(a, h[k]); }
+      }
+      return a;
+    },
+
+    /**
+     * Parses an event name string to return the specific event type.
+     * For example, given "click.foo" returns "click"
+     * @param {string} name - The input event type string.
+     * @return {string} - A string with the event type only.
+     */
+    eventName(name) {
+      const i = name.indexOf('.');
+      return i < 0 ? name : name.slice(0, i);
+    },
+
+    /**
+     * Handle hyperlink navigation in response to an item.href value.
+     * @param {Event} event - The event triggering hyperlink navigation.
+     * @param {Item} item - The scenegraph item.
+     * @param {string} href - The URL to navigate to.
+     */
+    handleHref(event, item, href) {
+      this._loader
+        .sanitize(href, {context:'href'})
+        .then(opt => {
+          const e = new MouseEvent(event.type, event),
+                a = domCreate(null, 'a');
+          for (const name in opt) a.setAttribute(name, opt[name]);
+          a.dispatchEvent(e);
+        })
+        .catch(function() { /* do nothing */ });
+    },
+
+    /**
+     * Handle tooltip display in response to an item.tooltip value.
+     * @param {Event} event - The event triggering tooltip display.
+     * @param {Item} item - The scenegraph item.
+     * @param {boolean} show - A boolean flag indicating whether
+     *   to show or hide a tooltip for the given item.
+     */
+    handleTooltip(event, item, show) {
+      if (item && item.tooltip != null) {
+        item = resolveItem(item, event, this.canvas(), this._origin);
+        const value = (show && item && item.tooltip) || null;
+        this._tooltip.call(this._obj, this, event, item, value);
+      }
+    },
+
+    /**
+     * Returns the size of a scenegraph item and its position relative
+     * to the viewport.
+     * @param {Item} item - The scenegraph item.
+     * @return {object} - A bounding box object (compatible with the
+     *   DOMRect type) consisting of x, y, width, heigh, top, left,
+     *   right, and bottom properties.
+     */
+    getItemBoundingClientRect(item) {
+      const el = this.canvas();
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect(),
+            origin = this._origin,
+            bounds = item.bounds,
+            width = bounds.width(),
+            height = bounds.height();
+
+      let x = bounds.x1 + origin[0] + rect.left,
+          y = bounds.y1 + origin[1] + rect.top;
+
+      // translate coordinate for each parent group
+      while (item.mark && (item = item.mark.group)) {
+        x += item.x || 0;
+        y += item.y || 0;
+      }
+
+      // return DOMRect-compatible bounding box
+      return {
+        x, y, width, height,
+        left: x, top: y, right: x + width, bottom: y + height
+      };
     }
-    return -1;
-  };
-
-  /**
-   * Returns an array with registered event handlers.
-   * @param {string} [type] - The event type to query. Any annotations
-   *   are ignored; for example, for the argument "click.foo", ".foo" will
-   *   be ignored and the method returns all "click" handlers. If type is
-   *   null or unspecified, this method returns handlers for all types.
-   * @return {Array} - A new array containing all registered event handlers.
-   */
-  prototype$J.handlers = function(type) {
-    const h = this._handlers, a = [];
-    if (type) {
-      a.push.apply(a, h[this.eventName(type)]);
-    } else {
-      for (const k in h) { a.push.apply(a, h[k]); }
-    }
-    return a;
-  };
-
-  /**
-   * Parses an event name string to return the specific event type.
-   * For example, given "click.foo" returns "click"
-   * @param {string} name - The input event type string.
-   * @return {string} - A string with the event type only.
-   */
-  prototype$J.eventName = function(name) {
-    const i = name.indexOf('.');
-    return i < 0 ? name : name.slice(0, i);
-  };
-
-  /**
-   * Handle hyperlink navigation in response to an item.href value.
-   * @param {Event} event - The event triggering hyperlink navigation.
-   * @param {Item} item - The scenegraph item.
-   * @param {string} href - The URL to navigate to.
-   */
-  prototype$J.handleHref = function(event, item, href) {
-    this._loader
-      .sanitize(href, {context:'href'})
-      .then(opt => {
-        const e = new MouseEvent(event.type, event),
-              a = domCreate(null, 'a');
-        for (const name in opt) a.setAttribute(name, opt[name]);
-        a.dispatchEvent(e);
-      })
-      .catch(function() { /* do nothing */ });
-  };
-
-  /**
-   * Handle tooltip display in response to an item.tooltip value.
-   * @param {Event} event - The event triggering tooltip display.
-   * @param {Item} item - The scenegraph item.
-   * @param {boolean} show - A boolean flag indicating whether
-   *   to show or hide a tooltip for the given item.
-   */
-  prototype$J.handleTooltip = function(event, item, show) {
-    if (item && item.tooltip != null) {
-      item = resolveItem(item, event, this.canvas(), this._origin);
-      const value = (show && item && item.tooltip) || null;
-      this._tooltip.call(this._obj, this, event, item, value);
-    }
-  };
-
-  /**
-   * Returns the size of a scenegraph item and its position relative
-   * to the viewport.
-   * @param {Item} item - The scenegraph item.
-   * @return {object} - A bounding box object (compatible with the
-   *   DOMRect type) consisting of x, y, width, heigh, top, left,
-   *   right, and bottom properties.
-   */
-  prototype$J.getItemBoundingClientRect = function(item) {
-    const el = this.canvas();
-    if (!el) return;
-
-    const rect = el.getBoundingClientRect(),
-          origin = this._origin,
-          bounds = item.bounds,
-          width = bounds.width(),
-          height = bounds.height();
-
-    let x = bounds.x1 + origin[0] + rect.left,
-        y = bounds.y1 + origin[1] + rect.top;
-
-    // translate coordinate for each parent group
-    while (item.mark && (item = item.mark.group)) {
-      x += item.x || 0;
-      y += item.y || 0;
-    }
-
-    // return DOMRect-compatible bounding box
-    return {
-      x, y, width, height,
-      left: x, top: y, right: x + width, bottom: y + height
-    };
   };
 
   /**
@@ -12579,173 +12600,172 @@
     this._loader = new ResourceLoader(loader);
   }
 
-  var prototype$K = Renderer.prototype;
+  Renderer.prototype = {
+    /**
+     * Initialize a new Renderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {Renderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      this._el = el;
+      return this.resize(width, height, origin, scaleFactor);
+    },
 
-  /**
-   * Initialize a new Renderer instance.
-   * @param {DOMElement} el - The containing DOM element for the display.
-   * @param {number} width - The coordinate width of the display, in pixels.
-   * @param {number} height - The coordinate height of the display, in pixels.
-   * @param {Array<number>} origin - The origin of the display, in pixels.
-   *   The coordinate system will be translated to this point.
-   * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
-   *   the width and height to determine the final pixel size.
-   * @return {Renderer} - This renderer instance.
-   */
-  prototype$K.initialize = function(el, width, height, origin, scaleFactor) {
-    this._el = el;
-    return this.resize(width, height, origin, scaleFactor);
-  };
+    /**
+     * Returns the parent container element for a visualization.
+     * @return {DOMElement} - The containing DOM element.
+     */
+    element() {
+      return this._el;
+    },
 
-  /**
-   * Returns the parent container element for a visualization.
-   * @return {DOMElement} - The containing DOM element.
-   */
-  prototype$K.element = function() {
-    return this._el;
-  };
+    /**
+     * Returns the scene element (e.g., canvas or SVG) of the visualization
+     * Subclasses must override if the first child is not the scene element.
+     * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
+     */
+    canvas() {
+      return this._el && this._el.firstChild;
+    },
 
-  /**
-   * Returns the scene element (e.g., canvas or SVG) of the visualization
-   * Subclasses must override if the first child is not the scene element.
-   * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
-   */
-  prototype$K.canvas = function() {
-    return this._el && this._el.firstChild;
-  };
+    /**
+     * Get / set the background color.
+     */
+    background(bgcolor) {
+      if (arguments.length === 0) return this._bgcolor;
+      this._bgcolor = bgcolor;
+      return this;
+    },
 
-  /**
-   * Get / set the background color.
-   */
-  prototype$K.background = function(bgcolor) {
-    if (arguments.length === 0) return this._bgcolor;
-    this._bgcolor = bgcolor;
-    return this;
-  };
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {Renderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      this._width = width;
+      this._height = height;
+      this._origin = origin || [0, 0];
+      this._scale = scaleFactor || 1;
+      return this;
+    },
 
-  /**
-   * Resize the display.
-   * @param {number} width - The new coordinate width of the display, in pixels.
-   * @param {number} height - The new coordinate height of the display, in pixels.
-   * @param {Array<number>} origin - The new origin of the display, in pixels.
-   *   The coordinate system will be translated to this point.
-   * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
-   *   the width and height to determine the final pixel size.
-   * @return {Renderer} - This renderer instance;
-   */
-  prototype$K.resize = function(width, height, origin, scaleFactor) {
-    this._width = width;
-    this._height = height;
-    this._origin = origin || [0, 0];
-    this._scale = scaleFactor || 1;
-    return this;
-  };
+    /**
+     * Report a dirty item whose bounds should be redrawn.
+     * This base class method does nothing. Subclasses that perform
+     * incremental should implement this method.
+     * @param {Item} item - The dirty item whose bounds should be redrawn.
+     */
+    dirty(/*item*/) {},
 
-  /**
-   * Report a dirty item whose bounds should be redrawn.
-   * This base class method does nothing. Subclasses that perform
-   * incremental should implement this method.
-   * @param {Item} item - The dirty item whose bounds should be redrawn.
-   */
-  prototype$K.dirty = function(/*item*/) {
-  };
+    /**
+     * Render an input scenegraph, potentially with a set of dirty items.
+     * This method will perform an immediate rendering with available resources.
+     * The renderer may also need to perform image loading to perform a complete
+     * render. This process can lead to asynchronous re-rendering of the scene
+     * after this method returns. To receive notification when rendering is
+     * complete, use the renderAsync method instead.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @return {Renderer} - This renderer instance.
+     */
+    render(scene) {
+      var r = this;
 
-  /**
-   * Render an input scenegraph, potentially with a set of dirty items.
-   * This method will perform an immediate rendering with available resources.
-   * The renderer may also need to perform image loading to perform a complete
-   * render. This process can lead to asynchronous re-rendering of the scene
-   * after this method returns. To receive notification when rendering is
-   * complete, use the renderAsync method instead.
-   * @param {object} scene - The root mark of a scenegraph to render.
-   * @return {Renderer} - This renderer instance.
-   */
-  prototype$K.render = function(scene) {
-    var r = this;
+      // bind arguments into a render call, and cache it
+      // this function may be subsequently called for async redraw
+      r._call = function() { r._render(scene); };
 
-    // bind arguments into a render call, and cache it
-    // this function may be subsequently called for async redraw
-    r._call = function() { r._render(scene); };
+      // invoke the renderer
+      r._call();
 
-    // invoke the renderer
-    r._call();
+      // clear the cached call for garbage collection
+      // async redraws will stash their own copy
+      r._call = null;
 
-    // clear the cached call for garbage collection
-    // async redraws will stash their own copy
-    r._call = null;
+      return r;
+    },
 
-    return r;
-  };
+    /**
+     * Internal rendering method. Renderer subclasses should override this
+     * method to actually perform rendering.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     */
+    _render(/*scene*/) {
+      // subclasses to override
+    },
 
-  /**
-   * Internal rendering method. Renderer subclasses should override this
-   * method to actually perform rendering.
-   * @param {object} scene - The root mark of a scenegraph to render.
-   */
-  prototype$K._render = function(/*scene*/) {
-    // subclasses to override
-  };
+    /**
+     * Asynchronous rendering method. Similar to render, but returns a Promise
+     * that resolves when all rendering is completed. Sometimes a renderer must
+     * perform image loading to get a complete rendering. The returned
+     * Promise will not resolve until this process completes.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @return {Promise} - A Promise that resolves when rendering is complete.
+     */
+    renderAsync(scene) {
+      var r = this.render(scene);
+      return this._ready
+        ? this._ready.then(function() { return r; })
+        : Promise.resolve(r);
+    },
 
-  /**
-   * Asynchronous rendering method. Similar to render, but returns a Promise
-   * that resolves when all rendering is completed. Sometimes a renderer must
-   * perform image loading to get a complete rendering. The returned
-   * Promise will not resolve until this process completes.
-   * @param {object} scene - The root mark of a scenegraph to render.
-   * @return {Promise} - A Promise that resolves when rendering is complete.
-   */
-  prototype$K.renderAsync = function(scene) {
-    var r = this.render(scene);
-    return this._ready
-      ? this._ready.then(function() { return r; })
-      : Promise.resolve(r);
-  };
+    /**
+     * Internal method for asynchronous resource loading.
+     * Proxies method calls to the ImageLoader, and tracks loading
+     * progress to invoke a re-render once complete.
+     * @param {string} method - The method name to invoke on the ImageLoader.
+     * @param {string} uri - The URI for the requested resource.
+     * @return {Promise} - A Promise that resolves to the requested resource.
+     */
+    _load(method, uri) {
+      var r = this,
+          p = r._loader[method](uri);
 
-  /**
-   * Internal method for asynchronous resource loading.
-   * Proxies method calls to the ImageLoader, and tracks loading
-   * progress to invoke a re-render once complete.
-   * @param {string} method - The method name to invoke on the ImageLoader.
-   * @param {string} uri - The URI for the requested resource.
-   * @return {Promise} - A Promise that resolves to the requested resource.
-   */
-  prototype$K._load = function(method, uri) {
-    var r = this,
-        p = r._loader[method](uri);
+      if (!r._ready) {
+        // re-render the scene when loading completes
+        var call = r._call;
+        r._ready = r._loader.ready()
+          .then(function(redraw) {
+            if (redraw) call();
+            r._ready = null;
+          });
+      }
 
-    if (!r._ready) {
-      // re-render the scene when loading completes
-      var call = r._call;
-      r._ready = r._loader.ready()
-        .then(function(redraw) {
-          if (redraw) call();
-          r._ready = null;
-        });
+      return p;
+    },
+
+    /**
+     * Sanitize a URL to include as a hyperlink in the rendered scene.
+     * This method proxies a call to ImageLoader.sanitizeURL, but also tracks
+     * image loading progress and invokes a re-render once complete.
+     * @param {string} uri - The URI string to sanitize.
+     * @return {Promise} - A Promise that resolves to the sanitized URL.
+     */
+    sanitizeURL(uri) {
+      return this._load('sanitizeURL', uri);
+    },
+
+    /**
+     * Requests an image to include in the rendered scene.
+     * This method proxies a call to ImageLoader.loadImage, but also tracks
+     * image loading progress and invokes a re-render once complete.
+     * @param {string} uri - The URI string of the image.
+     * @return {Promise} - A Promise that resolves to the loaded Image.
+     */
+    loadImage(uri) {
+      return this._load('loadImage', uri);
     }
-
-    return p;
-  };
-
-  /**
-   * Sanitize a URL to include as a hyperlink in the rendered scene.
-   * This method proxies a call to ImageLoader.sanitizeURL, but also tracks
-   * image loading progress and invokes a re-render once complete.
-   * @param {string} uri - The URI string to sanitize.
-   * @return {Promise} - A Promise that resolves to the sanitized URL.
-   */
-  prototype$K.sanitizeURL = function(uri) {
-    return this._load('sanitizeURL', uri);
-  };
-
-  /**
-   * Requests an image to include in the rendered scene.
-   * This method proxies a call to ImageLoader.loadImage, but also tracks
-   * image loading progress and invokes a re-render once complete.
-   * @param {string} uri - The URI string of the image.
-   * @return {Promise} - A Promise that resolves to the loaded Image.
-   */
-  prototype$K.loadImage = function(uri) {
-    return this._load('loadImage', uri);
   };
 
   const KeyDownEvent = 'keydown';
@@ -12802,18 +12822,6 @@
     this._events = {};
   }
 
-  const prototype$L = inherits(CanvasHandler, Handler);
-
-  prototype$L.initialize = function(el, origin, obj) {
-    this._canvas = el && domFind(el, 'canvas');
-
-    // add minimal events required for proper state management
-    [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
-      .forEach(type => eventListenerCheck(this, type));
-
-    return Handler.prototype.initialize.call(this, el, origin, obj);
-  };
-
   const eventBundle = type => (
     type === TouchStartEvent ||
     type === TouchMoveEvent ||
@@ -12837,19 +12845,6 @@
       );
     }
   }
-
-  // return the backing canvas instance
-  prototype$L.canvas = function() {
-    return this._canvas;
-  };
-
-  // retrieve the current canvas context
-  prototype$L.context = function() {
-    return this._canvas.getContext('2d');
-  };
-
-  // supported events
-  prototype$L.events = Events;
 
   function move(moveEvent, overEvent, outEvent) {
     return function(evt) {
@@ -12880,116 +12875,141 @@
     };
   }
 
-  // to keep old versions of firefox happy
-  prototype$L.DOMMouseScroll = function(evt) {
-    this.fire(MouseWheelEvent, evt);
-  };
+  inherits(CanvasHandler, Handler, {
+    initialize(el, origin, obj) {
+      this._canvas = el && domFind(el, 'canvas');
 
-  prototype$L.mousemove = move(MouseMoveEvent, MouseOverEvent, MouseOutEvent);
-  prototype$L.dragover  = move(DragOverEvent, DragEnterEvent, DragLeaveEvent);
+      // add minimal events required for proper state management
+      [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent]
+        .forEach(type => eventListenerCheck(this, type));
 
-  prototype$L.mouseout  = inactive(MouseOutEvent);
-  prototype$L.dragleave = inactive(DragLeaveEvent);
+      return Handler.prototype.initialize.call(this, el, origin, obj);
+    },
 
-  prototype$L.mousedown = function(evt) {
-    this._down = this._active;
-    this.fire(MouseDownEvent, evt);
-  };
+    // return the backing canvas instance
+    canvas() {
+      return this._canvas;
+    },
 
-  prototype$L.click = function(evt) {
-    if (this._down === this._active) {
-      this.fire(ClickEvent, evt);
-      this._down = null;
-    }
-  };
+    // retrieve the current canvas context
+    context() {
+      return this._canvas.getContext('2d');
+    },
 
-  prototype$L.touchstart = function(evt) {
-    this._touch = this.pickEvent(evt.changedTouches[0]);
+    // supported events
+    events: Events,
 
-    if (this._first) {
-      this._active = this._touch;
-      this._first = false;
-    }
+    // to keep old versions of firefox happy
+    DOMMouseScroll(evt) {
+      this.fire(MouseWheelEvent, evt);
+    },
 
-    this.fire(TouchStartEvent, evt, true);
-  };
+    mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
+    dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
 
-  prototype$L.touchmove = function(evt) {
-    this.fire(TouchMoveEvent, evt, true);
-  };
+    mouseout: inactive(MouseOutEvent),
+    dragleave: inactive(DragLeaveEvent),
 
-  prototype$L.touchend = function(evt) {
-    this.fire(TouchEndEvent, evt, true);
-    this._touch = null;
-  };
+    mousedown(evt) {
+      this._down = this._active;
+      this.fire(MouseDownEvent, evt);
+    },
 
-  // fire an event
-  prototype$L.fire = function(type, evt, touch) {
-    const a = touch ? this._touch : this._active,
-          h = this._handlers[type];
-
-    // set event type relative to scenegraph items
-    evt.vegaType = type;
-
-    // handle hyperlinks and tooltips first
-    if (type === HrefEvent && a && a.href) {
-      this.handleHref(evt, a, a.href);
-    } else if (type === TooltipShowEvent || type === TooltipHideEvent) {
-      this.handleTooltip(evt, a, type !== TooltipHideEvent);
-    }
-
-    // invoke all registered handlers
-    if (h) {
-      for (let i=0, len=h.length; i<len; ++i) {
-        h[i].handler.call(this._obj, evt, a);
+    click(evt) {
+      if (this._down === this._active) {
+        this.fire(ClickEvent, evt);
+        this._down = null;
       }
+    },
+
+    touchstart(evt) {
+      this._touch = this.pickEvent(evt.changedTouches[0]);
+
+      if (this._first) {
+        this._active = this._touch;
+        this._first = false;
+      }
+
+      this.fire(TouchStartEvent, evt, true);
+    },
+
+    touchmove(evt) {
+      this.fire(TouchMoveEvent, evt, true);
+    },
+
+    touchend(evt) {
+      this.fire(TouchEndEvent, evt, true);
+      this._touch = null;
+    },
+
+    // fire an event
+    fire(type, evt, touch) {
+      const a = touch ? this._touch : this._active,
+            h = this._handlers[type];
+
+      // set event type relative to scenegraph items
+      evt.vegaType = type;
+
+      // handle hyperlinks and tooltips first
+      if (type === HrefEvent && a && a.href) {
+        this.handleHref(evt, a, a.href);
+      } else if (type === TooltipShowEvent || type === TooltipHideEvent) {
+        this.handleTooltip(evt, a, type !== TooltipHideEvent);
+      }
+
+      // invoke all registered handlers
+      if (h) {
+        for (let i=0, len=h.length; i<len; ++i) {
+          h[i].handler.call(this._obj, evt, a);
+        }
+      }
+    },
+
+    // add an event handler
+    on(type, handler) {
+      const name = this.eventName(type),
+            h = this._handlers,
+            i = this._handlerIndex(h[name], type, handler);
+
+      if (i < 0) {
+        eventListenerCheck(this, type);
+        (h[name] || (h[name] = [])).push({
+          type:    type,
+          handler: handler
+        });
+      }
+
+      return this;
+    },
+
+    // remove an event handler
+    off(type, handler) {
+      const name = this.eventName(type),
+            h = this._handlers[name],
+            i = this._handlerIndex(h, type, handler);
+
+      if (i >= 0) {
+        h.splice(i, 1);
+      }
+
+      return this;
+    },
+
+    pickEvent(evt) {
+      const p = point(evt, this._canvas),
+            o = this._origin;
+      return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
+    },
+
+    // find the scenegraph item at the current mouse position
+    // x, y -- the absolute x, y mouse coordinates on the canvas element
+    // gx, gy -- the relative coordinates within the current group
+    pick(scene, x, y, gx, gy) {
+      const g = this.context(),
+            mark = Marks[scene.marktype];
+      return mark.pick.call(this, g, scene, x, y, gx, gy);
     }
-  };
-
-  // add an event handler
-  prototype$L.on = function(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers,
-          i = this._handlerIndex(h[name], type, handler);
-
-    if (i < 0) {
-      eventListenerCheck(this, type);
-      (h[name] || (h[name] = [])).push({
-        type:    type,
-        handler: handler
-      });
-    }
-
-    return this;
-  };
-
-  // remove an event handler
-  prototype$L.off = function(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers[name],
-          i = this._handlerIndex(h, type, handler);
-
-    if (i >= 0) {
-      h.splice(i, 1);
-    }
-
-    return this;
-  };
-
-  prototype$L.pickEvent = function(evt) {
-    const p = point(evt, this._canvas),
-          o = this._origin;
-    return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
-  };
-
-  // find the scenegraph item at the current mouse position
-  // x, y -- the absolute x, y mouse coordinates on the canvas element
-  // gx, gy -- the relative coordinates within the current group
-  prototype$L.pick = function(scene, x, y, gx, gy) {
-    const g = this.context(),
-          mark = Marks[scene.marktype];
-    return mark.pick.call(this, g, scene, x, y, gx, gy);
-  };
+  });
 
   function devicePixelRatio() {
     return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
@@ -13034,64 +13054,11 @@
     this._tempb = new Bounds();
   }
 
-  const prototype$M = inherits(CanvasRenderer, Renderer),
-        base = Renderer.prototype;
+  const base = Renderer.prototype;
 
-  prototype$M.initialize = function(el, width, height, origin, scaleFactor, options) {
-    this._options = options || {};
-
-    this._canvas = this._options.externalContext
-      ? null
-      : domCanvas(1, 1, this._options.type); // instantiate a small canvas
-
-    if (el && this._canvas) {
-      domClear(el, 0).appendChild(this._canvas);
-      this._canvas.setAttribute('class', 'marks');
-    }
-
-    // this method will invoke resize to size the canvas appropriately
-    return base.initialize.call(this, el, width, height, origin, scaleFactor);
-  };
-
-  prototype$M.resize = function(width, height, origin, scaleFactor) {
-    base.resize.call(this, width, height, origin, scaleFactor);
-
-    if (this._canvas) {
-      // configure canvas size and transform
-      resize(this._canvas, this._width, this._height,
-        this._origin, this._scale, this._options.context);
-    } else {
-      // external context needs to be scaled and positioned to origin
-      const ctx = this._options.externalContext;
-      if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
-      ctx.scale(this._scale, this._scale);
-      ctx.translate(this._origin[0], this._origin[1]);
-    }
-
-    this._redraw = true;
-    return this;
-  };
-
-  prototype$M.canvas = function() {
-    return this._canvas;
-  };
-
-  prototype$M.context = function() {
-    return this._options.externalContext
-      || (this._canvas ? this._canvas.getContext('2d') : null);
-  };
-
-  prototype$M.dirty = function(item) {
-    let b = this._tempb.clear().union(item.bounds),
-        g = item.mark.group;
-
-    while (g) {
-      b.translate(g.x || 0, g.y || 0);
-      g = g.mark.group;
-    }
-
-    this._dirty.union(b);
-  };
+  const viewBounds = (origin, width, height) => new Bounds()
+    .set(0, 0, width, height)
+    .translate(-origin[0], -origin[1]);
 
   function clipToBounds(g, b, origin) {
     // expand bounds by 1 pixel, then round to pixel boundaries
@@ -13113,58 +13080,112 @@
     return b;
   }
 
-  const viewBounds = (origin, width, height) => new Bounds()
-    .set(0, 0, width, height)
-    .translate(-origin[0], -origin[1]);
+  inherits(CanvasRenderer, Renderer, {
+    initialize(el, width, height, origin, scaleFactor, options) {
+      this._options = options || {};
 
-  prototype$M._render = function(scene) {
-    const g = this.context(),
-          o = this._origin,
-          w = this._width,
-          h = this._height,
-          db = this._dirty,
-          vb = viewBounds(o, w, h);
+      this._canvas = this._options.externalContext
+        ? null
+        : domCanvas(1, 1, this._options.type); // instantiate a small canvas
 
-    // setup
-    g.save();
-    const b = this._redraw || db.empty()
-      ? (this._redraw = false, vb.expand(1))
-      : clipToBounds(g, vb.intersect(db), o);
+      if (el && this._canvas) {
+        domClear(el, 0).appendChild(this._canvas);
+        this._canvas.setAttribute('class', 'marks');
+      }
 
-    this.clear(-o[0], -o[1], w, h);
+      // this method will invoke resize to size the canvas appropriately
+      return base.initialize.call(this, el, width, height, origin, scaleFactor);
+    },
 
-    // render
-    this.draw(g, scene, b);
+    resize(width, height, origin, scaleFactor) {
+      base.resize.call(this, width, height, origin, scaleFactor);
 
-    // takedown
-    g.restore();
-    db.clear();
+      if (this._canvas) {
+        // configure canvas size and transform
+        resize(this._canvas, this._width, this._height,
+          this._origin, this._scale, this._options.context);
+      } else {
+        // external context needs to be scaled and positioned to origin
+        const ctx = this._options.externalContext;
+        if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
+        ctx.scale(this._scale, this._scale);
+        ctx.translate(this._origin[0], this._origin[1]);
+      }
 
-    return this;
-  };
+      this._redraw = true;
+      return this;
+    },
 
-  prototype$M.draw = function(ctx, scene, bounds) {
-    const mark = Marks[scene.marktype];
-    if (scene.clip) clip$1(ctx, scene);
-    mark.draw.call(this, ctx, scene, bounds);
-    if (scene.clip) ctx.restore();
-  };
+    canvas() {
+      return this._canvas;
+    },
 
-  prototype$M.clear = function(x, y, w, h) {
-    const opt = this._options,
-           g = this.context();
+    context() {
+      return this._options.externalContext
+        || (this._canvas ? this._canvas.getContext('2d') : null);
+    },
 
-    if (opt.type !== 'pdf' && !opt.externalContext) {
-      // calling clear rect voids vector output in pdf mode
-      // and could remove external context content (#2615)
-      g.clearRect(x, y, w, h);
+    dirty(item) {
+      let b = this._tempb.clear().union(item.bounds),
+          g = item.mark.group;
+
+      while (g) {
+        b.translate(g.x || 0, g.y || 0);
+        g = g.mark.group;
+      }
+
+      this._dirty.union(b);
+    },
+
+    _render(scene) {
+      const g = this.context(),
+            o = this._origin,
+            w = this._width,
+            h = this._height,
+            db = this._dirty,
+            vb = viewBounds(o, w, h);
+
+      // setup
+      g.save();
+      const b = this._redraw || db.empty()
+        ? (this._redraw = false, vb.expand(1))
+        : clipToBounds(g, vb.intersect(db), o);
+
+      this.clear(-o[0], -o[1], w, h);
+
+      // render
+      this.draw(g, scene, b);
+
+      // takedown
+      g.restore();
+      db.clear();
+
+      return this;
+    },
+
+    draw(ctx, scene, bounds) {
+      const mark = Marks[scene.marktype];
+      if (scene.clip) clip$1(ctx, scene);
+      mark.draw.call(this, ctx, scene, bounds);
+      if (scene.clip) ctx.restore();
+    },
+
+    clear(x, y, w, h) {
+      const opt = this._options,
+            g = this.context();
+
+      if (opt.type !== 'pdf' && !opt.externalContext) {
+        // calling clear rect voids vector output in pdf mode
+        // and could remove external context content (#2615)
+        g.clearRect(x, y, w, h);
+      }
+
+      if (this._bgcolor != null) {
+        g.fillStyle = this._bgcolor;
+        g.fillRect(x, y, w, h);
+      }
     }
-
-    if (this._bgcolor != null) {
-      g.fillStyle = this._bgcolor;
-      g.fillRect(x, y, w, h);
-    }
-  };
+  });
 
   function SVGHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -13177,28 +13198,6 @@
     });
   }
 
-  const prototype$N = inherits(SVGHandler, Handler);
-
-  prototype$N.initialize = function(el, origin, obj) {
-    let svg = this._svg;
-    if (svg) {
-      svg.removeEventListener(HrefEvent, this._hrefHandler);
-      svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
-      svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
-    }
-    this._svg = svg = el && domFind(el, 'svg');
-    if (svg) {
-      svg.addEventListener(HrefEvent, this._hrefHandler);
-      svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
-      svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
-    }
-    return Handler.prototype.initialize.call(this, el, origin, obj);
-  };
-
-  prototype$N.canvas = function() {
-    return this._svg;
-  };
-
   // wrap an event listener for the SVG DOM
   const listener = (context, handler) => evt => {
     let item = evt.target.__data__;
@@ -13207,46 +13206,68 @@
     handler.call(context._obj, evt, item);
   };
 
-  // add an event handler
-  prototype$N.on = function(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers,
-          i = this._handlerIndex(h[name], type, handler);
-
-    if (i < 0) {
-      const x = {
-        type,
-        handler,
-        listener: listener(this, handler)
-      };
-
-      (h[name] || (h[name] = [])).push(x);
-      if (this._svg) {
-        this._svg.addEventListener(name, x.listener);
+  inherits(SVGHandler, Handler, {
+    initialize(el, origin, obj) {
+      let svg = this._svg;
+      if (svg) {
+        svg.removeEventListener(HrefEvent, this._hrefHandler);
+        svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
+        svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
       }
-    }
-
-    return this;
-  };
-
-  // remove an event handler
-  prototype$N.off = function(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers[name],
-          i = this._handlerIndex(h, type, handler);
-
-    if (i >= 0) {
-      if (this._svg) {
-        this._svg.removeEventListener(name, h[i].listener);
+      this._svg = svg = el && domFind(el, 'svg');
+      if (svg) {
+        svg.addEventListener(HrefEvent, this._hrefHandler);
+        svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
+        svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
       }
-      h.splice(i, 1);
-    }
+      return Handler.prototype.initialize.call(this, el, origin, obj);
+    },
 
-    return this;
-  };
+    canvas() {
+      return this._svg;
+    },
+
+    // add an event handler
+    on(type, handler) {
+      const name = this.eventName(type),
+            h = this._handlers,
+            i = this._handlerIndex(h[name], type, handler);
+
+      if (i < 0) {
+        const x = {
+          type,
+          handler,
+          listener: listener(this, handler)
+        };
+
+        (h[name] || (h[name] = [])).push(x);
+        if (this._svg) {
+          this._svg.addEventListener(name, x.listener);
+        }
+      }
+
+      return this;
+    },
+
+    // remove an event handler
+    off(type, handler) {
+      const name = this.eventName(type),
+            h = this._handlers[name],
+            i = this._handlerIndex(h, type, handler);
+
+      if (i >= 0) {
+        if (this._svg) {
+          this._svg.removeEventListener(name, h[i].listener);
+        }
+        h.splice(i, 1);
+      }
+
+      return this;
+    }
+  });
 
   function bandSpace(count, paddingInner, paddingOuter) {
-    var space = count - paddingInner + paddingOuter * 2;
+    const space = count - paddingInner + paddingOuter * 2;
     return count ? (space > 0 ? space : 1) : 0;
   }
 
@@ -13282,7 +13303,7 @@
 
   function invertRange(scale) {
     return function(_) {
-      var lo = _[0],
+      let lo = _[0],
           hi = _[1],
           t;
 
@@ -13301,7 +13322,7 @@
 
   function invertRangeExtent(scale) {
     return function(_) {
-      var range = scale.range(),
+      let range = scale.range(),
           lo = _[0],
           hi = _[1],
           min = -1, max, t, i, n;
@@ -13923,7 +13944,7 @@
       if (!arguments.length) return domain.slice();
       domain = [];
       for (let d of _) if (d != null && !isNaN(d = +d)) domain.push(d);
-      domain.sort(ascending);
+      domain.sort(ascending$1);
       return rescale();
     };
 
@@ -14370,7 +14391,7 @@
   }
 
   function band() {
-    var scale = ordinal().unknown(undefined),
+    let scale = ordinal().unknown(undefined),
         domain = scale.domain,
         ordinalRange = scale.range,
         range = [0, 1],
@@ -14384,7 +14405,7 @@
     delete scale.unknown;
 
     function rescale() {
-      var n = domain().length,
+      let n = domain().length,
           reverse = range[1] < range[0],
           start = range[reverse - 0],
           stop = range[1 - reverse],
@@ -14400,7 +14421,7 @@
         start = Math.round(start);
         bandwidth = Math.round(bandwidth);
       }
-      var values = sequence(n).map(function(i) { return start + step * i; });
+      const values = sequence(n).map(function(i) { return start + step * i; });
       return ordinalRange(reverse ? values.reverse() : values);
     }
 
@@ -14486,7 +14507,7 @@
       // bail if range has null or undefined values
       if (_[0] == null || _[1] == null) return;
 
-      var lo = +_[0],
+      let lo = +_[0],
           hi = +_[1],
           reverse = range[1] < range[0],
           values = reverse ? ordinalRange().reverse() : ordinalRange(),
@@ -14520,7 +14541,7 @@
     };
 
     scale.invert = function(_) {
-      var value = scale.invertRange([_, _]);
+      const value = scale.invertRange([_, _]);
       return value ? value[0] : value;
     };
 
@@ -14538,7 +14559,7 @@
   }
 
   function pointish(scale) {
-    var copy = scale.copy;
+    const copy = scale.copy;
 
     scale.padding = scale.paddingOuter;
     delete scale.paddingInner;
@@ -14557,13 +14578,13 @@
   var map = Array.prototype.map;
 
   function numbers$2(_) {
-    return map.call(_, function(x) { return +x; });
+    return map.call(_, toNumber);
   }
 
-  var slice = Array.prototype.slice;
+  const slice = Array.prototype.slice;
 
   function scaleBinOrdinal() {
-    var domain = [],
+    let domain = [],
         range = [];
 
     function scale(x) {
@@ -14609,7 +14630,7 @@
    */
   function create(type, constructor, metadata) {
     const ctr = function scale() {
-      var s = constructor();
+      const s = constructor();
 
       if (!s.invertRange) {
         s.invertRange = s.invert ? invertRange(s)
@@ -14713,8 +14734,8 @@
   const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
 
   function interpolateRange(interpolator, range) {
-    var start = range[0],
-        span = peek(range) - start;
+    const start = range[0],
+          span = peek(range) - start;
     return function(i) { return interpolator(start + i * span); };
   }
 
@@ -14723,14 +14744,14 @@
   }
 
   function quantizeInterpolator(interpolator, count) {
-    var samples = new Array(count),
-        n = count + 1;
-    for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
+    const samples = new Array(count),
+          n = count + 1;
+    for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
     return samples;
   }
 
   function scaleFraction(scale, min, max) {
-    var delta = max - min, i, t, s;
+    let delta = max - min, i, t, s;
 
     if (!delta || !Number.isFinite(delta)) {
       return constant(0.5);
@@ -14744,7 +14765,7 @@
   }
 
   function interpolate(type, gamma) {
-    var interp = $$1[method(type)];
+    const interp = $__namespace[method(type)];
     return (gamma != null && interp && interp.gamma)
       ? interp.gamma(gamma)
       : interp;
@@ -14837,13 +14858,17 @@
   };
 
   function colors(palette) {
-    var n = palette.length / 6 | 0, c = new Array(n), i = 0;
-    while (i < n) c[i] = '#' + palette.slice(i * 6, ++i * 6);
+    const n = palette.length / 6 | 0,
+          c = new Array(n);
+
+    for (let i = 0; i < n;) {
+      c[i] = '#' + palette.slice(i * 6, ++i * 6);
+    }
     return c;
   }
 
   function apply(_, f) {
-    for (let k in _) scheme(k, f(_[k]));
+    for (const k in _) scheme(k, f(_[k]));
   }
 
   const schemes = {};
@@ -14860,15 +14885,15 @@
     }
   }
 
-  var SymbolLegend  = 'symbol';
-  var DiscreteLegend = 'discrete';
-  var GradientLegend = 'gradient';
+  const SymbolLegend  = 'symbol';
+  const DiscreteLegend = 'discrete';
+  const GradientLegend = 'gradient';
 
   const defaultFormatter = value => isArray(value)
     ? value.map(v => String(v))
     : String(value);
 
-  const ascending$1 = (a, b) => a[1] - b[1];
+  const ascending$2 = (a, b) => a[1] - b[1];
   const descending = (a, b) => b[1] - a[1];
 
   /**
@@ -14879,7 +14904,7 @@
    * @return {*} - The tick count or interval function.
    */
   function tickCount(scale, count, minStep) {
-    var step;
+    let step;
 
     if (isNumber(count)) {
       if (scale.bins) {
@@ -14920,7 +14945,7 @@
     let range = scale.range(),
         lo = range[0],
         hi = peek(range),
-        cmp = ascending$1;
+        cmp = ascending$2;
 
     if (lo > hi) {
       range = hi;
@@ -14983,7 +15008,7 @@
    * @return {function(*):string} - The generated label formatter.
    */
   function tickFormat$1(locale, scale, count, specifier, formatType, noSkip) {
-    var type = scale.type;
+    const type = scale.type;
     let format = defaultFormatter;
 
     if (type === Time || formatType === Time) {
@@ -15048,7 +15073,7 @@
   }
 
   function thresholdFormat(locale, scale, specifier) {
-    var _ = scale[formats$1[scale.type]](),
+    let _ = scale[formats$1[scale.type]](),
         n = _.length,
         d = n > 1 ? _[1] - _[0] : _[0], i;
 
@@ -15072,9 +15097,8 @@
     return values;
   }
 
-  function isDiscreteRange(scale) {
-    return symbols$1[scale.type] || scale.bins;
-  }
+  const isDiscreteRange = scale =>
+    symbols$1[scale.type] || scale.bins;
 
   function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
     const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC
@@ -15086,33 +15110,28 @@
       : formatPoint(format);
   }
 
-  function formatRange(format) {
-    return (value, index, array) => {
-      var limit = get$2(array[index + 1], get$2(array.max, +Infinity)),
-          lo = formatValue(value, format),
-          hi = formatValue(limit, format);
+  const formatRange = format =>
+    (value, index, array) => {
+      const limit = get$2(array[index + 1], get$2(array.max, +Infinity)),
+            lo = formatValue(value, format),
+            hi = formatValue(limit, format);
       return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
     };
-  }
 
-  function get$2(value, dflt) {
-    return value != null ? value : dflt;
-  }
+  const get$2 = (value, dflt) =>
+    value != null ? value : dflt;
 
-  function formatDiscrete(format) {
-    return (value, index) => index ? format(value) : null;
-  }
+  const formatDiscrete = format =>
+    (value, index) => index ? format(value) : null;
 
-  function formatPoint(format) {
-    return value => format(value);
-  }
+  const formatPoint = format =>
+    value => format(value);
 
-  function formatValue(value, format) {
-    return Number.isFinite(value) ? format(value) : null;
-  }
+  const formatValue = (value, format) =>
+    Number.isFinite(value) ? format(value) : null;
 
   function labelFraction(scale) {
-    var domain = scale.domain(),
+    let domain = scale.domain(),
         count = domain.length - 1,
         lo = +domain[0],
         hi = +peek(domain),
@@ -15336,36 +15355,89 @@
     return s.length ? s[0].toUpperCase() + s.slice(1) : s;
   }
 
-  const attrText = val => (val + '')
+  const innerText = val => (val + '')
     .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;');
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 
-  /**
-   * Generate string for an opening xml tag.
-   * @param tag the name of the xml tag
-   * @param attr hash of attribute name-value pairs to include
-   * @param raw additional raw string to include in tag markup
-   */
-  function openTag(tag, attr, raw) {
-    var s = '<' + tag, key, val;
-    if (attr) {
-      for (key in attr) {
-        val = attr[key];
-        if (val != null) {
-          s += ' ' + key + '="' + attrText(val) + '"';
-        }
-      }
-    }
-    if (raw) s += ' ' + raw;
-    return s + '>';
+  const attrText = val => innerText(val)
+    .replace(/"/g, '&quot;')
+    .replace(/\t/g, '&#x9;')
+    .replace(/\n/g, '&#xA;')
+    .replace(/\r/g, '&#xD;');
+
+  function markup() {
+    let buf = '',
+        outer = '',
+        inner = '';
+
+    const stack = [],
+          clear = () => outer = inner = '',
+          push = tag => {
+            if (outer) { buf += `${outer}>${inner}`; clear(); }
+            stack.push(tag);
+          },
+          attr = (name, value) => {
+            if (value != null) outer += ` ${name}="${attrText(value)}"`;
+            return m;
+          },
+
+          m = {
+            open(tag, ...attrs) {
+              push(tag);
+              outer = '<' + tag;
+              for (const set of attrs) {
+                for (const key in set) attr(key, set[key]);
+              }
+              return m;
+            },
+            close() {
+              const tag = stack.pop();
+              if (outer) {
+                buf += outer + (inner
+                  ? `>${inner}</${tag}>`
+                  : '/>');
+              } else {
+                buf += `</${tag}>`;
+              }
+              clear();
+              return m;
+            },
+            attr,
+            text: t => (inner += innerText(t), m),
+            toString: () => buf
+          };
+
+    return m;
   }
 
-  /**
-   * Generate string for closing xml tag.
-   * @param tag the name of the xml tag
-   */
-  function closeTag(tag) {
-    return '</' + tag + '>';
+  const serializeXML = node =>
+    _serialize(markup(), node) + '';
+
+  function _serialize(m, node) {
+    m.open(node.tagName);
+
+    if (node.hasAttributes()) {
+      const attrs = node.attributes,
+            n = attrs.length;
+      for (let i=0; i<n; ++i) {
+        m.attr(attrs[i].name, attrs[i].value);
+      }
+    }
+
+    if (node.hasChildNodes()) {
+      const children = node.childNodes,
+            n = children.length;
+
+      for (let i=0; i<n; i++) {
+        const child = children[i];
+        child.nodeType === 3 // text node
+          ? m.text(child.nodeValue)
+          : _serialize(m, child);
+      }
+    }
+
+    return m.close();
   }
 
   const styles = {
@@ -15401,171 +15473,421 @@
     this._defs = null;
   }
 
-  var prototype$O = inherits(SVGRenderer, Renderer);
-  var base$1 = Renderer.prototype;
+  const base$1 = Renderer.prototype;
 
-  prototype$O.initialize = function(el, width, height, padding) {
-    // create the svg definitions cache
-    this._defs = {
-      gradient: {},
-      clipping: {}
-    };
+  inherits(SVGRenderer, Renderer, {
+    /**
+     * Initialize a new SVGRenderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      // create the svg definitions cache
+      this._defs = {};
+      this._clearDefs();
 
-    if (el) {
-      this._svg = domChild(el, 0, 'svg', ns);
-      this._svg.setAttribute('class', 'marks');
-      domClear(el, 1);
+      if (el) {
+        this._svg = domChild(el, 0, 'svg', ns);
+        setAttributes(this._svg, metadata);
+        this._svg.setAttribute('class', 'marks');
+        domClear(el, 1);
 
-      // set the svg root group
-      this._root = domChild(this._svg, RootIndex, 'g', ns);
-      for (const attr in rootAttributes) {
-        this._root.setAttribute(attr, rootAttributes[attr]);
+        // set the svg root group
+        this._root = domChild(this._svg, RootIndex, 'g', ns);
+        setAttributes(this._root, rootAttributes);
+
+        // ensure no additional child elements
+        domClear(this._svg, RootIndex + 1);
       }
 
-      // ensure no additional child elements
-      domClear(this._svg, RootIndex + 1);
+      // set background color if defined
+      this.background(this._bgcolor);
+
+      return base$1.initialize.call(this, el, width, height, origin, scaleFactor);
+    },
+
+    /**
+     * Get / set the background color.
+     */
+    background(bgcolor) {
+      if (arguments.length && this._svg) {
+        this._svg.style.setProperty('background-color', bgcolor);
+      }
+      return base$1.background.apply(this, arguments);
+    },
+
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      base$1.resize.call(this, width, height, origin, scaleFactor);
+
+      if (this._svg) {
+        setAttributes(this._svg, {
+          width: this._width * this._scale,
+          height: this._height * this._scale,
+          viewBox: `0 0 ${this._width} ${this._height}`
+        });
+        this._root.setAttribute('transform', `translate(${this._origin})`);
+      }
+
+      this._dirty = [];
+
+      return this;
+    },
+
+    /**
+     * Returns the SVG element of the visualization.
+     * @return {DOMElement} - The SVG element.
+     */
+    canvas() {
+      return this._svg;
+    },
+
+    /**
+     * Returns an SVG text string for the rendered content,
+     * or null if this renderer is currently headless.
+     */
+    svg() {
+      const svg = this._svg,
+            bg = this._bgcolor;
+
+      if (!svg) return null;
+
+      let node;
+      if (bg) {
+        svg.removeAttribute('style');
+        node = domChild(svg, RootIndex, 'rect', ns);
+        setAttributes(node, {width: this._width, height: this._height, fill: bg});
+      }
+
+      const text = serializeXML(svg);
+
+      if (bg) {
+        svg.removeChild(node);
+        this._svg.style.setProperty('background-color', bg);
+      }
+
+      return text;
+    },
+
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     */
+    _render(scene) {
+      // perform spot updates and re-render markup
+      if (this._dirtyCheck()) {
+        if (this._dirtyAll) this._clearDefs();
+        this.mark(this._root, scene);
+        domClear(this._root, 1);
+      }
+
+      this.defs();
+
+      this._dirty = [];
+      ++this._dirtyID;
+
+      return this;
+    },
+
+    // -- Manage rendering of items marked as dirty --
+
+    /**
+     * Flag a mark item as dirty.
+     * @param {Item} item - The mark item.
+     */
+    dirty(item) {
+      if (item.dirty !== this._dirtyID) {
+        item.dirty = this._dirtyID;
+        this._dirty.push(item);
+      }
+    },
+
+    /**
+     * Check if a mark item is considered dirty.
+     * @param {Item} item - The mark item.
+     */
+    isDirty(item) {
+      return this._dirtyAll
+        || !item._svg
+        || item.dirty === this._dirtyID;
+    },
+
+    /**
+     * Internal method to check dirty status and, if possible,
+     * make targetted updates without a full rendering pass.
+     */
+    _dirtyCheck() {
+      this._dirtyAll = true;
+      const items = this._dirty;
+      if (!items.length || !this._dirtyID) return true;
+
+      let id = ++this._dirtyID,
+          item, mark, type, mdef, i, n, o;
+
+      for (i=0, n=items.length; i<n; ++i) {
+        item = items[i];
+        mark = item.mark;
+
+        if (mark.marktype !== type) {
+          // memoize mark instance lookup
+          type = mark.marktype;
+          mdef = Marks[type];
+        }
+
+        if (mark.zdirty && mark.dirty !== id) {
+          this._dirtyAll = false;
+          dirtyParents(item, id);
+          mark.items.forEach(function(i) { i.dirty = id; });
+        }
+        if (mark.zdirty) continue; // handle in standard drawing pass
+
+        if (item.exit) { // EXIT
+          if (mdef.nested && mark.items.length) {
+            // if nested mark with remaining points, update instead
+            o = mark.items[0];
+            if (o._svg) this._update(mdef, o._svg, o);
+          } else if (item._svg) {
+            // otherwise remove from DOM
+            o = item._svg.parentNode;
+            if (o) o.removeChild(item._svg);
+          }
+          item._svg = null;
+          continue;
+        }
+
+        item = (mdef.nested ? mark.items[0] : item);
+        if (item._update === id) continue; // already visited
+
+        if (!item._svg || !item._svg.ownerSVGElement) {
+          // ENTER
+          this._dirtyAll = false;
+          dirtyParents(item, id);
+        } else {
+          // IN-PLACE UPDATE
+          this._update(mdef, item._svg, item);
+        }
+        item._update = id;
+      }
+      return !this._dirtyAll;
+    },
+
+    // -- Construct & maintain scenegraph to SVG mapping ---
+
+    /**
+     * Render a set of mark items.
+     * @param {SVGElement} el - The parent element in the SVG tree.
+     * @param {object} scene - The mark parent to render.
+     * @param {SVGElement} prev - The previous sibling in the SVG tree.
+     */
+    mark(el, scene, prev) {
+      if (!this.isDirty(scene)) return scene._svg;
+
+      let svg = this._svg,
+          mdef = Marks[scene.marktype],
+          events = scene.interactive === false ? 'none' : null,
+          isGroup = mdef.tag === 'g',
+          sibling = null,
+          i = 0,
+          parent;
+
+      parent = bind(scene, el, prev, 'g', svg);
+      parent.setAttribute('class', cssClass(scene));
+
+      // apply aria attributes to parent container element
+      const aria = ariaMarkAttributes(scene);
+      for (const key in aria) setAttribute(parent, key, aria[key]);
+
+      if (!isGroup) {
+        setAttribute(parent, 'pointer-events', events);
+      }
+      setAttribute(parent, 'clip-path',
+        scene.clip ? clip(this, scene, scene.group) : null);
+
+      const process = item => {
+        const dirty = this.isDirty(item),
+              node = bind(item, parent, sibling, mdef.tag, svg);
+
+        if (dirty) {
+          this._update(mdef, node, item);
+          if (isGroup) recurse(this, node, item);
+        }
+
+        sibling = node;
+        ++i;
+      };
+
+      if (mdef.nested) {
+        if (scene.items.length) process(scene.items[0]);
+      } else {
+        visit(scene, process);
+      }
+
+      domClear(parent, i);
+      return parent;
+    },
+
+    /**
+     * Update the attributes of an SVG element for a mark item.
+     * @param {object} mdef - The mark definition object
+     * @param {SVGElement} el - The SVG element.
+     * @param {Item} item - The mark item.
+     */
+    _update(mdef, el, item) {
+      // set dom element and values cache
+      // provides access to emit method
+      element = el;
+      values = el.__values__;
+
+      // apply aria-specific properties
+      ariaItemAttributes(emit, item);
+
+      // apply svg attributes
+      mdef.attr(emit, item, this);
+
+      // some marks need special treatment
+      const extra = mark_extras[mdef.type];
+      if (extra) extra.call(this, mdef, el, item);
+
+      // apply svg style attributes
+      // note: element state may have been modified by 'extra' method
+      if (element) this.style(element, item);
+    },
+
+    /**
+     * Update the presentation attributes of an SVG element for a mark item.
+     * @param {SVGElement} el - The SVG element.
+     * @param {Item} item - The mark item.
+     */
+    style(el, item) {
+      if (item == null) return;
+
+      for (const prop in styles) {
+        let value = prop === 'font' ? fontFamily(item) : item[prop];
+        if (value === values[prop]) continue;
+
+        const name = styles[prop];
+        if (value == null) {
+          el.removeAttribute(name);
+        } else {
+          if (isGradient(value)) {
+            value = gradientRef(value, this._defs.gradient, href());
+          }
+          el.setAttribute(name, value + '');
+        }
+
+        values[prop] = value;
+      }
+    },
+
+    /**
+     * Render SVG defs, as needed.
+     * Must be called *after* marks have been processed to ensure the
+     * collected state is current and accurate.
+     */
+    defs() {
+      const svg = this._svg,
+            defs = this._defs;
+
+      let el = defs.el,
+          index = 0;
+
+      for (const id in defs.gradient) {
+        if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+        index = updateGradient(el, defs.gradient[id], index);
+      }
+
+      for (const id in defs.clipping) {
+        if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+        index = updateClipping(el, defs.clipping[id], index);
+      }
+
+      // clean-up
+      if (el) {
+        index === 0
+          ? (svg.removeChild(el), defs.el = null)
+          : domClear(el, index);
+      }
+    },
+
+    /**
+     * Clear defs caches.
+     */
+    _clearDefs() {
+      const def = this._defs;
+      def.gradient = {};
+      def.clipping = {};
     }
+  });
 
-    // set background color if defined
-    this.background(this._bgcolor);
-
-    return base$1.initialize.call(this, el, width, height, padding);
-  };
-
-  prototype$O.background = function(bgcolor) {
-    if (arguments.length && this._svg) {
-      this._svg.style.setProperty('background-color', bgcolor);
+  // mark ancestor chain with a dirty id
+  function dirtyParents(item, id) {
+    for (; item && item.dirty !== id; item=item.mark.group) {
+      item.dirty = id;
+      if (item.mark && item.mark.dirty !== id) {
+        item.mark.dirty = id;
+      } else return;
     }
-    return base$1.background.apply(this, arguments);
-  };
+  }
 
-  prototype$O.resize = function(width, height, origin, scaleFactor) {
-    base$1.resize.call(this, width, height, origin, scaleFactor);
-
-    if (this._svg) {
-      this._svg.setAttribute('width', this._width * this._scale);
-      this._svg.setAttribute('height', this._height * this._scale);
-      this._svg.setAttribute('viewBox', '0 0 ' + this._width + ' ' + this._height);
-      this._root.setAttribute('transform', 'translate(' + this._origin + ')');
-    }
-
-    this._dirty = [];
-
-    return this;
-  };
-
-  prototype$O.canvas = function() {
-    return this._svg;
-  };
-
-  prototype$O.svg = function() {
-    if (!this._svg) return null;
-
-    var attr = {
-      class:   'marks',
-      width:   this._width * this._scale,
-      height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
-    }
-
-    var bg = !this._bgcolor ? ''
-      : (openTag('rect', {
-          width:  this._width,
-          height: this._height,
-          fill:   this._bgcolor
-        }) + closeTag('rect'));
-
-    return openTag('svg', attr)
-      + (this._defs.el ? this._defs.el.outerHTML : '')
-      + bg
-      + this._root.outerHTML
-      + closeTag('svg');
-  };
-
-
-  // -- Render entry point --
-
-  prototype$O._render = function(scene) {
-    // perform spot updates and re-render markup
-    if (this._dirtyCheck()) {
-      if (this._dirtyAll) this._resetDefs();
-      this.draw(this._root, scene);
-      domClear(this._root, 1);
-    }
-
-    this.updateDefs();
-
-    this._dirty = [];
-    ++this._dirtyID;
-
-    return this;
-  };
-
-  // -- Manage SVG definitions ('defs') block --
-
-  prototype$O.updateDefs = function() {
-    const svg = this._svg,
-          defs = this._defs;
-
-    let el = defs.el,
-        index = 0;
-
-    for (const id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
-      index = updateGradient(el, defs.gradient[id], index);
-    }
-
-    for (const id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex, 'defs', ns));
-      index = updateClipping(el, defs.clipping[id], index);
-    }
-
-    // clean-up
-    if (el) {
-      index === 0
-        ? (svg.removeChild(el), defs.el = null)
-        : domClear(el, index);
-    }
-  };
-
+  // update gradient definitions
   function updateGradient(el, grad, index) {
-    var i, n, stop;
+    let i, n, stop;
 
     if (grad.gradient === 'radial') {
       // SVG radial gradients automatically transform to normalized bbox
       // coordinates, in a way that is cumbersome to replicate in canvas.
       // We wrap the radial gradient in a pattern element, allowing us to
       // maintain a circular gradient that matches what canvas provides.
-      var pt = domChild(el, index++, 'pattern', ns);
-      pt.setAttribute('id', patternPrefix + grad.id);
-      pt.setAttribute('viewBox', '0,0,1,1');
-      pt.setAttribute('width', '100%');
-      pt.setAttribute('height', '100%');
-      pt.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      let pt = domChild(el, index++, 'pattern', ns);
+      setAttributes(pt, {
+        id: patternPrefix + grad.id,
+        viewBox: '0,0,1,1',
+        width: '100%',
+        height: '100%',
+        preserveAspectRatio: 'xMidYMid slice'
+      });
 
       pt = domChild(pt, 0, 'rect', ns);
-      pt.setAttribute('width', '1');
-      pt.setAttribute('height', '1');
-      pt.setAttribute('fill', 'url(' + href() + '#' + grad.id + ')');
+      setAttributes(pt, {
+        width: 1,
+        height: 1,
+        fill: `url(${href()}#${grad.id})`
+      });
 
       el = domChild(el, index++, 'radialGradient', ns);
-      el.setAttribute('id', grad.id);
-      el.setAttribute('fx', grad.x1);
-      el.setAttribute('fy', grad.y1);
-      el.setAttribute('fr', grad.r1);
-      el.setAttribute('cx', grad.x2);
-      el.setAttribute('cy', grad.y2);
-      el.setAttribute( 'r', grad.r2);
+      setAttributes(el, {
+        id: grad.id,
+        fx: grad.x1,
+        fy: grad.y1,
+        fr: grad.r1,
+        cx: grad.x2,
+        cy: grad.y2,
+        r: grad.r2
+      });
     } else {
       el = domChild(el, index++, 'linearGradient', ns);
-      el.setAttribute('id', grad.id);
-      el.setAttribute('x1', grad.x1);
-      el.setAttribute('x2', grad.x2);
-      el.setAttribute('y1', grad.y1);
-      el.setAttribute('y2', grad.y2);
+      setAttributes(el, {
+        id: grad.id,
+        x1: grad.x1,
+        x2: grad.x2,
+        y1: grad.y1,
+        y2: grad.y2
+      });
     }
 
     for (i=0, n=grad.stops.length; i<n; ++i) {
@@ -15578,8 +15900,9 @@
     return index;
   }
 
+  // update clipping path definitions
   function updateClipping(el, clip, index) {
-    var mask;
+    let mask;
 
     el = domChild(el, index, 'clipPath', ns);
     el.setAttribute('id', clip.id);
@@ -15589,152 +15912,12 @@
       mask.setAttribute('d', clip.path);
     } else {
       mask = domChild(el, 0, 'rect', ns);
-      mask.setAttribute('x', 0);
-      mask.setAttribute('y', 0);
-      mask.setAttribute('width', clip.width);
-      mask.setAttribute('height', clip.height);
+      setAttributes(mask, {x: 0, y: 0, width: clip.width, height: clip.height});
     }
     domClear(el, 1);
 
     return index + 1;
   }
-
-  prototype$O._resetDefs = function() {
-    var def = this._defs;
-    def.gradient = {};
-    def.clipping = {};
-  };
-
-
-  // -- Manage rendering of items marked as dirty --
-
-  prototype$O.dirty = function(item) {
-    if (item.dirty !== this._dirtyID) {
-      item.dirty = this._dirtyID;
-      this._dirty.push(item);
-    }
-  };
-
-  prototype$O.isDirty = function(item) {
-    return this._dirtyAll
-      || !item._svg
-      || item.dirty === this._dirtyID;
-  };
-
-  prototype$O._dirtyCheck = function() {
-    this._dirtyAll = true;
-    var items = this._dirty;
-    if (!items.length || !this._dirtyID) return true;
-
-    var id = ++this._dirtyID,
-        item, mark, type, mdef, i, n, o;
-
-    for (i=0, n=items.length; i<n; ++i) {
-      item = items[i];
-      mark = item.mark;
-
-      if (mark.marktype !== type) {
-        // memoize mark instance lookup
-        type = mark.marktype;
-        mdef = Marks[type];
-      }
-
-      if (mark.zdirty && mark.dirty !== id) {
-        this._dirtyAll = false;
-        dirtyParents(item, id);
-        mark.items.forEach(function(i) { i.dirty = id; });
-      }
-      if (mark.zdirty) continue; // handle in standard drawing pass
-
-      if (item.exit) { // EXIT
-        if (mdef.nested && mark.items.length) {
-          // if nested mark with remaining points, update instead
-          o = mark.items[0];
-          if (o._svg) this._update(mdef, o._svg, o);
-        } else if (item._svg) {
-          // otherwise remove from DOM
-          o = item._svg.parentNode;
-          if (o) o.removeChild(item._svg);
-        }
-        item._svg = null;
-        continue;
-      }
-
-      item = (mdef.nested ? mark.items[0] : item);
-      if (item._update === id) continue; // already visited
-
-      if (!item._svg || !item._svg.ownerSVGElement) {
-        // ENTER
-        this._dirtyAll = false;
-        dirtyParents(item, id);
-      } else {
-        // IN-PLACE UPDATE
-        this._update(mdef, item._svg, item);
-      }
-      item._update = id;
-    }
-    return !this._dirtyAll;
-  };
-
-  function dirtyParents(item, id) {
-    for (; item && item.dirty !== id; item=item.mark.group) {
-      item.dirty = id;
-      if (item.mark && item.mark.dirty !== id) {
-        item.mark.dirty = id;
-      } else return;
-    }
-  }
-
-
-  // -- Construct & maintain scenegraph to SVG mapping ---
-
-  // Draw a mark container.
-  prototype$O.draw = function(el, scene, prev) {
-    if (!this.isDirty(scene)) return scene._svg;
-
-    var svg = this._svg,
-        mdef = Marks[scene.marktype],
-        events = scene.interactive === false ? 'none' : null,
-        isGroup = mdef.tag === 'g',
-        sibling = null,
-        i = 0,
-        parent;
-
-    parent = bind(scene, el, prev, 'g', svg);
-    parent.setAttribute('class', cssClass(scene));
-
-    // apply aria attributes to parent container element
-    const aria = ariaMarkAttributes(scene);
-    for (const key in aria) setAttribute(parent, key, aria[key]);
-
-    if (!isGroup) {
-      setAttribute(parent, 'pointer-events', events);
-    }
-    setAttribute(parent, 'clip-path',
-      scene.clip ? clip(this, scene, scene.group) : null);
-
-    const process = item => {
-      const dirty = this.isDirty(item),
-            node = bind(item, parent, sibling, mdef.tag, svg);
-
-      if (dirty) {
-        this._update(mdef, node, item);
-        if (isGroup) recurse(this, node, item);
-      }
-
-      sibling = node;
-      ++i;
-    };
-
-    if (mdef.nested) {
-      if (scene.items.length) process(scene.items[0]);
-    } else {
-      visit(scene, process);
-    }
-
-    domClear(parent, i);
-    return parent;
-  };
 
   // Recursively process group contents.
   function recurse(renderer, el, group) {
@@ -15742,7 +15925,7 @@
     let prev, idx = 0;
 
     visit(group, item => {
-      prev = renderer.draw(el, item, prev);
+      prev = renderer.mark(el, item, prev);
       ++idx;
     });
 
@@ -15791,21 +15974,21 @@
     return node;
   }
 
+  // check if two nodes are ordered siblings
   function siblingCheck(node, sibling) {
     return node.parentNode
       && node.parentNode.childNodes.length > 1
       && node.previousSibling != sibling; // treat null/undefined the same
   }
 
-
   // -- Set attributes & styles on SVG elements ---
 
-  var element = null, // temp var for current SVG element
+  let element = null, // temp var for current SVG element
       values = null;  // temp var for current values hash
 
   // Extra configuration for certain mark types
-  var mark_extras = {
-    group: function(mdef, el, item) {
+  const mark_extras = {
+    group(mdef, el, item) {
       const fg = element = el.childNodes[2];
       values = fg.__values__;
       mdef.foreground(emit, item, this);
@@ -15845,7 +16028,7 @@
         setAttribute(fg, 'display', 'none');
       }
     },
-    image: function(mdef, el, item) {
+    image(mdef, el, item) {
       if (item.smooth === false) {
         setStyle(el, 'image-rendering', 'optimizeSpeed');
         setStyle(el, 'image-rendering', 'pixelated');
@@ -15853,7 +16036,7 @@
         setStyle(el, 'image-rendering', null);
       }
     },
-    text: function(mdef, el, item) {
+    text(mdef, el, item) {
       let tl = textLines(item),
           key, value, doc, lh;
 
@@ -15895,38 +16078,6 @@
     }
   };
 
-  function setStyle(el, name, value) {
-    if (value !== values[name]) {
-      if (value == null) {
-        el.style.removeProperty(name);
-      } else {
-        el.style.setProperty(name, value + '');
-      }
-      values[name] = value;
-    }
-  }
-
-  prototype$O._update = function(mdef, el, item) {
-    // set dom element and values cache
-    // provides access to emit method
-    element = el;
-    values = el.__values__;
-
-    // apply aria-specific properties
-    ariaItemAttributes(emit, item);
-
-    // apply svg attributes
-    mdef.attr(emit, item, this);
-
-    // some marks need special treatment
-    const extra = mark_extras[mdef.type];
-    if (extra) extra.call(this, mdef, el, item);
-
-    // apply svg style attributes
-    // note: element may be modified by 'extra' method
-    if (element) this.style(element, item);
-  };
-
   function emit(name, value, ns) {
     // early exit if value is unchanged
     if (value === values[name]) return;
@@ -15940,6 +16091,23 @@
 
     // note current value for future comparison
     values[name] = value;
+  }
+
+  function setStyle(el, name, value) {
+    if (value !== values[name]) {
+      if (value == null) {
+        el.style.removeProperty(name);
+      } else {
+        el.style.setProperty(name, value + '');
+      }
+      values[name] = value;
+    }
+  }
+
+  function setAttributes(el, attrs) {
+    for (const key in attrs) {
+      setAttribute(el, key, attrs[key]);
+    }
   }
 
   function setAttribute(el, name, value) {
@@ -15962,27 +16130,6 @@
     }
   }
 
-  prototype$O.style = function(el, o) {
-    if (o == null) return;
-
-    for (const prop in styles) {
-      let value = prop === 'font' ? fontFamily(o) : o[prop];
-      if (value === values[prop]) continue;
-
-      const name = styles[prop];
-      if (value == null) {
-        el.removeAttribute(name);
-      } else {
-        if (isGradient(value)) {
-          value = gradientRef(value, this._defs.gradient, href());
-        }
-        el.setAttribute(name, value + '');
-      }
-
-      values[prop] = value;
-    }
-  };
-
   function href() {
     let loc;
     return typeof window === 'undefined' ? ''
@@ -15992,307 +16139,306 @@
 
   function SVGStringRenderer(loader) {
     Renderer.call(this, loader);
-
-    this._text = {
-      head: '',
-      bg:   '',
-      root: '',
-      foot: '',
-      defs: '',
-      body: ''
-    };
-
+    this._text = null;
     this._defs = {
       gradient: {},
       clipping: {}
     };
   }
 
-  var prototype$P = inherits(SVGStringRenderer, Renderer);
-  var base$2 = Renderer.prototype;
+  inherits(SVGStringRenderer, Renderer, {
+    /**
+     * Returns the rendered SVG text string,
+     * or null if rendering has not yet occurred.
+     */
+    svg() {
+      return this._text;
+    },
 
-  prototype$P.resize = function(width, height, origin, scaleFactor) {
-    base$2.resize.call(this, width, height, origin, scaleFactor);
-    var o = this._origin,
-        t = this._text;
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     */
+    _render(scene) {
+      const m = markup();
 
-    var attr = {
-      class:   'marks',
-      width:   this._width * this._scale,
-      height:  this._height * this._scale,
-      viewBox: '0 0 ' + this._width + ' ' + this._height
-    };
-    for (var key in metadata) {
-      attr[key] = metadata[key];
-    }
+      // svg tag
+      m.open('svg', extend({}, metadata, {
+        class:   'marks',
+        width:   this._width * this._scale,
+        height:  this._height * this._scale,
+        viewBox: `0 0 ${this._width} ${this._height}`
+      }));
 
-    t.head = openTag('svg', attr);
-
-    var bg = this._bgcolor;
-    if (bg === 'transparent' || bg === 'none') bg = null;
-
-    if (bg) {
-      t.bg = openTag('rect', {
-        width:  this._width,
-        height: this._height,
-        fill:   bg
-      }) + closeTag('rect');
-    } else {
-      t.bg = '';
-    }
-
-    t.root = openTag('g', extend(
-      {}, rootAttributes, {transform: 'translate(' + o + ')'}
-    ));
-
-    t.foot = closeTag('g') + closeTag('svg');
-
-    return this;
-  };
-
-  prototype$P.background = function() {
-    var rv = base$2.background.apply(this, arguments);
-    if (arguments.length && this._text.head) {
-      this.resize(this._width, this._height, this._origin, this._scale);
-    }
-    return rv;
-  };
-
-  prototype$P.svg = function() {
-    var t = this._text;
-    return t.head + t.defs + t.bg + t.root + t.body + t.foot;
-  };
-
-  prototype$P._render = function(scene) {
-    this._text.body = this.mark(scene);
-    this._text.defs = this.buildDefs();
-    return this;
-  };
-
-  prototype$P.buildDefs = function() {
-    let defs = '', tag;
-
-    for (const id in this._defs.gradient) {
-      const def = this._defs.gradient[id],
-            stops = def.stops;
-
-      if (def.gradient === 'radial') {
-        // SVG radial gradients automatically transform to normalized bbox
-        // coordinates, in a way that is cumbersome to replicate in canvas.
-        // We wrap the radial gradient in a pattern element, allowing us to
-        // maintain a circular gradient that matches what canvas provides.
-
-        defs += openTag(tag = 'pattern', {
-          id: patternPrefix + id,
-          viewBox: '0,0,1,1',
-          width: '100%',
-          height: '100%',
-          preserveAspectRatio: 'xMidYMid slice'
-        });
-
-        defs += openTag('rect', {
-          width:  '1',
-          height: '1',
-          fill:   'url(#' + id + ')'
-        }) + closeTag('rect');
-
-        defs += closeTag(tag);
-
-        defs += openTag(tag = 'radialGradient', {
-          id: id,
-          fx: def.x1,
-          fy: def.y1,
-          fr: def.r1,
-          cx: def.x2,
-          cy: def.y2,
-           r: def.r2
-        });
-      } else {
-        defs += openTag(tag = 'linearGradient', {
-          id: id,
-          x1: def.x1,
-          x2: def.x2,
-          y1: def.y1,
-          y2: def.y2
-        });
+      // background, if defined
+      const bg = this._bgcolor;
+      if (bg && bg !== 'transparent' && bg !== 'none') {
+        m.open('rect', {
+          width:  this._width,
+          height: this._height,
+          fill:   bg
+        }).close();
       }
 
-      for (let i = 0; i < stops.length; ++i) {
-        defs += openTag('stop', {
-          offset: stops[i].offset,
-          'stop-color': stops[i].color
-        }) + closeTag('stop');
-      }
+      // root content group
+      m.open('g', rootAttributes, {
+        transform: 'translate(' + this._origin + ')'
+      });
+      this.mark(m, scene);
+      m.close(); // </g>
 
-      defs += closeTag(tag);
-    }
+      // defs
+      this.defs(m);
 
-    for (const id in this._defs.clipping) {
-      const def = this._defs.clipping[id];
+      // get SVG text string
+      this._text = m.close() + '';
 
-      defs += openTag('clipPath', {id: id});
+      return this;
+    },
 
-      if (def.path) {
-        defs += openTag('path', {
-          d: def.path
-        }) + closeTag('path');
-      } else {
-        defs += openTag('rect', {
-          x: 0,
-          y: 0,
-          width: def.width,
-          height: def.height
-        }) + closeTag('rect');
-      }
+    /**
+     * Render a set of mark items.
+     * @param {object} m - The markup context.
+     * @param {object} scene - The mark parent to render.
+     */
+    mark(m, scene) {
+      const mdef = Marks[scene.marktype],
+            tag  = mdef.tag,
+            attrList = [ariaItemAttributes, mdef.attr];
 
-      defs += closeTag('clipPath');
-    }
-
-    return defs ? (openTag('defs') + defs + closeTag('defs')) : '';
-  };
-
-  prototype$P.attr = function(scene, item, attrs, tag) {
-    const object = {},
-          emit = (name, value, ns, prefixed) => {
-            object[prefixed || name] = value;
-          };
-
-    // apply mark specific attributes
-    if (Array.isArray(attrs)) {
-      attrs.forEach(fn => fn(emit, item, this));
-    } else {
-      attrs(emit, item, this);
-    }
-
-    // apply style attributes
-    if (tag) {
-      applyStyles(object, item, scene, tag, this._defs);
-    }
-
-    return object;
-  };
-
-  prototype$P.href = function(item) {
-    var that = this,
-        href = item.href,
-        attr;
-
-    if (href) {
-      if (attr = that._hrefs && that._hrefs[href]) {
-        return attr;
-      } else {
-        that.sanitizeURL(href).then(attr => {
-          // rewrite to use xlink namespace
-          // note that this will be deprecated in SVG 2.0
-          attr['xlink:href'] = attr.href;
-          attr.href = null;
-          (that._hrefs || (that._hrefs = {}))[href] = attr;
-        });
-      }
-    }
-    return null;
-  };
-
-  prototype$P.mark = function(scene) {
-    const mdef = Marks[scene.marktype],
-          tag  = mdef.tag,
-          attrList = [ariaItemAttributes, mdef.attr];
-
-    let str = '';
-
-    // render opening group tag
-    str += openTag('g', extend(
-      {
-        'class': cssClass(scene),
-        'clip-path': scene.clip ? clip(this, scene, scene.group) : null
-      },
-      ariaMarkAttributes(scene),
-      {
-        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
-      }
-    ));
-
-    // render contained elements
-    const process = item => {
-      const href = this.href(item);
-      if (href) str += openTag('a', href);
-
-      str += openTag(
-        tag,
-        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
+      // render opening group tag
+      m.open('g',
+        {
+          'class': cssClass(scene),
+          'clip-path': scene.clip ? clip(this, scene, scene.group) : null
+        },
+        ariaMarkAttributes(scene),
+        {
+          'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+        }
       );
 
-      if (tag === 'text') {
-        const tl = textLines(item);
-        if (isArray(tl)) {
-          // multi-line text
-          const attrs = {x: 0, dy: lineHeight(item)};
-          for (let i=0; i<tl.length; ++i) {
-            str += openTag('tspan', i ? attrs: null)
-              + escape_text(textValue(item, tl[i]))
-              + closeTag('tspan');
+      // render contained elements
+      const process = item => {
+        const href = this.href(item);
+        if (href) m.open('a', href);
+
+        m.open(
+          tag,
+          this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
+        );
+
+        if (tag === 'text') {
+          const tl = textLines(item);
+          if (isArray(tl)) {
+            // multi-line text
+            const attrs = {x: 0, dy: lineHeight(item)};
+            for (let i=0; i<tl.length; ++i) {
+              m.open('tspan', i ? attrs: null)
+                .text(textValue(item, tl[i]))
+                .close();
+            }
+          } else {
+            // single-line text
+            m.text(textValue(item, tl));
           }
-        } else {
-          // single-line text
-          str += escape_text(textValue(item, tl));
-        }
-      } else if (tag === 'g') {
-        const fore = item.strokeForeground,
-              fill = item.fill,
-              stroke = item.stroke;
+        } else if (tag === 'g') {
+          const fore = item.strokeForeground,
+                fill = item.fill,
+                stroke = item.stroke;
 
-        if (fore && stroke) {
-          item.stroke = null;
-        }
+          if (fore && stroke) {
+            item.stroke = null;
+          }
 
-        str += openTag(
-          'path',
-          this.attr(scene, item, mdef.background, 'bgrect')
-        ) + closeTag('path');
-
-        str += openTag('g', this.attr(scene, item, mdef.content))
-          + this.markGroup(item)
-          + closeTag('g');
-
-        if (fore && stroke) {
-          if (fill) item.fill = null;
-          item.stroke = stroke;
-
-          str += openTag(
+          m.open(
             'path',
-            this.attr(scene, item, mdef.foreground, 'bgrect')
-          ) + closeTag('path');
+            this.attr(scene, item, mdef.background, 'bgrect')
+          ).close();
 
-          if (fill) item.fill = fill;
-        } else {
-          str += openTag(
-            'path',
-            this.attr(scene, item, mdef.foreground, 'bgfore')
-          ) + closeTag('path');
+          // recurse for group content
+          m.open('g', this.attr(scene, item, mdef.content));
+          visit(item, scene => this.mark(m, scene));
+          m.close();
+
+          if (fore && stroke) {
+            if (fill) item.fill = null;
+            item.stroke = stroke;
+
+            m.open(
+              'path',
+              this.attr(scene, item, mdef.foreground, 'bgrect')
+            ).close();
+
+            if (fill) item.fill = fill;
+          } else {
+            m.open(
+              'path',
+              this.attr(scene, item, mdef.foreground, 'bgfore')
+            ).close();
+          }
         }
+
+        m.close(); // </tag>
+        if (href) m.close(); // </a>
+      };
+
+      if (mdef.nested) {
+        if (scene.items && scene.items.length) process(scene.items[0]);
+      } else {
+        visit(scene, process);
       }
 
-      str += closeTag(tag);
-      if (href) str += closeTag('a');
-    };
+      // render closing group tag
+      return m.close(); // </g>
+    },
 
-    if (mdef.nested) {
-      if (scene.items && scene.items.length) process(scene.items[0]);
-    } else {
-      visit(scene, process);
+    /**
+     * Get href attributes for a hyperlinked mark item.
+     * @param {Item} item - The mark item.
+     */
+    href(item) {
+      let href = item.href,
+          attr;
+
+      if (href) {
+        if (attr = this._hrefs && this._hrefs[href]) {
+          return attr;
+        } else {
+          this.sanitizeURL(href).then(attr => {
+            // rewrite to use xlink namespace
+            attr['xlink:href'] = attr.href;
+            attr.href = null;
+            (this._hrefs || (this._hrefs = {}))[href] = attr;
+          });
+        }
+      }
+      return null;
+    },
+
+    /**
+     * Get an object of SVG attributes for a mark item.
+     * @param {object} scene - The mark parent.
+     * @param {Item} item - The mark item.
+     * @param {array|function} attrs - One or more attribute emitters.
+     * @param {string} tag - The tag being rendered.
+     */
+    attr(scene, item, attrs, tag) {
+      const object = {},
+            emit = (name, value, ns, prefixed) => {
+              object[prefixed || name] = value;
+            };
+
+      // apply mark specific attributes
+      if (Array.isArray(attrs)) {
+        attrs.forEach(fn => fn(emit, item, this));
+      } else {
+        attrs(emit, item, this);
+      }
+
+      // apply style attributes
+      if (tag) {
+        style(object, item, scene, tag, this._defs);
+      }
+
+      return object;
+    },
+
+    /**
+     * Render SVG defs, as needed.
+     * Must be called *after* marks have been processed to ensure the
+     * collected state is current and accurate.
+     * @param {object} m - The markup context.
+     */
+    defs(m) {
+      const gradient = this._defs.gradient,
+            clipping = this._defs.clipping,
+            count = Object.keys(gradient).length + Object.keys(clipping).length;
+
+      if (count === 0) return; // nothing to do
+
+      m.open('defs');
+
+      for (const id in gradient) {
+        const def = gradient[id],
+              stops = def.stops;
+
+        if (def.gradient === 'radial') {
+          // SVG radial gradients automatically transform to normalized bbox
+          // coordinates, in a way that is cumbersome to replicate in canvas.
+          // We wrap the radial gradient in a pattern element, allowing us to
+          // maintain a circular gradient that matches what canvas provides.
+
+          m.open('pattern', {
+            id: patternPrefix + id,
+            viewBox: '0,0,1,1',
+            width: '100%',
+            height: '100%',
+            preserveAspectRatio: 'xMidYMid slice'
+          });
+
+          m.open('rect', {
+            width:  '1',
+            height: '1',
+            fill:   'url(#' + id + ')'
+          }).close();
+
+          m.close(); // </pattern>
+
+          m.open('radialGradient', {
+            id: id,
+            fx: def.x1,
+            fy: def.y1,
+            fr: def.r1,
+            cx: def.x2,
+            cy: def.y2,
+            r: def.r2
+          });
+        } else {
+          m.open('linearGradient', {
+            id: id,
+            x1: def.x1,
+            x2: def.x2,
+            y1: def.y1,
+            y2: def.y2
+          });
+        }
+
+        for (let i = 0; i < stops.length; ++i) {
+          m.open('stop', {
+            offset: stops[i].offset,
+            'stop-color': stops[i].color
+          }).close();
+        }
+
+        m.close();
+      }
+
+      for (const id in clipping) {
+        const def = clipping[id];
+
+        m.open('clipPath', {id: id});
+        if (def.path) {
+          m.open('path', {
+            d: def.path
+          }).close();
+        } else {
+          m.open('rect', {
+            x: 0,
+            y: 0,
+            width: def.width,
+            height: def.height
+          }).close();
+        }
+        m.close();
+      }
+
+      m.close();
     }
+  });
 
-    // render closing group tag
-    return str + closeTag('g');
-  };
-
-  prototype$P.markGroup = function(scene) {
-    let str = '';
-    visit(scene, item => { str += this.mark(item); });
-    return str;
-  };
-
-  function applyStyles(s, item, scene, tag, defs) {
+  // Helper function for attr for style presentation attributes
+  function style(s, item, scene, tag, defs) {
     if (item == null) return s;
 
     if (tag === 'bgrect' && scene.interactive === false) {
@@ -16314,9 +16460,9 @@
     if (tag === 'text') {
       s['font-family'] = fontFamily(item);
       s['font-size'] = fontSize(item) + 'px';
-      if (item.fontStyle) s['font-style'] = item.fontStyle;
-      if (item.fontVariant) s['font-variant'] = item.fontVariant;
-      if (item.fontWeight) s['font-weight'] = item.fontWeight;
+      s['font-style'] = item.fontStyle;
+      s['font-variant'] = item.fontVariant;
+      s['font-weight'] = item.fontWeight;
     }
 
     for (const prop in styles) {
@@ -16332,12 +16478,6 @@
     }
 
     return s;
-  }
-
-  function escape_text(s) {
-    return s.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
   }
 
   var Canvas = 'canvas';
@@ -16452,13 +16592,13 @@
     return box.encloses(bounds) || (box.intersects(bounds) && test(item, box));
   }
 
-  var clipBounds = new Bounds();
+  const clipBounds = new Bounds();
 
   function boundClip(mark) {
-    var clip = mark.clip;
+    const clip = mark.clip;
 
     if (isFunction(clip)) {
-      clip(context(clipBounds.clear()));
+      clip(boundContext(clipBounds.clear()));
     } else if (clip) {
       clipBounds.set(0, 0, mark.group.width, mark.group.height);
     } else return;
@@ -16519,72 +16659,73 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$Q = inherits(Bound, Transform);
+  inherits(Bound, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow,
+            mark = _.mark,
+            type = mark.marktype,
+            entry = Marks[type],
+            bound = entry.bound;
 
-  prototype$Q.transform = function(_, pulse) {
-    var view = pulse.dataflow,
-        mark = _.mark,
-        type = mark.marktype,
-        entry = Marks[type],
-        bound = entry.bound,
-        markBounds = mark.bounds, rebound;
+      let markBounds = mark.bounds, rebound;
 
-    if (entry.nested) {
-      // multi-item marks have a single bounds instance
-      if (mark.items.length) view.dirty(mark.items[0]);
-      markBounds = boundItem$1(mark, bound);
-      mark.items.forEach(function(item) {
-        item.bounds.clear().union(markBounds);
-      });
-    }
-
-    else if (type === Group || _.modified()) {
-      // operator parameters modified -> re-bound all items
-      // updates group bounds in response to modified group content
-      pulse.visit(pulse.MOD, item => view.dirty(item));
-      markBounds.clear();
-      mark.items.forEach(item => markBounds.union(boundItem$1(item, bound)));
-
-      // force reflow for axes/legends/titles to propagate any layout changes
-      switch (mark.role) {
-        case AxisRole:
-        case LegendRole:
-        case TitleRole:
-          pulse.reflow();
+      if (entry.nested) {
+        // multi-item marks have a single bounds instance
+        if (mark.items.length) view.dirty(mark.items[0]);
+        markBounds = boundItem$1(mark, bound);
+        mark.items.forEach(function(item) {
+          item.bounds.clear().union(markBounds);
+        });
       }
-    }
 
-    else {
-      // incrementally update bounds, re-bound mark as needed
-      rebound = pulse.changed(pulse.REM);
-
-      pulse.visit(pulse.ADD, item => {
-        markBounds.union(boundItem$1(item, bound));
-      });
-
-      pulse.visit(pulse.MOD, item => {
-        rebound = rebound || markBounds.alignsWith(item.bounds);
-        view.dirty(item);
-        markBounds.union(boundItem$1(item, bound));
-      });
-
-      if (rebound) {
+      else if (type === Group || _.modified()) {
+        // operator parameters modified -> re-bound all items
+        // updates group bounds in response to modified group content
+        pulse.visit(pulse.MOD, item => view.dirty(item));
         markBounds.clear();
-        mark.items.forEach(item => markBounds.union(item.bounds));
+        mark.items.forEach(item => markBounds.union(boundItem$1(item, bound)));
+
+        // force reflow for axes/legends/titles to propagate any layout changes
+        switch (mark.role) {
+          case AxisRole:
+          case LegendRole:
+          case TitleRole:
+            pulse.reflow();
+        }
       }
+
+      else {
+        // incrementally update bounds, re-bound mark as needed
+        rebound = pulse.changed(pulse.REM);
+
+        pulse.visit(pulse.ADD, item => {
+          markBounds.union(boundItem$1(item, bound));
+        });
+
+        pulse.visit(pulse.MOD, item => {
+          rebound = rebound || markBounds.alignsWith(item.bounds);
+          view.dirty(item);
+          markBounds.union(boundItem$1(item, bound));
+        });
+
+        if (rebound) {
+          markBounds.clear();
+          mark.items.forEach(item => markBounds.union(item.bounds));
+        }
+      }
+
+      // ensure mark bounds do not exceed any clipping region
+      boundClip(mark);
+
+      return pulse.modifies('bounds');
     }
-
-    // ensure mark bounds do not exceed any clipping region
-    boundClip(mark);
-
-    return pulse.modifies('bounds');
-  };
+  });
 
   function boundItem$1(item, bound, opt) {
     return bound(item.bounds.clear(), item, opt);
   }
 
-  var COUNTER_NAME = ':vega_identifier:';
+  const COUNTER_NAME = ':vega_identifier:';
 
   /**
    * Adds a unique identifier to all added tuples.
@@ -16609,27 +16750,21 @@
     ]
   };
 
-  var prototype$R = inherits(Identifier, Transform);
+  inherits(Identifier, Transform, {
+    transform(_, pulse) {
+      const counter = getCounter(pulse.dataflow),
+            as = _.as;
+      let id = counter.value;
 
-  prototype$R.transform = function(_, pulse) {
-    var counter = getCounter(pulse.dataflow),
-        id = counter.value,
-        as = _.as;
-
-    pulse.visit(pulse.ADD, t => {
-      if (!t[as]) t[as] = ++id;
-    });
-
-    counter.set(this.value = id);
-    return pulse;
-  };
+      pulse.visit(pulse.ADD, t => (t[as] = t[as] || ++id));
+      counter.set(this.value = id);
+      return pulse;
+    }
+  });
 
   function getCounter(view) {
-    var counter = view._signals[COUNTER_NAME];
-    if (!counter) {
-      view._signals[COUNTER_NAME] = (counter = view.add(0));
-    }
-    return counter;
+    return view._signals[COUNTER_NAME]
+       || (view._signals[COUNTER_NAME] = view.add(0));
   }
 
   /**
@@ -16644,41 +16779,41 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$S = inherits(Mark, Transform);
+  inherits(Mark, Transform, {
+    transform(_, pulse) {
+      let mark = this.value;
 
-  prototype$S.transform = function(_, pulse) {
-    var mark = this.value;
+      // acquire mark on first invocation, bind context and group
+      if (!mark) {
+        mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1(_), _.index);
+        mark.group.context = _.context;
+        if (!_.context.group) _.context.group = mark.group;
+        mark.source = this.source; // point to upstream collector
+        mark.clip = _.clip;
+        mark.interactive = _.interactive;
+        this.value = mark;
+      }
 
-    // acquire mark on first invocation, bind context and group
-    if (!mark) {
-      mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1(_), _.index);
-      mark.group.context = _.context;
-      if (!_.context.group) _.context.group = mark.group;
-      mark.source = this.source; // point to upstream collector
-      mark.clip = _.clip;
-      mark.interactive = _.interactive;
-      this.value = mark;
+      // initialize entering items
+      const Init = mark.marktype === Group ? GroupItem : Item;
+      pulse.visit(pulse.ADD, item => Init.call(item, mark));
+
+      // update clipping and/or interactive status
+      if (_.modified('clip') || _.modified('interactive')) {
+        mark.clip = _.clip;
+        mark.interactive = !!_.interactive;
+        mark.zdirty = true; // force scenegraph re-eval
+        pulse.reflow();
+      }
+
+      // bind items array to scenegraph mark
+      mark.items = pulse.source;
+      return pulse;
     }
-
-    // initialize entering items
-    var Init = mark.marktype === Group ? GroupItem : Item;
-    pulse.visit(pulse.ADD, item => Init.call(item, mark));
-
-    // update clipping and/or interactive status
-    if (_.modified('clip') || _.modified('interactive')) {
-      mark.clip = _.clip;
-      mark.interactive = !!_.interactive;
-      mark.zdirty = true; // force scenegraph re-eval
-      pulse.reflow();
-    }
-
-    // bind items array to scenegraph mark
-    mark.items = pulse.source;
-    return pulse;
-  };
+  });
 
   function lookup$1(_) {
-    var g = _.groups, p = _.parent;
+    const g = _.groups, p = _.parent;
     return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
       : g && p ? g.lookup(p)
       : null;
@@ -16711,48 +16846,36 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$T = inherits(Overlap, Transform);
-
-  var methods = {
-    parity: items => {
-      return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
-    },
+  const methods = {
+    parity: items =>
+      items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1),
     greedy: (items, sep) => {
-      var a;
-      return items.filter((b, i) => {
-        if (!i || !intersect$1(a.bounds, b.bounds, sep)) {
-          a = b;
-          return 1;
-        } else {
-          return b.opacity = 0;
-        }
-      });
+      let a;
+      return items.filter((b, i) =>
+        (!i || !intersect$1(a.bounds, b.bounds, sep))
+          ? (a = b, 1)
+          : (b.opacity = 0)
+      );
     }
   };
 
   // compute bounding box intersection
   // including padding pixels of separation
-  function intersect$1(a, b, sep) {
-    return sep > Math.max(
-      b.x1 - a.x2,
-      a.x1 - b.x2,
-      b.y1 - a.y2,
-      a.y1 - b.y2
-    );
-  }
+  const intersect$1 = (a, b, sep) =>
+    sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
 
-  function hasOverlap(items, pad) {
+  const hasOverlap = (items, pad) => {
     for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
       if (intersect$1(a, b = items[i].bounds, pad)) return true;
     }
-  }
+  };
 
-  function hasBounds(item) {
+  const hasBounds = item => {
     var b = item.bounds;
     return b.width() > 1 && b.height() > 1;
-  }
+  };
 
-  function boundTest(scale, orient, tolerance) {
+  const boundTest = (scale, orient, tolerance) => {
     var range = scale.range(),
         b = new Bounds();
 
@@ -16764,76 +16887,77 @@
     b.expand(tolerance || 1);
 
     return item => b.encloses(item.bounds);
-  }
+  };
 
   // reset all items to be fully opaque
-  function reset(source) {
+  const reset = source => {
     source.forEach(item => item.opacity = 1);
     return source;
-  }
+  };
 
   // add all tuples to mod, fork pulse if parameters were modified
   // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
-  function reflow(pulse, _) {
-    return pulse.reflow(_.modified()).modifies('opacity');
-  }
+  const reflow = (pulse, _) =>
+    pulse.reflow(_.modified()).modifies('opacity');
 
-  prototype$T.transform = function(_, pulse) {
-    var reduce = methods[_.method] || methods.parity,
-        source = pulse.materialize(pulse.SOURCE).source,
-        sep = _.separation || 0,
-        items, test, bounds;
+  inherits(Overlap, Transform, {
+    transform(_, pulse) {
+      let reduce = methods[_.method] || methods.parity,
+          source = pulse.materialize(pulse.SOURCE).source,
+          sep = _.separation || 0,
+          items, test, bounds;
 
-    if (!source || !source.length) return;
+      if (!source || !source.length) return;
 
-    if (!_.method) {
-      // early exit if method is falsy
-      if (_.modified('method')) {
-        reset(source);
-        pulse = reflow(pulse, _);
+      if (!_.method) {
+        // early exit if method is falsy
+        if (_.modified('method')) {
+          reset(source);
+          pulse = reflow(pulse, _);
+        }
+        return pulse;
       }
+
+      // skip labels with no content
+      source = source.filter(hasBounds);
+
+      // early exit, nothing to do
+      if (!source.length) return;
+
+      if (_.sort) {
+        source = source.slice().sort(_.sort);
+      }
+
+      items = reset(source);
+      pulse = reflow(pulse, _);
+
+      if (items.length >= 3 && hasOverlap(items, sep)) {
+        do {
+          items = reduce(items, sep);
+        } while (items.length >= 3 && hasOverlap(items, sep));
+
+        if (items.length < 3 && !peek(source).opacity) {
+          if (items.length > 1) peek(items).opacity = 0;
+          peek(source).opacity = 1;
+        }
+      }
+
+      if (_.boundScale && _.boundTolerance >= 0) {
+        test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
+        source.forEach(item => {
+          if (!test(item)) item.opacity = 0;
+        });
+      }
+
+      // re-calculate mark bounds
+      bounds = items[0].mark.bounds.clear();
+      source.forEach(item => {
+        if (item.opacity) bounds.union(item.bounds);
+      });
+
       return pulse;
     }
-
-    // skip labels with no content
-    source = source.filter(hasBounds);
-
-    // early exit, nothing to do
-    if (!source.length) return;
-
-    if (_.sort) {
-      source = source.slice().sort(_.sort);
-    }
-
-    items = reset(source);
-    pulse = reflow(pulse, _);
-
-    if (items.length >= 3 && hasOverlap(items, sep)) {
-      do {
-        items = reduce(items, sep);
-      } while (items.length >= 3 && hasOverlap(items, sep));
-
-      if (items.length < 3 && !peek(source).opacity) {
-        if (items.length > 1) peek(items).opacity = 0;
-        peek(source).opacity = 1;
-      }
-    }
-
-    if (_.boundScale && _.boundTolerance >= 0) {
-      test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-      source.forEach(item => {
-        if (!test(item)) item.opacity = 0;
-      });
-    }
-
-    // re-calculate mark bounds
-    bounds = items[0].mark.bounds.clear();
-    source.forEach(item => {
-      if (item.opacity) bounds.union(item.bounds);
-    });
-
-    return pulse;
-  };
+  });
 
   /**
    * Queue modified scenegraph items for rendering.
@@ -16843,19 +16967,19 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$U = inherits(Render, Transform);
+  inherits(Render, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow;
 
-  prototype$U.transform = function(_, pulse) {
-    var view = pulse.dataflow;
+      pulse.visit(pulse.ALL, item => view.dirty(item));
 
-    pulse.visit(pulse.ALL, item => view.dirty(item));
-
-    // set z-index dirty flag as needed
-    if (pulse.fields && pulse.fields['zindex']) {
-      var item = pulse.source && pulse.source[0];
-      if (item) item.mark.zdirty = true;
+      // set z-index dirty flag as needed
+      if (pulse.fields && pulse.fields['zindex']) {
+        var item = pulse.source && pulse.source[0];
+        if (item) item.mark.zdirty = true;
+      }
     }
-  };
+  });
 
   const tempBounds$1 = new Bounds();
 
@@ -17649,16 +17773,16 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$V = inherits(ViewLayout, Transform);
-
-  prototype$V.transform = function(_, pulse) {
-    var view = pulse.dataflow;
-    _.mark.items.forEach(group => {
-      if (_.layout) trellisLayout(view, group, _.layout);
-      layoutGroup(view, group, _);
-    });
-    return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
-  };
+  inherits(ViewLayout, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow;
+      _.mark.items.forEach(group => {
+        if (_.layout) trellisLayout(view, group, _.layout);
+        layoutGroup(view, group, _);
+      });
+      return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
+    }
+  });
 
   function shouldReflow(group) {
     // We typically should reflow if layout is invoked (#2568), as child items
@@ -17859,48 +17983,48 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$W = inherits(AxisTicks, Transform);
+  inherits(AxisTicks, Transform, {
+    transform(_, pulse) {
+      if (this.value && !_.modified()) {
+        return pulse.StopPropagation;
+      }
 
-  prototype$W.transform = function(_, pulse) {
-    if (this.value && !_.modified()) {
-      return pulse.StopPropagation;
+      var locale = pulse.dataflow.locale(),
+          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          ticks = this.value,
+          scale = _.scale,
+          tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
+          count = tickCount(scale, tally, _.minstep),
+          format = _.format || tickFormat$1(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
+          values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
+
+      if (ticks) out.rem = ticks;
+
+      ticks = values.map((value, i) =>
+        ingest({
+          index: i / (values.length - 1 || 1),
+          value: value,
+          label: format(value)
+        })
+      );
+
+      if (_.extra && ticks.length) {
+        // add an extra tick pegged to the initial domain value
+        // this is used to generate axes with 'binned' domains
+        ticks.push(ingest({
+          index: -1,
+          extra: {value: ticks[0].value},
+          label: ''
+        }));
+      }
+
+      out.source = ticks;
+      out.add = ticks;
+      this.value = ticks;
+
+      return out;
     }
-
-    var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        ticks = this.value,
-        scale = _.scale,
-        tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
-        count = tickCount(scale, tally, _.minstep),
-        format = _.format || tickFormat$1(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
-        values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
-
-    if (ticks) out.rem = ticks;
-
-    ticks = values.map(function(value, i) {
-      return ingest({
-        index: i / (values.length - 1 || 1),
-        value: value,
-        label: format(value)
-      });
-    });
-
-    if (_.extra && ticks.length) {
-      // add an extra tick pegged to the initial domain value
-      // this is used to generate axes with 'binned' domains
-      ticks.push(ingest({
-        index: -1,
-        extra: {value: ticks[0].value},
-        label: ''
-      }));
-    }
-
-    out.source = ticks;
-    out.add = ticks;
-    this.value = ticks;
-
-    return out;
-  };
+  });
 
   /**
    * Joins a set of data elements against a set of visual items.
@@ -17913,8 +18037,6 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$X = inherits(DataJoin, Transform);
-
   function defaultItemCreate() {
     return ingest({});
   }
@@ -17925,78 +18047,80 @@
     return map;
   }
 
-  prototype$X.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        item = _.item || defaultItemCreate,
-        key = _.key || tupleid,
-        map = this.value;
+  inherits(DataJoin, Transform, {
+    transform(_, pulse) {
+      var df = pulse.dataflow,
+          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          item = _.item || defaultItemCreate,
+          key = _.key || tupleid,
+          map = this.value;
 
-    // prevent transient (e.g., hover) requests from
-    // cascading across marks derived from marks
-    if (isArray(out.encode)) {
-      out.encode = null;
-    }
+      // prevent transient (e.g., hover) requests from
+      // cascading across marks derived from marks
+      if (isArray(out.encode)) {
+        out.encode = null;
+      }
 
-    if (map && (_.modified('key') || pulse.modified(key))) {
-      error('DataJoin does not support modified key function or fields.');
-    }
+      if (map && (_.modified('key') || pulse.modified(key))) {
+        error('DataJoin does not support modified key function or fields.');
+      }
 
-    if (!map) {
-      pulse = pulse.addAll();
-      this.value = map = newMap(key);
-    }
+      if (!map) {
+        pulse = pulse.addAll();
+        this.value = map = newMap(key);
+      }
 
-    pulse.visit(pulse.ADD, t => {
-      const k = key(t);
-      let x = map.get(k);
+      pulse.visit(pulse.ADD, t => {
+        const k = key(t);
+        let x = map.get(k);
 
-      if (x) {
-        if (x.exit) {
-          map.empty--;
-          out.add.push(x);
+        if (x) {
+          if (x.exit) {
+            map.empty--;
+            out.add.push(x);
+          } else {
+            out.mod.push(x);
+          }
         } else {
+          x = item(t);
+          map.set(k, x);
+          out.add.push(x);
+        }
+
+        x.datum = t;
+        x.exit = false;
+      });
+
+      pulse.visit(pulse.MOD, t => {
+        const k = key(t),
+              x = map.get(k);
+
+        if (x) {
+          x.datum = t;
           out.mod.push(x);
         }
-      } else {
-        x = item(t);
-        map.set(k, x);
-        out.add.push(x);
+      });
+
+      pulse.visit(pulse.REM, t => {
+        const k = key(t),
+              x = map.get(k);
+
+        if (t === x.datum && !x.exit) {
+          out.rem.push(x);
+          x.exit = true;
+          ++map.empty;
+        }
+      });
+
+      if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+
+      if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
+        df.runAfter(map.clean);
       }
 
-      x.datum = t;
-      x.exit = false;
-    });
-
-    pulse.visit(pulse.MOD, t => {
-      const k = key(t),
-            x = map.get(k);
-
-      if (x) {
-        x.datum = t;
-        out.mod.push(x);
-      }
-    });
-
-    pulse.visit(pulse.REM, t => {
-      const k = key(t),
-            x = map.get(k);
-
-      if (t === x.datum && !x.exit) {
-        out.rem.push(x);
-        x.exit = true;
-        ++map.empty;
-      }
-    });
-
-    if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
-
-    if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
-      df.runAfter(map.clean);
+      return out;
     }
-
-    return out;
-  };
+  });
 
   /**
    * Invokes encoding functions for visual items.
@@ -18014,66 +18138,66 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$Y = inherits(Encode, Transform);
+  inherits(Encode, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ADD_REM),
+          fmod = _.mod || false,
+          encoders = _.encoders,
+          encode = pulse.encode;
 
-  prototype$Y.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.ADD_REM),
-        fmod = _.mod || false,
-        encoders = _.encoders,
-        encode = pulse.encode;
-
-    // if an array, the encode directive includes additional sets
-    // that must be defined in order for the primary set to be invoked
-    // e.g., only run the update set if the hover set is defined
-    if (isArray(encode)) {
-      if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
-        encode = encode[0];
-        out.encode = null; // consume targeted encode directive
-      } else {
-        return pulse.StopPropagation;
+      // if an array, the encode directive includes additional sets
+      // that must be defined in order for the primary set to be invoked
+      // e.g., only run the update set if the hover set is defined
+      if (isArray(encode)) {
+        if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+          encode = encode[0];
+          out.encode = null; // consume targeted encode directive
+        } else {
+          return pulse.StopPropagation;
+        }
       }
-    }
 
-    // marshall encoder functions
-    var reenter = encode === 'enter',
-        update = encoders.update || falsy,
-        enter = encoders.enter || falsy,
-        exit = encoders.exit || falsy,
-        set = (encode && !reenter ? encoders[encode] : update) || falsy;
+      // marshall encoder functions
+      var reenter = encode === 'enter',
+          update = encoders.update || falsy,
+          enter = encoders.enter || falsy,
+          exit = encoders.exit || falsy,
+          set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
-    if (pulse.changed(pulse.ADD)) {
-      pulse.visit(pulse.ADD, function(t) { enter(t, _); update(t, _); });
-      out.modifies(enter.output);
-      out.modifies(update.output);
-      if (set !== falsy && set !== update) {
-        pulse.visit(pulse.ADD, function(t) { set(t, _); });
-        out.modifies(set.output);
+      if (pulse.changed(pulse.ADD)) {
+        pulse.visit(pulse.ADD, function(t) { enter(t, _); update(t, _); });
+        out.modifies(enter.output);
+        out.modifies(update.output);
+        if (set !== falsy && set !== update) {
+          pulse.visit(pulse.ADD, function(t) { set(t, _); });
+          out.modifies(set.output);
+        }
       }
-    }
 
-    if (pulse.changed(pulse.REM) && exit !== falsy) {
-      pulse.visit(pulse.REM, function(t) { exit(t, _); });
-      out.modifies(exit.output);
-    }
-
-    if (reenter || set !== falsy) {
-      var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
-      if (reenter) {
-        pulse.visit(flag, function(t) {
-          var mod = enter(t, _) || fmod;
-          if (set(t, _) || mod) out.mod.push(t);
-        });
-        if (out.mod.length) out.modifies(enter.output);
-      } else {
-        pulse.visit(flag, function(t) {
-          if (set(t, _) || fmod) out.mod.push(t);
-        });
+      if (pulse.changed(pulse.REM) && exit !== falsy) {
+        pulse.visit(pulse.REM, function(t) { exit(t, _); });
+        out.modifies(exit.output);
       }
-      if (out.mod.length) out.modifies(set.output);
-    }
 
-    return out.changed() ? out : pulse.StopPropagation;
-  };
+      if (reenter || set !== falsy) {
+        var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
+        if (reenter) {
+          pulse.visit(flag, function(t) {
+            var mod = enter(t, _) || fmod;
+            if (set(t, _) || mod) out.mod.push(t);
+          });
+          if (out.mod.length) out.modifies(enter.output);
+        } else {
+          pulse.visit(flag, function(t) {
+            if (set(t, _) || fmod) out.mod.push(t);
+          });
+        }
+        if (out.mod.length) out.modifies(set.output);
+      }
+
+      return out.changed() ? out : pulse.StopPropagation;
+    }
+  });
 
   /**
    * Generates legend entries for visualizing a scale.
@@ -18097,132 +18221,117 @@
     Transform.call(this, [], params);
   }
 
-  var prototype$Z = inherits(LegendEntries, Transform);
-
-  prototype$Z.transform = function(_, pulse) {
-    if (this.value != null && !_.modified()) {
-      return pulse.StopPropagation;
-    }
-
-    var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        items = this.value,
-        type  = _.type || SymbolLegend,
-        scale = _.scale,
-        limit = +_.limit,
-        count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        lskip = !!_.values || type === SymbolLegend,
-        format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
-        values = _.values || labelValues(scale, count),
-        domain, fraction, size, offset, ellipsis;
-
-    if (items) out.rem = items;
-
-    if (type === SymbolLegend) {
-      if (limit && values.length > limit) {
-        pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
-        items = values.slice(0, limit - 1);
-        ellipsis = true;
-      } else {
-        items = values;
+  inherits(LegendEntries, Transform, {
+    transform(_, pulse) {
+      if (this.value != null && !_.modified()) {
+        return pulse.StopPropagation;
       }
 
-      if (isFunction(size = _.size)) {
-        // if first value maps to size zero, remove from list (vega#717)
-        if (!_.values && scale(items[0]) === 0) {
-          items = items.slice(1);
+      var locale = pulse.dataflow.locale(),
+          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          items = this.value,
+          type  = _.type || SymbolLegend,
+          scale = _.scale,
+          limit = +_.limit,
+          count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
+          lskip = !!_.values || type === SymbolLegend,
+          format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
+          values = _.values || labelValues(scale, count),
+          domain, fraction, size, offset, ellipsis;
+
+      if (items) out.rem = items;
+
+      if (type === SymbolLegend) {
+        if (limit && values.length > limit) {
+          pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
+          items = values.slice(0, limit - 1);
+          ellipsis = true;
+        } else {
+          items = values;
         }
-        // compute size offset for legend entries
-        offset = items.reduce(function(max, value) {
-          return Math.max(max, size(value, _));
-        }, 0);
-      } else {
-        size = constant(offset = size || 8);
+
+        if (isFunction(size = _.size)) {
+          // if first value maps to size zero, remove from list (vega#717)
+          if (!_.values && scale(items[0]) === 0) {
+            items = items.slice(1);
+          }
+          // compute size offset for legend entries
+          offset = items.reduce(function(max, value) {
+            return Math.max(max, size(value, _));
+          }, 0);
+        } else {
+          size = constant(offset = size || 8);
+        }
+
+        items = items.map((value, index) =>
+          ingest({
+            index:  index,
+            label:  format(value, index, items),
+            value:  value,
+            offset: offset,
+            size:   size(value, _)
+          })
+        );
+
+        if (ellipsis) {
+          ellipsis = values[items.length];
+          items.push(ingest({
+            index:    items.length,
+            label:    `\u2026${values.length-items.length} entries`,
+            value:    ellipsis,
+            offset:   offset,
+            size:     size(ellipsis, _)
+          }));
+        }
       }
 
-      items = items.map(function(value, index) {
-        return ingest({
-          index:  index,
-          label:  format(value, index, items),
-          value:  value,
-          offset: offset,
-          size:   size(value, _)
-        });
-      });
+      else if (type === GradientLegend) {
+        domain = scale.domain(),
+        fraction = scaleFraction(scale, domain[0], peek(domain));
 
-      if (ellipsis) {
-        ellipsis = values[items.length];
-        items.push(ingest({
-          index:    items.length,
-          label:    `\u2026${values.length-items.length} entries`,
-          value:    ellipsis,
-          offset:   offset,
-          size:     size(ellipsis, _)
-        }));
-      }
-    }
+        // if automatic label generation produces 2 or fewer values,
+        // use the domain end points instead (fixes vega/vega#1364)
+        if (values.length < 3 && !_.values && domain[0] !== peek(domain)) {
+          values = [domain[0], peek(domain)];
+        }
 
-    else if (type === GradientLegend) {
-      domain = scale.domain(),
-      fraction = scaleFraction(scale, domain[0], peek(domain));
-
-      // if automatic label generation produces 2 or fewer values,
-      // use the domain end points instead (fixes vega/vega#1364)
-      if (values.length < 3 && !_.values && domain[0] !== peek(domain)) {
-        values = [domain[0], peek(domain)];
+        items = values.map((value, index) =>
+          ingest({
+            index: index,
+            label: format(value, index, values),
+            value: value,
+            perc:  fraction(value)
+          })
+        );
       }
 
-      items = values.map(function(value, index) {
-        return ingest({
-          index: index,
-          label: format(value, index, values),
-          value: value,
-          perc:  fraction(value)
-        });
-      });
+      else {
+        size = values.length - 1;
+        fraction = labelFraction(scale);
+
+        items = values.map((value, index) =>
+          ingest({
+            index: index,
+            label: format(value, index, values),
+            value: value,
+            perc:  index ? fraction(value) : 0,
+            perc2: index === size ? 1 : fraction(values[index+1])
+          })
+        );
+      }
+
+      out.source = items;
+      out.add = items;
+      this.value = items;
+
+      return out;
     }
-
-    else {
-      size = values.length - 1;
-      fraction = labelFraction(scale);
-
-      items = values.map(function(value, index) {
-        return ingest({
-          index: index,
-          label: format(value, index, values),
-          value: value,
-          perc:  index ? fraction(value) : 0,
-          perc2: index === size ? 1 : fraction(values[index+1])
-        });
-      });
-    }
-
-    out.source = items;
-    out.add = items;
-    this.value = items;
-
-    return out;
-  };
-
-  var Paths = fastmap({
-    'line': line$2,
-    'line-radial': lineR,
-    'arc': arc$2,
-    'arc-radial': arcR,
-    'curve': curve,
-    'curve-radial': curveR,
-    'orthogonal-horizontal': orthoX,
-    'orthogonal-vertical': orthoY,
-    'orthogonal-radial': orthoR,
-    'diagonal-horizontal': diagonalX,
-    'diagonal-vertical': diagonalY,
-    'diagonal-radial': diagonalR
   });
 
-  function sourceX(t) { return t.source.x; }
-  function sourceY(t) { return t.source.y; }
-  function targetX(t) { return t.target.x; }
-  function targetY(t) { return t.target.y; }
+  const sourceX = t => t.source.x;
+  const sourceY = t => t.source.y;
+  const targetX = t => t.target.x;
+  const targetY = t => t.target.y;
 
    /**
     * Layout paths linking source and target elements.
@@ -18250,45 +18359,40 @@
     ]
   };
 
-  var prototype$_ = inherits(LinkPath, Transform);
+  inherits(LinkPath, Transform, {
+    transform(_, pulse) {
+      var sx = _.sourceX || sourceX,
+          sy = _.sourceY || sourceY,
+          tx = _.targetX || targetX,
+          ty = _.targetY || targetY,
+          as = _.as || 'path',
+          orient = _.orient || 'vertical',
+          shape = _.shape || 'line',
+          path = Paths.get(shape + '-' + orient) || Paths.get(shape);
 
-  prototype$_.transform = function(_, pulse) {
-    var sx = _.sourceX || sourceX,
-        sy = _.sourceY || sourceY,
-        tx = _.targetX || targetX,
-        ty = _.targetY || targetY,
-        as = _.as || 'path',
-        orient = _.orient || 'vertical',
-        shape = _.shape || 'line',
-        path = Paths.get(shape + '-' + orient) || Paths.get(shape);
+      if (!path) {
+        error('LinkPath unsupported type: ' + _.shape
+          + (_.orient ? '-' + _.orient : ''));
+      }
 
-    if (!path) {
-      error('LinkPath unsupported type: ' + _.shape
-        + (_.orient ? '-' + _.orient : ''));
+      pulse.visit(pulse.SOURCE, t => {
+        t[as] = path(sx(t), sy(t), tx(t), ty(t));
+      });
+
+      return pulse.reflow(_.modified()).modifies(as);
     }
+  });
 
-    pulse.visit(pulse.SOURCE, function(t) {
-      t[as] = path(sx(t), sy(t), tx(t), ty(t));
-    });
+  const line$2 = (sx, sy, tx, ty) =>
+    'M' + sx + ',' + sy +
+    'L' + tx + ',' + ty;
 
-    return pulse.reflow(_.modified()).modifies(as);
-  };
+  const lineR= (sa, sr, ta, tr) => line$2(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
 
-  // -- Link Path Generation Methods -----
-
-  function line$2(sx, sy, tx, ty) {
-    return 'M' + sx + ',' + sy +
-           'L' + tx + ',' + ty;
-  }
-
-  function lineR(sa, sr, ta, tr) {
-    return line$2(
-      sr * Math.cos(sa), sr * Math.sin(sa),
-      tr * Math.cos(ta), tr * Math.sin(ta)
-    );
-  }
-
-  function arc$2(sx, sy, tx, ty) {
+  const arc$2 = (sx, sy, tx, ty) => {
     var dx = tx - sx,
         dy = ty - sy,
         rr = Math.sqrt(dx * dx + dy * dy) / 2,
@@ -18297,82 +18401,91 @@
            'A' + rr + ',' + rr +
            ' ' + ra + ' 0 1' +
            ' ' + tx + ',' + ty;
-  }
+  };
 
-  function arcR(sa, sr, ta, tr) {
-    return arc$2(
-      sr * Math.cos(sa), sr * Math.sin(sa),
-      tr * Math.cos(ta), tr * Math.sin(ta)
-    );
-  }
+  const arcR = (sa, sr, ta, tr) => arc$2(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
 
-  function curve(sx, sy, tx, ty) {
-    var dx = tx - sx,
-        dy = ty - sy,
-        ix = 0.2 * (dx + dy),
-        iy = 0.2 * (dy - dx);
+  const curve = (sx, sy, tx, ty) => {
+    const dx = tx - sx,
+          dy = ty - sy,
+          ix = 0.2 * (dx + dy),
+          iy = 0.2 * (dy - dx);
     return 'M' + sx + ',' + sy +
            'C' + (sx+ix) + ',' + (sy+iy) +
            ' ' + (tx+iy) + ',' + (ty-ix) +
            ' ' + tx + ',' + ty;
-  }
+  };
 
-  function curveR(sa, sr, ta, tr) {
-    return curve(
-      sr * Math.cos(sa), sr * Math.sin(sa),
-      tr * Math.cos(ta), tr * Math.sin(ta)
-    );
-  }
+  const curveR = (sa, sr, ta, tr) => curve(
+    sr * Math.cos(sa), sr * Math.sin(sa),
+    tr * Math.cos(ta), tr * Math.sin(ta)
+  );
 
-  function orthoX(sx, sy, tx, ty) {
-    return 'M' + sx + ',' + sy +
-           'V' + ty + 'H' + tx;
-  }
+  const orthoX = (sx, sy, tx, ty) =>
+    'M' + sx + ',' + sy +
+    'V' + ty + 'H' + tx;
 
-  function orthoY(sx, sy, tx, ty) {
-    return 'M' + sx + ',' + sy +
-           'H' + tx + 'V' + ty;
-  }
+  const orthoY = (sx, sy, tx, ty) =>
+    'M' + sx + ',' + sy +
+    'H' + tx + 'V' + ty;
 
-  function orthoR(sa, sr, ta, tr) {
-    var sc = Math.cos(sa),
-        ss = Math.sin(sa),
-        tc = Math.cos(ta),
-        ts = Math.sin(ta),
-        sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
+  const orthoR = (sa, sr, ta, tr) => {
+    const sc = Math.cos(sa),
+          ss = Math.sin(sa),
+          tc = Math.cos(ta),
+          ts = Math.sin(ta),
+          sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
     return 'M' + (sr*sc) + ',' + (sr*ss) +
            'A' + sr + ',' + sr + ' 0 0,' + (sf?1:0) +
            ' ' + (sr*tc) + ',' + (sr*ts) +
            'L' + (tr*tc) + ',' + (tr*ts);
-  }
+  };
 
-  function diagonalX(sx, sy, tx, ty) {
-    var m = (sx + tx) / 2;
+  const diagonalX = (sx, sy, tx, ty) => {
+    const m = (sx + tx) / 2;
     return 'M' + sx + ',' + sy +
            'C' + m  + ',' + sy +
            ' ' + m  + ',' + ty +
            ' ' + tx + ',' + ty;
-  }
+  };
 
-  function diagonalY(sx, sy, tx, ty) {
-    var m = (sy + ty) / 2;
+  const diagonalY = (sx, sy, tx, ty) => {
+    const m = (sy + ty) / 2;
     return 'M' + sx + ',' + sy +
            'C' + sx + ',' + m +
            ' ' + tx + ',' + m +
            ' ' + tx + ',' + ty;
-  }
+  };
 
-  function diagonalR(sa, sr, ta, tr) {
-    var sc = Math.cos(sa),
-        ss = Math.sin(sa),
-        tc = Math.cos(ta),
-        ts = Math.sin(ta),
-        mr = (sr + tr) / 2;
+  const diagonalR = (sa, sr, ta, tr) => {
+    const sc = Math.cos(sa),
+          ss = Math.sin(sa),
+          tc = Math.cos(ta),
+          ts = Math.sin(ta),
+          mr = (sr + tr) / 2;
     return 'M' + (sr*sc) + ',' + (sr*ss) +
            'C' + (mr*sc) + ',' + (mr*ss) +
            ' ' + (mr*tc) + ',' + (mr*ts) +
            ' ' + (tr*tc) + ',' + (tr*ts);
-  }
+  };
+
+  const Paths = fastmap({
+    'line': line$2,
+    'line-radial': lineR,
+    'arc': arc$2,
+    'arc-radial': arcR,
+    'curve': curve,
+    'curve-radial': curveR,
+    'orthogonal-horizontal': orthoX,
+    'orthogonal-vertical': orthoY,
+    'orthogonal-radial': orthoR,
+    'diagonal-horizontal': diagonalX,
+    'diagonal-vertical': diagonalY,
+    'diagonal-radial': diagonalR
+  });
 
   /**
    * Pie and donut chart layout.
@@ -18399,41 +18512,39 @@
     ]
   };
 
-  var prototype$$ = inherits(Pie, Transform);
+  inherits(Pie, Transform, {
+    transform(_, pulse) {
+      var as = _.as || ['startAngle', 'endAngle'],
+          startAngle = as[0],
+          endAngle = as[1],
+          field = _.field || one,
+          start = _.startAngle || 0,
+          stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
+          data = pulse.source,
+          values = data.map(field),
+          n = values.length,
+          a = start,
+          k = (stop - start) / sum(values),
+          index = sequence(n),
+          i, t, v;
 
-  prototype$$.transform = function(_, pulse) {
-    var as = _.as || ['startAngle', 'endAngle'],
-        startAngle = as[0],
-        endAngle = as[1],
-        field = _.field || one,
-        start = _.startAngle || 0,
-        stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
-        data = pulse.source,
-        values = data.map(field),
-        n = values.length,
-        a = start,
-        k = (stop - start) / sum(values),
-        index = sequence(n),
-        i, t, v;
+      if (_.sort) {
+        index.sort((a, b) => values[a] - values[b]);
+      }
 
-    if (_.sort) {
-      index.sort(function(a, b) {
-        return values[a] - values[b];
-      });
+      for (i=0; i<n; ++i) {
+        v = values[index[i]];
+        t = data[index[i]];
+        t[startAngle] = a;
+        t[endAngle] = (a += v * k);
+      }
+
+      this.value = values;
+      return pulse.reflow(_.modified()).modifies(as);
     }
+  });
 
-    for (i=0; i<n; ++i) {
-      v = values[index[i]];
-      t = data[index[i]];
-      t[startAngle] = a;
-      t[endAngle] = (a += v * k);
-    }
-
-    this.value = values;
-    return pulse.reflow(_.modified()).modifies(as);
-  };
-
-  var DEFAULT_COUNT = 5;
+  const DEFAULT_COUNT = 5;
 
   function includeZero(scale) {
     const type = scale.type;
@@ -18446,7 +18557,7 @@
     return isContinuous(type) && type !== Sequential;
   }
 
-  var SKIP$2 = toSet([
+  const SKIP$2 = toSet([
     'set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount',
     'domain', 'domainMin', 'domainMid', 'domainMax',
     'domainRaw', 'domainImplicit', 'nice', 'zero', 'bins',
@@ -18463,32 +18574,32 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$10 = inherits(Scale, Transform);
+  inherits(Scale, Transform, {
+    transform(_, pulse) {
+      var df = pulse.dataflow,
+          scale = this.value,
+          key = scaleKey(_);
 
-  prototype$10.transform = function(_, pulse) {
-    var df = pulse.dataflow,
-        scale = this.value,
-        key = scaleKey(_);
+      if (!scale || key !== scale.type) {
+        this.value = scale = scale$2(key)();
+      }
 
-    if (!scale || key !== scale.type) {
-      this.value = scale = scale$2(key)();
+      for (key in _) if (!SKIP$2[key]) {
+        // padding is a scale property for band/point but not others
+        if (key === 'padding' && includePad(scale.type)) continue;
+        // invoke scale property setter, raise warning if not found
+        isFunction(scale[key])
+          ? scale[key](_[key])
+          : df.warn('Unsupported scale property: ' + key);
+      }
+
+      configureRange(scale, _,
+        configureBins(scale, _, configureDomain(scale, _, df))
+      );
+
+      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
     }
-
-    for (key in _) if (!SKIP$2[key]) {
-      // padding is a scale property for band/point but not others
-      if (key === 'padding' && includePad(scale.type)) continue;
-      // invoke scale property setter, raise warning if not found
-      isFunction(scale[key])
-        ? scale[key](_[key])
-        : df.warn('Unsupported scale property: ' + key);
-    }
-
-    configureRange(scale, _,
-      configureBins(scale, _, configureDomain(scale, _, df))
-    );
-
-    return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-  };
+  });
 
   function scaleKey(_) {
     var t = _.type, d = '', n;
@@ -18747,24 +18858,24 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$11 = inherits(SortItems, Transform);
+  inherits(SortItems, Transform, {
+    transform(_, pulse) {
+      const mod = _.modified('sort')
+            || pulse.changed(pulse.ADD)
+            || pulse.modified(_.sort.fields)
+            || pulse.modified('datum');
 
-  prototype$11.transform = function(_, pulse) {
-    var mod = _.modified('sort')
-           || pulse.changed(pulse.ADD)
-           || pulse.modified(_.sort.fields)
-           || pulse.modified('datum');
+      if (mod) pulse.source.sort(stableCompare(_.sort));
 
-    if (mod) pulse.source.sort(stableCompare(_.sort));
+      this.modified(mod);
+      return pulse;
+    }
+  });
 
-    this.modified(mod);
-    return pulse;
-  };
-
-  var Zero = 'zero',
-      Center = 'center',
-      Normalize = 'normalize',
-      DefOutput = ['y0', 'y1'];
+  const Zero = 'zero',
+        Center = 'center',
+        Normalize = 'normalize',
+        DefOutput = ['y0', 'y1'];
 
   /**
    * Stack layout for visualization elements.
@@ -18791,29 +18902,29 @@
     ]
   };
 
-  var prototype$12 = inherits(Stack, Transform);
+  inherits(Stack, Transform, {
+    transform(_, pulse) {
+      var as = _.as || DefOutput,
+          y0 = as[0],
+          y1 = as[1],
+          sort = stableCompare(_.sort),
+          field = _.field || one,
+          stack = _.offset === Center ? stackCenter
+                : _.offset === Normalize ? stackNormalize
+                : stackZero,
+          groups, i, n, max;
 
-  prototype$12.transform = function(_, pulse) {
-    var as = _.as || DefOutput,
-        y0 = as[0],
-        y1 = as[1],
-        sort = stableCompare(_.sort),
-        field = _.field || one,
-        stack = _.offset === Center ? stackCenter
-              : _.offset === Normalize ? stackNormalize
-              : stackZero,
-        groups, i, n, max;
+      // partition, sum, and sort the stack groups
+      groups = partition$2(pulse.source, _.groupby, sort, field);
 
-    // partition, sum, and sort the stack groups
-    groups = partition$2(pulse.source, _.groupby, sort, field);
+      // compute stack layouts per group
+      for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
+        stack(groups[i], max, field, y0, y1);
+      }
 
-    // compute stack layouts per group
-    for (i=0, n=groups.length, max=groups.max; i<n; ++i) {
-      stack(groups[i], max, field, y0, y1);
+      return pulse.reflow(_.modified()).modifies(as);
     }
-
-    return pulse.reflow(_.modified()).modifies(as);
-  };
+  });
 
   function stackCenter(group, max, field, y0, y1) {
     var last = (max - group.sum) / 2,
@@ -18861,7 +18972,7 @@
 
   function partition$2(data, groupby, sort, field) {
     var groups = [],
-        get = function(f) { return f(t); },
+        get = f => f(t),
         map, i, n, m, t, k, g, s, max;
 
     // partition data points into stack groups
@@ -18908,7 +19019,7 @@
     stack: Stack
   });
 
-  function noop$2() {}
+  function noop$1() {}
 
   const cases = [
     [],
@@ -19083,7 +19194,7 @@
     };
 
     contours.smooth = function(_) {
-      return arguments.length ? (smooth = _ ? smoothLinear : noop$2, contours) : smooth === smoothLinear;
+      return arguments.length ? (smooth = _ ? smoothLinear : noop$1, contours) : smooth === smoothLinear;
     };
 
     return contours;
@@ -19185,43 +19296,43 @@
     ]
   };
 
-  var prototype$13 = inherits(Isocontour, Transform);
+  inherits(Isocontour, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
 
-  prototype$13.transform = function(_, pulse) {
-    if (this.value && !pulse.changed() && !_.modified()) {
-      return pulse.StopPropagation;
-    }
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          source = pulse.materialize(pulse.SOURCE).source,
+          field = _.field || identity,
+          contour = contours().smooth(_.smooth !== false),
+          tz = _.thresholds || levels(source, field, _),
+          as = _.as === null ? null : _.as || 'contour',
+          values = [];
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        field = _.field || identity,
-        contour = contours().smooth(_.smooth !== false),
-        tz = _.thresholds || levels(source, field, _),
-        as = _.as === null ? null : _.as || 'contour',
-        values = [];
+      source.forEach(t => {
+        const grid = field(t);
 
-    source.forEach(t => {
-      const grid = field(t);
+        // generate contour paths in GeoJSON format
+        const paths = contour.size([grid.width, grid.height])(
+          grid.values, isArray(tz) ? tz : tz(grid.values)
+        );
 
-      // generate contour paths in GeoJSON format
-      const paths = contour.size([grid.width, grid.height])(
-        grid.values, isArray(tz) ? tz : tz(grid.values)
-      );
+        // adjust contour path coordinates as needed
+        transformPaths(paths, grid, t, _);
 
-      // adjust contour path coordinates as needed
-      transformPaths(paths, grid, t, _);
-
-      // ingest; copy source data properties to output
-      paths.forEach(p => {
-        values.push(rederive(t, ingest(as != null ? {[as]: p} : p)));
+        // ingest; copy source data properties to output
+        paths.forEach(p => {
+          values.push(rederive(t, ingest(as != null ? {[as]: p} : p)));
+        });
       });
-    });
 
-    if (this.value) out.rem = this.value;
-    this.value = out.source = out.add = values;
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = values;
 
-    return out;
-  };
+      return out;
+    }
+  });
 
   function levels(values, f, _) {
     const q = quantize$1(_.levels || 10, _.nice, _.zero !== false);
@@ -19464,8 +19575,6 @@
     ]
   };
 
-  var prototype$14 = inherits(KDE2D, Transform);
-
   const PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
 
   function params(obj, _) {
@@ -19473,33 +19582,35 @@
     return obj;
   }
 
-  prototype$14.transform = function(_, pulse) {
-    if (this.value && !pulse.changed() && !_.modified())
-      return pulse.StopPropagation;
+  inherits(KDE2D, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified())
+        return pulse.StopPropagation;
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        groups = partition$3(source, _.groupby),
-        names = (_.groupby || []).map(accessorName),
-        kde = params(density2D(), _),
-        as = _.as || 'grid',
-        values = [];
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition$3(source, _.groupby),
+          names = (_.groupby || []).map(accessorName),
+          kde = params(density2D(), _),
+          as = _.as || 'grid',
+          values = [];
 
-    function set(t, vals) {
-      for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
-      return t;
+      function set(t, vals) {
+        for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
+        return t;
+      }
+
+      // generate density raster grids
+      values = groups.map(g => ingest(
+        set({[as]: kde(g, _.counts)}, g.dims)
+      ));
+
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = values;
+
+      return out;
     }
-
-    // generate density raster grids
-    values = groups.map(g => ingest(
-      set({[as]: kde(g, _.counts)}, g.dims)
-    ));
-
-    if (this.value) out.rem = this.value;
-    this.value = out.source = out.add = values;
-
-    return out;
-  };
+  });
 
   function partition$3(data, groupby) {
     var groups = [],
@@ -19575,36 +19686,36 @@
     ]
   };
 
-  var prototype$15 = inherits(Contour, Transform);
+  inherits(Contour, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
 
-  prototype$15.transform = function(_, pulse) {
-    if (this.value && !pulse.changed() && !_.modified()) {
-      return pulse.StopPropagation;
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+          contour = contours().smooth(_.smooth !== false),
+          values = _.values,
+          thresh = _.thresholds || quantize$1(_.count || 10, _.nice, !!values),
+          size = _.size, grid, post;
+
+      if (!values) {
+        values = pulse.materialize(pulse.SOURCE).source;
+        grid = params(density2D(), _)(values, true);
+        post = transform$1(grid, grid.scale || 1, grid.scale || 1, 0, 0);
+        size = [grid.width, grid.height];
+        values = grid.values;
+      }
+
+      thresh = isArray(thresh) ? thresh : thresh(values);
+      values = contour.size(size)(values, thresh);
+      if (post) values.forEach(post);
+
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = (values || []).map(ingest);
+
+      return out;
     }
-
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        contour = contours().smooth(_.smooth !== false),
-        values = _.values,
-        thresh = _.thresholds || quantize$1(_.count || 10, _.nice, !!values),
-        size = _.size, grid, post;
-
-    if (!values) {
-      values = pulse.materialize(pulse.SOURCE).source;
-      grid = params(density2D(), _)(values, true);
-      post = transform$1(grid, grid.scale || 1, grid.scale || 1, 0, 0);
-      size = [grid.width, grid.height];
-      values = grid.values;
-    }
-
-    thresh = isArray(thresh) ? thresh : thresh(values);
-    values = contour.size(size)(values, thresh);
-    if (post) values.forEach(post);
-
-    if (this.value) out.rem = this.value;
-    this.value = out.source = out.add = (values || []).map(ingest);
-
-    return out;
-  };
+  });
 
   var Feature = 'Feature';
   var FeatureCollection = 'FeatureCollection';
@@ -19635,58 +19746,56 @@
     ]
   };
 
-  var prototype$16 = inherits(GeoJSON, Transform);
+  inherits(GeoJSON, Transform, {
+    transform(_, pulse) {
+      var features = this._features,
+          points = this._points,
+          fields = _.fields,
+          lon = fields && fields[0],
+          lat = fields && fields[1],
+          geojson = _.geojson || (!fields && identity),
+          flag = pulse.ADD,
+          mod;
 
-  prototype$16.transform = function(_, pulse) {
-    var features = this._features,
-        points = this._points,
-        fields = _.fields,
-        lon = fields && fields[0],
-        lat = fields && fields[1],
-        geojson = _.geojson || (!fields && identity),
-        flag = pulse.ADD,
-        mod;
+      mod = _.modified()
+        || pulse.changed(pulse.REM)
+        || pulse.modified(accessorFields(geojson))
+        || (lon && (pulse.modified(accessorFields(lon))))
+        || (lat && (pulse.modified(accessorFields(lat))));
 
-    mod = _.modified()
-      || pulse.changed(pulse.REM)
-      || pulse.modified(accessorFields(geojson))
-      || (lon && (pulse.modified(accessorFields(lon))))
-      || (lat && (pulse.modified(accessorFields(lat))));
+      if (!this.value || mod) {
+        flag = pulse.SOURCE;
+        this._features = (features = []);
+        this._points = (points = []);
+      }
 
-    if (!this.value || mod) {
-      flag = pulse.SOURCE;
-      this._features = (features = []);
-      this._points = (points = []);
+      if (geojson) {
+        pulse.visit(flag, t => features.push(geojson(t)));
+      }
+
+      if (lon && lat) {
+        pulse.visit(flag, t => {
+          var x = lon(t),
+              y = lat(t);
+          if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
+            points.push([x, y]);
+          }
+        });
+        features = features.concat({
+          type: Feature,
+          geometry: {
+            type: MultiPoint,
+            coordinates: points
+          }
+        });
+      }
+
+      this.value = {
+        type: FeatureCollection,
+        features: features
+      };
     }
-
-    if (geojson) {
-      pulse.visit(flag, function(t) {
-        features.push(geojson(t));
-      });
-    }
-
-    if (lon && lat) {
-      pulse.visit(flag, function(t) {
-        var x = lon(t),
-            y = lat(t);
-        if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
-          points.push([x, y]);
-        }
-      });
-      features = features.concat({
-        type: Feature,
-        geometry: {
-          type: MultiPoint,
-          coordinates: points
-        }
-      });
-    }
-
-    this.value = {
-      type: FeatureCollection,
-      features: features
-    };
-  };
+  });
 
   var abs = Math.abs;
   var cos = Math.cos;
@@ -19732,9 +19841,9 @@
         .scale(169.529);
   }
 
-  var defaultPath = d3Geo.geoPath();
+  const defaultPath = d3Geo.geoPath();
 
-  var projectionProperties = [
+  const projectionProperties = [
     // standard properties in d3-geo
     'clipAngle',
     'clipExtent',
@@ -19764,14 +19873,14 @@
    */
   function create$1(type, constructor) {
     return function projection() {
-      var p = constructor();
+      const p = constructor();
 
       p.type = type;
 
       p.path = d3Geo.geoPath().projection(p);
 
       p.copy = p.copy || function() {
-        var c = projection();
+        const c = projection();
         projectionProperties.forEach(function(prop) {
           if (p[prop]) c[prop](p[prop]());
         });
@@ -19800,7 +19909,7 @@
     return (proj && proj.path) || defaultPath;
   }
 
-  var projections = {
+  const projections = {
     // base d3-geo projection types
     albers:               d3Geo.geoAlbers,
     albersusa:            d3Geo.geoAlbersUsa,
@@ -19821,8 +19930,8 @@
     transversemercator:   d3Geo.geoTransverseMercator
   };
 
-  for (var key$1 in projections) {
-    projection(key$1, projections[key$1]);
+  for (const key in projections) {
+    projection(key, projections[key]);
   }
 
   /**
@@ -19851,33 +19960,31 @@
     ]
   };
 
-  var prototype$17 = inherits(GeoPath, Transform);
+  inherits(GeoPath, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ALL),
+          path = this.value,
+          field = _.field || identity,
+          as = _.as || 'path',
+          flag = out.SOURCE;
 
-  prototype$17.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        path = this.value,
-        field = _.field || identity,
-        as = _.as || 'path',
-        flag = out.SOURCE;
+      if (!path || _.modified()) {
+        // parameters updated, reset and reflow
+        this.value = path = getProjectionPath(_.projection);
+        out.materialize().reflow();
+      } else {
+        flag = field === identity || pulse.modified(field.fields)
+          ? out.ADD_MOD
+          : out.ADD;
+      }
 
-    function set(t) { t[as] = path(field(t)); }
+      var prev = initPath(path, _.pointRadius);
+      out.visit(flag, t => t[as] = path(field(t)));
+      path.pointRadius(prev);
 
-    if (!path || _.modified()) {
-      // parameters updated, reset and reflow
-      this.value = path = getProjectionPath(_.projection);
-      out.materialize().reflow();
-    } else {
-      flag = field === identity || pulse.modified(field.fields)
-        ? out.ADD_MOD
-        : out.ADD;
+      return out.modifies(as);
     }
-
-    var prev = initPath(path, _.pointRadius);
-    out.visit(flag, set);
-    path.pointRadius(prev);
-
-    return out.modifies(as);
-  };
+  });
 
   function initPath(path, pointRadius) {
     var prev = path.pointRadius();
@@ -19913,38 +20020,38 @@
     ]
   };
 
-  var prototype$18 = inherits(GeoPoint, Transform);
+  inherits(GeoPoint, Transform, {
+    transform(_, pulse) {
+      var proj = _.projection,
+          lon = _.fields[0],
+          lat = _.fields[1],
+          as = _.as || ['x', 'y'],
+          x = as[0],
+          y = as[1],
+          mod;
 
-  prototype$18.transform = function(_, pulse) {
-    var proj = _.projection,
-        lon = _.fields[0],
-        lat = _.fields[1],
-        as = _.as || ['x', 'y'],
-        x = as[0],
-        y = as[1],
-        mod;
-
-    function set(t) {
-      var xy = proj([lon(t), lat(t)]);
-      if (xy) {
-        t[x] = xy[0];
-        t[y] = xy[1];
-      } else {
-        t[x] = undefined;
-        t[y] = undefined;
+      function set(t) {
+        var xy = proj([lon(t), lat(t)]);
+        if (xy) {
+          t[x] = xy[0];
+          t[y] = xy[1];
+        } else {
+          t[x] = undefined;
+          t[y] = undefined;
+        }
       }
-    }
 
-    if (_.modified()) {
-      // parameters updated, reflow
-      pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-    } else {
-      mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
-      pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
-    }
+      if (_.modified()) {
+        // parameters updated, reflow
+        pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
+      } else {
+        mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
+        pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+      }
 
-    return pulse.modifies(as);
-  };
+      return pulse.modifies(as);
+    }
+  });
 
   /**
    * Annotate items with a geopath shape generator.
@@ -19972,40 +20079,40 @@
     ]
   };
 
-  var prototype$19 = inherits(GeoShape, Transform);
+  inherits(GeoShape, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ALL),
+          shape = this.value,
+          as = _.as || 'shape',
+          flag = out.ADD;
 
-  prototype$19.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        shape = this.value,
-        as = _.as || 'shape',
-        flag = out.ADD;
+      if (!shape || _.modified()) {
+        // parameters updated, reset and reflow
+        this.value = shape = shapeGenerator(
+          getProjectionPath(_.projection),
+          _.field || field('datum'),
+          _.pointRadius
+        );
+        out.materialize().reflow();
+        flag = out.SOURCE;
+      }
 
-    if (!shape || _.modified()) {
-      // parameters updated, reset and reflow
-      this.value = shape = shapeGenerator(
-        getProjectionPath(_.projection),
-        _.field || field('datum'),
-        _.pointRadius
-      );
-      out.materialize().reflow();
-      flag = out.SOURCE;
+      out.visit(flag, t => t[as] = shape);
+
+      return out.modifies(as);
     }
-
-    out.visit(flag, function(t) { t[as] = shape; });
-
-    return out.modifies(as);
-  };
+  });
 
   function shapeGenerator(path, field, pointRadius) {
     var shape = pointRadius == null
-      ? function(_) { return path(field(_)); }
-      : function(_) {
+      ? _ => path(field(_))
+      : _ => {
         var prev = path.pointRadius(),
             value = path.pointRadius(pointRadius)(field(_));
         path.pointRadius(prev);
         return value;
       };
-    shape.context = function(_) {
+    shape.context = _ => {
       path.context(_);
       return shape;
     };
@@ -20039,30 +20146,30 @@
     ]
   };
 
-  var prototype$1a = inherits(Graticule, Transform);
+  inherits(Graticule, Transform, {
+    transform(_, pulse) {
+      var src = this.value,
+          gen = this.generator, t;
 
-  prototype$1a.transform = function(_, pulse) {
-    var src = this.value,
-        gen = this.generator, t;
-
-    if (!src.length || _.modified()) {
-      for (var prop in _) {
-        if (isFunction(gen[prop])) {
-          gen[prop](_[prop]);
+      if (!src.length || _.modified()) {
+        for (var prop in _) {
+          if (isFunction(gen[prop])) {
+            gen[prop](_[prop]);
+          }
         }
       }
-    }
 
-    t = gen();
-    if (src.length) {
-      pulse.mod.push(replace(src[0], t));
-    } else {
-      pulse.add.push(ingest(t));
-    }
-    src[0] = t;
+      t = gen();
+      if (src.length) {
+        pulse.mod.push(replace(src[0], t));
+      } else {
+        pulse.add.push(ingest(t));
+      }
+      src[0] = t;
 
-    return pulse;
-  };
+      return pulse;
+    }
+  });
 
   /**
    * Render a heatmap image for input raster grid data.
@@ -20099,42 +20206,42 @@
     ]
   };
 
-  var prototype$1b = inherits(Heatmap, Transform);
+  inherits(Heatmap, Transform, {
+    transform(_, pulse) {
+      if (!pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
 
-  prototype$1b.transform = function(_, pulse) {
-    if (!pulse.changed() && !_.modified()) {
-      return pulse.StopPropagation;
+      var source = pulse.materialize(pulse.SOURCE).source,
+          shared = _.resolve === 'shared',
+          field = _.field || identity,
+          opacity = opacity_(_.opacity, _),
+          color = color_(_.color, _),
+          as = _.as || 'image',
+          obj = {
+            $x: 0, $y: 0, $value: 0,
+            $max: shared ? max(source.map(t => max(field(t).values))) : 0
+          };
+
+      source.forEach(t => {
+        const v = field(t);
+
+        // build proxy data object
+        const o = extend({}, t, obj);
+        // set maximum value if not globally shared
+        if (!shared) o.$max = max(v.values || []);
+
+        // generate canvas image
+        // optimize color/opacity if not pixel-dependent
+        t[as] = toCanvas(v, o,
+          color.dep ? color : constant(color(o)),
+          opacity.dep ? opacity : constant(opacity(o))
+        );
+      });
+
+      return pulse.reflow(true).modifies(as);
     }
-
-    var source = pulse.materialize(pulse.SOURCE).source,
-        shared = _.resolve === 'shared',
-        field = _.field || identity,
-        opacity = opacity_(_.opacity, _),
-        color = color_(_.color, _),
-        as = _.as || 'image',
-        obj = {
-          $x: 0, $y: 0, $value: 0,
-          $max: shared ? max(source.map(t => max(field(t).values))) : 0
-        };
-
-    source.forEach(t => {
-      const v = field(t);
-
-      // build proxy data object
-      const o = extend({}, t, obj);
-      // set maximum value if not globally shared
-      if (!shared) o.$max = max(v.values || []);
-
-      // generate canvas image
-      // optimize color/opacity if not pixel-dependent
-      t[as] = toCanvas(v, o,
-        color.dep ? color : constant(color(o)),
-        opacity.dep ? opacity : constant(opacity(o))
-      );
-    });
-
-    return pulse.reflow(true).modifies(as);
-  };
+  });
 
   // get image color function
   function color_(color, _) {
@@ -20215,27 +20322,27 @@
     this.modified(true); // always treat as modified
   }
 
-  var prototype$1c = inherits(Projection, Transform);
+  inherits(Projection, Transform, {
+    transform(_, pulse) {
+      let proj = this.value;
 
-  prototype$1c.transform = function(_, pulse) {
-    var proj = this.value;
+      if (!proj || _.modified('type')) {
+        this.value = (proj = create$2(_.type));
+        projectionProperties.forEach(function(prop) {
+          if (_[prop] != null) set$2(proj, prop, _[prop]);
+        });
+      } else {
+        projectionProperties.forEach(function(prop) {
+          if (_.modified(prop)) set$2(proj, prop, _[prop]);
+        });
+      }
 
-    if (!proj || _.modified('type')) {
-      this.value = (proj = create$2(_.type));
-      projectionProperties.forEach(function(prop) {
-        if (_[prop] != null) set$2(proj, prop, _[prop]);
-      });
-    } else {
-      projectionProperties.forEach(function(prop) {
-        if (_.modified(prop)) set$2(proj, prop, _[prop]);
-      });
+      if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
+      if (_.fit) fit(proj, _);
+
+      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
     }
-
-    if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
-    if (_.fit) fit(proj, _);
-
-    return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-  };
+  });
 
   function fit(proj, _) {
     var data = collectGeoJSON(_.fit);
@@ -20284,7 +20391,7 @@
     projection: Projection
   });
 
-  var ForceMap = {
+  const ForceMap = {
     center: d3Force.forceCenter,
     collide: d3Force.forceCollide,
     nbody: d3Force.forceManyBody,
@@ -20293,13 +20400,13 @@
     y: d3Force.forceY
   };
 
-  var Forces = 'forces',
-      ForceParams = [
-        'alpha', 'alphaMin', 'alphaTarget',
-        'velocityDecay', 'forces'
-      ],
-      ForceConfig = ['static', 'iterations'],
-      ForceOutput = ['x', 'y', 'vx', 'vy'];
+  const Forces = 'forces',
+        ForceParams = [
+          'alpha', 'alphaMin', 'alphaTarget',
+          'velocityDecay', 'forces'
+        ],
+        ForceConfig = ['static', 'iterations'],
+        ForceOutput = ['x', 'y', 'vx', 'vy'];
 
   /**
    * Force simulation layout.
@@ -20380,95 +20487,87 @@
     ]
   };
 
-  var prototype$1d = inherits(Force, Transform);
+  inherits(Force, Transform, {
+    transform(_, pulse) {
+      var sim = this.value,
+          change = pulse.changed(pulse.ADD_REM),
+          params = _.modified(ForceParams),
+          iters = _.iterations || 300;
 
-  prototype$1d.transform = function(_, pulse) {
-    var sim = this.value,
-        change = pulse.changed(pulse.ADD_REM),
-        params = _.modified(ForceParams),
-        iters = _.iterations || 300;
-
-    // configure simulation
-    if (!sim) {
-      this.value = sim = simulation(pulse.source, _);
-      sim.on('tick', rerun(pulse.dataflow, this));
-      if (!_.static) {
-        change = true;
-        sim.tick(); // ensure we run on init
-      }
-      pulse.modifies('index');
-    } else {
-      if (change) {
+      // configure simulation
+      if (!sim) {
+        this.value = sim = simulation(pulse.source, _);
+        sim.on('tick', rerun(pulse.dataflow, this));
+        if (!_.static) {
+          change = true;
+          sim.tick(); // ensure we run on init
+        }
         pulse.modifies('index');
-        sim.nodes(pulse.source);
-      }
-      if (params || pulse.changed(pulse.MOD)) {
-        setup(sim, _, 0, pulse);
-      }
-    }
-
-    // run simulation
-    if (params || change || _.modified(ForceConfig)
-        || (pulse.changed() && _.restart))
-    {
-      sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
-         .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
-
-      if (_.static) {
-        for (sim.stop(); --iters >= 0;) sim.tick();
       } else {
-        if (sim.stopped()) sim.restart();
-        if (!change) return pulse.StopPropagation; // defer to sim ticks
-      }
-    }
-
-    return this.finish(_, pulse);
-  };
-
-  prototype$1d.finish = function(_, pulse) {
-    var dataflow = pulse.dataflow;
-
-    // inspect dependencies, touch link source data
-    for (var args=this._argops, j=0, m=args.length, arg; j<m; ++j) {
-      arg = args[j];
-      if (arg.name !== Forces || arg.op._argval.force !== 'link') {
-        continue;
-      }
-      for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
-        if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-          dataflow.pulse(op, dataflow.changeset().reflow());
-          break;
+        if (change) {
+          pulse.modifies('index');
+          sim.nodes(pulse.source);
+        }
+        if (params || pulse.changed(pulse.MOD)) {
+          setup(sim, _, 0, pulse);
         }
       }
-    }
 
-    // reflow all nodes
-    return pulse.reflow(_.modified()).modifies(ForceOutput);
-  };
+      // run simulation
+      if (params || change || _.modified(ForceConfig)
+          || (pulse.changed() && _.restart))
+      {
+        sim.alpha(Math.max(sim.alpha(), _.alpha || 1))
+          .alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
+
+        if (_.static) {
+          for (sim.stop(); --iters >= 0;) sim.tick();
+        } else {
+          if (sim.stopped()) sim.restart();
+          if (!change) return pulse.StopPropagation; // defer to sim ticks
+        }
+      }
+
+      return this.finish(_, pulse);
+    },
+
+    finish(_, pulse) {
+      const dataflow = pulse.dataflow;
+
+      // inspect dependencies, touch link source data
+      for (let args=this._argops, j=0, m=args.length, arg; j<m; ++j) {
+        arg = args[j];
+        if (arg.name !== Forces || arg.op._argval.force !== 'link') {
+          continue;
+        }
+        for (var ops=arg.op._argops, i=0, n=ops.length, op; i<n; ++i) {
+          if (ops[i].name === 'links' && (op = ops[i].op.source)) {
+            dataflow.pulse(op, dataflow.changeset().reflow());
+            break;
+          }
+        }
+      }
+
+      // reflow all nodes
+      return pulse.reflow(_.modified()).modifies(ForceOutput);
+    }
+  });
 
   function rerun(df, op) {
-    return function() { df.touch(op).run(); };
+    return () => df.touch(op).run();
   }
 
   function simulation(nodes, _) {
-    var sim = d3Force.forceSimulation(nodes),
-        stopped = false,
-        stop = sim.stop,
-        restart = sim.restart;
+    const sim = d3Force.forceSimulation(nodes),
+          stop = sim.stop,
+          restart = sim.restart;
+    let stopped = false;
 
-    sim.stopped = function() {
-      return stopped;
-    };
-    sim.restart = function() {
-      stopped = false;
-      return restart();
-    };
-    sim.stop = function() {
-      stopped = true;
-      return stop();
-    };
+    sim.stopped = () => stopped;
+    sim.restart = () => (stopped = false, restart());
+    sim.stop = () => (stopped = true, stop());
 
-    return setup(sim, _, true).on('end', function() { stopped = true; });
+    return setup(sim, _, true).on('end', () => stopped = true);
   }
 
   function setup(sim, _, init, pulse) {
@@ -20520,7 +20619,7 @@
   }
 
   function setForceParam(f, v, _) {
-    f(isFunction(v) ? function(d) { return v(d, _); } : v);
+    f(isFunction(v) ? d => v(d, _) : v);
   }
 
   var force = /*#__PURE__*/Object.freeze({
@@ -20562,75 +20661,74 @@
     ]
   };
 
-  var prototype$1e = inherits(Nest, Transform);
+  const children = n => n.values;
 
-  function children(n) {
-    return n.values;
-  }
-
-  prototype$1e.transform = function(_, pulse) {
-    if (!pulse.source) {
-      error('Nest transform requires an upstream data source.');
-    }
-
-    var gen = _.generate,
-        mod = _.modified(),
-        out = pulse.clone(),
-        tree = this.value;
-
-    if (!tree || mod || pulse.changed()) {
-      // collect nodes to remove
-      if (tree) {
-        tree.each(node => {
-          if (node.children && isTuple(node.data)) {
-            out.rem.push(node.data);
-          }
-        });
+  inherits(Nest, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source) {
+        error('Nest transform requires an upstream data source.');
       }
 
-      // generate new tree structure
-      this.value = tree = d3Hierarchy.hierarchy({
-        values: array(_.keys)
-          .reduce((n, k) => { n.key(k); return n; }, nest())
-          .entries(out.source)
-      }, children);
+      var gen = _.generate,
+          mod = _.modified(),
+          out = pulse.clone(),
+          tree = this.value;
 
-      // collect nodes to add
-      if (gen) {
-        tree.each(node => {
-          if (node.children) {
-            node = ingest(node.data);
-            out.add.push(node);
-            out.source.push(node);
-          }
-        });
+      if (!tree || mod || pulse.changed()) {
+        // collect nodes to remove
+        if (tree) {
+          tree.each(node => {
+            if (node.children && isTuple(node.data)) {
+              out.rem.push(node.data);
+            }
+          });
+        }
+
+        // generate new tree structure
+        this.value = tree = d3Hierarchy.hierarchy({
+          values: array(_.keys)
+            .reduce((n, k) => { n.key(k); return n; }, nest())
+            .entries(out.source)
+        }, children);
+
+        // collect nodes to add
+        if (gen) {
+          tree.each(node => {
+            if (node.children) {
+              node = ingest(node.data);
+              out.add.push(node);
+              out.source.push(node);
+            }
+          });
+        }
+
+        // build lookup table
+        lookup$3(tree, tupleid, tupleid);
       }
 
-      // build lookup table
-      lookup$3(tree, tupleid, tupleid);
+      out.source.root = tree;
+      return out;
     }
-
-    out.source.root = tree;
-    return out;
-  };
+  });
 
   function nest() {
-    var keys = [],
-        nest;
+    const keys = [],
+          nest = {
+            entries: array => entries(apply(array, 0), 0),
+            key: d => (keys.push(d), nest)
+          };
 
     function apply(array, depth) {
       if (depth >= keys.length) {
         return array;
       }
 
-      var i = -1,
-          n = array.length,
-          key = keys[depth++],
-          keyValue,
-          value,
-          valuesByKey = {},
-          values,
-          result = {};
+      const n = array.length,
+            key = keys[depth++],
+            valuesByKey = {},
+            result = {};
+
+      let i = -1, keyValue, value, values;
 
       while (++i < n) {
         keyValue = key(value = array[i]) + '';
@@ -20650,17 +20748,17 @@
 
     function entries(map, depth) {
       if (++depth > keys.length) return map;
-      var array = [], k;
-      for (k in map) {
-        array.push({key: k, values: entries(map[k], depth)});
+      const array = [];
+      for (const key in map) {
+        array.push({
+          key,
+          values: entries(map[key], depth)
+        });
       }
       return array;
     }
 
-    return nest = {
-      entries: array => entries(apply(array, 0), 0),
-      key: d => { keys.push(d); return nest; }
-    };
+    return nest;
   }
 
   /**
@@ -20672,57 +20770,56 @@
     Transform.call(this, null, params);
   }
 
-  var prototype$1f = inherits(HierarchyLayout, Transform);
+  const defaultSeparation = (a, b) => a.parent === b.parent ? 1 : 2;
 
-  prototype$1f.transform = function(_, pulse) {
-    if (!pulse.source || !pulse.source.root) {
-      error(this.constructor.name
-        + ' transform requires a backing tree data source.');
+  inherits(HierarchyLayout, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source || !pulse.source.root) {
+        error(this.constructor.name
+          + ' transform requires a backing tree data source.');
+      }
+
+      const layout = this.layout(_.method),
+            fields = this.fields,
+            root = pulse.source.root,
+            as = _.as || fields;
+
+      if (_.field) root.sum(_.field); else root.count();
+      if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
+
+      setParams(layout, this.params, _);
+      if (layout.separation) {
+        layout.separation(_.separation !== false ? defaultSeparation : one);
+      }
+
+      try {
+        this.value = layout(root);
+      } catch (err) {
+        error(err);
+      }
+      root.each(node => setFields(node, fields, as));
+
+      return pulse.reflow(_.modified()).modifies(as).modifies('leaf');
     }
-
-    var layout = this.layout(_.method),
-        fields = this.fields,
-        root = pulse.source.root,
-        as = _.as || fields;
-
-    if (_.field) root.sum(_.field); else root.count();
-    if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
-
-    setParams(layout, this.params, _);
-    if (layout.separation) {
-      layout.separation(_.separation !== false ? defaultSeparation : one);
-    }
-
-    try {
-      this.value = layout(root);
-    } catch (err) {
-      error(err);
-    }
-    root.each(function(node) { setFields(node, fields, as); });
-
-    return pulse.reflow(_.modified()).modifies(as).modifies('leaf');
-  };
+  });
 
   function setParams(layout, params, _) {
-    for (var p, i=0, n=params.length; i<n; ++i) {
+    for (let p, i=0, n=params.length; i<n; ++i) {
       p = params[i];
       if (p in _) layout[p](_[p]);
     }
   }
 
   function setFields(node, fields, as) {
-    var t = node.data;
-    for (var i=0, n=fields.length-1; i<n; ++i) {
+    const t = node.data,
+          n = fields.length - 1;
+    for (let i=0; i<n; ++i) {
       t[as[i]] = node[fields[i]];
     }
     t[as[n]] = node.children ? node.children.length : 0;
   }
 
-  function defaultSeparation(a, b) {
-    return a.parent === b.parent ? 1 : 2;
-  }
-
-  var Output$1 = ['x', 'y', 'r', 'depth', 'children'];
+  const Output$1 = ['x', 'y', 'r', 'depth', 'children'];
 
   /**
    * Packed circle tree layout.
@@ -20747,15 +20844,13 @@
     ]
   };
 
-  var prototype$1g = inherits(Pack, HierarchyLayout);
+  inherits(Pack, HierarchyLayout, {
+    layout: d3Hierarchy.pack,
+    params: ['radius', 'size', 'padding'],
+    fields: Output$1
+  });
 
-  prototype$1g.layout = d3Hierarchy.pack;
-
-  prototype$1g.params = ['radius', 'size', 'padding'];
-
-  prototype$1g.fields = Output$1;
-
-  var Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  const Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Partition tree layout.
@@ -20780,13 +20875,11 @@
     ]
   };
 
-  var prototype$1h = inherits(Partition, HierarchyLayout);
-
-  prototype$1h.layout = d3Hierarchy.partition;
-
-  prototype$1h.params = ['size', 'round', 'padding'];
-
-  prototype$1h.fields = Output$2;
+  inherits(Partition, HierarchyLayout, {
+    layout: d3Hierarchy.partition,
+    params: ['size', 'round', 'padding'],
+    fields: Output$2
+  });
 
   /**
     * Stratify a collection of tuples into a tree structure based on
@@ -20809,45 +20902,46 @@
     ]
   };
 
-  var prototype$1i = inherits(Stratify, Transform);
-
-  prototype$1i.transform = function(_, pulse) {
-    if (!pulse.source) {
-      error('Stratify transform requires an upstream data source.');
-    }
-
-    var tree = this.value,
-        mod = _.modified(),
-        out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
-        run = !this.value
-           || mod
-           || pulse.changed(pulse.ADD_REM)
-           || pulse.modified(_.key.fields)
-           || pulse.modified(_.parentKey.fields);
-
-    // prevent upstream source pollution
-    out.source = out.source.slice();
-
-    if (run) {
-      if (out.source.length) {
-        tree = lookup$3(
-          d3Hierarchy.stratify().id(_.key).parentId(_.parentKey)(out.source)
-          , _.key, truthy);
-      } else {
-        tree = lookup$3(d3Hierarchy.stratify()([{}]), _.key, _.key);
+  inherits(Stratify, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source) {
+        error('Stratify transform requires an upstream data source.');
       }
-    }
 
-    out.source.root = this.value = tree;
-    return out;
-  };
+      let tree = this.value;
+
+      const mod = _.modified(),
+            out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
+            run = !tree
+              || mod
+              || pulse.changed(pulse.ADD_REM)
+              || pulse.modified(_.key.fields)
+              || pulse.modified(_.parentKey.fields);
+
+      // prevent upstream source pollution
+      out.source = out.source.slice();
+
+      if (run) {
+        tree = out.source.length
+          ? lookup$3(
+              d3Hierarchy.stratify().id(_.key).parentId(_.parentKey)(out.source),
+              _.key,
+              truthy
+            )
+          : lookup$3(d3Hierarchy.stratify()([{}]), _.key, _.key);
+      }
+
+      out.source.root = this.value = tree;
+      return out;
+    }
+  });
 
   var Layouts = {
     tidy: d3Hierarchy.tree,
     cluster: d3Hierarchy.cluster
   };
 
-  var Output$3 = ['x', 'y', 'depth', 'children'];
+  const Output$3 = ['x', 'y', 'depth', 'children'];
 
   /**
    * Tree layout. Depending on the method parameter, performs either
@@ -20873,20 +20967,18 @@
     ]
   };
 
-  var prototype$1j = inherits(Tree, HierarchyLayout);
-
-  /**
-   * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
-   */
-  prototype$1j.layout = function(method) {
-    var m = method || 'tidy';
-    if (hasOwnProperty(Layouts, m)) return Layouts[m]();
-    else error('Unrecognized Tree layout method: ' + m);
-  };
-
-  prototype$1j.params = ['size', 'nodeSize'];
-
-  prototype$1j.fields = Output$3;
+  inherits(Tree, HierarchyLayout, {
+    /**
+     * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
+     */
+    layout(method) {
+      var m = method || 'tidy';
+      if (hasOwnProperty(Layouts, m)) return Layouts[m]();
+      else error('Unrecognized Tree layout method: ' + m);
+    },
+    params: ['size', 'nodeSize'],
+    fields: Output$3
+  });
 
   /**
     * Generate tuples representing links between tree nodes.
@@ -20905,50 +20997,50 @@
     'params': []
   };
 
-  var prototype$1k = inherits(TreeLinks, Transform);
+  inherits(TreeLinks, Transform, {
+    transform(_, pulse) {
+      const links = this.value,
+            tree = pulse.source && pulse.source.root,
+            out = pulse.fork(pulse.NO_SOURCE),
+            lut = {};
 
-  prototype$1k.transform = function(_, pulse) {
-    var links = this.value,
-        tree = pulse.source && pulse.source.root,
-        out = pulse.fork(pulse.NO_SOURCE),
-        lut = {};
+      if (!tree) error('TreeLinks transform requires a tree data source.');
 
-    if (!tree) error('TreeLinks transform requires a tree data source.');
+      if (pulse.changed(pulse.ADD_REM)) {
+        // remove previous links
+        out.rem = links;
 
-    if (pulse.changed(pulse.ADD_REM)) {
-      // remove previous links
-      out.rem = links;
+        // build lookup table of valid tuples
+        pulse.visit(pulse.SOURCE, t => lut[tupleid(t)] = 1);
 
-      // build lookup table of valid tuples
-      pulse.visit(pulse.SOURCE, function(t) { lut[tupleid(t)] = 1; });
+        // generate links for all edges incident on valid tuples
+        tree.each(node => {
+          const t = node.data,
+                p = node.parent && node.parent.data;
+          if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
+            out.add.push(ingest({source: p, target: t}));
+          }
+        });
+        this.value = out.add;
+      }
 
-      // generate links for all edges incident on valid tuples
-      tree.each(function(node) {
-        var t = node.data,
-            p = node.parent && node.parent.data;
-        if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
-          out.add.push(ingest({source: p, target: t}));
-        }
-      });
-      this.value = out.add;
+      else if (pulse.changed(pulse.MOD)) {
+        // build lookup table of modified tuples
+        pulse.visit(pulse.MOD, t => lut[tupleid(t)] = 1);
+
+        // gather links incident on modified tuples
+        links.forEach(link => {
+          if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
+            out.mod.push(link);
+          }
+        });
+      }
+
+      return out;
     }
+  });
 
-    else if (pulse.changed(pulse.MOD)) {
-      // build lookup table of modified tuples
-      pulse.visit(pulse.MOD, function(t) { lut[tupleid(t)] = 1; });
-
-      // gather links incident on modified tuples
-      links.forEach(function(link) {
-        if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
-          out.mod.push(link);
-        }
-      });
-    }
-
-    return out;
-  };
-
-  var Tiles = {
+  const Tiles = {
     binary: d3Hierarchy.treemapBinary,
     dice: d3Hierarchy.treemapDice,
     slice: d3Hierarchy.treemapSlice,
@@ -20957,7 +21049,7 @@
     resquarify: d3Hierarchy.treemapResquarify
   };
 
-  var Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+  const Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
 
   /**
    * Treemap layout.
@@ -20991,32 +21083,35 @@
     ]
   };
 
-  var prototype$1l = inherits(Treemap, HierarchyLayout);
+  inherits(Treemap, HierarchyLayout, {
+    /**
+     * Treemap layout generator. Adds 'method' and 'ratio' parameters
+     * to configure the underlying tile method.
+     */
+    layout() {
+      const x = d3Hierarchy.treemap();
 
-  /**
-   * Treemap layout generator. Adds 'method' and 'ratio' parameters
-   * to configure the underlying tile method.
-   */
-  prototype$1l.layout = function() {
-    var x = d3Hierarchy.treemap();
-    x.ratio = function(_) {
-      var t = x.tile();
-      if (t.ratio) x.tile(t.ratio(_));
-    };
-    x.method = function(_) {
-      if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
-      else error('Unrecognized Treemap layout method: ' + _);
-    };
-    return x;
-  };
+      x.ratio = _ => {
+        const t = x.tile();
+        if (t.ratio) x.tile(t.ratio(_));
+      };
 
-  prototype$1l.params = [
-    'method', 'ratio', 'size', 'round',
-    'padding', 'paddingInner', 'paddingOuter',
-    'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
-  ];
+      x.method = _ => {
+        if (hasOwnProperty(Tiles, _)) x.tile(Tiles[_]);
+        else error('Unrecognized Treemap layout method: ' + _);
+      };
 
-  prototype$1l.fields = Output$4;
+      return x;
+    },
+
+    params: [
+      'method', 'ratio', 'size', 'round',
+      'padding', 'paddingInner', 'paddingOuter',
+      'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'
+    ],
+
+    fields: Output$4
+  });
 
   var tree = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -21079,37 +21174,37 @@
     ]
   };
 
-  var prototype$1m = inherits(Loess, Transform);
+  inherits(Loess, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
-  prototype$1m.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        const source = pulse.materialize(pulse.SOURCE).source,
+              groups = partition$4(source, _.groupby),
+              names = (_.groupby || []).map(accessorName),
+              m = names.length,
+              as = _.as || [accessorName(_.x), accessorName(_.y)],
+              values = [];
 
-    if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$4(source, _.groupby),
-            names = (_.groupby || []).map(accessorName),
-            m = names.length,
-            as = _.as || [accessorName(_.x), accessorName(_.y)],
-            values = [];
-
-      groups.forEach(g => {
-        regressionLoess(g, _.x, _.y, _.bandwidth || 0.3).forEach(p => {
-          const t = {};
-          for (let i=0; i<m; ++i) {
-            t[names[i]] = g.dims[i];
-          }
-          t[as[0]] = p[0];
-          t[as[1]] = p[1];
-          values.push(ingest(t));
+        groups.forEach(g => {
+          regressionLoess(g, _.x, _.y, _.bandwidth || 0.3).forEach(p => {
+            const t = {};
+            for (let i=0; i<m; ++i) {
+              t[names[i]] = g.dims[i];
+            }
+            t[as[0]] = p[0];
+            t[as[1]] = p[1];
+            values.push(ingest(t));
+          });
         });
-      });
 
-      if (this.value) out.rem = this.value;
-      this.value = out.add = out.source = values;
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
+      }
+
+      return out;
     }
-
-    return out;
-  };
+  });
 
   const Methods$1 = {
     linear: regressionLinear,
@@ -21120,9 +21215,8 @@
     poly:   regressionPoly
   };
 
-  function degreesOfFreedom(method, order) {
-    return method === 'poly' ? order : method === 'quad' ? 2 : 1;
-  }
+  const degreesOfFreedom = (method, order) =>
+    method === 'poly' ? order : method === 'quad' ? 2 : 1;
 
   /**
    * Compute regression fits for one or more data groups.
@@ -21154,80 +21248,80 @@
     ]
   };
 
-  var prototype$1n = inherits(Regression, Transform);
+  inherits(Regression, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
-  prototype$1n.transform = function(_, pulse) {
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        const source = pulse.materialize(pulse.SOURCE).source,
+              groups = partition$4(source, _.groupby),
+              names = (_.groupby || []).map(accessorName),
+              method = _.method || 'linear',
+              order = _.order || 3,
+              dof = degreesOfFreedom(method, order),
+              as = _.as || [accessorName(_.x), accessorName(_.y)],
+              fit = Methods$1[method],
+              values = [];
 
-    if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition$4(source, _.groupby),
-            names = (_.groupby || []).map(accessorName),
-            method = _.method || 'linear',
-            order = _.order || 3,
-            dof = degreesOfFreedom(method, order),
-            as = _.as || [accessorName(_.x), accessorName(_.y)],
-            fit = Methods$1[method],
-            values = [];
+        let domain = _.extent;
 
-      let domain = _.extent;
+        if (!hasOwnProperty(Methods$1, method)) {
+          error('Invalid regression method: ' + method);
+        }
 
-      if (!hasOwnProperty(Methods$1, method)) {
-        error('Invalid regression method: ' + method);
+        if (domain != null) {
+          if (method === 'log' && domain[0] <= 0) {
+            pulse.dataflow.warn('Ignoring extent with values <= 0 for log regression.');
+            domain = null;
+          }
+        }
+
+        groups.forEach(g => {
+          const n = g.length;
+          if (n <= dof) {
+            pulse.dataflow.warn('Skipping regression with more parameters than data points.');
+            return;
+          }
+
+          const model = fit(g, _.x, _.y, order);
+
+          if (_.params) {
+            // if parameter vectors requested return those
+            values.push(ingest({
+              keys: g.dims,
+              coef: model.coef,
+              rSquared: model.rSquared
+            }));
+            return;
+          }
+
+          const dom = domain || extent(g, _.x),
+                add = p => {
+                  const t = {};
+                  for (let i=0; i<names.length; ++i) {
+                    t[names[i]] = g.dims[i];
+                  }
+                  t[as[0]] = p[0];
+                  t[as[1]] = p[1];
+                  values.push(ingest(t));
+                };
+
+          if (method === 'linear') {
+            // for linear regression we only need the end points
+            dom.forEach(x => add([x, model.predict(x)]));
+          } else {
+            // otherwise return trend line sample points
+            sampleCurve(model.predict, dom, 25, 200).forEach(add);
+          }
+        });
+
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
       }
 
-      if (domain != null) {
-        if (method === 'log' && domain[0] <= 0) {
-          pulse.dataflow.warn('Ignoring extent with values <= 0 for log regression.');
-          domain = null;
-        }
-      }
-
-      groups.forEach(g => {
-        const n = g.length;
-        if (n <= dof) {
-          pulse.dataflow.warn('Skipping regression with more parameters than data points.');
-          return;
-        }
-
-        const model = fit(g, _.x, _.y, order);
-
-        if (_.params) {
-          // if parameter vectors requested return those
-          values.push(ingest({
-            keys: g.dims,
-            coef: model.coef,
-            rSquared: model.rSquared
-          }));
-          return;
-        }
-
-        const dom = domain || extent(g, _.x),
-              add = p => {
-                const t = {};
-                for (let i=0; i<names.length; ++i) {
-                  t[names[i]] = g.dims[i];
-                }
-                t[as[0]] = p[0];
-                t[as[1]] = p[1];
-                values.push(ingest(t));
-              };
-
-        if (method === 'linear') {
-          // for linear regression we only need the end points
-          dom.forEach(x => add([x, model.predict(x)]));
-        } else {
-          // otherwise return trend line sample points
-          sampleCurve(model.predict, dom, 25, 200).forEach(add);
-        }
-      });
-
-      if (this.value) out.rem = this.value;
-      this.value = out.add = out.source = values;
+      return out;
     }
-
-    return out;
-  };
+  });
 
   var reg = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -22362,33 +22456,33 @@
     ]
   };
 
-  const prototype$1o = inherits(Voronoi$1, Transform);
-
   const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
-  prototype$1o.transform = function(_, pulse) {
-    const as = _.as || 'path',
-          data = pulse.source;
+  inherits(Voronoi$1, Transform, {
+    transform(_, pulse) {
+      const as = _.as || 'path',
+            data = pulse.source;
 
-    // nothing to do if no data
-    if (!data || !data.length) return pulse;
+      // nothing to do if no data
+      if (!data || !data.length) return pulse;
 
-    // configure and construct voronoi diagram
-    let s = _.size;
-    s = s ? [0, 0, s[0], s[1]]
-      : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]]
-      : defaultExtent;
+      // configure and construct voronoi diagram
+      let s = _.size;
+      s = s ? [0, 0, s[0], s[1]]
+        : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]]
+        : defaultExtent;
 
-    const voronoi = this.value = Delaunay.from(data, _.x, _.y).voronoi(s);
+      const voronoi = this.value = Delaunay.from(data, _.x, _.y).voronoi(s);
 
-    // map polygons to paths
-    for (let i=0, n=data.length; i<n; ++i) {
-      const polygon = voronoi.cellPolygon(i);
-      data[i][as] = polygon ? toPathString(polygon) : null;
+      // map polygons to paths
+      for (let i=0, n=data.length; i<n; ++i) {
+        const polygon = voronoi.cellPolygon(i);
+        data[i][as] = polygon ? toPathString(polygon) : null;
+      }
+
+      return pulse.reflow(_.modified()).modifies(as);
     }
-
-    return pulse.reflow(_.modified()).modifies(as);
-  };
+  });
 
   // suppress duplicated end point vertices
   function toPathString(p) {
@@ -22862,123 +22956,119 @@
     ]
   };
 
-  var prototype$1p = inherits(Wordcloud, Transform);
+  inherits(Wordcloud, Transform, {
+    transform(_, pulse) {
+      if (_.size && !(_.size[0] && _.size[1])) {
+        error('Wordcloud size dimensions must be non-zero.');
+      }
 
-  prototype$1p.transform = function(_, pulse) {
-    if (_.size && !(_.size[0] && _.size[1])) {
-      error('Wordcloud size dimensions must be non-zero.');
+      function modp(param) {
+        var p = _[param];
+        return isFunction(p) && pulse.modified(p.fields);
+      }
+
+      const mod = _.modified();
+      if (!(mod || pulse.changed(pulse.ADD_REM) || Params$1.some(modp))) return;
+
+      const data = pulse.materialize(pulse.SOURCE).source,
+            layout = this.value,
+            as = _.as || Output$5;
+
+      let fontSize = _.fontSize || 14,
+          range;
+
+      isFunction(fontSize)
+        ? (range = _.fontSizeRange)
+        : (fontSize = constant(fontSize));
+
+      // create font size scaling function as needed
+      if (range) {
+        const fsize = fontSize,
+              sizeScale = scale$2('sqrt')()
+                .domain(extent(data, fsize))
+                .range(range);
+        fontSize = x => sizeScale(fsize(x));
+      }
+
+      data.forEach(t => {
+        t[as[0]] = NaN;
+        t[as[1]] = NaN;
+        t[as[3]] = 0;
+      });
+
+      // configure layout
+      const words = layout
+        .words(data)
+        .text(_.text)
+        .size(_.size || [500, 500])
+        .padding(_.padding || 1)
+        .spiral(_.spiral || 'archimedean')
+        .rotate(_.rotate || 0)
+        .font(_.font || 'sans-serif')
+        .fontStyle(_.fontStyle || 'normal')
+        .fontWeight(_.fontWeight || 'normal')
+        .fontSize(fontSize)
+        .random(exports.random)
+        .layout();
+
+      const size = layout.size(),
+          dx = size[0] >> 1,
+          dy = size[1] >> 1,
+          n = words.length;
+
+      for (let i = 0, w, t; i<n; ++i) {
+        w = words[i];
+        t = w.datum;
+        t[as[0]] = w.x + dx;
+        t[as[1]] = w.y + dy;
+        t[as[2]] = w.font;
+        t[as[3]] = w.size;
+        t[as[4]] = w.style;
+        t[as[5]] = w.weight;
+        t[as[6]] = w.rotate;
+      }
+
+      return pulse.reflow(mod).modifies(as);
     }
-
-    function modp(param) {
-      var p = _[param];
-      return isFunction(p) && pulse.modified(p.fields);
-    }
-
-    var mod = _.modified();
-    if (!(mod || pulse.changed(pulse.ADD_REM) || Params$1.some(modp))) return;
-
-    var data = pulse.materialize(pulse.SOURCE).source,
-        layout = this.value,
-        as = _.as || Output$5,
-        fontSize = _.fontSize || 14,
-        range;
-
-    isFunction(fontSize)
-      ? (range = _.fontSizeRange)
-      : (fontSize = constant(fontSize));
-
-    // create font size scaling function as needed
-    if (range) {
-      var fsize = fontSize,
-          sizeScale = scale$2('sqrt')()
-            .domain(extent(data, fsize))
-            .range(range);
-      fontSize = function(x) { return sizeScale(fsize(x)); };
-    }
-
-    data.forEach(function(t) {
-      t[as[0]] = NaN;
-      t[as[1]] = NaN;
-      t[as[3]] = 0;
-    });
-
-    // configure layout
-    var words = layout
-      .words(data)
-      .text(_.text)
-      .size(_.size || [500, 500])
-      .padding(_.padding || 1)
-      .spiral(_.spiral || 'archimedean')
-      .rotate(_.rotate || 0)
-      .font(_.font || 'sans-serif')
-      .fontStyle(_.fontStyle || 'normal')
-      .fontWeight(_.fontWeight || 'normal')
-      .fontSize(fontSize)
-      .random(exports.random)
-      .layout();
-
-    var size = layout.size(),
-        dx = size[0] >> 1,
-        dy = size[1] >> 1,
-        i = 0,
-        n = words.length,
-        w, t;
-
-    for (; i<n; ++i) {
-      w = words[i];
-      t = w.datum;
-      t[as[0]] = w.x + dx;
-      t[as[1]] = w.y + dy;
-      t[as[2]] = w.font;
-      t[as[3]] = w.size;
-      t[as[4]] = w.style;
-      t[as[5]] = w.weight;
-      t[as[6]] = w.rotate;
-    }
-
-    return pulse.reflow(mod).modifies(as);
-  };
+  });
 
   var wordcloud = /*#__PURE__*/Object.freeze({
     __proto__: null,
     wordcloud: Wordcloud
   });
 
-  function array8(n) { return new Uint8Array(n); }
+  const array8 = n => new Uint8Array(n);
 
-  function array16(n) { return new Uint16Array(n); }
+  const array16 = n => new Uint16Array(n);
 
-  function array32(n) { return new Uint32Array(n); }
+  const array32 = n => new Uint32Array(n);
 
   /**
    * Maintains CrossFilter state.
    */
   function Bitmaps() {
 
-    var width = 8,
+    let width = 8,
         data = [],
         seen = array32(0),
         curr = array$1(0, width),
         prev = array$1(0, width);
 
     return {
+      data: () => data,
 
-      data: function() { return data; },
+      seen: () => (seen = lengthen(seen, data.length)),
 
-      seen: function() {
-        return (seen = lengthen(seen, data.length));
-      },
-
-      add: function(array) {
-        for (var i=0, j=data.length, n=array.length, t; i<n; ++i) {
+      add(array) {
+        for (let i=0, j=data.length, n=array.length, t; i<n; ++i) {
           t = array[i];
           t._index = j++;
           data.push(t);
         }
       },
 
-      remove: function(num, map) { // map: index -> boolean (true => remove)
-        var n = data.length,
+      remove(num, map) { // map: index -> boolean (true => remove)
+        let n = data.length,
             copy = Array(n - num),
             reindex = data, // reuse old data array for index map
             t, i, j;
@@ -23008,24 +23098,23 @@
         return reindex;
       },
 
-      size: function() { return data.length; },
+      size: () => data.length,
 
-      curr: function() { return curr; },
+      curr: () => curr,
 
-      prev: function() { return prev; },
+      prev: () => prev,
 
-      reset: function(k) { prev[k] = curr[k]; },
+      reset: k => prev[k] = curr[k],
 
-      all: function() {
-        return width < 0x101 ? 0xff : width < 0x10001 ? 0xffff : 0xffffffff;
-      },
+      all: () =>
+        width < 0x101 ? 0xff : width < 0x10001 ? 0xffff : 0xffffffff,
 
-      set: function(k, one) { curr[k] |= one; },
+      set(k, one) { curr[k] |= one; },
 
-      clear: function(k, one) { curr[k] &= ~one; },
+      clear(k, one) { curr[k] &= ~one; },
 
-      resize: function(n, m) {
-        var k = curr.length;
+      resize(n, m) {
+        const k = curr.length;
         if (n > k || m > width) {
           width = Math.max(m, width);
           curr = array$1(n, width, curr);
@@ -23043,13 +23132,15 @@
   }
 
   function array$1(n, m, array) {
-    var copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
+    const copy = (m < 0x101 ? array8
+        : m < 0x10001 ? array16
+        : array32)(n);
     if (array) copy.set(array);
     return copy;
   }
 
   function Dimension(index, i, query) {
-    var bit = (1 << i);
+    const bit = (1 << i);
 
     return {
       one:     bit,
@@ -23059,8 +23150,8 @@
       index:   index.index,
       size:    index.size,
 
-      onAdd: function(added, curr) {
-        var dim = this,
+      onAdd(added, curr) {
+        let dim = this,
             range = dim.bisect(dim.range, added.value),
             idx = added.index,
             lo = range[0],
@@ -23078,14 +23169,14 @@
    * Maintains a list of values, sorted by key.
    */
   function SortedIndex() {
-    var index = array32(0),
+    let index = array32(0),
         value = [],
         size = 0;
 
     function insert(key, data, base) {
       if (!data.length) return [];
 
-      var n0 = size,
+      let n0 = size,
           n1 = data.length,
           addv = Array(n1),
           addi = array32(n1),
@@ -23117,7 +23208,7 @@
 
     function remove(num, map) {
       // map: index -> remove
-      var n = size,
+      let n = size,
           idx, i, j;
 
       // seek forward to first removal
@@ -23136,13 +23227,13 @@
     }
 
     function reindex(map) {
-      for (var i=0, n=size; i<n; ++i) {
+      for (let i=0, n=size; i<n; ++i) {
         index[i] = map[index[i]];
       }
     }
 
     function bisect(range, array) {
-      var n;
+      let n;
       if (array) {
         n = array.length;
       } else {
@@ -23160,22 +23251,22 @@
       remove:  remove,
       bisect:  bisect,
       reindex: reindex,
-      index:   function() { return index; },
-      size:    function() { return size; }
+      index:   () => index,
+      size:    () => size
     };
   }
 
   function sort(values, index) {
-    values.sort.call(index, function(a, b) {
-      var x = values[a],
-          y = values[b];
+    values.sort.call(index, (a, b) => {
+      const x = values[a],
+            y = values[b];
       return x < y ? -1 : x > y ? 1 : 0;
     });
     return permute(values, index);
   }
 
   function merge$1(base, value0, index0, n0, value1, index1, n1, value, index) {
-    var i0 = 0, i1 = 0, i;
+    let i0 = 0, i1 = 0, i;
 
     for (i=0; i0 < n0 && i1 < n1; ++i) {
       if (value0[i0] < value1[i1]) {
@@ -23221,361 +23312,361 @@
     ]
   };
 
-  var prototype$1q = inherits(CrossFilter, Transform);
+  inherits(CrossFilter, Transform, {
+    transform(_, pulse) {
+      if (!this._dims) {
+        return this.init(_, pulse);
+      } else {
+        var init = _.modified('fields')
+              || _.fields.some(f => pulse.modified(f.fields));
 
-  prototype$1q.transform = function(_, pulse) {
-    if (!this._dims) {
-      return this.init(_, pulse);
-    } else {
-      var init = _.modified('fields')
-            || _.fields.some(function(f) { return pulse.modified(f.fields); });
-
-      return init
-        ? this.reinit(_, pulse)
-        : this.eval(_, pulse);
-    }
-  };
-
-  prototype$1q.init = function(_, pulse) {
-    var fields = _.fields,
-        query = _.query,
-        indices = this._indices = {},
-        dims = this._dims = [],
-        m = query.length,
-        i = 0, key, index;
-
-    // instantiate indices and dimensions
-    for (; i<m; ++i) {
-      key = fields[i].fname;
-      index = indices[key] || (indices[key] = SortedIndex());
-      dims.push(Dimension(index, i, query[i]));
-    }
-
-    return this.eval(_, pulse);
-  };
-
-  prototype$1q.reinit = function(_, pulse) {
-    var output = pulse.materialize().fork(),
-        fields = _.fields,
-        query = _.query,
-        indices = this._indices,
-        dims = this._dims,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all = bits.all(),
-        out = (output.rem = output.add),
-        mod = output.mod,
-        m = query.length,
-        adds = {}, add, index, key,
-        mods, remMap, modMap, i, n, f;
-
-    // set prev to current state
-    prev.set(curr);
-
-    // if pulse has remove tuples, process them first
-    if (pulse.rem.length) {
-      remMap = this.remove(_, pulse, output);
-    }
-
-    // if pulse has added tuples, add them to state
-    if (pulse.add.length) {
-      bits.add(pulse.add);
-    }
-
-    // if pulse has modified tuples, create an index map
-    if (pulse.mod.length) {
-      modMap = {};
-      for (mods=pulse.mod, i=0, n=mods.length; i<n; ++i) {
-        modMap[mods[i]._index] = 1;
+        return init
+          ? this.reinit(_, pulse)
+          : this.eval(_, pulse);
       }
-    }
+    },
 
-    // re-initialize indices as needed, update curr bitmap
-    for (i=0; i<m; ++i) {
-      f = fields[i];
-      if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
-        key = f.fname;
-        if (!(add = adds[key])) {
-          indices[key] = index = SortedIndex();
-          adds[key] = add = index.insert(f, pulse.source, 0);
+    init(_, pulse) {
+      let fields = _.fields,
+          query = _.query,
+          indices = this._indices = {},
+          dims = this._dims = [],
+          m = query.length,
+          i = 0, key, index;
+
+      // instantiate indices and dimensions
+      for (; i<m; ++i) {
+        key = fields[i].fname;
+        index = indices[key] || (indices[key] = SortedIndex());
+        dims.push(Dimension(index, i, query[i]));
+      }
+
+      return this.eval(_, pulse);
+    },
+
+    reinit(_, pulse) {
+      let output = pulse.materialize().fork(),
+          fields = _.fields,
+          query = _.query,
+          indices = this._indices,
+          dims = this._dims,
+          bits = this.value,
+          curr = bits.curr(),
+          prev = bits.prev(),
+          all = bits.all(),
+          out = (output.rem = output.add),
+          mod = output.mod,
+          m = query.length,
+          adds = {}, add, index, key,
+          mods, remMap, modMap, i, n, f;
+
+      // set prev to current state
+      prev.set(curr);
+
+      // if pulse has remove tuples, process them first
+      if (pulse.rem.length) {
+        remMap = this.remove(_, pulse, output);
+      }
+
+      // if pulse has added tuples, add them to state
+      if (pulse.add.length) {
+        bits.add(pulse.add);
+      }
+
+      // if pulse has modified tuples, create an index map
+      if (pulse.mod.length) {
+        modMap = {};
+        for (mods=pulse.mod, i=0, n=mods.length; i<n; ++i) {
+          modMap[mods[i]._index] = 1;
         }
-        dims[i] = Dimension(index, i, query[i]).onAdd(add, curr);
       }
-    }
 
-    // visit each tuple
-    // if filter state changed, push index to add/rem
-    // else if in mod and passes a filter, push index to mod
-    for (i=0, n=bits.data().length; i<n; ++i) {
-      if (remMap[i]) { // skip if removed tuple
-        continue;
-      } else if (prev[i] !== curr[i]) { // add if state changed
-        out.push(i);
-      } else if (modMap[i] && curr[i] !== all) { // otherwise, pass mods through
-        mod.push(i);
-      }
-    }
-
-    bits.mask = (1 << m) - 1;
-    return output;
-  };
-
-  prototype$1q.eval = function(_, pulse) {
-    var output = pulse.materialize().fork(),
-        m = this._dims.length,
-        mask = 0;
-
-    if (pulse.rem.length) {
-      this.remove(_, pulse, output);
-      mask |= (1 << m) - 1;
-    }
-
-    if (_.modified('query') && !_.modified('fields')) {
-      mask |= this.update(_, pulse, output);
-    }
-
-    if (pulse.add.length) {
-      this.insert(_, pulse, output);
-      mask |= (1 << m) - 1;
-    }
-
-    if (pulse.mod.length) {
-      this.modify(pulse, output);
-      mask |= (1 << m) - 1;
-    }
-
-    this.value.mask = mask;
-    return output;
-  };
-
-  prototype$1q.insert = function(_, pulse, output) {
-    var tuples = pulse.add,
-        bits = this.value,
-        dims = this._dims,
-        indices = this._indices,
-        fields = _.fields,
-        adds = {},
-        out = output.add,
-        k = bits.size(),
-        n = k + tuples.length,
-        m = dims.length, j, key, add;
-
-    // resize bitmaps and add tuples as needed
-    bits.resize(n, m);
-    bits.add(tuples);
-
-    var curr = bits.curr(),
-        prev = bits.prev(),
-        all  = bits.all();
-
-    // add to dimensional indices
-    for (j=0; j<m; ++j) {
-      key = fields[j].fname;
-      add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
-      dims[j].onAdd(add, curr);
-    }
-
-    // set previous filters, output if passes at least one filter
-    for (; k<n; ++k) {
-      prev[k] = all;
-      if (curr[k] !== all) out.push(k);
-    }
-  };
-
-  prototype$1q.modify = function(pulse, output) {
-    var out = output.mod,
-        bits = this.value,
-        curr = bits.curr(),
-        all  = bits.all(),
-        tuples = pulse.mod,
-        i, n, k;
-
-    for (i=0, n=tuples.length; i<n; ++i) {
-      k = tuples[i]._index;
-      if (curr[k] !== all) out.push(k);
-    }
-  };
-
-  prototype$1q.remove = function(_, pulse, output) {
-    var indices = this._indices,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all  = bits.all(),
-        map = {},
-        out = output.rem,
-        tuples = pulse.rem,
-        i, n, k, f;
-
-    // process tuples, output if passes at least one filter
-    for (i=0, n=tuples.length; i<n; ++i) {
-      k = tuples[i]._index;
-      map[k] = 1; // build index map
-      prev[k] = (f = curr[k]);
-      curr[k] = all;
-      if (f !== all) out.push(k);
-    }
-
-    // remove from dimensional indices
-    for (k in indices) {
-      indices[k].remove(n, map);
-    }
-
-    this.reindex(pulse, n, map);
-    return map;
-  };
-
-  // reindex filters and indices after propagation completes
-  prototype$1q.reindex = function(pulse, num, map) {
-    var indices = this._indices,
-        bits = this.value;
-
-    pulse.runAfter(function() {
-      var indexMap = bits.remove(num, map);
-      for (var key in indices) indices[key].reindex(indexMap);
-    });
-  };
-
-  prototype$1q.update = function(_, pulse, output) {
-    var dims = this._dims,
-        query = _.query,
-        stamp = pulse.stamp,
-        m = dims.length,
-        mask = 0, i, q;
-
-    // survey how many queries have changed
-    output.filters = 0;
-    for (q=0; q<m; ++q) {
-      if (_.modified('query', q)) { i = q; ++mask; }
-    }
-
-    if (mask === 1) {
-      // only one query changed, use more efficient update
-      mask = dims[i].one;
-      this.incrementOne(dims[i], query[i], output.add, output.rem);
-    } else {
-      // multiple queries changed, perform full record keeping
-      for (q=0, mask=0; q<m; ++q) {
-        if (!_.modified('query', q)) continue;
-        mask |= dims[q].one;
-        this.incrementAll(dims[q], query[q], stamp, output.add);
-        output.rem = output.add; // duplicate add/rem for downstream resolve
-      }
-    }
-
-    return mask;
-  };
-
-  prototype$1q.incrementAll = function(dim, query, stamp, out) {
-    var bits = this.value,
-        seen = bits.seen(),
-        curr = bits.curr(),
-        prev = bits.prev(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one,
-        i, j, k;
-
-    // Fast incremental update based on previous lo index.
-    if (lo1 < lo0) {
-      for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
-        k = index[i];
-        if (seen[k] !== stamp) {
-          prev[k] = curr[k];
-          seen[k] = stamp;
-          out.push(k);
+      // re-initialize indices as needed, update curr bitmap
+      for (i=0; i<m; ++i) {
+        f = fields[i];
+        if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
+          key = f.fname;
+          if (!(add = adds[key])) {
+            indices[key] = index = SortedIndex();
+            adds[key] = add = index.insert(f, pulse.source, 0);
+          }
+          dims[i] = Dimension(index, i, query[i]).onAdd(add, curr);
         }
-        curr[k] ^= one;
       }
-    } else if (lo1 > lo0) {
-      for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
-        k = index[i];
-        if (seen[k] !== stamp) {
-          prev[k] = curr[k];
-          seen[k] = stamp;
-          out.push(k);
+
+      // visit each tuple
+      // if filter state changed, push index to add/rem
+      // else if in mod and passes a filter, push index to mod
+      for (i=0, n=bits.data().length; i<n; ++i) {
+        if (remMap[i]) { // skip if removed tuple
+          continue;
+        } else if (prev[i] !== curr[i]) { // add if state changed
+          out.push(i);
+        } else if (modMap[i] && curr[i] !== all) { // otherwise, pass mods through
+          mod.push(i);
         }
-        curr[k] ^= one;
       }
-    }
 
-    // Fast incremental update based on previous hi index.
-    if (hi1 > hi0) {
-      for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
-        k = index[i];
-        if (seen[k] !== stamp) {
-          prev[k] = curr[k];
-          seen[k] = stamp;
-          out.push(k);
+      bits.mask = (1 << m) - 1;
+      return output;
+    },
+
+    eval(_, pulse) {
+      let output = pulse.materialize().fork(),
+          m = this._dims.length,
+          mask = 0;
+
+      if (pulse.rem.length) {
+        this.remove(_, pulse, output);
+        mask |= (1 << m) - 1;
+      }
+
+      if (_.modified('query') && !_.modified('fields')) {
+        mask |= this.update(_, pulse, output);
+      }
+
+      if (pulse.add.length) {
+        this.insert(_, pulse, output);
+        mask |= (1 << m) - 1;
+      }
+
+      if (pulse.mod.length) {
+        this.modify(pulse, output);
+        mask |= (1 << m) - 1;
+      }
+
+      this.value.mask = mask;
+      return output;
+    },
+
+    insert(_, pulse, output) {
+      let tuples = pulse.add,
+          bits = this.value,
+          dims = this._dims,
+          indices = this._indices,
+          fields = _.fields,
+          adds = {},
+          out = output.add,
+          k = bits.size(),
+          n = k + tuples.length,
+          m = dims.length, j, key, add;
+
+      // resize bitmaps and add tuples as needed
+      bits.resize(n, m);
+      bits.add(tuples);
+
+      const curr = bits.curr(),
+            prev = bits.prev(),
+            all  = bits.all();
+
+      // add to dimensional indices
+      for (j=0; j<m; ++j) {
+        key = fields[j].fname;
+        add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
+        dims[j].onAdd(add, curr);
+      }
+
+      // set previous filters, output if passes at least one filter
+      for (; k<n; ++k) {
+        prev[k] = all;
+        if (curr[k] !== all) out.push(k);
+      }
+    },
+
+    modify(pulse, output) {
+      let out = output.mod,
+          bits = this.value,
+          curr = bits.curr(),
+          all  = bits.all(),
+          tuples = pulse.mod,
+          i, n, k;
+
+      for (i=0, n=tuples.length; i<n; ++i) {
+        k = tuples[i]._index;
+        if (curr[k] !== all) out.push(k);
+      }
+    },
+
+    remove(_, pulse, output) {
+      let indices = this._indices,
+          bits = this.value,
+          curr = bits.curr(),
+          prev = bits.prev(),
+          all  = bits.all(),
+          map = {},
+          out = output.rem,
+          tuples = pulse.rem,
+          i, n, k, f;
+
+      // process tuples, output if passes at least one filter
+      for (i=0, n=tuples.length; i<n; ++i) {
+        k = tuples[i]._index;
+        map[k] = 1; // build index map
+        prev[k] = (f = curr[k]);
+        curr[k] = all;
+        if (f !== all) out.push(k);
+      }
+
+      // remove from dimensional indices
+      for (k in indices) {
+        indices[k].remove(n, map);
+      }
+
+      this.reindex(pulse, n, map);
+      return map;
+    },
+
+    // reindex filters and indices after propagation completes
+    reindex(pulse, num, map) {
+      const indices = this._indices,
+            bits = this.value;
+
+      pulse.runAfter(() => {
+        const indexMap = bits.remove(num, map);
+        for (const key in indices) indices[key].reindex(indexMap);
+      });
+    },
+
+    update(_, pulse, output) {
+      let dims = this._dims,
+          query = _.query,
+          stamp = pulse.stamp,
+          m = dims.length,
+          mask = 0, i, q;
+
+      // survey how many queries have changed
+      output.filters = 0;
+      for (q=0; q<m; ++q) {
+        if (_.modified('query', q)) { i = q; ++mask; }
+      }
+
+      if (mask === 1) {
+        // only one query changed, use more efficient update
+        mask = dims[i].one;
+        this.incrementOne(dims[i], query[i], output.add, output.rem);
+      } else {
+        // multiple queries changed, perform full record keeping
+        for (q=0, mask=0; q<m; ++q) {
+          if (!_.modified('query', q)) continue;
+          mask |= dims[q].one;
+          this.incrementAll(dims[q], query[q], stamp, output.add);
+          output.rem = output.add; // duplicate add/rem for downstream resolve
         }
-        curr[k] ^= one;
       }
-    } else if (hi1 < hi0) {
-      for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
-        k = index[i];
-        if (seen[k] !== stamp) {
-          prev[k] = curr[k];
-          seen[k] = stamp;
-          out.push(k);
+
+      return mask;
+    },
+
+    incrementAll(dim, query, stamp, out) {
+      let bits = this.value,
+          seen = bits.seen(),
+          curr = bits.curr(),
+          prev = bits.prev(),
+          index = dim.index(),
+          old = dim.bisect(dim.range),
+          range = dim.bisect(query),
+          lo1 = range[0],
+          hi1 = range[1],
+          lo0 = old[0],
+          hi0 = old[1],
+          one = dim.one,
+          i, j, k;
+
+      // Fast incremental update based on previous lo index.
+      if (lo1 < lo0) {
+        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
         }
-        curr[k] ^= one;
+      } else if (lo1 > lo0) {
+        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
       }
+
+      // Fast incremental update based on previous hi index.
+      if (hi1 > hi0) {
+        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      } else if (hi1 < hi0) {
+        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      }
+
+      dim.range = query.slice();
+    },
+
+    incrementOne(dim, query, add, rem) {
+      let bits = this.value,
+          curr = bits.curr(),
+          index = dim.index(),
+          old = dim.bisect(dim.range),
+          range = dim.bisect(query),
+          lo1 = range[0],
+          hi1 = range[1],
+          lo0 = old[0],
+          hi0 = old[1],
+          one = dim.one,
+          i, j, k;
+
+      // Fast incremental update based on previous lo index.
+      if (lo1 < lo0) {
+        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          add.push(k);
+        }
+      } else if (lo1 > lo0) {
+        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          rem.push(k);
+        }
+      }
+
+      // Fast incremental update based on previous hi index.
+      if (hi1 > hi0) {
+        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          add.push(k);
+        }
+      } else if (hi1 < hi0) {
+        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          rem.push(k);
+        }
+      }
+
+      dim.range = query.slice();
     }
-
-    dim.range = query.slice();
-  };
-
-  prototype$1q.incrementOne = function(dim, query, add, rem) {
-    var bits = this.value,
-        curr = bits.curr(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one,
-        i, j, k;
-
-    // Fast incremental update based on previous lo index.
-    if (lo1 < lo0) {
-      for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
-        k = index[i];
-        curr[k] ^= one;
-        add.push(k);
-      }
-    } else if (lo1 > lo0) {
-      for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
-        k = index[i];
-        curr[k] ^= one;
-        rem.push(k);
-      }
-    }
-
-    // Fast incremental update based on previous hi index.
-    if (hi1 > hi0) {
-      for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
-        k = index[i];
-        curr[k] ^= one;
-        add.push(k);
-      }
-    } else if (hi1 < hi0) {
-      for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
-        k = index[i];
-        curr[k] ^= one;
-        rem.push(k);
-      }
-    }
-
-    dim.range = query.slice();
-  };
+  });
 
   /**
    * Selectively filters tuples by resolving against a filter bitmap.
@@ -23601,53 +23692,50 @@
     ]
   };
 
-  var prototype$1r = inherits(ResolveFilter, Transform);
+  inherits(ResolveFilter, Transform, {
+    transform(_, pulse) {
+      const ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
+            bitmap = _.filter,
+            mask = bitmap.mask;
 
-  prototype$1r.transform = function(_, pulse) {
-    var ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
-        bitmap = _.filter,
-        mask = bitmap.mask;
+      // exit early if no relevant filter changes
+      if ((mask & ignore) === 0) return pulse.StopPropagation;
 
-    // exit early if no relevant filter changes
-    if ((mask & ignore) === 0) return pulse.StopPropagation;
+      const output = pulse.fork(pulse.ALL),
+            data = bitmap.data(),
+            curr = bitmap.curr(),
+            prev = bitmap.prev(),
+            pass = k => !(curr[k] & ignore) ? data[k] : null;
 
-    var output = pulse.fork(pulse.ALL),
-        data = bitmap.data(),
-        curr = bitmap.curr(),
-        prev = bitmap.prev(),
-        pass = function(k) {
-          return !(curr[k] & ignore) ? data[k] : null;
-        };
+      // propagate all mod tuples that pass the filter
+      output.filter(output.MOD, pass);
 
-    // propagate all mod tuples that pass the filter
-    output.filter(output.MOD, pass);
+      // determine add & rem tuples via filter functions
+      // for efficiency, we do *not* populate new arrays,
+      // instead we add filter functions applied downstream
 
-    // determine add & rem tuples via filter functions
-    // for efficiency, we do *not* populate new arrays,
-    // instead we add filter functions applied downstream
+      if (!(mask & (mask-1))) { // only one filter changed
+        output.filter(output.ADD, pass);
+        output.filter(output.REM, k =>
+          (curr[k] & ignore) === mask ? data[k] : null);
 
-    if (!(mask & (mask-1))) { // only one filter changed
-      output.filter(output.ADD, pass);
-      output.filter(output.REM, function(k) {
-        return (curr[k] & ignore) === mask ? data[k] : null;
-      });
+      } else { // multiple filters changed
+        output.filter(output.ADD, k => {
+          const c = curr[k] & ignore,
+                f = !c && (c ^ (prev[k] & ignore));
+          return f ? data[k] : null;
+        });
+        output.filter(output.REM, k => {
+          const c = curr[k] & ignore,
+                f = c && !(c ^ (c ^ (prev[k] & ignore)));
+          return f ? data[k] : null;
+        });
+      }
 
-    } else { // multiple filters changed
-      output.filter(output.ADD, function(k) {
-        var c = curr[k] & ignore,
-            f = !c && (c ^ (prev[k] & ignore));
-        return f ? data[k] : null;
-      });
-      output.filter(output.REM, function(k) {
-        var c = curr[k] & ignore,
-            f = c && !(c ^ (c ^ (prev[k] & ignore)));
-        return f ? data[k] : null;
-      });
+      // add filter to source data in case of reflow...
+      return output.filter(output.SOURCE, t => pass(t._index));
     }
-
-    // add filter to source data in case of reflow...
-    return output.filter(output.SOURCE, function(t) { return pass(t._index); });
-  };
+  });
 
   var xf = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -23655,7 +23743,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.13.0";
+  var version = "5.14.0";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -24515,7 +24603,7 @@
   const timeParse = wrap('timeParse');
   const utcParse = wrap('utcParse');
 
-  var dateObj = new Date(2000, 0, 1);
+  const dateObj = new Date(2000, 0, 1);
 
   function time$1(month, day, specifier) {
     if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
@@ -24546,30 +24634,30 @@
   const ScalePrefix  = '%';
   const SignalPrefix = '$';
 
-  var RawCode = 'RawCode';
-  var Literal = 'Literal';
-  var Property = 'Property';
-  var Identifier$1 = 'Identifier';
+  const RawCode = 'RawCode';
+  const Literal = 'Literal';
+  const Property = 'Property';
+  const Identifier$1 = 'Identifier';
 
-  var ArrayExpression = 'ArrayExpression';
-  var BinaryExpression = 'BinaryExpression';
-  var CallExpression = 'CallExpression';
-  var ConditionalExpression = 'ConditionalExpression';
-  var LogicalExpression = 'LogicalExpression';
-  var MemberExpression = 'MemberExpression';
-  var ObjectExpression = 'ObjectExpression';
-  var UnaryExpression = 'UnaryExpression';
+  const ArrayExpression = 'ArrayExpression';
+  const BinaryExpression = 'BinaryExpression';
+  const CallExpression = 'CallExpression';
+  const ConditionalExpression = 'ConditionalExpression';
+  const LogicalExpression = 'LogicalExpression';
+  const MemberExpression = 'MemberExpression';
+  const ObjectExpression = 'ObjectExpression';
+  const UnaryExpression = 'UnaryExpression';
 
   function ASTNode(type) {
     this.type = type;
   }
 
   ASTNode.prototype.visit = function(visitor) {
-    var node = this, c, i, n;
+    let c, i, n;
 
-    if (visitor(node)) return 1;
+    if (visitor(this)) return 1;
 
-    for (c=children$1(node), i=0, n=c.length; i<n; ++i) {
+    for (c=children$1(this), i=0, n=c.length; i<n; ++i) {
       if (c[i].visit(visitor)) return 1;
     }
   };
@@ -24582,9 +24670,7 @@
       case LogicalExpression:
         return [node.left, node.right];
       case CallExpression:
-        var args = node.arguments.slice();
-        args.unshift(node.callee);
-        return args;
+        return [node.callee].concat(node.arguments);
       case ConditionalExpression:
         return [node.test, node.consequent, node.alternate];
       case MemberExpression:
@@ -26117,7 +26203,7 @@
   function functions(codegen) {
 
     function fncall(name, args, cast, type) {
-      var obj = codegen(args[0]);
+      let obj = codegen(args[0]);
       if (cast) {
         obj = cast + '(' + obj + ')';
         if (cast.lastIndexOf('new ', 0) === 0) obj = '(' + obj + ')';
@@ -26128,14 +26214,12 @@
     }
 
     function fn(name, cast, type) {
-      return function(args) {
-        return fncall(name, args, cast, type);
-      };
+      return args => fncall(name, args, cast, type);
     }
 
-    var DATE = 'new Date',
-        STRING = 'String',
-        REGEXP = 'RegExp';
+    const DATE = 'new Date',
+          STRING = 'String',
+          REGEXP = 'RegExp';
 
     return {
       // MATH functions
@@ -26163,7 +26247,7 @@
       clamp: function(args) {
         if (args.length < 3) error('Missing arguments to clamp function.');
         if (args.length > 3) error('Too many arguments to clamp function.');
-        var a = args.map(codegen);
+        const a = args.map(codegen);
         return 'Math.max('+a[1]+', Math.min('+a[2]+','+a[0]+'))';
       },
 
@@ -26219,14 +26303,14 @@
       if: function(args) {
           if (args.length < 3) error('Missing arguments to if function.');
           if (args.length > 3) error('Too many arguments to if function.');
-          var a = args.map(codegen);
+          const a = args.map(codegen);
           return '('+a[0]+'?'+a[1]+':'+a[2]+')';
         }
     };
   }
 
   function stripQuotes(s) {
-    var n = s && s.length - 1;
+    const n = s && s.length - 1;
     return n && (
         (s[0]==='"' && s[n]==='"') ||
         (s[0]==='\'' && s[n]==='\'')
@@ -26236,34 +26320,32 @@
   function codegen(opt) {
     opt = opt || {};
 
-    var whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
-        blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
-        constants$1 = opt.constants || constants,
-        functions$1 = (opt.functions || functions)(visit),
-        globalvar = opt.globalvar,
-        fieldvar = opt.fieldvar,
-        globals = {},
+    const whitelist = opt.whitelist ? toSet(opt.whitelist) : {},
+          blacklist = opt.blacklist ? toSet(opt.blacklist) : {},
+          constants$1 = opt.constants || constants,
+          functions$1 = (opt.functions || functions)(visit),
+          globalvar = opt.globalvar,
+          fieldvar = opt.fieldvar,
+          outputGlobal = isFunction(globalvar)
+            ? globalvar
+            : id => `${globalvar}["${id}"]`;
+
+    let globals = {},
         fields = {},
         memberDepth = 0;
 
-    var outputGlobal = isFunction(globalvar)
-      ? globalvar
-      : function (id) { return globalvar + '["' + id + '"]'; };
-
     function visit(ast) {
       if (isString(ast)) return ast;
-      var generator = Generators[ast.type];
+      const generator = Generators[ast.type];
       if (generator == null) error('Unsupported type: ' + ast.type);
       return generator(ast);
     }
 
-    var Generators = {
-      Literal: function(n) {
-          return n.raw;
-        },
+    const Generators = {
+      Literal: n => n.raw,
 
-      Identifier: function(n) {
-        var id = n.name;
+      Identifier: n => {
+        const id = n.name;
         if (memberDepth > 0) {
           return id;
         } else if (hasOwnProperty(blacklist, id)) {
@@ -26278,11 +26360,11 @@
         }
       },
 
-      MemberExpression: function(n) {
-          var d = !n.computed;
-          var o = visit(n.object);
+      MemberExpression: n => {
+          const d = !n.computed,
+                o = visit(n.object);
           if (d) memberDepth += 1;
-          var p = visit(n.property);
+          const p = visit(n.property);
           if (o === fieldvar) {
             // strip quotes to sanitize field name (#1653)
             fields[stripQuotes(p)] = 1;
@@ -26291,56 +26373,50 @@
           return o + (d ? '.'+p : '['+p+']');
         },
 
-      CallExpression: function(n) {
+      CallExpression: n => {
           if (n.callee.type !== 'Identifier') {
             error('Illegal callee type: ' + n.callee.type);
           }
-          var callee = n.callee.name;
-          var args = n.arguments;
-          var fn = hasOwnProperty(functions$1, callee) && functions$1[callee];
+          const callee = n.callee.name,
+                args = n.arguments,
+                fn = hasOwnProperty(functions$1, callee) && functions$1[callee];
           if (!fn) error('Unrecognized function: ' + callee);
           return isFunction(fn)
             ? fn(args)
             : fn + '(' + args.map(visit).join(',') + ')';
         },
 
-      ArrayExpression: function(n) {
-          return '[' + n.elements.map(visit).join(',') + ']';
-        },
+      ArrayExpression: n =>
+          '[' + n.elements.map(visit).join(',') + ']',
 
-      BinaryExpression: function(n) {
-          return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
-        },
+      BinaryExpression: n =>
+          '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-      UnaryExpression: function(n) {
-          return '(' + n.operator + visit(n.argument) + ')';
-        },
+      UnaryExpression: n =>
+          '(' + n.operator + visit(n.argument) + ')',
 
-      ConditionalExpression: function(n) {
-          return '(' + visit(n.test) +
+      ConditionalExpression: n =>
+          '(' + visit(n.test) +
             '?' + visit(n.consequent) +
             ':' + visit(n.alternate) +
-            ')';
-        },
+            ')',
 
-      LogicalExpression: function(n) {
-          return '(' + visit(n.left) + n.operator + visit(n.right) + ')';
-        },
+      LogicalExpression: n =>
+          '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-      ObjectExpression: function(n) {
-          return '{' + n.properties.map(visit).join(',') + '}';
-        },
+      ObjectExpression: n =>
+          '{' + n.properties.map(visit).join(',') + '}',
 
-      Property: function(n) {
+      Property: n => {
           memberDepth += 1;
-          var k = visit(n.key);
+          const k = visit(n.key);
           memberDepth -= 1;
           return k + ':' + visit(n.value);
         }
     };
 
     function codegen(ast) {
-      var result = {
+      const result = {
         code:    visit(ast),
         globals: Object.keys(globals),
         fields:  Object.keys(fields)
@@ -26517,7 +26593,7 @@
   }
 
   function merge$2() {
-    var args = [].slice.call(arguments);
+    const args = [].slice.call(arguments);
     args.unshift({});
     return extend.apply(null, args);
   }
@@ -27000,7 +27076,7 @@
 
   // Expression function context object
   const functionContext = {
-    random: function() { return exports.random(); }, // override default
+    random() { return exports.random(); }, // override default
     cumulativeNormal,
     cumulativeLogNormal,
     cumulativeUniform,
@@ -27016,13 +27092,13 @@
     isArray,
     isBoolean,
     isDate,
-    isDefined: function(_) { return _ !== undefined; },
+    isDefined(_) { return _ !== undefined; },
     isNumber,
     isObject,
     isRegExp,
     isString,
     isTuple,
-    isValid: function(_) { return _ != null && _ === _; },
+    isValid(_) { return _ != null && _ === _; },
     toBoolean,
     toDate,
     toNumber,
@@ -27094,6 +27170,20 @@
         thisPrefix = 'this.', // function context prefix
         astVisitors = {}; // AST visitors for dependency analysis
 
+  // export code generator parameters
+  const codegenParams = {
+    blacklist:  ['_'],
+    whitelist:  ['datum', 'event', 'item'],
+    fieldvar:   'datum',
+    globalvar:  id => `_[${$(SignalPrefix + id)}]`,
+    functions:  buildFunctions,
+    constants:  constants,
+    visitors:   astVisitors
+  };
+
+  // export code generator
+  const codeGenerator = codegen(codegenParams);
+
   // Build expression function registry
   function buildFunctions(codegen) {
     const fn = functions(codegen);
@@ -27142,21 +27232,8 @@
   expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
   expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
 
-  // Export code generator and parameters
-  const codegenParams = {
-    blacklist:  ['_'],
-    whitelist:  ['datum', 'event', 'item'],
-    fieldvar:   'datum',
-    globalvar:  id => '_[' + $(SignalPrefix + id) + ']',
-    functions:  buildFunctions,
-    constants:  constants,
-    visitors:   astVisitors
-  };
-
-  var codeGenerator = codegen(codegenParams);
-
   function parseExpression$1(expr, scope) {
-    var params = {}, ast, gen;
+    let params = {}, ast, gen;
 
     // parse the expression to an abstract syntax tree (ast)
     try {
@@ -27169,8 +27246,8 @@
     // analyze ast function calls for dependencies
     ast.visit(node => {
       if (node.type !== CallExpression) return;
-      var name = node.callee.name,
-          visit = codegenParams.visitors[name];
+      const name = node.callee.name,
+            visit = codegenParams.visitors[name];
       if (visit) visit(name, node.arguments, scope, params);
     });
 
@@ -27179,7 +27256,7 @@
 
     // collect signal dependencies
     gen.globals.forEach(name => {
-      var signalName = SignalPrefix + name;
+      const signalName = SignalPrefix + name;
       if (!hasOwnProperty(params, signalName) && scope.getSignal(name)) {
         params[signalName] = scope.signalRef(name);
       }
@@ -28116,192 +28193,11 @@
     if (options.container) view.initialize(options.container, options.bind);
   }
 
-  var prototype$1s = inherits(View, Dataflow);
-
-  // -- DATAFLOW / RENDERING ----
-
-  prototype$1s.evaluate = async function(encode, prerun, postrun) {
-    // evaluate dataflow and prerun
-    await Dataflow.prototype.evaluate.call(this, encode, prerun);
-
-    // render as needed
-    if (this._redraw || this._resize) {
-      try {
-        if (this._renderer) {
-          if (this._resize) {
-            this._resize = 0;
-            resizeRenderer(this);
-          }
-          await this._renderer.renderAsync(this._scenegraph.root);
-        }
-        this._redraw = false;
-      } catch (e) {
-        this.error(e);
-      }
-    }
-
-    // evaluate postrun
-    if (postrun) asyncCallback(this, postrun);
-
-    return this;
-  };
-
-  prototype$1s.dirty = function(item) {
-    this._redraw = true;
-    this._renderer && this._renderer.dirty(item);
-  };
-
-  // -- GET / SET ----
-
-  prototype$1s.description = function(text) {
-    if (arguments.length) {
-      const desc = text != null ? (text + '') : null;
-      if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
-      return this;
-    }
-    return this._desc;
-  };
-
-  prototype$1s.container = function() {
-    return this._el;
-  };
-
-  prototype$1s.scenegraph = function() {
-    return this._scenegraph;
-  };
-
-  prototype$1s.origin = function() {
-    return this._origin.slice();
-  };
-
   function lookupSignal(view, name) {
     return hasOwnProperty(view._signals, name)
       ? view._signals[name]
       : error('Unrecognized signal name: ' + $(name));
   }
-
-  prototype$1s.signal = function(name, value, options) {
-    var op = lookupSignal(this, name);
-    return arguments.length === 1
-      ? op.value
-      : this.update(op, value, options);
-  };
-
-  prototype$1s.width = function(_) {
-    return arguments.length ? this.signal('width', _) : this.signal('width');
-  };
-
-  prototype$1s.height = function(_) {
-    return arguments.length ? this.signal('height', _) : this.signal('height');
-  };
-
-  prototype$1s.padding = function(_) {
-    return arguments.length
-      ? this.signal('padding', padding(_))
-      : padding(this.signal('padding'));
-  };
-
-  prototype$1s.autosize = function(_) {
-    return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
-  };
-
-  prototype$1s.background = function(_) {
-    return arguments.length ? this.signal('background', _) : this.signal('background');
-  };
-
-  prototype$1s.renderer = function(type) {
-    if (!arguments.length) return this._renderType;
-    if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
-    if (type !== this._renderType) {
-      this._renderType = type;
-      this._resetRenderer();
-    }
-    return this;
-  };
-
-  prototype$1s.tooltip = function(handler) {
-    if (!arguments.length) return this._tooltip;
-    if (handler !== this._tooltip) {
-      this._tooltip = handler;
-      this._resetRenderer();
-    }
-    return this;
-  };
-
-  prototype$1s.loader = function(loader) {
-    if (!arguments.length) return this._loader;
-    if (loader !== this._loader) {
-      Dataflow.prototype.loader.call(this, loader);
-      this._resetRenderer();
-    }
-    return this;
-  };
-
-  prototype$1s.resize = function() {
-    // set flag to perform autosize
-    this._autosize = 1;
-    // touch autosize signal to ensure top-level ViewLayout runs
-    return this.touch(lookupSignal(this, 'autosize'));
-  };
-
-  prototype$1s._resetRenderer = function() {
-    if (this._renderer) {
-      this._renderer = null;
-      this.initialize(this._el, this._elBind);
-    }
-  };
-
-  // -- SIZING ----
-  prototype$1s._resizeView = resizeView;
-
-  // -- EVENT HANDLING ----
-
-  prototype$1s.addEventListener = function(type, handler, options) {
-    var callback = handler;
-    if (!(options && options.trap === false)) {
-      // wrap callback in error handler
-      callback = trap(this, handler);
-      callback.raw = handler;
-    }
-    this._handler.on(type, callback);
-    return this;
-  };
-
-  prototype$1s.removeEventListener = function(type, handler) {
-    var handlers = this._handler.handlers(type),
-        i = handlers.length, h, t;
-
-    // search registered handlers, remove if match found
-    while (--i >= 0) {
-      t = handlers[i].type;
-      h = handlers[i].handler;
-      if (type === t && (handler === h || handler === h.raw)) {
-        this._handler.off(t, h);
-        break;
-      }
-    }
-    return this;
-  };
-
-  prototype$1s.addResizeListener = function(handler) {
-    var l = this._resizeListeners;
-    if (l.indexOf(handler) < 0) {
-      // add handler if it isn't already registered
-      // note: error trapping handled elsewhere, so
-      // no need to wrap handlers here
-      l.push(handler);
-    }
-    return this;
-  };
-
-  prototype$1s.removeResizeListener = function(handler) {
-    var l = this._resizeListeners,
-        i = l.indexOf(handler);
-    if (i >= 0) {
-      l.splice(i, 1);
-    }
-    return this;
-  };
 
   function findOperatorHandler(op, handler) {
     const h = (op._targets || [])
@@ -28325,69 +28221,250 @@
     return view;
   }
 
-  prototype$1s.addSignalListener = function(name, handler) {
-    return addOperatorListener(this, name, lookupSignal(this, name), handler);
-  };
+  inherits(View, Dataflow, {
+    // -- DATAFLOW / RENDERING ----
 
-  prototype$1s.removeSignalListener = function(name, handler) {
-    return removeOperatorListener(this, lookupSignal(this, name), handler);
-  };
+    async evaluate(encode, prerun, postrun) {
+      // evaluate dataflow and prerun
+      await Dataflow.prototype.evaluate.call(this, encode, prerun);
 
-  prototype$1s.addDataListener = function(name, handler) {
-    return addOperatorListener(this, name, dataref(this, name).values, handler);
-  };
+      // render as needed
+      if (this._redraw || this._resize) {
+        try {
+          if (this._renderer) {
+            if (this._resize) {
+              this._resize = 0;
+              resizeRenderer(this);
+            }
+            await this._renderer.renderAsync(this._scenegraph.root);
+          }
+          this._redraw = false;
+        } catch (e) {
+          this.error(e);
+        }
+      }
 
-  prototype$1s.removeDataListener = function(name, handler) {
-    return removeOperatorListener(this, dataref(this, name).values, handler);
-  };
+      // evaluate postrun
+      if (postrun) asyncCallback(this, postrun);
 
-  prototype$1s.globalCursor = function(_) {
-    if (arguments.length) {
-      if (this._globalCursor !== !!_) {
-        const prev = setCursor(this, null); // clear previous cursor
-        this._globalCursor = !!_;
-        if (prev) setCursor(this, prev); // swap cursor
+      return this;
+    },
+
+    dirty(item) {
+      this._redraw = true;
+      this._renderer && this._renderer.dirty(item);
+    },
+
+    // -- GET / SET ----
+
+    description(text) {
+      if (arguments.length) {
+        const desc = text != null ? (text + '') : null;
+        if (desc !== this._desc) ariaLabel(this._el, this._desc = desc);
+        return this;
+      }
+      return this._desc;
+    },
+
+    container() {
+      return this._el;
+    },
+
+    scenegraph() {
+      return this._scenegraph;
+    },
+
+    origin() {
+      return this._origin.slice();
+    },
+
+    signal(name, value, options) {
+      var op = lookupSignal(this, name);
+      return arguments.length === 1
+        ? op.value
+        : this.update(op, value, options);
+    },
+
+    width(_) {
+      return arguments.length ? this.signal('width', _) : this.signal('width');
+    },
+
+    height(_) {
+      return arguments.length ? this.signal('height', _) : this.signal('height');
+    },
+
+    padding(_) {
+      return arguments.length
+        ? this.signal('padding', padding(_))
+        : padding(this.signal('padding'));
+    },
+
+    autosize(_) {
+      return arguments.length ? this.signal('autosize', _) : this.signal('autosize');
+    },
+
+    background(_) {
+      return arguments.length ? this.signal('background', _) : this.signal('background');
+    },
+
+    renderer(type) {
+      if (!arguments.length) return this._renderType;
+      if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
+      if (type !== this._renderType) {
+        this._renderType = type;
+        this._resetRenderer();
       }
       return this;
-    } else {
-      return this._globalCursor;
-    }
-  };
+    },
 
-  prototype$1s.preventDefault = function(_) {
-    if (arguments.length) {
-      this._preventDefault = _;
+    tooltip(handler) {
+      if (!arguments.length) return this._tooltip;
+      if (handler !== this._tooltip) {
+        this._tooltip = handler;
+        this._resetRenderer();
+      }
       return this;
-    } else {
-      return this._preventDefault;
-    }
-  };
+    },
 
-  prototype$1s.timer = timer;
-  prototype$1s.events = events$1;
-  prototype$1s.finalize = finalize;
-  prototype$1s.hover = hover;
+    loader(loader) {
+      if (!arguments.length) return this._loader;
+      if (loader !== this._loader) {
+        Dataflow.prototype.loader.call(this, loader);
+        this._resetRenderer();
+      }
+      return this;
+    },
 
-  // -- DATA ----
-  prototype$1s.data = data;
-  prototype$1s.change = change;
-  prototype$1s.insert = insert;
-  prototype$1s.remove = remove;
+    resize() {
+      // set flag to perform autosize
+      this._autosize = 1;
+      // touch autosize signal to ensure top-level ViewLayout runs
+      return this.touch(lookupSignal(this, 'autosize'));
+    },
 
-  // -- SCALES --
-  prototype$1s.scale = scale$4;
+    _resetRenderer() {
+      if (this._renderer) {
+        this._renderer = null;
+        this.initialize(this._el, this._elBind);
+      }
+    },
 
-  // -- INITIALIZATION ----
-  prototype$1s.initialize = initialize$1;
+    // -- SIZING ----
+    _resizeView: resizeView,
 
-  // -- HEADLESS RENDERING ----
-  prototype$1s.toImageURL = renderToImageURL;
-  prototype$1s.toCanvas = renderToCanvas;
-  prototype$1s.toSVG = renderToSVG;
+    // -- EVENT HANDLING ----
 
-  // -- SAVE / RESTORE STATE ----
-  prototype$1s.getState = getState$1;
-  prototype$1s.setState = setState$1;
+    addEventListener(type, handler, options) {
+      var callback = handler;
+      if (!(options && options.trap === false)) {
+        // wrap callback in error handler
+        callback = trap(this, handler);
+        callback.raw = handler;
+      }
+      this._handler.on(type, callback);
+      return this;
+    },
+
+    removeEventListener(type, handler) {
+      var handlers = this._handler.handlers(type),
+          i = handlers.length, h, t;
+
+      // search registered handlers, remove if match found
+      while (--i >= 0) {
+        t = handlers[i].type;
+        h = handlers[i].handler;
+        if (type === t && (handler === h || handler === h.raw)) {
+          this._handler.off(t, h);
+          break;
+        }
+      }
+      return this;
+    },
+
+    addResizeListener(handler) {
+      var l = this._resizeListeners;
+      if (l.indexOf(handler) < 0) {
+        // add handler if it isn't already registered
+        // note: error trapping handled elsewhere, so
+        // no need to wrap handlers here
+        l.push(handler);
+      }
+      return this;
+    },
+
+    removeResizeListener(handler) {
+      var l = this._resizeListeners,
+          i = l.indexOf(handler);
+      if (i >= 0) {
+        l.splice(i, 1);
+      }
+      return this;
+    },
+
+    addSignalListener(name, handler) {
+      return addOperatorListener(this, name, lookupSignal(this, name), handler);
+    },
+
+    removeSignalListener(name, handler) {
+      return removeOperatorListener(this, lookupSignal(this, name), handler);
+    },
+
+    addDataListener(name, handler) {
+      return addOperatorListener(this, name, dataref(this, name).values, handler);
+    },
+
+    removeDataListener(name, handler) {
+      return removeOperatorListener(this, dataref(this, name).values, handler);
+    },
+
+    globalCursor(_) {
+      if (arguments.length) {
+        if (this._globalCursor !== !!_) {
+          const prev = setCursor(this, null); // clear previous cursor
+          this._globalCursor = !!_;
+          if (prev) setCursor(this, prev); // swap cursor
+        }
+        return this;
+      } else {
+        return this._globalCursor;
+      }
+    },
+
+    preventDefault(_) {
+      if (arguments.length) {
+        this._preventDefault = _;
+        return this;
+      } else {
+        return this._preventDefault;
+      }
+    },
+
+    timer,
+    events: events$1,
+    finalize,
+    hover,
+
+    // -- DATA ----
+    data,
+    change,
+    insert,
+    remove,
+
+    // -- SCALES --
+    scale: scale$4,
+
+    // -- INITIALIZATION ----
+    initialize: initialize$1,
+
+    // -- HEADLESS RENDERING ----
+    toImageURL: renderToImageURL,
+    toCanvas: renderToCanvas,
+    toSVG: renderToSVG,
+
+    // -- SAVE / RESTORE STATE ----
+    getState: getState$1,
+    setState: setState$1
+  });
 
   function parseAutosize(spec) {
     return isObject(spec) ? spec : {type: spec || 'pad'};
@@ -28414,8 +28491,13 @@
 
   function addEncode(object, name, value, set) {
     if (value != null) {
+      const isEncoder = (
+        (isObject(value) && !isArray(value)) ||
+        (isArray(value) && value.length && isObject(value[0]))
+      );
+
       // Always assign signal to update, even if the signal is from the enter block
-      if (isObject(value) && !isArray(value)) {
+      if (isEncoder) {
         object.update[name] = value;
       } else {
         object[set || 'enter'][name] = {value: value};
@@ -28450,28 +28532,28 @@
     );
   }
 
-  var MarkRole = 'mark';
-  var FrameRole$1 = 'frame';
-  var ScopeRole$1 = 'scope';
+  const MarkRole = 'mark';
+  const FrameRole$1 = 'frame';
+  const ScopeRole$1 = 'scope';
 
-  var AxisRole$1 = 'axis';
-  var AxisDomainRole = 'axis-domain';
-  var AxisGridRole = 'axis-grid';
-  var AxisLabelRole = 'axis-label';
-  var AxisTickRole = 'axis-tick';
-  var AxisTitleRole = 'axis-title';
+  const AxisRole$1 = 'axis';
+  const AxisDomainRole = 'axis-domain';
+  const AxisGridRole = 'axis-grid';
+  const AxisLabelRole = 'axis-label';
+  const AxisTickRole = 'axis-tick';
+  const AxisTitleRole = 'axis-title';
 
-  var LegendRole$1 = 'legend';
-  var LegendBandRole = 'legend-band';
-  var LegendEntryRole = 'legend-entry';
-  var LegendGradientRole = 'legend-gradient';
-  var LegendLabelRole = 'legend-label';
-  var LegendSymbolRole = 'legend-symbol';
-  var LegendTitleRole = 'legend-title';
+  const LegendRole$1 = 'legend';
+  const LegendBandRole = 'legend-band';
+  const LegendEntryRole = 'legend-entry';
+  const LegendGradientRole = 'legend-gradient';
+  const LegendLabelRole = 'legend-label';
+  const LegendSymbolRole = 'legend-symbol';
+  const LegendTitleRole = 'legend-title';
 
-  var TitleRole$1 = 'title';
-  var TitleTextRole = 'title-text';
-  var TitleSubtitleRole = 'title-subtitle';
+  const TitleRole$1 = 'title';
+  const TitleTextRole = 'title-text';
+  const TitleSubtitleRole = 'title-subtitle';
 
   function applyDefaults(encode, type, role, style, config) {
     const defaults = {}, enter = {};
@@ -28727,26 +28809,26 @@
     return expr.$expr;
   }
 
-  var OUTER = 'outer',
-      OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
+  const OUTER = 'outer',
+        OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
 
   function outerError(prefix, name) {
     error(prefix + ' for "outer" push: ' + $(name));
   }
 
   function parseSignal(signal, scope) {
-    var name = signal.name;
+    const name = signal.name;
 
     if (signal.push === OUTER) {
       // signal must already be defined, raise error if not
       if (!scope.signals[name]) outerError('No prior signal definition', name);
       // signal push must not use properties reserved for standard definition
-      OUTER_INVALID.forEach(function(prop) {
+      OUTER_INVALID.forEach(prop => {
         if (signal[prop] !== undefined) outerError('Invalid property ', prop);
       });
     } else {
       // define a new signal in the current scope
-      var op = scope.addSignal(name, signal.value);
+      const op = scope.addSignal(name, signal.value);
       if (signal.react === false) op.react = false;
       if (signal.bind) scope.addBinding(name, signal.bind);
     }
@@ -28771,7 +28853,7 @@
   // -----
 
   function ref(op) {
-    var ref = {$ref: op.id};
+    const ref = {$ref: op.id};
     // if operator not yet registered, cache ref to resolve later
     if (op.id < 0) (op.refs = op.refs || []).push(ref);
     return ref;
@@ -28781,23 +28863,23 @@
     return name ? {$field: field, $name: name} : {$field: field};
   }
 
-  var keyFieldRef = fieldRef('key');
+  const keyFieldRef = fieldRef('key');
 
   function compareRef(fields, orders) {
     return {$compare: fields, $order: orders};
   }
 
   function keyRef(fields, flat) {
-    var ref = {$key: fields};
+    const ref = {$key: fields};
     if (flat) ref.$flat = true;
     return ref;
   }
 
   // -----
 
-  var Ascending  = 'ascending';
+  const Ascending  = 'ascending';
 
-  var Descending = 'descending';
+  const Descending = 'descending';
 
   function sortKey(sort) {
     return !isObject(sort) ? ''
@@ -28813,9 +28895,9 @@
 
   // -----
 
-  var Scope = 'scope';
+  const Scope = 'scope';
 
-  var View$1 = 'view';
+  const View$1 = 'view';
 
   function isSignal(_) {
     return _ && _.signal;
@@ -28827,7 +28909,7 @@
 
   function hasSignal(_) {
     if (isSignal(_)) return true;
-    if (isObject(_)) for (var key in _) {
+    if (isObject(_)) for (const key in _) {
       if (hasSignal(_[key])) return true;
     }
     return false;
@@ -28841,10 +28923,10 @@
     return v && v.signal || v;
   }
 
-  var Timer = 'timer';
+  const Timer = 'timer';
 
   function parseStream$1(stream, scope) {
-    var method = stream.merge ? mergeStream
+    const method = stream.merge ? mergeStream
       : stream.stream ? nestedStream
       : stream.type ? eventStream
       : error('Invalid stream specification: ' + $(stream));
@@ -28857,19 +28939,19 @@
   }
 
   function mergeStream(stream, scope) {
-    var list = stream.merge.map(s => parseStream$1(s, scope)),
-        entry = streamParameters({merge: list}, stream, scope);
+    const list = stream.merge.map(s => parseStream$1(s, scope)),
+          entry = streamParameters({merge: list}, stream, scope);
     return scope.addStream(entry).id;
   }
 
   function nestedStream(stream, scope) {
-    var id = parseStream$1(stream.stream, scope),
-        entry = streamParameters({stream: id}, stream, scope);
+    const id = parseStream$1(stream.stream, scope),
+          entry = streamParameters({stream: id}, stream, scope);
     return scope.addStream(entry).id;
   }
 
   function eventStream(stream, scope) {
-    var id, entry;
+    let id, entry;
 
     if (stream.type === Timer) {
       id = scope.event(Timer, stream.throttle);
@@ -28885,7 +28967,7 @@
   }
 
   function streamParameters(entry, stream, scope) {
-    var param = stream.between;
+    let param = stream.between;
 
     if (param) {
       if (param.length !== 2) {
@@ -28926,7 +29008,7 @@
   }
 
   function filterMark(type, name, role) {
-    var item = 'event.item';
+    const item = 'event.item';
     return item
       + (type && type !== '*' ? '&&' + item + '.mark.marktype===\'' + type + '\'' : '')
       + (role ? '&&' + item + '.mark.role===\'' + role + '\'' : '')
@@ -28943,7 +29025,7 @@
     return parseMerge(selector.trim()).map(parseSelector);
   }
 
-  var VIEW$1    = 'view',
+  let VIEW$1    = 'view',
       LBRACK  = '[',
       RBRACK  = ']',
       LBRACE  = '{',
@@ -28976,7 +29058,7 @@
   }
 
   function find$1(s, i, endChar, pushChar, popChar) {
-    var count = 0,
+    let count = 0,
         n = s.length,
         c;
     for (; i<n; ++i) {
@@ -28989,7 +29071,7 @@
   }
 
   function parseMerge(s) {
-    var output = [],
+    let output = [],
         start = 0,
         n = s.length,
         i = 0;
@@ -29013,7 +29095,7 @@
   }
 
   function parseBetween(s) {
-    var n = s.length,
+    let n = s.length,
         i = 1,
         b, stream;
 
@@ -29048,7 +29130,7 @@
   }
 
   function parseStream$2(s) {
-    var stream = {source: DEFAULT_SOURCE},
+    let stream = {source: DEFAULT_SOURCE},
         source = [],
         throttle = [0, 0],
         markname = 0,
@@ -29133,10 +29215,10 @@
   }
 
   function parseThrottle(s) {
-    var a = s.split(COMMA);
+    const a = s.split(COMMA);
     if (!s.length || a.length > 2) throw s;
     return a.map(function(_) {
-      var x = +_;
+      const x = +_;
       if (x !== x) throw s;
       return x;
     });
@@ -29149,7 +29231,7 @@
   };
 
   function parseUpdate$1(spec, scope, target) {
-    var events = spec.events,
+    let events = spec.events,
         update = spec.update,
         encode = spec.encode,
         sources = [],
@@ -29197,9 +29279,9 @@
       entry.options = {force: true};
     }
 
-    sources.forEach(function(source) {
-      scope.addUpdate(extend(streamSource(source, scope), entry));
-    });
+    sources.forEach(source =>
+      scope.addUpdate(extend(streamSource(source, scope), entry))
+    );
   }
 
   function streamSource(stream, scope) {
@@ -29219,7 +29301,7 @@
   }
 
   function parseSignalUpdates(signal, scope) {
-    var op = scope.getSignal(signal.name),
+    let op = scope.getSignal(signal.name),
         expr = signal.update;
 
     if (signal.init) {
@@ -29238,63 +29320,61 @@
     }
 
     if (signal.on) {
-      signal.on.forEach(function(_) {
-        parseUpdate$1(_, scope, op.id);
-      });
+      signal.on.forEach(_ => parseUpdate$1(_, scope, op.id));
     }
   }
 
   const transform$2 = name => (params, value, parent) =>
     entry$1(name, value, params || undefined, parent);
 
-  var Aggregate$1 = transform$2('aggregate');
-  var AxisTicks$1 = transform$2('axisticks');
-  var Bound$1 = transform$2('bound');
-  var Collect$1 = transform$2('collect');
-  var Compare$1 = transform$2('compare');
-  var DataJoin$1 = transform$2('datajoin');
-  var Encode$1 = transform$2('encode');
-  var Expression$1 = transform$2('expression');
-  var Facet$1 = transform$2('facet');
-  var Field$1 = transform$2('field');
-  var Key$1 = transform$2('key');
-  var LegendEntries$1 = transform$2('legendentries');
-  var Load$1 = transform$2('load');
-  var Mark$1 = transform$2('mark');
-  var MultiExtent$1 = transform$2('multiextent');
-  var MultiValues$1 = transform$2('multivalues');
-  var Overlap$1 = transform$2('overlap');
-  var Params$2 = transform$2('params');
-  var PreFacet$1 = transform$2('prefacet');
-  var Projection$1 = transform$2('projection');
-  var Proxy$1 = transform$2('proxy');
-  var Relay$1 = transform$2('relay');
-  var Render$1 = transform$2('render');
-  var Scale$1 = transform$2('scale');
-  var Sieve$1 = transform$2('sieve');
-  var SortItems$1 = transform$2('sortitems');
-  var ViewLayout$1 = transform$2('viewlayout');
-  var Values$1 = transform$2('values');
+  const Aggregate$1 = transform$2('aggregate');
+  const AxisTicks$1 = transform$2('axisticks');
+  const Bound$1 = transform$2('bound');
+  const Collect$1 = transform$2('collect');
+  const Compare$1 = transform$2('compare');
+  const DataJoin$1 = transform$2('datajoin');
+  const Encode$1 = transform$2('encode');
+  const Expression$1 = transform$2('expression');
+  const Facet$1 = transform$2('facet');
+  const Field$1 = transform$2('field');
+  const Key$1 = transform$2('key');
+  const LegendEntries$1 = transform$2('legendentries');
+  const Load$1 = transform$2('load');
+  const Mark$1 = transform$2('mark');
+  const MultiExtent$1 = transform$2('multiextent');
+  const MultiValues$1 = transform$2('multivalues');
+  const Overlap$1 = transform$2('overlap');
+  const Params$2 = transform$2('params');
+  const PreFacet$1 = transform$2('prefacet');
+  const Projection$1 = transform$2('projection');
+  const Proxy$1 = transform$2('proxy');
+  const Relay$1 = transform$2('relay');
+  const Render$1 = transform$2('render');
+  const Scale$1 = transform$2('scale');
+  const Sieve$1 = transform$2('sieve');
+  const SortItems$1 = transform$2('sortitems');
+  const ViewLayout$1 = transform$2('viewlayout');
+  const Values$1 = transform$2('values');
 
-  var FIELD_REF_ID = 0;
+  let FIELD_REF_ID = 0;
 
-  var MULTIDOMAIN_SORT_OPS  = {min: 'min', max: 'max', count: 'sum'};
+  const MULTIDOMAIN_SORT_OPS  = {min: 'min', max: 'max', count: 'sum'};
 
   function initScale(spec, scope) {
-    var type = spec.type || 'linear';
+    const type = spec.type || 'linear';
 
     if (!isValidScaleType(type)) {
       error('Unrecognized scale type: ' + $(type));
     }
 
     scope.addScale(spec.name, {
-      type:   type,
+      type,
       domain: undefined
     });
   }
 
   function parseScale(spec, scope) {
-    var params = scope.getScale(spec.name).params,
+    let params = scope.getScale(spec.name).params,
         key;
 
     params.domain = parseScaleDomain(spec.domain, spec, scope);
@@ -29354,13 +29434,11 @@
   }
 
   function explicitDomain(domain, spec, scope) {
-    return domain.map(function(v) {
-      return parseLiteral(v, scope);
-    });
+    return domain.map(v => parseLiteral(v, scope));
   }
 
   function singularDomain(domain, spec, scope) {
-    var data = scope.getData(domain.data);
+    const data = scope.getData(domain.data);
     if (!data) dataLookupError(domain.data);
 
     return isDiscrete(spec.type)
@@ -29370,14 +29448,14 @@
   }
 
   function multipleDomain(domain, spec, scope) {
-    var data = domain.data,
-        fields = domain.fields.reduce(function(dom, d) {
-          d = isString(d) ? {data: data, field: d}
-            : (isArray(d) || d.signal) ? fieldRef$1(d, scope)
-            : d;
-          dom.push(d);
-          return dom;
-        }, []);
+    const data = domain.data,
+          fields = domain.fields.reduce(function(dom, d) {
+            d = isString(d) ? {data: data, field: d}
+              : (isArray(d) || d.signal) ? fieldRef$1(d, scope)
+              : d;
+            dom.push(d);
+            return dom;
+          }, []);
 
     return (isDiscrete(spec.type) ? ordinalMultipleDomain
       : isQuantile(spec.type) ? quantileMultipleDomain
@@ -29385,13 +29463,13 @@
   }
 
   function fieldRef$1(data, scope) {
-    var name = '_:vega:_' + (FIELD_REF_ID++),
-        coll = Collect$1({});
+    const name = '_:vega:_' + (FIELD_REF_ID++),
+          coll = Collect$1({});
 
     if (isArray(data)) {
       coll.value = {$ingest: data};
     } else if (data.signal) {
-      var code = 'setdata(' + $(name) + ',' + data.signal + ')';
+      const code = 'setdata(' + $(name) + ',' + data.signal + ')';
       coll.params.input = scope.signalRef(code);
     }
     scope.addDataPipeline(name, [coll, Sieve$1({})]);
@@ -29399,12 +29477,12 @@
   }
 
   function ordinalMultipleDomain(domain, scope, fields) {
-    var sort = parseSort(domain.sort, true),
+    let sort = parseSort(domain.sort, true),
         counts, p, a, c, v;
 
     // get value counts for each domain field
-    counts = fields.map(function(f) {
-      var data = scope.getData(f.data);
+    counts = fields.map(f => {
+      const data = scope.getData(f.data);
       if (!data) dataLookupError(f.data);
       return data.countsRef(scope, f.field, sort);
     });
@@ -29451,8 +29529,8 @@
 
   function quantileMultipleDomain(domain, scope, fields) {
     // get value arrays for each domain field
-    var values = fields.map(function(f) {
-      var data = scope.getData(f.data);
+    const values = fields.map(f => {
+      const data = scope.getData(f.data);
       if (!data) dataLookupError(f.data);
       return data.domainRef(scope, f.field);
     });
@@ -29463,8 +29541,8 @@
 
   function numericMultipleDomain(domain, scope, fields) {
     // get extents for each domain field
-    var extents = fields.map(function(f) {
-      var data = scope.getData(f.data);
+    const extents = fields.map(f => {
+      const data = scope.getData(f.data);
       if (!data) dataLookupError(f.data);
       return data.extentRef(scope, f.field);
     });
@@ -29504,7 +29582,7 @@
   // -- SCALE RANGE -----
 
   function parseScaleRange(spec, scope, params) {
-    var range = spec.range,
+    let range = spec.range,
         config = scope.config.range;
 
     if (range.signal) {
@@ -29542,16 +29620,16 @@
   }
 
   function parseProjection(proj, scope) {
-    var config = scope.config.projection || {},
-        params = {};
+    const config = scope.config.projection || {},
+          params = {};
 
-    for (var name in proj) {
+    for (const name in proj) {
       if (name === 'name') continue;
       params[name] = parseParameter$1(proj[name], name, scope);
     }
 
     // apply projection defaults from config
-    for (name in config) {
+    for (const name in config) {
       if (params[name] == null) {
         params[name] = parseParameter$1(config[name], name, scope);
       }
@@ -29561,7 +29639,7 @@
   }
 
   function parseParameter$1(_, name, scope) {
-    return isArray(_) ? _.map(function(_) { return parseParameter$1(_, name, scope); })
+    return isArray(_) ? _.map(_ => parseParameter$1(_, name, scope))
       : !isObject(_) ? _
       : _.signal ? scope.signalRef(_.signal)
       : name === 'fit' ? _
@@ -29625,11 +29703,11 @@
   const zero$1 = {value: 0};
   const one$1 = {value: 1};
 
-  var GroupMark = 'group';
-  var RectMark = 'rect';
-  var RuleMark = 'rule';
-  var SymbolMark = 'symbol';
-  var TextMark = 'text';
+  const GroupMark = 'group';
+  const RectMark = 'rect';
+  const RuleMark = 'rule';
+  const SymbolMark = 'symbol';
+  const TextMark = 'text';
 
   function guideGroup(mark) {
     mark.type = GroupMark;
@@ -29664,7 +29742,7 @@
   }
 
   function getEncoding(name, encode) {
-    var v = encode && (
+    const v = encode && (
       (encode.update && encode.update[name]) ||
       (encode.enter && encode.enter[name])
     );
@@ -29672,7 +29750,7 @@
   }
 
   function getStyle(name, scope, style) {
-    var s = scope.config.style[style];
+    const s = scope.config.style[style];
     return s && s[name];
   }
 
@@ -29735,7 +29813,7 @@
   }
 
   function legendGradient(spec, scale, config, userEncode) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         vertical = _.isVertical(),
         thickness = _.gradientThickness(),
         length = _.gradientLength(),
@@ -29785,7 +29863,7 @@
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         vertical = _.isVertical(),
         thickness = _.gradientThickness(),
         length = _.gradientLength(),
@@ -29830,7 +29908,7 @@
         baselineExpr = `datum.${Perc}<=0?"${Bottom$1}":datum.${Perc}>=1?"${Top$1}":"${Middle$1}"`;
 
   function legendGradientLabels(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         vertical = _.isVertical(),
         thickness = encoder(_.gradientThickness()),
         length = _.gradientLength(),
@@ -29895,7 +29973,7 @@
 
   // userEncode is top-level, includes entries, symbols, labels
   function legendSymbolGroups(spec, config, userEncode, dataRef, columns) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         entries = userEncode.entries,
         interactive = !!(entries && entries.interactive),
         name = entries ? entries.name : undefined,
@@ -29928,7 +30006,7 @@
       }
     };
 
-    var baseFill = null,
+    let baseFill = null,
         baseStroke = null;
     if (!spec.fill) {
       baseFill = config.symbolBaseFillColor;
@@ -30079,7 +30157,7 @@
         exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
   function legendTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config), encode;
+    let _ = lookup$5(spec, config), encode;
 
     encode = {
       enter: {opacity: zero$1},
@@ -30122,7 +30200,7 @@
   }
 
   function clip$2(clip, scope) {
-    var expr;
+    let expr;
 
     if (isObject(clip)) {
       if (clip.signal) {
@@ -30146,7 +30224,7 @@
   }
 
   function getRole(spec) {
-    var role = spec.role || '';
+    const role = spec.role || '';
     return (!role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title'))
       ? role
       : spec.type === GroupMark ? ScopeRole$1 : (role || MarkRole);
@@ -30173,10 +30251,10 @@
    * Parse a data transform specification.
    */
   function parseTransform(spec, scope) {
-    var def = definition(spec.type);
+    const def = definition(spec.type);
     if (!def) error('Unrecognized transform type: ' + $(spec.type));
 
-    var t = entry$1(def.type.toLowerCase(), null, parseParameters$1(def, spec, scope));
+    const t = entry$1(def.type.toLowerCase(), null, parseParameters$1(def, spec, scope));
     if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
     t.metadata = def.metadata || {};
 
@@ -30187,7 +30265,7 @@
    * Parse all parameters of a data transform.
    */
   function parseParameters$1(def, spec, scope) {
-    var params = {}, pdef, i, n;
+    let params = {}, pdef, i, n;
     for (i=0, n=def.params.length; i<n; ++i) {
       pdef = def.params[i];
       params[pdef.name] = parseParameter$2(pdef, spec, scope);
@@ -30199,8 +30277,8 @@
    * Parse a data transform parameter.
    */
   function parseParameter$2(def, spec, scope) {
-    var type = def.type,
-        value = spec[def.name];
+    const type = def.type,
+          value = spec[def.name];
 
     if (type === 'index') {
       return parseIndexParameter(def, spec, scope);
@@ -30217,7 +30295,7 @@
     }
 
     return def.array && !isSignal(value)
-      ? value.map(function(v) { return parameterValue(def, v, scope); })
+      ? value.map(v => parameterValue(def, v, scope))
       : parameterValue(def, value, scope);
   }
 
@@ -30225,7 +30303,7 @@
    * Parse a single parameter value.
    */
   function parameterValue(def, value, scope) {
-    var type = def.type;
+    const type = def.type;
 
     if (isSignal(value)) {
       return isExpr$1(type) ? error('Expression references can not be signals.')
@@ -30233,7 +30311,7 @@
            : isCompare(type) ? scope.compareRef(value)
            : scope.signalRef(value.signal);
     } else {
-      var expr = def.expr || isField(type);
+      const expr = def.expr || isField(type);
       return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
            : expr && outerField(value) ? fieldRef(value.field, value.as)
            : isExpr$1(type) ? parseExpression$1(value, scope)
@@ -30258,15 +30336,13 @@
    * Parse a parameter that contains one or more sub-parameter objects.
    */
   function parseSubParameters(def, spec, scope) {
-    var value = spec[def.name];
+    const value = spec[def.name];
 
     if (def.array) {
       if (!isArray(value)) { // signals not allowed!
         error('Expected an array of sub-parameters. Instead: ' + $(value));
       }
-      return value.map(function(v) {
-        return parseSubParameter(def, v, scope);
-      });
+      return value.map(v => parseSubParameter(def, v, scope));
     } else {
       return parseSubParameter(def, value, scope);
     }
@@ -30276,7 +30352,7 @@
    * Parse a sub-parameter object.
    */
   function parseSubParameter(def, value, scope) {
-    var params, pdef, k, i, n;
+    let params, pdef, k, i, n;
 
     // loop over defs to find matching key
     for (i=0, n=def.params.length; i<n; ++i) {
@@ -30296,32 +30372,20 @@
 
   // -- Utilities -----
 
-  function outerExpr(_) {
-    return _ && _.expr;
-  }
+  const outerExpr = _ => _ && _.expr;
 
-  function outerField(_) {
-    return _ && _.field;
-  }
+  const outerField = _ => _ && _.field;
 
-  function isData(_) {
-    return _ === 'data';
-  }
+  const isData = _ => _ === 'data';
 
-  function isExpr$1(_) {
-    return _ === 'expr';
-  }
+  const isExpr$1 = _ => _ === 'expr';
 
-  function isField(_) {
-    return _ === 'field';
-  }
+  const isField = _ => _ === 'field';
 
-  function isCompare(_) {
-    return _ === 'compare';
-  }
+  const isCompare = _ => _ === 'compare';
 
   function parseData(from, group, scope) {
-    var facet, key, op, dataRef, parent;
+    let facet, key, op, dataRef, parent;
 
     // if no source data, generate singleton datum
     if (!from) {
@@ -30385,7 +30449,7 @@
   }
 
   DataScope.fromEntries = function(scope, entries) {
-    var n = entries.length,
+    let n = entries.length,
         i = 1,
         input  = entries[0],
         values = entries[n-1],
@@ -30407,44 +30471,16 @@
     return new DataScope(scope, input, output, values, aggr);
   };
 
-  var prototype$1t = DataScope.prototype;
-
-  prototype$1t.countsRef = function(scope, field, sort) {
-    var ds = this,
-        cache = ds.counts || (ds.counts = {}),
-        k = fieldKey(field), v, a, p;
-
-    if (k != null) {
-      scope = ds.scope;
-      v = cache[k];
-    }
-
-    if (!v) {
-      p = {
-        groupby: scope.fieldRef(field, 'key'),
-        pulse: ref(ds.output)
-      };
-      if (sort && sort.field) addSortField(scope, p, sort);
-      a = scope.add(Aggregate$1(p));
-      v = scope.add(Collect$1({pulse: ref(a)}));
-      v = {agg: a, ref: ref(v)};
-      if (k != null) cache[k] = v;
-    } else if (sort && sort.field) {
-      addSortField(scope, v.agg.params, sort);
-    }
-
-    return v.ref;
-  };
-
   function fieldKey(field) {
     return isString(field) ? field : null;
   }
 
   function addSortField(scope, p, sort) {
-    var as = aggrField(sort.op, sort.field), s;
+    let as = aggrField(sort.op, sort.field),
+        s;
 
     if (p.ops) {
-      for (var i=0, n=p.as.length; i<n; ++i) {
+      for (let i=0, n=p.as.length; i<n; ++i) {
         if (p.as[i] === as) return;
       }
     } else {
@@ -30460,9 +30496,10 @@
   }
 
   function cache(scope, ds, name, optype, field, counts, index) {
-    var cache = ds[name] || (ds[name] = {}),
+    let cache = ds[name] || (ds[name] = {}),
         sort = sortKey(counts),
-        k = fieldKey(field), v, op;
+        k = fieldKey(field),
+        v, op;
 
     if (k != null) {
       scope = ds.scope;
@@ -30471,7 +30508,7 @@
     }
 
     if (!v) {
-      var params = counts
+      const params = counts
         ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
         : {field: scope.fieldRef(field), pulse: ref(ds.output)};
       if (sort) params.sort = scope.sortRef(counts);
@@ -30483,32 +30520,61 @@
     return v;
   }
 
-  prototype$1t.tuplesRef = function() {
-    return ref(this.values);
-  };
+  DataScope.prototype = {
+    countsRef(scope, field, sort) {
+      let ds = this,
+          cache = ds.counts || (ds.counts = {}),
+          k = fieldKey(field), v, a, p;
 
-  prototype$1t.extentRef = function(scope, field) {
-    return cache(scope, this, 'extent', 'extent', field, false);
-  };
+      if (k != null) {
+        scope = ds.scope;
+        v = cache[k];
+      }
 
-  prototype$1t.domainRef = function(scope, field) {
-    return cache(scope, this, 'domain', 'values', field, false);
-  };
+      if (!v) {
+        p = {
+          groupby: scope.fieldRef(field, 'key'),
+          pulse: ref(ds.output)
+        };
+        if (sort && sort.field) addSortField(scope, p, sort);
+        a = scope.add(Aggregate$1(p));
+        v = scope.add(Collect$1({pulse: ref(a)}));
+        v = {agg: a, ref: ref(v)};
+        if (k != null) cache[k] = v;
+      } else if (sort && sort.field) {
+        addSortField(scope, v.agg.params, sort);
+      }
 
-  prototype$1t.valuesRef = function(scope, field, sort) {
-    return cache(scope, this, 'vals', 'values', field, sort || true);
-  };
+      return v.ref;
+    },
 
-  prototype$1t.lookupRef = function(scope, field) {
-    return cache(scope, this, 'lookup', 'tupleindex', field, false);
-  };
+    tuplesRef() {
+      return ref(this.values);
+    },
 
-  prototype$1t.indataRef = function(scope, field) {
-    return cache(scope, this, 'indata', 'tupleindex', field, true, true);
+    extentRef(scope, field) {
+      return cache(scope, this, 'extent', 'extent', field, false);
+    },
+
+    domainRef(scope, field) {
+      return cache(scope, this, 'domain', 'values', field, false);
+    },
+
+    valuesRef(scope, field, sort) {
+      return cache(scope, this, 'vals', 'values', field, sort || true);
+    },
+
+    lookupRef(scope, field) {
+      return cache(scope, this, 'lookup', 'tupleindex', field, false);
+    },
+
+    indataRef(scope, field) {
+      return cache(scope, this, 'indata', 'tupleindex', field, true, true);
+    }
   };
 
   function parseFacet(spec, scope, group) {
-    var facet = spec.from.facet,
+    let facet = spec.from.facet,
         name = facet.name,
         data = getDataRef(facet, scope),
         subscope, source, values, op;
@@ -30549,8 +30615,8 @@
   }
 
   function parseSubflow(spec, scope, input) {
-    var op = scope.add(PreFacet$1({pulse: input.pulse})),
-        subscope = scope.fork();
+    const op = scope.add(PreFacet$1({pulse: input.pulse})),
+          subscope = scope.fork();
 
     subscope.add(Sieve$1());
     subscope.addSignal('parent', null);
@@ -30562,7 +30628,7 @@
   }
 
   function parseTrigger(spec, scope, name) {
-    var remove = spec.remove,
+    let remove = spec.remove,
         insert = spec.insert,
         toggle = spec.toggle,
         modify = spec.modify,
@@ -30573,7 +30639,7 @@
     update = 'if(' + spec.trigger + ',modify("'
       + name + '",'
       + [insert, remove, toggle, modify, values]
-          .map(function(_) { return _ == null ? 'null' : _; })
+          .map(_ => _ == null ? 'null' : _)
           .join(',')
       + '),0)';
 
@@ -30583,7 +30649,7 @@
   }
 
   function parseMark(spec, scope) {
-    var role = getRole(spec),
+    let role = getRole(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
         layout = spec.layout || role === ScopeRole$1 || role === FrameRole$1,
@@ -30630,7 +30696,7 @@
 
     // add post-encoding transforms, if defined
     if (spec.transform) {
-      spec.transform.forEach(function(_) {
+      spec.transform.forEach(_ => {
         const tx = parseTransform(_, scope),
               md = tx.metadata;
         if (md.generates || md.changes) {
@@ -30695,7 +30761,7 @@
     if (spec.name != null) {
       name = spec.name;
       scope.addData(name, new DataScope(scope, store, render, sieve));
-      if (spec.on) spec.on.forEach(function(on) {
+      if (spec.on) spec.on.forEach(on => {
         if (on.insert || on.remove || on.toggle) {
           error('Marks only support modify triggers.');
         }
@@ -30705,11 +30771,11 @@
   }
 
   function parseOverlap(overlap, source, scope) {
-    var method = overlap.method,
-        bound = overlap.bound,
-        sep = overlap.separation, tol;
+    const method = overlap.method,
+          bound = overlap.bound,
+          sep = overlap.separation;
 
-    var params = {
+    const params = {
       separation: isSignal(sep) ? scope.signalRef(sep.signal) : sep,
       method: isSignal(method) ? scope.signalRef(method.signal) : method,
       pulse:  source
@@ -30720,7 +30786,7 @@
     }
 
     if (bound) {
-      tol = bound.tolerance;
+      const tol = bound.tolerance;
       params.boundTolerance = isSignal(tol) ? scope.signalRef(tol.signal) : +tol;
       params.boundScale = scope.scaleRef(bound.scale);
       params.boundOrient = bound.orient;
@@ -30730,7 +30796,7 @@
   }
 
   function parseLegend(spec, scope) {
-    var config = scope.config.legend,
+    let config = scope.config.legend,
         encode = spec.encode || {},
         legendEncode = encode.legend || {},
         name = legendEncode.name || undefined,
@@ -30846,7 +30912,7 @@
   }
 
   function legendType(spec, scaleType) {
-    var type = spec.type || Symbols$1;
+    let type = spec.type || Symbols$1;
 
     if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
       type = isContinuous(scaleType) ? Gradient$1
@@ -30866,7 +30932,7 @@
   }
 
   function buildLegendEncode(_, spec, config) {
-    var encode = {enter: {}, update: {}};
+    const encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
       orient:       _('orient'),
@@ -30890,9 +30956,9 @@
   }
 
   function sizeExpression(spec, scope, marks) {
-    var size = deref(getChannel('size', spec, marks)),
-        strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
-        fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
+    const size = deref(getChannel('size', spec, marks)),
+          strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
+          fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
     return parseExpression$1(
       `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,
@@ -30915,7 +30981,7 @@
   function parseTitle(spec, scope) {
     spec = isString(spec) ? {text: spec} : spec;
 
-    var _ = lookup$5(spec, scope.config.title),
+    let _ = lookup$5(spec, scope.config.title),
         encode = spec.encode || {},
         userEncode = encode.group || {},
         name = userEncode.name || undefined,
@@ -30966,7 +31032,7 @@
   }
 
   function groupEncode(_, userEncode) {
-    var encode = {enter: {}, update: {}};
+    const encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
       orient:      _('orient'),
@@ -30983,13 +31049,13 @@
   }
 
   function buildTitle(spec, _, userEncode, dataRef) {
-    var zero = {value: 0},
-        text = spec.text,
-        encode = {
-          enter: {opacity: zero},
-          update: {opacity: {value: 1}},
-          exit: {opacity: zero}
-        };
+    const zero = {value: 0},
+          text = spec.text,
+          encode = {
+            enter: {opacity: zero},
+            update: {opacity: {value: 1}},
+            exit: {opacity: zero}
+          };
 
     addEncoders(encode, {
       text:       text,
@@ -31021,13 +31087,13 @@
   }
 
   function buildSubTitle(spec, _, userEncode, dataRef) {
-    var zero = {value: 0},
-        text = spec.subtitle,
-        encode = {
-          enter: {opacity: zero},
-          update: {opacity: {value: 1}},
-          exit: {opacity: zero}
-        };
+    const zero = {value: 0},
+          text = spec.subtitle,
+          encode = {
+            enter: {opacity: zero},
+            update: {opacity: {value: 1}},
+            exit: {opacity: zero}
+          };
 
     addEncoders(encode, {
       text:       text,
@@ -31059,10 +31125,10 @@
   }
 
   function parseData$1(data, scope) {
-    var transforms = [];
+    const transforms = [];
 
     if (data.transform) {
-      data.transform.forEach(function(tx) {
+      data.transform.forEach(tx => {
         transforms.push(parseTransform(tx, scope));
       });
     }
@@ -31080,7 +31146,7 @@
    * Analyze a data pipeline, add needed operators.
    */
   function analyze(data, scope, ops) {
-    var output = [],
+    let output = [],
         source = null,
         modify = false,
         generate = false,
@@ -31114,9 +31180,8 @@
       }
     } else if (data.source) {
       // derives from one or more other data sets
-      source = upstream = array(data.source).map(function(d) {
-        return ref(scope.getData(d).output);
-      });
+      source = upstream = array(data.source)
+        .map(d => ref(scope.getData(d).output));
       output.push(null); // populate later
     }
 
@@ -31155,7 +31220,7 @@
   }
 
   function collect(values) {
-    var s = Collect$1({}, values);
+    const s = Collect$1({}, values);
     s.metadata = {source: true};
     return s;
   }
@@ -31355,7 +31420,7 @@
   }
 
   function axisDomain(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         orient = spec.orient,
         encode, enter, update;
 
@@ -31396,7 +31461,7 @@
   }
 
   function axisGrid(spec, config, userEncode, dataRef, band) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         orient = spec.orient,
         vscale = spec.gridScale,
         sign = getSign(orient, 1, -1),
@@ -31478,7 +31543,7 @@
   }
 
   function axisTicks(spec, config, userEncode, dataRef, size, band) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = getSign(orient, -1, 1),
         encode, enter, exit, update, tickSize, tickPos;
@@ -31536,7 +31601,7 @@
   }
 
   function axisLabels(spec, config, userEncode, dataRef, size, band) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         orient = spec.orient,
         scale = spec.scale,
         sign = getSign(orient, -1, 1),
@@ -31650,7 +31715,7 @@
   }
 
   function axisTitle(spec, config, userEncode, dataRef) {
-    var _ = lookup$5(spec, config),
+    let _ = lookup$5(spec, config),
         orient = spec.orient,
         sign = getSign(orient, -1, 1),
         encode, enter, update, titlePos;
@@ -31724,7 +31789,7 @@
   }
 
   function parseAxis(spec, scope) {
-    var config = axisConfig(spec, scope),
+    let config = axisConfig(spec, scope),
         encode = spec.encode || {},
         axisEncode = encode.axis || {},
         name = axisEncode.name || undefined,
@@ -31810,7 +31875,7 @@
   }
 
   function buildAxisEncode(_, spec) {
-    var encode = {enter: {}, update: {}};
+    const encode = {enter: {}, update: {}};
 
     addEncoders(encode, {
       orient:       _('orient'),
@@ -31831,8 +31896,8 @@
   }
 
   function parseScope(spec, scope, preprocessed) {
-    var signals = array(spec.signals),
-        scales = array(spec.scales);
+    const signals = array(spec.signals),
+          scales = array(spec.scales);
 
     // parse signal definitions, if not already preprocessed
     if (!preprocessed) signals.forEach(_ => parseSignal(_, scope));
@@ -32044,279 +32109,341 @@
     this._markpath = scope._markpath;
   }
 
-  var prototype$1u = Scope$1.prototype = Subscope.prototype;
+  Scope$1.prototype = Subscope.prototype = {
+    parse(spec) {
+      return parseScope(spec, this);
+    },
 
-  // ----
+    fork() {
+      return new Subscope(this);
+    },
 
-  prototype$1u.parse = function(spec) {
-    return parseScope(spec, this);
-  };
+    isSubscope() {
+      return this._subid > 0;
+    },
 
-  prototype$1u.fork = function() {
-    return new Subscope(this);
-  };
+    toRuntime() {
+      this.finish();
+      return {
+        description: this.description,
+        operators:   this.operators,
+        streams:     this.streams,
+        updates:     this.updates,
+        bindings:    this.bindings,
+        eventConfig: this.eventConfig,
+        locale:      this.locale
+      };
+    },
 
-  prototype$1u.isSubscope = function() {
-    return this._subid > 0;
-  };
+    id() {
+      return (this._subid ? this._subid + ':' : 0) + this._id++;
+    },
 
-  prototype$1u.toRuntime = function() {
-    this.finish();
-    return {
-      description: this.description,
-      operators:   this.operators,
-      streams:     this.streams,
-      updates:     this.updates,
-      bindings:    this.bindings,
-      eventConfig: this.eventConfig,
-      locale:      this.locale
-    };
-  };
-
-  prototype$1u.id = function() {
-    return (this._subid ? this._subid + ':' : 0) + this._id++;
-  };
-
-  prototype$1u.add = function(op) {
-    this.operators.push(op);
-    op.id = this.id();
-    // if pre-registration references exist, resolve them now
-    if (op.refs) {
-      op.refs.forEach(function(ref) { ref.$ref = op.id; });
-      op.refs = null;
-    }
-    return op;
-  };
-
-  prototype$1u.proxy = function(op) {
-    var vref = op instanceof Entry ? ref(op) : op;
-    return this.add(Proxy$1({value: vref}));
-  };
-
-  prototype$1u.addStream = function(stream) {
-    this.streams.push(stream);
-    stream.id = this.id();
-    return stream;
-  };
-
-  prototype$1u.addUpdate = function(update) {
-    this.updates.push(update);
-    return update;
-  };
-
-  // Apply metadata
-  prototype$1u.finish = function() {
-    var name, ds;
-
-    // annotate root
-    if (this.root) this.root.root = true;
-
-    // annotate signals
-    for (name in this.signals) {
-      this.signals[name].signal = name;
-    }
-
-    // annotate scales
-    for (name in this.scales) {
-      this.scales[name].scale = name;
-    }
-
-    // annotate data sets
-    function annotate(op, name, type) {
-      var data, list;
-      if (op) {
-        data = op.data || (op.data = {});
-        list = data[name] || (data[name] = []);
-        list.push(type);
+    add(op) {
+      this.operators.push(op);
+      op.id = this.id();
+      // if pre-registration references exist, resolve them now
+      if (op.refs) {
+        op.refs.forEach(function(ref) { ref.$ref = op.id; });
+        op.refs = null;
       }
-    }
-    for (name in this.data) {
-      ds = this.data[name];
-      annotate(ds.input,  name, 'input');
-      annotate(ds.output, name, 'output');
-      annotate(ds.values, name, 'values');
-      for (var field in ds.index) {
-        annotate(ds.index[field], name, 'index:' + field);
+      return op;
+    },
+
+    proxy(op) {
+      const vref = op instanceof Entry ? ref(op) : op;
+      return this.add(Proxy$1({value: vref}));
+    },
+
+    addStream(stream) {
+      this.streams.push(stream);
+      stream.id = this.id();
+      return stream;
+    },
+
+    addUpdate(update) {
+      this.updates.push(update);
+      return update;
+    },
+
+    // Apply metadata
+    finish() {
+      let name, ds;
+
+      // annotate root
+      if (this.root) this.root.root = true;
+
+      // annotate signals
+      for (name in this.signals) {
+        this.signals[name].signal = name;
       }
-    }
 
-    return this;
-  };
-
-  // ----
-
-  prototype$1u.pushState = function(encode, parent, lookup) {
-    this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
-    this._parent.push(parent);
-    this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
-    this._markpath.push(-1);
-  };
-
-  prototype$1u.popState = function() {
-    this._encode.pop();
-    this._parent.pop();
-    this._lookup.pop();
-    this._markpath.pop();
-  };
-
-  prototype$1u.parent = function() {
-    return peek(this._parent);
-  };
-
-  prototype$1u.encode = function() {
-    return peek(this._encode);
-  };
-
-  prototype$1u.lookup = function() {
-    return peek(this._lookup);
-  };
-
-  prototype$1u.markpath = function() {
-    var p = this._markpath;
-    return ++p[p.length-1];
-  };
-
-  // ----
-
-  prototype$1u.fieldRef = function(field, name) {
-    if (isString(field)) return fieldRef(field, name);
-    if (!field.signal) {
-      error('Unsupported field reference: ' + $(field));
-    }
-
-    var s = field.signal,
-        f = this.field[s],
-        params;
-
-    if (!f) {
-      params = {name: this.signalRef(s)};
-      if (name) params.as = name;
-      this.field[s] = f = ref(this.add(Field$1(params)));
-    }
-    return f;
-  };
-
-  prototype$1u.compareRef = function(cmp) {
-    function check(_) {
-      if (isSignal(_)) {
-        signal = true;
-        return scope.signalRef(_.signal);
-      } else if (isExpr(_)) {
-        signal = true;
-        return scope.exprRef(_.expr);
-      } else {
-        return _;
+      // annotate scales
+      for (name in this.scales) {
+        this.scales[name].scale = name;
       }
-    }
 
-    var scope = this,
-        signal = false,
-        fields = array(cmp.field).map(check),
-        orders = array(cmp.order).map(check);
-
-    return signal
-      ? ref(this.add(Compare$1({fields: fields, orders: orders})))
-      : compareRef(fields, orders);
-  };
-
-  prototype$1u.keyRef = function(fields, flat) {
-    function check(_) {
-      if (isSignal(_)) {
-        signal = true;
-        return ref(sig[_.signal]);
-      } else {
-        return _;
+      // annotate data sets
+      function annotate(op, name, type) {
+        let data, list;
+        if (op) {
+          data = op.data || (op.data = {});
+          list = data[name] || (data[name] = []);
+          list.push(type);
+        }
       }
+      for (name in this.data) {
+        ds = this.data[name];
+        annotate(ds.input,  name, 'input');
+        annotate(ds.output, name, 'output');
+        annotate(ds.values, name, 'values');
+        for (const field in ds.index) {
+          annotate(ds.index[field], name, 'index:' + field);
+        }
+      }
+
+      return this;
+    },
+
+    // ----
+
+    pushState(encode, parent, lookup) {
+      this._encode.push(ref(this.add(Sieve$1({pulse: encode}))));
+      this._parent.push(parent);
+      this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
+      this._markpath.push(-1);
+    },
+
+    popState() {
+      this._encode.pop();
+      this._parent.pop();
+      this._lookup.pop();
+      this._markpath.pop();
+    },
+
+    parent() {
+      return peek(this._parent);
+    },
+
+    encode() {
+      return peek(this._encode);
+    },
+
+    lookup() {
+      return peek(this._lookup);
+    },
+
+    markpath() {
+      const p = this._markpath;
+      return ++p[p.length-1];
+    },
+
+    // ----
+
+    fieldRef(field, name) {
+      if (isString(field)) return fieldRef(field, name);
+      if (!field.signal) {
+        error('Unsupported field reference: ' + $(field));
+      }
+
+      let s = field.signal,
+          f = this.field[s];
+
+      if (!f) {
+        const params = {name: this.signalRef(s)};
+        if (name) params.as = name;
+        this.field[s] = f = ref(this.add(Field$1(params)));
+      }
+      return f;
+    },
+
+    compareRef(cmp) {
+      let signal = false;
+
+      const check = _ => isSignal(_)
+        ? (signal = true, this.signalRef(_.signal))
+        : isExpr(_) ? (signal = true, this.exprRef(_.expr))
+        : _;
+
+      const fields = array(cmp.field).map(check),
+            orders = array(cmp.order).map(check);
+
+      return signal
+        ? ref(this.add(Compare$1({fields: fields, orders: orders})))
+        : compareRef(fields, orders);
+    },
+
+    keyRef(fields, flat) {
+      let signal = false;
+
+      const check = _ => isSignal(_)
+        ? (signal = true, ref(sig[_.signal]))
+        : _;
+
+      const sig = this.signals;
+      fields = array(fields).map(check);
+
+      return signal
+        ? ref(this.add(Key$1({fields: fields, flat: flat})))
+        : keyRef(fields, flat);
+    },
+
+    sortRef(sort) {
+      if (!sort) return sort;
+
+      // including id ensures stable sorting
+      const a = aggrField(sort.op, sort.field),
+           o = sort.order || Ascending;
+
+      return o.signal
+        ? ref(this.add(Compare$1({
+            fields: a,
+            orders: this.signalRef(o.signal)
+          })))
+        : compareRef(a, o);
+    },
+
+    // ----
+
+    event(source, type) {
+      const key = source + ':' + type;
+      if (!this.events[key]) {
+        const id = this.id();
+        this.streams.push({
+          id: id,
+          source: source,
+          type: type
+        });
+        this.events[key] = id;
+      }
+      return this.events[key];
+    },
+
+    // ----
+
+    hasOwnSignal(name) {
+      return hasOwnProperty(this.signals, name);
+    },
+
+    addSignal(name, value) {
+      if (this.hasOwnSignal(name)) {
+        error('Duplicate signal name: ' + $(name));
+      }
+      const op = value instanceof Entry ? value : this.add(operator(value));
+      return this.signals[name] = op;
+    },
+
+    getSignal(name) {
+      if (!this.signals[name]) {
+        error('Unrecognized signal name: ' + $(name));
+      }
+      return this.signals[name];
+    },
+
+    signalRef(s) {
+      if (this.signals[s]) {
+        return ref(this.signals[s]);
+      } else if (!hasOwnProperty(this.lambdas, s)) {
+        this.lambdas[s] = this.add(operator(null));
+      }
+      return ref(this.lambdas[s]);
+    },
+
+    parseLambdas() {
+      const code = Object.keys(this.lambdas);
+      for (let i=0, n=code.length; i<n; ++i) {
+        const s = code[i],
+              e = parseExpression$1(s, this),
+              op = this.lambdas[s];
+        op.params = e.$params;
+        op.update = e.$expr;
+      }
+    },
+
+    property(spec) {
+      return spec && spec.signal ? this.signalRef(spec.signal) : spec;
+    },
+
+    objectProperty(spec) {
+      return (!spec || !isObject(spec)) ? spec
+        : this.signalRef(spec.signal || propertyLambda(spec));
+    },
+
+    exprRef(code, name) {
+      const params = {expr: parseExpression$1(code, this)};
+      if (name) params.expr.$name = name;
+      return ref(this.add(Expression$1(params)));
+    },
+
+    addBinding(name, bind) {
+      if (!this.bindings) {
+        error('Nested signals do not support binding: ' + $(name));
+      }
+      this.bindings.push(extend({signal: name}, bind));
+    },
+
+    // ----
+
+    addScaleProj(name, transform) {
+      if (hasOwnProperty(this.scales, name)) {
+        error('Duplicate scale or projection name: ' + $(name));
+      }
+      this.scales[name] = this.add(transform);
+    },
+
+    addScale(name, params) {
+      this.addScaleProj(name, Scale$1(params));
+    },
+
+    addProjection(name, params) {
+      this.addScaleProj(name, Projection$1(params));
+    },
+
+    getScale(name) {
+      if (!this.scales[name]) {
+        error('Unrecognized scale name: ' + $(name));
+      }
+      return this.scales[name];
+    },
+
+    scaleRef(name) {
+      return ref(this.getScale(name));
+    },
+
+    scaleType(name) {
+      return this.getScale(name).params.type;
+    },
+
+    projectionRef(name) {
+      return this.scaleRef(name);
+    },
+
+    projectionType(name) {
+      return this.scaleType(name);
+    },
+
+    // ----
+
+    addData(name, dataScope) {
+      if (hasOwnProperty(this.data, name)) {
+        error('Duplicate data set name: ' + $(name));
+      }
+      return (this.data[name] = dataScope);
+    },
+
+    getData(name) {
+      if (!this.data[name]) {
+        error('Undefined data set name: ' + $(name));
+      }
+      return this.data[name];
+    },
+
+    addDataPipeline(name, entries) {
+      if (hasOwnProperty(this.data, name)) {
+        error('Duplicate data set name: ' + $(name));
+      }
+      return this.addData(name, DataScope.fromEntries(this, entries));
     }
-
-    var sig = this.signals,
-        signal = false;
-    fields = array(fields).map(check);
-
-    return signal
-      ? ref(this.add(Key$1({fields: fields, flat: flat})))
-      : keyRef(fields, flat);
-  };
-
-  prototype$1u.sortRef = function(sort) {
-    if (!sort) return sort;
-
-    // including id ensures stable sorting
-    var a = aggrField(sort.op, sort.field),
-        o = sort.order || Ascending;
-
-    return o.signal
-      ? ref(this.add(Compare$1({
-          fields: a,
-          orders: this.signalRef(o.signal)
-        })))
-      : compareRef(a, o);
-  };
-
-  // ----
-
-  prototype$1u.event = function(source, type) {
-    var key = source + ':' + type;
-    if (!this.events[key]) {
-      var id = this.id();
-      this.streams.push({
-        id: id,
-        source: source,
-        type: type
-      });
-      this.events[key] = id;
-    }
-    return this.events[key];
-  };
-
-  // ----
-
-  prototype$1u.hasOwnSignal = function(name) {
-    return hasOwnProperty(this.signals, name);
-  };
-
-  prototype$1u.addSignal = function(name, value) {
-    if (this.hasOwnSignal(name)) {
-      error('Duplicate signal name: ' + $(name));
-    }
-    var op = value instanceof Entry ? value : this.add(operator(value));
-    return this.signals[name] = op;
-  };
-
-  prototype$1u.getSignal = function(name) {
-    if (!this.signals[name]) {
-      error('Unrecognized signal name: ' + $(name));
-    }
-    return this.signals[name];
-  };
-
-  prototype$1u.signalRef = function(s) {
-    if (this.signals[s]) {
-      return ref(this.signals[s]);
-    } else if (!hasOwnProperty(this.lambdas, s)) {
-      this.lambdas[s] = this.add(operator(null));
-    }
-    return ref(this.lambdas[s]);
-  };
-
-  prototype$1u.parseLambdas = function() {
-    var code = Object.keys(this.lambdas);
-    for (var i=0, n=code.length; i<n; ++i) {
-      var s = code[i],
-          e = parseExpression$1(s, this),
-          op = this.lambdas[s];
-      op.params = e.$params;
-      op.update = e.$expr;
-    }
-  };
-
-  prototype$1u.property = function(spec) {
-    return spec && spec.signal ? this.signalRef(spec.signal) : spec;
-  };
-
-  prototype$1u.objectProperty = function(spec) {
-    return (!spec || !isObject(spec)) ? spec
-      : this.signalRef(spec.signal || propertyLambda(spec));
   };
 
   function propertyLambda(spec) {
@@ -32324,7 +32451,7 @@
   }
 
   function arrayLambda(array) {
-    var code = '[',
+    let code = '[',
         i = 0,
         n = array.length,
         value;
@@ -32340,7 +32467,7 @@
   }
 
   function objectLambda(obj) {
-    var code = '{',
+    let code = '{',
         i = 0,
         key, value;
 
@@ -32354,76 +32481,6 @@
     }
     return code + '}';
   }
-
-  prototype$1u.exprRef = function(code, name) {
-    var params = {expr: parseExpression$1(code, this)};
-    if (name) params.expr.$name = name;
-    return ref(this.add(Expression$1(params)));
-  };
-
-  prototype$1u.addBinding = function(name, bind) {
-    if (!this.bindings) {
-      error('Nested signals do not support binding: ' + $(name));
-    }
-    this.bindings.push(extend({signal: name}, bind));
-  };
-
-  // ----
-
-  prototype$1u.addScaleProj = function(name, transform) {
-    if (hasOwnProperty(this.scales, name)) {
-      error('Duplicate scale or projection name: ' + $(name));
-    }
-    this.scales[name] = this.add(transform);
-  };
-
-  prototype$1u.addScale = function(name, params) {
-    this.addScaleProj(name, Scale$1(params));
-  };
-
-  prototype$1u.addProjection = function(name, params) {
-    this.addScaleProj(name, Projection$1(params));
-  };
-
-  prototype$1u.getScale = function(name) {
-    if (!this.scales[name]) {
-      error('Unrecognized scale name: ' + $(name));
-    }
-    return this.scales[name];
-  };
-
-  prototype$1u.projectionRef =
-  prototype$1u.scaleRef = function(name) {
-    return ref(this.getScale(name));
-  };
-
-  prototype$1u.projectionType =
-  prototype$1u.scaleType = function(name) {
-    return this.getScale(name).params.type;
-  };
-
-  // ----
-
-  prototype$1u.addData = function(name, dataScope) {
-    if (hasOwnProperty(this.data, name)) {
-      error('Duplicate data set name: ' + $(name));
-    }
-    return (this.data[name] = dataScope);
-  };
-
-  prototype$1u.getData = function(name) {
-    if (!this.data[name]) {
-      error('Undefined data set name: ' + $(name));
-    }
-    return this.data[name];
-  };
-
-  prototype$1u.addDataPipeline = function(name, entries) {
-    if (hasOwnProperty(this.data, name)) {
-      error('Duplicate data set name: ' + $(name));
-    }
-    return this.addData(name, DataScope.fromEntries(this, entries));
-  };
 
   /**
    * Standard configuration defaults for Vega specification parsing.
@@ -32723,17 +32780,17 @@
   exports.accessorFields = accessorFields;
   exports.accessorName = accessorName;
   exports.array = array;
+  exports.ascending = ascending;
   exports.bandwidthNRD = bandwidthNRD;
   exports.bin = bin;
   exports.bootstrapCI = bootstrapCI;
   exports.boundClip = boundClip;
-  exports.boundContext = context;
+  exports.boundContext = boundContext;
   exports.boundItem = boundItem;
   exports.boundMark = boundMark;
   exports.boundStroke = boundStroke;
   exports.changeset = changeset;
   exports.clampRange = clampRange;
-  exports.closeTag = closeTag;
   exports.compare = compare;
   exports.constant = constant;
   exports.cumulativeLogNormal = cumulativeLogNormal;
@@ -32798,11 +32855,11 @@
   exports.locale = locale;
   exports.logger = logger;
   exports.lruCache = lruCache;
+  exports.markup = markup;
   exports.merge = merge;
   exports.mergeConfig = mergeConfig;
   exports.multiLineOffset = multiLineOffset;
   exports.one = one;
-  exports.openTag = openTag;
   exports.pad = pad;
   exports.panLinear = panLinear;
   exports.panLog = panLog;
@@ -32860,6 +32917,7 @@
   exports.sceneVisit = visit;
   exports.sceneZOrder = zorder;
   exports.scheme = scheme;
+  exports.serializeXML = serializeXML;
   exports.setRandom = setRandom;
   exports.span = span;
   exports.splitAccessPath = splitAccessPath;
