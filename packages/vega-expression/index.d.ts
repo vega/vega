@@ -1,12 +1,14 @@
 /** Parse a JavaScript *expression* string and return the resulting abstract syntax tree in the ESTree format */
-export function parse(expression: string): object;
+export function parse(expression: string): any;
 
 interface CodegenOptions {
   /** A hash of allowed top-level constant values */
   constants?: { [cn: string]: string };
 
   /** A function that is given an AST visitor instance as input and returns an object of allowed functions */
-  functions?: (astVisitor) => { [fn: string]: string | ((args) => string) };
+  functions?: (
+    astVisitor: any
+  ) => { [fn: string]: string | ((args: any) => string) };
 
   /** An array of variable names that may not be referenced within the expression scope */
   blacklist?: string[];
@@ -22,7 +24,11 @@ interface CodegenOptions {
 }
 
 /** Create a new output code generator configured according to the provided options */
-export function codegen(options: CodegenOptions): (ast) => {
+export function codegen(
+  options: CodegenOptions
+): (
+  ast: any
+) => {
   /** The generated code as a string */
   code: string;
 
@@ -37,7 +43,9 @@ export function codegen(options: CodegenOptions): (ast) => {
 export const constants: { [cn: string]: string };
 
 /** Given a *codegen* instance as input, returns an object defining all valid function names for use within an expression */
-export function functions(codegen): {
+export function functions(
+  codegen: any
+): {
   [fn: string]: string | (() => string);
 };
 
