@@ -2161,10 +2161,11 @@
       ticks = new Array(n = Math.ceil(stop - start + 1));
       while (++i < n) ticks[i] = (start + i) * step;
     } else {
-      start = Math.floor(start * step);
-      stop = Math.ceil(stop * step);
-      ticks = new Array(n = Math.ceil(start - stop + 1));
-      while (++i < n) ticks[i] = (start - i) / step;
+      step = -step;
+      start = Math.ceil(start * step);
+      stop = Math.floor(stop * step);
+      ticks = new Array(n = Math.ceil(stop - start + 1));
+      while (++i < n) ticks[i] = (start + i) / step;
     }
 
     if (reverse) ticks.reverse();
