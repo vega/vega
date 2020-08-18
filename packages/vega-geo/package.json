@@ -24,7 +24,7 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.4.0",
+    "d3-array": "^2.5.1",
     "d3-color": "^1.4.1",
     "d3-geo": "^1.12.1",
     "vega-canvas": "^1.2.3",
