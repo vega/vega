@@ -7,7 +7,7 @@ export const spec: Spec = {
   "padding": 5,
 
   "config": {
-    "title": { "fontSize": 14 }
+    "title": {"fontSize": 14}
   },
 
   "title": {
@@ -75,7 +75,7 @@ export const spec: Spec = {
       }
     },
     {
-      "name": "reverse", "value": false, "bind": { "input": "checkbox" }
+      "name": "reverse", "value": false, "bind": {"input": "checkbox"}
     }
   ],
 
@@ -83,13 +83,11 @@ export const spec: Spec = {
     {
       "name": "temperature",
       "url": "data/seattle-temps.csv",
-      "format": { "type": "csv", "parse": { "temp": "number", "date": "date" } },
+      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
       "transform": [
         { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
-        {
-          "type": "formula", "as": "day",
-          "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"
-        }
+        { "type": "formula", "as": "day",
+          "expr": "datetime(year(datum.date), month(datum.date), date(datum.date))"}
       ]
     }
   ],
@@ -98,7 +96,7 @@ export const spec: Spec = {
     {
       "name": "x",
       "type": "time",
-      "domain": { "data": "temperature", "field": "day" },
+      "domain": {"data": "temperature", "field": "day"},
       "range": "width"
     },
     {
@@ -113,21 +111,21 @@ export const spec: Spec = {
     {
       "name": "color",
       "type": "linear",
-      "range": { "scheme": { "signal": "palette" } },
-      "domain": { "data": "temperature", "field": "temp" },
-      "reverse": { "signal": "reverse" },
+      "range": {"scheme": {"signal": "palette"}},
+      "domain": {"data": "temperature", "field": "temp"},
+      "reverse": {"signal": "reverse"},
       "zero": false, "nice": true
     }
   ],
 
   "axes": [
-    { "orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b" },
+    {"orient": "bottom", "scale": "x", "domain": false, "title": "Month", "format": "%b"},
     {
       "orient": "left", "scale": "y", "domain": false, "title": "Hour",
       "encode": {
         "labels": {
           "update": {
-            "text": { "signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 AM' : (datum.value - 12) + ':00 PM'" }
+            "text": {"signal": "datum.value === 0 ? 'Midnight' : datum.value === 12 ? 'Noon' : datum.value < 12 ? datum.value + ':00 AM' : (datum.value - 12) + ':00 PM'"}
           }
         }
       }
@@ -140,14 +138,14 @@ export const spec: Spec = {
       "type": "gradient",
       "orient": "none",
       "direction": "vertical",
-      "gradientLength": { "signal": "height" },
+      "gradientLength": {"signal": "height"},
       "title": "Avg. Temp (°F)",
       "format": "0.1f",
       "encode": {
         "legend": {
           "update": {
-            "x": { "signal": "width", "offset": 20 },
-            "y": { "value": -16 }
+            "x": {"signal": "width", "offset": 20},
+            "y": {"value": -16}
           }
         }
       }
@@ -157,17 +155,17 @@ export const spec: Spec = {
   "marks": [
     {
       "type": "rect",
-      "from": { "data": "temperature" },
+      "from": {"data": "temperature"},
       "encode": {
         "enter": {
-          "x": { "scale": "x", "field": "day" },
-          "y": { "scale": "y", "field": "hour" },
-          "width": { "value": 5 },
-          "height": { "scale": "y", "band": 1 },
-          "tooltip": { "signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temp + '°'" }
+          "x": {"scale": "x", "field": "day"},
+          "y": {"scale": "y", "field": "hour"},
+          "width": {"value": 5},
+          "height": {"scale": "y", "band": 1},
+          "tooltip": {"signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temp + '°'"}
         },
         "update": {
-          "fill": { "scale": "color", "field": "temp" }
+          "fill": {"scale": "color", "field": "temp"}
         }
       }
     }
