@@ -28,7 +28,7 @@ export default function changeset() {
       return this;
     },
     modify(t, field, value) {
-      let m = {field: field, value: constant(value)};
+      const m = {field: field, value: constant(value)};
       if (isFunction(t)) {
         m.filter = t;
         modp.push(m);
