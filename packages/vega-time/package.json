@@ -1,6 +1,6 @@
 {
   "name": "vega-time",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "JavaScript date/time utilities for Vega.",
   "keywords": [
     "vega",
@@ -27,6 +27,6 @@
   "dependencies": {
     "d3-array": "^2.4.0",
     "d3-time": "^1.1.0",
-    "vega-util": "^1.14.0"
+    "vega-util": "^1.15.0"
   }
 }
