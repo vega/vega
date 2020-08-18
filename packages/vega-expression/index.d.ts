@@ -9,10 +9,10 @@ interface CodegenOptions {
   functions?: (astVisitor) => { [fn: string]: string | ((args) => string) };
 
   /** An array of variable names that may not be referenced within the expression scope */
-  blacklist?: string[];
+  forbidden?: string[];
 
   /** An array of variable names that may be referenced within the expression scope */
-  whitelist?: string[];
+  allowed?: string[];
 
   /** The name of the primary data input argument within the generated expression function */
   fieldvar?: string;
@@ -29,7 +29,7 @@ export function codegen(options: CodegenOptions): (ast) => {
   /** A hash of all properties referenced within the _fieldvar_ scope */
   fields: string[];
 
-  /** A hash of all properties referenced outside a provided whitelist */
+  /** A hash of all properties referenced outside a provided allowed */
   globals: string[];
 };
 

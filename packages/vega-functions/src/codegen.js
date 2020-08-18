@@ -278,8 +278,8 @@ const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event funct
 
 // export code generator parameters
 export const codegenParams = {
-  blacklist:  ['_'],
-  whitelist:  ['datum', 'event', 'item'],
+  forbidden:  ['_'],
+  allowed:  ['datum', 'event', 'item'],
   fieldvar:   'datum',
   globalvar:  id => `_[${stringValue(SignalPrefix + id)}]`,
   functions:  buildFunctions,
