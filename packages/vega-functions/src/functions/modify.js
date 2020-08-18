@@ -18,7 +18,7 @@ function equalArray(a, b) {
 }
 
 function equalObject(a, b) {
-  for (let key in a) {
+  for (const key in a) {
     if (!equal(a[key], b[key])) return false;
   }
   return true;

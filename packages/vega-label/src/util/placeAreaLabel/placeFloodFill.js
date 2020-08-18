@@ -6,7 +6,7 @@ const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
-  let width = $.width,
+  const width = $.width,
       height = $.height,
       bm0 = bitmaps[0], // where labels have been placed
       bm1 = bitmaps[1], // area outlines

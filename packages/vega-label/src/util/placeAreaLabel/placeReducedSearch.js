@@ -2,7 +2,7 @@ import {textMetrics} from 'vega-scenegraph';
 import {collision, outOfBounds} from './common';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
-  let width = $.width,
+  const width = $.width,
       height = $.height,
       bm0 = bitmaps[0], // where labels have been placed
       bm1 = bitmaps[1]; // area outlines

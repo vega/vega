@@ -61,7 +61,7 @@ export function object(properties, addl) {
   const p = {},
         r = [];
 
-  for (let key in properties) {
+  for (const key in properties) {
     let k = key;
     if (key.startsWith('_') && key.endsWith('_')) {
       r.push(k = key.slice(1, -1));

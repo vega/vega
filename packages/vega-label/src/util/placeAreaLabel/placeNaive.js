@@ -1,7 +1,7 @@
 import {textMetrics} from 'vega-scenegraph';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
-  let width = $.width,
+  const width = $.width,
       height = $.height;
   
   // try to place a label within an input area mark
