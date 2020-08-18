@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
@@ -24,10 +24,10 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-dataflow": "^5.6.0",
-    "vega-event-selector": "^2.0.3",
-    "vega-functions": "^5.7.0",
-    "vega-scale": "^7.0.0",
-    "vega-util": "^1.14.0"
+    "vega-dataflow": "^5.7.1",
+    "vega-event-selector": "^2.0.4",
+    "vega-functions": "^5.7.1",
+    "vega-scale": "^7.0.1",
+    "vega-util": "^1.15.0"
   }
 }

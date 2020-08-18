@@ -37,6 +37,12 @@ vega.<b>accessorName</b>(<i>accessor</i>)
 
 Returns the name string for a given *accessor* function. Returns null if no name has been set.
 
+<a name="ascending" href="#ascending">#</a>
+vega.<b>ascending</b>(<i>a</i>, <i>b</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/compare.js "Source")
+
+A comparator function for sorting primitive and Date values in ascending order.
+
 <a name="compare" href="#compare">#</a>
 vega.<b>compare</b>(<i>fields</i>[, <i>orders</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/compare.js "Source")
@@ -214,10 +220,10 @@ vega.<b>extend</b>(<i>target</i>[, <i>source1</i>, <i>source2</i>, …])
 Extends a *target* object by copying (in order) all enumerable properties of the input *source* objects.
 
 <a name="inherits" href="#inherits">#</a>
-vega.<b>inherits</b>(<i>child</i>, <i>parent</i>)
+vega.<b>inherits</b>(<i>child</i>, <i>parent</i>[, <i>members</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/inherits.js "Source")
 
-A convenience method for setting up object-oriented inheritance. Assigns the `prototype` property of the input *child* function, such that the *child* inherits the properties of the *parent* function's prototype via prototypal inheritance. Returns the new child prototype object.
+A convenience method for setting up object-oriented inheritance. Assigns the `prototype` property of the input *child* function, such that the *child* inherits the properties of the *parent* function's prototype via prototypal inheritance. The optional *members* argument is an object containing methods or properties to add to the new child prototype. Returns the new child prototype object.
 
 <a name="lruCache" href="#lruCache">#</a>
 vega.<b>lruCache</b>([<i>maxsize</i>])

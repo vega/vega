@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "5.7.0",
+  "version": "5.7.1",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -25,8 +25,8 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-format": "^1.0.0",
-    "vega-loader": "^4.3.0",
-    "vega-util": "^1.14.0"
+    "vega-format": "^1.0.2",
+    "vega-loader": "^4.3.1",
+    "vega-util": "^1.15.0"
   }
 }
