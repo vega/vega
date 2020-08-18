@@ -37,7 +37,7 @@ inherits(Extent, Transform, {
     }
 
     pulse.visit(mod ? pulse.SOURCE : pulse.ADD, t => {
-      let v = toNumber(field(t));
+      const v = toNumber(field(t));
       if (v != null) {
         // NaNs will fail all comparisons!
         if (v < min) min = v;

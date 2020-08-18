@@ -23,7 +23,7 @@ export default function WindowState(_) {
   visitInputs(_.sort);
 
   ops.forEach(function(op, i) {
-    let field = fields[i],
+    const field = fields[i],
         mname = accessorName(field),
         name = measureName(op, mname, as[i]);
 
@@ -89,7 +89,7 @@ prototype.update = function(w, t) {
 function cell(measures, counts, countOnly) {
   measures = measures.map(m => compileMeasures(m, m.field));
 
-  let cell = {
+  const cell = {
     num:   0,
     agg:   null,
     store: false,

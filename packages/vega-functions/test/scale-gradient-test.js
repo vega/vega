@@ -3,7 +3,7 @@ var tape = require('tape'),
     {scaleGradient} = require('../');
 
 tape('scaleGradient handles zero-span domain', function(t) {
-  let s = scale('linear')().range(['#f00', '#00f']);
+  const s = scale('linear')().range(['#f00', '#00f']);
 
   function testGradient(domain) {
     const g = scaleGradient.call({}, s.domain(domain), [0, 0], [1, 0], 3),
