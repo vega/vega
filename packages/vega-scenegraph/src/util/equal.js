@@ -9,7 +9,6 @@ export function sceneEqual(a, b, key) {
     : (a instanceof Date && b instanceof Date) ? +a === +b
     : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
     : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
-    : (a == null || b == null) ? false
     : objectEqual(a, b);
 }
 
