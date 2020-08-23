@@ -1,3 +1,6 @@
+// needed for https://github.com/developit/microbundle/issues/708
+import 'regenerator-runtime/runtime';
+
 export default function*(values, valueof) {
   if (valueof == null) {
     for (let value of values) {

@@ -14,11 +14,11 @@ To use this module in a web application, include the appropriate compiled JavaSc
 If you are using the standard `vega.js` or `vega.min.js` builds, include the following _after_ Vega has been imported:
 
 ```html
-  <script src="vega-projections.min.js"></script>
+  <script src="vega-projections.umd.js"></script>
 ```
 
 If you are using a standalone version of D3 (for example, alongside `vega-core.js` or `vega-core.min.js`), you can use the smaller file instead:
 
 ```html
-  <script src="vega-projections-core.min.js"></script>
+  <script src="vega-projections-core.umd.js"></script>
 ```

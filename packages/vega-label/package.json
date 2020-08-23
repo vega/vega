@@ -12,15 +12,15 @@
   "maintainers": [
     "Chanwut Kittivorawong"
   ],
+  "source": "index.js",
   "main": "build/vega-label.js",
-  "module": "index",
+  "module": "build/vega-label.module.js",
+  "unpkg": "build/vega-label.umd.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-canvas:vega,vega-dataflow:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-label.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-label.js -c -m -o build/vega-label.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "microbundle --globals vega-canvas=vega,vega-dataflow=vega,vega-scenegraph=vega,vega-util=vega --name vega",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags"
