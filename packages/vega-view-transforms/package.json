@@ -10,17 +10,16 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-view-transforms.js",
-  "module": "index",
+  "module": "build/vega-view-transforms.module.js",
+  "unpkg": "build/vega-view-transforms.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-dataflow:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-view-transforms.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-view-transforms.js -c -m -o build/vega-view-transforms.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "vega-dataflow": "^5.7.2",

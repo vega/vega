@@ -10,17 +10,16 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-wordcloud.js",
-  "module": "index",
+  "module": "build/vega-wordcloud.module.js",
+  "unpkg": "build/vega-wordcloud.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-canvas:vega,vega-dataflow:vega,vega-scale:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-wordcloud.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-wordcloud.js -c -m -o build/vega-wordcloud.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "vega-canvas": "^1.2.4",

@@ -11,17 +11,16 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-parser.js",
-  "module": "index",
+  "module": "build/vega-parser.module.js",
+  "unpkg": "build/vega-parser.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g vega-dataflow:vega,vega-event-selector:vega,vega-functions:vega,vega-scale:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "vega-dataflow": "^5.7.2",

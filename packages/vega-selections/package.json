@@ -9,18 +9,17 @@
   ],
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "license": "BSD-3-Clause",
-  "main": "build/vega-selections.js",
-  "module": "index",
+  "main": "build/vega-selection.js",
+  "module": "build/vega-selection.module.js",
+  "unpkg": "build/vega-selection.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-expression:vega,vega-util:vega -f umd -n vega -o build/vega-selections.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-selections.js -c -m -o build/vega-selections.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "vega-expression": "^2.7.0",

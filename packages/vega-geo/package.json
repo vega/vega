@@ -11,17 +11,16 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-geo.js",
-  "module": "index",
+  "module": "build/vega-geo.module.js",
+  "unpkg": "build/vega-geo.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-color:d3,d3-geo:d3,vega-canvas:vega,vega-dataflow:vega,vega-projection:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-geo.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-geo.js -c -m -o build/vega-geo.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "d3-array": "^2.7.0",

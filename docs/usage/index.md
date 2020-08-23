@@ -27,7 +27,7 @@ Try Vega with Vega-Embed online and publish your own chart by forking [our examp
 
 ### <a name="import"></a>Import Vega JavaScript
 
-To use Vega on a web page you first need to load the Vega JavaScript files. The simplest option is to import the complete Vega bundle. Load `vega.min.js` for deployment, and use `vega.js` for easier debugging.
+To use Vega on a web page you first need to load the Vega JavaScript files. The simplest option is to import the complete Vega bundle.
 
 ```html
 <head>
@@ -121,7 +121,7 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 
 ```html
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build-es5/vega.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build-es5/vega.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}/build-es5/vega-lite.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}/build-es5/vega-embed.js"></script>
 </head>

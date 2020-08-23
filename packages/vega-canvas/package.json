@@ -10,18 +10,17 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-canvas.node.js",
-  "module": "index",
-  "unpkg": "build/vega-canvas.js",
+  "module": "build/vega-canvas.module.js",
+  "unpkg": "build/vega-canvas.min.js",
   "jsdelivr": "build/vega-canvas.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f cjs -n vega -o build/vega-canvas.node.js -- index.js && rollup -f umd -n vega -o build/vega-canvas.js -- index.browser.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-browser",
+    "pretest": "yarn build",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "browser": {
     "./build/vega-canvas.node.js": "./build/vega-canvas.js",

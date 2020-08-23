@@ -5,19 +5,19 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-scenegraph.js",
-  "module": "index",
+  "module": "build/vega-scenegraph.module.js",
+  "unpkg": "build/vega-scenegraph.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g d3-path:d3,d3-shape:d3,vega-canvas:vega,vega-loader:vega,vega-scale:vega,vega-util:vega -n vega -o build/vega-scenegraph.js -- index.js",
     "schema": "node schema > build/vega-scenegraph-schema.json",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup && yarn schema",
-    "postbuild": "terser build/vega-scenegraph.js -c -m -o build/vega-scenegraph.min.js",
-    "pretest": "yarn prebuild && yarn rollup && yarn schema",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "postbuild": "yarn schema",
+    "pretest": "yarn build",
     "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "postpublish": "git push"
   },
   "dependencies": {
     "d3-path": "^2.0.0",

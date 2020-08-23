@@ -17,7 +17,7 @@
   },
   "repository": "vega/vega",
   "scripts": {
-    "postpublish": "git push && git push --tags",
+    "postpublish": "git push",
     "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
