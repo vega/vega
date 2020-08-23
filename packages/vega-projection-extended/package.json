@@ -18,7 +18,7 @@
   "scripts": {
     "prebuild": "rimraf build",
     "build": "rollup -c --config-core",
-    "pretest": "yarn build",
+    "pretest": "yarn build --config-test",
     "prepublishOnly": "yarn build",
     "postpublish": "git push"
   },

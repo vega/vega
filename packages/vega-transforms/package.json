@@ -23,7 +23,7 @@
   "scripts": {
     "prebuild": "rimraf build",
     "build": "rollup -c",
-    "pretest": "yarn build",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push"

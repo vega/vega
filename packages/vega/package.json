@@ -23,7 +23,7 @@
     "prebuild": "rimraf build && rimraf build-es5",
     "build": "rollup -c --config-core --config-bundle --config-ie",
     "postbuild": "node schema-copy",
-    "pretest": "yarn build",
+    "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
     "postpublish": "git push && git push --tags && ./schema-deploy.sh"

@@ -13,7 +13,7 @@
     "prebuild": "rimraf build",
     "build": "rollup -c",
     "postbuild": "yarn schema",
-    "pretest": "yarn build",
+    "pretest": "yarn build --config-test",
     "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
     "prepublishOnly": "yarn test && yarn build",
