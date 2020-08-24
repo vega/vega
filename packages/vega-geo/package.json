@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "d3-array": "^2.5.1",
-    "d3-color": "^1.4.1",
+    "d3-color": "^2.0.0",
     "d3-geo": "^1.12.1",
     "vega-canvas": "^1.2.3",
     "vega-dataflow": "^5.7.1",
