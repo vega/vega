@@ -22,7 +22,7 @@ export default function WindowState(_) {
   }
   visitInputs(_.sort);
 
-  ops.forEach(function(op, i) {
+  ops.forEach((op, i) => {
     let field = fields[i],
         mname = accessorName(field),
         name = measureName(op, mname, as[i]);

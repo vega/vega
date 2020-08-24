@@ -1,7 +1,7 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-tape('Parser parses Vega specs with marks', function(t) {
+tape('Parser parses Vega specs with marks', t => {
   var spec = {
     'signals': [
       { 'name': 'color', 'value': 'steelblue' }

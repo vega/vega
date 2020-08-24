@@ -52,6 +52,6 @@ export function interpolate(type, gamma) {
 function method(type) {
   return 'interpolate' + type.toLowerCase()
     .split('-')
-    .map(function(s) { return s[0].toUpperCase() + s.slice(1); })
+    .map(s => s[0].toUpperCase() + s.slice(1))
     .join('');
 }

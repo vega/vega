@@ -7,7 +7,7 @@ var tape = require('tape'),
     Lookup = tx.lookup,
     TupleIndex = tx.tupleindex;
 
-tape('Lookup looks up matching tuples', function(t) {
+tape('Lookup looks up matching tuples', t => {
   var lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -57,7 +57,7 @@ tape('Lookup looks up matching tuples', function(t) {
   t.end();
 });
 
-tape('Lookup looks up matching values', function(t) {
+tape('Lookup looks up matching values', t => {
   var lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},

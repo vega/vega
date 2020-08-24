@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('lruCache should cache items', function(t) {
+tape('lruCache should cache items', t => {
   var cache = vega.lruCache();
 
   // test adding an entry
@@ -40,7 +40,7 @@ tape('lruCache should cache items', function(t) {
   t.end();
 });
 
-tape('lruCache should evict least recently used items', function(t) {
+tape('lruCache should evict least recently used items', t => {
   var cache = vega.lruCache(2);
 
   cache.set('a', 1); // a in curr cache

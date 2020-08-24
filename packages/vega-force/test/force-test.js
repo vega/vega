@@ -3,7 +3,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Force = require('../').force;
 
-tape('Force places points', function(t) {
+tape('Force places points', t => {
   var data = [
     {label: 'a'},
     {label: 'b'},

@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('extend extends objects with other object properties', function(t) {
+tape('extend extends objects with other object properties', t => {
   var grandparent = {p2_1: 'vp2_1', p2_2: 'vp2_2'},
       parent = Object.create(grandparent),
       object1 = Object.create(parent),

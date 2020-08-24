@@ -7,7 +7,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Values = tx.values;
 
-tape('Values extracts values', function(t) {
+tape('Values extracts values', t => {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'c', v:2}, {k:'d', v:4}
@@ -32,7 +32,7 @@ tape('Values extracts values', function(t) {
   t.end();
 });
 
-tape('Values extracts sorted domain values', function(t) {
+tape('Values extracts sorted domain values', t => {
   var byCount = util.compare('count', 'descending'),
       key = util.field('k'),
       df = new vega.Dataflow(),
@@ -56,7 +56,7 @@ tape('Values extracts sorted domain values', function(t) {
   t.end();
 });
 
-tape('Values extracts multi-domain values', function(t) {
+tape('Values extracts multi-domain values', t => {
   var byCount = util.compare('count', 'descending'),
       count = util.field('count'),
       key = util.field('key'),

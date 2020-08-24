@@ -33,7 +33,7 @@ export function band() {
       start = Math.round(start);
       bandwidth = Math.round(bandwidth);
     }
-    const values = sequence(n).map(function(i) { return start + step * i; });
+    const values = sequence(n).map(i => start + step * i);
     return ordinalRange(reverse ? values.reverse() : values);
   }
 

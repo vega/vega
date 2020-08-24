@@ -7,7 +7,7 @@ function regexEqual(x, y) {
     (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
 }
 
-tape('Evaluate expressions without white or black list', function(t) {
+tape('Evaluate expressions without white or black list', t => {
   var codegen = vega.codegen({
     globalvar: 'global'
   });
@@ -36,13 +36,13 @@ tape('Evaluate expressions without white or black list', function(t) {
   t.equal(value.code, 'd');
 
   // should not allow unknown ast node type
-  t.throws(function() { codegen({}); });
-  t.throws(function() { codegen({type: 'foo'}); });
+  t.throws(() => { codegen({}); });
+  t.throws(() => { codegen({type: 'foo'}); });
 
   t.end();
 });
 
-tape('Evaluate expressions with black list', function(t) {
+tape('Evaluate expressions with black list', t => {
   var codegen = vega.codegen({
     blacklist: ['a', 'b', 'c'],
     globalvar: 'global',
@@ -72,7 +72,7 @@ tape('Evaluate expressions with black list', function(t) {
   t.end();
 });
 
-tape('Evaluate expressions with white list', function(t) {
+tape('Evaluate expressions with white list', t => {
   var codegen = vega.codegen({
     whitelist: ['datum', 'event', 'signals'],
     globalvar: 'global'

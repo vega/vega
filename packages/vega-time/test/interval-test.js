@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../'),
     {local, utc} = require('./util');
 
-tape('timeInterval provides local intervals for time units', function(t) {
+tape('timeInterval provides local intervals for time units', t => {
   var ti;
 
   ti = vega.timeInterval('year');
@@ -53,7 +53,7 @@ tape('timeInterval provides local intervals for time units', function(t) {
   t.end();
 });
 
-tape('utcInterval provides utc intervals for time units', function(t) {
+tape('utcInterval provides utc intervals for time units', t => {
   var ti;
 
   ti = vega.utcInterval('year');

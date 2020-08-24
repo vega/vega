@@ -49,7 +49,7 @@ function getContext(bounds, angle) {
   return boundContext(bounds.clear(), angle || 0);
 }
 
-tape('boundContext should bound arc segments', function(t) {
+tape('boundContext should bound arc segments', t => {
   angles.forEach(_ => {
     getContext(b).arc(x, y, r, 0, _.angle, false);
     t.ok(boundEqual(b, _.bounds), 'bound-cw: ' + _.angle);
@@ -67,7 +67,7 @@ tape('boundContext should bound arc segments', function(t) {
   t.end();
 });
 
-tape('boundContext should bound rotated arc segments', function(t) {
+tape('boundContext should bound rotated arc segments', t => {
   const deg = 45,
         rad = deg * Math.PI / 180;
 

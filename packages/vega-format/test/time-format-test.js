@@ -3,7 +3,7 @@ var tape = require('tape'),
     locale = vega.timeFormatDefaultLocale(),
     {deDE, local, utc} = require('./util');
 
-tape('timeParse supports specifier strings', function(t) {
+tape('timeParse supports specifier strings', t => {
   const d = local(2001, 2, 1);
   t.equal(+locale.timeParse('%Y-%m-%d')('2001-03-01'), +d);
   t.equal(+locale.timeParse('%d %b %Y')('01 Mar 2001'), +d);
@@ -11,7 +11,7 @@ tape('timeParse supports specifier strings', function(t) {
   t.end();
 });
 
-tape('timeFormat supports specifier strings', function(t) {
+tape('timeFormat supports specifier strings', t => {
   const d = local(2001, 0, 1);
   t.equal(locale.timeFormat('%Y')(d), '2001');
   t.equal(locale.timeFormat('%m')(d), '01');
@@ -21,7 +21,7 @@ tape('timeFormat supports specifier strings', function(t) {
   t.end();
 });
 
-tape('timeFormat supports specifier objects', function(t) {
+tape('timeFormat supports specifier objects', t => {
   let f = locale.timeFormat();
   t.equal(f(local(2001, 0, 1)), '2001');
   t.equal(f(local(2001, 1, 1)), 'February');
@@ -47,7 +47,7 @@ tape('timeFormat supports specifier objects', function(t) {
   t.end();
 });
 
-tape('utcParse supports specifier strings', function(t) {
+tape('utcParse supports specifier strings', t => {
   const d = utc(2001, 2, 1);
   t.equal(+locale.utcParse('%Y-%m-%d')('2001-03-01'), +d);
   t.equal(+locale.utcParse('%d %b %Y')('01 Mar 2001'), +d);
@@ -55,7 +55,7 @@ tape('utcParse supports specifier strings', function(t) {
   t.end();
 });
 
-tape('utcFormat supports specifier strings', function(t) {
+tape('utcFormat supports specifier strings', t => {
   const d = utc(2001, 0, 1);
   t.equal(locale.utcFormat('%Y')(d), '2001');
   t.equal(locale.utcFormat('%m')(d), '01');
@@ -65,7 +65,7 @@ tape('utcFormat supports specifier strings', function(t) {
   t.end();
 });
 
-tape('utcFormat supports specifier objects', function(t) {
+tape('utcFormat supports specifier objects', t => {
   var f = locale.utcFormat();
   t.equal(f(utc(2001, 0, 1)), '2001');
   t.equal(f(utc(2001, 1, 1)), 'February');
@@ -91,7 +91,7 @@ tape('utcFormat supports specifier objects', function(t) {
   t.end();
 });
 
-tape('timeFormatLocale creates a new locale', function(t) {
+tape('timeFormatLocale creates a new locale', t => {
   const locale = vega.timeFormatLocale(deDE.time);
   let d, f;
 

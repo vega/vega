@@ -59,9 +59,9 @@ function aggregateParams(_, pulse) {
   return {
     key:      _.key,
     groupby:  _.groupby,
-    ops:      keys.map(function() { return op; }),
-    fields:   keys.map(function(k) { return get(k, key, value, fields); }),
-    as:       keys.map(function(k) { return k + ''; }),
+    ops:      keys.map(() => op),
+    fields:   keys.map(k => get(k, key, value, fields)),
+    as:       keys.map(k => k + ''),
     modified: _.modified.bind(_)
   };
 }

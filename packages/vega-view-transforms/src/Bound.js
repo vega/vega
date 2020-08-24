@@ -27,7 +27,7 @@ inherits(Bound, Transform, {
       // multi-item marks have a single bounds instance
       if (mark.items.length) view.dirty(mark.items[0]);
       markBounds = boundItem(mark, bound);
-      mark.items.forEach(function(item) {
+      mark.items.forEach(item => {
         item.bounds.clear().union(markBounds);
       });
     }

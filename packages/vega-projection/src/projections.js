@@ -62,7 +62,7 @@ function create(type, constructor) {
 
     p.copy = p.copy || function() {
       const c = projection();
-      projectionProperties.forEach(function(prop) {
+      projectionProperties.forEach(prop => {
         if (p[prop]) c[prop](p[prop]());
       });
       c.path.pointRadius(p.path.pointRadius());

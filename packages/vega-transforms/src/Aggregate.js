@@ -145,7 +145,7 @@ inherits(Aggregate, Transform, {
 
     // initialize group-by dimensions
     this._dims = array(_.groupby);
-    this._dnames = this._dims.map(function(d) {
+    this._dnames = this._dims.map(d => {
       var dname = accessorName(d);
       inputVisit(d);
       outputs.push(dname);
@@ -197,9 +197,7 @@ inherits(Aggregate, Transform, {
       m.push(createMeasure(op, outname));
     }
 
-    this._measures = this._measures.map(function(m) {
-      return compileMeasures(m, m.field);
-    });
+    this._measures = this._measures.map(m => compileMeasures(m, m.field));
 
     return {}; // aggregation cells (this.value)
   },

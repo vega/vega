@@ -57,7 +57,7 @@ function event(name, x, y) {
   return evt;
 }
 
-tape('SVGHandler should add/remove event callbacks', function(t) {
+tape('SVGHandler should add/remove event callbacks', t => {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -107,7 +107,7 @@ tape('SVGHandler should add/remove event callbacks', function(t) {
   t.end();
 });
 
-tape('SVGHandler should handle input events', function(t) {
+tape('SVGHandler should handle input events', t => {
   var scene = loadScene('scenegraph-rect.json');
   var handler = new Handler()
     .initialize(render(scene, 400, 200))
@@ -119,12 +119,12 @@ tape('SVGHandler should handle input events', function(t) {
   var count = 0;
   var increment = function() { count++; };
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     handler.on(name, increment);
   });
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     svg.dispatchEvent(event(name));
   });
 
@@ -149,7 +149,7 @@ tape('SVGHandler should handle input events', function(t) {
   handler.off('nonevent');
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     handler.off(name, increment);
   });
 

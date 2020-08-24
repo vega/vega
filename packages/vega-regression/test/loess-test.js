@@ -5,7 +5,7 @@ var tape = require('tape'),
     Loess = require('../').loess,
     changeset = vega.changeset;
 
-  tape('Loess handles repeated x-values', function(t) {
+  tape('Loess handles repeated x-values', t => {
     var data = [
       {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
       {k: 'b', u: 1, v: 3}, {k: 'b', u: 2, v: 6}, {k: 'b', u: 3, v: 7}
@@ -32,7 +32,7 @@ var tape = require('tape'),
     t.end();
   });
 
-tape('Loess adapts bandwidth when too small', function(t) {
+tape('Loess adapts bandwidth when too small', t => {
   var data = [
     {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
     {k: 'b', u: 1, v: 2}, {k: 'b', u: 2, v: 5}, {k: 'b', u: 3, v: 6}

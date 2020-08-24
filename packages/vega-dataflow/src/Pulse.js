@@ -59,7 +59,7 @@ function materialize(data, filter) {
 
 function filter(pulse, flags) {
   const map = {};
-  pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
+  pulse.visit(flags, t => { map[tupleid(t)] = 1; });
   return t => map[tupleid(t)] ? null : t;
 }
 

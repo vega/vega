@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Stack = encode.stack;
 
-tape('Stack stacks numeric values', function(t) {
+tape('Stack stacks numeric values', t => {
   var data = [
     {key: 'a', value: 1},
     {key: 'a', value: 2},
@@ -58,7 +58,7 @@ tape('Stack stacks numeric values', function(t) {
   t.end();
 });
 
-tape('Stack stacks negative values', function(t) {
+tape('Stack stacks negative values', t => {
   var data = [
     {key: 'a', value: -1},
     {key: 'a', value: 2},
@@ -110,7 +110,7 @@ tape('Stack stacks negative values', function(t) {
   t.end();
 });
 
-tape('Stack stacks coerced string values', function(t) {
+tape('Stack stacks coerced string values', t => {
   var data = [
     {key: 'a', value: '1'},
     {key: 'a', value: '2'},

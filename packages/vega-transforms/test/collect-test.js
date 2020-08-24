@@ -4,7 +4,7 @@ var tape = require('tape'),
     Collect = require('../').collect,
     changeset = vega.changeset;
 
-tape('Collect collects tuples', function(t) {
+tape('Collect collects tuples', t => {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},

@@ -3,7 +3,7 @@ var tape = require('tape'),
     locale = vega.numberFormatDefaultLocale(),
     {deDE} = require('./util');
 
-tape('format formats numbers', function(t) {
+tape('format formats numbers', t => {
   t.equal(locale.format('.1f')(0.16), '0.2');
   t.equal(locale.format('.0s')(1e6), '1M');
   t.equal(locale.format(',')(1234), '1,234');
@@ -11,20 +11,20 @@ tape('format formats numbers', function(t) {
   t.end();
 });
 
-tape('formatPrefix formats numbers', function(t) {
+tape('formatPrefix formats numbers', t => {
   t.equal(locale.formatPrefix('.1s', 1e6)(1e5), '0.1M');
   t.equal(locale.formatPrefix('.0s', 1e4)(1e5), '100k');
   t.end();
 });
 
-tape('formatFloat formats numbers', function(t) {
+tape('formatFloat formats numbers', t => {
   t.equal(locale.formatFloat('')(0.123), '0.123');
   t.equal(locale.formatFloat('')(0.1234), '0.1234');
   t.equal(locale.formatFloat('.2f')(0.1234), '0.12');
   t.end();
 });
 
-tape('formatSpan formats number spans', function(t) {
+tape('formatSpan formats number spans', t => {
   t.equal(locale.formatSpan(0, 10, 5)(5), '5');
   t.equal(locale.formatSpan(0, 10, 20)(5), '5.0');
   t.equal(locale.formatSpan(0, 10, 200)(5), '5.00');
@@ -32,7 +32,7 @@ tape('formatSpan formats number spans', function(t) {
   t.end();
 });
 
-tape('numberFormatLocale creates a new locale', function(t) {
+tape('numberFormatLocale creates a new locale', t => {
   const locale = vega.numberFormatLocale(deDE.number);
   t.equal(locale.format('.1f')(0.16), '0,2');
   t.equal(locale.format('.0s')(1e6), '1M');

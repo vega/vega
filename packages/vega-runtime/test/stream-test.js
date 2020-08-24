@@ -3,7 +3,7 @@ var tape = require('tape'),
     runtime = require('../'),
     events = require('./events');
 
-tape('Parser parses event streams', function(t) {
+tape('Parser parses event streams', t => {
 
   var spec = {
     streams: [
@@ -25,8 +25,8 @@ tape('Parser parses event streams', function(t) {
       streams = ctx.nodes,
       counts = [0,0,0,0,0,0,0];
 
-  Object.keys(streams).forEach(function(id, i) {
-    streams[id].apply(function() { counts[i] += 1; });
+  Object.keys(streams).forEach((id, i) => {
+    streams[id].apply(() => { counts[i] += 1; });
   });
 
   t.deepEqual(counts, [0,0,0,0,0,0,0]);
@@ -50,7 +50,7 @@ tape('Parser parses event streams', function(t) {
   df.fire('window', 'mousemove', {buttons: 1});
   df.fire('window', 'mouseup', {});
 
-  setTimeout(function() {
+  setTimeout(() => {
     t.deepEqual(counts, [4,3,3,6,3,1,1]);
     t.end();
   }, 105);

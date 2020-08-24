@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('truncate truncates strings', function(t) {
+tape('truncate truncates strings', t => {
   // should reduce string length
   t.equal(vega.truncate('123456789', 5), '1234…');
   t.equal(vega.truncate('123456789', 5, null, ''), '12345');
@@ -14,7 +14,7 @@ tape('truncate truncates strings', function(t) {
   t.end();
 });
 
-tape('truncate truncates numbers', function(t) {
+tape('truncate truncates numbers', t => {
   // should reduce length
   t.equal(vega.truncate(123456789, 5), '1234…');
   t.equal(vega.truncate(123456789, 5, null, ''), '12345');

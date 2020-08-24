@@ -15,14 +15,14 @@ var validator = new ajv({
 
 var validate = validator.compile(schema);
 
-tape('JSON schema is valid', function(t) {
+tape('JSON schema is valid', t => {
   t.ok(validator.validateSchema(schema));
   t.end();
 });
 
-tape('JSON schema recognizes valid specifications', function(t) {
+tape('JSON schema recognizes valid specifications', t => {
   var dir = process.cwd() + '/test/specs-valid/';
-  validSpecs.forEach(function(file) {
+  validSpecs.forEach(file => {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
         valid = validate(spec);
     t.ok(valid, 'valid schema: ' + file);
@@ -32,11 +32,11 @@ tape('JSON schema recognizes valid specifications', function(t) {
   t.end();
 });
 
-tape('JSON schema recognizes invalid specifications', function(t) {
+tape('JSON schema recognizes invalid specifications', t => {
   var dir = process.cwd() + '/test/specs-invalid/';
-  invalidSpecs.forEach(function(file) {
+  invalidSpecs.forEach(file => {
     var specs = JSON.parse(fs.readFileSync(dir + file + '.json'));
-    specs.forEach(function(spec, index) {
+    specs.forEach((spec, index) => {
       t.notOk(validate(spec),
         'invalid schema (' + index + '): ' + file);
     });

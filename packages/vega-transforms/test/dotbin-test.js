@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = transforms.collect,
     DotBin = transforms.dotbin;
 
-tape('DotBin assigns dot plot bin positions', function(t) {
+tape('DotBin assigns dot plot bin positions', t => {
   var data = [
     {key: 'a', value: 1},
     {key: 'a', value: 1},

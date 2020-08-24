@@ -4,7 +4,7 @@ var tape = require('tape'),
     transforms = require('vega-transforms'),
     runtime = require('../');
 
-tape('Parser parses expressions', function(t) {
+tape('Parser parses expressions', t => {
   var values = [
     {'x': 1,  'y': 28},
     {'x': 2,  'y': 43},
@@ -44,9 +44,7 @@ tape('Parser parses expressions', function(t) {
   t.equal(ids.length, spec.operators.length);
 
   df.run();
-  t.equal(ids.reduce(function(sum, id) {
-    return sum + +(ops[id].stamp === df.stamp());
-  }, 0), spec.operators.length);
+  t.equal(ids.reduce((sum, id) => sum + +(ops[id].stamp === df.stamp()), 0), spec.operators.length);
 
   t.equal(typeof ops[1]._update, 'function');
   t.equal(ops[1].value, 100);

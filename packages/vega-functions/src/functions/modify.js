@@ -44,7 +44,7 @@ export default function(name, insert, remove, toggle, modify, values) {
   if (!changes || changes.stamp < stamp) {
     data.changes = (changes = df.changeset());
     changes.stamp = stamp;
-    df.runAfter(function() {
+    df.runAfter(() => {
       data.modified = true;
       df.pulse(input, changes).run();
     }, true, 1);

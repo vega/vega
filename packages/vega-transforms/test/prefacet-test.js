@@ -7,7 +7,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     PreFacet = tx.prefacet;
 
-tape('PreFacet partitions pre-faceted tuple sets', function(t) {
+tape('PreFacet partitions pre-faceted tuple sets', t => {
   var data = [
     {'id': 'a', 'tuples': [{x:1},{x:2}]},
     {'id': 'b', 'tuples': [{x:3},{x:4}]},
@@ -99,7 +99,7 @@ tape('PreFacet partitions pre-faceted tuple sets', function(t) {
   t.end();
 });
 
-tape('PreFacet raises error if tuple sets are modified', function(t) {
+tape('PreFacet raises error if tuple sets are modified', t => {
   var data = [
     {'id': 'a', 'tuples': [{x:1},{x:2}]},
     {'id': 'b', 'tuples': [{x:3},{x:4}]},

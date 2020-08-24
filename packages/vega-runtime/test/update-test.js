@@ -3,7 +3,7 @@ var tape = require('tape'),
     runtime = require('../'),
     events = require('./events');
 
-tape('Parser parses event-driven operator updates', function(t) {
+tape('Parser parses event-driven operator updates', t => {
 
   var spec = {
     operators: [

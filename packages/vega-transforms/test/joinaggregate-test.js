@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     JoinAggregate = tx.joinaggregate;
 
-tape('JoinAggregate extends tuples with aggregate values', function(t) {
+tape('JoinAggregate extends tuples with aggregate values', t => {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -96,7 +96,7 @@ tape('JoinAggregate extends tuples with aggregate values', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles count aggregates', function(t) {
+tape('JoinAggregate handles count aggregates', t => {
   var data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
@@ -179,7 +179,7 @@ tape('JoinAggregate handles count aggregates', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles distinct aggregates', function(t) {
+tape('JoinAggregate handles distinct aggregates', t => {
   var data = [
     {foo:null},
     {foo:null},

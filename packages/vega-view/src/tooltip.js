@@ -13,7 +13,7 @@ function formatTooltip(value) {
 }
 
 function formatObject(obj) {
-  return Object.keys(obj).map(function(key) {
+  return Object.keys(obj).map(key => {
     var v = obj[key];
     return key + ': ' + (isArray(v) ? formatArray(v) : formatValue(v));
   }).join('\n');

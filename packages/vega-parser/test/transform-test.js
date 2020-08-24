@@ -5,7 +5,7 @@ var tape = require('tape'),
 
 util.extend(vega.transforms, require('vega-transforms'));
 
-tape('Parser parses Vega specs with data transforms', function(t) {
+tape('Parser parses Vega specs with data transforms', t => {
   var spec = {
     'signals': [
       { 'name': 'ufield', 'value': 'u' },

@@ -200,7 +200,7 @@ function parseStream(s) {
 function parseThrottle(s) {
   const a = s.split(COMMA);
   if (!s.length || a.length > 2) throw s;
-  return a.map(function(_) {
+  return a.map(_ => {
     const x = +_;
     if (x !== x) throw s;
     return x;

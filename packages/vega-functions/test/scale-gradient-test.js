@@ -2,7 +2,7 @@ var tape = require('tape'),
     {scale} = require('vega-scale'),
     {scaleGradient} = require('../');
 
-tape('scaleGradient handles zero-span domain', function(t) {
+tape('scaleGradient handles zero-span domain', t => {
   let s = scale('linear')().range(['#f00', '#00f']);
 
   function testGradient(domain) {

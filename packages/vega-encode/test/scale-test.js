@@ -13,7 +13,7 @@ function scale(params) {
   return e ? util.error(e) : s.value;
 }
 
-tape('Scale respects domain configuration', function(t) {
+tape('Scale respects domain configuration', t => {
   var s, params = {
     type: 'linear',
     domain: [1, 9.5]
@@ -50,7 +50,7 @@ tape('Scale respects domain configuration', function(t) {
   t.end();
 });
 
-tape('Scale respects domain padding', function(t) {
+tape('Scale respects domain padding', t => {
   var d;
 
   // test linear scale padding
@@ -100,7 +100,7 @@ tape('Scale respects domain padding', function(t) {
   t.end();
 });
 
-tape('Ordinal scale respects domainImplicit', function(t) {
+tape('Ordinal scale respects domainImplicit', t => {
   var s, params = {
     type: 'ordinal',
     domain: [],
@@ -125,7 +125,7 @@ tape('Ordinal scale respects domainImplicit', function(t) {
   t.end();
 });
 
-tape('Scale respects range configuration', function(t) {
+tape('Scale respects range configuration', t => {
   var s, params = {
     type: 'linear',
     domain: [0, 10],
@@ -153,14 +153,14 @@ tape('Scale respects range configuration', function(t) {
   t.deepEqual(s.range(), [0, 60]);
   t.equal(s.bandwidth(), 20);
 
-  s = t.throws(function() {
+  s = t.throws(() => {
     scale(util.extend({}, params, {type: 'linear'}));
   });
 
   t.end();
 });
 
-tape('Scale respects range color schemes', function(t) {
+tape('Scale respects range color schemes', t => {
   var s, u, v;
 
   // performs scheme lookup
@@ -168,10 +168,10 @@ tape('Scale respects range color schemes', function(t) {
   t.equal(s.range().length, 10);
 
   // throws on invalid scheme
-  t.throws(function() {
+  t.throws(() => {
     scale({type: 'ordinal', scheme: 'foobarbaz'});
   });
-  t.throws(function() {
+  t.throws(() => {
     scale({type: 'sequential', scheme: 'foobarbaz'});
   });
 
@@ -210,7 +210,7 @@ tape('Scale respects range color schemes', function(t) {
   t.end();
 });
 
-tape('Scale warns for zero in log domain', function(t) {
+tape('Scale warns for zero in log domain', t => {
   function logScale(domain) {
     return function() {
       var df = new vega.Dataflow(), e;
@@ -231,7 +231,7 @@ tape('Scale warns for zero in log domain', function(t) {
   t.end();
 });
 
-tape('Scale infers scale key from type, domain, and range', function(t) {
+tape('Scale infers scale key from type, domain, and range', t => {
   function key(params) {
     const df = new vega.Dataflow(),
           s = df.add(encode.scale, params);
@@ -240,7 +240,7 @@ tape('Scale infers scale key from type, domain, and range', function(t) {
   }
 
   // numeric domain scales should adapt
-  [vs.Linear, vs.Log, vs.Pow, vs.Sqrt, vs.Symlog].forEach(function(st) {
+  [vs.Linear, vs.Log, vs.Pow, vs.Sqrt, vs.Symlog].forEach(st => {
     t.equal(key({type: st, domain:[0,1], range:[0,1]}), st);
     t.equal(key({type: st, domain:[0,1], range:[true,false]}), st);
 
@@ -256,7 +256,7 @@ tape('Scale infers scale key from type, domain, and range', function(t) {
   });
 
   // temporal domain scales should not adapt
-  [vs.Time, vs.UTC].forEach(function(st) {
+  [vs.Time, vs.UTC].forEach(st => {
     const t0 = new Date(2010, 0, 1),
           t1 = new Date(2011, 0, 1),
           t2 = new Date(2012, 0, 1),
@@ -284,7 +284,7 @@ tape('Scale infers scale key from type, domain, and range', function(t) {
   t.end();
 });
 
-tape('Scale respects bins parameter', function(t) {
+tape('Scale respects bins parameter', t => {
   var bins = {start: 0, stop: 10, step: 2},
       vals = [0, 2, 4, 6, 8, 10],
       val6 = [0, 2, 4, 6],

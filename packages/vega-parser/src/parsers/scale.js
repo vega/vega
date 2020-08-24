@@ -101,7 +101,7 @@ function singularDomain(domain, spec, scope) {
 
 function multipleDomain(domain, spec, scope) {
   const data = domain.data,
-        fields = domain.fields.reduce(function(dom, d) {
+        fields = domain.fields.reduce((dom, d) => {
           d = isString(d) ? {data: data, field: d}
             : (isArray(d) || d.signal) ? fieldRef(d, scope)
             : d;

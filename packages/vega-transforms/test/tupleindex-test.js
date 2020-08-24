@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     TupleIndex = tx.tupleindex;
 
-tape('TupleIndex maintains an index of tuples', function(t) {
+tape('TupleIndex maintains an index of tuples', t => {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -82,7 +82,7 @@ tape('TupleIndex maintains an index of tuples', function(t) {
   t.end();
 });
 
-tape('TupleIndex does not leak memory', function(t) {
+tape('TupleIndex does not leak memory', t => {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       ti = df.add(TupleIndex, {field: util.field('id'), pulse: c0}),

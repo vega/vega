@@ -33,13 +33,13 @@ export default function(el, elBind) {
     elBind = elBind ? (view._elBind = lookup(view, elBind))
       : el.appendChild(element('form', {'class': 'vega-bindings'}));
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(_ => {
       if (_.param.element && config !== 'container') {
         _.element = lookup(view, _.param.element);
       }
     });
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(_ => {
       bind(view, _.element || elBind, _);
     });
   }

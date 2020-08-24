@@ -5,7 +5,7 @@ const tape = require('tape'),
     Collect = require('vega-transforms').collect,
     changeset = vega.changeset;
 
-tape('Voronoi generates voronoi cell paths', function(t) {
+tape('Voronoi generates voronoi cell paths', t => {
   const data = [
     {x: 10, y: 10},
     {x: 20, y: 10},
@@ -31,7 +31,7 @@ tape('Voronoi generates voronoi cell paths', function(t) {
   t.end();
 });
 
-tape('Voronoi generates voronoi cell paths with 1 input point', function(t) {
+tape('Voronoi generates voronoi cell paths with 1 input point', t => {
   const data = [
     {x: 10, y: 10}
   ];
@@ -53,7 +53,7 @@ tape('Voronoi generates voronoi cell paths with 1 input point', function(t) {
   t.end();
 });
 
-tape('Voronoi generates voronoi cell paths with 2 input points', function(t) {
+tape('Voronoi generates voronoi cell paths with 2 input points', t => {
   const data = [
     {x: 10, y: 10},
     {x: 20, y: 10}

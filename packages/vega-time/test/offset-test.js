@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../'),
     {local, utc} = require('./util');
 
-tape('timeOffset computes local date offsets', function(t) {
+tape('timeOffset computes local date offsets', t => {
   t.equal(+vega.timeOffset('year', local(2012)), +local(2013));
   t.equal(+vega.timeOffset('year', local(2012), 2), +local(2014));
   t.equal(+vega.timeOffset('quarter', local(2012)), +local(2012, 3));
@@ -28,7 +28,7 @@ tape('timeOffset computes local date offsets', function(t) {
   t.end();
 });
 
-tape('utcOffset computes utc date offsets', function(t) {
+tape('utcOffset computes utc date offsets', t => {
   t.equal(+vega.utcOffset('year', utc(2012)), +utc(2013));
   t.equal(+vega.utcOffset('year', utc(2012), 2), +utc(2014));
   t.equal(+vega.utcOffset('quarter', utc(2012)), +utc(2012, 3));

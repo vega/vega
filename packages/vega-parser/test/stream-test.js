@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Parser parses stream definitions', function(t) {
+tape('Parser parses stream definitions', t => {
   var scope = new vega.Scope(),
       dom, view, between, merge, nested, timer;
 

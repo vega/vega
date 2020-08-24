@@ -64,7 +64,7 @@ export default function(input) {
     }
   };
 
-  if (input) Object.keys(input).forEach(function(key) {
+  if (input) Object.keys(input).forEach(key => {
     map.set(key, input[key]);
   });
 

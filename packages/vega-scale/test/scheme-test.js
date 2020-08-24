@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('scheme registers a single color scheme', function(t) {
+tape('scheme registers a single color scheme', t => {
   var name = 'rgb',
       colors = ['#f00', '#0f0', '#00f'];
 

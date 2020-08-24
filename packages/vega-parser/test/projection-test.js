@@ -18,7 +18,7 @@ var geojson = {
   ]
 };
 
-tape('Parser parses Vega specs with projection', function(t) {
+tape('Parser parses Vega specs with projection', t => {
   var spec = {
     'projections': [
         {

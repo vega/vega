@@ -6,7 +6,7 @@ vega.textMetrics.canvas(false);
 // for cross-platform rendering compatibility,
 // draw text bounding boxes rather than text strings
 vega.Marks.text.draw = function(context, scene) {
-  vega.sceneVisit(scene, function(item) {
+  vega.sceneVisit(scene, item => {
     if (!item.text) return;
     var b = vega.Marks.text.bound(item.bounds, item);
     if (item.fill) {

@@ -80,7 +80,7 @@ function testDates(t, data, unit, step, date) {
   });
 }
 
-tape('TimeUnit truncates dates to time units', function(t) {
+tape('TimeUnit truncates dates to time units', t => {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -111,7 +111,7 @@ tape('TimeUnit truncates dates to time units', function(t) {
   t.end();
 });
 
-tape('TimeUnit truncates UTC dates to time units', function(t) {
+tape('TimeUnit truncates UTC dates to time units', t => {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -142,7 +142,7 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit steps', function(t) {
+tape('TimeUnit supports unit steps', t => {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -175,7 +175,7 @@ tape('TimeUnit supports unit steps', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit inference', function(t) {
+tape('TimeUnit supports unit inference', t => {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -225,7 +225,7 @@ tape('TimeUnit supports unit inference', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit inference with extent', function(t) {
+tape('TimeUnit supports unit inference with extent', t => {
   var data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
@@ -265,7 +265,7 @@ tape('TimeUnit supports unit inference with extent', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports point output', function(t) {
+tape('TimeUnit supports point output', t => {
   var data = [{date: new Date(2012, 0, 1)}];
 
   var df = new vega.Dataflow(),

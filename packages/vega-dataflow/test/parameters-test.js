@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Parameters handles parameter values', function(t) {
+tape('Parameters handles parameter values', t => {
   var p = new vega.Parameters;
 
   // test initial state

@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('stringValue maps values', function(t) {
+tape('stringValue maps values', t => {
   // should wrap string arguments in double quotation marks
   t.strictEqual(vega.stringValue('test'), '"test"');
 
@@ -26,7 +26,7 @@ tape('stringValue maps values', function(t) {
 
   // should handle quotes in strings
   var tests = ["'hello'", '"hello"'];
-  tests.forEach(function(s) {
+  tests.forEach(s => {
     t.equal(s, eval(vega.stringValue(s)));
   });
 
@@ -36,7 +36,7 @@ tape('stringValue maps values', function(t) {
     '\u2028', // line separator
     '\u2029' // paragraph separator
   ];
-  tests.forEach(function(s) {
+  tests.forEach(s => {
     t.equal(s, eval(vega.stringValue(s)));
   });
 

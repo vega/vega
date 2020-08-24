@@ -14,7 +14,7 @@ export default function parseData(data, scope) {
   }
 
   if (data.on) {
-    data.on.forEach(function(on) {
+    data.on.forEach(on => {
       parseTrigger(on, scope, data.name);
     });
   }
