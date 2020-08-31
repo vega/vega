@@ -22,9 +22,10 @@ export function labelValues(scale, count) {
 }
 
 export function thresholdFormat(locale, scale, specifier) {
-  let _ = scale[formats[scale.type]](),
-      n = _.length,
-      d = n > 1 ? _[1] - _[0] : _[0], i;
+  const _ = scale[formats[scale.type]](),
+        n = _.length;
+
+  let d = n > 1 ? _[1] - _[0] : _[0], i;
 
   for (i=1; i<n; ++i) {
     d = Math.min(d, _[i] - _[i-1]);
@@ -80,9 +81,10 @@ const formatValue = (value, format) =>
   Number.isFinite(value) ? format(value) : null;
 
 export function labelFraction(scale) {
-  let domain = scale.domain(),
-      count = domain.length - 1,
-      lo = +domain[0],
+  const domain = scale.domain(),
+        count = domain.length - 1;
+
+  let lo = +domain[0],
       hi = +peek(domain),
       span = hi - lo;
 

@@ -25,9 +25,9 @@ JoinAggregate.Definition = {
 
 inherits(JoinAggregate, Aggregate, {
   transform(_, pulse) {
-    let aggr = this,
-        mod = _.modified(),
-        cells;
+    const aggr = this,
+          mod = _.modified();
+    let cells;
 
     // process all input tuples to calculate aggregates
     if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
@@ -51,9 +51,9 @@ inherits(JoinAggregate, Aggregate, {
   },
 
   changes() {
-    let adds = this._adds,
-        mods = this._mods,
-        i, n;
+    const adds = this._adds,
+          mods = this._mods;
+    let i, n;
 
     for (i=0, n=this._alen; i<n; ++i) {
       this.celltuple(adds[i]);

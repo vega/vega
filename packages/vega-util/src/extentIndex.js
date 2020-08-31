@@ -1,7 +1,6 @@
 export default function(array, f) {
-  let i = -1,
-      n = array.length,
-      a, b, c, u, v;
+  const n = array.length;
+  let i = -1, a, b, c, u, v;
 
   if (f == null) {
     while (++i < n) {

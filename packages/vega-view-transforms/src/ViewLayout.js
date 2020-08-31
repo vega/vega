@@ -159,10 +159,11 @@ function viewSizeLayout(view, group, viewBounds, _) {
       viewHeight = view._height,
       width  = Math.max(0, group.width || 0),
       left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-      right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
       height = Math.max(0, group.height || 0),
-      top    = Math.max(0, Math.ceil(-viewBounds.y1)),
-      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+      top    = Math.max(0, Math.ceil(-viewBounds.y1));
+
+  const right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
   if (auto.contains === Padding) {
     const padding = view.padding();

@@ -219,12 +219,13 @@ function configureBins(scale, _, count) {
 
   if (bins && !isArray(bins)) {
     // generate bin boundary array
-    let domain = scale.domain(),
-        lo = domain[0],
-        hi = peek(domain),
-        start = bins.start == null ? lo : bins.start,
-        stop = bins.stop == null ? hi : bins.stop,
-        step = bins.step;
+    const domain = scale.domain(),
+          lo = domain[0],
+          hi = peek(domain),
+          step = bins.step;
+
+    let start = bins.start == null ? lo : bins.start,
+        stop = bins.stop == null ? hi : bins.stop;
 
     if (!step) error('Scale bins parameter missing step property.');
     if (start < lo) start = step * Math.ceil(lo / step);

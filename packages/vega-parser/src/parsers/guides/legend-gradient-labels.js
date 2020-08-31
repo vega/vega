@@ -13,14 +13,15 @@ const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Cen
       baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  let _ = lookup(spec, config),
-      vertical = _.isVertical(),
-      thickness = encoder(_.gradientThickness()),
-      length = _.gradientLength(),
-      overlap = _('labelOverlap'),
-      encode, enter, update, u, v, adjust = '';
+  const _ = lookup(spec, config),
+        vertical = _.isVertical(),
+        thickness = encoder(_.gradientThickness()),
+        length = _.gradientLength();
 
-  encode = {
+  let overlap = _('labelOverlap'),
+      enter, update, u, v, adjust = '';
+
+  const encode = {
     enter: enter = {
       opacity: zero
     },

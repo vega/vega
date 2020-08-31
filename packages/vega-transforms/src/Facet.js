@@ -32,8 +32,8 @@ inherits(Facet, Transform, {
 
   // parent argument provided by PreFacet subclass
   subflow(key, flow, pulse, parent) {
-    let flows = this.value,
-        sf = hasOwnProperty(flows, key) && flows[key],
+    const flows = this.value;
+    let sf = hasOwnProperty(flows, key) && flows[key],
         df, p;
 
     if (!sf) {

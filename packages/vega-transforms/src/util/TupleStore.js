@@ -29,13 +29,14 @@ prototype.values = function() {
   this._get = null;
   if (this._rem.length === 0) return this._add;
 
-  let a = this._add,
-      r = this._rem,
-      k = this._key,
-      n = a.length,
-      m = r.length,
-      x = Array(n - m),
-      map = {}, i, j, v;
+  const a = this._add,
+        r = this._rem,
+        k = this._key,
+        n = a.length,
+        m = r.length,
+        x = Array(n - m),
+        map = {};
+  let i, j, v;
 
   // use unique key field to clear removed values
   for (i=0; i<m; ++i) {
@@ -56,9 +57,10 @@ prototype.values = function() {
 // memoizing statistics methods
 
 prototype.distinct = function(get) {
-  let v = this.values(),
-      n = v.length,
-      map = {},
+  const v = this.values(),
+        map = {};
+
+  let n = v.length,
       count = 0, s;
 
   while (--n >= 0) {

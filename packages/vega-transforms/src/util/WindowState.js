@@ -4,25 +4,25 @@ import {WindowOp, WindowOps} from './WindowOps';
 import {accessorFields, accessorName, array, error, hasOwnProperty} from 'vega-util';
 
 export default function WindowState(_) {
-  let self = this,
-      ops = array(_.ops),
-      fields = array(_.fields),
-      params = array(_.params),
-      as = array(_.as),
-      outputs = self.outputs = [],
-      windows = self.windows = [],
-      inputs = {},
-      map = {},
-      countOnly = true,
-      counts = [],
-      measures = [];
+  const ops = array(_.ops),
+        fields = array(_.fields),
+        params = array(_.params),
+        as = array(_.as),
+        outputs = this.outputs = [],
+        windows = this.windows = [],
+        inputs = {},
+        map = {},
+        counts = [],
+        measures = [];
+
+  let countOnly = true;
 
   function visitInputs(f) {
     array(accessorFields(f)).forEach(_ => inputs[_] = 1);
   }
   visitInputs(_.sort);
 
-  ops.forEach(function(op, i) {
+  ops.forEach((op, i) => {
     const field = fields[i],
           mname = accessorName(field),
           name = measureName(op, mname, as[i]);
@@ -57,10 +57,10 @@ export default function WindowState(_) {
   });
 
   if (counts.length || measures.length) {
-    self.cell = cell(measures, counts, countOnly);
+    this.cell = cell(measures, counts, countOnly);
   }
 
-  self.inputs = Object.keys(inputs);
+  this.inputs = Object.keys(inputs);
 }
 
 const prototype = WindowState.prototype;
@@ -71,19 +71,18 @@ prototype.init = function() {
 };
 
 prototype.update = function(w, t) {
-  let self = this,
-      cell = self.cell,
-      wind = self.windows,
-      data = w.data,
-      m = wind && wind.length,
-      j;
+  const cell = this.cell,
+        wind = this.windows,
+        data = w.data,
+        m = wind && wind.length;
+  let j;
 
   if (cell) {
-    for (j=w.p0; j<w.i0; ++j) cell.rem(data[j]);
-    for (j=w.p1; j<w.i1; ++j) cell.add(data[j]);
+    for (j = w.p0; j < w.i0; ++j) cell.rem(data[j]);
+    for (j = w.p1; j < w.i1; ++j) cell.add(data[j]);
     cell.set(t);
   }
-  for (j=0; j<m; ++j) wind[j].update(w, t);
+  for (j = 0; j < m; ++j) wind[j].update(w, t);
 };
 
 function cell(measures, counts, countOnly) {

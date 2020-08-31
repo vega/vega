@@ -1,7 +1,7 @@
 export default function(scale) {
   return function(_) {
-    let range = scale.range(),
-        lo = _[0],
+    const range = scale.range();
+    let lo = _[0],
         hi = _[1],
         min = -1, max, t, i, n;
 

@@ -7,9 +7,9 @@ export function fieldNames(fields, as) {
 }
 
 export function partition(data, groupby, field) {
-  let groups = [],
-      get = f => f(t),
-      map, i, n, t, k, g;
+  const groups = [],
+        get = f => f(t);
+  let map, i, n, t, k, g;
 
   // partition data points into groups
   if (groupby == null) {

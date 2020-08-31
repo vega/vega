@@ -29,7 +29,8 @@ export function scaleCopy(scale) {
 }
 
 export function scaleFraction(scale, min, max) {
-  let delta = max - min, i, t, s;
+  const delta = max - min;
+  let i, t, s;
 
   if (!delta || !Number.isFinite(delta)) {
     return constant(0.5);

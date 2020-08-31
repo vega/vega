@@ -77,10 +77,10 @@ inherits(Bin, Transform, {
       return this.value;
     }
 
-    let field = _.field,
-        bins  = bin(_),
-        step  = bins.step,
-        start = bins.start,
+    const field = _.field,
+          bins  = bin(_),
+          step  = bins.step;
+    let start = bins.start,
         stop  = start + Math.ceil((bins.stop - start) / step) * step,
         a, d;
 

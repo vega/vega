@@ -29,21 +29,20 @@ Project.Definition = {
 
 inherits(Project, Transform, {
   transform(_, pulse) {
-    let fields = _.fields,
-        as = fieldNames(_.fields, _.as || []),
-        derive = fields
-          ? (s, t) => project(s, t, fields, as)
-          : rederive,
-        out, lut;
+    const out = pulse.fork(pulse.NO_SOURCE),
+          fields = _.fields,
+          as = fieldNames(_.fields, _.as || []),
+          derive = fields
+            ? (s, t) => project(s, t, fields, as)
+            : rederive;
 
+    let lut;
     if (this.value) {
       lut = this.value;
     } else {
       pulse = pulse.addAll();
       lut = this.value = {};
     }
-
-    out = pulse.fork(pulse.NO_SOURCE);
 
     pulse.visit(pulse.REM, t => {
       const id = tupleid(t);

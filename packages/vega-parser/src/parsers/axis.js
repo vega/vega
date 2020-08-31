@@ -14,18 +14,17 @@ import {AxisTicks, Collect} from '../transforms';
 import {ref, value} from '../util';
 
 export default function(spec, scope) {
-  let config = axisConfig(spec, scope),
-      encode = spec.encode || {},
-      axisEncode = encode.axis || {},
-      name = axisEncode.name || undefined,
-      interactive = axisEncode.interactive,
-      style = axisEncode.style,
-      _ = lookup(spec, config),
-      band = tickBand(_),
-      datum, dataRef, ticksRef, size, children;
+  const config = axisConfig(spec, scope),
+        encode = spec.encode || {},
+        axisEncode = encode.axis || {},
+        name = axisEncode.name || undefined,
+        interactive = axisEncode.interactive,
+        style = axisEncode.style,
+        _ = lookup(spec, config),
+        band = tickBand(_);
 
   // single-element data source for axis group
-  datum = {
+  const datum = {
     scale:  spec.scale,
     ticks:  !!_('ticks'),
     labels: !!_('labels'),
@@ -33,15 +32,10 @@ export default function(spec, scope) {
     domain: !!_('domain'),
     title:  spec.title != null
   };
-  dataRef = ref(scope.add(Collect({}, [datum])));
-
-  // encoding properties for axis group item
-  axisEncode = extendEncode(
-    buildAxisEncode(_, spec), axisEncode, Skip
-  );
+  const dataRef = ref(scope.add(Collect({}, [datum])));
 
   // data source for axis ticks
-  ticksRef = ref(scope.add(AxisTicks({
+  const ticksRef = ref(scope.add(AxisTicks({
     scale:   scope.scaleRef(spec.scale),
     extra:   scope.property(band.extra),
     count:   scope.objectProperty(spec.tickCount),
@@ -52,7 +46,8 @@ export default function(spec, scope) {
   })));
 
   // generate axis marks
-  children = [];
+  const children = [];
+  let size;
 
   // include axis gridlines if requested
   if (datum.grid) {
@@ -86,7 +81,7 @@ export default function(spec, scope) {
     guideGroup({
       role:        AxisRole,
       from:        dataRef,
-      encode:      axisEncode,
+      encode:      extendEncode(buildAxisEncode(_, spec), axisEncode, Skip),
       marks:       children,
       aria:        _('aria'),
       description: _('description'),

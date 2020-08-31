@@ -186,8 +186,8 @@ inherits(SVGRenderer, Renderer, {
     const items = this._dirty;
     if (!items.length || !this._dirtyID) return true;
 
-    let id = ++this._dirtyID,
-        item, mark, type, mdef, i, n, o;
+    const id = ++this._dirtyID;
+    let item, mark, type, mdef, i, n, o;
 
     for (i=0, n=items.length; i<n; ++i) {
       item = items[i];
@@ -247,15 +247,15 @@ inherits(SVGRenderer, Renderer, {
   mark(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
-    let svg = this._svg,
-        mdef = marks[scene.marktype],
-        events = scene.interactive === false ? 'none' : null,
-        isGroup = mdef.tag === 'g',
-        sibling = null,
-        i = 0,
-        parent;
+    const svg = this._svg,
+          mdef = marks[scene.marktype],
+          events = scene.interactive === false ? 'none' : null,
+          isGroup = mdef.tag === 'g';
 
-    parent = bind(scene, el, prev, 'g', svg);
+    let sibling = null,
+        i = 0;
+
+    const parent = bind(scene, el, prev, 'g', svg);
     parent.setAttribute('class', cssClass(scene));
 
     // apply aria attributes to parent container element
@@ -587,8 +587,8 @@ const mark_extras = {
     }
   },
   text(mdef, el, item) {
-    let tl = textLines(item),
-        key, value, doc, lh;
+    const tl = textLines(item);
+    let key, value, doc, lh;
 
     if (isArray(tl)) {
       // multi-line text

@@ -52,12 +52,12 @@ Parameters.prototype = {
    * @return {boolean} - Returns true if a queried parameter was modified.
    */
   modified(name, index) {
-    let mod = this[CACHE], k;
+    const mod = this[CACHE];
     if (!arguments.length) {
-      for (k in mod) { if (mod[k]) return true; }
+      for (const k in mod) { if (mod[k]) return true; }
       return false;
     } else if (isArray(name)) {
-      for (k=0; k<name.length; ++k) {
+      for (let k = 0; k < name.length; ++k) {
         if (mod[name[k]]) return true;
       }
       return false;

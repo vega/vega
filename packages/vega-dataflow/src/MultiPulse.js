@@ -14,9 +14,9 @@ import {error, inherits, isArray} from 'vega-util';
  * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
  */
 export default function MultiPulse(dataflow, stamp, pulses, encode) {
-  let p = this,
-      c = 0,
-      pulse, hash, i, n, f;
+  const p = this,
+        n = pulses.length;
+  let c = 0;
 
   this.dataflow = dataflow;
   this.stamp = stamp;
@@ -24,13 +24,13 @@ export default function MultiPulse(dataflow, stamp, pulses, encode) {
   this.encode = encode || null;
   this.pulses = pulses;
 
-  for (i=0, n=pulses.length; i<n; ++i) {
-    pulse = pulses[i];
+  for (let i = 0; i < n; ++i) {
+    const pulse = pulses[i];
     if (pulse.stamp !== stamp) continue;
 
     if (pulse.fields) {
-      hash = p.fields || (p.fields = {});
-      for (f in pulse.fields) { hash[f] = 1; }
+      const hash = p.fields || (p.fields = {});
+      for (const f in pulse.fields) { hash[f] = 1; }
     }
 
     if (pulse.changed(p.ADD)) c |= p.ADD;
@@ -77,17 +77,17 @@ inherits(MultiPulse, Pulse, {
   },
 
   visit(flags, visitor) {
-    let p = this,
-        pulses = p.pulses,
-        n = pulses.length,
-        i = 0;
+    const p = this,
+          pulses = p.pulses,
+          n = pulses.length;
+    let i = 0;
 
     if (flags & p.SOURCE) {
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         pulses[i].visit(flags, visitor);
       }
     } else {
-      for (; i<n; ++i) {
+      for (; i < n; ++i) {
         if (pulses[i].stamp === p.stamp) {
           pulses[i].visit(flags, visitor);
         }

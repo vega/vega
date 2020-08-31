@@ -24,13 +24,14 @@ Sample.Definition = {
 
 inherits(Sample, Transform, {
   transform(_, pulse) {
-    let out = pulse.fork(pulse.NO_SOURCE),
-        mod = _.modified('size'),
-        num = _.size,
-        res = this.value,
+    const out = pulse.fork(pulse.NO_SOURCE),
+          mod = _.modified('size'),
+          num = _.size,
+          map = this.value.reduce((m, t) => (m[tupleid(t)] = 1, m), {});
+
+    let res = this.value,
         cnt = this.count,
-        cap = 0,
-        map = res.reduce((m, t) => (m[tupleid(t)] = 1, m), {});
+        cap = 0;
 
     // sample reservoir update function
     function update(t) {

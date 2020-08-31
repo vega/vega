@@ -42,12 +42,12 @@ inherits(CrossFilter, Transform, {
   },
 
   init(_, pulse) {
-    let fields = _.fields,
-        query = _.query,
-        indices = this._indices = {},
-        dims = this._dims = [],
-        m = query.length,
-        i = 0, key, index;
+    const fields = _.fields,
+          query = _.query,
+          indices = this._indices = {},
+          dims = this._dims = [],
+          m = query.length;
+    let i = 0, key, index;
 
     // instantiate indices and dimensions
     for (; i<m; ++i) {
@@ -60,20 +60,20 @@ inherits(CrossFilter, Transform, {
   },
 
   reinit(_, pulse) {
-    let output = pulse.materialize().fork(),
-        fields = _.fields,
-        query = _.query,
-        indices = this._indices,
-        dims = this._dims,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all = bits.all(),
-        out = (output.rem = output.add),
-        mod = output.mod,
-        m = query.length,
-        adds = {}, add, index, key,
-        mods, remMap, modMap, i, n, f;
+    const output = pulse.materialize().fork(),
+          fields = _.fields,
+          query = _.query,
+          indices = this._indices,
+          dims = this._dims,
+          bits = this.value,
+          curr = bits.curr(),
+          prev = bits.prev(),
+          all = bits.all(),
+          out = (output.rem = output.add),
+          mod = output.mod,
+          m = query.length,
+          adds = {};
+    let add, index, key, mods, remMap, modMap, i, n, f;
 
     // set prev to current state
     prev.set(curr);
@@ -127,9 +127,9 @@ inherits(CrossFilter, Transform, {
   },
 
   eval(_, pulse) {
-    let output = pulse.materialize().fork(),
-        m = this._dims.length,
-        mask = 0;
+    const output = pulse.materialize().fork(),
+          m = this._dims.length;
+    let mask = 0;
 
     if (pulse.rem.length) {
       this.remove(_, pulse, output);
@@ -155,16 +155,16 @@ inherits(CrossFilter, Transform, {
   },
 
   insert(_, pulse, output) {
-    let tuples = pulse.add,
-        bits = this.value,
-        dims = this._dims,
-        indices = this._indices,
-        fields = _.fields,
-        adds = {},
-        out = output.add,
-        k = bits.size(),
-        n = k + tuples.length,
-        m = dims.length, j, key, add;
+    const tuples = pulse.add,
+          bits = this.value,
+          dims = this._dims,
+          indices = this._indices,
+          fields = _.fields,
+          adds = {},
+          out = output.add,
+          n = bits.size() + tuples.length,
+          m = dims.length;
+    let k = bits.size(), j, key, add;
 
     // resize bitmaps and add tuples as needed
     bits.resize(n, m);
@@ -182,19 +182,19 @@ inherits(CrossFilter, Transform, {
     }
 
     // set previous filters, output if passes at least one filter
-    for (; k<n; ++k) {
+    for (; k < n; ++k) {
       prev[k] = all;
       if (curr[k] !== all) out.push(k);
     }
   },
 
   modify(pulse, output) {
-    let out = output.mod,
-        bits = this.value,
-        curr = bits.curr(),
-        all  = bits.all(),
-        tuples = pulse.mod,
-        i, n, k;
+    const out = output.mod,
+          bits = this.value,
+          curr = bits.curr(),
+          all  = bits.all(),
+          tuples = pulse.mod;
+    let i, n, k;
 
     for (i=0, n=tuples.length; i<n; ++i) {
       k = tuples[i]._index;
@@ -203,15 +203,15 @@ inherits(CrossFilter, Transform, {
   },
 
   remove(_, pulse, output) {
-    let indices = this._indices,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all  = bits.all(),
-        map = {},
-        out = output.rem,
-        tuples = pulse.rem,
-        i, n, k, f;
+    const indices = this._indices,
+          bits = this.value,
+          curr = bits.curr(),
+          prev = bits.prev(),
+          all  = bits.all(),
+          map = {},
+          out = output.rem,
+          tuples = pulse.rem;
+    let i, n, k, f;
 
     // process tuples, output if passes at least one filter
     for (i=0, n=tuples.length; i<n; ++i) {
@@ -243,11 +243,11 @@ inherits(CrossFilter, Transform, {
   },
 
   update(_, pulse, output) {
-    let dims = this._dims,
-        query = _.query,
-        stamp = pulse.stamp,
-        m = dims.length,
-        mask = 0, i, q;
+    const dims = this._dims,
+          query = _.query,
+          stamp = pulse.stamp,
+          m = dims.length;
+    let mask = 0, i, q;
 
     // survey how many queries have changed
     output.filters = 0;
@@ -273,19 +273,19 @@ inherits(CrossFilter, Transform, {
   },
 
   incrementAll(dim, query, stamp, out) {
-    let bits = this.value,
-        seen = bits.seen(),
-        curr = bits.curr(),
-        prev = bits.prev(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one,
-        i, j, k;
+    const bits = this.value,
+          seen = bits.seen(),
+          curr = bits.curr(),
+          prev = bits.prev(),
+          index = dim.index(),
+          old = dim.bisect(dim.range),
+          range = dim.bisect(query),
+          lo1 = range[0],
+          hi1 = range[1],
+          lo0 = old[0],
+          hi0 = old[1],
+          one = dim.one;
+    let i, j, k;
 
     // Fast incremental update based on previous lo index.
     if (lo1 < lo0) {
@@ -337,17 +337,17 @@ inherits(CrossFilter, Transform, {
   },
 
   incrementOne(dim, query, add, rem) {
-    let bits = this.value,
-        curr = bits.curr(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one,
-        i, j, k;
+    const bits = this.value,
+          curr = bits.curr(),
+          index = dim.index(),
+          old = dim.bisect(dim.range),
+          range = dim.bisect(query),
+          lo1 = range[0],
+          hi1 = range[1],
+          lo0 = old[0],
+          hi0 = old[1],
+          one = dim.one;
+    let i, j, k;
 
     // Fast incremental update based on previous lo index.
     if (lo1 < lo0) {

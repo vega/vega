@@ -68,8 +68,8 @@ function draw(context, scene, bounds) {
   visit(scene, item => {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-    let img = getImage(item, this),
-        w = imageWidth(item, img),
+    const img = getImage(item, this);
+    let w = imageWidth(item, img),
         h = imageHeight(item, img),
         x = (item.x || 0) - imageXOffset(item.align, w),
         y = (item.y || 0) - imageYOffset(item.baseline, h),

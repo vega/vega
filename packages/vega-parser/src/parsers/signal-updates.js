@@ -3,8 +3,8 @@ import {parseExpression} from 'vega-functions';
 import {error} from 'vega-util';
 
 export default function(signal, scope) {
-  let op = scope.getSignal(signal.name),
-      expr = signal.update;
+  const op = scope.getSignal(signal.name);
+  let expr = signal.update;
 
   if (signal.init) {
     if (expr) {

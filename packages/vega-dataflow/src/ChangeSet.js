@@ -6,25 +6,26 @@ export function isChangeSet(v) {
 }
 
 export default function changeset() {
-  let add = [],  // insert tuples
-      rem = [],  // remove tuples
-      mod = [],  // modify tuples
-      remp = [], // remove by predicate
-      modp = [], // modify by predicate
-      clean = null,
+  const add = [],  // insert tuples
+        rem = [],  // remove tuples
+        mod = [],  // modify tuples
+        remp = [], // remove by predicate
+        modp = []; // modify by predicate
+  let clean = null,
       reflow = false;
 
   return {
     constructor: changeset,
     insert(t) {
-      let d = array(t), i = 0, n = d.length;
-      for (; i<n; ++i) add.push(d[i]);
+      const d = array(t), n = d.length;
+      for (let i = 0; i < n; ++i) add.push(d[i]);
       return this;
     },
     remove(t) {
-      let a = isFunction(t) ? remp : rem,
-          d = array(t), i = 0, n = d.length;
-      for (; i<n; ++i) a.push(d[i]);
+      const a = isFunction(t) ? remp : rem,
+            d = array(t),
+            n = d.length;
+      for (let i = 0; i < n; ++i) a.push(d[i]);
       return this;
     },
     modify(t, field, value) {
@@ -52,21 +53,22 @@ export default function changeset() {
       return this;
     },
     pulse(pulse, tuples) {
-      let cur = {}, out = {}, i, n, m, f, t, id;
+      const cur = {}, out = {};
+      let i, n, m, f, t, id;
 
       // build lookup table of current tuples
-      for (i=0, n=tuples.length; i<n; ++i) {
+      for (i = 0, n = tuples.length; i < n; ++i) {
         cur[tupleid(tuples[i])] = 1;
       }
 
       // process individual tuples to remove
-      for (i=0, n=rem.length; i<n; ++i) {
+      for (i = 0, n = rem.length; i < n; ++i) {
         t = rem[i];
         cur[tupleid(t)] = -1;
       }
 
       // process predicate-based removals
-      for (i=0, n=remp.length; i<n; ++i) {
+      for (i = 0, n = remp.length; i < n; ++i) {
         f = remp[i];
         tuples.forEach(t => {
           if (f(t)) cur[tupleid(t)] = -1;
@@ -74,7 +76,7 @@ export default function changeset() {
       }
 
       // process all add tuples
-      for (i=0, n=add.length; i<n; ++i) {
+      for (i = 0, n = add.length; i < n; ++i) {
         t = add[i];
         id = tupleid(t);
         if (cur[id]) {
@@ -88,7 +90,7 @@ export default function changeset() {
       }
 
       // populate pulse rem list
-      for (i=0, n=tuples.length; i<n; ++i) {
+      for (i = 0, n = tuples.length; i < n; ++i) {
         t = tuples[i];
         if (cur[tupleid(t)] < 0) pulse.rem.push(t);
       }
@@ -104,7 +106,7 @@ export default function changeset() {
       }
 
       // process individual tuples to modify
-      for (i=0, n=mod.length; i<n; ++i) {
+      for (i = 0, n = mod.length; i < n; ++i) {
         m = mod[i];
         t = m.tuple;
         f = m.field;
@@ -116,7 +118,7 @@ export default function changeset() {
       }
 
       // process predicate-based modifications
-      for (i=0, n=modp.length; i<n; ++i) {
+      for (i = 0, n = modp.length; i < n; ++i) {
         m = modp[i];
         f = m.filter;
         tuples.forEach(t => {

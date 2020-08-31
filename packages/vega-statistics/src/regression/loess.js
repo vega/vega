@@ -25,8 +25,8 @@ export default function(data, x, y, bandwidth) {
             i1 = interval[1],
             edge = (dx - xv[i0]) > (xv[i1] - dx) ? i0 : i1;
 
-      let W = 0, X = 0, Y = 0, XY = 0, X2 = 0,
-          denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
+      let W = 0, X = 0, Y = 0, XY = 0, X2 = 0;
+      const denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
 
       for (let k = i0; k <= i1; ++k) {
         const xk = xv[k],
@@ -74,8 +74,8 @@ function tricube(x) {
 
 // advance sliding window interval of nearest neighbors
 function updateInterval(xv, i, interval) {
-  let val = xv[i],
-      left = interval[0],
+  const val = xv[i];
+  let left = interval[0],
       right = interval[1] + 1;
 
   if (right >= xv.length) return;

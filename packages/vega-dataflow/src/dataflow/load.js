@@ -70,8 +70,8 @@ export async function preload(target, url, format) {
 }
 
 function loadPending(df) {
-  let accept,
-      pending = new Promise(a => accept = a);
+  let accept;
+  const pending = new Promise(a => accept = a);
 
   pending.requests = 0;
 

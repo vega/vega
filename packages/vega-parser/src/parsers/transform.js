@@ -22,9 +22,11 @@ export default function(spec, scope) {
  * Parse all parameters of a data transform.
  */
 function parseParameters(def, spec, scope) {
-  let params = {}, pdef, i, n;
-  for (i=0, n=def.params.length; i<n; ++i) {
-    pdef = def.params[i];
+  const params = {},
+        n = def.params.length;
+
+  for (let i = 0; i < n; ++i) {
+    const pdef = def.params[i];
     params[pdef.name] = parseParameter(pdef, spec, scope);
   }
   return params;
@@ -109,12 +111,13 @@ function parseSubParameters(def, spec, scope) {
  * Parse a sub-parameter object.
  */
 function parseSubParameter(def, value, scope) {
-  let params, pdef, k, i, n;
+  const n =def.params.length;
+  let pdef;
 
   // loop over defs to find matching key
-  for (i=0, n=def.params.length; i<n; ++i) {
+  for (let i = 0; i < n; ++i) {
     pdef = def.params[i];
-    for (k in pdef.key) {
+    for (const k in pdef.key) {
       if (pdef.key[k] !== value[k]) { pdef = null; break; }
     }
     if (pdef) break;
@@ -123,7 +126,7 @@ function parseSubParameter(def, value, scope) {
   if (!pdef) error('Unsupported parameter: ' + stringValue(value));
 
   // parse params, create Params transform, return ref
-  params = extend(parseParameters(pdef, value, scope), pdef.key);
+  const params = extend(parseParameters(pdef, value, scope), pdef.key);
   return ref(scope.add(Params(params)));
 }
 

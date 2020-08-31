@@ -18,9 +18,9 @@ const isL = 'item.orient === "left"',
       exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  let _ = lookup(spec, config), encode;
+  const _ = lookup(spec, config);
 
-  encode = {
+  const encode = {
     enter: {opacity: zero},
     update: {
       opacity: one,

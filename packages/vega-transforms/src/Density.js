@@ -94,10 +94,10 @@ inherits(Density, Transform, {
     const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
-      let dist = parseDist(_.distribution, source(pulse)),
-          minsteps = _.steps || _.minsteps || 25,
-          maxsteps = _.steps || _.maxsteps || 200,
-          method = _.method || 'pdf';
+      const dist = parseDist(_.distribution, source(pulse)),
+            minsteps = _.steps || _.minsteps || 25,
+            maxsteps = _.steps || _.maxsteps || 200;
+      let method = _.method || 'pdf';
 
       if (method !== 'pdf' && method !== 'cdf') {
         error('Invalid density method: ' + method);

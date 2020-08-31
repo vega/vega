@@ -29,11 +29,12 @@ function removePredicate(props) {
 }
 
 export default function(name, insert, remove, toggle, modify, values) {
-  let df = this.context.dataflow,
-      data = this.context.data[name],
-      input = data.input,
-      changes = data.changes,
-      stamp = df.stamp(),
+  const df = this.context.dataflow,
+        data = this.context.data[name],
+        input = data.input,
+        stamp = df.stamp();
+
+  let changes = data.changes,
       predicate, key;
 
   if (df._trigger === false || !(input.value.length || insert || toggle)) {
