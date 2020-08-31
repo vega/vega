@@ -95,7 +95,7 @@ function layoutGroup(view, group, _) {
     });
 
     // perform grid layout for each orient group
-    for (let orient in l) {
+    for (const orient in l) {
       const g = l[orient];
       gridLayout(view, g, legendParams(
         g, orient, _.legends, xBounds, yBounds, width, height

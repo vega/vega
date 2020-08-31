@@ -294,7 +294,7 @@ export const codeGenerator = codegen(codegenParams);
 function buildFunctions(codegen) {
   const fn = functions(codegen);
   eventFunctions.forEach(name => fn[name] = eventPrefix + name);
-  for (let name in functionContext) { fn[name] = thisPrefix + name; }
+  for (const name in functionContext) { fn[name] = thisPrefix + name; }
   extend(fn, internalScaleFunctions(codegen, functionContext, astVisitors));
   return fn;
 }

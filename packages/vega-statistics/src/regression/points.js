@@ -34,7 +34,7 @@ export function points(data, x, y, sort) {
 export function visitPoints(data, x, y, callback) {
   let i = -1, u, v;
 
-  for (let d of data) {
+  for (const d of data) {
     u = x(d);
     v = y(d);
     if (u != null && (u = +u) >= u && v != null && (v = +v) >= v) {

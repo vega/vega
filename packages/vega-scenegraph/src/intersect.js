@@ -26,7 +26,7 @@ function intersectMark(mark, box, filter, hits) {
       }
     } else {
       for (const test = Marks[type].isect; i<n; ++i) {
-        let item = items[i];
+        const item = items[i];
         if (intersectItem(item, box, test)) hits.push(item);
       }
     }
