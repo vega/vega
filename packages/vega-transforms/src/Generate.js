@@ -17,10 +17,11 @@ export default function Generate(params) {
 
 inherits(Generate, Transform, {
   transform(_, pulse) {
+    const out = pulse.fork(pulse.ALL),
+          gen = _.generator;
+
     let data = this.value,
-        out = pulse.fork(pulse.ALL),
         num = _.size - data.length,
-        gen = _.generator,
         add, rem, t;
 
     if (num > 0) {

@@ -88,8 +88,8 @@ inherits(CanvasRenderer, Renderer, {
   },
 
   dirty(item) {
-    let b = this._tempb.clear().union(item.bounds),
-        g = item.mark.group;
+    const b = this._tempb.clear().union(item.bounds);
+    let g = item.mark.group;
 
     while (g) {
       b.translate(g.x || 0, g.y || 0);

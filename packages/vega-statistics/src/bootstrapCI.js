@@ -5,10 +5,10 @@ import {ascending, quantile} from 'd3-array';
 export default function(array, samples, alpha, f) {
   if (!array.length) return [undefined, undefined];
 
-  let values = Float64Array.from(numbers(array, f)),
-      n = values.length,
-      m = samples,
-      a, i, j, mu;
+  const values = Float64Array.from(numbers(array, f)),
+        n = values.length,
+        m = samples;
+  let a, i, j, mu;
 
   for (j=0, mu=Array(m); j<m; ++j) {
     for (a=0, i=0; i<n; ++i) {

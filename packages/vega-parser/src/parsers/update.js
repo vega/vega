@@ -11,11 +11,12 @@ const OP_VALUE_EXPR = {
 };
 
 export default function(spec, scope, target) {
+  const encode = spec.encode,
+        entry = {target: target};
+
   let events = spec.events,
       update = spec.update,
-      encode = spec.encode,
-      sources = [],
-      entry = {target: target};
+      sources = [];
 
   if (!events) {
     error('Signal update missing events specification.');

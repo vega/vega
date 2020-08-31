@@ -30,8 +30,7 @@ function nestedStream(stream, scope) {
 }
 
 function eventStream(stream, scope) {
-  let id, entry;
-
+  let id;
   if (stream.type === Timer) {
     id = scope.event(Timer, stream.throttle);
     stream = {between: stream.between, filter: stream.filter};
@@ -39,7 +38,7 @@ function eventStream(stream, scope) {
     id = scope.event(eventSource(stream.source), stream.type);
   }
 
-  entry = streamParameters({stream: id}, stream, scope);
+  const entry = streamParameters({stream: id}, stream, scope);
   return Object.keys(entry).length === 1
     ? id
     : scope.addStream(entry).id;

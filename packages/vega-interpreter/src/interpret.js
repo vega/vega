@@ -25,8 +25,8 @@ const Visitors = {
   },
 
   CallExpression: ($, n) => {
-    let name = n.callee.name,
-        args = n.arguments;
+    const args = n.arguments;
+    let name = n.callee.name;
 
     // handle special internal functions used by encoders
     // re-route to corresponding standard function

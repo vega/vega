@@ -24,14 +24,14 @@ function parse(data, types, timeParser, utcParser) {
   utcParser = utcParser || locale.utcParse;
 
   let fields = data.columns || Object.keys(data[0]),
-      parsers, datum, field, i, j, n, m;
+      datum, field, i, j, n, m;
 
   if (types === 'auto') types = inferTypes(data, fields);
 
   fields = Object.keys(types);
-  parsers = fields.map(field => {
-    let type = types[field],
-        parts, pattern;
+  const parsers = fields.map(field => {
+    const type = types[field];
+    let parts, pattern;
 
     if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
       parts = type.split(/:(.+)?/, 2);  // split on first :

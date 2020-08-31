@@ -4,14 +4,13 @@ const NULL = {};
 
 export default function(input) {
   let obj = {},
-      map,
       test;
 
   function has(key) {
     return hasOwnProperty(obj, key) && obj[key] !== NULL;
   }
 
-  map = {
+  const map = {
     size: 0,
     empty: 0,
     object: obj,
@@ -48,11 +47,10 @@ export default function(input) {
       }
     },
     clean() {
-      let next = {},
-          size = 0,
-          key, value;
-      for (key in obj) {
-        value = obj[key];
+      const next = {};
+      let size = 0;
+      for (const key in obj) {
+        const value = obj[key];
         if (value !== NULL && (!test || !test(value))) {
           next[key] = value;
           ++size;

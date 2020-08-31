@@ -12,14 +12,13 @@ import {
 
 function trimZeroes(numberFormat, decimalChar) {
   return x => {
-    let str = numberFormat(x),
-        dec = str.indexOf(decimalChar),
-        idx, end;
+    const str = numberFormat(x),
+        dec = str.indexOf(decimalChar);
 
     if (dec < 0) return str;
 
-    idx = rightmostDigit(str, dec);
-    end = idx < str.length ? str.slice(idx) : '';
+    let idx = rightmostDigit(str, dec);
+    const end = idx < str.length ? str.slice(idx) : '';
     while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
 
     return str.slice(0, idx) + end;

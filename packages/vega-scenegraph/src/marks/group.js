@@ -129,18 +129,18 @@ function pick(context, scene, x, y, gx, gy) {
         cy = y * context.pixelRatio;
 
   return pickVisit(scene, group => {
-    let hit, fore, ix, dx, dy, dw, dh, b, c;
+    let hit, dx, dy;
 
     // first hit test bounding box
-    b = group.bounds;
+    const b = group.bounds;
     if (b && !b.contains(gx, gy)) return;
 
     // passed bounds check, test rectangular clip
     dx = group.x || 0;
     dy = group.y || 0;
-    dw = dx + (group.width || 0);
-    dh = dy + (group.height || 0);
-    c = group.clip;
+    const dw = dx + (group.width || 0),
+          dh = dy + (group.height || 0),
+          c = group.clip;
     if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
     // adjust coordinate system
@@ -155,8 +155,8 @@ function pick(context, scene, x, y, gx, gy) {
       return null;
     }
 
-    fore = group.strokeForeground;
-    ix = scene.interactive !== false;
+    const fore = group.strokeForeground,
+          ix = scene.interactive !== false;
 
     // hit test against group foreground
     if (ix && fore && group.stroke

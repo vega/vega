@@ -394,7 +394,7 @@ Pulse.prototype = {
    * @return {Pulse} - Returns this pulse instance.
    */
   visit(flags, visitor) {
-    let p = this, v = visitor, src, sum;
+    const p = this, v = visitor;
 
     if (flags & SOURCE) {
       visitArray(p.source, p.srcF, v);
@@ -405,8 +405,9 @@ Pulse.prototype = {
     if (flags & REM) visitArray(p.rem, p.remF, v);
     if (flags & MOD) visitArray(p.mod, p.modF, v);
 
-    if ((flags & REFLOW) && (src = p.source)) {
-      sum = p.add.length + p.mod.length;
+    const src = p.source;
+    if ((flags & REFLOW) && src) {
+      const sum = p.add.length + p.mod.length;
       if (sum === src.length) {
         // do nothing
       } else if (sum) {

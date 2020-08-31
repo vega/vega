@@ -43,9 +43,9 @@ inherits(Flatten, Transform, {
 
     // generate flattened tuples
     pulse.visit(pulse.SOURCE, t => {
-      let arrays = fields.map(f => f(t)),
-          maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
-          i = 0, j, d, v;
+      const arrays = fields.map(f => f(t)),
+            maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0);
+      let i = 0, j, d, v;
 
       for (; i<maxlen; ++i) {
         d = derive(t);

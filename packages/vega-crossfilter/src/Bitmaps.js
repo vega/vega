@@ -25,10 +25,10 @@ export default function Bitmaps() {
     },
 
     remove(num, map) { // map: index -> boolean (true => remove)
-      let n = data.length,
-          copy = Array(n - num),
-          reindex = data, // reuse old data array for index map
-          t, i, j;
+      const n = data.length,
+            copy = Array(n - num),
+            reindex = data; // reuse old data array for index map
+      let t, i, j;
 
       // seek forward to first removal
       for (i=0; !map[i] && i<n; ++i) {

@@ -86,10 +86,11 @@ const reflow = (pulse, _) =>
 
 inherits(Overlap, Transform, {
   transform(_, pulse) {
-    let reduce = methods[_.method] || methods.parity,
-        source = pulse.materialize(pulse.SOURCE).source,
-        sep = _.separation || 0,
-        items, test, bounds;
+    const reduce = methods[_.method] || methods.parity,
+          sep = _.separation || 0;
+
+    let source = pulse.materialize(pulse.SOURCE).source,
+        items, test;
 
     if (!source || !source.length) return;
 
@@ -134,7 +135,7 @@ inherits(Overlap, Transform, {
     }
 
     // re-calculate mark bounds
-    bounds = items[0].mark.bounds.clear();
+    const bounds = items[0].mark.bounds.clear();
     source.forEach(item => {
       if (item.opacity) bounds.union(item.bounds);
     });

@@ -34,17 +34,18 @@ TimeUnit.Definition = {
 
 inherits(TimeUnit, Transform, {
   transform(_, pulse) {
-    let field = _.field,
-        band = _.interval !== false,
-        utc = _.timezone === 'utc',
-        floor = this._floor(_, pulse),
-        offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
-        as = _.as || OUTPUT,
-        u0 = as[0],
-        u1 = as[1],
-        min = floor.start || Infinity,
+    const field = _.field,
+          band = _.interval !== false,
+          utc = _.timezone === 'utc',
+          floor = this._floor(_, pulse),
+          offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+          as = _.as || OUTPUT,
+          u0 = as[0],
+          u1 = as[1],
+          step = floor.step;
+
+    let min = floor.start || Infinity,
         max = floor.stop || -Infinity,
-        step = floor.step,
         flag = pulse.ADD;
 
     if (_.modified() || pulse.modified(accessorFields(field))) {
@@ -55,7 +56,8 @@ inherits(TimeUnit, Transform, {
     }
 
     pulse.visit(flag, t => {
-      let v = field(t), a, b;
+      const v = field(t);
+      let a, b;
       if (v == null) {
         t[u0] = null;
         if (band) t[u1] = null;
@@ -77,7 +79,7 @@ inherits(TimeUnit, Transform, {
     const utc = _.timezone === 'utc';
 
     // get parameters
-    let {units, step} = _.units
+    const {units, step} = _.units
       ? {units: _.units, step: _.step || 1}
       : timeBin({
         extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
@@ -85,13 +87,12 @@ inherits(TimeUnit, Transform, {
       });
 
     // check / standardize time units
-    units = timeUnits(units);
+    const tunits = timeUnits(units),
+          prev = this.value || {},
+          floor = (utc ? utcFloor : timeFloor)(tunits, step);
 
-    const prev = this.value || {},
-          floor = (utc ? utcFloor : timeFloor)(units, step);
-
-    floor.unit = peek(units);
-    floor.units = units;
+    floor.unit = peek(tunits);
+    floor.units = tunits;
     floor.step = step;
     floor.start = prev.start;
     floor.stop = prev.stop;

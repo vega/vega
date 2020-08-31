@@ -20,7 +20,7 @@ export const WindowOps = {
       init: () => rank = 1,
       next: w => {
         const i = w.index,
-            data = w.data;
+              data = w.data;
         return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
       }
     };
@@ -31,14 +31,14 @@ export const WindowOps = {
       init: () => drank = 1,
       next: w => {
         const i = w.index,
-            d = w.data;
+              d = w.data;
         return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
       }
     };
   },
   percent_rank: function() {
     const rank = WindowOps.rank(),
-        next = rank.next;
+          next = rank.next;
     return {
       init: rank.init,
       next: w => (next(w) - 1) / (w.data.length - 1)
@@ -49,9 +49,9 @@ export const WindowOps = {
     return {
       init: () => cume = 0,
       next: w => {
-        let i = w.index,
-            d = w.data,
-            c = w.compare;
+        const d = w.data,
+              c = w.compare;
+        let i = w.index;
         if (cume < i) {
           while (i + 1 < d.length && !c(d[i], d[i + 1])) ++i;
           cume = i;
@@ -64,7 +64,7 @@ export const WindowOps = {
     num = +num;
     if (!(num > 0)) error('ntile num must be greater than zero.');
     const cume = WindowOps.cume_dist(),
-        next = cume.next;
+          next = cume.next;
     return {
       init: cume.init,
       next: w => Math.ceil(num * next(w))

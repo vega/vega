@@ -8,12 +8,12 @@ import {AxisTitleRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  let _ = lookup(spec, config),
-      orient = spec.orient,
-      sign = getSign(orient, -1, 1),
-      encode, enter, update, titlePos;
+  const _ = lookup(spec, config),
+        orient = spec.orient,
+        sign = getSign(orient, -1, 1);
 
-  encode = {
+  let enter, update;
+  const encode = {
     enter: enter = {
       opacity: zero,
       anchor: encoder(_('titleAnchor', null)),
@@ -28,7 +28,7 @@ export default function(spec, config, userEncode, dataRef) {
     }
   };
 
-  titlePos = {
+  const titlePos = {
     signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 

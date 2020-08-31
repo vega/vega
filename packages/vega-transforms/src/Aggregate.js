@@ -133,8 +133,9 @@ inherits(Aggregate, Transform, {
           inputMap = {};
 
     function inputVisit(get) {
-      let fields = array(accessorFields(get)),
-          i = 0, n = fields.length, f;
+      const fields = array(accessorFields(get)),
+            n = fields.length;
+      let i = 0, f;
       for (; i<n; ++i) {
         if (!inputMap[f=fields[i]]) {
           inputMap[f] = 1;
@@ -158,12 +159,12 @@ inherits(Aggregate, Transform, {
     this._counts = [];
     this._measures = [];
 
-    let fields = _.fields || [null],
-        ops = _.ops || ['count'],
-        as = _.as || [],
-        n = fields.length,
-        map = {},
-        field, op, m, mname, outname, i;
+    const fields = _.fields || [null],
+          ops = _.ops || ['count'],
+          as = _.as || [],
+          n = fields.length,
+          map = {};
+    let field, op, m, mname, outname, i;
 
     if (n !== ops.length) {
       error('Unmatched number of fields and aggregate ops.');

@@ -52,8 +52,8 @@ export const alignExpr = anchorExpr(
 );
 
 export function tickBand(_) {
-  let v = _('tickBand'),
-      offset = _('tickOffset'),
+  const v = _('tickBand');
+  let offset = _('tickOffset'),
       band, extra;
 
   if (!v) {

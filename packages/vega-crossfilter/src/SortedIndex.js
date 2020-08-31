@@ -12,10 +12,10 @@ export default function SortedIndex() {
   function insert(key, data, base) {
     if (!data.length) return [];
 
-    let n0 = size,
+    const n0 = size,
         n1 = data.length,
-        addv = Array(n1),
-        addi = array32(n1),
+        addi = array32(n1);
+    let addv = Array(n1),
         oldv, oldi, i;
 
     for (i=0; i<n1; ++i) {
@@ -44,8 +44,8 @@ export default function SortedIndex() {
 
   function remove(num, map) {
     // map: index -> remove
-    let n = size,
-        idx, i, j;
+    const n = size;
+    let idx, i, j;
 
     // seek forward to first removal
     for (i=0; !map[index[i]] && i<n; ++i);

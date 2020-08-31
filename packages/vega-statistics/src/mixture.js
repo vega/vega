@@ -4,9 +4,10 @@ export default function(dists, weights) {
   let m = 0, w;
 
   function normalize(x) {
-    let w = [], sum = 0, i;
-    for (i=0; i<m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
-    for (i=0; i<m; ++i) { w[i] /= sum; }
+    const w = [];
+    let sum = 0, i;
+    for (i = 0; i < m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
+    for (i = 0; i < m; ++i) { w[i] /= sum; }
     return w;
   }
 
@@ -34,8 +35,8 @@ export default function(dists, weights) {
     },
 
     sample() {
-      let r = random(),
-          d = dists[m-1],
+      const r = random();
+      let d = dists[m-1],
           v = w[0],
           i = 0;
 

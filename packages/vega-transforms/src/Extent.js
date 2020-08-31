@@ -21,16 +21,14 @@ Extent.Definition = {
 
 inherits(Extent, Transform, {
   transform(_, pulse) {
-    let extent = this.value,
-        field = _.field,
-        min = extent[0],
-        max = extent[1],
-        mod;
+    const extent = this.value,
+          field = _.field,
+          mod = pulse.changed()
+            || pulse.modified(field.fields)
+            || _.modified('field');
 
-    mod = pulse.changed()
-      || pulse.modified(field.fields)
-      || _.modified('field');
-
+    let min = extent[0],
+        max = extent[1];
     if (mod || min == null) {
       min = +Infinity;
       max = -Infinity;

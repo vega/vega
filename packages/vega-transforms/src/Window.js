@@ -80,17 +80,16 @@ inherits(Window, Transform, {
   },
 
   group(key) {
-    let self = this,
-        group = self.value[key];
+    let group = this.value[key];
 
     if (!group) {
-      group = self.value[key] = SortedList(tupleid);
+      group = this.value[key] = SortedList(tupleid);
       group.stamp = -1;
     }
 
-    if (group.stamp < self.stamp) {
-      group.stamp = self.stamp;
-      self._mods[self._mlen++] = group;
+    if (group.stamp < this.stamp) {
+      group.stamp = this.stamp;
+      this._mods[this._mlen++] = group;
     }
 
     return group;

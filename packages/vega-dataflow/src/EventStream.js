@@ -51,12 +51,11 @@ EventStream.prototype = {
 
   receive(evt) {
     if (this._filter(evt)) {
-      let val = (this.value = this._apply(evt)),
+      const val = (this.value = this._apply(evt)),
           trg = this._targets,
-          n = trg ? trg.length : 0,
-          i = 0;
+          n = trg ? trg.length : 0;
 
-      for (; i<n; ++i) trg[i].receive(val);
+      for (let i = 0; i < n; ++i) trg[i].receive(val);
 
       if (this._consume) {
         evt.preventDefault();

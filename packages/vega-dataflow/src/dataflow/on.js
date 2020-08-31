@@ -37,7 +37,8 @@ export default function(source, target, update, params, options) {
 }
 
 function onStream(df, stream, target, update, params, options) {
-  let opt = extend({}, options, SKIP), func, op;
+  const opt = extend({}, options, SKIP);
+  let func, op;
 
   if (!isFunction(target)) target = constant(target);
 

@@ -9,15 +9,14 @@ import {isSignal} from '../../util';
 import {extend, isObject} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef, band) {
-  let _ = lookup(spec, config),
-      orient = spec.orient,
-      vscale = spec.gridScale,
-      sign = getSign(orient, 1, -1),
-      offset = offsetValue(spec.offset, sign),
-      encode, enter, exit, update,
-      tickPos, gridStart, gridEnd, sz;
+  const _ = lookup(spec, config),
+        orient = spec.orient,
+        vscale = spec.gridScale,
+        sign = getSign(orient, 1, -1),
+        offset = offsetValue(spec.offset, sign);
 
-  encode = {
+  let enter, exit, update;
+  const encode = {
     enter: enter = {opacity: zero},
     update: update = {opacity: one},
     exit: exit = {opacity: zero}
@@ -32,7 +31,7 @@ export default function(spec, config, userEncode, dataRef, band) {
     strokeWidth:      _('gridWidth')
   });
 
-  tickPos = {
+  const tickPos = {
     scale:  spec.scale,
     field:  Value,
     band:   band.band,
@@ -41,13 +40,13 @@ export default function(spec, config, userEncode, dataRef, band) {
     round:  _('tickRound')
   };
 
-  sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
+  const sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
 
-  gridStart = vscale
+  const gridStart = vscale
     ? {scale: vscale, range: 0, mult: sign, offset: offset}
     : {value: 0, offset: offset};
 
-  gridEnd = vscale
+  const gridEnd = vscale
     ? {scale: vscale, range: 1, mult: sign, offset: offset}
     : extend(sz, {mult: sign, offset: offset});
 

@@ -114,10 +114,10 @@ Operator.prototype = {
    */
   parameters(params, react, initonly) {
     react = react !== false;
-    let argval = (this._argval = this._argval || new Parameters()),
-        argops = (this._argops = this._argops || []),
-        deps = [],
-        name, value, n, i;
+    const argval = (this._argval = this._argval || new Parameters()),
+          argops = (this._argops = this._argops || []),
+          deps = [];
+    let name, value, n, i;
 
     const add = (name, index, value) => {
       if (value instanceof Operator) {
@@ -146,7 +146,7 @@ Operator.prototype = {
         this.source = value;
       } else if (isArray(value)) {
         argval.set(name, -1, Array(n = value.length));
-        for (i=0; i<n; ++i) add(name, i, value[i]);
+        for (i = 0; i < n; ++i) add(name, i, value[i]);
       } else {
         add(name, -1, value);
       }
@@ -164,12 +164,13 @@ Operator.prototype = {
    * @return {Parameters} A Parameters object to pass to the update function.
    */
   marshall(stamp) {
-    let argval = this._argval || NO_PARAMS,
-        argops = this._argops,
-        item, i, n, op, mod;
+    const argval = this._argval || NO_PARAMS,
+          argops = this._argops;
+    let item, i, op, mod;
 
     if (argops) {
-      for (i=0, n=argops.length; i<n; ++i) {
+      const n = argops.length;
+      for (i = 0; i < n; ++i) {
         item = argops[i];
         op = item.op;
         mod = op.modified() && op.stamp === stamp;
@@ -177,7 +178,7 @@ Operator.prototype = {
       }
 
       if (argops.initonly) {
-        for (i=0; i<n; ++i) {
+        for (i = 0; i < n; ++i) {
           item = argops[i];
           item.op.targets().remove(this);
         }
@@ -193,11 +194,11 @@ Operator.prototype = {
    * Unregisters listeners on upstream dependencies.
    */
   detach() {
-    let argops = this._argops,
-        i, n, item, op;
+    const argops = this._argops;
+    let i, n, item, op;
 
     if (argops) {
-      for (i=0, n=argops.length; i<n; ++i) {
+      for (i = 0, n = argops.length; i < n; ++i) {
         item = argops[i];
         op = item.op;
         if (op._targets) {

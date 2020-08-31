@@ -4,9 +4,10 @@
 export default function(array, step, smooth, f) {
   f = f || (_ => _);
 
+  const n = array.length,
+        v = new Float64Array(n);
+
   let i = 0, j = 1,
-      n = array.length,
-      v = new Float64Array(n),
       a = f(array[0]),
       b = a,
       w = a + step,
@@ -33,8 +34,8 @@ export default function(array, step, smooth, f) {
 // swap points between "adjacent" stacks
 // Wilkinson defines adjacent as within step/4 units
 function smoothing(v, thresh) {
-  let n = v.length,
-      a = 0,
+  const n = v.length;
+  let a = 0,
       b = 1,
       c, d;
 

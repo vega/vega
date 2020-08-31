@@ -15,18 +15,17 @@ const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
 
-  let _ = lookup(spec, scope.config.title),
-      encode = spec.encode || {},
-      userEncode = encode.group || {},
-      name = userEncode.name || undefined,
-      interactive = userEncode.interactive,
-      style = userEncode.style,
-      children = [],
-      datum, dataRef;
+  const _ = lookup(spec, scope.config.title),
+        encode = spec.encode || {},
+        userEncode = encode.group || {},
+        name = userEncode.name || undefined,
+        interactive = userEncode.interactive,
+        style = userEncode.style,
+        children = [];
 
   // single-element data source for group title
-  datum = {};
-  dataRef = ref(scope.add(Collect(null, [datum])));
+  const datum = {},
+        dataRef = ref(scope.add(Collect(null, [datum])));
 
   // include title text
   children.push(buildTitle(spec, _, titleEncode(spec), dataRef));

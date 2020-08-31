@@ -21,16 +21,16 @@ import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  let config = scope.config.legend,
-      encode = spec.encode || {},
-      legendEncode = encode.legend || {},
-      name = legendEncode.name || undefined,
-      interactive = legendEncode.interactive,
-      style = legendEncode.style,
-      _ = lookup(spec, config),
-      scales = {}, scale = 0,
-      entryEncode, entryLayout, params, children,
-      type, datum, dataRef, entryRef;
+  const config = scope.config.legend,
+        encode = spec.encode || {},
+        _ = lookup(spec, config),
+        legendEncode = encode.legend || {},
+        name = legendEncode.name || undefined,
+        interactive = legendEncode.interactive,
+        style = legendEncode.style,
+        scales = {};
+
+  let scale = 0, entryLayout, params, children;
 
   // resolve scales and 'canonical' scale name
   LegendScales.forEach(s => spec[s]
@@ -39,27 +39,22 @@ export default function(spec, scope) {
   if (!scale) error('Missing valid scale for legend.');
 
   // resolve legend type (symbol, gradient, or discrete gradient)
-  type = legendType(spec, scope.scaleType(scale));
+  const type = legendType(spec, scope.scaleType(scale));
 
   // single-element data source for legend group
-  datum = {
+  const datum = {
     title:  spec.title != null,
     scales: scales,
     type:   type,
     vgrad:  type !== 'symbol' &&  _.isVertical()
   };
-  dataRef = ref(scope.add(Collect(null, [datum])));
-
-  // encoding properties for legend group
-  legendEncode = extendEncode(
-    buildLegendEncode(_, spec, config), legendEncode, Skip
-  );
+  const dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend entry sub-group
-  entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
+  const entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
 
   // data source for legend values
-  entryRef = ref(scope.add(LegendEntries(params = {
+  const entryRef = ref(scope.add(LegendEntries(params = {
     type:    type,
     scale:   scope.scaleRef(scale),
     count:   scope.objectProperty(_('tickCount')),
@@ -123,7 +118,7 @@ export default function(spec, scope) {
     guideGroup({
       role:        LegendRole,
       from:        dataRef,
-      encode:      legendEncode,
+      encode:      extendEncode(buildLegendEncode(_, spec, config), legendEncode, Skip),
       marks:       children,
       aria:        _('aria'),
       description: _('description'),

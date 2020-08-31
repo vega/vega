@@ -1,8 +1,8 @@
 import {merge} from 'vega-util';
 
 export default function(idFunc, source, input) {
-  let $ = idFunc,
-      data = source || [],
+  const $ = idFunc;
+  let data = source || [],
       add = input || [],
       rem = {},
       cnt = 0;

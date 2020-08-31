@@ -84,12 +84,12 @@ inherits(CountPattern, Transform, {
   },
 
   _finish(pulse, as) {
-    let counts = this._counts,
-        tuples = this._tuples || (this._tuples = {}),
-        text = as[0],
-        count = as[1],
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        w, t, c;
+    const counts = this._counts,
+          tuples = this._tuples || (this._tuples = {}),
+          text = as[0],
+          count = as[1],
+          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    let w, t, c;
 
     for (w in counts) {
       t = tuples[w];

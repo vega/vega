@@ -26,8 +26,8 @@ export function initScale(spec, scope) {
 }
 
 export function parseScale(spec, scope) {
-  let params = scope.getScale(spec.name).params,
-      key;
+  const params = scope.getScale(spec.name).params;
+  let key;
 
   params.domain = parseScaleDomain(spec.domain, spec, scope);
 
@@ -129,18 +129,18 @@ function fieldRef(data, scope) {
 }
 
 function ordinalMultipleDomain(domain, scope, fields) {
-  let sort = parseSort(domain.sort, true),
-      counts, p, a, c, v;
+  const sort = parseSort(domain.sort, true);
+  let a, v;
 
   // get value counts for each domain field
-  counts = fields.map(f => {
+  const counts = fields.map(f => {
     const data = scope.getData(f.data);
     if (!data) dataLookupError(f.data);
     return data.countsRef(scope, f.field, sort);
   });
 
   // aggregate the results from each domain field
-  p = {groupby: keyFieldRef, pulse: counts};
+  const p = {groupby: keyFieldRef, pulse: counts};
   if (sort) {
     a = sort.op || 'count';
     v = sort.field ? aggrField(a, sort.field) : 'count';
@@ -151,7 +151,7 @@ function ordinalMultipleDomain(domain, scope, fields) {
   a = scope.add(Aggregate(p));
 
   // collect aggregate output
-  c = scope.add(Collect({pulse: ref(a)}));
+  const c = scope.add(Collect({pulse: ref(a)}));
 
   // extract values for combined domain
   v = scope.add(Values({
@@ -234,8 +234,8 @@ function parseScaleInterpolate(interpolate, params) {
 // -- SCALE RANGE -----
 
 function parseScaleRange(spec, scope, params) {
-  let range = spec.range,
-      config = scope.config.range;
+  const config = scope.config.range;
+  let range = spec.range;
 
   if (range.signal) {
     return scope.signalRef(range.signal);

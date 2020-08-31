@@ -31,15 +31,16 @@ Lookup.Definition = {
 
 inherits(Lookup, Transform, {
   transform(_, pulse) {
-    let out = pulse,
+    const keys = _.fields,
+          index = _.index,
+          values = _.values,
+          defaultValue = _.default==null ? null : _.default,
+          reset = _.modified(),
+          n = keys.length;
+
+    let flag = reset ? pulse.SOURCE : pulse.ADD,
+        out = pulse,
         as = _.as,
-        keys = _.fields,
-        index = _.index,
-        values = _.values,
-        defaultValue = _.default==null ? null : _.default,
-        reset = _.modified(),
-        flag = reset ? pulse.SOURCE : pulse.ADD,
-        n = keys.length,
         set, m, mods;
 
     if (values) {

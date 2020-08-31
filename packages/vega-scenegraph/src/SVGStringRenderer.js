@@ -172,8 +172,8 @@ inherits(SVGStringRenderer, Renderer, {
    * @param {Item} item - The mark item.
    */
   href(item) {
-    let href = item.href,
-        attr;
+    const href = item.href;
+    let attr;
 
     if (href) {
       if (attr = this._hrefs && this._hrefs[href]) {

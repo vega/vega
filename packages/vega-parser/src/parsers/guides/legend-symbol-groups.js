@@ -11,19 +11,19 @@ import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
-  let _ = lookup(spec, config),
-      entries = userEncode.entries,
-      interactive = !!(entries && entries.interactive),
-      name = entries ? entries.name : undefined,
-      height = _('clipHeight'),
-      symbolOffset = _('symbolOffset'),
-      valueRef = {data: 'value'},
-      encode = {},
-      xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
-      yEncode = height ? encoder(height) : {field: Size},
-      index = `datum.${Index}`,
-      ncols = `max(1, ${columns})`,
-      enter, update, labelOffset, symbols, labels, nrows, sort;
+  const _ = lookup(spec, config),
+        entries = userEncode.entries,
+        interactive = !!(entries && entries.interactive),
+        name = entries ? entries.name : undefined,
+        height = _('clipHeight'),
+        symbolOffset = _('symbolOffset'),
+        valueRef = {data: 'value'},
+        xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
+        yEncode = height ? encoder(height) : {field: Size},
+        index = `datum.${Index}`,
+        ncols = `max(1, ${columns})`;
+
+  let encode, enter, update, nrows, sort;
 
   yEncode.mult = 0.5;
 
@@ -69,7 +69,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   });
 
-  symbols = guideMark({
+  const symbols = guideMark({
     type: SymbolMark,
     role: LegendSymbolRole,
     key:  Value,
@@ -79,7 +79,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
   }, userEncode.symbols);
 
   // -- LEGEND LABELS --
-  labelOffset = encoder(symbolOffset);
+  const labelOffset = encoder(symbolOffset);
   labelOffset.offset = _('labelOffset');
 
   encode = {
@@ -111,7 +111,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     limit:       _('labelLimit')
   });
 
-  labels = guideMark({
+  const labels = guideMark({
     type:  TextMark,
     role:  LegendLabelRole,
     style: GuideLabelStyle,

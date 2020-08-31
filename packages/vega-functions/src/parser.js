@@ -4,9 +4,10 @@ import {CallExpression, parse} from 'vega-expression';
 import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope) {
-  let params = {}, ast, gen;
+  const params = {};
 
   // parse the expression to an abstract syntax tree (ast)
+  let ast;
   try {
     expr = isString(expr) ? expr : (stringValue(expr) + '');
     ast = parse(expr);
@@ -23,7 +24,7 @@ export default function(expr, scope) {
   });
 
   // perform code generation
-  gen = codeGenerator(ast);
+  const gen = codeGenerator(ast);
 
   // collect signal dependencies
   gen.globals.forEach(name => {
