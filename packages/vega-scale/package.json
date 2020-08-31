@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -25,10 +25,10 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.5.1",
-    "d3-interpolate": "^1.4.0",
-    "d3-scale": "^3.2.1",
+    "d3-array": "^2.7.0",
+    "d3-interpolate": "^2.0.1",
+    "d3-scale": "^3.2.2",
     "vega-time": "^2.0.2",
-    "vega-util": "^1.15.0"
+    "vega-util": "^1.15.1"
   }
 }
