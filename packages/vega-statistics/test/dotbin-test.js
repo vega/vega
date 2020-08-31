@@ -1,7 +1,7 @@
 var tape = require('tape'),
     dotbin = require('../').dotbin;
 
-tape('dotbin calculates dot plot bin positions', function(t) {
+tape('dotbin calculates dot plot bin positions', t => {
   var data = [1, 1, 2, 3, 4, 5, 6];
   t.deepEqual(
     Array.from(dotbin(data, 0.5)),

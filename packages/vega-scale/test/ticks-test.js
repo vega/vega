@@ -2,7 +2,7 @@ var tape = require('tape'),
     validTicks = require('../').validTicks,
     timeInterval = require('vega-time').timeInterval;
 
-tape('validTicks uses count correctly', function(t) {
+tape('validTicks uses count correctly', t => {
   var data = [0, 1, 2, 3, 4, 5, 6, 7];
 
   var identity = function(x) { return x; };

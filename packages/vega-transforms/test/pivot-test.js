@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Pivot = tx.pivot;
 
-tape('Pivot pivots values', function(t) {
+tape('Pivot pivots values', t => {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -71,7 +71,7 @@ tape('Pivot pivots values', function(t) {
   t.end();
 });
 
-tape('Pivot pivots values within limit', function(t) {
+tape('Pivot pivots values within limit', t => {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
@@ -108,7 +108,7 @@ tape('Pivot pivots values within limit', function(t) {
   t.end();
 });
 
-tape('Pivot handles count aggregate', function(t) {
+tape('Pivot handles count aggregate', t => {
   var data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:null},

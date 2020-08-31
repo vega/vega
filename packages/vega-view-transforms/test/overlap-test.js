@@ -18,7 +18,7 @@ function toObject(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-tape('Overlap removes overlapping items (parity)', function(t) {
+tape('Overlap removes overlapping items (parity)', t => {
   var data = items(),
       df = new vega.Dataflow(),
       co = df.add(Collect),
@@ -41,7 +41,7 @@ tape('Overlap removes overlapping items (parity)', function(t) {
   t.end();
 });
 
-tape('Overlap removes overlapping items (greedy)', function(t) {
+tape('Overlap removes overlapping items (greedy)', t => {
   var data = items(),
       df = new vega.Dataflow(),
       co = df.add(Collect),

@@ -11,7 +11,7 @@ export default function(view) {
 
   // evaluate cursor on each mousemove event
   view.on(view.events('view', 'mousemove'), cursor,
-    function(_, event) {
+    (_, event) => {
       const value = cursor.value,
             user = value ? (isString(value) ? value : value.user) : Default,
             item = event.item && event.item.cursor || null;

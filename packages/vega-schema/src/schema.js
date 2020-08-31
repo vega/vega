@@ -82,7 +82,7 @@ export default function(definitions) {
     stream,
     title,
     transform(definitions)
-  ].forEach(function(module) {
+  ].forEach(module => {
     addModule(schema, module);
   });
 

@@ -129,7 +129,7 @@ Renderer.prototype = {
   renderAsync(scene) {
     var r = this.render(scene);
     return this._ready
-      ? this._ready.then(function() { return r; })
+      ? this._ready.then(() => r)
       : Promise.resolve(r);
   },
 
@@ -149,7 +149,7 @@ Renderer.prototype = {
       // re-render the scene when loading completes
       var call = r._call;
       r._ready = r._loader.ready()
-        .then(function(redraw) {
+        .then(redraw => {
           if (redraw) call();
           r._ready = null;
         });

@@ -63,7 +63,7 @@ function renderAsync(scene, w, h, callback) {
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(doc.body, w, h)
     .renderAsync(scene)
-    .then(function(r) { callback(compensate(r.svg())); });
+    .then(r => { callback(compensate(r.svg())); });
 }
 
 // workaround for broken jsdom style parser
@@ -73,13 +73,13 @@ function replaceFont(str, font) {
     tok.slice(2, -1).concat([tok[1], tok[0]]).join(' ') + ';';
 }
 
-tape('SVGRenderer should support argument free constructor', function(t) {
+tape('SVGRenderer should support argument free constructor', t => {
   var r = new Renderer();
   t.equal(r.svg(), null);
   t.end();
 });
 
-tape('SVGRenderer should behave when dom element is not provided', function(t) {
+tape('SVGRenderer should behave when dom element is not provided', t => {
   var r = new Renderer().initialize(null, 100, 100, null);
   t.equal(r._svg, null);
   t.equal(r._root, null);
@@ -92,7 +92,7 @@ tape('SVGRenderer should behave when dom element is not provided', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should render scenegraph to svg', function(t) {
+tape('SVGRenderer should render scenegraph to svg', t => {
   var scene = loadScene('scenegraph-rect.json');
   var svg = render(scene, 400, 200);
   var file = load('svg/scenegraph-rect.svg');
@@ -100,7 +100,7 @@ tape('SVGRenderer should render scenegraph to svg', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support descriptions', function(t) {
+tape('SVGRenderer should support descriptions', t => {
   var scene = loadScene('scenegraph-description.json');
   var svg = render(scene, 400, 200);
   var file = load('svg/scenegraph-description.svg');
@@ -108,7 +108,7 @@ tape('SVGRenderer should support descriptions', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support clipping and gradients', function(t) {
+tape('SVGRenderer should support clipping and gradients', t => {
   var r = new Renderer()
     .initialize(doc.body, 102, 102);
 
@@ -131,7 +131,7 @@ tape('SVGRenderer should support clipping and gradients', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support axes, legends and sub-groups', function(t) {
+tape('SVGRenderer should support axes, legends and sub-groups', t => {
   var scene = loadScene('scenegraph-barley.json');
   var svg = render(scene, 360, 740);
   var file = load('svg/scenegraph-barley.svg');
@@ -139,7 +139,7 @@ tape('SVGRenderer should support axes, legends and sub-groups', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support full redraw', function(t) {
+tape('SVGRenderer should support full redraw', t => {
   vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -168,7 +168,7 @@ tape('SVGRenderer should support full redraw', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support enter-item redraw', function(t) {
+tape('SVGRenderer should support enter-item redraw', t => {
   vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -216,7 +216,7 @@ tape('SVGRenderer should support exit-item redraw', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support single-item redraw', function(t) {
+tape('SVGRenderer should support single-item redraw', t => {
   vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-rect.json');
@@ -237,7 +237,7 @@ tape('SVGRenderer should support single-item redraw', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support multi-item redraw', function(t) {
+tape('SVGRenderer should support multi-item redraw', t => {
   vega.resetSVGDefIds();
 
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
@@ -257,7 +257,7 @@ tape('SVGRenderer should support multi-item redraw', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should support enter-group redraw', function(t) {
+tape('SVGRenderer should support enter-group redraw', t => {
   vega.resetSVGDefIds();
 
   var scene = loadScene('scenegraph-barley.json');
@@ -277,7 +277,7 @@ tape('SVGRenderer should support enter-group redraw', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should handle empty item sets', function(t) {
+tape('SVGRenderer should handle empty item sets', t => {
   var types = [
     'arc',
     'area',
@@ -301,57 +301,57 @@ tape('SVGRenderer should handle empty item sets', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should render arc mark', function(t) {
+tape('SVGRenderer should render arc mark', t => {
   var svg = render(marks.arc, 500, 500);
   var file = load('svg/marks-arc.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render horizontal area mark', function(t) {
+tape('SVGRenderer should render horizontal area mark', t => {
   var svg = render(marks['area-h'], 500, 500);
   var file = load('svg/marks-area-h.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render vertical area mark', function(t) {
+tape('SVGRenderer should render vertical area mark', t => {
   var svg = render(marks['area-v'], 500, 500);
   var file = load('svg/marks-area-v.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render area mark with breaks', function(t) {
+tape('SVGRenderer should render area mark with breaks', t => {
   var svg = render(marks['area-breaks'], 500, 500);
   var file = load('svg/marks-area-breaks.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render trail mark', function(t) {
+tape('SVGRenderer should render trail mark', t => {
   var svg = render(marks['trail'], 500, 500);
   var file = load('svg/marks-area-trail.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render group mark', function(t) {
+tape('SVGRenderer should render group mark', t => {
   var svg = render(marks.group, 500, 500);
   var file = load('svg/marks-group.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render image mark', function(t) {
-  renderAsync(marks.image, 500, 500, function(svg) {
+tape('SVGRenderer should render image mark', t => {
+  renderAsync(marks.image, 500, 500, svg => {
     var file = load('svg/marks-image.svg');
     t.equal(svg, file);
     t.end();
   });
 });
 
-tape('SVGRenderer should render line mark', function(t) {
+tape('SVGRenderer should render line mark', t => {
   var svg = render(marks['line-1'], 500, 500);
   var file = load('svg/marks-line-1.svg');
   t.equal(svg, file);
@@ -362,42 +362,42 @@ tape('SVGRenderer should render line mark', function(t) {
   t.end();
 });
 
-tape('SVGRenderer should render line mark with breaks', function(t) {
+tape('SVGRenderer should render line mark with breaks', t => {
   var svg = render(marks['line-breaks'], 500, 500);
   var file = load('svg/marks-line-breaks.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render path mark', function(t) {
+tape('SVGRenderer should render path mark', t => {
   var svg = render(marks.path, 500, 500);
   var file = load('svg/marks-path.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render rect mark', function(t) {
+tape('SVGRenderer should render rect mark', t => {
   var svg = render(marks.rect, 500, 500);
   var file = load('svg/marks-rect.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render rule mark', function(t) {
+tape('SVGRenderer should render rule mark', t => {
   var svg = render(marks.rule, 500, 500);
   var file = load('svg/marks-rule.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render symbol mark', function(t) {
+tape('SVGRenderer should render symbol mark', t => {
   var svg = render(marks.symbol, 500, 500);
   var file = load('svg/marks-symbol.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGRenderer should render text mark', function(t) {
+tape('SVGRenderer should render text mark', t => {
   var svg = render(marks.text, 500, 500);
   var file = load('svg/marks-text.svg');
   t.equal(svg, file);

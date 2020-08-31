@@ -691,7 +691,7 @@ function testRegExp(pattern, flags) {
     // perfectly valid pattern that is equivalent to `[a-b]`, but it
     // would be replaced by `[x-b]` which throws an error.
     tmp = tmp
-      .replace(/\\u\{([0-9a-fA-F]+)\}/g, function($0, $1) {
+      .replace(/\\u\{([0-9a-fA-F]+)\}/g, ($0, $1) => {
         if (parseInt($1, 16) <= 0x10FFFF) {
           return 'x';
         }
@@ -978,7 +978,7 @@ function throwError(token, messageFormat) {
     args = Array.prototype.slice.call(arguments, 2),
     msg = messageFormat.replace(
       /%(\d)/g,
-      function(whole, index) {
+      (whole, index) => {
         assert(index < args.length, 'Message reference must be in range');
         return args[index];
       }

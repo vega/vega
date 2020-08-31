@@ -3,7 +3,7 @@ var tape = require('tape'),
     transforms = require('vega-transforms'),
     runtime = require('../');
 
-tape('Parser parses faceted dataflow specs', function(t) {
+tape('Parser parses faceted dataflow specs', t => {
   var values = [
     {'k': 'a', 'x': 1,  'y': 28},
     {'k': 'b', 'x': 2,  'y': 43},
@@ -75,11 +75,11 @@ tape('Parser parses faceted dataflow specs', function(t) {
 function count(ctx, stamp) {
   var sum = 0, ops = ctx.nodes;
 
-  Object.keys(ops).forEach(function(key) {
+  Object.keys(ops).forEach(key => {
     if (ops[key].stamp === stamp) ++sum;
   });
 
-  (ctx.subcontext || []).forEach(function(sub) {
+  (ctx.subcontext || []).forEach(sub => {
     sum += count(sub, stamp);
   });
 

@@ -63,9 +63,7 @@ inherits(LegendEntries, Transform, {
           items = items.slice(1);
         }
         // compute size offset for legend entries
-        offset = items.reduce(function(max, value) {
-          return Math.max(max, size(value, _));
-        }, 0);
+        offset = items.reduce((max, value) => Math.max(max, size(value, _)), 0);
       } else {
         size = constant(offset = size || 8);
       }

@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Extent = tx.extent;
 
-tape('Extent computes extents', function(t) {
+tape('Extent computes extents', t => {
   var data = [
     {'x': 0, 'y': 28}, {'x': 1, 'y': 43},
     {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
@@ -33,7 +33,7 @@ tape('Extent computes extents', function(t) {
   t.end();
 });
 
-tape('Extent handles empty and invalid data', function(t) {
+tape('Extent handles empty and invalid data', t => {
   var x = util.field('x'),
       df = new vega.Dataflow(),
       c = df.add(Collect),

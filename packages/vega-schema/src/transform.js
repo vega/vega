@@ -16,7 +16,7 @@ function req(key) {
 
 function transformSchema(name, def) {
   function parameters(list) {
-    list.forEach(function(param) {
+    list.forEach(param => {
       if (param.type === 'param') {
         const schema = {
           oneOf: param.params.map(subParameterSchema)
@@ -111,7 +111,7 @@ function subParameterSchema(sub) {
     props[req(name)] = enums([key[name]]);
   }
 
-  sub.params.forEach(function(param) {
+  sub.params.forEach(param => {
     const key = param.required ? req(param.name) : param.name;
     props[key] = parameterSchema(param);
   });

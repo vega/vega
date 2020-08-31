@@ -15,7 +15,7 @@ function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
 
-tape('CanvasRenderer should support supplied external canvas context', function(t) {
+tape('CanvasRenderer should support supplied external canvas context', t => {
   const scene = vega.sceneFromJSON(load('scenegraph-rect.json')),
         externalCanvas = canvas(400, 400),
         externalContext = externalCanvas.getContext('2d'),

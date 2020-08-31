@@ -39,7 +39,7 @@ function path(context, item, opacity) {
 }
 
 function draw(context, scene, bounds) {
-  visit(scene, function(item) {
+  visit(scene, item => {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     var opacity = item.opacity == null ? 1 : item.opacity;
     if (opacity && path(context, item, opacity)) {

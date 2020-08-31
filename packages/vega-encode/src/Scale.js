@@ -205,9 +205,7 @@ function domainCheck(type, domain, df) {
   if (isLogarithmic(type)) {
     // sum signs of domain values
     // if all pos or all neg, abs(sum) === domain.length
-    var s = Math.abs(domain.reduce(function(s, v) {
-      return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
-    }, 0));
+    var s = Math.abs(domain.reduce((s, v) => s + (v < 0 ? -1 : v > 0 ? 1 : 0), 0));
 
     if (s !== domain.length) {
       df.warn('Log scale domain includes zero: ' + stringValue(domain));

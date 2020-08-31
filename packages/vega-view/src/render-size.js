@@ -26,7 +26,7 @@ export function resizeRenderer(view) {
   view._renderer.resize(w, h, origin);
   view._handler.origin(origin);
 
-  view._resizeListeners.forEach(function(handler) {
+  view._resizeListeners.forEach(handler => {
     try {
       handler(w, h);
     } catch (error) {

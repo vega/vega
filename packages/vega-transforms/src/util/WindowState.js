@@ -24,8 +24,8 @@ export default function WindowState(_) {
 
   ops.forEach(function(op, i) {
     const field = fields[i],
-        mname = accessorName(field),
-        name = measureName(op, mname, as[i]);
+          mname = accessorName(field),
+          name = measureName(op, mname, as[i]);
 
     visitInputs(field);
     outputs.push(name);

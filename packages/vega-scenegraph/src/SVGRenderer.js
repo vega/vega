@@ -202,7 +202,7 @@ inherits(SVGRenderer, Renderer, {
       if (mark.zdirty && mark.dirty !== id) {
         this._dirtyAll = false;
         dirtyParents(item, id);
-        mark.items.forEach(function(i) { i.dirty = id; });
+        mark.items.forEach(i => { i.dirty = id; });
       }
       if (mark.zdirty) continue; // handle in standard drawing pass
 

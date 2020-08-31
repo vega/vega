@@ -1,7 +1,7 @@
 var tape = require('tape'),
     {markup} = require('../');
 
-tape('markup should generate empty tag', function(t) {
+tape('markup should generate empty tag', t => {
   t.equal(
     markup().open('g').close() + '',
     '<g/>'
@@ -9,7 +9,7 @@ tape('markup should generate empty tag', function(t) {
   t.end();
 });
 
-tape('markup should generate tag with text content', function(t) {
+tape('markup should generate tag with text content', t => {
   t.equal(
     markup().open('text').text('hello').close() + '',
     '<text>hello</text>'
@@ -17,7 +17,7 @@ tape('markup should generate tag with text content', function(t) {
   t.end();
 });
 
-tape('markup should generate tag with sanitized text content', function(t) {
+tape('markup should generate tag with sanitized text content', t => {
   t.equal(
     markup().open('text').text('1 < 5 & 4 > 3').close() + '',
     '<text>1 &lt; 5 &amp; 4 &gt; 3</text>'
@@ -25,7 +25,7 @@ tape('markup should generate tag with sanitized text content', function(t) {
   t.end();
 });
 
-tape('markup should generate nested tags', function(t) {
+tape('markup should generate nested tags', t => {
   t.equal(
     markup().open('g').open('rect').close().close() + '',
     '<g><rect/></g>'
@@ -33,7 +33,7 @@ tape('markup should generate nested tags', function(t) {
   t.end();
 });
 
-tape('markup should generate tag with attributes', function(t) {
+tape('markup should generate tag with attributes', t => {
   const attr = {
     fill: 'none',
     transform: 'translate(0,0)',
@@ -46,7 +46,7 @@ tape('markup should generate tag with attributes', function(t) {
   t.end();
 });
 
-tape('markup should append attributes', function(t) {
+tape('markup should append attributes', t => {
   t.equal(
     markup().open('g')
       .attr('fill', 'none')
@@ -58,7 +58,7 @@ tape('markup should append attributes', function(t) {
   t.end();
 });
 
-tape('markup should generate sanitized attributes', function(t) {
+tape('markup should generate sanitized attributes', t => {
   const attr = {
     'aria-description': 'A \'single\' "double" & < or > \t\n\r'
   };

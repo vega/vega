@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Facet = tx.facet;
 
-tape('Facet facets tuples', function(t) {
+tape('Facet facets tuples', t => {
   var data = [
     {k:'a', v:5}, {k:'b', v:7}, {k:'c', v:9},
     {k:'a', v:1}, {k:'b', v:2}, {k:'c', v:3}
@@ -111,7 +111,7 @@ tape('Facet facets tuples', function(t) {
   t.end();
 });
 
-tape('Facet handles key parameter change', function(t) {
+tape('Facet handles key parameter change', t => {
   var data = [
     {k1:'a', k2:'a', v:5}, {k1:'b', k2:'c', v:7}, {k1:'c', k2:'c', v:9},
     {k1:'a', k2:'a', v:1}, {k1:'b', k2:'b', v:2}, {k1:'c', k2:'b', v:3}
@@ -151,7 +151,7 @@ tape('Facet handles key parameter change', function(t) {
   t.end();
 });
 
-tape('Facet key cache does not leak memory', function(t) {
+tape('Facet key cache does not leak memory', t => {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       ft = df.add(Facet, {subflow:subflow, key:field('key'), pulse:c0}),

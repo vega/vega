@@ -5,7 +5,7 @@ import {visit} from '../visit';
 
 export function drawAll(path) {
   return function(context, scene, bounds) {
-    visit(scene, function(item) {
+    visit(scene, item => {
       if (!bounds || bounds.intersects(item.bounds)) {
         drawPath(path, context, item, item);
       }

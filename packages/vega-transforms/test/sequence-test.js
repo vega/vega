@@ -5,7 +5,7 @@ var tape = require('tape'),
     tx = require('../'),
     Sequence = tx.sequence;
 
-tape('Sequence generates sequences', function(t) {
+tape('Sequence generates sequences', t => {
   var df = new vega.Dataflow(),
       start = df.add(0),
       stop = df.add(11),

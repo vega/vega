@@ -64,7 +64,7 @@ inherits(MultiPulse, Pulse, {
   modified(_) {
     const p = this, fields = p.fields;
     return !(fields && (p.changes & p.MOD)) ? 0
-      : isArray(_) ? _.some(function(f) { return fields[f]; })
+      : isArray(_) ? _.some(f => fields[f])
       : fields[_];
   },
 

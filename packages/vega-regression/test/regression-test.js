@@ -5,7 +5,7 @@ var tape = require('tape'),
     Regression = require('../').regression,
     changeset = vega.changeset;
 
-tape('Regression fits linear regression model', function(t) {
+tape('Regression fits linear regression model', t => {
   var data = [
     {k: 'a', u: 2, v: 2}, {k: 'a', u: 1, v: 1},
     {k: 'b', u: 3, v: 2}, {k: 'b', u: 2, v: 1}
@@ -49,7 +49,7 @@ tape('Regression fits linear regression model', function(t) {
   t.end();
 });
 
-tape('Regression fits quadratic regression model', function(t) {
+tape('Regression fits quadratic regression model', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
       x = util.field('x'),
       y = util.field('y'),
@@ -69,7 +69,7 @@ tape('Regression fits quadratic regression model', function(t) {
   t.end();
 });
 
-tape('Regression outputs model parameters', function(t) {
+tape('Regression outputs model parameters', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
       x = util.field('x'),
       y = util.field('y'),

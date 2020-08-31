@@ -9,7 +9,7 @@ export default function(view, prevHandler, el, constructor) {
 
   // transfer event handlers
   if (prevHandler) {
-    prevHandler.handlers().forEach(function(h) {
+    prevHandler.handlers().forEach(h => {
       handler.on(h.type, h.handler);
     });
   }

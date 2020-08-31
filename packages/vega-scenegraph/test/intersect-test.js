@@ -11,7 +11,7 @@ function draw(context) {
   context.closePath();
 }
 
-tape('intersectPath should intersect paths', function(t) {
+tape('intersectPath should intersect paths', t => {
   const b = new vega.Bounds(),
         p = vega.intersectPath(draw),
         s = {bounds: new vega.Bounds()};
@@ -37,7 +37,7 @@ tape('intersectPath should intersect paths', function(t) {
   t.end();
 });
 
-tape('intersectPoint should intersect point items', function(t) {
+tape('intersectPoint should intersect point items', t => {
   const b = new vega.Bounds(),
         p = {x: 10, y: 10, size: 1000},
         q = {x: 10, size: 1000};
@@ -63,7 +63,7 @@ tape('intersectPoint should intersect point items', function(t) {
   t.end();
 });
 
-tape('intersectLine should intersect rule items', function(t) {
+tape('intersectLine should intersect rule items', t => {
   const b = new vega.Bounds(),
         r = {x: 10, y: 10, x2: 50, y2: 50},
         s = {x: 10, y2: 50};
@@ -91,7 +91,7 @@ tape('intersectLine should intersect rule items', function(t) {
   t.end();
 });
 
-tape('intersectBoxLine should compute box/line intersection', function(t) {
+tape('intersectBoxLine should compute box/line intersection', t => {
   const b = new vega.Bounds(),
         x = 10, y = 10,
         u = 50, v = 50;

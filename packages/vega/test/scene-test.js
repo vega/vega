@@ -6,10 +6,8 @@ var GENERATE_SCENES = false, // flag to generate test scenes
     tape = require('tape'),
     vega = require('../'),
     loader = vega.loader({baseURL: 'test/'}),
-    specs = require('./specs-valid.json').filter(function(spec) {
-      // filter wordcloud due to cross-platform canvas issues
-      return spec !== 'wordcloud';
-    });
+    specs = require('./specs-valid.json').filter(spec => // filter wordcloud due to cross-platform canvas issues
+    spec !== 'wordcloud');
 
 // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));
@@ -17,7 +15,7 @@ vega.setRandom(vega.randomLCG(123456789));
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
 
-tape('Vega generates scenegraphs for specifications', function(t) {
+tape('Vega generates scenegraphs for specifications', t => {
   let count = specs.length;
 
   specs.forEach(async function(name, index) {

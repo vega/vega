@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Relay = tx.relay;
 
-tape('Relay propagates pulse', function(t) {
+tape('Relay propagates pulse', t => {
   var data = [{'id': 0}, {'id': 1}];
 
   var df = new vega.Dataflow(),
@@ -25,7 +25,7 @@ tape('Relay propagates pulse', function(t) {
   t.end();
 });
 
-tape('Relay relays derived tuples', function(t) {
+tape('Relay relays derived tuples', t => {
   var data = [{'id': 0}, {'id': 1}];
 
   var id = util.field('id'),
@@ -64,7 +64,7 @@ tape('Relay relays derived tuples', function(t) {
 
   // test tuple modification
   df.pulse(c, changeset()
-    .modify(function() { return 1; }, 'id', function(t) { return t.id + 2; }))
+    .modify(() => 1, 'id', t => t.id + 2))
     .run();
   p = r.pulse;
   t.equal(p.add.length, 0);
@@ -80,7 +80,7 @@ tape('Relay relays derived tuples', function(t) {
   t.equal(p.add.length, 0);
   t.equal(p.rem.length, 2);
   t.equal(p.mod.length, 0);
-  p.rem.sort(function(a, b) { return a.id - b.id; });
+  p.rem.sort((a, b) => a.id - b.id);
   t.notEqual(p.rem[0], data[0]);
   t.notEqual(p.rem[1], data[1]);
   t.deepEqual(p.rem.map(id), [2, 3]);
@@ -88,7 +88,7 @@ tape('Relay relays derived tuples', function(t) {
   t.end();
 });
 
-tape('Relay flags modified fields and handles multi-pulse', function(t) {
+tape('Relay flags modified fields and handles multi-pulse', t => {
   var data1 = [{id: 0, foo: 1}, {id: 1, foo: 2}],
       data2 = [{id: 4, bar: 3}, {id: 5, bar: 4}];
 
@@ -113,7 +113,7 @@ tape('Relay flags modified fields and handles multi-pulse', function(t) {
 
   // test tuple modification
   df.pulse(c1, changeset()
-    .modify(util.truthy, 'id', function(t) { return t.id + 2; }))
+    .modify(util.truthy, 'id', t => t.id + 2))
     .run();
   p = r.pulse;
   t.ok(p.modified('id'));

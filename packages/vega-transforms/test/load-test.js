@@ -3,7 +3,7 @@ var tape = require('tape'),
     tx = require('../'),
     Load = tx.load;
 
-tape('Load requests external data', function(t) {
+tape('Load requests external data', t => {
   var df = new vega.Dataflow(),
       u = df.add('url'),
       f = df.add('format'),

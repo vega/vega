@@ -30,19 +30,19 @@ function isEquivalent(t, actual, expect) {
   t.equal(actual.utcParse, expect.utcParse);
 }
 
-tape('defaultLocale checks arguments', function(t) {
+tape('defaultLocale checks arguments', t => {
   t.throws(() => vega.defaultLocale(1));
   t.throws(() => vega.defaultLocale(1, 2, 3));
   t.end();
 });
 
 
-tape('defaultLocale gets the default locale', function(t) {
+tape('defaultLocale gets the default locale', t => {
   isLocale(t, vega.defaultLocale());
   t.end();
 });
 
-tape('defaultLocale sets the default locale', function(t) {
+tape('defaultLocale sets the default locale', t => {
   const d = new Date(2000, 2, 1);
   const init = vega.defaultLocale();
 
@@ -74,7 +74,7 @@ tape('defaultLocale sets the default locale', function(t) {
   t.end();
 });
 
-tape('locale creates a new locale', function(t) {
+tape('locale creates a new locale', t => {
   const locale = vega.locale(deDE.number, deDE.time);
   isLocale(t, locale);
   t.equal(locale.format(',.2f')(1234.1), '1.234,10');
@@ -83,7 +83,7 @@ tape('locale creates a new locale', function(t) {
   t.end();
 });
 
-tape('locale uses default locale for missing arguments', function(t) {
+tape('locale uses default locale for missing arguments', t => {
   const localeNum = vega.locale(deDE.number);
   isLocale(t, localeNum);
   t.equal(localeNum.format(',.2f')(1234.1), '1.234,10');

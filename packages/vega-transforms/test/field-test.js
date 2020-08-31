@@ -3,7 +3,7 @@ var tape = require('tape'),
     vega = require('vega-dataflow'),
     Field = require('../').field;
 
-tape('Field generates field accessors', function(t) {
+tape('Field generates field accessors', t => {
   var df = new vega.Dataflow(),
       n = df.add('foo'),
       a = df.add(null),

@@ -46,24 +46,24 @@ function renderAsync(scene, w, h, callback) {
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
-    .then(function(r) { callback(r.canvas().toBuffer()); });
+    .then(r => { callback(r.canvas().toBuffer()); });
 }
 
 function clearPathCache(mark) {
-  mark.items.forEach(function(item) {
+  mark.items.forEach(item => {
     item.pathCache = null;
   });
   return mark;
 }
 
-tape('CanvasRenderer should support argument free constructor', function(t) {
+tape('CanvasRenderer should support argument free constructor', t => {
   var r = new Renderer();
   t.notOk(r.canvas());
   t.notOk(r.context());
   t.end();
 });
 
-tape('CanvasRenderer should use DOM if available', function(t) {
+tape('CanvasRenderer should use DOM if available', t => {
   var jsdom = require('jsdom');
   global.document = (new jsdom.JSDOM()).window.document;
 
@@ -75,7 +75,7 @@ tape('CanvasRenderer should use DOM if available', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render scenegraph to canvas', function(t) {
+tape('CanvasRenderer should render scenegraph to canvas', t => {
   var scene = loadScene('scenegraph-rect.json');
   var image = render(scene, 400, 200);
   generate('png/scenegraph-rect.png', image);
@@ -84,7 +84,7 @@ tape('CanvasRenderer should render scenegraph to canvas', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support clipping and gradients', function(t) {
+tape('CanvasRenderer should support clipping and gradients', t => {
   var scene = loadScene('scenegraph-defs.json');
   var image = render(scene, 102, 102);
   generate('png/scenegraph-defs.png', image);
@@ -101,7 +101,7 @@ tape('CanvasRenderer should support clipping and gradients', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support axes, legends and sub-groups', function(t) {
+tape('CanvasRenderer should support axes, legends and sub-groups', t => {
   var scene = loadScene('scenegraph-barley.json');
   var image = render(scene, 360, 740);
   generate('png/scenegraph-barley.png', image);
@@ -110,7 +110,7 @@ tape('CanvasRenderer should support axes, legends and sub-groups', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support full redraw', function(t) {
+tape('CanvasRenderer should support full redraw', t => {
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -140,7 +140,7 @@ tape('CanvasRenderer should support full redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support enter-item redraw', function(t) {
+tape('CanvasRenderer should support enter-item redraw', t => {
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -169,7 +169,7 @@ tape('CanvasRenderer should support enter-item redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support exit-item redraw', function(t) {
+tape('CanvasRenderer should support exit-item redraw', t => {
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -188,7 +188,7 @@ tape('CanvasRenderer should support exit-item redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support single-item redraw', function(t) {
+tape('CanvasRenderer should support single-item redraw', t => {
   var scene = loadScene('scenegraph-rect.json');
   var r = new Renderer()
     .initialize(null, 400, 200)
@@ -210,7 +210,7 @@ tape('CanvasRenderer should support single-item redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support multi-item redraw', function(t) {
+tape('CanvasRenderer should support multi-item redraw', t => {
   var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
   var r = new Renderer()
     .initialize(null, 400, 400)
@@ -232,7 +232,7 @@ tape('CanvasRenderer should support multi-item redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should support enter-group redraw', function(t) {
+tape('CanvasRenderer should support enter-group redraw', t => {
   var scene = loadScene('scenegraph-barley.json');
   var r = new Renderer()
     .initialize(null, 500, 600)
@@ -253,7 +253,7 @@ tape('CanvasRenderer should support enter-group redraw', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should skip empty item sets', function(t) {
+tape('CanvasRenderer should skip empty item sets', t => {
   var scene = {marktype:'', items:[]};
   var types = [
     'arc',
@@ -277,7 +277,7 @@ tape('CanvasRenderer should skip empty item sets', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render arc mark', function(t) {
+tape('CanvasRenderer should render arc mark', t => {
   var image = render(marks.arc, 500, 500);
   generate('png/marks-arc.png', image);
   var file = load('png/marks-arc.png');
@@ -285,7 +285,7 @@ tape('CanvasRenderer should render arc mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render horizontal area mark', function(t) {
+tape('CanvasRenderer should render horizontal area mark', t => {
   var image = render(marks['area-h'], 500, 500);
   generate('png/marks-area-h.png', image);
   var file = load('png/marks-area-h.png');
@@ -297,7 +297,7 @@ tape('CanvasRenderer should render horizontal area mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render vertical area mark', function(t) {
+tape('CanvasRenderer should render vertical area mark', t => {
   var image = render(marks['area-v'], 500, 500);
   generate('png/marks-area-v.png', image);
   var file = load('png/marks-area-v.png');
@@ -309,7 +309,7 @@ tape('CanvasRenderer should render vertical area mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render area mark with breaks', function(t) {
+tape('CanvasRenderer should render area mark with breaks', t => {
   var image = render(marks['area-breaks'], 500, 500);
   generate('png/marks-area-breaks.png', image);
   var file = load('png/marks-area-breaks.png');
@@ -317,7 +317,7 @@ tape('CanvasRenderer should render area mark with breaks', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render trail mark', function(t) {
+tape('CanvasRenderer should render trail mark', t => {
   var image = render(marks['trail'], 500, 500);
   generate('png/marks-area-trail.png', image);
   var file = load('png/marks-area-trail.png');
@@ -325,7 +325,7 @@ tape('CanvasRenderer should render trail mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render group mark', function(t) {
+tape('CanvasRenderer should render group mark', t => {
   var image = render(marks.group, 500, 500);
   generate('png/marks-group.png', image);
   var file = load('png/marks-group.png');
@@ -333,8 +333,8 @@ tape('CanvasRenderer should render group mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render image mark', function(t) {
-  renderAsync(marks.image, 500, 500, function(image) {
+tape('CanvasRenderer should render image mark', t => {
+  renderAsync(marks.image, 500, 500, image => {
     generate('png/marks-image.png', image);
     var file = load('png/marks-image.png');
     t.equal(comparePNGs(image, file), 0);
@@ -342,12 +342,12 @@ tape('CanvasRenderer should render image mark', function(t) {
   });
 });
 
-tape('CanvasRenderer should skip invalid image', function(t) {
+tape('CanvasRenderer should skip invalid image', t => {
   var scene = vega.sceneFromJSON({
     marktype: 'image',
     items: [{url: 'does_not_exist.png'}]
   });
-  renderAsync(scene, 500, 500, function(image) {
+  renderAsync(scene, 500, 500, image => {
     generate('png/marks-empty.png', image);
     var file = load('png/marks-empty.png');
     t.equal(comparePNGs(image, file), 0);
@@ -355,7 +355,7 @@ tape('CanvasRenderer should skip invalid image', function(t) {
   });
 });
 
-tape('CanvasRenderer should render line mark', function(t) {
+tape('CanvasRenderer should render line mark', t => {
   var image = render(marks['line-1'], 500, 500);
   generate('png/marks-line-1.png', image);
   var file = load('png/marks-line-1.png');
@@ -372,7 +372,7 @@ tape('CanvasRenderer should render line mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render line mark with breaks', function(t) {
+tape('CanvasRenderer should render line mark with breaks', t => {
   var image = render(marks['line-breaks'], 500, 500);
   generate('png/marks-line-breaks.png', image);
   var file = load('png/marks-line-breaks.png');
@@ -380,7 +380,7 @@ tape('CanvasRenderer should render line mark with breaks', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render path mark', function(t) {
+tape('CanvasRenderer should render path mark', t => {
   var image = render(marks.path, 500, 500);
   generate('png/marks-path.png', image);
   var file = load('png/marks-path.png');
@@ -392,7 +392,7 @@ tape('CanvasRenderer should render path mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render rect mark', function(t) {
+tape('CanvasRenderer should render rect mark', t => {
   var image = render(marks.rect, 500, 500);
   generate('png/marks-rect.png', image);
   var file = load('png/marks-rect.png');
@@ -400,7 +400,7 @@ tape('CanvasRenderer should render rect mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render rule mark', function(t) {
+tape('CanvasRenderer should render rule mark', t => {
   var image = render(marks.rule, 500, 500);
   generate('png/marks-rule.png', image);
   var file = load('png/marks-rule.png');
@@ -408,7 +408,7 @@ tape('CanvasRenderer should render rule mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render symbol mark', function(t) {
+tape('CanvasRenderer should render symbol mark', t => {
   var image = render(marks.symbol, 500, 500);
   generate('png/marks-symbol.png', image);
   var file = load('png/marks-symbol.png');
@@ -416,7 +416,7 @@ tape('CanvasRenderer should render symbol mark', function(t) {
   t.end();
 });
 
-tape('CanvasRenderer should render text mark', function(t) {
+tape('CanvasRenderer should render text mark', t => {
   var image = render(marks.text, 500, 500);
   generate('png/marks-text.png', image);
   var file = load('png/marks-text.png');

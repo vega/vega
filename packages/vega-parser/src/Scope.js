@@ -106,7 +106,7 @@ Scope.prototype = Subscope.prototype = {
     op.id = this.id();
     // if pre-registration references exist, resolve them now
     if (op.refs) {
-      op.refs.forEach(function(ref) { ref.$ref = op.id; });
+      op.refs.forEach(ref => { ref.$ref = op.id; });
       op.refs = null;
     }
     return op;

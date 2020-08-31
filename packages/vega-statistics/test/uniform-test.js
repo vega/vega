@@ -1,7 +1,7 @@
 var tape = require('tape'),
     uniform = require('../').randomUniform;
 
-tape('uniform generates random values', function(t) {
+tape('uniform generates random values', t => {
   var s = uniform().sample();
   t.ok(s >= 0 && s < 1);
 
@@ -14,7 +14,7 @@ tape('uniform generates random values', function(t) {
   t.end();
 });
 
-tape('uniform evaluates the pdf', function(t) {
+tape('uniform evaluates the pdf', t => {
   var n1 = uniform(-1, 1);
   t.equal(n1.pdf(-2), 0.0);
   t.equal(n1.pdf(2), 0.0);
@@ -24,7 +24,7 @@ tape('uniform evaluates the pdf', function(t) {
   t.end();
 });
 
-tape('uniform evaluates the cdf', function(t) {
+tape('uniform evaluates the cdf', t => {
   var n1 = uniform(-1, 1);
   // extreme values
   t.equal(n1.cdf(-2), 0);
@@ -36,7 +36,7 @@ tape('uniform evaluates the cdf', function(t) {
   t.end();
 });
 
-tape('uniform evaluates the inverse cdf', function(t) {
+tape('uniform evaluates the inverse cdf', t => {
   var n1 = uniform(-1, 1);
   // extreme values
   t.ok(Number.isNaN(n1.icdf(-2)));

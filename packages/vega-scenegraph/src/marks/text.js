@@ -94,7 +94,7 @@ function bound(bounds, item, mode) {
 }
 
 function draw(context, scene, bounds) {
-  visit(scene, function(item) {
+  visit(scene, item => {
     var opacity = item.opacity == null ? 1 : item.opacity,
         p, x, y, i, lh, tl, str;
 

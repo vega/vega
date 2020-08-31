@@ -6,7 +6,7 @@ function parseSignal(spec, scope) {
   vega.signalUpdates(spec, scope);
 }
 
-tape('Parser parses static signals', function(t) {
+tape('Parser parses static signals', t => {
   var scope = new vega.Scope();
 
   vega.signal({name: 'a', value: 'foo'}, scope);
@@ -25,7 +25,7 @@ tape('Parser parses static signals', function(t) {
   t.end();
 });
 
-tape('Parser parses updating signals', function(t) {
+tape('Parser parses updating signals', t => {
   var scope = new vega.Scope();
 
   parseSignal({name: 'a', update: '5 * 2'}, scope);
@@ -43,7 +43,7 @@ tape('Parser parses updating signals', function(t) {
   t.end();
 });
 
-tape('Parser parses signals with event-driven updates', function(t) {
+tape('Parser parses signals with event-driven updates', t => {
   var scope = new vega.Scope(),
       update, a, b, c, d;
 
@@ -141,7 +141,7 @@ function testSignals(t, df, signals) {
   });
 }
 
-tape('Parser handles built-in signals', function (t) {
+tape('Parser handles built-in signals', t => {
   // empty spec should get default values
   testSignals(t, vega.parse({}), {
     background: {value: null},

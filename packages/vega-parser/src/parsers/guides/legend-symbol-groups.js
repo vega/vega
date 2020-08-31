@@ -63,7 +63,7 @@ export default function(spec, config, userEncode, dataRef, columns) {
     opacity:          _('symbolOpacity')
   });
 
-  LegendScales.forEach(function(scale) {
+  LegendScales.forEach(scale => {
     if (spec[scale]) {
       update[scale] = enter[scale] = {scale: spec[scale], field: Value};
     }

@@ -148,7 +148,7 @@ Handler.prototype = {
         for (const name in opt) a.setAttribute(name, opt[name]);
         a.dispatchEvent(e);
       })
-      .catch(function() { /* do nothing */ });
+      .catch(() => { /* do nothing */ });
   },
 
   /**

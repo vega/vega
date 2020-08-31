@@ -6,7 +6,7 @@ var tape = require('tape'),
     Formula = tx.formula,
     Collect = tx.collect;
 
-tape('Formula extends tuples', function(t) {
+tape('Formula extends tuples', t => {
   var data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
@@ -16,8 +16,8 @@ tape('Formula extends tuples', function(t) {
   var df = new vega.Dataflow(),
       x  = util.field('x'),
       y  = util.field('y'),
-      f0 = util.accessor(function(t) { return t.id * 2; }, ['id']),
-      f1 = util.accessor(function(t) { return t.value[0]; }, ['value']),
+      f0 = util.accessor(t => t.id * 2, ['id']),
+      f1 = util.accessor(t => t.value[0], ['value']),
       c0 = df.add(Collect),
       fa = df.add(Formula, {expr:f0, as:'x', pulse:c0}),
       fb = df.add(Formula, {expr:f1, as:'y', pulse:fa});

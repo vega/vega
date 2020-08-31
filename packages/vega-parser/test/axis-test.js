@@ -1,7 +1,7 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-tape('Parser parses Vega specs with axes', function(t) {
+tape('Parser parses Vega specs with axes', t => {
   var spec = {
     'scales': [
       {

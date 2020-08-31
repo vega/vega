@@ -2,7 +2,7 @@ var tape = require('tape'),
     util = require('vega-util'),
     config = require('../').config;
 
-tape('Config generates defaults', function(t) {
+tape('Config generates defaults', t => {
   var c = config();
 
   t.equal(c.autosize, 'pad');
@@ -11,7 +11,7 @@ tape('Config generates defaults', function(t) {
   t.end();
 });
 
-tape('Config overrides with extended defaults', function(t) {
+tape('Config overrides with extended defaults', t => {
   var as = {type: 'pad', resize: 'true'};
 
   var c = util.mergeConfig(

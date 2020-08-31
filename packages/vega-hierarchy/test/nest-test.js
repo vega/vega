@@ -8,7 +8,7 @@ function toObject(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-tape('Nest tuples', function(t) {
+tape('Nest tuples', t => {
   var dataA = {id: 'A', job: 'Doctor'},
       nodeA = {key: dataA.job, values: [dataA]},
       childA = {data: dataA, height: 0, depth: 2};
@@ -84,7 +84,7 @@ tape('Nest tuples', function(t) {
   t.end();
 });
 
-tape('Nest empty data', function(t) {
+tape('Nest empty data', t => {
   // Setup nest aggregation
   var df = new vega.Dataflow(),
       collect = df.add(Collect),

@@ -12,7 +12,7 @@ function match(t, actual, expect) {
   }
 }
 
-tape('Window processes single partition', function(t) {
+tape('Window processes single partition', t => {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -119,7 +119,7 @@ tape('Window processes single partition', function(t) {
   t.end();
 });
 
-tape('Window processes peers correctly', function(t) {
+tape('Window processes peers correctly', t => {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -163,7 +163,7 @@ tape('Window processes peers correctly', function(t) {
   t.end();
 });
 
-tape('Window processes multiple partitions', function(t) {
+tape('Window processes multiple partitions', t => {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -245,7 +245,7 @@ tape('Window processes multiple partitions', function(t) {
   t.end();
 });
 
-tape('Window processes range frames', function(t) {
+tape('Window processes range frames', t => {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -330,7 +330,7 @@ tape('Window processes range frames', function(t) {
   t.end();
 });
 
-tape('Window processes row frames', function(t) {
+tape('Window processes row frames', t => {
   var data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
@@ -380,7 +380,7 @@ tape('Window processes row frames', function(t) {
   t.end();
 });
 
-tape('Window processes unsorted values', function(t) {
+tape('Window processes unsorted values', t => {
   var data = [
     {key:0}, {key:1}, {key:2}, {key:3}, {key:4}
   ];
@@ -405,7 +405,7 @@ tape('Window processes unsorted values', function(t) {
   t.end();
 });
 
-tape('Window processes fill operations', function(t) {
+tape('Window processes fill operations', t => {
   var data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
@@ -456,7 +456,7 @@ tape('Window processes fill operations', function(t) {
   t.end();
 });
 
-tape('Window handles next_value with overwrite', function(t) {
+tape('Window handles next_value with overwrite', t => {
   var data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
@@ -491,7 +491,7 @@ tape('Window handles next_value with overwrite', function(t) {
   t.end();
 });
 
-tape('Window handles prev_value with overwrite', function(t) {
+tape('Window handles prev_value with overwrite', t => {
   var data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
@@ -526,7 +526,7 @@ tape('Window handles prev_value with overwrite', function(t) {
   t.end();
 });
 
-tape('Window fill operations handle partition state', function(t) {
+tape('Window fill operations handle partition state', t => {
   var data = [
     {u: 'a',  v: null, key:0, idx:0},
     {u: null, v: 'b',  key:1, idx:0}

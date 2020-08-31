@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../'),
     bandScale = vega.scale('band');
 
-tape('band.invert inverts single value', function(t) {
+tape('band.invert inverts single value', t => {
   var s = bandScale().domain(['foo', 'bar']);
 
   // ascending range
@@ -48,7 +48,7 @@ tape('band.invert inverts single value', function(t) {
   t.end();
 });
 
-tape('band.invertRange inverts value range', function(t) {
+tape('band.invertRange inverts value range', t => {
   var s = bandScale().domain(['foo', 'bar']);
 
   // empty and invalid ranges should fail

@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('toBoolean parses booleans', function(t) {
+tape('toBoolean parses booleans', t => {
   t.equal(vega.toBoolean(null), null);
   t.equal(vega.toBoolean(undefined), null);
   t.equal(vega.toBoolean(''), null);
@@ -17,7 +17,7 @@ tape('toBoolean parses booleans', function(t) {
   t.end();
 });
 
-tape('toDate parses dates', function(t) {
+tape('toDate parses dates', t => {
   var now = Date.now(),
       d = new Date(now);
 
@@ -35,7 +35,7 @@ tape('toDate parses dates', function(t) {
   t.end();
 });
 
-tape('toDate parses dates with custom parser', function(t) {
+tape('toDate parses dates with custom parser', t => {
   function parser(_) {
     return _ === 'epoch' ? 0 : NaN;
   }
@@ -51,7 +51,7 @@ tape('toDate parses dates with custom parser', function(t) {
   t.end();
 });
 
-tape('toNumber parses numbers', function(t) {
+tape('toNumber parses numbers', t => {
   t.equal(vega.toNumber(null), null);
   t.equal(vega.toNumber(undefined), null);
   t.equal(vega.toNumber(''), null);
@@ -67,7 +67,7 @@ tape('toNumber parses numbers', function(t) {
   t.end();
 });
 
-tape('toString parses strings', function(t) {
+tape('toString parses strings', t => {
   t.equal(vega.toString(null), null);
   t.equal(vega.toString(undefined), null);
   t.equal(vega.toString(''), null);

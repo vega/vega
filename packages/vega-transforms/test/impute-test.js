@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Impute = tx.impute;
 
-tape('Impute imputes missing tuples', function(t) {
+tape('Impute imputes missing tuples', t => {
   var data = [
     {'x': 0, 'y': 28, 'c':0},
     {'x': 0, 'y': 55, 'c':1},
@@ -36,7 +36,7 @@ tape('Impute imputes missing tuples', function(t) {
   t.equal(p.add[3].x, 1);
   t.equal(p.add[3].y, -1);
 
-  ['min', 'max', 'mean', 'median'].forEach(function(method) {
+  ['min', 'max', 'mean', 'median'].forEach(method => {
     df.update(m, method).run();
     p = im.pulse;
     t.equal(p.rem.length, 1);
@@ -49,7 +49,7 @@ tape('Impute imputes missing tuples', function(t) {
   t.end();
 });
 
-tape('Impute imputes missing tuples for provided domain', function(t) {
+tape('Impute imputes missing tuples for provided domain', t => {
   var data = [
     {c: 0, x: 0, y: 28},
     {c: 1, x: 0, y: 55},
@@ -90,7 +90,7 @@ tape('Impute imputes missing tuples for provided domain', function(t) {
   t.end();
 });
 
-tape('Impute imputes missing tuples without groupby', function(t) {
+tape('Impute imputes missing tuples without groupby', t => {
   var data = [
     {x: 0, y: 28},
     {x: 1, y: 43},

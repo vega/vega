@@ -19,11 +19,11 @@ inherits(Projection, Transform, {
 
     if (!proj || _.modified('type')) {
       this.value = (proj = create(_.type));
-      projectionProperties.forEach(function(prop) {
+      projectionProperties.forEach(prop => {
         if (_[prop] != null) set(proj, prop, _[prop]);
       });
     } else {
-      projectionProperties.forEach(function(prop) {
+      projectionProperties.forEach(prop => {
         if (_.modified(prop)) set(proj, prop, _[prop]);
       });
     }

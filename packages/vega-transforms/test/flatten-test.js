@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Flatten = tx.flatten;
 
-tape('Flatten flattens arrays', function(t) {
+tape('Flatten flattens arrays', t => {
   var data = [
     { k: 'a', v: [ 1, 2 ] },
     { k: 'b', v: [ 3, 4, 5 ] }
@@ -51,7 +51,7 @@ tape('Flatten flattens arrays', function(t) {
   t.end();
 });
 
-tape('Flatten flattens parallel arrays', function(t) {
+tape('Flatten flattens parallel arrays', t => {
   var data = [
     { k: 'a', a: [ 1, 2 ], b: [ 'A', 'B'] },
     { k: 'b', a: [ 3, 4, 5 ], b: [ 'C', 'D', 'E' ]}
@@ -97,7 +97,7 @@ tape('Flatten flattens parallel arrays', function(t) {
 });
 
 
-tape('Flatten flattens and adds index field', function(t) {
+tape('Flatten flattens and adds index field', t => {
   var data = [
     { k: 'a', v: [ 1, 2 ] },
     { k: 'b', v: [ 3, 4, 5 ] }

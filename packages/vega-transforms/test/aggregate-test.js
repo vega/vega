@@ -6,7 +6,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     Aggregate = tx.aggregate;
 
-tape('Aggregate aggregates tuples', function(t) {
+tape('Aggregate aggregates tuples', t => {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -89,7 +89,7 @@ tape('Aggregate aggregates tuples', function(t) {
   t.end();
 });
 
-tape('Aggregate handles count aggregates', function(t) {
+tape('Aggregate handles count aggregates', t => {
   var data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
@@ -140,7 +140,7 @@ tape('Aggregate handles count aggregates', function(t) {
   t.end();
 });
 
-tape('Aggregate properly handles empty aggregation cells', function(t) {
+tape('Aggregate properly handles empty aggregation cells', t => {
   var data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
@@ -164,7 +164,7 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
 
   // -- remove category 'b'
   df.pulse(col, changeset()
-    .remove(function(d) { return d.k === 'b'; })).run();
+    .remove(d => d.k === 'b')).run();
   t.equal(out.value.length, 1);
 
   // -- modify tuple
@@ -182,7 +182,7 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
   t.end();
 });
 
-tape('Aggregate handles distinct aggregates', function(t) {
+tape('Aggregate handles distinct aggregates', t => {
   var data = [
     {foo:null},
     {foo:null},
@@ -225,7 +225,7 @@ tape('Aggregate handles distinct aggregates', function(t) {
   t.end();
 });
 
-tape('Aggregate handles cross-product', function(t) {
+tape('Aggregate handles cross-product', t => {
   var data = [
     {a: 0, b: 2},
     {a: 1, b: 3}
@@ -311,7 +311,7 @@ tape('Aggregate handles cross-product', function(t) {
   t.end();
 });
 
-tape('Aggregate handles empty/invalid data', function(t) {
+tape('Aggregate handles empty/invalid data', t => {
   var ops = [
     'count',
     'missing',

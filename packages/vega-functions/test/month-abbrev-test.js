@@ -2,7 +2,7 @@ var tape = require('tape'),
     format = require('vega-format'),
     {monthAbbrevFormat} = require('../');
 
-tape('monthAbbrevFormat returns empty string for non-integer values', function(t) {
+tape('monthAbbrevFormat returns empty string for non-integer values', t => {
   const locale = format.defaultLocale(),
         self = { context: { dataflow: { locale: () => locale } } },
         abbrev = monthAbbrevFormat.bind(self);

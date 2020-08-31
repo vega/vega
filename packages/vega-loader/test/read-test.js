@@ -36,12 +36,10 @@ var types = {
 
 function toDelimitedText(data, delimiter) {
   var head = fields.join(delimiter);
-  var body = data.map(function(row) {
-    return fields.map(function(f) {
-      var v = row[f];
-      return typeof v === 'string' ? ('"'+v+'"') : v;
-    }).join(delimiter);
-  });
+  var body = data.map(row => fields.map(f => {
+    var v = row[f];
+    return typeof v === 'string' ? ('"'+v+'"') : v;
+  }).join(delimiter));
   return head + '\n' + body.join('\n');
 }
 
@@ -49,31 +47,31 @@ function toDelimitedText(data, delimiter) {
 
 var json = JSON.stringify(data);
 
-tape('JSON reader should read json data', function(t) {
+tape('JSON reader should read json data', t => {
   t.deepEqual(read(json), data);
   t.deepEqual(read(json, {type:'json'}), data);
   t.end();
 });
 
-tape('JSON reader should parse json fields', function(t) {
+tape('JSON reader should parse json fields', t => {
   t.deepEqual(read(data, {type:'json', parse: types}), parsed);
   t.deepEqual(read(json, {type:'json', parse: types}), parsed);
   t.end();
 });
 
-tape('JSON reader should auto-parse json fields', function(t) {
+tape('JSON reader should auto-parse json fields', t => {
   t.deepEqual(read(data, {type:'json', parse:'auto'}), parsed);
   t.deepEqual(read(json, {type:'json', parse:'auto'}), parsed);
   t.end();
 });
 
-tape('JSON reader should read json from property', function(t) {
+tape('JSON reader should read json from property', t => {
   var json = JSON.stringify({foo: data});
   t.deepEqual(read(json, {type:'json', property:'foo'}), data);
   t.end();
 });
 
-tape('JSON reader should parse date with format %d.%m.%Y', function(t) {
+tape('JSON reader should parse date with format %d.%m.%Y', t => {
   var expected = function() { return [{foo: new Date(1990, 6, 18)}]; },
       input = function() { return [{foo: '18.07.1990'}]; },
       types;
@@ -93,7 +91,7 @@ tape('JSON reader should parse date with format %d.%m.%Y', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse date with format %m.%d.%Y', function(t) {
+tape('JSON reader should parse date with format %m.%d.%Y', t => {
   var expected = function() { return [{foo: new Date(1990, 6, 18)}]; },
       input = function() { return [{foo: '07.18.1990'}]; },
       types;
@@ -113,7 +111,7 @@ tape('JSON reader should parse date with format %m.%d.%Y', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse time with format %H:%M', function(t) {
+tape('JSON reader should parse time with format %H:%M', t => {
   var expected = function() { return [{foo: new Date(1900, 0, 1, 13, 15)}]; },
       input = function() { return [{foo: '13:15'}]; },
       types;
@@ -133,7 +131,7 @@ tape('JSON reader should parse time with format %H:%M', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse date with custom parse function', function(t) {
+tape('JSON reader should parse date with custom parse function', t => {
   var expected = [{foo: new Date(2000, 1, 1)}],
       input = [{foo: '18.07.1990'}],
       types = {foo: 'date:custom'};
@@ -146,7 +144,7 @@ tape('JSON reader should parse date with custom parse function', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse UTC date with format %d.%m.%Y', function(t) {
+tape('JSON reader should parse UTC date with format %d.%m.%Y', t => {
   var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
       input = function() { return [{foo: '18.07.1990'}]; },
       types;
@@ -166,7 +164,7 @@ tape('JSON reader should parse UTC date with format %d.%m.%Y', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse UTC date with format %m.%d.%Y', function(t) {
+tape('JSON reader should parse UTC date with format %m.%d.%Y', t => {
   var expected = function() { return [{foo: new Date(Date.UTC(1990, 6, 18))}]; },
       input = function() { return [{foo: '07.18.1990'}]; },
       types;
@@ -186,7 +184,7 @@ tape('JSON reader should parse UTC date with format %m.%d.%Y', function(t) {
   t.end();
 });
 
-tape('JSON reader should parse UTC time with format %H:%M', function(t) {
+tape('JSON reader should parse UTC time with format %H:%M', t => {
   var expected = function() { return [{foo: new Date(Date.UTC(1900, 0, 1, 13, 15))}]; },
       input = function() { return [{foo: '13:15'}]; },
       types;
@@ -206,10 +204,10 @@ tape('JSON reader should parse UTC time with format %H:%M', function(t) {
   t.end();
 });
 
-tape('JSON reader should throw error if format is unrecognized', function(t) {
+tape('JSON reader should throw error if format is unrecognized', t => {
   var input = [{foo: '18.07.1990'}],
       types = {foo: 'notAFormat'};
-  t.throws(function() { read(input, {type:'json', parse: types}); });
+  t.throws(() => { read(input, {type:'json', parse: types}); });
   t.end();
 });
 
@@ -217,18 +215,18 @@ tape('JSON reader should throw error if format is unrecognized', function(t) {
 
 var csv = toDelimitedText(data, ',');
 
-tape('CSV reader should read csv data', function(t) {
+tape('CSV reader should read csv data', t => {
   t.deepEqual(read(csv, {type:'csv'}), strings);
   t.deepEqual(read('', {type:'csv'}), []);
   t.end();
 });
 
-tape('CSV reader should parse csv fields', function(t) {
+tape('CSV reader should parse csv fields', t => {
   t.deepEqual(read(csv, {type:'csv', parse:types}), parsed);
   t.end();
 });
 
-tape('CSV reader should auto-parse csv fields', function(t) {
+tape('CSV reader should auto-parse csv fields', t => {
   t.deepEqual(read(csv, {type:'csv', parse:'auto'}), parsed);
   t.end();
 });
@@ -237,18 +235,18 @@ tape('CSV reader should auto-parse csv fields', function(t) {
 
 var tsv = toDelimitedText(data, '\t');
 
-tape('TSV reader should read tsv data', function(t) {
+tape('TSV reader should read tsv data', t => {
   t.deepEqual(read(tsv, {type:'tsv'}), strings);
   t.deepEqual(read('', {type:'tsv'}), []);
   t.end();
 });
 
-tape('TSV reader should parse tsv fields', function(t) {
+tape('TSV reader should parse tsv fields', t => {
   t.deepEqual(read(tsv, {type:'tsv', parse:types}), parsed);
   t.end();
 });
 
-tape('TSV reader should auto-parse tsv fields', function(t) {
+tape('TSV reader should auto-parse tsv fields', t => {
   t.deepEqual(read(tsv, {type:'tsv', parse:'auto'}), parsed);
   t.end();
 });
@@ -257,13 +255,13 @@ tape('TSV reader should auto-parse tsv fields', function(t) {
 
 var psv = toDelimitedText(data, '|');
 
-tape('DSV reader should read dsv data', function(t) {
+tape('DSV reader should read dsv data', t => {
   t.deepEqual(read(psv, {type:'dsv', delimiter:'|'}), strings);
   t.deepEqual(read('', {type:'dsv', delimiter:'|'}), []);
   t.end();
 });
 
-tape('DSV reader should accept header parameter', function(t) {
+tape('DSV reader should accept header parameter', t => {
   var body = psv.slice(psv.indexOf('\n')+1);
   t.deepEqual(read(body, {
     type: 'dsv',
@@ -273,12 +271,12 @@ tape('DSV reader should accept header parameter', function(t) {
   t.end();
 });
 
-tape('DSV reader should parse dsv fields', function(t) {
+tape('DSV reader should parse dsv fields', t => {
   t.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:types}), parsed);
   t.end();
 });
 
-tape('DSV reader should auto-parse dsv fields', function(t) {
+tape('DSV reader should auto-parse dsv fields', t => {
   t.deepEqual(read(psv, {type:'dsv', delimiter:'|', parse:'auto'}), parsed);
   t.end();
 });
@@ -288,42 +286,42 @@ tape('DSV reader should auto-parse dsv fields', function(t) {
 var worldText = require('fs').readFileSync('./test/data/world-110m.json', 'utf8');
 var world = JSON.parse(worldText);
 
-tape('TopoJSON reader should read TopoJSON mesh', function(t) {
+tape('TopoJSON reader should read TopoJSON mesh', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries'});
   var tj = topojson.mesh(world, world.objects['countries']);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
-tape('TopoJSON reader should read TopoJSON mesh interior', function(t) {
+tape('TopoJSON reader should read TopoJSON mesh interior', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'interior'});
   var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a !== b);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
-tape('TopoJSON reader should read TopoJSON mesh exterior', function(t) {
+tape('TopoJSON reader should read TopoJSON mesh exterior', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'exterior'});
   var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a === b);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
-tape('TopoJSON reader should read TopoJSON feature', function(t) {
+tape('TopoJSON reader should read TopoJSON feature', t => {
   var feature = read(worldText, {type:'topojson', feature: 'countries'});
   var tj = topojson.feature(world, world.objects['countries']).features;
   t.equal(JSON.stringify(tj), JSON.stringify(feature));
   t.end();
 });
 
-tape('TopoJSON reader should throw error if TopoJSON is invalid', function(t) {
+tape('TopoJSON reader should throw error if TopoJSON is invalid', t => {
   var data = {objects: {}};
-  t.throws(function() { read(data, {type:'topojson', feature: 'countries'}); });
-  t.throws(function() { read(data, {type:'topojson', mesh: 'countries'}); });
+  t.throws(() => { read(data, {type:'topojson', feature: 'countries'}); });
+  t.throws(() => { read(data, {type:'topojson', mesh: 'countries'}); });
   t.end();
 });
 
-tape('TopoJSON reader should throw error if TopoJSON parameters are missing', function(t) {
-  t.throws(function() { read(worldText, {type:'topojson'}); });
+tape('TopoJSON reader should throw error if TopoJSON parameters are missing', t => {
+  t.throws(() => { read(worldText, {type:'topojson'}); });
   t.end();
 });

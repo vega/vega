@@ -17,7 +17,7 @@ vega.setRandom(vega.randomLCG(123456789));
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
 
-tape('Vega generates scenegraphs for specifications', function(t) {
+tape('Vega generates scenegraphs for specifications', t => {
   let count = specs.length;
 
   specs.forEach(async function(name, index) {

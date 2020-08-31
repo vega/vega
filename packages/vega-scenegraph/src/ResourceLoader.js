@@ -25,11 +25,11 @@ ResourceLoader.prototype = {
     increment(loader);
 
     return loader._loader.sanitize(uri, {context:'href'})
-      .then(function(opt) {
+      .then(opt => {
         decrement(loader);
         return opt;
       })
-      .catch(function() {
+      .catch(() => {
         decrement(loader);
         return null;
       });
@@ -42,7 +42,7 @@ ResourceLoader.prototype = {
 
     return loader._loader
       .sanitize(uri, {context: 'image'})
-      .then(function(opt) {
+      .then(opt => {
         const url = opt.href;
         if (!url || !Image) throw {url: url};
 
@@ -60,7 +60,7 @@ ResourceLoader.prototype = {
 
         return img;
       })
-      .catch(function(e) {
+      .catch(e => {
         decrement(loader);
         return {complete: false, width: 0, height: 0, src: e && e.url || ''};
       });
@@ -68,10 +68,10 @@ ResourceLoader.prototype = {
 
   ready() {
     var loader = this;
-    return new Promise(function(accept) {
+    return new Promise(accept => {
       function poll(value) {
         if (!loader.pending()) accept(value);
-        else setTimeout(function() { poll(true); }, 10);
+        else setTimeout(() => { poll(true); }, 10);
       }
       poll(false);
     });

@@ -60,7 +60,7 @@ export function inferType(values, field) {
 }
 
 export function inferTypes(data, fields) {
-  return fields.reduce(function(types, field) {
+  return fields.reduce((types, field) => {
     types[field] = inferType(data, field);
     return types;
   }, {});

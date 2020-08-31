@@ -15,12 +15,12 @@ var validator = new ajv({
 
 var validate = validator.compile(schema);
 
-tape('schema should be valid', function(t) {
+tape('schema should be valid', t => {
   t.ok(validator.validateSchema(schema));
   t.end();
 });
 
-tape('schema should validate correct marks', function(t) {
+tape('schema should validate correct marks', t => {
   var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
   for (var name in marks) {
     t.ok(validate(marks[name]), name);
@@ -28,7 +28,7 @@ tape('schema should validate correct marks', function(t) {
   t.end();
 });
 
-tape('schema should invalidate incorrect marks', function(t) {
+tape('schema should invalidate incorrect marks', t => {
   var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
   for (var name in marks) {
     var scene = marks[name];
@@ -42,20 +42,20 @@ tape('schema should invalidate incorrect marks', function(t) {
   t.end();
 });
 
-tape('schema should validate scenegraph files', function(t) {
+tape('schema should validate scenegraph files', t => {
   var files = [
     'scenegraph-barley.json',
     'scenegraph-defs.json',
     'scenegraph-rect.json'
   ];
-  files.forEach(function(f) {
+  files.forEach(f => {
     var scene = JSON.parse(fs.readFileSync(res + f));
     t.ok(validate(scene));
   });
   t.end();
 });
 
-tape('schema should invalidate degenerate scenegraphs', function(t) {
+tape('schema should invalidate degenerate scenegraphs', t => {
   var list = [
     {},
     {x: 0, y:1},
@@ -63,14 +63,14 @@ tape('schema should invalidate degenerate scenegraphs', function(t) {
     {marktype:'blah', items: []}
   ];
 
-  list.forEach(function(scene) {
+  list.forEach(scene => {
     t.notOk(validate(scene));
   });
 
   t.end();
 });
 
-tape('schema should validate svg paths', function(t) {
+tape('schema should validate svg paths', t => {
   var bad = [
     {marktype: 'path', items: [{path: 'lorem ipsum'}]},
     {marktype: 'path', items: [{path: 'L1,2'}]},
@@ -84,7 +84,7 @@ tape('schema should validate svg paths', function(t) {
     {marktype: 'path', items: [{path: 'M1,2A-1,2,1.3,0,0,3,4'}]}
   ];
 
-  bad.forEach(function(scene) {
+  bad.forEach(scene => {
     t.notOk(validate(scene), scene.items[0].path);
   });
 
@@ -101,14 +101,14 @@ tape('schema should validate svg paths', function(t) {
     {marktype: 'path', items: [{path: 'M1,2A1,2,1.3,0,0,3,4'}]}
   ];
 
-  good.forEach(function(scene) {
+  good.forEach(scene => {
     t.ok(validate(scene));
   });
 
   t.end();
 });
 
-tape('schema should validate colors', function(t) {
+tape('schema should validate colors', t => {
   var bad = [
     {marktype: 'rect', items: [{fill: '#ffff'}]},
     {marktype: 'rect', items: [{fill: 'rgb(256,0,0)'}]},
@@ -116,7 +116,7 @@ tape('schema should validate colors', function(t) {
     {marktype: 'rect', items: [{fill: 'hsl(355,20,30%)'}]}
   ];
 
-  bad.forEach(function(scene) {
+  bad.forEach(scene => {
     t.notOk(validate(scene));
   });
 
@@ -130,7 +130,7 @@ tape('schema should validate colors', function(t) {
     {marktype: 'rect', items: [{fill: 'hsl(355,20%,30%)'}]}
   ];
 
-  good.forEach(function(scene) {
+  good.forEach(scene => {
     t.ok(validate(scene));
   });
 

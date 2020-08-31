@@ -151,9 +151,7 @@ function legendType(spec, scaleType) {
 }
 
 function scaleCount(spec) {
-  return LegendScales.reduce(function(count, type) {
-    return count + (spec[type] ? 1 : 0);
-  }, 0);
+  return LegendScales.reduce((count, type) => count + (spec[type] ? 1 : 0), 0);
 }
 
 function buildLegendEncode(_, spec, config) {
