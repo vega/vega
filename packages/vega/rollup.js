@@ -10,7 +10,7 @@ function hasArgument(_) {
 }
 
 const external = !externals ? [] : [
-  // 'd3-array', // we use d3-array v2, not part of D3 v5
+  'd3-array',
   'd3-color',
   'd3-dispatch',
   'd3-dsv',
@@ -20,12 +20,12 @@ const external = !externals ? [] : [
   'd3-hierarchy',
   'd3-interpolate',
   'd3-path',
-  // 'd3-scale', // we use d3-scale v3, not part of D3 v5
+  'd3-scale',
   'd3-shape',
   'd3-time',
   'd3-time-format',
   'd3-timer',
-  // 'd3-delaunay', // not part of D3 v5
+  'd3-delaunay',
   'topojson-client'
 ];
 

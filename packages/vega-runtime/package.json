@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -24,8 +24,8 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "vega-dataflow": "^5.7.1",
-    "vega-util": "^1.15.0"
+    "vega-dataflow": "^5.7.2",
+    "vega-util": "^1.15.1"
   },
   "devDependencies": {
     "vega-encode": "*",

@@ -1,6 +1,6 @@
 {
   "name": "vega-format",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "JavaScript string formatting utilities for Vega.",
   "keywords": [
     "vega",
@@ -25,10 +25,10 @@
     "postpublish": "git push && git push --tags"
   },
   "dependencies": {
-    "d3-array": "^2.5.1",
-    "d3-format": "^1.4.4",
-    "d3-time-format": "^2.2.3",
-    "vega-time": "^2.0.2",
-    "vega-util": "^1.15.0"
+    "d3-array": "^2.7.0",
+    "d3-format": "^2.0.0",
+    "d3-time-format": "^3.0.0",
+    "vega-time": "^2.0.3",
+    "vega-util": "^1.15.1"
   }
 }
