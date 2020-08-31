@@ -41,10 +41,11 @@
   }
 
   function splitAccessPath(p) {
-    let path = [],
-        q = null,
+    const path = [],
+          n = p.length;
+
+    let q = null,
         b = 0,
-        n = p.length,
         s = '',
         i, j, c;
 
@@ -114,15 +115,15 @@
 
   const id = field('id');
 
-  const identity = accessor(function(_) { return _; }, [], 'identity');
+  const identity = accessor(_ => _, [], 'identity');
 
-  const zero = accessor(function() { return 0; }, [], 'zero');
+  const zero = accessor(() => 0, [], 'zero');
 
-  const one = accessor(function() { return 1; }, [], 'one');
+  const one = accessor(() => 1, [], 'one');
 
-  const truthy = accessor(function() { return true; }, [], 'true');
+  const truthy = accessor(() => true, [], 'true');
 
-  const falsy = accessor(function() { return false; }, [], 'false');
+  const falsy = accessor(() => false, [], 'false');
 
   function log(method, level, input) {
     const args = [level].concat([].slice.call(input));
@@ -467,9 +468,8 @@
   }
 
   function extentIndex(array, f) {
-    let i = -1,
-        n = array.length,
-        a, b, c, u, v;
+    const n = array.length;
+    let i = -1, a, b, c, u, v;
 
     if (f == null) {
       while (++i < n) {
@@ -532,14 +532,13 @@
 
   function fastmap(input) {
     let obj = {},
-        map,
         test;
 
     function has(key) {
       return hasOwnProperty(obj, key) && obj[key] !== NULL;
     }
 
-    map = {
+    const map = {
       size: 0,
       empty: 0,
       object: obj,
@@ -576,11 +575,10 @@
         }
       },
       clean() {
-        let next = {},
-            size = 0,
-            key, value;
-        for (key in obj) {
-          value = obj[key];
+        const next = {};
+        let size = 0;
+        for (const key in obj) {
+          const value = obj[key];
           if (value !== NULL && (!test || !test(value))) {
             next[key] = value;
             ++size;
@@ -592,7 +590,7 @@
       }
     };
 
-    if (input) Object.keys(input).forEach(function(key) {
+    if (input) Object.keys(input).forEach(key => {
       map.set(key, input[key]);
     });
 
@@ -602,10 +600,10 @@
   function flush(range, value, threshold, left, right, center) {
     if (!threshold && threshold !== 0) return center;
 
+    const t = +threshold;
     let a = range[0],
         b = peek(range),
-        t = +threshold,
-        l, r;
+        l;
 
     // swap endpoints if range is reversed
     if (b < a) {
@@ -614,7 +612,7 @@
 
     // compare value to endpoints
     l = Math.abs(value - a);
-    r = Math.abs(b - value);
+    const r = Math.abs(b - value);
 
     // adjust if value is within threshold distance of endpoint
     return l < r && l <= t ? left : r <= t ? right : center;
@@ -745,8 +743,8 @@
     if (!n1) return array0;
     if (!n0) return array1;
 
-    let merged = output || new array0.constructor(n0 + n1),
-        i0 = 0, i1 = 0, i = 0;
+    const merged = output || new array0.constructor(n0 + n1);
+    let i0 = 0, i1 = 0, i = 0;
 
     for (; i0<n0 && i1<n1; ++i) {
       merged[i] = compare(array0[i0], array1[i1]) > 0
@@ -837,9 +835,10 @@
   function visitArray(array, filter, visitor) {
     if (array) {
       if (filter) {
-        let i = 0, n = array.length, t;
-        for (; i<n; ++i) {
-          if (t = filter(array[i])) visitor(t, i, array);
+        const n = array.length;
+        for (let i = 0; i < n; ++i) {
+          const t = filter(array[i]);
+          if (t) visitor(t, i, array);
         }
       } else {
         array.forEach(visitor);
@@ -980,29 +979,30 @@
   }
 
   function changeset() {
-    let add = [],  // insert tuples
-        rem = [],  // remove tuples
-        mod = [],  // modify tuples
-        remp = [], // remove by predicate
-        modp = [], // modify by predicate
-        clean = null,
+    const add = [],  // insert tuples
+          rem = [],  // remove tuples
+          mod = [],  // modify tuples
+          remp = [], // remove by predicate
+          modp = []; // modify by predicate
+    let clean = null,
         reflow = false;
 
     return {
       constructor: changeset,
       insert(t) {
-        let d = array(t), i = 0, n = d.length;
-        for (; i<n; ++i) add.push(d[i]);
+        const d = array(t), n = d.length;
+        for (let i = 0; i < n; ++i) add.push(d[i]);
         return this;
       },
       remove(t) {
-        let a = isFunction(t) ? remp : rem,
-            d = array(t), i = 0, n = d.length;
-        for (; i<n; ++i) a.push(d[i]);
+        const a = isFunction(t) ? remp : rem,
+              d = array(t),
+              n = d.length;
+        for (let i = 0; i < n; ++i) a.push(d[i]);
         return this;
       },
       modify(t, field, value) {
-        let m = {field: field, value: constant(value)};
+        const m = {field: field, value: constant(value)};
         if (isFunction(t)) {
           m.filter = t;
           modp.push(m);
@@ -1026,21 +1026,22 @@
         return this;
       },
       pulse(pulse, tuples) {
-        let cur = {}, out = {}, i, n, m, f, t, id;
+        const cur = {}, out = {};
+        let i, n, m, f, t, id;
 
         // build lookup table of current tuples
-        for (i=0, n=tuples.length; i<n; ++i) {
+        for (i = 0, n = tuples.length; i < n; ++i) {
           cur[tupleid(tuples[i])] = 1;
         }
 
         // process individual tuples to remove
-        for (i=0, n=rem.length; i<n; ++i) {
+        for (i = 0, n = rem.length; i < n; ++i) {
           t = rem[i];
           cur[tupleid(t)] = -1;
         }
 
         // process predicate-based removals
-        for (i=0, n=remp.length; i<n; ++i) {
+        for (i = 0, n = remp.length; i < n; ++i) {
           f = remp[i];
           tuples.forEach(t => {
             if (f(t)) cur[tupleid(t)] = -1;
@@ -1048,7 +1049,7 @@
         }
 
         // process all add tuples
-        for (i=0, n=add.length; i<n; ++i) {
+        for (i = 0, n = add.length; i < n; ++i) {
           t = add[i];
           id = tupleid(t);
           if (cur[id]) {
@@ -1062,7 +1063,7 @@
         }
 
         // populate pulse rem list
-        for (i=0, n=tuples.length; i<n; ++i) {
+        for (i = 0, n = tuples.length; i < n; ++i) {
           t = tuples[i];
           if (cur[tupleid(t)] < 0) pulse.rem.push(t);
         }
@@ -1078,7 +1079,7 @@
         }
 
         // process individual tuples to modify
-        for (i=0, n=mod.length; i<n; ++i) {
+        for (i = 0, n = mod.length; i < n; ++i) {
           m = mod[i];
           t = m.tuple;
           f = m.field;
@@ -1090,7 +1091,7 @@
         }
 
         // process predicate-based modifications
-        for (i=0, n=modp.length; i<n; ++i) {
+        for (i = 0, n = modp.length; i < n; ++i) {
           m = modp[i];
           f = m.filter;
           tuples.forEach(t => {
@@ -1173,12 +1174,12 @@
      * @return {boolean} - Returns true if a queried parameter was modified.
      */
     modified(name, index) {
-      let mod = this[CACHE], k;
+      const mod = this[CACHE];
       if (!arguments.length) {
-        for (k in mod) { if (mod[k]) return true; }
+        for (const k in mod) { if (mod[k]) return true; }
         return false;
       } else if (isArray(name)) {
-        for (k=0; k<name.length; ++k) {
+        for (let k = 0; k < name.length; ++k) {
           if (mod[name[k]]) return true;
         }
         return false;
@@ -1310,10 +1311,10 @@
      */
     parameters(params, react, initonly) {
       react = react !== false;
-      let argval = (this._argval = this._argval || new Parameters()),
-          argops = (this._argops = this._argops || []),
-          deps = [],
-          name, value, n, i;
+      const argval = (this._argval = this._argval || new Parameters()),
+            argops = (this._argops = this._argops || []),
+            deps = [];
+      let name, value, n, i;
 
       const add = (name, index, value) => {
         if (value instanceof Operator) {
@@ -1342,7 +1343,7 @@
           this.source = value;
         } else if (isArray(value)) {
           argval.set(name, -1, Array(n = value.length));
-          for (i=0; i<n; ++i) add(name, i, value[i]);
+          for (i = 0; i < n; ++i) add(name, i, value[i]);
         } else {
           add(name, -1, value);
         }
@@ -1360,12 +1361,13 @@
      * @return {Parameters} A Parameters object to pass to the update function.
      */
     marshall(stamp) {
-      let argval = this._argval || NO_PARAMS,
-          argops = this._argops,
-          item, i, n, op, mod;
+      const argval = this._argval || NO_PARAMS,
+            argops = this._argops;
+      let item, i, op, mod;
 
       if (argops) {
-        for (i=0, n=argops.length; i<n; ++i) {
+        const n = argops.length;
+        for (i = 0; i < n; ++i) {
           item = argops[i];
           op = item.op;
           mod = op.modified() && op.stamp === stamp;
@@ -1373,7 +1375,7 @@
         }
 
         if (argops.initonly) {
-          for (i=0; i<n; ++i) {
+          for (i = 0; i < n; ++i) {
             item = argops[i];
             item.op.targets().remove(this);
           }
@@ -1389,11 +1391,11 @@
      * Unregisters listeners on upstream dependencies.
      */
     detach() {
-      let argops = this._argops,
-          i, n, item, op;
+      const argops = this._argops;
+      let i, n, item, op;
 
       if (argops) {
-        for (i=0, n=argops.length; i<n; ++i) {
+        for (i = 0, n = argops.length; i < n; ++i) {
           item = argops[i];
           op = item.op;
           if (op._targets) {
@@ -1502,9 +1504,10 @@
    *   to the target operator.
    */
   function connect(target, sources) {
-    let targetRank = target.rank, i, n;
+    const targetRank = target.rank,
+          n = sources.length;
 
-    for (i=0, n=sources.length; i<n; ++i) {
+    for (let i = 0; i < n; ++i) {
       if (targetRank < sources[i].rank) {
         this.rerank(target);
         return;
@@ -1562,12 +1565,11 @@
 
     receive(evt) {
       if (this._filter(evt)) {
-        let val = (this.value = this._apply(evt)),
+        const val = (this.value = this._apply(evt)),
             trg = this._targets,
-            n = trg ? trg.length : 0,
-            i = 0;
+            n = trg ? trg.length : 0;
 
-        for (; i<n; ++i) trg[i].receive(val);
+        for (let i = 0; i < n; ++i) trg[i].receive(val);
 
         if (this._consume) {
           evt.preventDefault();
@@ -1651,27 +1653,28 @@
    * @return {EventStream}
    */
   function events(source, type, filter, apply) {
-    let df = this,
-        s = stream(filter, apply),
-        send = function(e) {
-          e.dataflow = df;
-          try {
-            s.receive(e);
-          } catch (error) {
-            df.error(error);
-          } finally {
-            df.run();
-          }
-        },
-        sources;
+    const df = this,
+          s = stream(filter, apply),
+          send = function(e) {
+            e.dataflow = df;
+            try {
+              s.receive(e);
+            } catch (error) {
+              df.error(error);
+            } finally {
+              df.run();
+            }
+          };
 
+    let sources;
     if (typeof source === 'string' && typeof document !== 'undefined') {
       sources = document.querySelectorAll(source);
     } else {
       sources = array(source);
     }
 
-    for (let i=0, n=sources.length; i<n; ++i) {
+    const n = sources.length;
+    for (let i = 0; i < n; ++i) {
       sources[i].addEventListener(type, send);
     }
 
@@ -1927,7 +1930,7 @@
   }
 
   function inferTypes(data, fields) {
-    return fields.reduce(function(types, field) {
+    return fields.reduce((types, field) => {
       types[field] = inferType(data, field);
       return types;
     }, {});
@@ -2420,41 +2423,76 @@
     return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
   }
 
-  function bisector(compare) {
-    if (compare.length === 1) compare = ascendingComparator(compare);
-    return {
-      left: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) < 0) lo = mid + 1;
-          else hi = mid;
-        }
-        return lo;
-      },
-      right: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) > 0) hi = mid;
-          else lo = mid + 1;
-        }
-        return lo;
+  function bisector(f) {
+    let delta = f;
+    let compare = f;
+
+    if (f.length === 1) {
+      delta = (d, x) => f(d) - x;
+      compare = ascendingComparator(f);
+    }
+
+    function left(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (compare(a[mid], x) < 0) lo = mid + 1;
+        else hi = mid;
       }
-    };
+      return lo;
+    }
+
+    function right(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (compare(a[mid], x) > 0) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    }
+
+    function center(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      const i = left(a, x, lo, hi - 1);
+      return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
+    }
+
+    return {left, center, right};
   }
 
   function ascendingComparator(f) {
-    return function(d, x) {
-      return ascending$1(f(d), x);
-    };
+    return (d, x) => ascending$1(f(d), x);
   }
 
-  var ascendingBisect = bisector(ascending$1);
-  var bisectRight = ascendingBisect.right;
-  var bisectLeft = ascendingBisect.left;
+  function number(x) {
+    return x === null ? NaN : +x;
+  }
+
+  function* numbers(values, valueof) {
+    if (valueof === undefined) {
+      for (let value of values) {
+        if (value != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    } else {
+      let index = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+          yield value;
+        }
+      }
+    }
+  }
+
+  const ascendingBisect = bisector(ascending$1);
+  const bisectRight = ascendingBisect.right;
+  const bisectLeft = ascendingBisect.left;
+  const bisectCenter = bisector(number).center;
 
   function variance(values, valueof) {
     let count = 0;
@@ -2485,6 +2523,48 @@
   function deviation(values, valueof) {
     const v = variance(values, valueof);
     return v ? Math.sqrt(v) : v;
+  }
+
+  // https://github.com/python/cpython/blob/a74eea238f5baba15797e2e8b570d153bc8690a7/Modules/mathmodule.c#L1423
+  class Adder {
+    constructor() {
+      this._partials = new Float64Array(32);
+      this._n = 0;
+    }
+    add(x) {
+      const p = this._partials;
+      let i = 0;
+      for (let j = 0; j < this._n && j < 32; j++) {
+        const y = p[j],
+          hi = x + y,
+          lo = Math.abs(x) < Math.abs(y) ? x - (hi - y) : y - (hi - x);
+        if (lo) p[i++] = lo;
+        x = hi;
+      }
+      p[i] = x;
+      this._n = i + 1;
+      return this;
+    }
+    valueOf() {
+      const p = this._partials;
+      let n = this._n, x, y, lo, hi = 0;
+      if (n > 0) {
+        hi = p[--n];
+        while (n > 0) {
+          x = hi;
+          y = p[--n];
+          hi = x + y;
+          lo = y - (hi - x);
+          if (lo) break;
+        }
+        if (n > 0 && ((lo < 0 && p[n - 1] < 0) || (lo > 0 && p[n - 1] > 0))) {
+          y = lo * 2;
+          x = hi + y;
+          if (y == x - hi) hi = x;
+        }
+      }
+      return hi;
+    }
   }
 
   function sequence(start, stop, step) {
@@ -2639,27 +2719,6 @@
     array[j] = t;
   }
 
-  function number(x) {
-    return x === null ? NaN : +x;
-  }
-
-  function* numbers(values, valueof) {
-    if (valueof === undefined) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    } else {
-      let index = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
-          yield value;
-        }
-      }
-    }
-  }
-
   function quantile(values, p, valueof) {
     values = Float64Array.from(numbers(values, valueof));
     if (!(n = values.length)) return;
@@ -2709,6 +2768,16 @@
     return quantile(values, 0.5, valueof);
   }
 
+  function* flatten(arrays) {
+    for (const array of arrays) {
+      yield* array;
+    }
+  }
+
+  function merge$1(arrays) {
+    return Array.from(flatten(arrays));
+  }
+
   function permute(source, keys) {
     return Array.from(keys, key => source[key]);
   }
@@ -2732,10 +2801,16 @@
     return sum;
   }
 
+  function formatDecimal(x) {
+    return Math.abs(x = Math.round(x)) >= 1e21
+        ? x.toLocaleString("en").replace(/,/g, "")
+        : x.toString(10);
+  }
+
   // Computes the decimal coefficient and exponent of the specified number x with
   // significant digits p, where x is positive and p is in [1, 21] or undefined.
-  // For example, formatDecimal(1.23) returns ["123", 0].
-  function formatDecimal(x, p) {
+  // For example, formatDecimalParts(1.23) returns ["123", 0].
+  function formatDecimalParts(x, p) {
     if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
     var i, coefficient = x.slice(0, i);
 
@@ -2748,7 +2823,7 @@
   }
 
   function exponent(x) {
-    return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+    return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
   }
 
   function formatGroup(grouping, thousands) {
@@ -2841,7 +2916,7 @@
   var prefixExponent;
 
   function formatPrefixAuto(x, p) {
-    var d = formatDecimal(x, p);
+    var d = formatDecimalParts(x, p);
     if (!d) return x + "";
     var coefficient = d[0],
         exponent = d[1],
@@ -2850,11 +2925,11 @@
     return i === n ? coefficient
         : i > n ? coefficient + new Array(i - n + 1).join("0")
         : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
-        : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+        : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
   }
 
   function formatRounded(x, p) {
-    var d = formatDecimal(x, p);
+    var d = formatDecimalParts(x, p);
     if (!d) return x + "";
     var coefficient = d[0],
         exponent = d[1];
@@ -2864,19 +2939,19 @@
   }
 
   var formatTypes = {
-    "%": function(x, p) { return (x * 100).toFixed(p); },
-    "b": function(x) { return Math.round(x).toString(2); },
-    "c": function(x) { return x + ""; },
-    "d": function(x) { return Math.round(x).toString(10); },
-    "e": function(x, p) { return x.toExponential(p); },
-    "f": function(x, p) { return x.toFixed(p); },
-    "g": function(x, p) { return x.toPrecision(p); },
-    "o": function(x) { return Math.round(x).toString(8); },
-    "p": function(x, p) { return formatRounded(x * 100, p); },
+    "%": (x, p) => (x * 100).toFixed(p),
+    "b": (x) => Math.round(x).toString(2),
+    "c": (x) => x + "",
+    "d": formatDecimal,
+    "e": (x, p) => x.toExponential(p),
+    "f": (x, p) => x.toFixed(p),
+    "g": (x, p) => x.toPrecision(p),
+    "o": (x) => Math.round(x).toString(8),
+    "p": (x, p) => formatRounded(x * 100, p),
     "r": formatRounded,
     "s": formatPrefixAuto,
-    "X": function(x) { return Math.round(x).toString(16).toUpperCase(); },
-    "x": function(x) { return Math.round(x).toString(16); }
+    "X": (x) => Math.round(x).toString(16).toUpperCase(),
+    "x": (x) => Math.round(x).toString(16)
   };
 
   function identity$2(x) {
@@ -2893,7 +2968,7 @@
         decimal = locale.decimal === undefined ? "." : locale.decimal + "",
         numerals = locale.numerals === undefined ? identity$2 : formatNumerals(map.call(locale.numerals, String)),
         percent = locale.percent === undefined ? "%" : locale.percent + "",
-        minus = locale.minus === undefined ? "-" : locale.minus + "",
+        minus = locale.minus === undefined ? "−" : locale.minus + "",
         nan = locale.nan === undefined ? "NaN" : locale.nan + "";
 
     function newFormat(specifier) {
@@ -3028,11 +3103,9 @@
   var formatPrefix;
 
   defaultLocale({
-    decimal: ".",
     thousands: ",",
     grouping: [3],
-    currency: ["$", ""],
-    minus: "-"
+    currency: ["$", ""]
   });
 
   function defaultLocale(definition) {
@@ -3057,14 +3130,13 @@
 
   function trimZeroes(numberFormat, decimalChar) {
     return x => {
-      let str = numberFormat(x),
-          dec = str.indexOf(decimalChar),
-          idx, end;
+      const str = numberFormat(x),
+          dec = str.indexOf(decimalChar);
 
       if (dec < 0) return str;
 
-      idx = rightmostDigit(str, dec);
-      end = idx < str.length ? str.slice(idx) : '';
+      let idx = rightmostDigit(str, dec);
+      const end = idx < str.length ? str.slice(idx) : '';
       while (--idx > dec) if (str[idx] !== '0') { ++idx; break; }
 
       return str.slice(0, idx) + end;
@@ -3387,15 +3459,12 @@
     return date.getHours();
   });
 
-  var day = newInterval(function(date) {
-    date.setHours(0, 0, 0, 0);
-  }, function(date, step) {
-    date.setDate(date.getDate() + step);
-  }, function(start, end) {
-    return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationDay;
-  }, function(date) {
-    return date.getDate() - 1;
-  });
+  var day = newInterval(
+    date => date.setHours(0, 0, 0, 0),
+    (date, step) => date.setDate(date.getDate() + step),
+    (start, end) => (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationDay,
+    date => date.getDate() - 1
+  );
 
   function weekday(i) {
     return newInterval(function(date) {
@@ -3871,6 +3940,8 @@
       "d": formatDayOfMonth,
       "e": formatDayOfMonth,
       "f": formatMicroseconds,
+      "g": formatYearISO,
+      "G": formatFullYearISO,
       "H": formatHour24,
       "I": formatHour12,
       "j": formatDayOfYear,
@@ -3904,6 +3975,8 @@
       "d": formatUTCDayOfMonth,
       "e": formatUTCDayOfMonth,
       "f": formatUTCMicroseconds,
+      "g": formatUTCYearISO,
+      "G": formatUTCFullYearISO,
       "H": formatUTCHour24,
       "I": formatUTCHour12,
       "j": formatUTCDayOfYear,
@@ -3937,6 +4010,8 @@
       "d": parseDayOfMonth,
       "e": parseDayOfMonth,
       "f": parseMicroseconds,
+      "g": parseYear,
+      "G": parseFullYear,
       "H": parseHour24,
       "I": parseHour24,
       "j": parseDayOfYear,
@@ -4080,27 +4155,27 @@
 
     function parsePeriod(d, string, i) {
       var n = periodRe.exec(string.slice(i));
-      return n ? (d.p = periodLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+      return n ? (d.p = periodLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
     }
 
     function parseShortWeekday(d, string, i) {
       var n = shortWeekdayRe.exec(string.slice(i));
-      return n ? (d.w = shortWeekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+      return n ? (d.w = shortWeekdayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
     }
 
     function parseWeekday(d, string, i) {
       var n = weekdayRe.exec(string.slice(i));
-      return n ? (d.w = weekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+      return n ? (d.w = weekdayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
     }
 
     function parseShortMonth(d, string, i) {
       var n = shortMonthRe.exec(string.slice(i));
-      return n ? (d.m = shortMonthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+      return n ? (d.m = shortMonthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
     }
 
     function parseMonth(d, string, i) {
       var n = monthRe.exec(string.slice(i));
-      return n ? (d.m = monthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+      return n ? (d.m = monthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
     }
 
     function parseLocaleDateTime(d, string, i) {
@@ -4208,9 +4283,7 @@
   }
 
   function formatLookup(names) {
-    var map = {}, i = -1, n = names.length;
-    while (++i < n) map[names[i].toLowerCase()] = i;
-    return map;
+    return new Map(names.map((name, i) => [name.toLowerCase(), i]));
   }
 
   function parseWeekdayNumberSunday(d, string, i) {
@@ -4358,9 +4431,13 @@
     return pad$2(sunday.count(year(d) - 1, d), p, 2);
   }
 
-  function formatWeekNumberISO(d, p) {
+  function dISO(d) {
     var day = d.getDay();
-    d = (day >= 4 || day === 0) ? thursday(d) : thursday.ceil(d);
+    return (day >= 4 || day === 0) ? thursday(d) : thursday.ceil(d);
+  }
+
+  function formatWeekNumberISO(d, p) {
+    d = dISO(d);
     return pad$2(thursday.count(year(d), d) + (year(d).getDay() === 4), p, 2);
   }
 
@@ -4376,7 +4453,18 @@
     return pad$2(d.getFullYear() % 100, p, 2);
   }
 
+  function formatYearISO(d, p) {
+    d = dISO(d);
+    return pad$2(d.getFullYear() % 100, p, 2);
+  }
+
   function formatFullYear(d, p) {
+    return pad$2(d.getFullYear() % 10000, p, 4);
+  }
+
+  function formatFullYearISO(d, p) {
+    var day = d.getDay();
+    d = (day >= 4 || day === 0) ? thursday(d) : thursday.ceil(d);
     return pad$2(d.getFullYear() % 10000, p, 4);
   }
 
@@ -4432,9 +4520,13 @@
     return pad$2(utcSunday.count(utcYear(d) - 1, d), p, 2);
   }
 
-  function formatUTCWeekNumberISO(d, p) {
+  function UTCdISO(d) {
     var day = d.getUTCDay();
-    d = (day >= 4 || day === 0) ? utcThursday(d) : utcThursday.ceil(d);
+    return (day >= 4 || day === 0) ? utcThursday(d) : utcThursday.ceil(d);
+  }
+
+  function formatUTCWeekNumberISO(d, p) {
+    d = UTCdISO(d);
     return pad$2(utcThursday.count(utcYear(d), d) + (utcYear(d).getUTCDay() === 4), p, 2);
   }
 
@@ -4450,7 +4542,18 @@
     return pad$2(d.getUTCFullYear() % 100, p, 2);
   }
 
+  function formatUTCYearISO(d, p) {
+    d = UTCdISO(d);
+    return pad$2(d.getUTCFullYear() % 100, p, 2);
+  }
+
   function formatUTCFullYear(d, p) {
+    return pad$2(d.getUTCFullYear() % 10000, p, 4);
+  }
+
+  function formatUTCFullYearISO(d, p) {
+    var day = d.getUTCDay();
+    d = (day >= 4 || day === 0) ? utcThursday(d) : utcThursday.ceil(d);
     return pad$2(d.getUTCFullYear() % 10000, p, 4);
   }
 
@@ -4626,14 +4729,14 @@
     utcParser = utcParser || locale.utcParse;
 
     let fields = data.columns || Object.keys(data[0]),
-        parsers, datum, field, i, j, n, m;
+        datum, field, i, j, n, m;
 
     if (types === 'auto') types = inferTypes(data, fields);
 
     fields = Object.keys(types);
-    parsers = fields.map(field => {
-      let type = types[field],
-          parts, pattern;
+    const parsers = fields.map(field => {
+      const type = types[field];
+      let parts, pattern;
 
       if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
         parts = type.split(/:(.+)?/, 2);  // split on first :
@@ -4738,8 +4841,8 @@
   }
 
   function loadPending(df) {
-    let accept,
-        pending = new Promise(a => accept = a);
+    let accept;
+    const pending = new Promise(a => accept = a);
 
     pending.requests = 0;
 
@@ -4788,7 +4891,8 @@
   }
 
   function onStream(df, stream, target, update, params, options) {
-    let opt = extend({}, options, SKIP$1), func, op;
+    const opt = extend({}, options, SKIP$1);
+    let func, op;
 
     if (!isFunction(target)) target = constant(target);
 
@@ -4856,8 +4960,8 @@
    * @param {Operator} op - The operator to re-rank.
    */
   function rerank(op) {
-    let queue = [op],
-        cur, list, i;
+    const queue = [op];
+    let cur, list, i;
 
     while (queue.length) {
       this.rank(cur = queue.pop());
@@ -4928,7 +5032,7 @@
 
   function filter(pulse, flags) {
     const map = {};
-    pulse.visit(flags, function(t) { map[tupleid(t)] = 1; });
+    pulse.visit(flags, t => { map[tupleid(t)] = 1; });
     return t => map[tupleid(t)] ? null : t;
   }
 
@@ -5263,7 +5367,7 @@
      * @return {Pulse} - Returns this pulse instance.
      */
     visit(flags, visitor) {
-      let p = this, v = visitor, src, sum;
+      const p = this, v = visitor;
 
       if (flags & SOURCE) {
         visitArray(p.source, p.srcF, v);
@@ -5274,8 +5378,9 @@
       if (flags & REM) visitArray(p.rem, p.remF, v);
       if (flags & MOD) visitArray(p.mod, p.modF, v);
 
-      if ((flags & REFLOW) && (src = p.source)) {
-        sum = p.add.length + p.mod.length;
+      const src = p.source;
+      if ((flags & REFLOW) && src) {
+        const sum = p.add.length + p.mod.length;
         if (sum === src.length) ; else if (sum) {
           visitArray(src, filter(p, ADD_MOD), v);
         } else {
@@ -5301,9 +5406,9 @@
    * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
    */
   function MultiPulse(dataflow, stamp, pulses, encode) {
-    let p = this,
-        c = 0,
-        pulse, hash, i, n, f;
+    const p = this,
+          n = pulses.length;
+    let c = 0;
 
     this.dataflow = dataflow;
     this.stamp = stamp;
@@ -5311,13 +5416,13 @@
     this.encode = encode || null;
     this.pulses = pulses;
 
-    for (i=0, n=pulses.length; i<n; ++i) {
-      pulse = pulses[i];
+    for (let i = 0; i < n; ++i) {
+      const pulse = pulses[i];
       if (pulse.stamp !== stamp) continue;
 
       if (pulse.fields) {
-        hash = p.fields || (p.fields = {});
-        for (f in pulse.fields) { hash[f] = 1; }
+        const hash = p.fields || (p.fields = {});
+        for (const f in pulse.fields) { hash[f] = 1; }
       }
 
       if (pulse.changed(p.ADD)) c |= p.ADD;
@@ -5351,7 +5456,7 @@
     modified(_) {
       const p = this, fields = p.fields;
       return !(fields && (p.changes & p.MOD)) ? 0
-        : isArray(_) ? _.some(function(f) { return fields[f]; })
+        : isArray(_) ? _.some(f => fields[f])
         : fields[_];
     },
 
@@ -5364,17 +5469,17 @@
     },
 
     visit(flags, visitor) {
-      let p = this,
-          pulses = p.pulses,
-          n = pulses.length,
-          i = 0;
+      const p = this,
+            pulses = p.pulses,
+            n = pulses.length;
+      let i = 0;
 
       if (flags & p.SOURCE) {
-        for (; i<n; ++i) {
+        for (; i < n; ++i) {
           pulses[i].visit(flags, visitor);
         }
       } else {
-        for (; i<n; ++i) {
+        for (; i < n; ++i) {
           if (pulses[i].stamp === p.stamp) {
             pulses[i].visit(flags, visitor);
           }
@@ -5740,7 +5845,8 @@
         return siftdown(nodes, 0, nodes.length - 1, cmp);
       },
       pop: () => {
-        let last = nodes.pop(), item;
+        const last = nodes.pop();
+        let item;
         if (nodes.length) {
           item = nodes[0];
           nodes[0] = last;
@@ -5754,9 +5860,9 @@
   }
 
   function siftdown(array, start, idx, cmp) {
-    let item, parent, pidx;
+    let parent, pidx;
 
-    item = array[idx];
+    const item = array[idx];
     while (idx > start) {
       pidx = (idx - 1) >> 1;
       parent = array[pidx];
@@ -5771,10 +5877,10 @@
   }
 
   function siftup(array, idx, cmp) {
-    let start = idx,
-        end = array.length,
-        item = array[idx],
-        cidx = (idx << 1) + 1, ridx;
+    const start = idx,
+          end = array.length,
+          item = array[idx];
+    let cidx = (idx << 1) + 1, ridx;
 
     while (cidx < end) {
       ridx = cidx + 1;
@@ -6043,8 +6149,8 @@
 
   function multikey(f) {
     return x => {
-      let n = f.length,
-          i = 1,
+      const n = f.length;
+      let i = 1,
           k = String(f[0](x));
 
       for (; i<n; ++i) {
@@ -6309,26 +6415,26 @@
   // Scott, D. W. (1992) Multivariate Density Estimation:
   // Theory, Practice, and Visualization. Wiley.
   function bandwidthNRD(array, f) {
-    let n = array.length,
-        v = deviation(array, f),
-        q = quartiles(array, f),
-        h = (q[2] - q[0]) / 1.34;
-
-    v = Math.min(v, h) || v || Math.abs(q[0]) || 1;
-
+    const n = array.length,
+          d = deviation(array, f),
+          q = quartiles(array, f),
+          h = (q[2] - q[0]) / 1.34,
+          v = Math.min(d, h) || d || Math.abs(q[0]) || 1;
     return 1.06 * v * Math.pow(n, -0.2);
   }
 
   function bin(_) {
     // determine range
-    let maxb = _.maxbins || 20,
-        base = _.base || 10,
-        logb = Math.log(base),
-        div  = _.divide || [5, 2],
-        min  = _.extent[0],
+    const maxb = _.maxbins || 20,
+          base = _.base || 10,
+          logb = Math.log(base),
+          div  = _.divide || [5, 2];
+
+    let min  = _.extent[0],
         max  = _.extent[1],
-        span = _.span || (max - min) || Math.abs(min) || 1,
-        step, level, minstep, precision, v, i, n, eps;
+        step, level, minstep, v, i, n;
+
+    const span = _.span || (max - min) || Math.abs(min) || 1;
 
     if (_.step) {
       // if step size is explicitly given, use that
@@ -6359,8 +6465,8 @@
 
     // update precision, min and max
     v = Math.log(step);
-    precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
-    eps = Math.pow(base, -precision - 1);
+    const precision = v >= 0 ? 0 : ~~(-v / logb) + 1,
+          eps = Math.pow(base, -precision - 1);
     if (_.nice || _.nice === undefined) {
       v = Math.floor(min / step + eps) * step;
       min = min < v ? v - step : v;
@@ -6383,10 +6489,10 @@
   function bootstrapCI(array, samples, alpha, f) {
     if (!array.length) return [undefined, undefined];
 
-    let values = Float64Array.from(numbers$1(array, f)),
-        n = values.length,
-        m = samples,
-        a, i, j, mu;
+    const values = Float64Array.from(numbers$1(array, f)),
+          n = values.length,
+          m = samples;
+    let a, i, j, mu;
 
     for (j=0, mu=Array(m); j<m; ++j) {
       for (a=0, i=0; i<n; ++i) {
@@ -6409,9 +6515,10 @@
   function dotbin(array, step, smooth, f) {
     f = f || (_ => _);
 
+    const n = array.length,
+          v = new Float64Array(n);
+
     let i = 0, j = 1,
-        n = array.length,
-        v = new Float64Array(n),
         a = f(array[0]),
         b = a,
         w = a + step,
@@ -6438,8 +6545,8 @@
   // swap points between "adjacent" stacks
   // Wilkinson defines adjacent as within step/4 units
   function smoothing(v, thresh) {
-    let n = v.length,
-        a = 0,
+    const n = v.length;
+    let a = 0,
         b = 1,
         c, d;
 
@@ -6559,14 +6666,15 @@
     mean = mean || 0;
     stdev = stdev == null ? 1 : stdev;
 
-    let cd,
-        z = (value - mean) / stdev,
-        Z = Math.abs(z);
+    const z = (value - mean) / stdev,
+          Z = Math.abs(z);
+    let cd;
 
     if (Z > 37) {
       cd = 0;
     } else {
-      let sum, exp = Math.exp(-Z * Z / 2);
+      const exp = Math.exp(-Z * Z / 2);
+      let sum;
       if (Z < 7.07106781186547) {
         sum = 3.52624965998911e-02 * Z + 0.700383064443688;
         sum = sum * Z + 6.37396220353165;
@@ -6817,9 +6925,10 @@
     let m = 0, w;
 
     function normalize(x) {
-      let w = [], sum = 0, i;
-      for (i=0; i<m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
-      for (i=0; i<m; ++i) { w[i] /= sum; }
+      const w = [];
+      let sum = 0, i;
+      for (i = 0; i < m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
+      for (i = 0; i < m; ++i) { w[i] /= sum; }
       return w;
     }
 
@@ -6847,8 +6956,8 @@
       },
 
       sample() {
-        let r = exports.random(),
-            d = dists[m-1],
+        const r = exports.random();
+        let d = dists[m-1],
             v = w[0],
             i = 0;
 
@@ -6994,7 +7103,7 @@
   function visitPoints(data, x, y, callback) {
     let i = -1, u, v;
 
-    for (let d of data) {
+    for (const d of data) {
       u = x(d);
       v = y(d);
       if (u != null && (u = +u) >= u && v != null && (v = +v) >= v) {
@@ -7297,8 +7406,8 @@
               i1 = interval[1],
               edge = (dx - xv[i0]) > (xv[i1] - dx) ? i0 : i1;
 
-        let W = 0, X = 0, Y = 0, XY = 0, X2 = 0,
-            denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
+        let W = 0, X = 0, Y = 0, XY = 0, X2 = 0;
+        const denom = 1 / Math.abs(xv[edge] - dx || 1); // avoid singularity!
 
         for (let k = i0; k <= i1; ++k) {
           const xk = xv[k],
@@ -7346,8 +7455,8 @@
 
   // advance sliding window interval of nearest neighbors
   function updateInterval(xv, i, interval) {
-    let val = xv[i],
-        left = interval[0],
+    const val = xv[i];
+    let left = interval[0],
         right = interval[1] + 1;
 
     if (right >= xv.length) return;
@@ -7475,13 +7584,14 @@
     this._get = null;
     if (this._rem.length === 0) return this._add;
 
-    let a = this._add,
-        r = this._rem,
-        k = this._key,
-        n = a.length,
-        m = r.length,
-        x = Array(n - m),
-        map = {}, i, j, v;
+    const a = this._add,
+          r = this._rem,
+          k = this._key,
+          n = a.length,
+          m = r.length,
+          x = Array(n - m),
+          map = {};
+    let i, j, v;
 
     // use unique key field to clear removed values
     for (i=0; i<m; ++i) {
@@ -7502,9 +7612,10 @@
   // memoizing statistics methods
 
   prototype.distinct = function(get) {
-    let v = this.values(),
-        n = v.length,
-        map = {},
+    const v = this.values(),
+          map = {};
+
+    let n = v.length,
         count = 0, s;
 
     while (--n >= 0) {
@@ -7711,8 +7822,9 @@
             inputMap = {};
 
       function inputVisit(get) {
-        let fields = array(accessorFields(get)),
-            i = 0, n = fields.length, f;
+        const fields = array(accessorFields(get)),
+              n = fields.length;
+        let i = 0, f;
         for (; i<n; ++i) {
           if (!inputMap[f=fields[i]]) {
             inputMap[f] = 1;
@@ -7723,7 +7835,7 @@
 
       // initialize group-by dimensions
       this._dims = array(_.groupby);
-      this._dnames = this._dims.map(function(d) {
+      this._dnames = this._dims.map(d => {
         var dname = accessorName(d);
         inputVisit(d);
         outputs.push(dname);
@@ -7736,12 +7848,12 @@
       this._counts = [];
       this._measures = [];
 
-      let fields = _.fields || [null],
-          ops = _.ops || ['count'],
-          as = _.as || [],
-          n = fields.length,
-          map = {},
-          field, op, m, mname, outname, i;
+      const fields = _.fields || [null],
+            ops = _.ops || ['count'],
+            as = _.as || [],
+            n = fields.length,
+            map = {};
+      let field, op, m, mname, outname, i;
 
       if (n !== ops.length) {
         error('Unmatched number of fields and aggregate ops.');
@@ -7775,9 +7887,7 @@
         m.push(createMeasure(op, outname));
       }
 
-      this._measures = this._measures.map(function(m) {
-        return compileMeasures(m, m.field);
-      });
+      this._measures = this._measures.map(m => compileMeasures(m, m.field));
 
       return {}; // aggregation cells (this.value)
     },
@@ -8013,10 +8123,10 @@
         return this.value;
       }
 
-      let field = _.field,
-          bins  = bin(_),
-          step  = bins.step,
-          start = bins.start,
+      const field = _.field,
+            bins  = bin(_),
+            step  = bins.step;
+      let start = bins.start,
           stop  = start + Math.ceil((bins.stop - start) / step) * step,
           a, d;
 
@@ -8050,8 +8160,8 @@
   });
 
   function SortedList(idFunc, source, input) {
-    let $ = idFunc,
-        data = source || [],
+    const $ = idFunc;
+    let data = source || [],
         add = input || [],
         rem = {},
         cnt = 0;
@@ -8224,12 +8334,12 @@
     },
 
     _finish(pulse, as) {
-      let counts = this._counts,
-          tuples = this._tuples || (this._tuples = {}),
-          text = as[0],
-          count = as[1],
-          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-          w, t, c;
+      const counts = this._counts,
+            tuples = this._tuples || (this._tuples = {}),
+            text = as[0],
+            count = as[1],
+            out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      let w, t, c;
 
       for (w in counts) {
         t = tuples[w];
@@ -8276,15 +8386,15 @@
 
   inherits(Cross, Transform, {
     transform(_, pulse) {
-      let out = pulse.fork(pulse.NO_SOURCE),
-          data = this.value,
-          as = _.as || ['a', 'b'],
-          a = as[0], b = as[1],
-          reset = !data
-              || pulse.changed(pulse.ADD_REM)
-              || _.modified('as')
-              || _.modified('filter');
+      const out = pulse.fork(pulse.NO_SOURCE),
+            as = _.as || ['a', 'b'],
+            a = as[0], b = as[1],
+            reset = !this.value
+                || pulse.changed(pulse.ADD_REM)
+                || _.modified('as')
+                || _.modified('filter');
 
+      let data = this.value;
       if (reset) {
         if (data) out.rem = data;
         data = pulse.materialize(pulse.SOURCE).source;
@@ -8462,10 +8572,10 @@
       const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
       if (!this.value || pulse.changed() || _.modified()) {
-        let dist = parse$2(_.distribution, source(pulse)),
-            minsteps = _.steps || _.minsteps || 25,
-            maxsteps = _.steps || _.maxsteps || 200,
-            method = _.method || 'pdf';
+        const dist = parse$2(_.distribution, source(pulse)),
+              minsteps = _.steps || _.minsteps || 25,
+              maxsteps = _.steps || _.maxsteps || 200;
+        let method = _.method || 'pdf';
 
         if (method !== 'pdf' && method !== 'cdf') {
           error('Invalid density method: ' + method);
@@ -8504,9 +8614,9 @@
   }
 
   function partition(data, groupby, field) {
-    let groups = [],
-        get = f => f(t),
-        map, i, n, t, k, g;
+    const groups = [],
+          get = f => f(t);
+    let map, i, n, t, k, g;
 
     // partition data points into groups
     if (groupby == null) {
@@ -8644,23 +8754,21 @@
 
   inherits(Extent, Transform, {
     transform(_, pulse) {
-      let extent = this.value,
-          field = _.field,
-          min = extent[0],
-          max = extent[1],
-          mod;
+      const extent = this.value,
+            field = _.field,
+            mod = pulse.changed()
+              || pulse.modified(field.fields)
+              || _.modified('field');
 
-      mod = pulse.changed()
-        || pulse.modified(field.fields)
-        || _.modified('field');
-
+      let min = extent[0],
+          max = extent[1];
       if (mod || min == null) {
         min = +Infinity;
         max = -Infinity;
       }
 
       pulse.visit(mod ? pulse.SOURCE : pulse.ADD, t => {
-        let v = toNumber(field(t));
+        const v = toNumber(field(t));
         if (v != null) {
           // NaNs will fail all comparisons!
           if (v < min) min = v;
@@ -8778,8 +8886,8 @@
 
     // parent argument provided by PreFacet subclass
     subflow(key, flow, pulse, parent) {
-      let flows = this.value,
-          sf = hasOwnProperty(flows, key) && flows[key],
+      const flows = this.value;
+      let sf = hasOwnProperty(flows, key) && flows[key],
           df, p;
 
       if (!sf) {
@@ -8927,14 +9035,14 @@
 
   inherits(Filter, Transform, {
     transform(_, pulse) {
-      let df = pulse.dataflow,
-          cache = this.value, // cache ids of filtered tuples
-          output = pulse.fork(),
-          add = output.add,
-          rem = output.rem,
-          mod = output.mod,
-          test = _.expr,
-          isMod = true;
+      const df = pulse.dataflow,
+            cache = this.value, // cache ids of filtered tuples
+            output = pulse.fork(),
+            add = output.add,
+            rem = output.rem,
+            mod = output.mod,
+            test = _.expr;
+      let isMod = true;
 
       pulse.visit(pulse.REM, t => {
         var id = tupleid(t);
@@ -9015,9 +9123,9 @@
 
       // generate flattened tuples
       pulse.visit(pulse.SOURCE, t => {
-        let arrays = fields.map(f => f(t)),
-            maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0),
-            i = 0, j, d, v;
+        const arrays = fields.map(f => f(t)),
+              maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0);
+        let i = 0, j, d, v;
 
         for (; i<maxlen; ++i) {
           d = derive(t);
@@ -9148,10 +9256,11 @@
 
   inherits(Generate, Transform, {
     transform(_, pulse) {
+      const out = pulse.fork(pulse.ALL),
+            gen = _.generator;
+
       let data = this.value,
-          out = pulse.fork(pulse.ALL),
           num = _.size - data.length,
-          gen = _.generator,
           add, rem, t;
 
       if (num > 0) {
@@ -9335,9 +9444,9 @@
 
   inherits(JoinAggregate, Aggregate, {
     transform(_, pulse) {
-      let aggr = this,
-          mod = _.modified(),
-          cells;
+      const aggr = this,
+            mod = _.modified();
+      let cells;
 
       // process all input tuples to calculate aggregates
       if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
@@ -9361,9 +9470,9 @@
     },
 
     changes() {
-      let adds = this._adds,
-          mods = this._mods,
-          i, n;
+      const adds = this._adds,
+            mods = this._mods;
+      let i, n;
 
       for (i=0, n=this._alen; i<n; ++i) {
         this.celltuple(adds[i]);
@@ -9590,15 +9699,16 @@
 
   inherits(Lookup, Transform, {
     transform(_, pulse) {
-      let out = pulse,
+      const keys = _.fields,
+            index = _.index,
+            values = _.values,
+            defaultValue = _.default==null ? null : _.default,
+            reset = _.modified(),
+            n = keys.length;
+
+      let flag = reset ? pulse.SOURCE : pulse.ADD,
+          out = pulse,
           as = _.as,
-          keys = _.fields,
-          index = _.index,
-          values = _.values,
-          defaultValue = _.default==null ? null : _.default,
-          reset = _.modified(),
-          flag = reset ? pulse.SOURCE : pulse.ADD,
-          n = keys.length,
           set, m, mods;
 
       if (values) {
@@ -9661,12 +9771,14 @@
       return this.value;
     }
 
+    const ext = _.extents,
+          n = ext.length;
+
     let min = +Infinity,
         max = -Infinity,
-        ext = _.extents,
-        i, n, e;
+        i, e;
 
-    for (i=0, n=ext.length; i<n; ++i) {
+    for (i = 0; i < n; ++i) {
       e = ext[i];
       if (e[0] < min) min = e[0];
       if (e[1] > max) max = e[1];
@@ -9767,9 +9879,9 @@
     return {
       key:      _.key,
       groupby:  _.groupby,
-      ops:      keys.map(function() { return op; }),
-      fields:   keys.map(function(k) { return get(k, key, value, fields); }),
-      as:       keys.map(function(k) { return k + ''; }),
+      ops:      keys.map(() => op),
+      fields:   keys.map(k => get(k, key, value, fields)),
+      as:       keys.map(k => k + ''),
       modified: _.modified.bind(_)
     };
   }
@@ -9883,21 +9995,20 @@
 
   inherits(Project, Transform, {
     transform(_, pulse) {
-      let fields = _.fields,
-          as = fieldNames(_.fields, _.as || []),
-          derive = fields
-            ? (s, t) => project(s, t, fields, as)
-            : rederive,
-          out, lut;
+      const out = pulse.fork(pulse.NO_SOURCE),
+            fields = _.fields,
+            as = fieldNames(_.fields, _.as || []),
+            derive = fields
+              ? (s, t) => project(s, t, fields, as)
+              : rederive;
 
+      let lut;
       if (this.value) {
         lut = this.value;
       } else {
         pulse = pulse.addAll();
         lut = this.value = {};
       }
-
-      out = pulse.fork(pulse.NO_SOURCE);
 
       pulse.visit(pulse.REM, t => {
         const id = tupleid(t);
@@ -10097,13 +10208,14 @@
 
   inherits(Sample, Transform, {
     transform(_, pulse) {
-      let out = pulse.fork(pulse.NO_SOURCE),
-          mod = _.modified('size'),
-          num = _.size,
-          res = this.value,
+      const out = pulse.fork(pulse.NO_SOURCE),
+            mod = _.modified('size'),
+            num = _.size,
+            map = this.value.reduce((m, t) => (m[tupleid(t)] = 1, m), {});
+
+      let res = this.value,
           cnt = this.count,
-          cap = 0,
-          map = res.reduce((m, t) => (m[tupleid(t)] = 1, m), {});
+          cap = 0;
 
       // sample reservoir update function
       function update(t) {
@@ -10272,17 +10384,18 @@
 
   inherits(TimeUnit, Transform, {
     transform(_, pulse) {
-      let field = _.field,
-          band = _.interval !== false,
-          utc = _.timezone === 'utc',
-          floor = this._floor(_, pulse),
-          offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
-          as = _.as || OUTPUT,
-          u0 = as[0],
-          u1 = as[1],
-          min = floor.start || Infinity,
+      const field = _.field,
+            band = _.interval !== false,
+            utc = _.timezone === 'utc',
+            floor = this._floor(_, pulse),
+            offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+            as = _.as || OUTPUT,
+            u0 = as[0],
+            u1 = as[1],
+            step = floor.step;
+
+      let min = floor.start || Infinity,
           max = floor.stop || -Infinity,
-          step = floor.step,
           flag = pulse.ADD;
 
       if (_.modified() || pulse.modified(accessorFields(field))) {
@@ -10293,7 +10406,8 @@
       }
 
       pulse.visit(flag, t => {
-        let v = field(t), a, b;
+        const v = field(t);
+        let a, b;
         if (v == null) {
           t[u0] = null;
           if (band) t[u1] = null;
@@ -10315,7 +10429,7 @@
       const utc = _.timezone === 'utc';
 
       // get parameters
-      let {units, step} = _.units
+      const {units, step} = _.units
         ? {units: _.units, step: _.step || 1}
         : timeBin({
           extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
@@ -10323,13 +10437,12 @@
         });
 
       // check / standardize time units
-      units = timeUnits(units);
+      const tunits = timeUnits(units),
+            prev = this.value || {},
+            floor = (utc ? utcFloor : timeFloor)(tunits, step);
 
-      const prev = this.value || {},
-            floor = (utc ? utcFloor : timeFloor)(units, step);
-
-      floor.unit = peek(units);
-      floor.units = units;
+      floor.unit = peek(tunits);
+      floor.units = tunits;
       floor.step = step;
       floor.start = prev.start;
       floor.stop = prev.stop;
@@ -10404,7 +10517,7 @@
   });
 
   function WindowOp(op, field, param, as) {
-    let fn = WindowOps[op](field, param);
+    const fn = WindowOps[op](field, param);
     return {
       init:   fn.init || zero,
       update: function(w, t) { t[as] = fn.next(w); }
@@ -10422,8 +10535,8 @@
       return {
         init: () => rank = 1,
         next: w => {
-          let i = w.index,
-              data = w.data;
+          const i = w.index,
+                data = w.data;
           return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
         }
       };
@@ -10433,15 +10546,15 @@
       return {
         init: () => drank = 1,
         next: w => {
-          let i = w.index,
-              d = w.data;
+          const i = w.index,
+                d = w.data;
           return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
         }
       };
     },
     percent_rank: function() {
-      let rank = WindowOps.rank(),
-          next = rank.next;
+      const rank = WindowOps.rank(),
+            next = rank.next;
       return {
         init: rank.init,
         next: w => (next(w) - 1) / (w.data.length - 1)
@@ -10452,9 +10565,9 @@
       return {
         init: () => cume = 0,
         next: w => {
-          let i = w.index,
-              d = w.data,
-              c = w.compare;
+          const d = w.data,
+                c = w.compare;
+          let i = w.index;
           if (cume < i) {
             while (i + 1 < d.length && !c(d[i], d[i + 1])) ++i;
             cume = i;
@@ -10466,8 +10579,8 @@
     ntile: function(field, num) {
       num = +num;
       if (!(num > 0)) error('ntile num must be greater than zero.');
-      let cume = WindowOps.cume_dist(),
-          next = cume.next;
+      const cume = WindowOps.cume_dist(),
+            next = cume.next;
       return {
         init: cume.init,
         next: w => Math.ceil(num * next(w))
@@ -10478,7 +10591,7 @@
       offset = +offset || 1;
       return {
         next: w => {
-          let i = w.index - offset;
+          const i = w.index - offset;
           return i >= 0 ? field(w.data[i]) : null;
         }
       };
@@ -10487,7 +10600,7 @@
       offset = +offset || 1;
       return {
         next: w => {
-          let i = w.index + offset,
+          const i = w.index + offset,
               d = w.data;
           return i < d.length ? field(d[i]) : null;
         }
@@ -10509,7 +10622,7 @@
       if (!(nth > 0)) error('nth_value nth must be greater than zero.');
       return {
         next: w => {
-          let i = w.i0 + (nth - 1);
+          const i = w.i0 + (nth - 1);
           return i < w.i1 ? field(w.data[i]) : null;
         }
       };
@@ -10520,7 +10633,7 @@
       return {
         init: () => prev = null,
         next: w => {
-          let v = field(w.data[w.index]);
+          const v = field(w.data[w.index]);
           return v != null ? (prev = v) : prev;
         }
       };
@@ -10530,7 +10643,7 @@
       return {
         init: () => (v = null, i = -1),
         next: w => {
-          let d = w.data;
+          const d = w.data;
           return w.index <= i ? v
             : (i = find(field, d, w.index)) < 0
               ? (i = d.length, v = null)
@@ -10542,7 +10655,7 @@
 
   function find(field, data, index) {
     for (let n = data.length; index < n; ++index) {
-      let v = field(data[index]);
+      const v = field(data[index]);
       if (v != null) return index;
     }
     return -1;
@@ -10551,28 +10664,28 @@
   const ValidWindowOps = Object.keys(WindowOps);
 
   function WindowState(_) {
-    let self = this,
-        ops = array(_.ops),
-        fields = array(_.fields),
-        params = array(_.params),
-        as = array(_.as),
-        outputs = self.outputs = [],
-        windows = self.windows = [],
-        inputs = {},
-        map = {},
-        countOnly = true,
-        counts = [],
-        measures = [];
+    const ops = array(_.ops),
+          fields = array(_.fields),
+          params = array(_.params),
+          as = array(_.as),
+          outputs = this.outputs = [],
+          windows = this.windows = [],
+          inputs = {},
+          map = {},
+          counts = [],
+          measures = [];
+
+    let countOnly = true;
 
     function visitInputs(f) {
       array(accessorFields(f)).forEach(_ => inputs[_] = 1);
     }
     visitInputs(_.sort);
 
-    ops.forEach(function(op, i) {
-      let field = fields[i],
-          mname = accessorName(field),
-          name = measureName(op, mname, as[i]);
+    ops.forEach((op, i) => {
+      const field = fields[i],
+            mname = accessorName(field),
+            name = measureName(op, mname, as[i]);
 
       visitInputs(field);
       outputs.push(name);
@@ -10604,10 +10717,10 @@
     });
 
     if (counts.length || measures.length) {
-      self.cell = cell(measures, counts, countOnly);
+      this.cell = cell(measures, counts, countOnly);
     }
 
-    self.inputs = Object.keys(inputs);
+    this.inputs = Object.keys(inputs);
   }
 
   const prototype$1 = WindowState.prototype;
@@ -10618,25 +10731,24 @@
   };
 
   prototype$1.update = function(w, t) {
-    let self = this,
-        cell = self.cell,
-        wind = self.windows,
-        data = w.data,
-        m = wind && wind.length,
-        j;
+    const cell = this.cell,
+          wind = this.windows,
+          data = w.data,
+          m = wind && wind.length;
+    let j;
 
     if (cell) {
-      for (j=w.p0; j<w.i0; ++j) cell.rem(data[j]);
-      for (j=w.p1; j<w.i1; ++j) cell.add(data[j]);
+      for (j = w.p0; j < w.i0; ++j) cell.rem(data[j]);
+      for (j = w.p1; j < w.i1; ++j) cell.add(data[j]);
       cell.set(t);
     }
-    for (j=0; j<m; ++j) wind[j].update(w, t);
+    for (j = 0; j < m; ++j) wind[j].update(w, t);
   };
 
   function cell(measures, counts, countOnly) {
     measures = measures.map(m => compileMeasures(m, m.field));
 
-    let cell = {
+    const cell = {
       num:   0,
       agg:   null,
       store: false,
@@ -10765,17 +10877,16 @@
     },
 
     group(key) {
-      let self = this,
-          group = self.value[key];
+      let group = this.value[key];
 
       if (!group) {
-        group = self.value[key] = SortedList(tupleid);
+        group = this.value[key] = SortedList(tupleid);
         group.stamp = -1;
       }
 
-      if (group.stamp < self.stamp) {
-        group.stamp = self.stamp;
-        self._mods[self._mlen++] = group;
+      if (group.stamp < this.stamp) {
+        group.stamp = this.stamp;
+        this._mods[this._mlen++] = group;
       }
 
       return group;
@@ -10928,8 +11039,9 @@
   }
 
   function gradientRef(g, defs, base) {
+    const type = g.gradient;
+
     let id = g.id,
-        type = g.gradient,
         prefix = type === 'radial' ? patternPrefix : '';
 
     // check id, assign default values as needed
@@ -10978,7 +11090,7 @@
     };
   }
 
-  var pi = Math.PI,
+  const pi = Math.PI,
       tau = 2 * pi,
       epsilon$1 = 1e-6,
       tauEpsilon = tau - epsilon$1;
@@ -11392,6 +11504,12 @@
     return arc;
   }
 
+  function array$1(x) {
+    return typeof x === "object" && "length" in x
+      ? x // Array, TypedArray, NodeList, array-like
+      : Array.from(x); // Map, Set, iterable, string, or anything else
+  }
+
   function Linear(context) {
     this._context = context;
   }
@@ -11432,17 +11550,18 @@
     return p[1];
   }
 
-  function d3_line() {
-    var x$1 = x,
-        y$1 = y,
-        defined = constant$1(true),
+  function d3_line(x$1, y$1) {
+    var defined = constant$1(true),
         context = null,
         curve = curveLinear,
         output = null;
 
+    x$1 = typeof x$1 === "function" ? x$1 : (x$1 === undefined) ? x : constant$1(x$1);
+    y$1 = typeof y$1 === "function" ? y$1 : (y$1 === undefined) ? y : constant$1(y$1);
+
     function line(data) {
       var i,
-          n = data.length,
+          n = (data = array$1(data)).length,
           d,
           defined0 = false,
           buffer;
@@ -11483,21 +11602,22 @@
     return line;
   }
 
-  function d3_area() {
-    var x0 = x,
-        x1 = null,
-        y0 = constant$1(0),
-        y1 = y,
+  function d3_area(x0, y0, y1) {
+    var x1 = null,
         defined = constant$1(true),
         context = null,
         curve = curveLinear,
         output = null;
 
+    x0 = typeof x0 === "function" ? x0 : (x0 === undefined) ? x : constant$1(+x0);
+    y0 = typeof y0 === "function" ? y0 : (y0 === undefined) ? constant$1(0) : constant$1(+y0);
+    y1 = typeof y1 === "function" ? y1 : (y1 === undefined) ? y : constant$1(+y1);
+
     function area(data) {
       var i,
           j,
           k,
-          n = data.length,
+          n = (data = array$1(data)).length,
           d,
           defined0 = false,
           buffer,
@@ -11595,10 +11715,10 @@
     }
   };
 
-  function d3_symbol() {
-    var type = constant$1(circle),
-        size = constant$1(64),
-        context = null;
+  function d3_symbol(type, size) {
+    var context = null;
+    type = typeof type === "function" ? type : constant$1(type || circle);
+    size = typeof size === "function" ? size : constant$1(size === undefined ? 64 : +size);
 
     function symbol() {
       var buffer;
@@ -12548,22 +12668,21 @@
         ];
 
   function pathParse(pathstr) {
-    let result = [],
-        path,
-        curr,
+    const result = [];
+    let curr,
         chunks,
         parsed, param,
         cmd, len, i, j, n, m;
 
     // First, break path into command sequence
-    path = pathstr
+    const path = pathstr
       .slice()
       .replace(regexp[0], '###$1')
       .split(regexp[1])
       .slice(1);
 
     // Next, parse each command in turn
-    for (i=0, n=path.length; i<n; ++i) {
+    for (i = 0, n = path.length; i < n; ++i) {
       curr = path[i];
       chunks = curr
         .slice(1)
@@ -12574,7 +12693,7 @@
       cmd = curr.charAt(0);
 
       parsed = [cmd];
-      for (j=0, m=chunks.length; j<m; ++j) {
+      for (j = 0, m = chunks.length; j < m; ++j) {
         if ((param = +chunks[j]) === param) { // not NaN
           parsed.push(param);
         }
@@ -12582,7 +12701,8 @@
 
       len = cmdlen[cmd.toLowerCase()];
       if (parsed.length - 1 > len) {
-        let j = 1, m = parsed.length;
+        const m = parsed.length;
+        j = 1;
         result.push([cmd].concat(parsed.slice(j, j += len)));
 
         // handle implicit lineTo (#2803)
@@ -13767,11 +13887,11 @@
       increment(loader);
 
       return loader._loader.sanitize(uri, {context:'href'})
-        .then(function(opt) {
+        .then(opt => {
           decrement(loader);
           return opt;
         })
-        .catch(function() {
+        .catch(() => {
           decrement(loader);
           return null;
         });
@@ -13784,7 +13904,7 @@
 
       return loader._loader
         .sanitize(uri, {context: 'image'})
-        .then(function(opt) {
+        .then(opt => {
           const url = opt.href;
           if (!url || !Image) throw {url: url};
 
@@ -13802,7 +13922,7 @@
 
           return img;
         })
-        .catch(function(e) {
+        .catch(e => {
           decrement(loader);
           return {complete: false, width: 0, height: 0, src: e && e.url || ''};
         });
@@ -13810,10 +13930,10 @@
 
     ready() {
       var loader = this;
-      return new Promise(function(accept) {
+      return new Promise(accept => {
         function poll(value) {
           if (!loader.pending()) accept(value);
-          else setTimeout(function() { poll(true); }, 10);
+          else setTimeout(() => { poll(true); }, 10);
         }
         poll(false);
       });
@@ -14233,7 +14353,7 @@
 
   function drawAll(path) {
     return function(context, scene, bounds) {
-      visit(scene, function(item) {
+      visit(scene, item => {
         if (!bounds || bounds.intersects(item.bounds)) {
           drawPath(path, context, item, item);
         }
@@ -14273,7 +14393,7 @@
       x *= context.pixelRatio;
       y *= context.pixelRatio;
 
-      return pickVisit(scene, function(item) {
+      return pickVisit(scene, item => {
         var b = item.bounds;
         // first hit test against bounding box
         if ((b && !b.contains(gx, gy)) || !b) return;
@@ -14614,18 +14734,18 @@
           cy = y * context.pixelRatio;
 
     return pickVisit(scene, group => {
-      let hit, fore, ix, dx, dy, dw, dh, b, c;
+      let hit, dx, dy;
 
       // first hit test bounding box
-      b = group.bounds;
+      const b = group.bounds;
       if (b && !b.contains(gx, gy)) return;
 
       // passed bounds check, test rectangular clip
       dx = group.x || 0;
       dy = group.y || 0;
-      dw = dx + (group.width || 0);
-      dh = dy + (group.height || 0);
-      c = group.clip;
+      const dw = dx + (group.width || 0),
+            dh = dy + (group.height || 0),
+            c = group.clip;
       if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
       // adjust coordinate system
@@ -14640,8 +14760,8 @@
         return null;
       }
 
-      fore = group.strokeForeground;
-      ix = scene.interactive !== false;
+      const fore = group.strokeForeground,
+            ix = scene.interactive !== false;
 
       // hit test against group foreground
       if (ix && fore && group.stroke
@@ -14756,8 +14876,8 @@
     visit(scene, item => {
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
-      let img = getImage(item, this),
-          w = imageWidth(item, img),
+      const img = getImage(item, this);
+      let w = imageWidth(item, img),
           h = imageHeight(item, img),
           x = (item.x || 0) - imageXOffset(item.align, w),
           y = (item.y || 0) - imageYOffset(item.baseline, h),
@@ -14920,7 +15040,7 @@
   }
 
   function draw$3(context, scene, bounds) {
-    visit(scene, function(item) {
+    visit(scene, item => {
       if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
       var opacity = item.opacity == null ? 1 : item.opacity;
       if (opacity && path$3(context, item, opacity)) {
@@ -15179,7 +15299,7 @@
   }
 
   function draw$4(context, scene, bounds) {
-    visit(scene, function(item) {
+    visit(scene, item => {
       var opacity = item.opacity == null ? 1 : item.opacity,
           p, x, y, i, lh, tl, str;
 
@@ -15646,7 +15766,7 @@
           for (const name in opt) a.setAttribute(name, opt[name]);
           a.dispatchEvent(e);
         })
-        .catch(function() { /* do nothing */ });
+        .catch(() => { /* do nothing */ });
     },
 
     /**
@@ -15828,7 +15948,7 @@
     renderAsync(scene) {
       var r = this.render(scene);
       return this._ready
-        ? this._ready.then(function() { return r; })
+        ? this._ready.then(() => r)
         : Promise.resolve(r);
     },
 
@@ -15848,7 +15968,7 @@
         // re-render the scene when loading completes
         var call = r._call;
         r._ready = r._loader.ready()
-          .then(function(redraw) {
+          .then(redraw => {
             if (redraw) call();
             r._ready = null;
           });
@@ -16238,8 +16358,8 @@
     },
 
     dirty(item) {
-      let b = this._tempb.clear().union(item.bounds),
-          g = item.mark.group;
+      const b = this._tempb.clear().union(item.bounds);
+      let g = item.mark.group;
 
       while (g) {
         b.translate(g.x || 0, g.y || 0);
@@ -16434,8 +16554,8 @@
 
   function invertRangeExtent(scale) {
     return function(_) {
-      let range = scale.range(),
-          lo = _[0],
+      const range = scale.range();
+      let lo = _[0],
           hi = _[1],
           min = -1, max, t, i, n;
 
@@ -16917,11 +17037,11 @@
         : m1) * 255;
   }
 
-  var deg2rad = Math.PI / 180;
-  var rad2deg = 180 / Math.PI;
+  const radians = Math.PI / 180;
+  const degrees = 180 / Math.PI;
 
   // https://observablehq.com/@mbostock/lab-and-rgb
-  var K = 18,
+  const K = 18,
       Xn = 0.96422,
       Yn = 1,
       Zn = 0.82521,
@@ -16999,7 +17119,7 @@
     if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
     if (!(o instanceof Lab)) o = labConvert(o);
     if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-    var h = Math.atan2(o.b, o.a) * rad2deg;
+    var h = Math.atan2(o.b, o.a) * degrees;
     return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
   }
 
@@ -17016,7 +17136,7 @@
 
   function hcl2lab(o) {
     if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
-    var h = o.h * deg2rad;
+    var h = o.h * radians;
     return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
   }
 
@@ -17051,7 +17171,7 @@
         bl = b - l,
         k = (E * (g - l) - C$1 * bl) / D,
         s = Math.sqrt(k * k + bl * bl) / (E * l * (1 - l)), // NaN if l=0 or l=1
-        h = s ? Math.atan2(k, bl) * rad2deg - 120 : NaN;
+        h = s ? Math.atan2(k, bl) * degrees - 120 : NaN;
     return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
   }
 
@@ -17076,7 +17196,7 @@
       return new Cubehelix(this.h, this.s, this.l * k, this.opacity);
     },
     rgb: function() {
-      var h = isNaN(this.h) ? 0 : (this.h + 120) * deg2rad,
+      var h = isNaN(this.h) ? 0 : (this.h + 120) * radians,
           l = +this.l,
           a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
           cosh = Math.cos(h),
@@ -17122,11 +17242,7 @@
     };
   }
 
-  function constant$2(x) {
-    return function() {
-      return x;
-    };
-  }
+  var constant$2 = x => () => x;
 
   function linear(a, d) {
     return function(t) {
@@ -17222,7 +17338,7 @@
     return ArrayBuffer.isView(x) && !(x instanceof DataView);
   }
 
-  function array$1(a, b) {
+  function array$2(a, b) {
     return (isNumberArray(b) ? numberArray : genericArray)(a, b);
   }
 
@@ -17374,7 +17490,7 @@
     };
   }
 
-  var degrees = 180 / Math.PI;
+  var degrees$1 = 180 / Math.PI;
 
   var identity$3 = {
     translateX: 0,
@@ -17394,26 +17510,19 @@
     return {
       translateX: e,
       translateY: f,
-      rotate: Math.atan2(b, a) * degrees,
-      skewX: Math.atan(skewX) * degrees,
+      rotate: Math.atan2(b, a) * degrees$1,
+      skewX: Math.atan(skewX) * degrees$1,
       scaleX: scaleX,
       scaleY: scaleY
     };
   }
 
-  var cssNode,
-      cssRoot,
-      cssView,
-      svgNode;
+  var svgNode;
 
+  /* eslint-disable no-undef */
   function parseCss(value) {
-    if (value === "none") return identity$3;
-    if (!cssNode) cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView;
-    cssNode.style.transform = value;
-    value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform");
-    cssRoot.removeChild(cssNode);
-    value = value.slice(7, -1).split(",");
-    return decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]);
+    const m = new (typeof DOMMatrix === "function" ? DOMMatrix : WebKitCSSMatrix)(value + "");
+    return m.isIdentity ? identity$3 : decompose(m.a, m.b, m.c, m.d, m.e, m.f);
   }
 
   function parseSvg(value) {
@@ -17486,10 +17595,7 @@
   var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
   var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
 
-  var rho = Math.SQRT2,
-      rho2 = 2,
-      rho4 = 4,
-      epsilon2 = 1e-12;
+  var epsilon2 = 1e-12;
 
   function cosh(x) {
     return ((x = Math.exp(x)) + 1 / x) / 2;
@@ -17503,53 +17609,63 @@
     return ((x = Math.exp(2 * x)) - 1) / (x + 1);
   }
 
-  // p0 = [ux0, uy0, w0]
-  // p1 = [ux1, uy1, w1]
-  function zoom$1(p0, p1) {
-    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2],
-        ux1 = p1[0], uy1 = p1[1], w1 = p1[2],
-        dx = ux1 - ux0,
-        dy = uy1 - uy0,
-        d2 = dx * dx + dy * dy,
-        i,
-        S;
+  var zoom$1 = (function zoomRho(rho, rho2, rho4) {
 
-    // Special case for u0 ≅ u1.
-    if (d2 < epsilon2) {
-      S = Math.log(w1 / w0) / rho;
-      i = function(t) {
-        return [
-          ux0 + t * dx,
-          uy0 + t * dy,
-          w0 * Math.exp(rho * t * S)
-        ];
-      };
+    // p0 = [ux0, uy0, w0]
+    // p1 = [ux1, uy1, w1]
+    function zoom(p0, p1) {
+      var ux0 = p0[0], uy0 = p0[1], w0 = p0[2],
+          ux1 = p1[0], uy1 = p1[1], w1 = p1[2],
+          dx = ux1 - ux0,
+          dy = uy1 - uy0,
+          d2 = dx * dx + dy * dy,
+          i,
+          S;
+
+      // Special case for u0 ≅ u1.
+      if (d2 < epsilon2) {
+        S = Math.log(w1 / w0) / rho;
+        i = function(t) {
+          return [
+            ux0 + t * dx,
+            uy0 + t * dy,
+            w0 * Math.exp(rho * t * S)
+          ];
+        };
+      }
+
+      // General case.
+      else {
+        var d1 = Math.sqrt(d2),
+            b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
+            b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
+            r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
+            r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
+        S = (r1 - r0) / rho;
+        i = function(t) {
+          var s = t * S,
+              coshr0 = cosh(r0),
+              u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
+          return [
+            ux0 + u * dx,
+            uy0 + u * dy,
+            w0 * coshr0 / cosh(rho * s + r0)
+          ];
+        };
+      }
+
+      i.duration = S * 1000 * rho / Math.SQRT2;
+
+      return i;
     }
 
-    // General case.
-    else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / rho;
-      i = function(t) {
-        var s = t * S,
-            coshr0 = cosh(r0),
-            u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
-        return [
-          ux0 + u * dx,
-          uy0 + u * dy,
-          w0 * coshr0 / cosh(rho * s + r0)
-        ];
-      };
-    }
+    zoom.rho = function(_) {
+      var _1 = Math.max(1e-3, +_), _2 = _1 * _1, _4 = _2 * _2;
+      return zoomRho(_1, _2, _4);
+    };
 
-    i.duration = S * 1000;
-
-    return i;
-  }
+    return zoom;
+  })(Math.SQRT2, 2, 4);
 
   function hsl$1(hue) {
     return function(start, end) {
@@ -17630,9 +17746,10 @@
   var cubehelix$2 = cubehelix$1(hue);
   var cubehelixLong = cubehelix$1(nogamma);
 
-  function piecewise(interpolate, values) {
+  function piecewise(interpolate$1, values) {
+    if (values === undefined) values = interpolate$1, interpolate$1 = interpolate;
     var i = 0, n = values.length - 1, v = values[0], I = new Array(n < 0 ? 0 : n);
-    while (i < n) I[i] = interpolate(v, v = values[++i]);
+    while (i < n) I[i] = interpolate$1(v, v = values[++i]);
     return function(t) {
       var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
       return I[i](t - i);
@@ -17648,7 +17765,7 @@
   var $$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     interpolate: interpolate,
-    interpolateArray: array$1,
+    interpolateArray: array$2,
     interpolateBasis: basis$1,
     interpolateBasisClosed: basisClosed,
     interpolateDate: date,
@@ -17850,38 +17967,36 @@
     scale.nice = function(count) {
       if (count == null) count = 10;
 
-      var d = domain(),
-          i0 = 0,
-          i1 = d.length - 1,
-          start = d[i0],
-          stop = d[i1],
-          step;
+      var d = domain();
+      var i0 = 0;
+      var i1 = d.length - 1;
+      var start = d[i0];
+      var stop = d[i1];
+      var prestep;
+      var step;
+      var maxIter = 10;
 
       if (stop < start) {
         step = start, start = stop, stop = step;
         step = i0, i0 = i1, i1 = step;
       }
-
-      step = tickIncrement(start, stop, count);
-
-      if (step > 0) {
-        start = Math.floor(start / step) * step;
-        stop = Math.ceil(stop / step) * step;
+      
+      while (maxIter-- > 0) {
         step = tickIncrement(start, stop, count);
-      } else if (step < 0) {
-        start = Math.ceil(start * step) / step;
-        stop = Math.floor(stop * step) / step;
-        step = tickIncrement(start, stop, count);
-      }
-
-      if (step > 0) {
-        d[i0] = Math.floor(start / step) * step;
-        d[i1] = Math.ceil(stop / step) * step;
-        domain(d);
-      } else if (step < 0) {
-        d[i0] = Math.ceil(start * step) / step;
-        d[i1] = Math.floor(stop * step) / step;
-        domain(d);
+        if (step === prestep) {
+          d[i0] = start;
+          d[i1] = stop;
+          return domain(d);
+        } else if (step > 0) {
+          start = Math.floor(start / step) * step;
+          stop = Math.ceil(stop / step) * step;
+        } else if (step < 0) {
+          start = Math.ceil(start * step) / step;
+          stop = Math.floor(stop * step) / step;
+        } else {
+          break;
+        }
+        prestep = step;
       }
 
       return scale;
@@ -18643,10 +18758,10 @@
   }
 
   function band() {
-    let scale = ordinal().unknown(undefined),
-        domain = scale.domain,
-        ordinalRange = scale.range,
-        range = [0, 1],
+    const scale = ordinal().unknown(undefined),
+          domain = scale.domain,
+          ordinalRange = scale.range;
+    let range = [0, 1],
         step,
         bandwidth,
         round = false,
@@ -18657,11 +18772,12 @@
     delete scale.unknown;
 
     function rescale() {
-      let n = domain().length,
-          reverse = range[1] < range[0],
-          start = range[reverse - 0],
-          stop = range[1 - reverse],
-          space = bandSpace(n, paddingInner, paddingOuter);
+      const n = domain().length,
+            reverse = range[1] < range[0],
+            stop = range[1 - reverse],
+            space = bandSpace(n, paddingInner, paddingOuter);
+
+      let start = range[reverse - 0];
 
       step = (stop - start) / (space || 1);
       if (round) {
@@ -18673,7 +18789,7 @@
         start = Math.round(start);
         bandwidth = Math.round(bandwidth);
       }
-      const values = sequence(n).map(function(i) { return start + step * i; });
+      const values = sequence(n).map(i => start + step * i);
       return ordinalRange(reverse ? values.reverse() : values);
     }
 
@@ -18759,11 +18875,13 @@
       // bail if range has null or undefined values
       if (_[0] == null || _[1] == null) return;
 
+      const reverse = range[1] < range[0],
+            values = reverse ? ordinalRange().reverse() : ordinalRange(),
+            n = values.length - 1;
+
       let lo = +_[0],
           hi = +_[1],
-          reverse = range[1] < range[0],
-          values = reverse ? ordinalRange().reverse() : ordinalRange(),
-          n = values.length - 1, a, b, t;
+          a, b, t;
 
       // bail if either range endpoint is invalid
       if (lo !== lo || hi !== hi) return;
@@ -19003,7 +19121,8 @@
   }
 
   function scaleFraction(scale, min, max) {
-    let delta = max - min, i, t, s;
+    const delta = max - min;
+    let i, t, s;
 
     if (!delta || !Number.isFinite(delta)) {
       return constant(0.5);
@@ -19026,7 +19145,7 @@
   function method(type) {
     return 'interpolate' + type.toLowerCase()
       .split('-')
-      .map(function(s) { return s[0].toUpperCase() + s.slice(1); })
+      .map(s => s[0].toUpperCase() + s.slice(1))
       .join('');
   }
 
@@ -19066,9 +19185,11 @@
     magma: '0000040404130b0924150e3720114b2c11603b0f704a107957157e651a80721f817f24828c29819a2e80a8327db6377ac43c75d1426fde4968e95462f1605df76f5cfa7f5efc8f65fe9f6dfeaf78febf84fece91fddea0fcedaffcfdbf',
     inferno: '0000040403130c0826170c3b240c4f330a5f420a68500d6c5d126e6b176e781c6d86216b932667a12b62ae305cbb3755c73e4cd24644dd513ae65c30ed6925f3771af8850ffb9506fca50afcb519fac62df6d645f2e661f3f484fcffa4',
     plasma: '0d088723069033059742039d5002a25d01a66a00a87801a88405a7900da49c179ea72198b12a90ba3488c33d80cb4779d35171da5a69e16462e76e5bed7953f2834cf68f44fa9a3dfca636fdb32ffec029fcce25f9dc24f5ea27f0f921',
+    cividis: '00205100235800265d002961012b65042e670831690d346b11366c16396d1c3c6e213f6e26426e2c456e31476e374a6e3c4d6e42506e47536d4c566d51586e555b6e5a5e6e5e616e62646f66676f6a6a706e6d717270717573727976737c79747f7c75827f758682768985778c8877908b78938e789691789a94789e9778a19b78a59e77a9a177aea575b2a874b6ab73bbaf71c0b26fc5b66dc9b96acebd68d3c065d8c462ddc85fe2cb5ce7cf58ebd355f0d652f3da4ff7de4cfae249fce647',
 
     rainbow: '6e40aa883eb1a43db3bf3cafd83fa4ee4395fe4b83ff576eff6659ff7847ff8c38f3a130e2b72fcfcc36bee044aff05b8ff4576ff65b52f6673af27828ea8d1ddfa319d0b81cbecb23abd82f96e03d82e14c6edb5a5dd0664dbf6e40aa',
     sinebow: 'ff4040fc582af47218e78d0bd5a703bfbf00a7d5038de70b72f41858fc2a40ff402afc5818f4720be78d03d5a700bfbf03a7d50b8de71872f42a58fc4040ff582afc7218f48d0be7a703d5bf00bfd503a7e70b8df41872fc2a58ff4040',
+    turbo: '23171b32204a3e2a71453493493eae4b49c54a53d7485ee44569ee4074f53c7ff8378af93295f72e9ff42ba9ef28b3e926bce125c5d925cdcf27d5c629dcbc2de3b232e9a738ee9d3ff39347f68950f9805afc7765fd6e70fe667cfd5e88fc5795fb51a1f84badf545b9f140c5ec3cd0e637dae034e4d931ecd12ef4c92bfac029ffb626ffad24ffa223ff9821ff8d1fff821dff771cfd6c1af76118f05616e84b14df4111d5380fcb2f0dc0260ab61f07ac1805a313029b0f00950c00910b00',
 
     browns: 'eedbbdecca96e9b97ae4a865dc9856d18954c7784cc0673fb85536ad44339f3632',
     tealBlues: 'bce4d89dd3d181c3cb65b3c245a2b9368fae347da0306a932c5985',
@@ -19325,9 +19446,10 @@
   }
 
   function thresholdFormat(locale, scale, specifier) {
-    let _ = scale[formats$1[scale.type]](),
-        n = _.length,
-        d = n > 1 ? _[1] - _[0] : _[0], i;
+    const _ = scale[formats$1[scale.type]](),
+          n = _.length;
+
+    let d = n > 1 ? _[1] - _[0] : _[0], i;
 
     for (i=1; i<n; ++i) {
       d = Math.min(d, _[i] - _[i-1]);
@@ -19383,9 +19505,10 @@
     Number.isFinite(value) ? format(value) : null;
 
   function labelFraction(scale) {
-    let domain = scale.domain(),
-        count = domain.length - 1,
-        lo = +domain[0],
+    const domain = scale.domain(),
+          count = domain.length - 1;
+
+    let lo = +domain[0],
         hi = +peek(domain),
         span = hi - lo;
 
@@ -19888,8 +20011,8 @@
       const items = this._dirty;
       if (!items.length || !this._dirtyID) return true;
 
-      let id = ++this._dirtyID,
-          item, mark, type, mdef, i, n, o;
+      const id = ++this._dirtyID;
+      let item, mark, type, mdef, i, n, o;
 
       for (i=0, n=items.length; i<n; ++i) {
         item = items[i];
@@ -19904,7 +20027,7 @@
         if (mark.zdirty && mark.dirty !== id) {
           this._dirtyAll = false;
           dirtyParents(item, id);
-          mark.items.forEach(function(i) { i.dirty = id; });
+          mark.items.forEach(i => { i.dirty = id; });
         }
         if (mark.zdirty) continue; // handle in standard drawing pass
 
@@ -19949,15 +20072,15 @@
     mark(el, scene, prev) {
       if (!this.isDirty(scene)) return scene._svg;
 
-      let svg = this._svg,
-          mdef = Marks[scene.marktype],
-          events = scene.interactive === false ? 'none' : null,
-          isGroup = mdef.tag === 'g',
-          sibling = null,
-          i = 0,
-          parent;
+      const svg = this._svg,
+            mdef = Marks[scene.marktype],
+            events = scene.interactive === false ? 'none' : null,
+            isGroup = mdef.tag === 'g';
 
-      parent = bind(scene, el, prev, 'g', svg);
+      let sibling = null,
+          i = 0;
+
+      const parent = bind(scene, el, prev, 'g', svg);
       parent.setAttribute('class', cssClass(scene));
 
       // apply aria attributes to parent container element
@@ -20289,8 +20412,8 @@
       }
     },
     text(mdef, el, item) {
-      let tl = textLines(item),
-          key, value, doc, lh;
+      const tl = textLines(item);
+      let key, value, doc, lh;
 
       if (isArray(tl)) {
         // multi-line text
@@ -20550,8 +20673,8 @@
      * @param {Item} item - The mark item.
      */
     href(item) {
-      let href = item.href,
-          attr;
+      const href = item.href;
+      let attr;
 
       if (href) {
         if (attr = this._hrefs && this._hrefs[href]) {
@@ -20794,7 +20917,7 @@
         }
       } else {
         for (const test = Marks[type].isect; i<n; ++i) {
-          let item = items[i];
+          const item = items[i];
           if (intersectItem(item, box, test)) hits.push(item);
         }
       }
@@ -20866,7 +20989,6 @@
       : (a instanceof Date && b instanceof Date) ? +a === +b
       : (isNumber(a) && isNumber(b)) ? Math.abs(a - b) <= TOLERANCE
       : (!a || !b || !isObject(a) && !isObject(b)) ? a == b
-      : (a == null || b == null) ? false
       : objectEqual(a, b);
   }
 
@@ -20925,7 +21047,7 @@
         // multi-item marks have a single bounds instance
         if (mark.items.length) view.dirty(mark.items[0]);
         markBounds = boundItem$1(mark, bound);
-        mark.items.forEach(function(item) {
+        mark.items.forEach(item => {
           item.bounds.clear().union(markBounds);
         });
       }
@@ -21154,10 +21276,11 @@
 
   inherits(Overlap, Transform, {
     transform(_, pulse) {
-      let reduce = methods[_.method] || methods.parity,
-          source = pulse.materialize(pulse.SOURCE).source,
-          sep = _.separation || 0,
-          items, test, bounds;
+      const reduce = methods[_.method] || methods.parity,
+            sep = _.separation || 0;
+
+      let source = pulse.materialize(pulse.SOURCE).source,
+          items, test;
 
       if (!source || !source.length) return;
 
@@ -21202,7 +21325,7 @@
       }
 
       // re-calculate mark bounds
-      bounds = items[0].mark.bounds.clear();
+      const bounds = items[0].mark.bounds.clear();
       source.forEach(item => {
         if (item.opacity) bounds.union(item.bounds);
       });
@@ -22095,7 +22218,7 @@
       });
 
       // perform grid layout for each orient group
-      for (let orient in l) {
+      for (const orient in l) {
         const g = l[orient];
         gridLayout(view, g, legendParams(
           g, orient, _.legends, xBounds, yBounds, width, height
@@ -22159,10 +22282,11 @@
         viewHeight = view._height,
         width  = Math.max(0, group.width || 0),
         left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-        right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
         height = Math.max(0, group.height || 0),
-        top    = Math.max(0, Math.ceil(-viewBounds.y1)),
-        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+        top    = Math.max(0, Math.ceil(-viewBounds.y1));
+
+    const right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+          bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
     if (auto.contains === Padding) {
       const padding = view.padding();
@@ -22401,7 +22525,7 @@
       // that must be defined in order for the primary set to be invoked
       // e.g., only run the update set if the hover set is defined
       if (isArray(encode)) {
-        if (out.changed() || encode.every(function(e) { return encoders[e]; })) {
+        if (out.changed() || encode.every(e => encoders[e])) {
           encode = encode[0];
           out.encode = null; // consume targeted encode directive
         } else {
@@ -22417,30 +22541,30 @@
           set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
       if (pulse.changed(pulse.ADD)) {
-        pulse.visit(pulse.ADD, function(t) { enter(t, _); update(t, _); });
+        pulse.visit(pulse.ADD, t => { enter(t, _); update(t, _); });
         out.modifies(enter.output);
         out.modifies(update.output);
         if (set !== falsy && set !== update) {
-          pulse.visit(pulse.ADD, function(t) { set(t, _); });
+          pulse.visit(pulse.ADD, t => { set(t, _); });
           out.modifies(set.output);
         }
       }
 
       if (pulse.changed(pulse.REM) && exit !== falsy) {
-        pulse.visit(pulse.REM, function(t) { exit(t, _); });
+        pulse.visit(pulse.REM, t => { exit(t, _); });
         out.modifies(exit.output);
       }
 
       if (reenter || set !== falsy) {
         var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
         if (reenter) {
-          pulse.visit(flag, function(t) {
+          pulse.visit(flag, t => {
             var mod = enter(t, _) || fmod;
             if (set(t, _) || mod) out.mod.push(t);
           });
           if (out.mod.length) out.modifies(enter.output);
         } else {
-          pulse.visit(flag, function(t) {
+          pulse.visit(flag, t => {
             if (set(t, _) || fmod) out.mod.push(t);
           });
         }
@@ -22508,9 +22632,7 @@
             items = items.slice(1);
           }
           // compute size offset for legend entries
-          offset = items.reduce(function(max, value) {
-            return Math.max(max, size(value, _));
-          }, 0);
+          offset = items.reduce((max, value) => Math.max(max, size(value, _)), 0);
         } else {
           size = constant(offset = size || 8);
         }
@@ -22959,9 +23081,7 @@
     if (isLogarithmic(type)) {
       // sum signs of domain values
       // if all pos or all neg, abs(sum) === domain.length
-      var s = Math.abs(domain.reduce(function(s, v) {
-        return s + (v < 0 ? -1 : v > 0 ? 1 : 0);
-      }, 0));
+      var s = Math.abs(domain.reduce((s, v) => s + (v < 0 ? -1 : v > 0 ? 1 : 0), 0));
 
       if (s !== domain.length) {
         df.warn('Log scale domain includes zero: ' + $(domain));
@@ -22975,12 +23095,13 @@
 
     if (bins && !isArray(bins)) {
       // generate bin boundary array
-      let domain = scale.domain(),
-          lo = domain[0],
-          hi = peek(domain),
-          start = bins.start == null ? lo : bins.start,
-          stop = bins.stop == null ? hi : bins.stop,
-          step = bins.step;
+      const domain = scale.domain(),
+            lo = domain[0],
+            hi = peek(domain),
+            step = bins.step;
+
+      let start = bins.start == null ? lo : bins.start,
+          stop = bins.stop == null ? hi : bins.stop;
 
       if (!step) error('Scale bins parameter missing step property.');
       if (start < lo) start = step * Math.ceil(lo / step);
@@ -23308,13 +23429,13 @@
       var polygons = [],
           holes = [];
 
-      isorings(values, value, function(ring) {
+      isorings(values, value, ring => {
         smooth(ring, values, value);
         if (area$2(ring) > 0) polygons.push([ring]);
         else holes.push(ring);
       });
 
-      holes.forEach(function(hole) {
+      holes.forEach(hole => {
         for (var i = 0, n = polygons.length, polygon; i < n; ++i) {
           if (contains((polygon = polygons[i])[0], hole) !== -1) {
             polygon.push(hole);
@@ -23418,7 +23539,7 @@
     }
 
     function smoothLinear(ring, values, value) {
-      ring.forEach(function(point) {
+      ring.forEach(point => {
         var x = point[0],
             y = point[1],
             xt = x | 0,
@@ -23694,7 +23815,7 @@
 
       // scale density estimates
       // density in points per square pixel or probability density
-      let s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
+      const s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
       for (let i=0, sz=n*m; i<sz; ++i) values[i] *= s;
 
       return {
@@ -24049,47 +24170,6 @@
     }
   });
 
-  // Adds floating point numbers with twice the normal precision.
-  // Reference: J. R. Shewchuk, Adaptive Precision Floating-Point Arithmetic and
-  // Fast Robust Geometric Predicates, Discrete & Computational Geometry 18(3)
-  // 305–363 (1997).
-  // Code adapted from GeographicLib by Charles F. F. Karney,
-  // http://geographiclib.sourceforge.net/
-
-  function adder() {
-    return new Adder;
-  }
-
-  function Adder() {
-    this.reset();
-  }
-
-  Adder.prototype = {
-    constructor: Adder,
-    reset: function() {
-      this.s = // rounded value
-      this.t = 0; // exact error
-    },
-    add: function(y) {
-      add$3(temp$1, y, this.t);
-      add$3(this, temp$1.s, this.s);
-      if (this.s) this.t += temp$1.t;
-      else this.s = temp$1.t;
-    },
-    valueOf: function() {
-      return this.s;
-    }
-  };
-
-  var temp$1 = new Adder;
-
-  function add$3(adder, a, b) {
-    var x = adder.s = a + b,
-        bv = x - a,
-        av = x - bv;
-    adder.t = (a - av) + (b - bv);
-  }
-
   var epsilon$3 = 1e-6;
   var epsilon2$1 = 1e-12;
   var pi$2 = Math.PI;
@@ -24097,8 +24177,8 @@
   var quarterPi = pi$2 / 4;
   var tau$2 = pi$2 * 2;
 
-  var degrees$1 = 180 / pi$2;
-  var radians = pi$2 / 180;
+  var degrees$2 = 180 / pi$2;
+  var radians$1 = pi$2 / 180;
 
   var abs$1 = Math.abs;
   var atan = Math.atan;
@@ -24106,6 +24186,7 @@
   var cos$1 = Math.cos;
   var ceil = Math.ceil;
   var exp$1 = Math.exp;
+  var hypot = Math.hypot;
   var log$3 = Math.log;
   var pow$2 = Math.pow;
   var sin$1 = Math.sin;
@@ -24193,9 +24274,11 @@
     }
   }
 
-  var areaRingSum = adder();
+  var areaRingSum = new Adder();
 
-  var areaSum = adder(),
+  // hello?
+
+  var areaSum = new Adder(),
       lambda00,
       phi00,
       lambda0,
@@ -24207,7 +24290,7 @@
     lineStart: noop$3,
     lineEnd: noop$3,
     polygonStart: function() {
-      areaRingSum.reset();
+      areaRingSum = new Adder();
       areaStream.lineStart = areaRingStart;
       areaStream.lineEnd = areaRingEnd;
     },
@@ -24232,12 +24315,12 @@
   function areaPointFirst(lambda, phi) {
     areaStream.point = areaPoint;
     lambda00 = lambda, phi00 = phi;
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     lambda0 = lambda, cosPhi0 = cos$1(phi = phi / 2 + quarterPi), sinPhi0 = sin$1(phi);
   }
 
   function areaPoint(lambda, phi) {
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     phi = phi / 2 + quarterPi; // half the angular distance from south pole
 
     // Spherical excess E for a spherical triangle with vertices: south pole,
@@ -24258,7 +24341,7 @@
   }
 
   function area$3(object) {
-    areaSum.reset();
+    areaSum = new Adder();
     geoStream(object, areaStream);
     return areaSum * 2;
   }
@@ -24299,7 +24382,7 @@
       lambda2, // previous lambda-coordinate
       lambda00$1, phi00$1, // first point
       p0, // previous 3D point
-      deltaSum = adder(),
+      deltaSum,
       ranges,
       range;
 
@@ -24311,7 +24394,7 @@
       boundsStream.point = boundsRingPoint;
       boundsStream.lineStart = boundsRingStart;
       boundsStream.lineEnd = boundsRingEnd;
-      deltaSum.reset();
+      deltaSum = new Adder();
       areaStream.polygonStart();
     },
     polygonEnd: function() {
@@ -24336,7 +24419,7 @@
   }
 
   function linePoint(lambda, phi) {
-    var p = cartesian([lambda * radians, phi * radians]);
+    var p = cartesian([lambda * radians$1, phi * radians$1]);
     if (p0) {
       var normal = cartesianCross(p0, p),
           equatorial = [normal[1], -normal[0], 0],
@@ -24345,14 +24428,14 @@
       inflection = spherical(inflection);
       var delta = lambda - lambda2,
           sign = delta > 0 ? 1 : -1,
-          lambdai = inflection[0] * degrees$1 * sign,
+          lambdai = inflection[0] * degrees$2 * sign,
           phii,
           antimeridian = abs$1(delta) > 180;
       if (antimeridian ^ (sign * lambda2 < lambdai && lambdai < sign * lambda)) {
-        phii = inflection[1] * degrees$1;
+        phii = inflection[1] * degrees$2;
         if (phii > phi1) phi1 = phii;
       } else if (lambdai = (lambdai + 360) % 360 - 180, antimeridian ^ (sign * lambda2 < lambdai && lambdai < sign * lambda)) {
-        phii = -inflection[1] * degrees$1;
+        phii = -inflection[1] * degrees$2;
         if (phii < phi0) phi0 = phii;
       } else {
         if (phi < phi0) phi0 = phi;
@@ -24493,7 +24576,7 @@
 
   // Arithmetic mean of Cartesian vectors.
   function centroidPoint(lambda, phi) {
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     var cosPhi = cos$1(phi);
     centroidPointCartesian(cosPhi * cos$1(lambda), cosPhi * sin$1(lambda), sin$1(phi));
   }
@@ -24510,7 +24593,7 @@
   }
 
   function centroidLinePointFirst(lambda, phi) {
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     var cosPhi = cos$1(phi);
     x0 = cosPhi * cos$1(lambda);
     y0 = cosPhi * sin$1(lambda);
@@ -24520,7 +24603,7 @@
   }
 
   function centroidLinePoint(lambda, phi) {
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     var cosPhi = cos$1(phi),
         x = cosPhi * cos$1(lambda),
         y = cosPhi * sin$1(lambda),
@@ -24550,7 +24633,7 @@
 
   function centroidRingPointFirst(lambda, phi) {
     lambda00$2 = lambda, phi00$2 = phi;
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     centroidStream.point = centroidRingPoint;
     var cosPhi = cos$1(phi);
     x0 = cosPhi * cos$1(lambda);
@@ -24560,7 +24643,7 @@
   }
 
   function centroidRingPoint(lambda, phi) {
-    lambda *= radians, phi *= radians;
+    lambda *= radians$1, phi *= radians$1;
     var cosPhi = cos$1(phi),
         x = cosPhi * cos$1(lambda),
         y = cosPhi * sin$1(lambda),
@@ -24568,12 +24651,12 @@
         cx = y0 * z - z0 * y,
         cy = z0 * x - x0 * z,
         cz = x0 * y - y0 * x,
-        m = sqrt$2(cx * cx + cy * cy + cz * cz),
+        m = hypot(cx, cy, cz),
         w = asin$1(m), // line weight = angle
         v = m && -w / m; // area weight multiplier
-    X2 += v * cx;
-    Y2 += v * cy;
-    Z2 += v * cz;
+    X2.add(v * cx);
+    Y2.add(v * cy);
+    Z2.add(v * cz);
     W1 += w;
     X1 += w * (x0 + (x0 = x));
     Y1 += w * (y0 + (y0 = y));
@@ -24584,26 +24667,28 @@
   function centroid(object) {
     W0 = W1 =
     X0 = Y0 = Z0 =
-    X1 = Y1 = Z1 =
-    X2 = Y2 = Z2 = 0;
+    X1 = Y1 = Z1 = 0;
+    X2 = new Adder();
+    Y2 = new Adder();
+    Z2 = new Adder();
     geoStream(object, centroidStream);
 
-    var x = X2,
-        y = Y2,
-        z = Z2,
-        m = x * x + y * y + z * z;
+    var x = +X2,
+        y = +Y2,
+        z = +Z2,
+        m = hypot(x, y, z);
 
     // If the area-weighted ccentroid is undefined, fall back to length-weighted ccentroid.
     if (m < epsilon2$1) {
       x = X1, y = Y1, z = Z1;
       // If the feature has zero length, fall back to arithmetic mean of point vectors.
       if (W1 < epsilon$3) x = X0, y = Y0, z = Z0;
-      m = x * x + y * y + z * z;
+      m = hypot(x, y, z);
       // If the feature still has an undefined ccentroid, then return.
       if (m < epsilon2$1) return [NaN, NaN];
     }
 
-    return [atan2$1(y, x) * degrees$1, asin$1(z / sqrt$2(m)) * degrees$1];
+    return [atan2$1(y, x) * degrees$2, asin$1(z / m) * degrees$2];
   }
 
   function compose(a, b) {
@@ -24678,16 +24763,16 @@
   }
 
   function rotation(rotate) {
-    rotate = rotateRadians(rotate[0] * radians, rotate[1] * radians, rotate.length > 2 ? rotate[2] * radians : 0);
+    rotate = rotateRadians(rotate[0] * radians$1, rotate[1] * radians$1, rotate.length > 2 ? rotate[2] * radians$1 : 0);
 
     function forward(coordinates) {
-      coordinates = rotate(coordinates[0] * radians, coordinates[1] * radians);
-      return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
+      coordinates = rotate(coordinates[0] * radians$1, coordinates[1] * radians$1);
+      return coordinates[0] *= degrees$2, coordinates[1] *= degrees$2, coordinates;
     }
 
     forward.invert = function(coordinates) {
-      coordinates = rotate.invert(coordinates[0] * radians, coordinates[1] * radians);
-      return coordinates[0] *= degrees$1, coordinates[1] *= degrees$1, coordinates;
+      coordinates = rotate.invert(coordinates[0] * radians$1, coordinates[1] * radians$1);
+      return coordinates[0] *= degrees$2, coordinates[1] *= degrees$2, coordinates;
     };
 
     return forward;
@@ -24849,8 +24934,6 @@
     b.p = a;
   }
 
-  var sum$1 = adder();
-
   function longitude(point) {
     if (abs$1(point[0]) <= pi$2)
       return point[0];
@@ -24866,7 +24949,7 @@
         angle = 0,
         winding = 0;
 
-    sum$1.reset();
+    var sum = new Adder();
 
     if (sinPhi === 1) phi = halfPi$1 + epsilon$3;
     else if (sinPhi === -1) phi = -halfPi$1 - epsilon$3;
@@ -24893,7 +24976,7 @@
             antimeridian = absDelta > pi$2,
             k = sinPhi0 * sinPhi1;
 
-        sum$1.add(atan2$1(k * sign * sin$1(absDelta), cosPhi0 * cosPhi1 + k * cos$1(absDelta)));
+        sum.add(atan2$1(k * sign * sin$1(absDelta), cosPhi0 * cosPhi1 + k * cos$1(absDelta)));
         angle += antimeridian ? delta + sign * tau$2 : delta;
 
         // Are the longitudes either side of the point’s meridian (lambda),
@@ -24922,81 +25005,7 @@
     // from the point to the South pole.  If it is zero, then the point is the
     // same side as the South pole.
 
-    return (angle < -epsilon$3 || angle < epsilon$3 && sum$1 < -epsilon$3) ^ (winding & 1);
-  }
-
-  function ascending$3(a, b) {
-    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  function bisector$1(compare) {
-    if (compare.length === 1) compare = ascendingComparator$1(compare);
-    return {
-      left: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) < 0) lo = mid + 1;
-          else hi = mid;
-        }
-        return lo;
-      },
-      right: function(a, x, lo, hi) {
-        if (lo == null) lo = 0;
-        if (hi == null) hi = a.length;
-        while (lo < hi) {
-          var mid = lo + hi >>> 1;
-          if (compare(a[mid], x) > 0) hi = mid;
-          else lo = mid + 1;
-        }
-        return lo;
-      }
-    };
-  }
-
-  function ascendingComparator$1(f) {
-    return function(d, x) {
-      return ascending$3(f(d), x);
-    };
-  }
-
-  var ascendingBisect$1 = bisector$1(ascending$3);
-
-  function range$1(start, stop, step) {
-    start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-    var i = -1,
-        n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-        range = new Array(n);
-
-    while (++i < n) {
-      range[i] = start + i * step;
-    }
-
-    return range;
-  }
-
-  function merge$1(arrays) {
-    var n = arrays.length,
-        m,
-        i = -1,
-        j = 0,
-        merged,
-        array;
-
-    while (++i < n) j += arrays[i].length;
-    merged = new Array(j);
-
-    while (--n >= 0) {
-      array = arrays[n];
-      m = array.length;
-      while (--m >= 0) {
-        merged[--j] = array[m];
-      }
-    }
-
-    return merged;
+    return (angle < -epsilon$3 || angle < epsilon$3 && sum < -epsilon2$1) ^ (winding & 1);
   }
 
   function clip$2(pointVisible, clipLine, interpolate, start) {
@@ -25217,7 +25226,7 @@
 
   function clipCircle(radius) {
     var cr = cos$1(radius),
-        delta = 6 * radians,
+        delta = 6 * radians$1,
         smallRadius = cr > 0,
         notHemisphere = abs$1(cr) > epsilon$3; // TODO optimise for this common case
 
@@ -25611,12 +25620,12 @@
   }
 
   function graticuleX(y0, y1, dy) {
-    var y = range$1(y0, y1 - epsilon$3, dy).concat(y1);
+    var y = sequence(y0, y1 - epsilon$3, dy).concat(y1);
     return function(x) { return y.map(function(y) { return [x, y]; }); };
   }
 
   function graticuleY(x0, x1, dx) {
-    var x = range$1(x0, x1 - epsilon$3, dx).concat(x1);
+    var x = sequence(x0, x1 - epsilon$3, dx).concat(x1);
     return function(y) { return x.map(function(x) { return [x, y]; }); };
   }
 
@@ -25632,10 +25641,10 @@
     }
 
     function lines() {
-      return range$1(ceil(X0 / DX) * DX, X1, DX).map(X)
-          .concat(range$1(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
-          .concat(range$1(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$3; }).map(x))
-          .concat(range$1(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$3; }).map(y));
+      return sequence(ceil(X0 / DX) * DX, X1, DX).map(X)
+          .concat(sequence(ceil(Y0 / DY) * DY, Y1, DY).map(Y))
+          .concat(sequence(ceil(x0 / dx) * dx, x1, dx).filter(function(x) { return abs$1(x % DX) > epsilon$3; }).map(x))
+          .concat(sequence(ceil(y0 / dy) * dy, y1, dy).filter(function(y) { return abs$1(y % DY) > epsilon$3; }).map(y));
     }
 
     graticule.lines = function() {
@@ -25709,12 +25718,10 @@
         .extentMinor([[-180, -80 - epsilon$3], [180, 80 + epsilon$3]]);
   }
 
-  function identity$6(x) {
-    return x;
-  }
+  var identity$6 = x => x;
 
-  var areaSum$1 = adder(),
-      areaRingSum$1 = adder(),
+  var areaSum$1 = new Adder(),
+      areaRingSum$1 = new Adder(),
       x00,
       y00,
       x0$1,
@@ -25731,11 +25738,11 @@
     polygonEnd: function() {
       areaStream$1.lineStart = areaStream$1.lineEnd = areaStream$1.point = noop$3;
       areaSum$1.add(abs$1(areaRingSum$1));
-      areaRingSum$1.reset();
+      areaRingSum$1 = new Adder();
     },
     result: function() {
       var area = areaSum$1 / 2;
-      areaSum$1.reset();
+      areaSum$1 = new Adder();
       return area;
     }
   };
@@ -25923,7 +25930,7 @@
     result: noop$3
   };
 
-  var lengthSum = adder(),
+  var lengthSum = new Adder(),
       lengthRing,
       x00$2,
       y00$2,
@@ -25947,7 +25954,7 @@
     },
     result: function() {
       var length = +lengthSum;
-      lengthSum.reset();
+      lengthSum = new Adder();
       return length;
     }
   };
@@ -26143,7 +26150,7 @@
   }
 
   var maxDepth = 16, // maximum depth of subdivision
-      cosMinDistance = cos$1(30 * radians); // cos(minimum angular distance)
+      cosMinDistance = cos$1(30 * radians$1); // cos(minimum angular distance)
 
   function resample(project, delta2) {
     return +delta2 ? resample$1(project, delta2) : resampleNone(project);
@@ -26243,7 +26250,7 @@
 
   var transformRadians = transformer$3({
     point: function(x, y) {
-      this.stream.point(x * radians, y * radians);
+      this.stream.point(x * radians$1, y * radians$1);
     }
   });
 
@@ -26268,6 +26275,7 @@
   }
 
   function scaleTranslateRotate(k, dx, dy, sx, sy, alpha) {
+    if (!alpha) return scaleTranslate(k, dx, dy, sx, sy);
     var cosAlpha = cos$1(alpha),
         sinAlpha = sin$1(alpha),
         a = cosAlpha * k,
@@ -26309,12 +26317,12 @@
         cacheStream;
 
     function projection(point) {
-      return projectRotateTransform(point[0] * radians, point[1] * radians);
+      return projectRotateTransform(point[0] * radians$1, point[1] * radians$1);
     }
 
     function invert(point) {
       point = projectRotateTransform.invert(point[0], point[1]);
-      return point && [point[0] * degrees$1, point[1] * degrees$1];
+      return point && [point[0] * degrees$2, point[1] * degrees$2];
     }
 
     projection.stream = function(stream) {
@@ -26330,7 +26338,7 @@
     };
 
     projection.clipAngle = function(_) {
-      return arguments.length ? (preclip = +_ ? clipCircle(theta = _ * radians) : (theta = null, clipAntimeridian), reset()) : theta * degrees$1;
+      return arguments.length ? (preclip = +_ ? clipCircle(theta = _ * radians$1) : (theta = null, clipAntimeridian), reset()) : theta * degrees$2;
     };
 
     projection.clipExtent = function(_) {
@@ -26346,15 +26354,15 @@
     };
 
     projection.center = function(_) {
-      return arguments.length ? (lambda = _[0] % 360 * radians, phi = _[1] % 360 * radians, recenter()) : [lambda * degrees$1, phi * degrees$1];
+      return arguments.length ? (lambda = _[0] % 360 * radians$1, phi = _[1] % 360 * radians$1, recenter()) : [lambda * degrees$2, phi * degrees$2];
     };
 
     projection.rotate = function(_) {
-      return arguments.length ? (deltaLambda = _[0] % 360 * radians, deltaPhi = _[1] % 360 * radians, deltaGamma = _.length > 2 ? _[2] % 360 * radians : 0, recenter()) : [deltaLambda * degrees$1, deltaPhi * degrees$1, deltaGamma * degrees$1];
+      return arguments.length ? (deltaLambda = _[0] % 360 * radians$1, deltaPhi = _[1] % 360 * radians$1, deltaGamma = _.length > 2 ? _[2] % 360 * radians$1 : 0, recenter()) : [deltaLambda * degrees$2, deltaPhi * degrees$2, deltaGamma * degrees$2];
     };
 
     projection.angle = function(_) {
-      return arguments.length ? (alpha = _ % 360 * radians, recenter()) : alpha * degrees$1;
+      return arguments.length ? (alpha = _ % 360 * radians$1, recenter()) : alpha * degrees$2;
     };
 
     projection.reflectX = function(_) {
@@ -26387,7 +26395,7 @@
 
     function recenter() {
       var center = scaleTranslateRotate(k, 0, 0, sx, sy, alpha).apply(null, project(lambda, phi)),
-          transform = (alpha ? scaleTranslateRotate : scaleTranslate)(k, x - center[0], y - center[1], sx, sy, alpha);
+          transform = scaleTranslateRotate(k, x - center[0], y - center[1], sx, sy, alpha);
       rotate = rotateRadians(deltaLambda, deltaPhi, deltaGamma);
       projectTransform = compose(project, transform);
       projectRotateTransform = compose(rotate, projectTransform);
@@ -26414,7 +26422,7 @@
         p = m(phi0, phi1);
 
     p.parallels = function(_) {
-      return arguments.length ? m(phi0 = _[0] * radians, phi1 = _[1] * radians) : [phi0 * degrees$1, phi1 * degrees$1];
+      return arguments.length ? m(phi0 = _[0] * radians$1, phi1 = _[1] * radians$1) : [phi0 * degrees$2, phi1 * degrees$2];
     };
 
     return p;
@@ -26585,6 +26593,7 @@
       var cx = cos$1(x),
           cy = cos$1(y),
           k = scale(cx * cy);
+          if (k === Infinity) return [2, 0];
       return [
         k * cy * sin$1(x),
         k * sin$1(y)
@@ -26860,7 +26869,7 @@
       return arguments.length ? (tx = +_[0], ty = +_[1], reset()) : [tx, ty];
     };
     projection.angle = function(_) {
-      return arguments.length ? (alpha = _ % 360 * radians, sa = sin$1(alpha), ca = cos$1(alpha), reset()) : alpha * degrees$1;
+      return arguments.length ? (alpha = _ % 360 * radians$1, sa = sin$1(alpha), ca = cos$1(alpha), reset()) : alpha * degrees$2;
     };
     projection.reflectX = function(_) {
       return arguments.length ? (sx = _ ? -1 : 1, reset()) : sx < 0;
@@ -27046,7 +27055,7 @@
 
       p.copy = p.copy || function() {
         const c = projection();
-        projectionProperties.forEach(function(prop) {
+        projectionProperties.forEach(prop => {
           if (p[prop]) c[prop](p[prop]());
         });
         c.path.pointRadius(p.path.pointRadius());
@@ -27493,11 +27502,11 @@
 
       if (!proj || _.modified('type')) {
         this.value = (proj = create$2(_.type));
-        projectionProperties.forEach(function(prop) {
+        projectionProperties.forEach(prop => {
           if (_[prop] != null) set$2(proj, prop, _[prop]);
         });
       } else {
-        projectionProperties.forEach(function(prop) {
+        projectionProperties.forEach(prop => {
           if (_.modified(prop)) set$2(proj, prop, _[prop]);
         });
       }
@@ -27557,7 +27566,7 @@
   });
 
   function forceCenter(x, y) {
-    var nodes;
+    var nodes, strength = 1;
 
     if (x == null) x = 0;
     if (y == null) y = 0;
@@ -27573,7 +27582,7 @@
         node = nodes[i], sx += node.x, sy += node.y;
       }
 
-      for (sx = sx / n - x, sy = sy / n - y, i = 0; i < n; ++i) {
+      for (sx = (sx / n - x) * strength, sy = (sy / n - y) * strength, i = 0; i < n; ++i) {
         node = nodes[i], node.x -= sx, node.y -= sy;
       }
     }
@@ -27590,16 +27599,20 @@
       return arguments.length ? (y = +_, force) : y;
     };
 
+    force.strength = function(_) {
+      return arguments.length ? (strength = +_, force) : strength;
+    };
+
     return force;
   }
 
   function tree_add(d) {
-    var x = +this._x.call(null, d),
+    const x = +this._x.call(null, d),
         y = +this._y.call(null, d);
-    return add$4(this.cover(x, y), x, y, d);
+    return add$3(this.cover(x, y), x, y, d);
   }
 
-  function add$4(tree, x, y, d) {
+  function add$3(tree, x, y, d) {
     if (isNaN(x) || isNaN(y)) return tree; // ignore invalid points
 
     var parent,
@@ -27672,7 +27685,7 @@
 
     // Add the new points.
     for (i = 0; i < n; ++i) {
-      add$4(this, xz[i], yz[i], data[i]);
+      add$3(this, xz[i], yz[i], data[i]);
     }
 
     return this;
@@ -27696,7 +27709,7 @@
 
     // Otherwise, double repeatedly to cover.
     else {
-      var z = x1 - x0,
+      var z = x1 - x0 || 1,
           node = this._root,
           parent,
           i;
@@ -28006,8 +28019,8 @@
     };
   }
 
-  function jiggle() {
-    return (Math.random() - 0.5) * 1e-6;
+  function jiggle(random) {
+    return (random() - 0.5) * 1e-6;
   }
 
   function x$2(d) {
@@ -28021,6 +28034,7 @@
   function forceCollide(radius) {
     var nodes,
         radii,
+        random,
         strength = 1,
         iterations = 1;
 
@@ -28054,8 +28068,8 @@
                 y = yi - data.y - data.vy,
                 l = x * x + y * y;
             if (l < r * r) {
-              if (x === 0) x = jiggle(), l += x * x;
-              if (y === 0) y = jiggle(), l += y * y;
+              if (x === 0) x = jiggle(random), l += x * x;
+              if (y === 0) y = jiggle(random), l += y * y;
               l = (r - (l = Math.sqrt(l))) / l * strength;
               node.vx += (x *= l) * (r = (rj *= rj) / (ri2 + rj));
               node.vy += (y *= l) * r;
@@ -28085,8 +28099,9 @@
       for (i = 0; i < n; ++i) node = nodes[i], radii[node.index] = +radius(node, i, nodes);
     }
 
-    force.initialize = function(_) {
-      nodes = _;
+    force.initialize = function(_nodes, _random) {
+      nodes = _nodes;
+      random = _random;
       initialize();
     };
 
@@ -28111,7 +28126,7 @@
 
   function find$1(nodeById, nodeId) {
     var node = nodeById.get(nodeId);
-    if (!node) throw new Error("missing: " + nodeId);
+    if (!node) throw new Error("node not found: " + nodeId);
     return node;
   }
 
@@ -28124,6 +28139,7 @@
         nodes,
         count,
         bias,
+        random,
         iterations = 1;
 
     if (links == null) links = [];
@@ -28136,8 +28152,8 @@
       for (var k = 0, n = links.length; k < iterations; ++k) {
         for (var i = 0, link, source, target, x, y, l, b; i < n; ++i) {
           link = links[i], source = link.source, target = link.target;
-          x = target.x + target.vx - source.x - source.vx || jiggle();
-          y = target.y + target.vy - source.y - source.vy || jiggle();
+          x = target.x + target.vx - source.x - source.vx || jiggle(random);
+          y = target.y + target.vy - source.y - source.vy || jiggle(random);
           l = Math.sqrt(x * x + y * y);
           l = (l - distances[i]) / l * alpha * strengths[i];
           x *= l, y *= l;
@@ -28190,8 +28206,9 @@
       }
     }
 
-    force.initialize = function(_) {
-      nodes = _;
+    force.initialize = function(_nodes, _random) {
+      nodes = _nodes;
+      random = _random;
       initialize();
     };
 
@@ -28218,7 +28235,7 @@
     return force;
   }
 
-  var noop$4 = {value: function() {}};
+  var noop$4 = {value: () => {}};
 
   function dispatch() {
     for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
@@ -28415,13 +28432,27 @@
   function interval$1(callback, delay, time) {
     var t = new Timer, total = delay;
     if (delay == null) return t.restart(callback, delay, time), t;
-    delay = +delay, time = time == null ? now() : +time;
-    t.restart(function tick(elapsed) {
-      elapsed += total;
-      t.restart(tick, total += delay, time);
-      callback(elapsed);
-    }, delay, time);
+    t._restart = t.restart;
+    t.restart = function(callback, delay, time) {
+      delay = +delay, time = time == null ? now() : +time;
+      t._restart(function tick(elapsed) {
+        elapsed += total;
+        t._restart(tick, total += delay, time);
+        callback(elapsed);
+      }, delay, time);
+    };
+    t.restart(callback, delay, time);
     return t;
+  }
+
+  // https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
+  const a = 1664525;
+  const c = 1013904223;
+  const m = 4294967296; // 2^32
+
+  function lcg$1() {
+    let s = 1;
+    return () => (s = (a * s + c) % m) / m;
   }
 
   function x$3(d) {
@@ -28444,7 +28475,8 @@
         velocityDecay = 0.6,
         forces = new Map(),
         stepper = timer(step),
-        event = dispatch("tick", "end");
+        event = dispatch("tick", "end"),
+        random = lcg$1();
 
     if (nodes == null) nodes = [];
 
@@ -28487,7 +28519,7 @@
         if (node.fx != null) node.x = node.fx;
         if (node.fy != null) node.y = node.fy;
         if (isNaN(node.x) || isNaN(node.y)) {
-          var radius = initialRadius * Math.sqrt(i), angle = i * initialAngle;
+          var radius = initialRadius * Math.sqrt(0.5 + i), angle = i * initialAngle;
           node.x = radius * Math.cos(angle);
           node.y = radius * Math.sin(angle);
         }
@@ -28498,7 +28530,7 @@
     }
 
     function initializeForce(force) {
-      if (force.initialize) force.initialize(nodes);
+      if (force.initialize) force.initialize(nodes, random);
       return force;
     }
 
@@ -28539,6 +28571,10 @@
         return arguments.length ? (velocityDecay = 1 - _, simulation) : 1 - velocityDecay;
       },
 
+      randomSource: function(_) {
+        return arguments.length ? (random = _, forces.forEach(initializeForce), simulation) : random;
+      },
+
       force: function(name, _) {
         return arguments.length > 1 ? ((_ == null ? forces.delete(name) : forces.set(name, initializeForce(_))), simulation) : forces.get(name);
       },
@@ -28575,6 +28611,7 @@
   function forceManyBody() {
     var nodes,
         node,
+        random,
         alpha,
         strength = constant$4(-30),
         strengths,
@@ -28632,8 +28669,8 @@
       // Limit forces for very close nodes; randomize direction if coincident.
       if (w * w / theta2 < l) {
         if (l < distanceMax2) {
-          if (x === 0) x = jiggle(), l += x * x;
-          if (y === 0) y = jiggle(), l += y * y;
+          if (x === 0) x = jiggle(random), l += x * x;
+          if (y === 0) y = jiggle(random), l += y * y;
           if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
           node.vx += x * quad.value * alpha / l;
           node.vy += y * quad.value * alpha / l;
@@ -28646,8 +28683,8 @@
 
       // Limit forces for very close nodes; randomize direction if coincident.
       if (quad.data !== node || quad.next) {
-        if (x === 0) x = jiggle(), l += x * x;
-        if (y === 0) y = jiggle(), l += y * y;
+        if (x === 0) x = jiggle(random), l += x * x;
+        if (y === 0) y = jiggle(random), l += y * y;
         if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
       }
 
@@ -28658,8 +28695,9 @@
       } while (quad = quad.next);
     }
 
-    force.initialize = function(_) {
-      nodes = _;
+    force.initialize = function(_nodes, _random) {
+      nodes = _nodes;
+      random = _random;
       initialize();
     };
 
@@ -29001,7 +29039,7 @@
   // Build lookup table mapping tuple keys to tree node instances
   function lookup$3(tree, key, filter) {
     var map = {};
-    tree.each(function(node) {
+    tree.each(node => {
       var t = node.data;
       if (filter(t)) map[key(t)] = node;
     });
@@ -29107,43 +29145,50 @@
     return this.eachAfter(count);
   }
 
-  function node_each(callback) {
-    var node = this, current, next = [node], children, i, n;
-    do {
-      current = next.reverse(), next = [];
-      while (node = current.pop()) {
-        callback(node), children = node.children;
-        if (children) for (i = 0, n = children.length; i < n; ++i) {
-          next.push(children[i]);
-        }
-      }
-    } while (next.length);
+  function node_each(callback, that) {
+    let index = -1;
+    for (const node of this) {
+      callback.call(that, node, ++index, this);
+    }
     return this;
   }
 
-  function node_eachBefore(callback) {
-    var node = this, nodes = [node], children, i;
+  function node_eachBefore(callback, that) {
+    var node = this, nodes = [node], children, i, index = -1;
     while (node = nodes.pop()) {
-      callback(node), children = node.children;
-      if (children) for (i = children.length - 1; i >= 0; --i) {
-        nodes.push(children[i]);
+      callback.call(that, node, ++index, this);
+      if (children = node.children) {
+        for (i = children.length - 1; i >= 0; --i) {
+          nodes.push(children[i]);
+        }
       }
     }
     return this;
   }
 
-  function node_eachAfter(callback) {
-    var node = this, nodes = [node], next = [], children, i, n;
+  function node_eachAfter(callback, that) {
+    var node = this, nodes = [node], next = [], children, i, n, index = -1;
     while (node = nodes.pop()) {
-      next.push(node), children = node.children;
-      if (children) for (i = 0, n = children.length; i < n; ++i) {
-        nodes.push(children[i]);
+      next.push(node);
+      if (children = node.children) {
+        for (i = 0, n = children.length; i < n; ++i) {
+          nodes.push(children[i]);
+        }
       }
     }
     while (node = next.pop()) {
-      callback(node);
+      callback.call(that, node, ++index, this);
     }
     return this;
+  }
+
+  function node_find(callback, that) {
+    let index = -1;
+    for (const node of this) {
+      if (callback.call(that, node, ++index, this)) {
+        return node;
+      }
+    }
   }
 
   function node_sum(value) {
@@ -29204,11 +29249,7 @@
   }
 
   function node_descendants() {
-    var nodes = [];
-    this.each(function(node) {
-      nodes.push(node);
-    });
-    return nodes;
+    return Array.from(this);
   }
 
   function node_leaves() {
@@ -29231,9 +29272,30 @@
     return links;
   }
 
+  function* node_iterator() {
+    var node = this, current, next = [node], children, i, n;
+    do {
+      current = next.reverse(), next = [];
+      while (node = current.pop()) {
+        yield node;
+        if (children = node.children) {
+          for (i = 0, n = children.length; i < n; ++i) {
+            next.push(children[i]);
+          }
+        }
+      }
+    } while (next.length);
+  }
+
   function hierarchy(data, children) {
+    if (data instanceof Map) {
+      data = [undefined, data];
+      if (children === undefined) children = mapChildren;
+    } else if (children === undefined) {
+      children = objectChildren;
+    }
+
     var root = new Node(data),
-        valued = +data.value && (root.value = data.value),
         node,
         nodes = [root],
         child,
@@ -29241,14 +29303,11 @@
         i,
         n;
 
-    if (children == null) children = defaultChildren;
-
     while (node = nodes.pop()) {
-      if (valued) node.value = +node.data.value;
-      if ((childs = children(node.data)) && (n = childs.length)) {
-        node.children = new Array(n);
+      if ((childs = children(node.data)) && (n = (childs = Array.from(childs)).length)) {
+        node.children = childs;
         for (i = n - 1; i >= 0; --i) {
-          nodes.push(child = node.children[i] = new Node(childs[i]));
+          nodes.push(child = childs[i] = new Node(childs[i]));
           child.parent = node;
           child.depth = node.depth + 1;
         }
@@ -29262,11 +29321,16 @@
     return hierarchy(this).eachBefore(copyData);
   }
 
-  function defaultChildren(d) {
+  function objectChildren(d) {
     return d.children;
   }
 
+  function mapChildren(d) {
+    return Array.isArray(d) ? d[1] : null;
+  }
+
   function copyData(node) {
+    if (node.data.value !== undefined) node.value = node.data.value;
     node.data = node.data.data;
   }
 
@@ -29289,6 +29353,7 @@
     each: node_each,
     eachAfter: node_eachAfter,
     eachBefore: node_eachBefore,
+    find: node_find,
     sum: node_sum,
     sort: node_sort,
     path: node_path,
@@ -29296,10 +29361,15 @@
     descendants: node_descendants,
     leaves: node_leaves,
     links: node_links,
-    copy: node_copy
+    copy: node_copy,
+    [Symbol.iterator]: node_iterator
   };
 
-  var slice$1 = Array.prototype.slice;
+  function array$3(x) {
+    return typeof x === "object" && "length" in x
+      ? x // Array, TypedArray, NodeList, array-like
+      : Array.from(x); // Map, Set, iterable, string, or anything else
+  }
 
   function shuffle(array) {
     var m = array.length,
@@ -29317,7 +29387,7 @@
   }
 
   function enclose(circles) {
-    var i = 0, n = (circles = shuffle(slice$1.call(circles))).length, B = [], p, e;
+    var i = 0, n = (circles = shuffle(Array.from(circles))).length, B = [], p, e;
 
     while (i < n) {
       p = circles[i];
@@ -29363,7 +29433,7 @@
   }
 
   function enclosesWeak(a, b) {
-    var dr = a.r - b.r + 1e-6, dx = b.x - a.x, dy = b.y - a.y;
+    var dr = a.r - b.r + Math.max(a.r, b.r, 1) * 1e-9, dx = b.x - a.x, dy = b.y - a.y;
     return dr > 0 && dr * dr > dx * dx + dy * dy;
   }
 
@@ -29478,7 +29548,7 @@
   }
 
   function packEnclose(circles) {
-    if (!(n = circles.length)) return 0;
+    if (!(n = (circles = array$3(circles)).length)) return 0;
 
     var a, b, c, n, aa, ca, i, j, k, sj, sk;
 
@@ -29710,8 +29780,7 @@
     return partition;
   }
 
-  var keyPrefix = "$", // Protect against keys like “__proto__”.
-      preroot = {depth: -1},
+  var preroot = {depth: -1},
       ambiguous = {};
 
   function defaultId(d) {
@@ -29727,37 +29796,40 @@
         parentId = defaultParentId;
 
     function stratify(data) {
-      var d,
+      var nodes = Array.from(data),
+          n = nodes.length,
+          d,
           i,
-          n = data.length,
           root,
           parent,
           node,
-          nodes = new Array(n),
           nodeId,
           nodeKey,
-          nodeByKey = {};
+          nodeByKey = new Map;
 
       for (i = 0; i < n; ++i) {
-        d = data[i], node = nodes[i] = new Node(d);
+        d = nodes[i], node = nodes[i] = new Node(d);
         if ((nodeId = id(d, i, data)) != null && (nodeId += "")) {
-          nodeKey = keyPrefix + (node.id = nodeId);
-          nodeByKey[nodeKey] = nodeKey in nodeByKey ? ambiguous : node;
+          nodeKey = node.id = nodeId;
+          nodeByKey.set(nodeKey, nodeByKey.has(nodeKey) ? ambiguous : node);
+        }
+        if ((nodeId = parentId(d, i, data)) != null && (nodeId += "")) {
+          node.parent = nodeId;
         }
       }
 
       for (i = 0; i < n; ++i) {
-        node = nodes[i], nodeId = parentId(data[i], i, data);
-        if (nodeId == null || !(nodeId += "")) {
-          if (root) throw new Error("multiple roots");
-          root = node;
-        } else {
-          parent = nodeByKey[keyPrefix + nodeId];
+        node = nodes[i];
+        if (nodeId = node.parent) {
+          parent = nodeByKey.get(nodeId);
           if (!parent) throw new Error("missing: " + nodeId);
           if (parent === ambiguous) throw new Error("ambiguous: " + nodeId);
           if (parent.children) parent.children.push(node);
           else parent.children = [node];
           node.parent = parent;
+        } else {
+          if (root) throw new Error("multiple roots");
+          root = node;
         }
       }
 
@@ -30220,11 +30292,11 @@
           valueRight = value - valueLeft;
 
       if ((x1 - x0) > (y1 - y0)) {
-        var xk = (x0 * valueRight + x1 * valueLeft) / value;
+        var xk = value ? (x0 * valueRight + x1 * valueLeft) / value : x1;
         partition(i, k, valueLeft, x0, y0, xk, y1);
         partition(k, j, valueRight, xk, y0, x1, y1);
       } else {
-        var yk = (y0 * valueRight + y1 * valueLeft) / value;
+        var yk = value ? (y0 * valueRight + y1 * valueLeft) / value : y1;
         partition(i, k, valueLeft, x0, y0, x1, yk);
         partition(k, j, valueRight, x0, yk, x1, y1);
       }
@@ -30251,8 +30323,8 @@
         while (++j < m) {
           row = rows[j], nodes = row.children;
           for (i = row.value = 0, n = nodes.length; i < n; ++i) row.value += nodes[i].value;
-          if (row.dice) treemapDice(row, x0, y0, x1, y0 += (y1 - y0) * row.value / value);
-          else treemapSlice(row, x0, y0, x0 += (x1 - x0) * row.value / value, y1);
+          if (row.dice) treemapDice(row, x0, y0, x1, value ? y0 += (y1 - y0) * row.value / value : y1);
+          else treemapSlice(row, x0, y0, value ? x0 += (x1 - x0) * row.value / value : x1, y1);
           value -= row.value;
         }
       } else {
@@ -32187,26 +32259,24 @@
           n = words.length,
           i = -1,
           tags = [],
-          data = words.map(function(d) {
-            return {
-              text: text(d),
-              font: font(d),
-              style: fontStyle(d),
-              weight: fontWeight(d),
-              rotate: rotate(d),
-              size: ~~(fontSize(d) + 1e-14),
-              padding: padding(d),
-              xoff: 0,
-              yoff: 0,
-              x1: 0,
-              y1: 0,
-              x0: 0,
-              y0: 0,
-              hasText: false,
-              sprite: null,
-              datum: d
-            };
-          }).sort(function(a, b) { return b.size - a.size; });
+          data = words.map(d => ({
+            text: text(d),
+            font: font(d),
+            style: fontStyle(d),
+            weight: fontWeight(d),
+            rotate: rotate(d),
+            size: ~~(fontSize(d) + 1e-14),
+            padding: padding(d),
+            xoff: 0,
+            yoff: 0,
+            x1: 0,
+            y1: 0,
+            x0: 0,
+            y0: 0,
+            hasText: false,
+            sprite: null,
+            datum: d
+          })).sort((a, b) => b.size - a.size);
 
       while (++i < n) {
         var d = data[i];
@@ -32681,8 +32751,8 @@
     let width = 8,
         data = [],
         seen = array32(0),
-        curr = array$2(0, width),
-        prev = array$2(0, width);
+        curr = array$4(0, width),
+        prev = array$4(0, width);
 
     return {
       data: () => data,
@@ -32698,10 +32768,10 @@
       },
 
       remove(num, map) { // map: index -> boolean (true => remove)
-        let n = data.length,
-            copy = Array(n - num),
-            reindex = data, // reuse old data array for index map
-            t, i, j;
+        const n = data.length,
+              copy = Array(n - num),
+              reindex = data; // reuse old data array for index map
+        let t, i, j;
 
         // seek forward to first removal
         for (i=0; !map[i] && i<n; ++i) {
@@ -32747,8 +32817,8 @@
         const k = curr.length;
         if (n > k || m > width) {
           width = Math.max(m, width);
-          curr = array$2(n, width, curr);
-          prev = array$2(n, width);
+          curr = array$4(n, width, curr);
+          prev = array$4(n, width);
         }
       }
     };
@@ -32761,7 +32831,7 @@
     return copy;
   }
 
-  function array$2(n, m, array) {
+  function array$4(n, m, array) {
     const copy = (m < 0x101 ? array8
         : m < 0x10001 ? array16
         : array32)(n);
@@ -32781,12 +32851,13 @@
       size:    index.size,
 
       onAdd(added, curr) {
-        let dim = this,
-            range = dim.bisect(dim.range, added.value),
-            idx = added.index,
-            lo = range[0],
-            hi = range[1],
-            n1 = idx.length, i;
+        const dim = this,
+              range = dim.bisect(dim.range, added.value),
+              idx = added.index,
+              lo = range[0],
+              hi = range[1],
+              n1 = idx.length;
+        let i;
 
         for (i=0;  i<lo; ++i) curr[idx[i]] |= bit;
         for (i=hi; i<n1; ++i) curr[idx[i]] |= bit;
@@ -32806,10 +32877,10 @@
     function insert(key, data, base) {
       if (!data.length) return [];
 
-      let n0 = size,
+      const n0 = size,
           n1 = data.length,
-          addv = Array(n1),
-          addi = array32(n1),
+          addi = array32(n1);
+      let addv = Array(n1),
           oldv, oldi, i;
 
       for (i=0; i<n1; ++i) {
@@ -32838,8 +32909,8 @@
 
     function remove(num, map) {
       // map: index -> remove
-      let n = size,
-          idx, i, j;
+      const n = size;
+      let idx, i, j;
 
       // seek forward to first removal
       for (i=0; !map[index[i]] && i<n; ++i);
@@ -32957,12 +33028,12 @@
     },
 
     init(_, pulse) {
-      let fields = _.fields,
-          query = _.query,
-          indices = this._indices = {},
-          dims = this._dims = [],
-          m = query.length,
-          i = 0, key, index;
+      const fields = _.fields,
+            query = _.query,
+            indices = this._indices = {},
+            dims = this._dims = [],
+            m = query.length;
+      let i = 0, key, index;
 
       // instantiate indices and dimensions
       for (; i<m; ++i) {
@@ -32975,20 +33046,20 @@
     },
 
     reinit(_, pulse) {
-      let output = pulse.materialize().fork(),
-          fields = _.fields,
-          query = _.query,
-          indices = this._indices,
-          dims = this._dims,
-          bits = this.value,
-          curr = bits.curr(),
-          prev = bits.prev(),
-          all = bits.all(),
-          out = (output.rem = output.add),
-          mod = output.mod,
-          m = query.length,
-          adds = {}, add, index, key,
-          mods, remMap, modMap, i, n, f;
+      const output = pulse.materialize().fork(),
+            fields = _.fields,
+            query = _.query,
+            indices = this._indices,
+            dims = this._dims,
+            bits = this.value,
+            curr = bits.curr(),
+            prev = bits.prev(),
+            all = bits.all(),
+            out = (output.rem = output.add),
+            mod = output.mod,
+            m = query.length,
+            adds = {};
+      let add, index, key, mods, remMap, modMap, i, n, f;
 
       // set prev to current state
       prev.set(curr);
@@ -33042,9 +33113,9 @@
     },
 
     eval(_, pulse) {
-      let output = pulse.materialize().fork(),
-          m = this._dims.length,
-          mask = 0;
+      const output = pulse.materialize().fork(),
+            m = this._dims.length;
+      let mask = 0;
 
       if (pulse.rem.length) {
         this.remove(_, pulse, output);
@@ -33070,16 +33141,16 @@
     },
 
     insert(_, pulse, output) {
-      let tuples = pulse.add,
-          bits = this.value,
-          dims = this._dims,
-          indices = this._indices,
-          fields = _.fields,
-          adds = {},
-          out = output.add,
-          k = bits.size(),
-          n = k + tuples.length,
-          m = dims.length, j, key, add;
+      const tuples = pulse.add,
+            bits = this.value,
+            dims = this._dims,
+            indices = this._indices,
+            fields = _.fields,
+            adds = {},
+            out = output.add,
+            n = bits.size() + tuples.length,
+            m = dims.length;
+      let k = bits.size(), j, key, add;
 
       // resize bitmaps and add tuples as needed
       bits.resize(n, m);
@@ -33097,19 +33168,19 @@
       }
 
       // set previous filters, output if passes at least one filter
-      for (; k<n; ++k) {
+      for (; k < n; ++k) {
         prev[k] = all;
         if (curr[k] !== all) out.push(k);
       }
     },
 
     modify(pulse, output) {
-      let out = output.mod,
-          bits = this.value,
-          curr = bits.curr(),
-          all  = bits.all(),
-          tuples = pulse.mod,
-          i, n, k;
+      const out = output.mod,
+            bits = this.value,
+            curr = bits.curr(),
+            all  = bits.all(),
+            tuples = pulse.mod;
+      let i, n, k;
 
       for (i=0, n=tuples.length; i<n; ++i) {
         k = tuples[i]._index;
@@ -33118,15 +33189,15 @@
     },
 
     remove(_, pulse, output) {
-      let indices = this._indices,
-          bits = this.value,
-          curr = bits.curr(),
-          prev = bits.prev(),
-          all  = bits.all(),
-          map = {},
-          out = output.rem,
-          tuples = pulse.rem,
-          i, n, k, f;
+      const indices = this._indices,
+            bits = this.value,
+            curr = bits.curr(),
+            prev = bits.prev(),
+            all  = bits.all(),
+            map = {},
+            out = output.rem,
+            tuples = pulse.rem;
+      let i, n, k, f;
 
       // process tuples, output if passes at least one filter
       for (i=0, n=tuples.length; i<n; ++i) {
@@ -33158,11 +33229,11 @@
     },
 
     update(_, pulse, output) {
-      let dims = this._dims,
-          query = _.query,
-          stamp = pulse.stamp,
-          m = dims.length,
-          mask = 0, i, q;
+      const dims = this._dims,
+            query = _.query,
+            stamp = pulse.stamp,
+            m = dims.length;
+      let mask = 0, i, q;
 
       // survey how many queries have changed
       output.filters = 0;
@@ -33188,19 +33259,19 @@
     },
 
     incrementAll(dim, query, stamp, out) {
-      let bits = this.value,
-          seen = bits.seen(),
-          curr = bits.curr(),
-          prev = bits.prev(),
-          index = dim.index(),
-          old = dim.bisect(dim.range),
-          range = dim.bisect(query),
-          lo1 = range[0],
-          hi1 = range[1],
-          lo0 = old[0],
-          hi0 = old[1],
-          one = dim.one,
-          i, j, k;
+      const bits = this.value,
+            seen = bits.seen(),
+            curr = bits.curr(),
+            prev = bits.prev(),
+            index = dim.index(),
+            old = dim.bisect(dim.range),
+            range = dim.bisect(query),
+            lo1 = range[0],
+            hi1 = range[1],
+            lo0 = old[0],
+            hi0 = old[1],
+            one = dim.one;
+      let i, j, k;
 
       // Fast incremental update based on previous lo index.
       if (lo1 < lo0) {
@@ -33252,17 +33323,17 @@
     },
 
     incrementOne(dim, query, add, rem) {
-      let bits = this.value,
-          curr = bits.curr(),
-          index = dim.index(),
-          old = dim.bisect(dim.range),
-          range = dim.bisect(query),
-          lo1 = range[0],
-          hi1 = range[1],
-          lo0 = old[0],
-          hi0 = old[1],
-          one = dim.one,
-          i, j, k;
+      const bits = this.value,
+            curr = bits.curr(),
+            index = dim.index(),
+            old = dim.bisect(dim.range),
+            range = dim.bisect(query),
+            lo1 = range[0],
+            hi1 = range[1],
+            lo0 = old[0],
+            hi0 = old[1],
+            one = dim.one;
+      let i, j, k;
 
       // Fast incremental update based on previous lo index.
       if (lo1 < lo0) {
@@ -33373,7 +33444,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.14.0";
+  var version = "5.15.0";
 
   // initialize aria role and label attributes
   function initializeAria(view) {
@@ -33412,7 +33483,7 @@
 
     // evaluate cursor on each mousemove event
     view.on(view.events('view', 'mousemove'), cursor,
-      function(_, event) {
+      (_, event) => {
         const value = cursor.value,
               user = value ? (isString(value) ? value : value.user) : Default,
               item = event.item && event.item.cursor || null;
@@ -33510,7 +33581,7 @@
     view._renderer.resize(w, h, origin);
     view._handler.origin(origin);
 
-    view._resizeListeners.forEach(function(handler) {
+    view._resizeListeners.forEach(handler => {
       try {
         handler(w, h);
       } catch (error) {
@@ -33818,7 +33889,7 @@
         set: null,
         update: value => {
           if (value !== view.signal(param.signal)) {
-            view.runAsync(null, function() {
+            view.runAsync(null, () => {
               bind.source = true;
               view.signal(param.signal, value);
             });
@@ -33866,7 +33937,7 @@
       case 'checkbox': input = checkbox; break;
       case 'select':   input = select; break;
       case 'radio':    input = radio; break;
-      case 'range':    input = range$2; break;
+      case 'range':    input = range$1; break;
     }
 
     input(bind, wrapper, param, value);
@@ -33977,7 +34048,7 @@
   /**
    * Generates a slider input element.
    */
-  function range$2(bind, el, param, value) {
+  function range$1(bind, el, param, value) {
     value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
     const max = param.max != null ? param.max : Math.max(100, +value) || 100,
@@ -34043,7 +34114,7 @@
 
     // transfer event handlers
     if (prevHandler) {
-      prevHandler.handlers().forEach(function(h) {
+      prevHandler.handlers().forEach(h => {
         handler.on(h.type, h.handler);
       });
     }
@@ -34079,13 +34150,13 @@
       elBind = elBind ? (view._elBind = lookup$4(view, elBind))
         : el.appendChild(element$1('form', {'class': 'vega-bindings'}));
 
-      view._bind.forEach(function(_) {
+      view._bind.forEach(_ => {
         if (_.param.element && config !== 'container') {
           _.element = lookup$4(view, _.param.element);
         }
       });
 
-      view._bind.forEach(function(_) {
+      view._bind.forEach(_ => {
         bind$1(view, _.element || elBind, _);
       });
     }
@@ -35011,7 +35082,7 @@
       // perfectly valid pattern that is equivalent to `[a-b]`, but it
       // would be replaced by `[x-b]` which throws an error.
       tmp = tmp
-        .replace(/\\u\{([0-9a-fA-F]+)\}/g, function($0, $1) {
+        .replace(/\\u\{([0-9a-fA-F]+)\}/g, ($0, $1) => {
           if (parseInt($1, 16) <= 0x10FFFF) {
             return 'x';
           }
@@ -35298,7 +35369,7 @@
       args = Array.prototype.slice.call(arguments, 2),
       msg = messageFormat.replace(
         /%(\d)/g,
-        function(whole, index) {
+        (whole, index) => {
           assert(index < args.length, 'Message reference must be in range');
           return args[index];
         }
@@ -36165,8 +36236,8 @@
   const geoCentroid = geoMethod('centroid', centroid);
 
   function inScope(item) {
-    let group = this.context.group,
-        value = false;
+    const group = this.context.group;
+    let value = false;
 
     if (group) while (item) {
       if (item === group) { value = true; break; }
@@ -36245,7 +36316,7 @@
   }
 
   function equalObject(a, b) {
-    for (let key in a) {
+    for (const key in a) {
       if (!equal(a[key], b[key])) return false;
     }
     return true;
@@ -36256,11 +36327,12 @@
   }
 
   function modify(name, insert, remove, toggle, modify, values) {
-    let df = this.context.dataflow,
-        data = this.context.data[name],
-        input = data.input,
-        changes = data.changes,
-        stamp = df.stamp(),
+    const df = this.context.dataflow,
+          data = this.context.data[name],
+          input = data.input,
+          stamp = df.stamp();
+
+    let changes = data.changes,
         predicate, key;
 
     if (df._trigger === false || !(input.value.length || insert || toggle)) {
@@ -36271,7 +36343,7 @@
     if (!changes || changes.stamp < stamp) {
       data.changes = (changes = df.changeset());
       changes.stamp = stamp;
-      df.runAfter(function() {
+      df.runAfter(() => {
         data.modified = true;
         df.pulse(input, changes).run();
       }, true, 1);
@@ -36347,7 +36419,7 @@
       : (s.invert || s.invertExtent)(range);
   }
 
-  function range$3(name, group) {
+  function range$2(name, group) {
     const s = getScale(name, (group || this).context);
     return s && s.range ? s.range() : [];
   }
@@ -36597,7 +36669,7 @@
 
     // Then resolve fields across units as per the op.
     op = op || Union;
-    Object.keys(resolved).forEach(function (field) {
+    Object.keys(resolved).forEach(field => {
       resolved[field] = Object.keys(resolved[field])
         .map(unit => resolved[field][unit])
         .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
@@ -36624,7 +36696,7 @@
 
     E_intersect: function(base, value) {
       return !base.length ? value :
-        base.filter(function (v) { return value.indexOf(v) >= 0; });
+        base.filter(v => value.indexOf(v) >= 0);
     },
 
     R_union: function(base, value) {
@@ -36818,7 +36890,7 @@
   function buildFunctions(codegen) {
     const fn = functions(codegen);
     eventFunctions.forEach(name => fn[name] = eventPrefix + name);
-    for (let name in functionContext) { fn[name] = thisPrefix + name; }
+    for (const name in functionContext) { fn[name] = thisPrefix + name; }
     extend(fn, internalScaleFunctions(codegen, functionContext, astVisitors));
     return fn;
   }
@@ -36845,7 +36917,7 @@
   expressionFunction('bandwidth', bandwidth, scaleVisitor);
   expressionFunction('copy', copy$2, scaleVisitor);
   expressionFunction('domain', domain, scaleVisitor);
-  expressionFunction('range', range$3, scaleVisitor);
+  expressionFunction('range', range$2, scaleVisitor);
   expressionFunction('invert', invert, scaleVisitor);
   expressionFunction('scale', scale$3, scaleVisitor);
   expressionFunction('gradient', scaleGradient, scaleVisitor);
@@ -36863,9 +36935,10 @@
   expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
 
   function parseExpression$1(expr, scope) {
-    let params = {}, ast, gen;
+    const params = {};
 
     // parse the expression to an abstract syntax tree (ast)
+    let ast;
     try {
       expr = isString(expr) ? expr : ($(expr) + '');
       ast = parse$3(expr);
@@ -36882,7 +36955,7 @@
     });
 
     // perform code generation
-    gen = codeGenerator(ast);
+    const gen = codeGenerator(ast);
 
     // collect signal dependencies
     gen.globals.forEach(name => {
@@ -37580,7 +37653,7 @@
 
     // respond to width signal
     view._resizeWidth = view.add(null,
-      function(_) {
+      _ => {
         view._width = _.size;
         view._viewWidth = viewWidth(view, _.size);
         resetSize();
@@ -37590,7 +37663,7 @@
 
     // respond to height signal
     view._resizeHeight = view.add(null,
-      function(_) {
+      _ => {
         view._height = _.size;
         view._viewHeight = viewHeight(view, _.size);
         resetSize();
@@ -37608,7 +37681,7 @@
   }
 
   function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
-    this.runAfter(function(view) {
+    this.runAfter(view => {
       var rerun = 0;
 
       // reset autosize flag
@@ -37720,7 +37793,7 @@
   }
 
   function formatObject(obj) {
-    return Object.keys(obj).map(function(key) {
+    return Object.keys(obj).map(key => {
       var v = obj[key];
       return key + ': ' + (isArray(v) ? formatArray(v) : formatValue$1(v));
     }).join('\n');
@@ -38581,8 +38654,7 @@
   }
 
   function eventStream(stream, scope) {
-    let id, entry;
-
+    let id;
     if (stream.type === Timer$1) {
       id = scope.event(Timer$1, stream.throttle);
       stream = {between: stream.between, filter: stream.filter};
@@ -38590,7 +38662,7 @@
       id = scope.event(eventSource(stream.source), stream.type);
     }
 
-    entry = streamParameters({stream: id}, stream, scope);
+    const entry = streamParameters({stream: id}, stream, scope);
     return Object.keys(entry).length === 1
       ? id
       : scope.addStream(entry).id;
@@ -38645,6 +38717,35 @@
       + (name ? '&&' + item + '.mark.name===\'' + name + '\'' : '');
   }
 
+  const VIEW$1    = 'view',
+        LBRACK  = '[',
+        RBRACK  = ']',
+        LBRACE  = '{',
+        RBRACE  = '}',
+        COLON   = ':',
+        COMMA   = ',',
+        NAME    = '@',
+        GT      = '>',
+        ILLEGAL$1 = /[[\]{}]/,
+        DEFAULT_MARKS = {
+          '*': 1,
+          arc: 1,
+          area: 1,
+          group: 1,
+          image: 1,
+          line: 1,
+          path: 1,
+          rect: 1,
+          rule: 1,
+          shape: 1,
+          symbol: 1,
+          text: 1,
+          trail: 1
+        };
+
+  let DEFAULT_SOURCE,
+      MARKS;
+
   /**
    * Parse an event selector string.
    * Returns an array of event stream definitions.
@@ -38655,43 +38756,15 @@
     return parseMerge(selector.trim()).map(parseSelector);
   }
 
-  let VIEW$1    = 'view',
-      LBRACK  = '[',
-      RBRACK  = ']',
-      LBRACE  = '{',
-      RBRACE  = '}',
-      COLON   = ':',
-      COMMA   = ',',
-      NAME    = '@',
-      GT      = '>',
-      ILLEGAL$1 = /[[\]{}]/,
-      DEFAULT_SOURCE,
-      MARKS,
-      DEFAULT_MARKS = {
-        '*': 1,
-        arc: 1,
-        area: 1,
-        group: 1,
-        image: 1,
-        line: 1,
-        path: 1,
-        rect: 1,
-        rule: 1,
-        shape: 1,
-        symbol: 1,
-        text: 1,
-        trail: 1
-      };
-
   function isMarkType(type) {
     return MARKS[type];
   }
 
   function find$2(s, i, endChar, pushChar, popChar) {
-    let count = 0,
-        n = s.length,
-        c;
-    for (; i<n; ++i) {
+    const n = s.length;
+    let count = 0, c;
+
+    for (; i < n; ++i) {
       c = s[i];
       if (!count && c === endChar) return i;
       else if (popChar && popChar.indexOf(c) >= 0) --count;
@@ -38701,10 +38774,9 @@
   }
 
   function parseMerge(s) {
-    let output = [],
-        start = 0,
-        n = s.length,
-        i = 0;
+    const output = [],
+          n = s.length;
+    let start = 0, i = 0;
 
     while (i < n) {
       i = find$2(s, i, COMMA, LBRACK + LBRACE, RBRACK + RBRACE);
@@ -38725,9 +38797,8 @@
   }
 
   function parseBetween(s) {
-    let n = s.length,
-        i = 1,
-        b, stream;
+    const n = s.length;
+    let i = 1, b;
 
     i = find$2(s, i, RBRACK, LBRACK, RBRACK);
     if (i === n) {
@@ -38746,7 +38817,7 @@
 
     b = b.map(parseSelector);
 
-    stream = parseSelector(s.slice(1).trim());
+    const stream = parseSelector(s.slice(1).trim());
     if (stream.between) {
       return {
         between: b,
@@ -38760,9 +38831,10 @@
   }
 
   function parseStream$2(s) {
-    let stream = {source: DEFAULT_SOURCE},
-        source = [],
-        throttle = [0, 0],
+    const stream = {source: DEFAULT_SOURCE},
+          source = [];
+
+    let throttle = [0, 0],
         markname = 0,
         start = 0,
         n = s.length,
@@ -38847,7 +38919,7 @@
   function parseThrottle(s) {
     const a = s.split(COMMA);
     if (!s.length || a.length > 2) throw s;
-    return a.map(function(_) {
+    return a.map(_ => {
       const x = +_;
       if (x !== x) throw s;
       return x;
@@ -38861,11 +38933,12 @@
   };
 
   function parseUpdate$1(spec, scope, target) {
+    const encode = spec.encode,
+          entry = {target: target};
+
     let events = spec.events,
         update = spec.update,
-        encode = spec.encode,
-        sources = [],
-        entry = {target: target};
+        sources = [];
 
     if (!events) {
       error('Signal update missing events specification.');
@@ -38931,8 +39004,8 @@
   }
 
   function parseSignalUpdates(signal, scope) {
-    let op = scope.getSignal(signal.name),
-        expr = signal.update;
+    const op = scope.getSignal(signal.name);
+    let expr = signal.update;
 
     if (signal.init) {
       if (expr) {
@@ -39004,8 +39077,8 @@
   }
 
   function parseScale(spec, scope) {
-    let params = scope.getScale(spec.name).params,
-        key;
+    const params = scope.getScale(spec.name).params;
+    let key;
 
     params.domain = parseScaleDomain(spec.domain, spec, scope);
 
@@ -39079,7 +39152,7 @@
 
   function multipleDomain(domain, spec, scope) {
     const data = domain.data,
-          fields = domain.fields.reduce(function(dom, d) {
+          fields = domain.fields.reduce((dom, d) => {
             d = isString(d) ? {data: data, field: d}
               : (isArray(d) || d.signal) ? fieldRef$1(d, scope)
               : d;
@@ -39107,18 +39180,18 @@
   }
 
   function ordinalMultipleDomain(domain, scope, fields) {
-    let sort = parseSort(domain.sort, true),
-        counts, p, a, c, v;
+    const sort = parseSort(domain.sort, true);
+    let a, v;
 
     // get value counts for each domain field
-    counts = fields.map(f => {
+    const counts = fields.map(f => {
       const data = scope.getData(f.data);
       if (!data) dataLookupError(f.data);
       return data.countsRef(scope, f.field, sort);
     });
 
     // aggregate the results from each domain field
-    p = {groupby: keyFieldRef, pulse: counts};
+    const p = {groupby: keyFieldRef, pulse: counts};
     if (sort) {
       a = sort.op || 'count';
       v = sort.field ? aggrField(a, sort.field) : 'count';
@@ -39129,7 +39202,7 @@
     a = scope.add(Aggregate$1(p));
 
     // collect aggregate output
-    c = scope.add(Collect$1({pulse: ref(a)}));
+    const c = scope.add(Collect$1({pulse: ref(a)}));
 
     // extract values for combined domain
     v = scope.add(Values$1({
@@ -39212,8 +39285,8 @@
   // -- SCALE RANGE -----
 
   function parseScaleRange(spec, scope, params) {
-    let range = spec.range,
-        config = scope.config.range;
+    const config = scope.config.range;
+    let range = spec.range;
 
     if (range.signal) {
       return scope.signalRef(range.signal);
@@ -39395,8 +39468,8 @@
   );
 
   function tickBand(_) {
-    let v = _('tickBand'),
-        offset = _('tickOffset'),
+    const v = _('tickBand');
+    let offset = _('tickOffset'),
         band, extra;
 
     if (!v) {
@@ -39443,11 +39516,12 @@
   }
 
   function legendGradient(spec, scale, config, userEncode) {
-    let _ = lookup$5(spec, config),
-        vertical = _.isVertical(),
-        thickness = _.gradientThickness(),
-        length = _.gradientLength(),
-        encode, enter, start, stop, width, height;
+    const _ = lookup$5(spec, config),
+          vertical = _.isVertical(),
+          thickness = _.gradientThickness(),
+          length = _.gradientLength();
+
+    let enter, start, stop, width, height;
 
     if (vertical) {
       start = [0, 1];
@@ -39461,7 +39535,7 @@
       height = thickness;
     }
 
-    encode = {
+    const encode = {
       enter: enter = {
         opacity: zero$2,
         x: zero$2,
@@ -39493,17 +39567,18 @@
   }
 
   function legendGradientDiscrete(spec, scale, config, userEncode, dataRef) {
-    let _ = lookup$5(spec, config),
-        vertical = _.isVertical(),
-        thickness = _.gradientThickness(),
-        length = _.gradientLength(),
-        encode, enter, u, v, uu, vv, adjust = '';
+    const _ = lookup$5(spec, config),
+          vertical = _.isVertical(),
+          thickness = _.gradientThickness(),
+          length = _.gradientLength();
+
+    let u, v, uu, vv, adjust = '';
 
     vertical
       ? (u = 'y', uu = 'y2', v = 'x', vv = 'width', adjust = '1-')
       : (u = 'x', uu = 'x2', v = 'y', vv = 'height');
 
-    enter = {
+    const enter = {
       opacity: zero$2,
       fill: {scale: scale, field: Value}
     };
@@ -39512,7 +39587,7 @@
     enter[uu] = {signal: adjust + 'datum.' + Perc2, mult: length};
     enter[vv] = encoder(thickness);
 
-    encode = {
+    const encode = {
       enter: enter,
       update: extend({}, enter, {opacity: one$2}),
       exit: {opacity: zero$2}
@@ -39538,14 +39613,15 @@
         baselineExpr = `datum.${Perc}<=0?"${Bottom$1}":datum.${Perc}>=1?"${Top$1}":"${Middle$1}"`;
 
   function legendGradientLabels(spec, config, userEncode, dataRef) {
-    let _ = lookup$5(spec, config),
-        vertical = _.isVertical(),
-        thickness = encoder(_.gradientThickness()),
-        length = _.gradientLength(),
-        overlap = _('labelOverlap'),
-        encode, enter, update, u, v, adjust = '';
+    const _ = lookup$5(spec, config),
+          vertical = _.isVertical(),
+          thickness = encoder(_.gradientThickness()),
+          length = _.gradientLength();
 
-    encode = {
+    let overlap = _('labelOverlap'),
+        enter, update, u, v, adjust = '';
+
+    const encode = {
       enter: enter = {
         opacity: zero$2
       },
@@ -39603,19 +39679,19 @@
 
   // userEncode is top-level, includes entries, symbols, labels
   function legendSymbolGroups(spec, config, userEncode, dataRef, columns) {
-    let _ = lookup$5(spec, config),
-        entries = userEncode.entries,
-        interactive = !!(entries && entries.interactive),
-        name = entries ? entries.name : undefined,
-        height = _('clipHeight'),
-        symbolOffset = _('symbolOffset'),
-        valueRef = {data: 'value'},
-        encode = {},
-        xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
-        yEncode = height ? encoder(height) : {field: Size},
-        index = `datum.${Index}`,
-        ncols = `max(1, ${columns})`,
-        enter, update, labelOffset, symbols, labels, nrows, sort;
+    const _ = lookup$5(spec, config),
+          entries = userEncode.entries,
+          interactive = !!(entries && entries.interactive),
+          name = entries ? entries.name : undefined,
+          height = _('clipHeight'),
+          symbolOffset = _('symbolOffset'),
+          valueRef = {data: 'value'},
+          xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
+          yEncode = height ? encoder(height) : {field: Size},
+          index = `datum.${Index}`,
+          ncols = `max(1, ${columns})`;
+
+    let encode, enter, update, nrows, sort;
 
     yEncode.mult = 0.5;
 
@@ -39655,13 +39731,13 @@
       opacity:          _('symbolOpacity')
     });
 
-    LegendScales.forEach(function(scale) {
+    LegendScales.forEach(scale => {
       if (spec[scale]) {
         update[scale] = enter[scale] = {scale: spec[scale], field: Value};
       }
     });
 
-    symbols = guideMark({
+    const symbols = guideMark({
       type: SymbolMark,
       role: LegendSymbolRole,
       key:  Value,
@@ -39671,7 +39747,7 @@
     }, userEncode.symbols);
 
     // -- LEGEND LABELS --
-    labelOffset = encoder(symbolOffset);
+    const labelOffset = encoder(symbolOffset);
     labelOffset.offset = _('labelOffset');
 
     encode = {
@@ -39703,7 +39779,7 @@
       limit:       _('labelLimit')
     });
 
-    labels = guideMark({
+    const labels = guideMark({
       type:  TextMark,
       role:  LegendLabelRole,
       style: GuideLabelStyle,
@@ -39787,9 +39863,9 @@
         exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
   function legendTitle(spec, config, userEncode, dataRef) {
-    let _ = lookup$5(spec, config), encode;
+    const _ = lookup$5(spec, config);
 
-    encode = {
+    const encode = {
       enter: {opacity: zero$2},
       update: {
         opacity: one$2,
@@ -39895,9 +39971,11 @@
    * Parse all parameters of a data transform.
    */
   function parseParameters$1(def, spec, scope) {
-    let params = {}, pdef, i, n;
-    for (i=0, n=def.params.length; i<n; ++i) {
-      pdef = def.params[i];
+    const params = {},
+          n = def.params.length;
+
+    for (let i = 0; i < n; ++i) {
+      const pdef = def.params[i];
       params[pdef.name] = parseParameter$2(pdef, spec, scope);
     }
     return params;
@@ -39982,12 +40060,13 @@
    * Parse a sub-parameter object.
    */
   function parseSubParameter(def, value, scope) {
-    let params, pdef, k, i, n;
+    const n =def.params.length;
+    let pdef;
 
     // loop over defs to find matching key
-    for (i=0, n=def.params.length; i<n; ++i) {
+    for (let i = 0; i < n; ++i) {
       pdef = def.params[i];
-      for (k in pdef.key) {
+      for (const k in pdef.key) {
         if (pdef.key[k] !== value[k]) { pdef = null; break; }
       }
       if (pdef) break;
@@ -39996,7 +40075,7 @@
     if (!pdef) error('Unsupported parameter: ' + $(value));
 
     // parse params, create Params transform, return ref
-    params = extend(parseParameters$1(pdef, value, scope), pdef.key);
+    const params = extend(parseParameters$1(pdef, value, scope), pdef.key);
     return ref(scope.add(Params$2(params)));
   }
 
@@ -40079,12 +40158,13 @@
   }
 
   DataScope.fromEntries = function(scope, entries) {
-    let n = entries.length,
-        i = 1,
-        input  = entries[0],
-        values = entries[n-1],
-        output = entries[n-2],
-        aggr = null;
+    const n = entries.length,
+          values = entries[n-1],
+          output = entries[n-2];
+
+    let input = entries[0],
+        aggr = null,
+        i = 1;
 
     if (input && input.type === 'load') {
       input = entries[1];
@@ -40106,11 +40186,11 @@
   }
 
   function addSortField(scope, p, sort) {
-    let as = aggrField(sort.op, sort.field),
-        s;
+    const as = aggrField(sort.op, sort.field);
+    let s;
 
     if (p.ops) {
-      for (let i=0, n=p.as.length; i<n; ++i) {
+      for (let i = 0, n = p.as.length; i < n; ++i) {
         if (p.as[i] === as) return;
       }
     } else {
@@ -40126,9 +40206,10 @@
   }
 
   function cache(scope, ds, name, optype, field, counts, index) {
-    let cache = ds[name] || (ds[name] = {}),
-        sort = sortKey(counts),
-        k = fieldKey(field),
+    const cache = ds[name] || (ds[name] = {}),
+          sort = sortKey(counts);
+
+    let k = fieldKey(field),
         v, op;
 
     if (k != null) {
@@ -40152,9 +40233,11 @@
 
   DataScope.prototype = {
     countsRef(scope, field, sort) {
-      let ds = this,
-          cache = ds.counts || (ds.counts = {}),
-          k = fieldKey(field), v, a, p;
+      const ds = this,
+            cache = ds.counts || (ds.counts = {}),
+            k = fieldKey(field);
+
+      let v, a, p;
 
       if (k != null) {
         scope = ds.scope;
@@ -40204,10 +40287,10 @@
   };
 
   function parseFacet(spec, scope, group) {
-    let facet = spec.from.facet,
-        name = facet.name,
-        data = getDataRef(facet, scope),
-        subscope, source, values, op;
+    const facet = spec.from.facet,
+          name = facet.name,
+          data = getDataRef(facet, scope);
+    let op;
 
     if (!facet.name) {
       error('Facet must have a name: ' + $(facet));
@@ -40232,9 +40315,9 @@
     }
 
     // initialize facet subscope
-    subscope = scope.fork();
-    source = subscope.add(Collect$1());
-    values = subscope.add(Sieve$1({pulse: ref(source)}));
+    const subscope = scope.fork(),
+          source = subscope.add(Collect$1()),
+          values = subscope.add(Sieve$1({pulse: ref(source)}));
     subscope.addData(name, new DataScope(subscope, source, source, values));
     subscope.addSignal('parent', null);
 
@@ -40258,38 +40341,38 @@
   }
 
   function parseTrigger(spec, scope, name) {
-    let remove = spec.remove,
-        insert = spec.insert,
-        toggle = spec.toggle,
-        modify = spec.modify,
-        values = spec.values,
-        op = scope.add(operator()),
-        update, expr;
+    const remove = spec.remove,
+          insert = spec.insert,
+          toggle = spec.toggle,
+          modify = spec.modify,
+          values = spec.values,
+          op = scope.add(operator());
 
-    update = 'if(' + spec.trigger + ',modify("'
+    const update = 'if(' + spec.trigger + ',modify("'
       + name + '",'
       + [insert, remove, toggle, modify, values]
           .map(_ => _ == null ? 'null' : _)
           .join(',')
       + '),0)';
 
-    expr = parseExpression$1(update, scope);
+    const expr = parseExpression$1(update, scope);
     op.update = expr.$expr;
     op.params = expr.$params;
   }
 
   function parseMark(spec, scope) {
-    let role = getRole(spec),
-        group = spec.type === GroupMark,
-        facet = spec.from && spec.from.facet,
-        layout = spec.layout || role === ScopeRole$1 || role === FrameRole$1,
-        nested = role === MarkRole || layout || facet,
-        overlap = spec.overlap,
-        ops, op, input, store, enc, bound, render, sieve, name,
-        joinRef, markRef, encodeRef, layoutRef, boundRef;
+    const role = getRole(spec),
+          group = spec.type === GroupMark,
+          facet = spec.from && spec.from.facet,
+          overlap = spec.overlap;
+
+    let layout = spec.layout || role === ScopeRole$1 || role === FrameRole$1,
+        ops, op, store, enc, name, layoutRef, boundRef;
+
+    const nested = role === MarkRole || layout || facet;
 
     // resolve input data
-    input = parseData(spec.from, group, scope);
+    const input = parseData(spec.from, group, scope);
 
     // data join to map tuples to visual items
     op = scope.add(DataJoin$1({
@@ -40297,7 +40380,7 @@
       pulse: input.pulse,
       clean: !group
     }));
-    joinRef = ref(op);
+    const joinRef = ref(op);
 
     // collect visual items
     op = store = scope.add(Collect$1({pulse: joinRef}));
@@ -40313,7 +40396,7 @@
       index:       scope.markpath(),
       pulse:       ref(op)
     }));
-    markRef = ref(op);
+    const markRef = ref(op);
 
     // add visual encoders
     op = enc = scope.add(Encode$1(parseEncode(
@@ -40346,7 +40429,7 @@
       }));
     }
 
-    encodeRef = ref(op);
+    const encodeRef = ref(op);
 
     // add view layout operator if needed
     if (facet || layout) {
@@ -40360,7 +40443,7 @@
     }
 
     // compute bounding boxes
-    bound = scope.add(Bound$1({mark: markRef, pulse: layoutRef || encodeRef}));
+    const bound = scope.add(Bound$1({mark: markRef, pulse: layoutRef || encodeRef}));
     boundRef = ref(bound);
 
     // if group mark, recurse to parse nested content
@@ -40383,8 +40466,8 @@
     }
 
     // render / sieve items
-    render = scope.add(Render$1({pulse: boundRef}));
-    sieve = scope.add(Sieve$1({pulse: ref(render)}, undefined, scope.parent()));
+    const render = scope.add(Render$1({pulse: boundRef})),
+          sieve = scope.add(Sieve$1({pulse: ref(render)}, undefined, scope.parent()));
 
     // if mark is named, make accessible as reactive geometry
     // add trigger updates if defined
@@ -40426,16 +40509,16 @@
   }
 
   function parseLegend(spec, scope) {
-    let config = scope.config.legend,
-        encode = spec.encode || {},
-        legendEncode = encode.legend || {},
-        name = legendEncode.name || undefined,
-        interactive = legendEncode.interactive,
-        style = legendEncode.style,
-        _ = lookup$5(spec, config),
-        scales = {}, scale = 0,
-        entryEncode, entryLayout, params, children,
-        type, datum, dataRef, entryRef;
+    const config = scope.config.legend,
+          encode = spec.encode || {},
+          _ = lookup$5(spec, config),
+          legendEncode = encode.legend || {},
+          name = legendEncode.name || undefined,
+          interactive = legendEncode.interactive,
+          style = legendEncode.style,
+          scales = {};
+
+    let scale = 0, entryLayout, params, children;
 
     // resolve scales and 'canonical' scale name
     LegendScales.forEach(s => spec[s]
@@ -40444,27 +40527,22 @@
     if (!scale) error('Missing valid scale for legend.');
 
     // resolve legend type (symbol, gradient, or discrete gradient)
-    type = legendType(spec, scope.scaleType(scale));
+    const type = legendType(spec, scope.scaleType(scale));
 
     // single-element data source for legend group
-    datum = {
+    const datum = {
       title:  spec.title != null,
       scales: scales,
       type:   type,
       vgrad:  type !== 'symbol' &&  _.isVertical()
     };
-    dataRef = ref(scope.add(Collect$1(null, [datum])));
-
-    // encoding properties for legend group
-    legendEncode = extendEncode(
-      buildLegendEncode(_, spec, config), legendEncode, Skip$2
-    );
+    const dataRef = ref(scope.add(Collect$1(null, [datum])));
 
     // encoding properties for legend entry sub-group
-    entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
+    const entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
 
     // data source for legend values
-    entryRef = ref(scope.add(LegendEntries$1(params = {
+    const entryRef = ref(scope.add(LegendEntries$1(params = {
       type:    type,
       scale:   scope.scaleRef(scale),
       count:   scope.objectProperty(_('tickCount')),
@@ -40528,7 +40606,7 @@
       guideGroup({
         role:        LegendRole$1,
         from:        dataRef,
-        encode:      legendEncode,
+        encode:      extendEncode(buildLegendEncode(_, spec, config), legendEncode, Skip$2),
         marks:       children,
         aria:        _('aria'),
         description: _('description'),
@@ -40556,9 +40634,7 @@
   }
 
   function scaleCount(spec) {
-    return LegendScales.reduce(function(count, type) {
-      return count + (spec[type] ? 1 : 0);
-    }, 0);
+    return LegendScales.reduce((count, type) => count + (spec[type] ? 1 : 0), 0);
   }
 
   function buildLegendEncode(_, spec, config) {
@@ -40611,18 +40687,17 @@
   function parseTitle(spec, scope) {
     spec = isString(spec) ? {text: spec} : spec;
 
-    let _ = lookup$5(spec, scope.config.title),
-        encode = spec.encode || {},
-        userEncode = encode.group || {},
-        name = userEncode.name || undefined,
-        interactive = userEncode.interactive,
-        style = userEncode.style,
-        children = [],
-        datum, dataRef;
+    const _ = lookup$5(spec, scope.config.title),
+          encode = spec.encode || {},
+          userEncode = encode.group || {},
+          name = userEncode.name || undefined,
+          interactive = userEncode.interactive,
+          style = userEncode.style,
+          children = [];
 
     // single-element data source for group title
-    datum = {};
-    dataRef = ref(scope.add(Collect$1(null, [datum])));
+    const datum = {},
+          dataRef = ref(scope.add(Collect$1(null, [datum])));
 
     // include title text
     children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
@@ -40764,7 +40839,7 @@
     }
 
     if (data.on) {
-      data.on.forEach(function(on) {
+      data.on.forEach(on => {
         parseTrigger(on, scope, data.name);
       });
     }
@@ -40776,8 +40851,8 @@
    * Analyze a data pipeline, add needed operators.
    */
   function analyze(data, scope, ops) {
-    let output = [],
-        source = null,
+    const output = [];
+    let source = null,
         modify = false,
         generate = false,
         upstream, i, n, t, m;
@@ -41050,11 +41125,11 @@
   }
 
   function axisDomain(spec, config, userEncode, dataRef) {
-    let _ = lookup$5(spec, config),
-        orient = spec.orient,
-        encode, enter, update;
+    const _ = lookup$5(spec, config),
+          orient = spec.orient;
 
-    encode = {
+    let enter, update;
+    const encode = {
       enter: enter = {opacity: zero$2},
       update: update = {opacity: one$2},
       exit: {opacity: zero$2}
@@ -41091,15 +41166,14 @@
   }
 
   function axisGrid(spec, config, userEncode, dataRef, band) {
-    let _ = lookup$5(spec, config),
-        orient = spec.orient,
-        vscale = spec.gridScale,
-        sign = getSign(orient, 1, -1),
-        offset = offsetValue$1(spec.offset, sign),
-        encode, enter, exit, update,
-        tickPos, gridStart, gridEnd, sz;
+    const _ = lookup$5(spec, config),
+          orient = spec.orient,
+          vscale = spec.gridScale,
+          sign = getSign(orient, 1, -1),
+          offset = offsetValue$1(spec.offset, sign);
 
-    encode = {
+    let enter, exit, update;
+    const encode = {
       enter: enter = {opacity: zero$2},
       update: update = {opacity: one$2},
       exit: exit = {opacity: zero$2}
@@ -41114,7 +41188,7 @@
       strokeWidth:      _('gridWidth')
     });
 
-    tickPos = {
+    const tickPos = {
       scale:  spec.scale,
       field:  Value,
       band:   band.band,
@@ -41123,13 +41197,13 @@
       round:  _('tickRound')
     };
 
-    sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
+    const sz = ifX(orient, {signal: 'height'}, {signal: 'width'});
 
-    gridStart = vscale
+    const gridStart = vscale
       ? {scale: vscale, range: 0, mult: sign, offset: offset}
       : {value: 0, offset: offset};
 
-    gridEnd = vscale
+    const gridEnd = vscale
       ? {scale: vscale, range: 1, mult: sign, offset: offset}
       : extend(sz, {mult: sign, offset: offset});
 
@@ -41173,12 +41247,12 @@
   }
 
   function axisTicks(spec, config, userEncode, dataRef, size, band) {
-    let _ = lookup$5(spec, config),
-        orient = spec.orient,
-        sign = getSign(orient, -1, 1),
-        encode, enter, exit, update, tickSize, tickPos;
+    const _ = lookup$5(spec, config),
+          orient = spec.orient,
+          sign = getSign(orient, -1, 1);
 
-    encode = {
+    let enter, exit, update;
+    const encode = {
       enter: enter = {opacity: zero$2},
       update: update = {opacity: one$2},
       exit: exit = {opacity: zero$2}
@@ -41193,10 +41267,10 @@
       strokeWidth:      _('tickWidth')
     });
 
-    tickSize = encoder(size);
+    const tickSize = encoder(size);
     tickSize.mult = sign;
 
-    tickPos = {
+    const tickPos = {
       scale:  spec.scale,
       field:  Value,
       band:   band.band,
@@ -41231,54 +41305,54 @@
   }
 
   function axisLabels(spec, config, userEncode, dataRef, size, band) {
-    let _ = lookup$5(spec, config),
-        orient = spec.orient,
-        scale = spec.scale,
-        sign = getSign(orient, -1, 1),
-        flush = deref(_('labelFlush')),
-        flushOffset = deref(_('labelFlushOffset')),
-        flushOn = flush === 0 || !!flush,
-        labelAlign = _('labelAlign'),
-        labelBaseline = _('labelBaseline'),
-        encode, enter, update, tickSize, tickPos,
-        align, baseline, bound, overlap, offsetExpr;
+    const _ = lookup$5(spec, config),
+          orient = spec.orient,
+          scale = spec.scale,
+          sign = getSign(orient, -1, 1),
+          flush = deref(_('labelFlush')),
+          flushOffset = deref(_('labelFlushOffset')),
+          labelAlign = _('labelAlign'),
+          labelBaseline = _('labelBaseline');
 
-    tickSize = encoder(size);
+    let flushOn = flush === 0 || !!flush,
+        update;
+
+    const tickSize = encoder(size);
     tickSize.mult = sign;
     tickSize.offset = encoder(_('labelPadding') || 0);
     tickSize.offset.mult = sign;
 
-    tickPos = {
+    const tickPos = {
       scale:  scale,
       field:  Value,
       band:   0.5,
       offset: extendOffset(band.offset, _('labelOffset'))
     };
 
-    align = ifX(orient,
+    const align = ifX(orient,
       flushOn
         ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
         : {value: 'center'},
       ifRight(orient, 'left', 'right')
     );
 
-    baseline = ifX(orient,
+    const baseline = ifX(orient,
       ifTop(orient, 'bottom', 'top'),
       flushOn
         ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
         : {value: 'middle'}
     );
 
-    offsetExpr = flushExpr(scale, flush, `-(${flushOffset})`, flushOffset, 0);
+    const offsetExpr = flushExpr(scale, flush, `-(${flushOffset})`, flushOffset, 0);
     flushOn = flushOn && flushOffset;
 
-    enter = {
+    const enter = {
       opacity: zero$2,
       x: ifX(orient, tickPos, tickSize),
       y: ifY(orient, tickPos, tickSize)
     };
 
-    encode = {
+    const encode = {
       enter: enter,
       update: update = {
         opacity: one$2,
@@ -41315,8 +41389,8 @@
       baseline:    labelBaseline
     });
 
-    bound   = _('labelBound');
-    overlap = _('labelOverlap');
+    const bound   = _('labelBound');
+    let overlap = _('labelOverlap');
 
     // if overlap method or bound defined, request label overlap removal
     overlap = overlap || bound ? {
@@ -41345,12 +41419,12 @@
   }
 
   function axisTitle(spec, config, userEncode, dataRef) {
-    let _ = lookup$5(spec, config),
-        orient = spec.orient,
-        sign = getSign(orient, -1, 1),
-        encode, enter, update, titlePos;
+    const _ = lookup$5(spec, config),
+          orient = spec.orient,
+          sign = getSign(orient, -1, 1);
 
-    encode = {
+    let enter, update;
+    const encode = {
       enter: enter = {
         opacity: zero$2,
         anchor: encoder(_('titleAnchor', null)),
@@ -41365,7 +41439,7 @@
       }
     };
 
-    titlePos = {
+    const titlePos = {
       signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
     };
 
@@ -41419,18 +41493,17 @@
   }
 
   function parseAxis(spec, scope) {
-    let config = axisConfig(spec, scope),
-        encode = spec.encode || {},
-        axisEncode = encode.axis || {},
-        name = axisEncode.name || undefined,
-        interactive = axisEncode.interactive,
-        style = axisEncode.style,
-        _ = lookup$5(spec, config),
-        band = tickBand(_),
-        datum, dataRef, ticksRef, size, children;
+    const config = axisConfig(spec, scope),
+          encode = spec.encode || {},
+          axisEncode = encode.axis || {},
+          name = axisEncode.name || undefined,
+          interactive = axisEncode.interactive,
+          style = axisEncode.style,
+          _ = lookup$5(spec, config),
+          band = tickBand(_);
 
     // single-element data source for axis group
-    datum = {
+    const datum = {
       scale:  spec.scale,
       ticks:  !!_('ticks'),
       labels: !!_('labels'),
@@ -41438,15 +41511,10 @@
       domain: !!_('domain'),
       title:  spec.title != null
     };
-    dataRef = ref(scope.add(Collect$1({}, [datum])));
-
-    // encoding properties for axis group item
-    axisEncode = extendEncode(
-      buildAxisEncode(_, spec), axisEncode, Skip$2
-    );
+    const dataRef = ref(scope.add(Collect$1({}, [datum])));
 
     // data source for axis ticks
-    ticksRef = ref(scope.add(AxisTicks$1({
+    const ticksRef = ref(scope.add(AxisTicks$1({
       scale:   scope.scaleRef(spec.scale),
       extra:   scope.property(band.extra),
       count:   scope.objectProperty(spec.tickCount),
@@ -41457,7 +41525,8 @@
     })));
 
     // generate axis marks
-    children = [];
+    const children = [];
+    let size;
 
     // include axis gridlines if requested
     if (datum.grid) {
@@ -41491,7 +41560,7 @@
       guideGroup({
         role:        AxisRole$1,
         from:        dataRef,
-        encode:      axisEncode,
+        encode:      extendEncode(buildAxisEncode(_, spec), axisEncode, Skip$2),
         marks:       children,
         aria:        _('aria'),
         description: _('description'),
@@ -41774,7 +41843,7 @@
       op.id = this.id();
       // if pre-registration references exist, resolve them now
       if (op.refs) {
-        op.refs.forEach(function(ref) { ref.$ref = op.id; });
+        op.refs.forEach(ref => { ref.$ref = op.id; });
         op.refs = null;
       }
       return op;
@@ -41876,8 +41945,8 @@
         error('Unsupported field reference: ' + $(field));
       }
 
-      let s = field.signal,
-          f = this.field[s];
+      const s = field.signal;
+      let f = this.field[s];
 
       if (!f) {
         const params = {name: this.signalRef(s)};
@@ -42081,13 +42150,11 @@
   }
 
   function arrayLambda(array) {
-    let code = '[',
-        i = 0,
-        n = array.length,
-        value;
+    const n = array.length;
+    let code = '[';
 
-    for (; i<n; ++i) {
-      value = array[i];
+    for (let i = 0; i<n; ++i) {
+      const value = array[i];
       code += (i > 0 ? ',' : '')
         + (isObject(value)
           ? (value.signal || propertyLambda(value))
