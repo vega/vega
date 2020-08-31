@@ -1289,111 +1289,6 @@ Sequential color schemes can be used to encode quantitative values. These color 
 Sequential color schemes can be used to encode quantitative values. These color ramps are designed to encode increasing numeric values, but use additional hues for more color discrimination, which may be useful for visualizations such as heatmaps. However, beware that using multiple hues may cause viewers to inaccurately see the data range as grouped into color-coded clusters. Hover over a scheme and click the "View Discrete" link to toggle display of discretized palettes suitable for quantile, quantize, threshold, or ordinal [scales](../scales).
 
 <div class="scheme continuous">
-<a name="turbo" href="#turbo">#</a> <strong>turbo</strong> <a class="toggle" href='javascript:toggle("#discrete-turbo")'>View Discrete</a>
-<svg viewBox="0,0,1,1" preserveAspectRatio="none">
-  <defs>
-    <linearGradient id="gradient-turbo">
-        <stop offset="0%" stop-color="#23171b"></stop>
-        <stop offset="10%" stop-color="#4a58dd"></stop>
-        <stop offset="20%" stop-color="#2f9df5"></stop>
-        <stop offset="30%" stop-color="#27d7c4"></stop>
-        <stop offset="40%" stop-color="#4df884"></stop>
-        <stop offset="50%" stop-color="#95fb51"></stop>
-        <stop offset="60%" stop-color="#dedd32"></stop>
-        <stop offset="70%" stop-color="#ffa423"></stop>
-        <stop offset="80%" stop-color="#f65f18"></stop>
-        <stop offset="90%" stop-color="#ba2208"></stop>
-        <stop offset="100%" stop-color="#900c00"></stop>
-    </linearGradient>
-  </defs>
-  <rect fill="url(#gradient-turbo)" x="0" y="0" width="1" height="1"></rect>
-</svg>
-
-
-<div class="swatch">
-  <strong>1</strong>
-    <div title="#95fb51" style="background: #95fb51;"></div>
-</div>
-
-<div class="swatch">
-  <strong>2</strong>
-    <div title="#2ee5ae" style="background: #2ee5ae;"></div>
-    <div title="#feb927" style="background: #feb927;"></div>
-</div>
-
-<div class="swatch">
-  <strong>3</strong>
-    <div title="#26bce1" style="background: #26bce1;"></div>
-    <div title="#95fb51" style="background: #95fb51;"></div>
-    <div title="#ff821d" style="background: #ff821d;"></div>
-</div>
-
-<div class="swatch">
-  <strong>4</strong>
-    <div title="#2f9df5" style="background: #2f9df5;"></div>
-    <div title="#4df884" style="background: #4df884;"></div>
-    <div title="#dedd32" style="background: #dedd32;"></div>
-    <div title="#f65f18" style="background: #f65f18;"></div>
-</div>
-
-<div class="swatch">
-  <strong>5</strong>
-    <div title="#3987f9" style="background: #3987f9;"></div>
-    <div title="#2ee5ae" style="background: #2ee5ae;"></div>
-    <div title="#95fb51" style="background: #95fb51;"></div>
-    <div title="#feb927" style="background: #feb927;"></div>
-    <div title="#e54813" style="background: #e54813;"></div>
-</div>
-
-<div class="swatch">
-  <strong>6</strong>
-    <div title="#4076f5" style="background: #4076f5;"></div>
-    <div title="#26d0cd" style="background: #26d0cd;"></div>
-    <div title="#5ffc73" style="background: #5ffc73;"></div>
-    <div title="#cbe839" style="background: #cbe839;"></div>
-    <div title="#ff9b21" style="background: #ff9b21;"></div>
-    <div title="#d6390f" style="background: #d6390f;"></div>
-</div>
-
-<div class="swatch">
-  <strong>7</strong>
-    <div title="#4569ee" style="background: #4569ee;"></div>
-    <div title="#26bce1" style="background: #26bce1;"></div>
-    <div title="#3ff393" style="background: #3ff393;"></div>
-    <div title="#95fb51" style="background: #95fb51;"></div>
-    <div title="#ecd12e" style="background: #ecd12e;"></div>
-    <div title="#ff821d" style="background: #ff821d;"></div>
-    <div title="#cb2f0d" style="background: #cb2f0d;"></div>
-</div>
-
-<div class="swatch">
-  <strong>8</strong>
-    <div title="#4860e6" style="background: #4860e6;"></div>
-    <div title="#2aabee" style="background: #2aabee;"></div>
-    <div title="#2ee5ae" style="background: #2ee5ae;"></div>
-    <div title="#6afd6a" style="background: #6afd6a;"></div>
-    <div title="#c0ee3d" style="background: #c0ee3d;"></div>
-    <div title="#feb927" style="background: #feb927;"></div>
-    <div title="#fe6e1a" style="background: #fe6e1a;"></div>
-    <div title="#c2270a" style="background: #c2270a;"></div>
-</div>
-
-<div class="swatch">
-  <strong>9</strong>
-    <div title="#4a58dd" style="background: #4a58dd;"></div>
-    <div title="#2f9df5" style="background: #2f9df5;"></div>
-    <div title="#27d7c4" style="background: #27d7c4;"></div>
-    <div title="#4df884" style="background: #4df884;"></div>
-    <div title="#95fb51" style="background: #95fb51;"></div>
-    <div title="#dedd32" style="background: #dedd32;"></div>
-    <div title="#ffa423" style="background: #ffa423;"></div>
-    <div title="#f65f18" style="background: #f65f18;"></div>
-    <div title="#ba2208" style="background: #ba2208;"></div>
-</div>
-</div>
-</div>
-
-<div class="scheme continuous">
 <a name="viridis" href="#viridis">#</a> <strong>viridis</strong> <a class="toggle" href='javascript:toggle("#discrete-viridis")'>View Discrete</a>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
@@ -1778,7 +1673,7 @@ Sequential color schemes can be used to encode quantitative values. These color 
 </div>
 
 <div class="scheme continuous">
-<a name="cividis" href="#cividis">#</a> <strong>cividis</strong> <a class="toggle" href='javascript:toggle("#discrete-cividis")'>View Discrete</a>
+<a name="cividis" href="#cividis">#</a> <strong>cividis</strong> {% include tag ver="5.15" %} <a class="toggle" href='javascript:toggle("#discrete-cividis")'>View Discrete</a>
 <svg viewBox="0,0,1,1" preserveAspectRatio="none">
   <defs>
     <linearGradient id="gradient-cividis">
@@ -1797,87 +1692,174 @@ Sequential color schemes can be used to encode quantitative values. These color 
   </defs>
   <rect fill="url(#gradient-cividis)" x="0" y="0" width="1" height="1"></rect>
 </svg>
-
-
+<div id="discrete-cividis" style="display: none;">
 <div class="swatch">
   <strong>1</strong>
-    <div title="#7f7c75" style="background: #7f7c75;"></div>
+  <div title="#7f7c75" style="background: #7f7c75;"></div>
 </div>
-
 <div class="swatch">
   <strong>2</strong>
-    <div title="#575c6e" style="background: #575c6e;"></div>
-    <div title="#a49d78" style="background: #a49d78;"></div>
+  <div title="#575c6e" style="background: #575c6e;"></div>
+  <div title="#a49d78" style="background: #a49d78;"></div>
 </div>
-
 <div class="swatch">
   <strong>3</strong>
-    <div title="#3c4d6e" style="background: #3c4d6e;"></div>
-    <div title="#7f7c75" style="background: #7f7c75;"></div>
-    <div title="#bbaf71" style="background: #bbaf71;"></div>
+  <div title="#3c4d6e" style="background: #3c4d6e;"></div>
+  <div title="#7f7c75" style="background: #7f7c75;"></div>
+  <div title="#bbaf71" style="background: #bbaf71;"></div>
 </div>
-
 <div class="swatch">
   <strong>4</strong>
-    <div title="#2b446e" style="background: #2b446e;"></div>
-    <div title="#696970" style="background: #696970;"></div>
-    <div title="#948f78" style="background: #948f78;"></div>
-    <div title="#caba6a" style="background: #caba6a;"></div>
+  <div title="#2b446e" style="background: #2b446e;"></div>
+  <div title="#696970" style="background: #696970;"></div>
+  <div title="#948f78" style="background: #948f78;"></div>
+  <div title="#caba6a" style="background: #caba6a;"></div>
 </div>
-
 <div class="swatch">
   <strong>5</strong>
-    <div title="#1f3e6e" style="background: #1f3e6e;"></div>
-    <div title="#575c6e" style="background: #575c6e;"></div>
-    <div title="#7f7c75" style="background: #7f7c75;"></div>
-    <div title="#a49d78" style="background: #a49d78;"></div>
-    <div title="#d5c164" style="background: #d5c164;"></div>
+  <div title="#1f3e6e" style="background: #1f3e6e;"></div>
+  <div title="#575c6e" style="background: #575c6e;"></div>
+  <div title="#7f7c75" style="background: #7f7c75;"></div>
+  <div title="#a49d78" style="background: #a49d78;"></div>
+  <div title="#d5c164" style="background: #d5c164;"></div>
 </div>
-
 <div class="swatch">
   <strong>6</strong>
-    <div title="#173a6d" style="background: #173a6d;"></div>
-    <div title="#48546d" style="background: #48546d;"></div>
-    <div title="#706e71" style="background: #706e71;"></div>
-    <div title="#8e8978" style="background: #8e8978;"></div>
-    <div title="#b1a775" style="background: #b1a775;"></div>
-    <div title="#ddc75f" style="background: #ddc75f;"></div>
+  <div title="#173a6d" style="background: #173a6d;"></div>
+  <div title="#48546d" style="background: #48546d;"></div>
+  <div title="#706e71" style="background: #706e71;"></div>
+  <div title="#8e8978" style="background: #8e8978;"></div>
+  <div title="#b1a775" style="background: #b1a775;"></div>
+  <div title="#ddc75f" style="background: #ddc75f;"></div>
 </div>
-
 <div class="swatch">
   <strong>7</strong>
-    <div title="#11366c" style="background: #11366c;"></div>
-    <div title="#3c4d6e" style="background: #3c4d6e;"></div>
-    <div title="#62646f" style="background: #62646f;"></div>
-    <div title="#7f7c75" style="background: #7f7c75;"></div>
-    <div title="#9a9478" style="background: #9a9478;"></div>
-    <div title="#bbaf71" style="background: #bbaf71;"></div>
-    <div title="#e2cb5c" style="background: #e2cb5c;"></div>
+  <div title="#11366c" style="background: #11366c;"></div>
+  <div title="#3c4d6e" style="background: #3c4d6e;"></div>
+  <div title="#62646f" style="background: #62646f;"></div>
+  <div title="#7f7c75" style="background: #7f7c75;"></div>
+  <div title="#9a9478" style="background: #9a9478;"></div>
+  <div title="#bbaf71" style="background: #bbaf71;"></div>
+  <div title="#e2cb5c" style="background: #e2cb5c;"></div>
 </div>
-
 <div class="swatch">
   <strong>8</strong>
-    <div title="#0d346b" style="background: #0d346b;"></div>
-    <div title="#33486e" style="background: #33486e;"></div>
-    <div title="#575c6e" style="background: #575c6e;"></div>
-    <div title="#737172" style="background: #737172;"></div>
-    <div title="#8b8677" style="background: #8b8677;"></div>
-    <div title="#a49d78" style="background: #a49d78;"></div>
-    <div title="#c3b56d" style="background: #c3b56d;"></div>
-    <div title="#e6cf59" style="background: #e6cf59;"></div>
+  <div title="#0d346b" style="background: #0d346b;"></div>
+  <div title="#33486e" style="background: #33486e;"></div>
+  <div title="#575c6e" style="background: #575c6e;"></div>
+  <div title="#737172" style="background: #737172;"></div>
+  <div title="#8b8677" style="background: #8b8677;"></div>
+  <div title="#a49d78" style="background: #a49d78;"></div>
+  <div title="#c3b56d" style="background: #c3b56d;"></div>
+  <div title="#e6cf59" style="background: #e6cf59;"></div>
 </div>
-
 <div class="swatch">
   <strong>9</strong>
-    <div title="#0a326a" style="background: #0a326a;"></div>
-    <div title="#2b446e" style="background: #2b446e;"></div>
-    <div title="#4d566d" style="background: #4d566d;"></div>
-    <div title="#696970" style="background: #696970;"></div>
-    <div title="#7f7c75" style="background: #7f7c75;"></div>
-    <div title="#948f78" style="background: #948f78;"></div>
-    <div title="#ada476" style="background: #ada476;"></div>
-    <div title="#caba6a" style="background: #caba6a;"></div>
-    <div title="#ead156" style="background: #ead156;"></div>
+  <div title="#0a326a" style="background: #0a326a;"></div>
+  <div title="#2b446e" style="background: #2b446e;"></div>
+  <div title="#4d566d" style="background: #4d566d;"></div>
+  <div title="#696970" style="background: #696970;"></div>
+  <div title="#7f7c75" style="background: #7f7c75;"></div>
+  <div title="#948f78" style="background: #948f78;"></div>
+  <div title="#ada476" style="background: #ada476;"></div>
+  <div title="#caba6a" style="background: #caba6a;"></div>
+  <div title="#ead156" style="background: #ead156;"></div>
+</div>
+</div>
+</div>
+
+<div class="scheme continuous">
+<a name="turbo" href="#turbo">#</a> <strong>turbo</strong> {% include tag ver="5.15" %} <a class="toggle" href='javascript:toggle("#discrete-turbo")'>View Discrete</a>
+<svg viewBox="0,0,1,1" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="gradient-turbo">
+        <stop offset="0%" stop-color="#23171b"></stop>
+        <stop offset="10%" stop-color="#4a58dd"></stop>
+        <stop offset="20%" stop-color="#2f9df5"></stop>
+        <stop offset="30%" stop-color="#27d7c4"></stop>
+        <stop offset="40%" stop-color="#4df884"></stop>
+        <stop offset="50%" stop-color="#95fb51"></stop>
+        <stop offset="60%" stop-color="#dedd32"></stop>
+        <stop offset="70%" stop-color="#ffa423"></stop>
+        <stop offset="80%" stop-color="#f65f18"></stop>
+        <stop offset="90%" stop-color="#ba2208"></stop>
+        <stop offset="100%" stop-color="#900c00"></stop>
+    </linearGradient>
+  </defs>
+  <rect fill="url(#gradient-turbo)" x="0" y="0" width="1" height="1"></rect>
+</svg>
+<div id="discrete-turbo" style="display: none;">
+<div class="swatch">
+  <strong>1</strong>
+  <div title="#95fb51" style="background: #95fb51;"></div>
+</div>
+<div class="swatch">
+  <strong>2</strong>
+  <div title="#2ee5ae" style="background: #2ee5ae;"></div>
+  <div title="#feb927" style="background: #feb927;"></div>
+</div>
+<div class="swatch">
+  <strong>3</strong>
+  <div title="#26bce1" style="background: #26bce1;"></div>
+  <div title="#95fb51" style="background: #95fb51;"></div>
+  <div title="#ff821d" style="background: #ff821d;"></div>
+</div>
+<div class="swatch">
+  <strong>4</strong>
+  <div title="#2f9df5" style="background: #2f9df5;"></div>
+  <div title="#4df884" style="background: #4df884;"></div>
+  <div title="#dedd32" style="background: #dedd32;"></div>
+  <div title="#f65f18" style="background: #f65f18;"></div>
+</div>
+<div class="swatch">
+  <strong>5</strong>
+  <div title="#3987f9" style="background: #3987f9;"></div>
+  <div title="#2ee5ae" style="background: #2ee5ae;"></div>
+  <div title="#95fb51" style="background: #95fb51;"></div>
+  <div title="#feb927" style="background: #feb927;"></div>
+  <div title="#e54813" style="background: #e54813;"></div>
+</div>
+<div class="swatch">
+  <strong>6</strong>
+  <div title="#4076f5" style="background: #4076f5;"></div>
+  <div title="#26d0cd" style="background: #26d0cd;"></div>
+  <div title="#5ffc73" style="background: #5ffc73;"></div>
+  <div title="#cbe839" style="background: #cbe839;"></div>
+  <div title="#ff9b21" style="background: #ff9b21;"></div>
+  <div title="#d6390f" style="background: #d6390f;"></div>
+</div>
+<div class="swatch">
+  <strong>7</strong>
+  <div title="#4569ee" style="background: #4569ee;"></div>
+  <div title="#26bce1" style="background: #26bce1;"></div>
+  <div title="#3ff393" style="background: #3ff393;"></div>
+  <div title="#95fb51" style="background: #95fb51;"></div>
+  <div title="#ecd12e" style="background: #ecd12e;"></div>
+  <div title="#ff821d" style="background: #ff821d;"></div>
+  <div title="#cb2f0d" style="background: #cb2f0d;"></div>
+</div>
+<div class="swatch">
+  <strong>8</strong>
+  <div title="#4860e6" style="background: #4860e6;"></div>
+  <div title="#2aabee" style="background: #2aabee;"></div>
+  <div title="#2ee5ae" style="background: #2ee5ae;"></div>
+  <div title="#6afd6a" style="background: #6afd6a;"></div>
+  <div title="#c0ee3d" style="background: #c0ee3d;"></div>
+  <div title="#feb927" style="background: #feb927;"></div>
+  <div title="#fe6e1a" style="background: #fe6e1a;"></div>
+  <div title="#c2270a" style="background: #c2270a;"></div>
+</div>
+<div class="swatch">
+  <strong>9</strong>
+  <div title="#4a58dd" style="background: #4a58dd;"></div>
+  <div title="#2f9df5" style="background: #2f9df5;"></div>
+  <div title="#27d7c4" style="background: #27d7c4;"></div>
+  <div title="#4df884" style="background: #4df884;"></div>
+  <div title="#95fb51" style="background: #95fb51;"></div>
+  <div title="#dedd32" style="background: #dedd32;"></div>
+  <div title="#ffa423" style="background: #ffa423;"></div>
+  <div title="#f65f18" style="background: #f65f18;"></div>
+  <div title="#ba2208" style="background: #ba2208;"></div>
 </div>
 </div>
 </div>
