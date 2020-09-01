@@ -3,7 +3,7 @@ var tape = require('tape'),
     canvas = require('canvas');
 
 tape('Canvas loader loads node canvas', t => {
-  var c = vega.canvas(10, 20);
+  let c = vega.canvas(10, 20);
   t.ok(c);
   t.ok(c.getContext);
   t.equal(c.width, 10);

@@ -32,7 +32,7 @@ inherits(Filter, Transform, {
     let isMod = true;
 
     pulse.visit(pulse.REM, t => {
-      var id = tupleid(t);
+      const id = tupleid(t);
       if (!cache.has(id)) rem.push(t);
       else cache.delete(id);
     });

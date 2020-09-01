@@ -3,7 +3,7 @@ var rollup = require('rollup'),
     externals = process.argv[2] === '-e',
     output = 'vega-projections' + (externals ? '-core' : '') + '.js';
 
-var modules = ['vega-projection'].concat(
+const modules = ['vega-projection'].concat(
   externals ? ['d3-array', 'd3-geo'] : []
 );
 

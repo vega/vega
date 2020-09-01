@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../');
 
 tape('ChangeSet adds/removes/modifies tuples', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
@@ -76,7 +76,7 @@ tape('ChangeSet adds/removes/modifies tuples', t => {
 });
 
 tape('ChangeSet handles conflicting changes', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
@@ -175,7 +175,7 @@ tape('ChangeSet handles conflicting changes', t => {
 });
 
 tape('ChangeSet handles reflow', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}

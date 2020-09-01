@@ -7,7 +7,7 @@ function parseSignal(spec, scope) {
 }
 
 tape('Parser parses static signals', t => {
-  var scope = new vega.Scope();
+  const scope = new vega.Scope();
 
   vega.signal({name: 'a', value: 'foo'}, scope);
   vega.signal({name: 'b', value: 'bar', react: true}, scope);
@@ -26,7 +26,7 @@ tape('Parser parses static signals', t => {
 });
 
 tape('Parser parses updating signals', t => {
-  var scope = new vega.Scope();
+  const scope = new vega.Scope();
 
   parseSignal({name: 'a', update: '5 * 2'}, scope);
   parseSignal({name: 'b', update: 'a + 3'}, scope);

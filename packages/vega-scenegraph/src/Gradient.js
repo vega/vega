@@ -1,4 +1,4 @@
-var gradient_id = 0;
+let gradient_id = 0;
 
 export function resetSVGGradientId() {
   gradient_id = 0;

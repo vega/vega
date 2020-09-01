@@ -40,7 +40,7 @@ tape('Vega generates scenegraphs for specifications', t => {
 
       if (OUTPUT_FAILURES && !isEqual) {
         pair.forEach((scene, i) => {
-          var prefix = vega.pad(index, 2, '0', 'left');
+          const prefix = vega.pad(index, 2, '0', 'left');
           fs.writeFileSync(
             `${prefix}-scene-${i?'expect':'actual'}-${name}.json`,
             JSON.stringify(scene, 0, 2)

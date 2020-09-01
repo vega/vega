@@ -2,18 +2,18 @@ var fs = require('fs'),
     ajv = require('ajv'),
     tape = require('tape');
 
-var schemaFile = './build/vega-scenegraph-schema.json';
-var schema = JSON.parse(fs.readFileSync(schemaFile));
-var res = './test/resources/';
+const schemaFile = './build/vega-scenegraph-schema.json';
+const schema = JSON.parse(fs.readFileSync(schemaFile));
+const res = './test/resources/';
 
-var validator = new ajv({
+const validator = new ajv({
     allErrors: true,
     verbose: true,
     extendRefs: 'fail'
   })
   .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-var validate = validator.compile(schema);
+const validate = validator.compile(schema);
 
 tape('schema should be valid', t => {
   t.ok(validator.validateSchema(schema));
@@ -21,17 +21,17 @@ tape('schema should be valid', t => {
 });
 
 tape('schema should validate correct marks', t => {
-  var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
-  for (var name in marks) {
+  const marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
+  for (const name in marks) {
     t.ok(validate(marks[name]), name);
   }
   t.end();
 });
 
 tape('schema should invalidate incorrect marks', t => {
-  var marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
-  for (var name in marks) {
-    var scene = marks[name];
+  const marks = JSON.parse(fs.readFileSync(res + 'marks.json'));
+  for (const name in marks) {
+    const scene = marks[name];
     switch (scene.marktype) {
       case 'rect': scene.marktype = 'fake'; break;
       case 'text': scene.marktype = 'arc'; break;
@@ -43,20 +43,20 @@ tape('schema should invalidate incorrect marks', t => {
 });
 
 tape('schema should validate scenegraph files', t => {
-  var files = [
+  const files = [
     'scenegraph-barley.json',
     'scenegraph-defs.json',
     'scenegraph-rect.json'
   ];
   files.forEach(f => {
-    var scene = JSON.parse(fs.readFileSync(res + f));
+    const scene = JSON.parse(fs.readFileSync(res + f));
     t.ok(validate(scene));
   });
   t.end();
 });
 
 tape('schema should invalidate degenerate scenegraphs', t => {
-  var list = [
+  const list = [
     {},
     {x: 0, y:1},
     {items: [{x:0, y:0}]},
@@ -71,7 +71,7 @@ tape('schema should invalidate degenerate scenegraphs', t => {
 });
 
 tape('schema should validate svg paths', t => {
-  var bad = [
+  const bad = [
     {marktype: 'path', items: [{path: 'lorem ipsum'}]},
     {marktype: 'path', items: [{path: 'L1,2'}]},
     {marktype: 'path', items: [{path: 'L1\n2'}]},
@@ -88,7 +88,7 @@ tape('schema should validate svg paths', t => {
     t.notOk(validate(scene), scene.items[0].path);
   });
 
-  var good = [
+  const good = [
     {marktype: 'path', items: [{path: ''}]},
     {marktype: 'path', items: [{path: 'M1,2'}]},
     {marktype: 'path', items: [{path: 'M1-2'}]},
@@ -109,7 +109,7 @@ tape('schema should validate svg paths', t => {
 });
 
 tape('schema should validate colors', t => {
-  var bad = [
+  const bad = [
     {marktype: 'rect', items: [{fill: '#ffff'}]},
     {marktype: 'rect', items: [{fill: 'rgb(256,0,0)'}]},
     {marktype: 'rect', items: [{fill: 'rgb(50%,50%,120%)'}]},
@@ -120,7 +120,7 @@ tape('schema should validate colors', t => {
     t.notOk(validate(scene));
   });
 
-  var good = [
+  const good = [
     {marktype: 'rect', items: [{fill: '#fff'}]},
     {marktype: 'rect', items: [{fill: '#abcdEf'}]},
     {marktype: 'rect', items: [{fill: 'steelblue'}]},

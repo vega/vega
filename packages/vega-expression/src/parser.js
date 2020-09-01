@@ -152,7 +152,7 @@ function isIdentifierPart(ch) {
 
 // 7.6.1.1 Keywords
 
-var keywords = {
+const keywords = {
   'if':1, 'in':1, 'do':1,
   'var':1, 'for':1, 'new':1, 'try':1, 'let':1,
   'this':1, 'else':1, 'case':1, 'void':1, 'with':1, 'enum':1,
@@ -165,7 +165,7 @@ var keywords = {
 };
 
 function skipComment() {
-  var ch;
+  let ch;
 
   while (index < length) {
     ch = source.charCodeAt(index);
@@ -456,7 +456,7 @@ function scanPunctuator() {
 // 7.8.3 Numeric Literals
 
 function scanHexLiteral(start) {
-  var number = '';
+  let number = '';
 
   while (index < length) {
     if (!isHexDigit(source[index])) {
@@ -482,7 +482,7 @@ function scanHexLiteral(start) {
 }
 
 function scanOctalLiteral(start) {
-  var number = '0' + source[index++];
+  let number = '0' + source[index++];
   while (index < length) {
     if (!isOctalDigit(source[index])) {
       break;
@@ -679,7 +679,7 @@ function scanStringLiteral() {
 }
 
 function testRegExp(pattern, flags) {
-  var tmp = pattern;
+  let tmp = pattern;
 
   if (flags.indexOf('u') >= 0) {
     // Replace each astral symbol and every Unicode code point
@@ -825,7 +825,7 @@ function isIdentifierName(token) {
 }
 
 function advance() {
-  var ch;
+  let ch;
 
   skipComment();
 
@@ -871,7 +871,7 @@ function advance() {
 }
 
 function lex() {
-  var token;
+  let token;
 
   token = lookahead;
   index = token.end;
@@ -884,7 +884,7 @@ function lex() {
 }
 
 function peek() {
-  var pos;
+  let pos;
 
   pos = index;
 
@@ -893,13 +893,13 @@ function peek() {
 }
 
 function finishArrayExpression(elements) {
-  var node = new ASTNode(SyntaxArrayExpression);
+  const node = new ASTNode(SyntaxArrayExpression);
   node.elements = elements;
   return node;
 }
 
 function finishBinaryExpression(operator, left, right) {
-  var node = new ASTNode((operator === '||' || operator === '&&') ? SyntaxLogicalExpression : SyntaxBinaryExpression);
+  const node = new ASTNode((operator === '||' || operator === '&&') ? SyntaxLogicalExpression : SyntaxBinaryExpression);
   node.operator = operator;
   node.left = left;
   node.right = right;
@@ -907,14 +907,14 @@ function finishBinaryExpression(operator, left, right) {
 }
 
 function finishCallExpression(callee, args) {
-  var node = new ASTNode(SyntaxCallExpression);
+  const node = new ASTNode(SyntaxCallExpression);
   node.callee = callee;
   node.arguments = args;
   return node;
 }
 
 function finishConditionalExpression(test, consequent, alternate) {
-  var node = new ASTNode(SyntaxConditionalExpression);
+  const node = new ASTNode(SyntaxConditionalExpression);
   node.test = test;
   node.consequent = consequent;
   node.alternate = alternate;
@@ -922,13 +922,13 @@ function finishConditionalExpression(test, consequent, alternate) {
 }
 
 function finishIdentifier(name) {
-  var node = new ASTNode(SyntaxIdentifier);
+  const node = new ASTNode(SyntaxIdentifier);
   node.name = name;
   return node;
 }
 
 function finishLiteral(token) {
-  var node = new ASTNode(SyntaxLiteral);
+  const node = new ASTNode(SyntaxLiteral);
   node.value = token.value;
   node.raw = source.slice(token.start, token.end);
   if (token.regex) {
@@ -941,7 +941,7 @@ function finishLiteral(token) {
 }
 
 function finishMemberExpression(accessor, object, property) {
-  var node = new ASTNode(SyntaxMemberExpression);
+  const node = new ASTNode(SyntaxMemberExpression);
   node.computed = accessor === '[';
   node.object = object;
   node.property = property;
@@ -950,13 +950,13 @@ function finishMemberExpression(accessor, object, property) {
 }
 
 function finishObjectExpression(properties) {
-  var node = new ASTNode(SyntaxObjectExpression);
+  const node = new ASTNode(SyntaxObjectExpression);
   node.properties = properties;
   return node;
 }
 
 function finishProperty(kind, key, value) {
-  var node = new ASTNode(SyntaxProperty);
+  const node = new ASTNode(SyntaxProperty);
   node.key = key;
   node.value = value;
   node.kind = kind;
@@ -964,7 +964,7 @@ function finishProperty(kind, key, value) {
 }
 
 function finishUnaryExpression(operator, argument) {
-  var node = new ASTNode(SyntaxUnaryExpression);
+  const node = new ASTNode(SyntaxUnaryExpression);
   node.operator = operator;
   node.argument = argument;
   node.prefix = true;
@@ -1022,7 +1022,7 @@ function throwUnexpected(token) {
 // If not, an exception will be thrown.
 
 function expect(value) {
-  var token = lex();
+  const token = lex();
   if (token.type !== TokenPunctuator || token.value !== value) {
     throwUnexpected(token);
   }
@@ -1043,7 +1043,7 @@ function matchKeyword(keyword) {
 // 11.1.4 Array Initialiser
 
 function parseArrayInitialiser() {
-  var elements = [];
+  const elements = [];
 
   index = lookahead.start;
   expect('[');
@@ -1069,7 +1069,7 @@ function parseArrayInitialiser() {
 // 11.1.5 Object Initialiser
 
 function parseObjectPropertyKey() {
-  var token;
+  let token;
 
   index = lookahead.start;
   token = lex();
@@ -1148,7 +1148,7 @@ function parseObjectInitialiser() {
 // 11.1.6 The Grouping Operator
 
 function parseGroupExpression() {
-  var expr;
+  let expr;
 
   expect('(');
 
@@ -1162,7 +1162,7 @@ function parseGroupExpression() {
 
 // 11.1 Primary Expressions
 
-var legalKeywords = {
+const legalKeywords = {
   'if': 1
 };
 
@@ -1215,7 +1215,7 @@ function parsePrimaryExpression() {
 // 11.2 Left-Hand-Side Expressions
 
 function parseArguments() {
-  var args = [];
+  const args = [];
 
   expect('(');
 
@@ -1235,7 +1235,7 @@ function parseArguments() {
 }
 
 function parseNonComputedProperty() {
-  var token;
+  let token;
   index = lookahead.start;
   token = lex();
 
@@ -1253,7 +1253,7 @@ function parseNonComputedMember() {
 }
 
 function parseComputedMember() {
-  var expr;
+  let expr;
 
   expect('[');
 
@@ -1290,7 +1290,7 @@ function parseLeftHandSideExpressionAllowCall() {
 // 11.3 Postfix Expressions
 
 function parsePostfixExpression() {
-  var expr = parseLeftHandSideExpressionAllowCall();
+  const expr = parseLeftHandSideExpressionAllowCall();
 
   if (lookahead.type === TokenPunctuator) {
     if ((match('++') || match('--'))) {
@@ -1324,7 +1324,7 @@ function parseUnaryExpression() {
 }
 
 function binaryPrecedence(token) {
-  var prec = 0;
+  let prec = 0;
 
   if (token.type !== TokenPunctuator && token.type !== TokenKeyword) {
     return 0;
@@ -1474,7 +1474,7 @@ function parseConditionalExpression() {
 // 11.14 Comma Operator
 
 function parseExpression() {
-  var expr = parseConditionalExpression();
+  const expr = parseConditionalExpression();
 
   if (match(',')) {
     throw new Error(DISABLED); // no sequence expressions
@@ -1491,7 +1491,7 @@ export default function(code) {
 
   peek();
 
-  var expr = parseExpression();
+  const expr = parseExpression();
 
   if (lookahead.type !== TokenEOF) {
     throw new Error('Unexpect token after expression.');

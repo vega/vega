@@ -206,7 +206,7 @@ function ringContains(ring, point) {
 }
 
 function segmentContains(a, b, c) {
-  var i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
+  let i; return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
 }
 
 function collinear(a, b, c) {

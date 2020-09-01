@@ -3,7 +3,7 @@ import trap from './trap';
 
 export default function(view, prevHandler, el, constructor) {
   // instantiate scenegraph handler
-  var handler = new constructor(view.loader(), trap(view, view.tooltip()))
+  const handler = new constructor(view.loader(), trap(view, view.tooltip()))
     .scene(view.scenegraph().root)
     .initialize(el, offset(view), view);
 

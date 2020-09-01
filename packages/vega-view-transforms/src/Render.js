@@ -17,7 +17,7 @@ inherits(Render, Transform, {
 
     // set z-index dirty flag as needed
     if (pulse.fields && pulse.fields['zindex']) {
-      var item = pulse.source && pulse.source[0];
+      const item = pulse.source && pulse.source[0];
       if (item) item.mark.zdirty = true;
     }
   }

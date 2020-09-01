@@ -22,7 +22,7 @@ export function visit(scene, visitor) {
   var items = scene.items, i, n;
   if (!items || !items.length) return;
 
-  var zitems = zorder(scene);
+  const zitems = zorder(scene);
 
   if (zitems && zitems.length) {
     for (i=0, n=items.length; i<n; ++i) {
@@ -40,7 +40,7 @@ export function pickVisit(scene, visitor) {
   var items = scene.items, hit, i;
   if (!items || !items.length) return null;
 
-  var zitems = zorder(scene);
+  const zitems = zorder(scene);
   if (zitems && zitems.length) items = zitems;
 
   for (i=items.length; --i >= 0;) {

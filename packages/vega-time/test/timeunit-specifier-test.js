@@ -32,7 +32,7 @@ tape('timeUnitSpecifier produces specifier for multiple time units', t => {
 });
 
 tape('timeUnitSpecifier supports configurable specifiers', t => {
-  var specs = {
+  const specs = {
     'year': '%y',
     'month': 'M%m',
     'year-month': '%y-%b',

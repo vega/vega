@@ -534,7 +534,7 @@ tape('Parser should parse escape sequences', t => {
 });
 
 tape('Parser should ignore whitespace', t => {
-  var tree = {
+  const tree = {
     type: 'BinaryExpression',
     operator: '+',
     left: {type: 'Literal', value: 1, raw: '1'},

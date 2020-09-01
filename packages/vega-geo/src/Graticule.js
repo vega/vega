@@ -34,7 +34,7 @@ inherits(Graticule, Transform, {
         gen = this.generator, t;
 
     if (!src.length || _.modified()) {
-      for (var prop in _) {
+      for (const prop in _) {
         if (isFunction(gen[prop])) {
           gen[prop](_[prop]);
         }

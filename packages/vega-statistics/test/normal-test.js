@@ -10,9 +10,9 @@ function closeTo(t, a, b, delta) {
 }
 
 function check(t, u, s, values) {
-  var sum = values.reduce((a, b) => a + b, 0);
-  var avg = sum / values.length;
-  var dev = values.reduce((a, b) => a + (b-avg)*(b-avg), 0);
+  const sum = values.reduce((a, b) => a + b, 0);
+  const avg = sum / values.length;
+  let dev = values.reduce((a, b) => a + (b-avg)*(b-avg), 0);
   dev = dev / (values.length-1);
 
   // mean within 99.9% confidence interval
@@ -20,7 +20,7 @@ function check(t, u, s, values) {
 }
 
 function samples(dist, n) {
-  var a = Array(n);
+  const a = Array(n);
   while (--n >= 0) a[n] = dist.sample();
   return a;
 }
@@ -33,7 +33,7 @@ tape('normal generates normal samples', t => {
 });
 
 tape('normal evaluates the pdf', t => {
-  var n1 = normal();
+  const n1 = normal();
   closeTo(t, 0.40, n1.pdf(0), 1e-2);
   closeTo(t, 0.24, n1.pdf(-1), 1e-2);
   t.equal(n1.pdf(5), n1.pdf(-5));
@@ -41,7 +41,7 @@ tape('normal evaluates the pdf', t => {
 });
 
 tape('normal approximates the cdf', t => {
-  var n1 = normal();
+  const n1 = normal();
   // extreme values
   t.equal(0, n1.cdf(-38));
   t.equal(1, n1.cdf(38));
@@ -54,7 +54,7 @@ tape('normal approximates the cdf', t => {
 });
 
 tape('normal approximates the inverse cdf', t => {
-  var n1 = normal();
+  const n1 = normal();
   // out of domain inputs
   t.ok(Number.isNaN(n1.icdf(-1)));
   t.ok(Number.isNaN(n1.icdf(2)));

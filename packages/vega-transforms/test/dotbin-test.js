@@ -7,7 +7,7 @@ var tape = require('tape'),
     DotBin = transforms.dotbin;
 
 tape('DotBin assigns dot plot bin positions', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'a', value: 1},
     {key: 'a', value: 2},
@@ -34,7 +34,7 @@ tape('DotBin assigns dot plot bin positions', t => {
   t.equal(db.pulse.rem.length, 0);
   t.equal(db.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.deepEqual(d[0], {key: 'a', value: 1, x: 1.5});
   t.deepEqual(d[1], {key: 'a', value: 1, x: 1.5});
   t.deepEqual(d[2], {key: 'a', value: 2, x: 1.5});

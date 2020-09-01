@@ -1,7 +1,7 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-var geojson = {
+const geojson = {
   'type': 'FeatureCollection',
   'features': [
     {
@@ -19,7 +19,7 @@ var geojson = {
 };
 
 tape('Parser parses Vega specs with projection', t => {
-  var spec = {
+  const spec = {
     'projections': [
         {
           'name': 'projection',
@@ -30,7 +30,7 @@ tape('Parser parses Vega specs with projection', t => {
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
   t.equal(dfs.operators.length, 15);
   t.equal(dfs.operators[10].type, 'projection');

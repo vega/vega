@@ -3,7 +3,7 @@ var tape = require('tape'),
     config = require('../').config;
 
 tape('Config generates defaults', t => {
-  var c = config();
+  const c = config();
 
   t.equal(c.autosize, 'pad');
   t.equal(c.style.point.shape, 'circle');
@@ -12,9 +12,9 @@ tape('Config generates defaults', t => {
 });
 
 tape('Config overrides with extended defaults', t => {
-  var as = {type: 'pad', resize: 'true'};
+  const as = {type: 'pad', resize: 'true'};
 
-  var c = util.mergeConfig(
+  const c = util.mergeConfig(
     config(),
     {autosize: as},
     {style: {point: {shape: 'triangle-right'}}},

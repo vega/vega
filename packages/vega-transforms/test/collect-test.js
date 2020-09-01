@@ -5,7 +5,7 @@ var tape = require('tape'),
     changeset = vega.changeset;
 
 tape('Collect collects tuples', t => {
-  var data = [
+  const data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}

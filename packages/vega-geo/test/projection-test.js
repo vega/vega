@@ -15,7 +15,7 @@ tape('Projection transform fits parameters to GeoJSON data', t => {
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);
@@ -34,7 +34,7 @@ tape('Projection transform handles fit input with null data', t => {
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);

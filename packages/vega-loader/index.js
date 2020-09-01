@@ -1,6 +1,6 @@
 import loaderFactory from './src/loader';
 
-export var loader = loaderFactory(
+export const loader = loaderFactory(
   require('node-fetch'),
   require('fs')
 );

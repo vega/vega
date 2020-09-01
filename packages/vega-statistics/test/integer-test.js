@@ -2,7 +2,7 @@ var tape = require('tape'),
     integer = require('../').randomInteger;
 
 tape('integer generates random values', t => {
-  var s = integer(10).sample();
+  let s = integer(10).sample();
   t.ok(0 <= s && s < 10);
   t.equal(s, ~~s);
 
@@ -14,7 +14,7 @@ tape('integer generates random values', t => {
 });
 
 tape('integer evaluates the pdf', t => {
-  var n1 = integer(0, 5);
+  const n1 = integer(0, 5);
   t.equal(n1.pdf(-1), 0.0);
   t.equal(n1.pdf(5), 0.0);
   t.equal(n1.pdf(0), 0.2);
@@ -26,7 +26,7 @@ tape('integer evaluates the pdf', t => {
 });
 
 tape('integer evaluates the cdf', t => {
-  var n1 = integer(0, 5);
+  const n1 = integer(0, 5);
   t.equal(n1.cdf(-1), 0.0);
   t.equal(n1.cdf(0), 0.2);
   t.equal(n1.cdf(1), 0.4);
@@ -38,7 +38,7 @@ tape('integer evaluates the cdf', t => {
 });
 
 tape('integer evaluates the inverse cdf', t => {
-  var n1 = integer(0, 5);
+  const n1 = integer(0, 5);
   // extreme values
   t.ok(Number.isNaN(n1.icdf(-1)));
   t.ok(Number.isNaN(n1.icdf(2)));

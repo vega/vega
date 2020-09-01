@@ -8,10 +8,10 @@ var tape = require('tape'),
     Renderer = vega.CanvasRenderer,
     res = './test/resources/';
 
-var GENERATE = require('./resources/generate-tests');
+const GENERATE = require('./resources/generate-tests');
 
-var marks = JSON.parse(load('marks.json', 'utf-8'));
-for (var name in marks) { vega.sceneFromJSON(marks[name]); }
+const marks = JSON.parse(load('marks.json', 'utf-8'));
+for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, image) {
   if (GENERATE) fs.writeFileSync(res + path, image);
@@ -57,17 +57,17 @@ function clearPathCache(mark) {
 }
 
 tape('CanvasRenderer should support argument free constructor', t => {
-  var r = new Renderer();
+  const r = new Renderer();
   t.notOk(r.canvas());
   t.notOk(r.context());
   t.end();
 });
 
 tape('CanvasRenderer should use DOM if available', t => {
-  var jsdom = require('jsdom');
+  const jsdom = require('jsdom');
   global.document = (new jsdom.JSDOM()).window.document;
 
-  var r = new Renderer().initialize(document.body, 100, 100);
+  const r = new Renderer().initialize(document.body, 100, 100);
   t.strictEqual(r.element(), document.body);
   t.strictEqual(r.canvas(), document.body.childNodes[0]);
 
@@ -76,22 +76,22 @@ tape('CanvasRenderer should use DOM if available', t => {
 });
 
 tape('CanvasRenderer should render scenegraph to canvas', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var image = render(scene, 400, 200);
+  const scene = loadScene('scenegraph-rect.json');
+  const image = render(scene, 400, 200);
   generate('png/scenegraph-rect.png', image);
-  var file = load('png/scenegraph-rect.png');
+  const file = load('png/scenegraph-rect.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support clipping and gradients', t => {
-  var scene = loadScene('scenegraph-defs.json');
-  var image = render(scene, 102, 102);
+  const scene = loadScene('scenegraph-defs.json');
+  let image = render(scene, 102, 102);
   generate('png/scenegraph-defs.png', image);
-  var file = load('png/scenegraph-defs.png');
+  let file = load('png/scenegraph-defs.png');
   t.equal(comparePNGs(image, file), 0);
 
-  var scene2 = loadScene('scenegraph-defs.json');
+  const scene2 = loadScene('scenegraph-defs.json');
   scene2.items[0].clip = false;
   scene2.items[0].fill = 'red';
   image = render(scene2, 102, 102);
@@ -102,32 +102,32 @@ tape('CanvasRenderer should support clipping and gradients', t => {
 });
 
 tape('CanvasRenderer should support axes, legends and sub-groups', t => {
-  var scene = loadScene('scenegraph-barley.json');
-  var image = render(scene, 360, 740);
+  const scene = loadScene('scenegraph-barley.json');
+  const image = render(scene, 360, 740);
   generate('png/scenegraph-barley.png', image);
-  var file = load('png/scenegraph-barley.png');
+  const file = load('png/scenegraph-barley.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support full redraw', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var mark = scene.items[0].items[0].items;
-  var rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
+  const mark = scene.items[0].items[0].items;
+  const rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
   mark.push({
     mark: mark, x: 0, y: 0, width: 10, height: 10, fill: 'purple',
     bounds: new Bounds().set(0, 0, 10, 10)
   });
   r.render(scene);
 
-  var image = r.canvas().toBuffer();
+  let image = r.canvas().toBuffer();
   generate('png/scenegraph-full-redraw.png', image);
-  var file = load('png/scenegraph-full-redraw.png');
+  let file = load('png/scenegraph-full-redraw.png');
   t.equal(comparePNGs(image, file), 0);
 
   mark.pop();
@@ -141,20 +141,20 @@ tape('CanvasRenderer should support full redraw', t => {
 });
 
 tape('CanvasRenderer should support enter-item redraw', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rects = scene.items[0].items[0];
+  const rects = scene.items[0].items[0];
 
-  var rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
+  const rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
   rect1.mark = rects;
   rect1.bounds = new Bounds().set(10, 10, 60, 60);
   rects.items.push(rect1);
 
-  var rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
+  const rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
   rect2.mark = rects;
   rect2.bounds = new Bounds().set(70, 10, 120, 60);
   rects.items.push(rect2);
@@ -162,40 +162,40 @@ tape('CanvasRenderer should support enter-item redraw', t => {
   r.dirty(rect1);
   r.dirty(rect2);
   r.render(scene);
-  var image = r.canvas().toBuffer();
+  const image = r.canvas().toBuffer();
   generate('png/scenegraph-enter-redraw.png', image);
-  var file = load('png/scenegraph-enter-redraw.png');
+  const file = load('png/scenegraph-enter-redraw.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support exit-item redraw', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rect = scene.items[0].items[0].items.pop();
+  const rect = scene.items[0].items[0].items.pop();
   rect.status = 'exit';
   r.dirty(rect);
   r.render(scene);
 
-  var image = r.canvas().toBuffer();
+  const image = r.canvas().toBuffer();
   generate('png/scenegraph-exit-redraw.png', image);
-  var file = load('png/scenegraph-exit-redraw.png');
+  const file = load('png/scenegraph-exit-redraw.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support single-item redraw', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rect = scene.items[0].items[0].items[1];
+  const rect = scene.items[0].items[0].items[1];
   r.dirty(rect);
   rect.fill = 'red';
   rect.width *= 2;
@@ -203,59 +203,59 @@ tape('CanvasRenderer should support single-item redraw', t => {
   r.dirty(rect);
   r.render(scene);
 
-  var image = r.canvas().toBuffer();
+  const image = r.canvas().toBuffer();
   generate('png/scenegraph-single-redraw.png', image);
-  var file = load('png/scenegraph-single-redraw.png');
+  const file = load('png/scenegraph-single-redraw.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support multi-item redraw', t => {
-  var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
-  var r = new Renderer()
+  const scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
+  const r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
     .render(scene);
 
-  var line1 = scene.items[1]; line1.y = 5;                        // update
-  var line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
-  var line3 = {x:400, y:200}; line3.mark = scene;                 // enter
+  const line1 = scene.items[1]; line1.y = 5;                        // update
+  const line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
+  const line3 = {x:400, y:200}; line3.mark = scene;                 // enter
   scene.bounds.set(-1, -1, 401, 201);
   scene.items[0].pathCache = null;
   scene.items.push(line3);
 
   r.render(scene);
-  var image = r.canvas().toBuffer();
+  const image = r.canvas().toBuffer();
   generate('png/scenegraph-line-redraw.png', image);
-  var file = load('png/scenegraph-line-redraw.png');
+  const file = load('png/scenegraph-line-redraw.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should support enter-group redraw', t => {
-  var scene = loadScene('scenegraph-barley.json');
-  var r = new Renderer()
+  let scene = loadScene('scenegraph-barley.json');
+  const r = new Renderer()
     .initialize(null, 500, 600)
     .background('white')
     .render(scene);
 
-  var group = JSON.parse(vega.sceneToJSON(scene.items[0]));
+  const group = JSON.parse(vega.sceneToJSON(scene.items[0]));
   group.x = 200;
   scene = JSON.parse(vega.sceneToJSON(scene));
   scene.items.push(group);
   scene = vega.sceneFromJSON(scene);
 
   r.dirty(group);
-  var image = r.render(scene).canvas().toBuffer();
+  const image = r.render(scene).canvas().toBuffer();
   generate('png/scenegraph-enter-group-redraw.png', image);
-  var file = load('png/scenegraph-enter-group-redraw.png');
+  const file = load('png/scenegraph-enter-group-redraw.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should skip empty item sets', t => {
-  var scene = {marktype:'', items:[]};
-  var types = [
+  const scene = {marktype:'', items:[]};
+  const types = [
     'arc',
     'area',
     'group',
@@ -269,7 +269,7 @@ tape('CanvasRenderer should skip empty item sets', t => {
   ];
   var file = load('png/marks-empty.png'), image;
 
-  for (var i=0; i<types.length; ++i) {
+  for (let i=0; i<types.length; ++i) {
     scene.marktype = types[i];
     image = render(scene, 500, 500);
     t.equal(comparePNGs(image, file), 0);
@@ -278,17 +278,17 @@ tape('CanvasRenderer should skip empty item sets', t => {
 });
 
 tape('CanvasRenderer should render arc mark', t => {
-  var image = render(marks.arc, 500, 500);
+  const image = render(marks.arc, 500, 500);
   generate('png/marks-arc.png', image);
-  var file = load('png/marks-arc.png');
+  const file = load('png/marks-arc.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render horizontal area mark', t => {
-  var image = render(marks['area-h'], 500, 500);
+  let image = render(marks['area-h'], 500, 500);
   generate('png/marks-area-h.png', image);
-  var file = load('png/marks-area-h.png');
+  const file = load('png/marks-area-h.png');
   t.equal(comparePNGs(image, file), 0);
 
   // clear path cache and re-render
@@ -298,9 +298,9 @@ tape('CanvasRenderer should render horizontal area mark', t => {
 });
 
 tape('CanvasRenderer should render vertical area mark', t => {
-  var image = render(marks['area-v'], 500, 500);
+  let image = render(marks['area-v'], 500, 500);
   generate('png/marks-area-v.png', image);
-  var file = load('png/marks-area-v.png');
+  const file = load('png/marks-area-v.png');
   t.equal(comparePNGs(image, file), 0);
 
   // clear path cache and re-render
@@ -310,25 +310,25 @@ tape('CanvasRenderer should render vertical area mark', t => {
 });
 
 tape('CanvasRenderer should render area mark with breaks', t => {
-  var image = render(marks['area-breaks'], 500, 500);
+  const image = render(marks['area-breaks'], 500, 500);
   generate('png/marks-area-breaks.png', image);
-  var file = load('png/marks-area-breaks.png');
+  const file = load('png/marks-area-breaks.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render trail mark', t => {
-  var image = render(marks['trail'], 500, 500);
+  const image = render(marks['trail'], 500, 500);
   generate('png/marks-area-trail.png', image);
-  var file = load('png/marks-area-trail.png');
+  const file = load('png/marks-area-trail.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render group mark', t => {
-  var image = render(marks.group, 500, 500);
+  const image = render(marks.group, 500, 500);
   generate('png/marks-group.png', image);
-  var file = load('png/marks-group.png');
+  const file = load('png/marks-group.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
@@ -336,29 +336,29 @@ tape('CanvasRenderer should render group mark', t => {
 tape('CanvasRenderer should render image mark', t => {
   renderAsync(marks.image, 500, 500, image => {
     generate('png/marks-image.png', image);
-    var file = load('png/marks-image.png');
+    const file = load('png/marks-image.png');
     t.equal(comparePNGs(image, file), 0);
     t.end();
   });
 });
 
 tape('CanvasRenderer should skip invalid image', t => {
-  var scene = vega.sceneFromJSON({
+  const scene = vega.sceneFromJSON({
     marktype: 'image',
     items: [{url: 'does_not_exist.png'}]
   });
   renderAsync(scene, 500, 500, image => {
     generate('png/marks-empty.png', image);
-    var file = load('png/marks-empty.png');
+    const file = load('png/marks-empty.png');
     t.equal(comparePNGs(image, file), 0);
     t.end();
   });
 });
 
 tape('CanvasRenderer should render line mark', t => {
-  var image = render(marks['line-1'], 500, 500);
+  let image = render(marks['line-1'], 500, 500);
   generate('png/marks-line-1.png', image);
-  var file = load('png/marks-line-1.png');
+  let file = load('png/marks-line-1.png');
   t.equal(comparePNGs(image, file), 0);
 
   image = render(marks['line-2'], 500, 500);
@@ -373,17 +373,17 @@ tape('CanvasRenderer should render line mark', t => {
 });
 
 tape('CanvasRenderer should render line mark with breaks', t => {
-  var image = render(marks['line-breaks'], 500, 500);
+  const image = render(marks['line-breaks'], 500, 500);
   generate('png/marks-line-breaks.png', image);
-  var file = load('png/marks-line-breaks.png');
+  const file = load('png/marks-line-breaks.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render path mark', t => {
-  var image = render(marks.path, 500, 500);
+  let image = render(marks.path, 500, 500);
   generate('png/marks-path.png', image);
-  var file = load('png/marks-path.png');
+  const file = load('png/marks-path.png');
   t.equal(comparePNGs(image, file), 0);
 
   // clear path cache and re-render
@@ -393,33 +393,33 @@ tape('CanvasRenderer should render path mark', t => {
 });
 
 tape('CanvasRenderer should render rect mark', t => {
-  var image = render(marks.rect, 500, 500);
+  const image = render(marks.rect, 500, 500);
   generate('png/marks-rect.png', image);
-  var file = load('png/marks-rect.png');
+  const file = load('png/marks-rect.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render rule mark', t => {
-  var image = render(marks.rule, 500, 500);
+  const image = render(marks.rule, 500, 500);
   generate('png/marks-rule.png', image);
-  var file = load('png/marks-rule.png');
+  const file = load('png/marks-rule.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render symbol mark', t => {
-  var image = render(marks.symbol, 500, 500);
+  const image = render(marks.symbol, 500, 500);
   generate('png/marks-symbol.png', image);
-  var file = load('png/marks-symbol.png');
+  const file = load('png/marks-symbol.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
 
 tape('CanvasRenderer should render text mark', t => {
-  var image = render(marks.text, 500, 500);
+  const image = render(marks.text, 500, 500);
   generate('png/marks-text.png', image);
-  var file = load('png/marks-text.png');
+  const file = load('png/marks-text.png');
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });

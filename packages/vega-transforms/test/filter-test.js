@@ -7,10 +7,10 @@ var tape = require('tape'),
     Filter = tx.filter;
 
 tape('Filter filters tuples', t => {
-  var lt3 = util.accessor(d => d.id < 3, ['id']);
-  var baz = util.accessor(d => d.value === 'baz', ['value']);
+  const lt3 = util.accessor(d => d.id < 3, ['id']);
+  const baz = util.accessor(d => d.value === 'baz', ['value']);
 
-  var data = [
+  const data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}
