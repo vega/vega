@@ -89,8 +89,8 @@ export const spec: Spec = {
   "data": [
     {
       "name": "temperature",
-      "url": "data/seattle-temps.csv",
-      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
+      "url": "data/seattle-weather-hourly-normals.csv",
+      "format": {"type": "csv", "parse": {"temperature": "number", "date": "date"}},
       "transform": [
         { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
         { "type": "timeunit", "as": ["day", "unit1"], "field": "date",
@@ -106,7 +106,7 @@ export const spec: Spec = {
           "size": [365, 24],
           "x": {"expr": "round((datum.day - datetime(year(datum.day), 0, 1)) / msday)"},
           "y": {"expr": "datum.hour - 6 < 0 ? datum.hour + 18 : datum.hour - 6"},
-          "weight": "temp",
+          "weight": "temperature",
           "counts": true,
           "bandwidth": [0, 0],
           "cellSize": 1
@@ -135,7 +135,7 @@ export const spec: Spec = {
       "name": "color",
       "type": "linear",
       "range": {"scheme": {"signal": "palette"}},
-      "domain": {"data": "temperature", "field": "temp"},
+      "domain": {"data": "temperature", "field": "temperature"},
       "reverse": {"signal": "reverse"},
       "zero": false, "nice": true
     }
@@ -161,7 +161,7 @@ export const spec: Spec = {
       "type": "gradient",
       "direction": "vertical",
       "gradientLength": {"signal": "height - 16"},
-      "title": "Avg. Temp (°F)",
+      "title": "Avg. Temp (°C)",
       "format": "0.1f"
     }
   ],
