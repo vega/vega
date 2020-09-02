@@ -16,8 +16,7 @@
     "pretest": "yarn build --config-test",
     "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "d3-path": "^2.0.0",

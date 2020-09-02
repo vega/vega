@@ -20,8 +20,7 @@
     "build": "rollup -c",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "vega-util": "^1.15.1"

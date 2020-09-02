@@ -17,8 +17,7 @@
     "build": "rollup -c --config-node",
     "postbuild": "node schema > build/vega-schema.json",
     "test": "yarn build",
-    "prepublishOnly": "yarn test",
-    "postpublish": "git push"
+    "prepublishOnly": "yarn test"
   },
   "dependencies": {
     "vega-scale": "^7.1.0"

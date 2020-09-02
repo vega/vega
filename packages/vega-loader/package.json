@@ -28,8 +28,7 @@
     "build": "rollup -c --config-browser",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "d3-dsv": "^2.0.0",

@@ -26,7 +26,7 @@
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags && ./schema-deploy.sh"
+    "postpublish": "./schema-deploy.sh"
   },
   "dependencies": {
     "vega-crossfilter": "~4.0.4",
