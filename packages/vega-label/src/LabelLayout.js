@@ -33,7 +33,7 @@ const placeAreaLabel = {
 };
 
 export default function(texts, size, compare, offset, anchor,
-  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method)
+  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method, fill)
 {
   // early exit for empty data
   if (!texts.length) return texts;
@@ -91,11 +91,37 @@ export default function(texts, size, compare, offset, anchor,
     ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex)
     : placeMarkLabel($, bitmaps, anchors, offsets);
 
-  // place all labels
-  data.forEach(d => d.opacity = +place(d));
+  // place all labels and set fill.
+  data.forEach(d => {
+    const inOrOut = +place(d);
+    const labelFill = getFill(d, inOrOut, fill);
+
+    // Side effects.
+    d.opacity = inOrOut;
+    if (labelFill) {
+      d.fill = labelFill;
+    }
+  });
 
   return data;
 }
+
+function getFill(d, inOrOut, fill) {
+
+  const markColor = d.datum.datum.fill;
+
+  let res;
+  fill[inOrOut][markColor];
+
+  if (fill[inOrOut] && fill[inOrOut][markColor]) {
+    res = fill[inOrOut][markColor];
+  } else if(fill[inOrOut]) {
+    res = fill[inOrOut];
+  }
+
+  return res;
+}
+
 
 function getOffsets(_, count) {
   const offsets = new Float64Array(count),

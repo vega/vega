@@ -7,7 +7,8 @@ const Output = [
   'y',
   'opacity',
   'align',
-  'baseline'
+  'baseline',
+  'fill'
 ];
 
 const Anchors = [
@@ -44,6 +45,9 @@ const Anchors = [
  *   overlap with the underlying base mark being labeled.
  * @param {string} [params.method='naive'] - For area make labels only, a method for
  *   place labels. One of 'naive', 'reduced-search', or 'floodfill'.
+ * @param {string} [params.fill] - A label text color array of length 2. fill[0] is the
+ *   color to use when the label is inside the mark and fill[1] for outside the mark. Each may be
+ *   a single color or an object map from the mark's color to the label color, e.g. { '#000': '#FFF', '#222': '#FFF' }
  * @param {Array<string>} [params.as] - The output fields written by the transform.
  *   The default is ['x', 'y', 'opacity', 'align', 'baseline'].
  */
@@ -64,7 +68,8 @@ Label.Definition = {
     { name: 'markIndex', type: 'number', default: 0 },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
-    { name: 'method', type: 'string', default: 'naive'},
+    { name: 'method', type: 'string', default: 'naive' },
+    { name: 'fill', type: 'string', array: true, default: [] },
     { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
   ]
 };
@@ -96,7 +101,8 @@ inherits(Label, Transform, {
       _.lineAnchor || 'end',
       _.markIndex || 0,
       _.padding || 0,
-      _.method || 'naive'
+      _.method || 'naive',
+      _.fill || [],
     ).forEach(l => {
       // write layout results to data stream
       const t = l.datum;
@@ -105,6 +111,9 @@ inherits(Label, Transform, {
       t[as[2]] = l.opacity;
       t[as[3]] = l.align;
       t[as[4]] = l.baseline;
+      if (l.fill) {
+        t[as[5]] = l.fill;
+      }
     });
 
     return pulse.reflow(mod).modifies(as);
