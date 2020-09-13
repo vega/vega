@@ -14,6 +14,7 @@ import {
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
+import { URI } from './data';
 import {
   Blend,
   ColorValueRef,
@@ -125,7 +126,19 @@ export interface MarkConfig {
   /**
    * Whether to keep aspect ratio of image marks.
    */
-  aspect?: boolean;
+  aspect?: boolean | SignalRef;
+
+  /**
+   * The URL of the image file for image marks.
+   *
+   * @format uri
+   */
+  url?: URI | SignalRef;
+
+  /**
+   * A boolean flag (default true) indicating if the image should be smoothed when resized. If false, individual pixels should be scaled directly rather than interpolated with smoothing. For SVG rendering, this option may not work in some browsers due to lack of standardization.
+   */
+  smooth?: boolean | SignalRef;
 
   /**
    * Default fill color.
@@ -411,10 +424,8 @@ export interface MarkConfig {
 
   /**
    * A URL to load upon mouse click. If defined, the mark acts as a hyperlink.
-   *
-   * @format uri
    */
-  href?: string | SignalRef;
+  href?: URI | SignalRef;
 
   /**
    * The tooltip text to show upon mouse hover.
