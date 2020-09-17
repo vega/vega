@@ -7,7 +7,7 @@ var tape = require('tape'),
     Stack = encode.stack;
 
 tape('Stack stacks numeric values', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'a', value: 2},
     {key: 'b', value: 3},
@@ -29,7 +29,7 @@ tape('Stack stacks numeric values', t => {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, 1);
   t.equal(d[1].y0, 1);
@@ -59,7 +59,7 @@ tape('Stack stacks numeric values', t => {
 });
 
 tape('Stack stacks negative values', t => {
-  var data = [
+  const data = [
     {key: 'a', value: -1},
     {key: 'a', value: 2},
     {key: 'b', value: 3},
@@ -81,7 +81,7 @@ tape('Stack stacks negative values', t => {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, -1);
   t.equal(d[1].y0, 0);
@@ -111,7 +111,7 @@ tape('Stack stacks negative values', t => {
 });
 
 tape('Stack stacks coerced string values', t => {
-  var data = [
+  const data = [
     {key: 'a', value: '1'},
     {key: 'a', value: '2'},
     {key: 'b', value: '3'},
@@ -133,7 +133,7 @@ tape('Stack stacks coerced string values', t => {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, 1);
   t.equal(d[1].y0, 1);

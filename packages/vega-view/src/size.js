@@ -46,7 +46,7 @@ export function initializeResize(view) {
   );
 
   // respond to padding signal
-  var resizePadding = view.add(null, resetSize, {pad: p});
+  const resizePadding = view.add(null, resetSize, {pad: p});
 
   // set rank to run immediately after source signal
   view._resizeWidth.rank = w.rank + 1;
@@ -56,7 +56,7 @@ export function initializeResize(view) {
 
 export function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
   this.runAfter(view => {
-    var rerun = 0;
+    let rerun = 0;
 
     // reset autosize flag
     view._autosize = 0;

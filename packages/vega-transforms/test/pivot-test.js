@@ -7,7 +7,7 @@ var tape = require('tape'),
     Pivot = tx.pivot;
 
 tape('Pivot pivots values', t => {
-  var data = [
+  const data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
     {a:'B', b:'u', c:3},
@@ -72,7 +72,7 @@ tape('Pivot pivots values', t => {
 });
 
 tape('Pivot pivots values within limit', t => {
-  var data = [
+  const data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:2},
     {a:'A', b:'w', c:3},
@@ -109,7 +109,7 @@ tape('Pivot pivots values within limit', t => {
 });
 
 tape('Pivot handles count aggregate', t => {
-  var data = [
+  const data = [
     {a:'A', b:'u', c:1},
     {a:'A', b:'v', c:null},
     {a:'B', b:'v', c:4},

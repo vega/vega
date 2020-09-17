@@ -1,7 +1,7 @@
 import {isArray, isDate, isObject} from 'vega-util';
 
 export default function(handler, event, item, value) {
-  var el = handler.element();
+  const el = handler.element();
   if (el) el.setAttribute('title', formatTooltip(value));
 }
 
@@ -14,7 +14,7 @@ function formatTooltip(value) {
 
 function formatObject(obj) {
   return Object.keys(obj).map(key => {
-    var v = obj[key];
+    const v = obj[key];
     return key + ': ' + (isArray(v) ? formatArray(v) : formatValue(v));
   }).join('\n');
 }

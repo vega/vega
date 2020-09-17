@@ -5,23 +5,23 @@ var tape = require('tape'),
     inferTypes = vega.inferTypes,
     typeParsers = vega.typeParsers;
 
-var fields = ['a', 'b', 'c', 'd', 'e'];
+const fields = ['a', 'b', 'c', 'd', 'e'];
 
-var data = [
+const data = [
   {a:1, b:'aaa', c:true,  d:'1/1/2001', e:1.2},
   {a:2, b:'bbb', c:false, d:'1/2/2001', e:3.4},
   {a:3, b:'ccc', c:false, d:'1/3/2001', e:5.6},
   {a:4, b:'ddd', c:true,  d:'1/4/2001', e:7.8}
 ];
 
-var strings = [
+const strings = [
   {a:'1', b:'aaa', c:'true',  d:'1/1/2001', e:'1.2'},
   {a:'2', b:'bbb', c:'false', d:'1/2/2001', e:'3.4'},
   {a:'3', b:'ccc', c:'false', d:'1/3/2001', e:'5.6'},
   {a:'4', b:'ddd', c:'true',  d:'1/4/2001', e:'7.8'}
 ];
 
-var types = {
+const types = {
   a: 'integer',
   b: 'string',
   c: 'boolean',
@@ -59,7 +59,7 @@ tape('inferType should infer strings when all else fails', t => {
 });
 
 tape('inferType should handle fields', t => {
-  var data = [
+  const data = [
     {a:'1', b:'true'},
     {a:'2', b:'false'},
     {a:'3', b:null}

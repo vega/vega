@@ -6,7 +6,7 @@ var tape = require('tape'),
     Stratify = require('../').stratify;
 
 tape('Stratify tuples', t => {
-  var data = [
+  const data = [
     {id: 'a'},
     {id: 'b', pid: 'a'},
     {id: 'c', pid: 'a'},

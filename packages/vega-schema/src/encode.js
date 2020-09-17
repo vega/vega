@@ -32,7 +32,7 @@ export function baseValueSchema(type, nullable) {
   var modType = type.type === 'number' ? 'number' : 'string',
       valueType = nullable ? oneOf(type, nullType) : type;
 
-  var valueRef = allOf(
+  const valueRef = allOf(
     ref(modType + 'Modifiers'),
     anyOf(
       oneOf(
@@ -51,7 +51,7 @@ export function baseValueSchema(type, nullable) {
 }
 
 export function valueSchema(type, nullable) {
-  var valueRef = baseValueSchema(type, nullable);
+  const valueRef = baseValueSchema(type, nullable);
   return oneOf(
     array(allOf(ruleRef, valueRef)),
     valueRef

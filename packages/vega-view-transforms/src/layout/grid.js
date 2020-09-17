@@ -17,7 +17,7 @@ function gridLayoutGroups(group) {
       n = groups.length,
       i = 0, mark, items;
 
-  var views = {
+  const views = {
     marks:      [],
     rowheaders: [],
     rowfooters: [],
@@ -56,14 +56,14 @@ function bboxFlush(item) {
 }
 
 function bboxFull(item) {
-  var b = item.bounds.clone();
+  const b = item.bounds.clone();
   return b.empty()
     ? b.set(0, 0, 0, 0)
     : b.translate(-(item.x || 0), -(item.y || 0));
 }
 
 function get(opt, key, d) {
-  var v = isObject(opt) ? opt[key] : opt;
+  const v = isObject(opt) ? opt[key] : opt;
   return v != null ? v : (d !== undefined ? d : 0);
 }
 

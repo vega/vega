@@ -89,7 +89,7 @@ export default function(spec, scope) {
     or = config['axis' + orient[0].toUpperCase() + orient.slice(1)];
   }
 
-  var result = (xy || or || band)
+  const result = (xy || or || band)
     ? extend({}, axis, xy, or, band)
     : axis;
 

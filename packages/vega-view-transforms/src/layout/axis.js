@@ -8,7 +8,7 @@ export function isYAxis(mark) {
 }
 
 function axisIndices(datum) {
-  var index = +datum.grid;
+  let index = +datum.grid;
   return [
     datum.ticks  ? index++ : -1, // ticks index
     datum.labels ? index++ : -1, // labels index

@@ -37,7 +37,7 @@ inherits(GeoPoint, Transform, {
         mod;
 
     function set(t) {
-      var xy = proj([lon(t), lat(t)]);
+      const xy = proj([lon(t), lat(t)]);
       if (xy) {
         t[x] = xy[0];
         t[y] = xy[1];

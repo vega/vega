@@ -9,7 +9,7 @@ tape('array wraps values in an array', t => {
   t.deepEqual(vega.array(), []);
 
   // should return an unmodified array argument
-  var value = [1, 2, 3];
+  const value = [1, 2, 3];
   t.equal(vega.array(value), value);
 
   // should return an array for non-array argument

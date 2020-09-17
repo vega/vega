@@ -5,7 +5,7 @@ var tape = require('tape'),
 
 tape('Parser parses event-driven operator updates', t => {
 
-  var spec = {
+  const spec = {
     operators: [
       { id:0, type:'Operator', value:50 },
       { id:1, type:'Operator', value:0 },
@@ -27,7 +27,7 @@ tape('Parser parses event-driven operator updates', t => {
     ]
   };
 
-  var df = new vega.Dataflow();
+  const df = new vega.Dataflow();
   df.events = events.events;
   df.fire = events.fire;
 

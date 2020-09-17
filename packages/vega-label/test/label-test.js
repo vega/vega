@@ -31,7 +31,7 @@ tape('Label performs label layout over input points', t => {
     .pulse(c0, vega.changeset().insert(data()))
     .run();
   t.equal(lb.stamp, df.stamp());
-  var out = c0.value;
+  let out = c0.value;
   t.equal(out.length, data().length);
   closeTo(t, out[0].x, 18);
   closeTo(t, out[0].y, 15);
@@ -156,7 +156,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
     .pulse(c0, vega.changeset().insert(data()))
     .run();
   t.equal(lb.stamp, df.stamp());
-  var out = c0.value;
+  let out = c0.value;
   t.equal(out.length, data().length);
   closeTo(t, out[0].x, 18);
   closeTo(t, out[0].y, 16);

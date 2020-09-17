@@ -21,11 +21,11 @@ tape('stringValue maps values', t => {
   t.equal(vega.stringValue([['1', 3], '2']), '[["1",3],"2"]');
 
   // should stringify objects
-  var x = {a: {b: {c: 1}}};
+  const x = {a: {b: {c: 1}}};
   t.equal(JSON.stringify(x), vega.stringValue(x));
 
   // should handle quotes in strings
-  var tests = ["'hello'", '"hello"'];
+  let tests = ["'hello'", '"hello"'];
   tests.forEach(s => {
     t.equal(s, eval(vega.stringValue(s)));
   });

@@ -15,7 +15,7 @@ function lookup(config, orient) {
 
 // if legends specify offset directly, use the maximum specified value
 function offsets(legends, value) {
-  var max = -Infinity;
+  let max = -Infinity;
   legends.forEach(item => {
     if (item.offset != null) max = Math.max(max, item.offset);
   });
@@ -206,7 +206,7 @@ function translate(view, item, dx, dy) {
 
 function legendEntryLayout(entries) {
   // get max widths for each column
-  var widths = entries.reduce((w, g) => {
+  const widths = entries.reduce((w, g) => {
     w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
     return w;
   }, {});

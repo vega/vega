@@ -26,7 +26,7 @@ export default function(type, shape, tip) {
     shape(context, items);
   }
 
-  var hit = hitPath(draw);
+  const hit = hitPath(draw);
 
   function pick(context, scene, x, y, gx, gy) {
     var items = scene.items,

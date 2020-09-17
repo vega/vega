@@ -7,35 +7,35 @@ function equal(a1, a2) {
 }
 
 tape('panLinear pans a domain linearly', t => {
-  var domain = [0, 1];
+  const domain = [0, 1];
   t.ok(equal(vega.panLinear(domain, -1), [1, 2]));
   t.ok(equal(vega.panLinear(domain, +1), [-1, 0]));
   t.end();
 });
 
 tape('panLog pans a domain logarithmically', t => {
-  var domain = [1, 10];
+  const domain = [1, 10];
   t.ok(equal(vega.panLog(domain, -1), [10, 100]));
   t.ok(equal(vega.panLog(domain, +1), [0.1, 1]));
   t.end();
 });
 
 tape('panPow pans a domain along a power scale', t => {
-  var domain = [4, 16];
+  const domain = [4, 16];
   t.ok(equal(vega.panPow(domain, -1, 0.5), [16, 36]));
   t.ok(equal(vega.panPow(domain, +1, 0.5), [0, 4]));
   t.end();
 });
 
 tape('panSymlog pans a domain along a symlog scale', t => {
-  var domain = [0, 1];
+  const domain = [0, 1];
   t.ok(equal(vega.panSymlog(domain, -1, 1), [1, 3]));
   t.ok(equal(vega.panSymlog(domain, +1, 1), [-1, 0]));
   t.end();
 });
 
 tape('zoomLinear zooms a domain linearly', t => {
-  var domain = [0, 1];
+  const domain = [0, 1];
   t.ok(equal(vega.zoomLinear(domain, null, 2.0), [-0.5, 1.5]));
   t.ok(equal(vega.zoomLinear(domain, null, 0.5), [0.25, 0.75]));
   t.ok(equal(vega.zoomLinear(domain, 0.5,  2.0), [-0.5, 1.5]));

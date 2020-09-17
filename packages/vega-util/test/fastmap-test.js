@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../');
 
 tape('fastmap maps keys to values', t => {
-  var m = vega.fastmap();
+  const m = vega.fastmap();
 
   m.set('foo', 1);
   m.set('bar', 2);
@@ -49,7 +49,7 @@ tape('fastmap maps keys to values', t => {
 });
 
 tape('fastmap accepts object as argument', t => {
-  var m = vega.fastmap({a:1, b:2});
+  const m = vega.fastmap({a:1, b:2});
   t.equal(m.size, 2);
   t.equal(m.empty, 0);
   t.equal(m.has('a'), true);
@@ -60,7 +60,7 @@ tape('fastmap accepts object as argument', t => {
 });
 
 tape('fastmap supports external clean test', t => {
-  var m = vega.fastmap({a:1, b:2, c:1});
+  const m = vega.fastmap({a:1, b:2, c:1});
 
   m.test(value => value === 1);
   m.clean();

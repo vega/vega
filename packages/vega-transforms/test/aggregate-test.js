@@ -7,7 +7,7 @@ var tape = require('tape'),
     Aggregate = tx.aggregate;
 
 tape('Aggregate aggregates tuples', t => {
-  var data = [
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
   ];
@@ -26,7 +26,7 @@ tape('Aggregate aggregates tuples', t => {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, 2);
   t.equal(d[0].k, 'a');
   t.equal(d[0].count_v, 2);
@@ -90,7 +90,7 @@ tape('Aggregate aggregates tuples', t => {
 });
 
 tape('Aggregate handles count aggregates', t => {
-  var data = [
+  const data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
     {foo:4, bar:5}
@@ -141,7 +141,7 @@ tape('Aggregate handles count aggregates', t => {
 });
 
 tape('Aggregate properly handles empty aggregation cells', t => {
-  var data = [
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
   ];
@@ -170,7 +170,7 @@ tape('Aggregate properly handles empty aggregation cells', t => {
   // -- modify tuple
   df.pulse(col, changeset().modify(data[0], 'v', 2)).run();
 
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 1);
   t.equal(d[0].k, 'a');
   t.equal(d[0].count_v, 2);
@@ -183,7 +183,7 @@ tape('Aggregate properly handles empty aggregation cells', t => {
 });
 
 tape('Aggregate handles distinct aggregates', t => {
-  var data = [
+  const data = [
     {foo:null},
     {foo:null},
     {foo:undefined},
@@ -226,7 +226,7 @@ tape('Aggregate handles distinct aggregates', t => {
 });
 
 tape('Aggregate handles cross-product', t => {
-  var data = [
+  const data = [
     {a: 0, b: 2},
     {a: 1, b: 3}
   ];
@@ -247,7 +247,7 @@ tape('Aggregate handles cross-product', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, 4);
   t.equal(d[0].a, 0);
   t.equal(d[0].b, 2);
@@ -312,7 +312,7 @@ tape('Aggregate handles cross-product', t => {
 });
 
 tape('Aggregate handles empty/invalid data', t => {
-  var ops = [
+  const ops = [
     'count',
     'missing',
     'valid',
@@ -325,7 +325,7 @@ tape('Aggregate handles empty/invalid data', t => {
     'max',
     'median'
   ];
-  var res = [4, 3, 0, 0]; // higher indices 'undefined'
+  const res = [4, 3, 0, 0]; // higher indices 'undefined'
 
   var v = util.field('v'),
       df = new vega.Dataflow(),
@@ -344,7 +344,7 @@ tape('Aggregate handles empty/invalid data', t => {
       {v: NaN}, {v: null}, {v: undefined}, {v: ''}
     ])
   ).run();
-  var d = out.value[0];
+  const d = out.value[0];
 
   ops.forEach((op, i) => {
     t.equal(d[op], res[i], op);

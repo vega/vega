@@ -25,8 +25,8 @@ tape('Sample samples tuples without backing source', t => {
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(t => { map[tupleid(t)] = 1; });
-  var inTuple = s.value[0];
-  var outTuple = null;
+  const inTuple = s.value[0];
+  let outTuple = null;
 
   for (i=0; i<n; ++i) {
     tid = data[i];
@@ -41,7 +41,7 @@ tape('Sample samples tuples without backing source', t => {
 
   // -- remove half of sample, no backing source
   map = {};
-  var rems = s.value.slice(0, 10);
+  const rems = s.value.slice(0, 10);
   rems.forEach(t => { map[tupleid(t)] = 1; });
   df.pulse(s, changeset().remove(rems)).run();
   t.equal(s.value.length, ns - 10);
@@ -70,8 +70,8 @@ tape('Sample samples tuples with backing source', t => {
 
   // -- modify tuple in and out sample, check propagation
   s.value.forEach(t => { map[tupleid(t)] = 1; });
-  var inTuple = s.value[0];
-  var outTuple = null;
+  const inTuple = s.value[0];
+  let outTuple = null;
 
   for (i=0; i<n; ++i) {
     tid = data[i];

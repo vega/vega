@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../');
 
 tape('compare compares numbers', t => {
-  var c = vega.compare('x');
+  const c = vega.compare('x');
   t.equal(c({x:1}, {x:0}), 1);
   t.equal(c({x:0}, {x:1}), -1);
   t.equal(c({x:1}, {x:1}), 0);
@@ -18,7 +18,7 @@ tape('compare compares numbers', t => {
 });
 
 tape('compare compares strings', t => {
-  var c = vega.compare('x');
+  const c = vega.compare('x');
   t.equal(c({x:'b'}, {x:'a'}), 1);
   t.equal(c({x:'a'}, {x:'b'}), -1);
   t.equal(c({x:'b'}, {x:'b'}), 0);
@@ -34,7 +34,7 @@ tape('compare compares strings', t => {
 });
 
 tape('compare compares dates', t => {
-  var c = vega.compare('x');
+  const c = vega.compare('x');
   t.equal(c({x:new Date(1)}, {x:new Date(0)}), 1);
   t.equal(c({x:new Date(0)}, {x:new Date(1)}), -1);
   t.equal(c({x:new Date(1)}, {x:new Date(1)}), 0);
@@ -51,7 +51,7 @@ tape('compare compares dates', t => {
 });
 
 tape('compare compares null, undefined and NaN', t => {
-  var c = vega.compare('x');
+  const c = vega.compare('x');
   // null and undefined are treated as equivalent
   t.equal(c({x:null}, {x:undefined}), 0);
   t.equal(c({x:undefined}, {x:null}), 0);
@@ -68,7 +68,7 @@ tape('compare compares null, undefined and NaN', t => {
 });
 
 tape('compare supports descending order', t => {
-  var c = vega.compare('x', 'descending');
+  const c = vega.compare('x', 'descending');
   t.equal(c({x:1}, {x:0}), -1);
   t.equal(c({x:0}, {x:1}), 1);
   t.equal(c({x:1}, {x:1}), -0);
@@ -77,7 +77,7 @@ tape('compare supports descending order', t => {
 });
 
 tape('compare supports nested comparison', t => {
-  var c = vega.compare(['x', 'y'], ['descending', 'ascending']);
+  const c = vega.compare(['x', 'y'], ['descending', 'ascending']);
   t.equal(c({x:1,y:0}, {x:0,y:1}), -1);
   t.equal(c({x:0,y:1}, {x:1,y:0}), 1);
   t.equal(c({x:0,y:0}, {x:0,y:1}), -1);

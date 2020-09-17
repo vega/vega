@@ -19,7 +19,7 @@ export function change(name, changes) {
   if (!isChangeSet(changes)) {
     error('Second argument to changes must be a changeset.');
   }
-  var dataset = dataref(this, name);
+  const dataset = dataref(this, name);
   dataset.modified = true;
   return this.pulse(dataset.input, changes);
 }
