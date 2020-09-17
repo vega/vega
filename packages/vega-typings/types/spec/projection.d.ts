@@ -58,7 +58,7 @@ export interface BaseProjection {
   /**
    * The projection's three-axis rotation to the specified angles, which must be a two- or three-element array of numbers [`lambda`, `phi`, `gamma`] specifying the rotation angles in degrees about each spherical axis. (These correspond to yaw, pitch and roll.)
    *
-   * __Default value:__ `[0, 0, 0]`
+   * __Default value:__ `[0, 0, 0]` or the spherical centroid as determined by `fit` if `fit` is set.
    */
   rotate?: Vector2<number | SignalRef> | Vector3<number | SignalRef> | SignalRef;
 
@@ -80,7 +80,7 @@ export interface BaseProjection {
   precision?: number | SignalRef;
 
   /*
-   * GeoJSON data to which the projection should attempt to automatically fit the `translate` and `scale` parameters. If object-valued, this parameter should be a GeoJSON Feature or FeatureCollection. If array-valued, each array member may be a GeoJSON Feature, FeatureCollection, or a sub-array of GeoJSON Features.
+   * GeoJSON data to which the projection should attempt to automatically fit the `translate`, `scale`, and `rotate` parameters. If object-valued, this parameter should be a GeoJSON Feature or FeatureCollection. If array-valued, each array member may be a GeoJSON Feature, FeatureCollection, or a sub-array of GeoJSON Features.
    */
   fit?: Fit | Fit[] | SignalRef;
   /*
