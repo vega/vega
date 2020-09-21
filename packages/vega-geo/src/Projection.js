@@ -2,6 +2,7 @@ import {Feature, FeatureCollection} from './constants';
 import {Transform} from 'vega-dataflow';
 import {projection, projectionProperties} from 'vega-projection';
 import {array, error, inherits, isFunction} from 'vega-util';
+import {geoCentroid} from 'd3-geo';
 
 /**
  * Maintains a cartographic projection.
@@ -37,8 +38,15 @@ inherits(Projection, Transform, {
 
 function fit(proj, _) {
   var data = collectGeoJSON(_.fit);
-  _.extent ? proj.fitExtent(_.extent, data)
-    : _.size ? proj.fitSize(_.size, data) : 0;
+  if (_.rotate == null) {
+    // -rotation to move the centroid to the center of the map
+    var rotation = geoCentroid(data).map(i => -i);
+
+    if (!Number.isNaN(rotation[0])) proj.rotate(rotation);
+  }
+
+  if (_.extent) proj.fitExtent(_.extent, data);
+  else if (_.size) proj.fitSize(_.size, data);
 }
 
 function create(type) {
