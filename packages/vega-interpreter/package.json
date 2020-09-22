@@ -10,19 +10,17 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "types": "index.d.ts",
   "main": "build/vega-interpreter.js",
-  "module": "index",
+  "module": "build/vega-interpreter.module.js",
+  "unpkg": "build/vega-interpreter.min.js",
+  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -n vega --extend -o build/vega-interpreter.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-interpreter.js -c -m -o build/vega-interpreter.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --extend",
+    "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "devDependencies": {
     "vega": "*"

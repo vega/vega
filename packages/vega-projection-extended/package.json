@@ -10,18 +10,16 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-projections-core.js",
-  "module": "index",
+  "main": "build/vega-projections.js",
+  "module": "build/vega-projections.module.js",
   "unpkg": "build/vega-projections.min.js",
   "jsdelivr": "build/vega-projections.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "node rollup.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup && node rollup.js -e",
-    "postbuild": "terser build/vega-projections.js -c -m -o build/vega-projections.min.js && terser build/vega-projections-core.js -c -m -o build/vega-projections-core.min.js",
-    "prepublishOnly": "yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-core",
+    "pretest": "yarn build --config-test",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "d3-geo-projection": "^3.0.0",

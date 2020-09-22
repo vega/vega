@@ -10,17 +10,15 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
   "main": "build/vega-functions.js",
-  "module": "index.js",
+  "module": "build/vega-functions.module.js",
+  "unpkg": "build/vega-functions.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-color:d3,d3-geo:d3,vega-dataflow:vega,vega-expression:vega,vega-scale:vega,vega-scenegraph:vega,vega-selections:vega,vega-statistics:vega,vega-time:vega,vega-util:vega -f umd -n vega -o build/vega-functions.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-functions.js -c -m -o build/vega-functions.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "d3-array": "^2.7.0",

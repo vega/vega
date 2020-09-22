@@ -10,17 +10,15 @@
   "license": "BSD-3-Clause",
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "main": "build/vega-event-selector.js",
-  "module": "index",
+  "module": "build/vega-event-selector.module.js",
+  "unpkg": "build/vega-event-selector.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -n vega -o build/vega-event-selector.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-event-selector.js -c -m -o build/vega-event-selector.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   }
 }

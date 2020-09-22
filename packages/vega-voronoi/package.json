@@ -9,17 +9,15 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-voronoi.js",
-  "module": "index",
+  "module": "build/vega-voronoi.module.js",
+  "unpkg": "build/vega-voronoi.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-delaunay:d3,vega-dataflow:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-voronoi.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-voronoi.js -c -m -o build/vega-voronoi.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "d3-delaunay": "^5.3.0",

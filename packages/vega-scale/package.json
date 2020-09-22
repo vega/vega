@@ -11,18 +11,15 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-scale.js",
-  "module": "index",
-  "types": "index.d.ts",
+  "module": "build/vega-scale.module.js",
+  "unpkg": "build/vega-scale.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,d3-interpolate:d3,d3-scale:d3,vega-time:vega,vega-util:vega -f umd -n vega -o build/vega-scale.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-scale.js -c -m -o build/vega-scale.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "d3-array": "^2.7.0",
