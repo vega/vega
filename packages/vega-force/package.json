@@ -1,6 +1,6 @@
 {
   "name": "vega-force",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "d3-force": "^2.1.1",
-    "vega-dataflow": "^5.7.2",
-    "vega-util": "^1.15.1"
+    "vega-dataflow": "^5.7.3",
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

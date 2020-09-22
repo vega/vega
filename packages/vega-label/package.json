@@ -24,10 +24,10 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-canvas": "^1.2.4",
-    "vega-dataflow": "^5.7.2",
-    "vega-scenegraph": "^4.9.1",
-    "vega-util": "^1.15.1"
+    "vega-canvas": "^1.2.5",
+    "vega-dataflow": "^5.7.3",
+    "vega-scenegraph": "^4.9.2",
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
