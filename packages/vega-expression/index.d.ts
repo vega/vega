@@ -35,7 +35,7 @@ export function codegen(
   /** A hash of all properties referenced within the _fieldvar_ scope */
   fields: string[];
 
-  /** A hash of all properties referenced outside a provided allowed */
+  /** A hash of all properties referenced outside a provided allowed list */
   globals: string[];
 };
 
