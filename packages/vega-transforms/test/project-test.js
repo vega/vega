@@ -7,7 +7,7 @@ var tape = require('tape'),
     Project = tx.project;
 
 tape('Project copies tuples', t => {
-  var data = [{'id': 0}, {'id': 1}];
+  const data = [{'id': 0}, {'id': 1}];
 
   var id = util.field('id'),
       df = new vega.Dataflow(),
@@ -70,7 +70,7 @@ tape('Project copies tuples', t => {
 });
 
 tape('Project projects tuples', t => {
-  var data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
+  const data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
 
   var id = util.field('id'),
       df = new vega.Dataflow(),
@@ -136,7 +136,7 @@ tape('Project projects tuples', t => {
 });
 
 tape('Project aliases tuples', t => {
-  var data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
+  const data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
 
   var id = util.field('id'),
       foo = util.field('foo'),
@@ -208,7 +208,7 @@ tape('Project aliases tuples', t => {
 });
 
 tape('Project projects tuples with nested properties', t => {
-  var data = [
+  const data = [
     {'id': 0, 'obj': {'foo': {'bar': 'a'}}},
     {'id': 1, 'obj': {'foo': {'bar': 'b'}}}
   ];

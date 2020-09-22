@@ -48,7 +48,7 @@ export default function(view, event, item) {
 }
 
 function extension(view, item, point) {
-  var itemGroup = item
+  const itemGroup = item
     ? item.mark.marktype === 'group' ? item : item.mark.group
     : null;
 
@@ -64,7 +64,7 @@ function extension(view, item, point) {
     if (!item) return point;
     if (isString(item)) item = group(item);
 
-    var p = point.slice();
+    const p = point.slice();
     while (item) {
       p[0] -= item.x || 0;
       p[1] -= item.y || 0;

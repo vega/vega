@@ -22,7 +22,7 @@ Scenegraph.prototype = {
 
   mark(markdef, group, index) {
     group = group || this.root.items[0];
-    var mark = createMark(markdef, group);
+    const mark = createMark(markdef, group);
     group.items[index] = mark;
     if (mark.zindex) mark.group.zdirty = true;
     return mark;

@@ -8,10 +8,10 @@ var tape = require('tape'),
     win = (new jsdom.JSDOM()).window,
     doc = win.document;
 
-var res = './test/resources/';
+const res = './test/resources/';
 
-var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.sceneFromJSON(marks[name]); }
+const marks = JSON.parse(load('marks.json'));
+for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
@@ -23,7 +23,7 @@ function loadScene(file) {
 
 function render(scene, w, h) {
   global.document = doc;
-  var r = new Renderer()
+  const r = new Renderer()
     .initialize(doc.body, w, h)
     .render(scene);
   delete global.document;
@@ -40,7 +40,7 @@ function renderAsync(scene, w, h, callback) {
 }
 
 function event(name, x, y) {
-  var evt = new win.MouseEvent(name, {clientX: x, clientY: y});
+  const evt = new win.MouseEvent(name, {clientX: x, clientY: y});
   evt.changedTouches = [{
     clientX: x || 0,
     clientY: y || 0
@@ -99,16 +99,16 @@ tape('CanvasHandler should add/remove event callbacks', t => {
 });
 
 tape('CanvasHandler should handle input events', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var handler = new Handler()
+  const scene = loadScene('scenegraph-rect.json');
+  const handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
   t.equal(handler.scene(), scene);
 
   var canvas = handler.canvas();
-  var count = 0;
-  var increment = function() { count++; };
+  let count = 0;
+  const increment = function() { count++; };
 
   handler.events.forEach(name => {
     handler.on(name, increment);
@@ -150,8 +150,8 @@ tape('CanvasHandler should handle input events', t => {
 });
 
 tape('CanvasHandler should pick elements in scenegraph', t => {
-  var scene = loadScene('scenegraph-rect.json');
-  var handler = new Handler().initialize(render(scene, 400, 200));
+  const scene = loadScene('scenegraph-rect.json');
+  const handler = new Handler().initialize(render(scene, 400, 200));
   t.ok(handler.pick(scene, 20, 180, 20, 180));
   t.notOk(handler.pick(scene, 0, 0, 0, 0));
   t.notOk(handler.pick(scene, 800, 800, 800, 800));
@@ -159,8 +159,8 @@ tape('CanvasHandler should pick elements in scenegraph', t => {
 });
 
 tape('CanvasHandler should pick arc mark', t => {
-  var mark = marks.arc;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.arc;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 260, 300, 260, 300));
   t.notOk(handler.pick(mark, 248, 250, 248, 250));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -168,8 +168,8 @@ tape('CanvasHandler should pick arc mark', t => {
 });
 
 tape('CanvasHandler should pick area mark', t => {
-  var mark = marks['area-h'];
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  let mark = marks['area-h'];
+  let handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 100, 150, 100, 150));
   t.notOk(handler.pick(mark, 100, 50, 100, 50));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -185,23 +185,23 @@ tape('CanvasHandler should pick area mark', t => {
 });
 
 tape('CanvasHandler should pick group mark', t => {
-  var mark = {
+  const mark = {
     'marktype': 'group',
     'name': 'class-name',
     'items': [
       {'x':5, 'y':5, 'width':100, 'height':56, 'fill':'steelblue', 'clip':true, 'items':[]}
     ]
   };
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 50, 50, 50, 50));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
   t.end();
 });
 
 tape('CanvasHandler should pick image mark', t => {
-  var mark = marks.image;
+  const mark = marks.image;
   renderAsync(mark, 500, 500, el => {
-    var handler = new Handler().initialize(el);
+    const handler = new Handler().initialize(el);
     t.ok(handler.pick(mark, 250, 150, 250, 150));
     t.notOk(handler.pick(mark, 100, 305, 100, 305));
     t.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -210,13 +210,13 @@ tape('CanvasHandler should pick image mark', t => {
 });
 
 tape('CanvasHandler should pick line mark', t => {
-  var mark = marks['line-2'];
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  let mark = marks['line-2'];
+  let handler = new Handler().initialize(render(mark, 500, 500));
   t.notOk(handler.pick(mark, 100, 144, 100, 144));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   // fake isPointInStroke until node canvas supports it
-  var g = handler.context();
+  let g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
   t.ok(handler.pick(mark, 0, 144, 0, 144));
@@ -235,8 +235,8 @@ tape('CanvasHandler should pick line mark', t => {
 });
 
 tape('CanvasHandler should pick path mark', t => {
-  var mark = marks.path;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.path;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 150, 150, 150, 150));
   t.notOk(handler.pick(mark, 200, 300, 300, 300));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -244,21 +244,21 @@ tape('CanvasHandler should pick path mark', t => {
 });
 
 tape('CanvasHandler should pick rect mark', t => {
-  var mark = marks.rect;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.rect;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 50, 50, 50, 50));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
   t.end();
 });
 
 tape('CanvasHandler should pick rule mark', t => {
-  var mark = marks.rule;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.rule;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.notOk(handler.pick(mark, 100, 198, 100, 198));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
   // fake isPointInStroke until node canvas supports it
-  var g = handler.context();
+  const g = handler.context();
   g.pixelRatio = 1.1;
   g.isPointInStroke = function() { return true; };
   t.ok(handler.pick(mark, 5, 0, 5, 0));
@@ -267,8 +267,8 @@ tape('CanvasHandler should pick rule mark', t => {
 });
 
 tape('CanvasHandler should pick symbol mark', t => {
-  var mark = marks.symbol;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.symbol;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 50, 90, 50, 90));
   t.notOk(handler.pick(mark, 155, 22, 155, 22));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
@@ -276,8 +276,8 @@ tape('CanvasHandler should pick symbol mark', t => {
 });
 
 tape('CanvasHandler should pick text mark', t => {
-  var mark = marks.text;
-  var handler = new Handler().initialize(render(mark, 500, 500));
+  const mark = marks.text;
+  const handler = new Handler().initialize(render(mark, 500, 500));
   t.ok(handler.pick(mark, 3, 45, 3, 45));
   t.ok(handler.pick(mark, 140, 160, 140, 160));
   t.ok(handler.pick(mark, 49, 120, 49, 120));
@@ -287,8 +287,8 @@ tape('CanvasHandler should pick text mark', t => {
 });
 
 tape('CanvasHandler should not pick empty marks', t => {
-  var scene = {marktype:'', items:[]};
-  var types = [
+  const scene = {marktype:'', items:[]};
+  const types = [
     'arc',
     'area',
     'group',

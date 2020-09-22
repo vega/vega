@@ -73,66 +73,64 @@ export class View {
     },
   );
 
+  // View Configuration
+
   initialize(container?: Element | string, bindContainer?: Element | string): this;
+
   finalize(): this;
+
+  loader(loader: Loader): this;
+  loader(): Loader;
 
   logLevel(level: number): this;
   logLevel(): number;
+
   logger(logger: LoggerInterface): this;
   logger(): LoggerInterface;
 
   renderer(renderer: Renderers): this;
   renderer(): Renderers;
 
-  loader(loader: Loader): this;
-  loader(): Loader;
-
-  locale(locale: LocaleFormatters): this;
-  locale(): LocaleFormatters;
+  tooltip(handler: TooltipHandler): this;
 
   hover(hoverSet?: EncodeEntryName, leaveSet?: EncodeEntryName): this;
-  run(encode?: string): this;
-  runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
-  runAsync(): Promise<View>;
-  insert(name: string, tuples: any): this;
-  remove(name: string, tuples: any): this;
-  change(name: string, changeset: Changeset): this;
-  changeset(): any;
-  data(name: string): any[];
-  data(name: string, tuples: any): this;
 
   description(s: string): this;
   description(): string;
+
+  background(s: Color): this;
+  background(): Color;
 
   width(w: number): this;
   width(): number;
   height(h: number): this;
   height(): number;
 
-  origin(): [number, number];
-
   padding(p: Padding): this;
   padding(): Padding;
 
   resize(): this;
 
-  toImageURL(type: string, scaleFactor?: number): Promise<string>;
-  toSVG(scaleFactor?: number): Promise<string>;
-  toCanvas(scaleFactor?: number, options?: ToCanvasOptions): Promise<HTMLCanvasElement>;
+  // Dataflow and Rendering
+
+  runAsync(): Promise<View>;
+
+  run(encode?: string): this;
+
+  runAfter(callback: (view: this) => void, enqueue?: boolean, priority?: number): this;
+
+  dirty(item: any): void;
+
+  container(): HTMLElement | null;
+
+  scenegraph(): Scene;
+
+  origin(): [number, number];
+
+  // Signals
 
   signal(name: string, value: SignalValue): this;
   signal(name: string): SignalValue;
-  container(): HTMLElement | null;
-  scenegraph(): Scene;
-  addEventListener(type: string, handler: EventListenerHandler): this;
-  removeEventListener(type: string, handler: EventListenerHandler): this;
-  addSignalListener(name: string, handler: SignalListenerHandler): this;
-  removeSignalListener(name: string, handler: SignalListenerHandler): this;
-  addDataListener(name: string, handler: DataListenerHandler): this;
-  removeDataListener(name: string, handler: DataListenerHandler): this;
-  addResizeListener(handler: ResizeHandler): this;
-  removeResizeListener(handler: ResizeHandler): this;
-  tooltip(handler: TooltipHandler): this;
 
   getState(options?: {
     signals?: (name?: string, operator?: any) => boolean;
@@ -140,6 +138,49 @@ export class View {
     recurse?: boolean;
   }): { signals?: any; data?: any };
   setState(state: { signals?: any; data?: any }): this;
+
+  addSignalListener(name: string, handler: SignalListenerHandler): this;
+  removeSignalListener(name: string, handler: SignalListenerHandler): this;
+
+  // Event Handling
+
+  events(source: any, type: any, filter?: (_: any) => boolean): any;
+
+  addEventListener(type: string, handler: EventListenerHandler): this;
+  removeEventListener(type: string, handler: EventListenerHandler): this;
+
+  addResizeListener(handler: ResizeHandler): this;
+  removeResizeListener(handler: ResizeHandler): this;
+
+  globalCursor(flag: boolean): any;
+
+  preventDefault(flag: boolean): void;
+
+  // Image Export
+
+  toCanvas(scaleFactor?: number, options?: ToCanvasOptions): Promise<HTMLCanvasElement>;
+  toSVG(scaleFactor?: number): Promise<string>;
+  toImageURL(type: string, scaleFactor?: number): Promise<string>;
+
+  // Data and Scales
+  scale(name: string): any;
+
+  data(name: string): any[];
+  data(name: string, tuples: any): this;
+
+  addDataListener(name: string, handler: DataListenerHandler): this;
+  removeDataListener(name: string, handler: DataListenerHandler): this;
+
+  change(name: string, changeset: Changeset): this;
+  insert(name: string, tuples: any): this;
+  remove(name: string, tuples: any): this;
+
+  // Undocumented (https://github.com/vega/vega/issues/2844, https://github.com/vega/vega/issues/2845)
+
+  locale(locale: LocaleFormatters): this;
+  locale(): LocaleFormatters;
+
+  changeset(): Changeset;
 }
 
 export type ScenegraphEvent = MouseEvent | TouchEvent | KeyboardEvent;

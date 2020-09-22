@@ -26,8 +26,8 @@ tape('Nest tuples', t => {
   // -- test adds
   df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
 
-  var expected = [dataA, dataB];
-  var expectedRoot = {
+  let expected = [dataA, dataB];
+  let expectedRoot = {
     data: {values: [nodeA, nodeB]},
     height: 2,
     depth: 0,
@@ -43,7 +43,7 @@ tape('Nest tuples', t => {
   };
 
   // test and remove circular properties first
-  var d = out.value;
+  let d = out.value;
   t.equal(d.root.children[0].parent, d.root);
   t.equal(d.root.children[1].parent, d.root);
   t.equal(d.root.lookup['1'].parent, d.root.children[0]);

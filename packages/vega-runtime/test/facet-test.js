@@ -4,14 +4,14 @@ var tape = require('tape'),
     runtime = require('../');
 
 tape('Parser parses faceted dataflow specs', t => {
-  var values = [
+  const values = [
     {'k': 'a', 'x': 1,  'y': 28},
     {'k': 'b', 'x': 2,  'y': 43},
     {'k': 'a', 'x': 3,  'y': 81},
     {'k': 'b', 'x': 4,  'y': 19}
   ];
 
-  var spec = {operators: [
+  const spec = {operators: [
     {id:0, type:'Collect', value:{$ingest: values}},
     {id:1, type:'Facet', params:{
       key: {$field: 'k'},
@@ -36,10 +36,10 @@ tape('Parser parses faceted dataflow specs', t => {
     }}
   ]};
 
-  var len0 = 3; // number of operators in 1st subflow (ignore Subflow op)
-  var len1 = 1; // number of operators in 2nd subflow (ignore Subflow op)
-  var nkey = 2; // number of facet keys per level
-  var size = 2; // number of tuples per facet in 1st subflow
+  const len0 = 3; // number of operators in 1st subflow (ignore Subflow op)
+  const len1 = 1; // number of operators in 2nd subflow (ignore Subflow op)
+  const nkey = 2; // number of facet keys per level
+  const size = 2; // number of tuples per facet in 1st subflow
 
   // ----
 

@@ -11,9 +11,9 @@ function closeTo(t, a, b, delta) {
 }
 
 function check(t, u, s, values) {
-  var sum = values.reduce((a, b) => a + b, 0);
-  var avg = sum / values.length;
-  var dev = values.reduce((a, b) => a + (b-avg)*(b-avg), 0);
+  const sum = values.reduce((a, b) => a + b, 0);
+  const avg = sum / values.length;
+  let dev = values.reduce((a, b) => a + (b-avg)*(b-avg), 0);
   dev = dev / (values.length-1);
 
   // mean within 99.9% confidence interval
@@ -21,13 +21,13 @@ function check(t, u, s, values) {
 }
 
 function samples(dist, n) {
-  var a = Array(n);
+  const a = Array(n);
   while (--n >= 0) a[n] = dist.sample();
   return a;
 }
 
 tape('kde generates samples', t => {
-  var kde = stats.randomKDE(d3.range(0, 1000)
+  let kde = stats.randomKDE(d3.range(0, 1000)
     .map(gaussian.sample));
   check(t, 0, 1, samples(kde, 1000));
 
@@ -64,7 +64,7 @@ tape('kde does not support the inverse cdf', t => {
 });
 
 tape('kde auto-selects positive bandwidth values', t => {
-  var a = [377, 347, 347, 347, 347, 347];
+  const a = [377, 347, 347, 347, 347, 347];
   t.ok(stats.randomKDE(a).bandwidth() > 0);
   t.ok(stats.randomKDE(a.slice(1)).bandwidth() > 0);
   t.ok(stats.randomKDE([-1, -1, -1]).bandwidth() > 0);

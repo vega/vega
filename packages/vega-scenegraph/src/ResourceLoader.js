@@ -21,7 +21,7 @@ ResourceLoader.prototype = {
   },
 
   sanitizeURL(uri) {
-    var loader = this;
+    const loader = this;
     increment(loader);
 
     return loader._loader.sanitize(uri, {context:'href'})
@@ -67,7 +67,7 @@ ResourceLoader.prototype = {
   },
 
   ready() {
-    var loader = this;
+    const loader = this;
     return new Promise(accept => {
       function poll(value) {
         if (!loader.pending()) accept(value);

@@ -7,7 +7,7 @@ var tape = require('tape'),
     Extent = tx.extent;
 
 tape('Extent computes extents', t => {
-  var data = [
+  const data = [
     {'x': 0, 'y': 28}, {'x': 1, 'y': 43},
     {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
   ];

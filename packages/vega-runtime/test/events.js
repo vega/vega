@@ -1,9 +1,9 @@
-var vega = require('vega-dataflow');
+const vega = require('vega-dataflow');
 
-var registry = {};
+const registry = {};
 
 function events(source, type, filter) {
-  var handlers = registry[source] || (registry[source] = {});
+  const handlers = registry[source] || (registry[source] = {});
   return (handlers[type] = new vega.EventStream(filter));
 }
 

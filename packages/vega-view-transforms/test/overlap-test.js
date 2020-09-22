@@ -6,7 +6,7 @@ var tape = require('tape'),
     Overlap = tx.overlap;
 
 function items() {
-  var mark = {bounds: new Bounds(0, 0, 20, 10)};
+  const mark = {bounds: new Bounds(0, 0, 20, 10)};
   return [
     {opacity: 1, mark: mark, bounds: new Bounds().set( 0, 0,  3, 10)},
     {opacity: 1, mark: mark, bounds: new Bounds().set( 5, 0, 20, 10)},

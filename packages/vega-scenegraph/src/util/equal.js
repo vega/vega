@@ -1,7 +1,7 @@
 import pathParse from '../path/parse';
 import {isNumber, isObject} from 'vega-util';
 
-var TOLERANCE = 1e-9;
+const TOLERANCE = 1e-9;
 
 export function sceneEqual(a, b, key) {
   return (a === b) ? true

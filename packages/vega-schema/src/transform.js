@@ -42,7 +42,7 @@ function transformSchema(name, def) {
 }
 
 function parameterSchema(param) {
-  var p = {};
+  let p = {};
 
   switch (param.type) {
     case 'projection':

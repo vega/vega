@@ -10,15 +10,14 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-schema.js",
-  "module": "index",
+  "module": "build/vega-schema.module.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-scale:vega -f cjs -o build/vega-schema.js -- index.js",
-    "prebuild": "rm -rf build && mkdir build",
-    "build": "yarn rollup && node schema > build/vega-schema.json",
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-node",
+    "postbuild": "node schema > build/vega-schema.json",
     "test": "yarn build",
-    "prepublishOnly": "yarn test",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test"
   },
   "dependencies": {
     "vega-scale": "^7.1.0"

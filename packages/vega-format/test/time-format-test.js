@@ -66,7 +66,7 @@ tape('utcFormat supports specifier strings', t => {
 });
 
 tape('utcFormat supports specifier objects', t => {
-  var f = locale.utcFormat();
+  let f = locale.utcFormat();
   t.equal(f(utc(2001, 0, 1)), '2001');
   t.equal(f(utc(2001, 1, 1)), 'February');
   t.equal(f(utc(2001, 1, 2)), 'Fri 02');

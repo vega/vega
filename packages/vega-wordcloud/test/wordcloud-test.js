@@ -5,7 +5,7 @@ var tape = require('tape'),
     Wordcloud = require('../').wordcloud;
 
 tape('Wordcloud generates wordcloud layout', t => {
-  var data = [
+  const data = [
     {text: 'foo', size: 49, index: 0},
     {text: 'bar', size: 36, index: 1},
     {text: 'baz', size: 25, index: 2},
@@ -26,7 +26,7 @@ tape('Wordcloud generates wordcloud layout', t => {
         pulse: c0
       });
 
-  var angles = [0, 30, 60, 90];
+  const angles = [0, 30, 60, 90];
   rot.set(t => angles[t.index]);
 
   df.pulse(c0, vega.changeset().insert(data)).run();

@@ -54,10 +54,15 @@ export type ValuesData = {
 } & BaseData;
 
 export type UrlData = {
-  url: string | SignalRef;
+  url: URI | SignalRef;
   format?: Format | SignalRef;
   async?: boolean | SignalRef;
 } & BaseData;
 
 export type Data = SourceData | ValuesData | UrlData | BaseData;
 export type Datum = any;
+
+/**
+ * @format uri-reference
+ */
+export type URI = string;

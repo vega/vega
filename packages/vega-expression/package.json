@@ -11,18 +11,16 @@
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
   "main": "build/vega-expression.js",
-  "module": "index",
+  "module": "build/vega-expression.module.js",
+  "unpkg": "build/vega-expression.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g vega-util:vega -n vega -o build/vega-expression.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-expression.js -c -m -o build/vega-expression.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "vega-util": "^1.15.1"

@@ -13,8 +13,8 @@ tape('Evaluate expressions without white or black list', t => {
   });
 
   function evaluate(str) {
-    var value = codegen(vega.parse(str));
-    var fn = Function('"use strict"; return (' + value.code + ')');
+    const value = codegen(vega.parse(str));
+    const fn = Function('"use strict"; return (' + value.code + ')');
     return fn();
   }
 
@@ -23,7 +23,7 @@ tape('Evaluate expressions without white or black list', t => {
   };
 
   // should access globals object
-  var unicode = 'd\u00A9';
+  const unicode = 'd\u00A9';
   global._val_ = 5;
   global[unicode] = 3.14;
   t.equal(evaluate('global._val_+1'), 6);
@@ -50,9 +50,9 @@ tape('Evaluate expressions with black list', t => {
   });
 
   function evaluate(str) {
-    var d = {a: 2, föö: 5};
-    var value = codegen(vega.parse(str));
-    var fn = Function('d', '"use strict";return(' + value.code + ')');
+    const d = {a: 2, föö: 5};
+    const value = codegen(vega.parse(str));
+    const fn = Function('d', '"use strict";return(' + value.code + ')');
     return fn(d);
   }
 
@@ -79,13 +79,13 @@ tape('Evaluate expressions with white list', t => {
   });
 
   function evaluate(str) {
-    var datum = {a: 2, föö: 5};
-    var evt = {type: 'mousemove'};
-    var value = codegen(vega.parse(str));
+    const datum = {a: 2, föö: 5};
+    const evt = {type: 'mousemove'};
+    const value = codegen(vega.parse(str));
     if (value.globals.length > 0) {
       throw Error('Found non-whitelisted global identifier.');
     }
-    var fn = Function('datum', 'event', 'signals', 'return (' + value.code + ')');
+    const fn = Function('datum', 'event', 'signals', 'return (' + value.code + ')');
     return fn(datum, evt);
   }
 
@@ -188,8 +188,8 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('sin(1)'), Math.sin(1));
   t.equal(evaluate('sqrt(2)'), Math.sqrt(2));
   t.equal(evaluate('tan(1)'), Math.tan(1));
-  for (var i=0; i<5; ++i) {
-    var r = evaluate('random()');
+  for (let i=0; i<5; ++i) {
+    const r = evaluate('random()');
     t.equal(r >= 0 && r <= 1, true);
   }
 
@@ -256,7 +256,7 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('utcseconds(datetime(2001,1,1))'), d.getUTCSeconds());
   t.equal(evaluate('utcmilliseconds(datetime(2001,1,1))'), d.getUTCMilliseconds());
 
-  for (var date=1; date<=7; ++date) {
+  for (let date=1; date<=7; ++date) {
     d = new Date(2001, 1, date);
     t.equal(evaluate('date(datetime(2001,1,'+date+'))'), d.getDate());
     t.equal(evaluate('utcdate(datetime(2001,1,'+date+'))'), d.getUTCDate());
