@@ -71,6 +71,14 @@ tape('JSON reader should read json from property', t => {
   t.end();
 });
 
+tape('JSON reader should copy data when "copy: true" provided', t => {
+  var copy = read(data, { type: 'json', copy: true });
+  t.deepEqual(copy, data);
+  t.notEqual(copy, data);
+  copy.forEach((obj, i) => t.notEqual(obj, data[i]));
+  t.end();
+});
+
 tape('JSON reader should parse date with format %d.%m.%Y', t => {
   var expected = function() { return [{foo: new Date(1990, 6, 18)}]; },
       input = function() { return [{foo: '18.07.1990'}]; },
