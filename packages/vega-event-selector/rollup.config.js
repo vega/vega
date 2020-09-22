@@ -1,2 +1,1 @@
-import rollupConfig from '../../lib/rollup.config';
-export default rollupConfig;
+export { default } from '../../rollup.config';

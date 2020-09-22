@@ -28,6 +28,12 @@ const d3CoreDeps = [
   'topojson-client'
 ];
 
+function onwarn(warning, defaultHandler) {
+  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+    defaultHandler(warning);
+  }
+}
+
 /**
  * Command line arguments:
  *  `config-debug`: print debug information about the build
@@ -68,7 +74,7 @@ export default function(commandLineArgs) {
       globals[dep] = 'topojson';
     }
   }
-  
+
   function commonPlugins(targets) {
     if (debug) {
       console.log(targets);
@@ -84,11 +90,8 @@ export default function(commandLineArgs) {
             debug
           }
         ]],
-        babelHelpers: 'runtime',
-        extensions: ['.js', '.ts'],
-        plugins: [['@babel/plugin-transform-runtime', {
-          useESModules: true
-        }]]
+        babelHelpers: 'bundled',
+        extensions: ['.js', '.ts']
       }),
       bundleSize()
     ];
@@ -101,25 +104,27 @@ export default function(commandLineArgs) {
       customResolveOptions: { preserveSymlinks: false }
     });
   }
-  
+
   const outputs = [{
     input: './index.js',
     external: dependencies,
+    onwarn,
     output: {
       file: pkg.main,
       format: pkg.main.includes('-node') ? 'cjs' : 'umd',
       globals,
-      sourcemap: true,
+      sourcemap: false,
       name
     },
     plugins: [nodePlugin(false), ...commonPlugins({node: true})]
   }, {
     input: browser ? './index.browser.js' : './index.js',
     external: dependencies,
+    onwarn,
     output: {
       file: pkg.module,
       format: 'esm',
-      sourcemap: true
+      sourcemap: false
     },
     plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
   }];
@@ -138,6 +143,7 @@ export default function(commandLineArgs) {
         plugins: [terser()]
       }, {
         ...output,
+        sourcemap: false,
         file: output.file.replace('.min', '')
       }];
     } else {
@@ -151,7 +157,8 @@ export default function(commandLineArgs) {
   if (!commandLineArgs['config-node']) {
     outputs.push({
       input: browser ? './index.browser.js' : './index.js',
-      external: [/@babel\/runtime/, ...vgDependencies],
+      external: vgDependencies,
+      onwarn,
       output: bundleOutputs({
         file: pkg.unpkg,
         format: 'iife',
@@ -165,7 +172,8 @@ export default function(commandLineArgs) {
     if (ie) {
       outputs.push({
         input: browser ? './index.browser.js' : './index.js',
-        external: [/@babel\/runtime/, ...vgDependencies],
+        external: vgDependencies,
+        onwarn,
         output: bundleOutputs({
           file: pkg.unpkg.replace('build/', 'build-es5/'),
           format: 'iife',
@@ -182,7 +190,8 @@ export default function(commandLineArgs) {
     // Create bundle without d3 (core bundle)
     outputs.push({
       input: browser ? './index.browser.js' : './index.js',
-      external: [/@babel\/runtime/, ...vgDependencies, ...coreExternal],
+      external: [...vgDependencies, ...coreExternal],
+      onwarn,
       output: bundleOutputs({
         file: pkg.unpkg.replace('.min.js', '-core.min.js'),
         format: 'iife',
@@ -196,7 +205,8 @@ export default function(commandLineArgs) {
     if (ie) {
       outputs.push({
         input: browser ? './index.browser.js' : './index.js',
-        external: [/@babel\/runtime/, ...vgDependencies, ...coreExternal],
+        external: [...vgDependencies, ...coreExternal],
+        onwarn,
         output: bundleOutputs({
           file: pkg.unpkg.replace('.min.js', '-core.min.js').replace('build/', 'build-es5/'),
           format: 'iife',
