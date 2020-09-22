@@ -51,7 +51,7 @@ tape('Scale respects domain configuration', t => {
 });
 
 tape('Scale respects domain padding', t => {
-  var d;
+  let d;
 
   // test linear scale padding
   d = scale({

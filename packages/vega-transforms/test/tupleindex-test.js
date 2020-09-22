@@ -7,7 +7,7 @@ var tape = require('tape'),
     TupleIndex = tx.tupleindex;
 
 tape('TupleIndex maintains an index of tuples', t => {
-  var data = [
+  const data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}

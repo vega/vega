@@ -5,7 +5,7 @@ var tape = require('tape'),
 
 tape('Parser parses event streams', t => {
 
-  var spec = {
+  const spec = {
     streams: [
       { id:0, source:'window', type:'mousemove' },
       { id:1, source:'window', type:'mousedown' },
@@ -17,7 +17,7 @@ tape('Parser parses event streams', t => {
     ]
   };
 
-  var df = new vega.Dataflow();
+  const df = new vega.Dataflow();
   df.events = events.events;
   df.fire = events.fire;
 

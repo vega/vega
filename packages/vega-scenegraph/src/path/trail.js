@@ -10,7 +10,7 @@ export default function() {
       ready, x1, y1, r1;
 
   function point(x2, y2, w2) {
-    var r2 = w2 / 2;
+    const r2 = w2 / 2;
 
     if (ready) {
       var ux = y1 - y2,

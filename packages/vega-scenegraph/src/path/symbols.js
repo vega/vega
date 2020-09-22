@@ -3,12 +3,12 @@ import pathRender from './render';
 import {HalfSqrt3, Tau} from '../util/constants';
 import {hasOwnProperty} from 'vega-util';
 
-var Tan30 = 0.5773502691896257;
+const Tan30 = 0.5773502691896257;
 
-var builtins = {
+const builtins = {
   'circle': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+      const r = Math.sqrt(size) / 2;
       context.moveTo(r, 0);
       context.arc(0, 0, r, 0, Tau);
     }
@@ -34,7 +34,7 @@ var builtins = {
   },
   'diamond': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+      const r = Math.sqrt(size) / 2;
       context.moveTo(-r, 0);
       context.lineTo(0, -r);
       context.lineTo(r, 0);
@@ -130,7 +130,7 @@ var builtins = {
   },
   'stroke': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2;
+      const r = Math.sqrt(size) / 2;
       context.moveTo(-r, 0);
       context.lineTo(r, 0);
     }
@@ -145,7 +145,7 @@ var custom = {};
 
 function customSymbol(path) {
   if (!hasOwnProperty(custom, path)) {
-    var parsed = pathParse(path);
+    const parsed = pathParse(path);
     custom[path] = {
       draw: function(context, size) {
         pathRender(context, parsed, 0, 0, Math.sqrt(size) / 2);

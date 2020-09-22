@@ -2,7 +2,7 @@ var tape = require('tape'),
     parse = require('../').parse;
 
 tape('Parser parses Vega specs with scales', t => {
-  var spec = {
+  const spec = {
     'width': 500,
     'height': 300,
     'signals': [
@@ -52,7 +52,7 @@ tape('Parser parses Vega specs with scales', t => {
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
   t.equal(dfs.operators.length, 28);
   t.deepEqual(dfs.operators.map(o => o.type),
@@ -68,7 +68,7 @@ tape('Parser parses Vega specs with scales', t => {
 });
 
 tape('Parser parses Vega specs with multi-domain scales', t => {
-  var spec = {
+  const spec = {
     'data': [
       {
         'name': 'table',
@@ -126,7 +126,7 @@ tape('Parser parses Vega specs with multi-domain scales', t => {
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
   t.equal(dfs.operators.length, 34);
   t.deepEqual(dfs.operators.map(o => o.type),

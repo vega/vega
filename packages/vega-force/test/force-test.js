@@ -4,7 +4,7 @@ var tape = require('tape'),
     Force = require('../').force;
 
 tape('Force places points', t => {
-  var data = [
+  const data = [
     {label: 'a'},
     {label: 'b'},
     {label: 'c'},

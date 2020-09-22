@@ -7,7 +7,7 @@ var tape = require('tape'),
     Relay = tx.relay;
 
 tape('Relay propagates pulse', t => {
-  var data = [{'id': 0}, {'id': 1}];
+  const data = [{'id': 0}, {'id': 1}];
 
   var df = new vega.Dataflow(),
       c = df.add(Collect),
@@ -26,7 +26,7 @@ tape('Relay propagates pulse', t => {
 });
 
 tape('Relay relays derived tuples', t => {
-  var data = [{'id': 0}, {'id': 1}];
+  const data = [{'id': 0}, {'id': 1}];
 
   var id = util.field('id'),
       df = new vega.Dataflow(),

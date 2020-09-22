@@ -3,18 +3,18 @@ var tape = require('tape'),
     Handler = vega.Handler;
 
 tape('Handler should support argument free constructor', t => {
-  var h = new Handler();
+  const h = new Handler();
   t.equal(h._active, null);
   t.ok(h._handlers);
   t.end();
 });
 
 tape('Handler should initialize', t => {
-  var el = {};
-  var obj = {};
-  var o = [1, 1];
-  var h = new Handler();
-  var s = h.initialize(el, o, obj);
+  const el = {};
+  const obj = {};
+  const o = [1, 1];
+  const h = new Handler();
+  const s = h.initialize(el, o, obj);
   t.equal(s, h);
   t.equal(h._el, el);
   t.equal(h._obj, obj);
@@ -28,15 +28,15 @@ tape('Handler should initialize', t => {
 });
 
 tape('Handler should parse event names', t => {
-  var h = new Handler();
+  const h = new Handler();
   t.equal(h.eventName('touchstart'), 'touchstart');
   t.equal(h.eventName('click.foo'), 'click');
   t.end();
 });
 
 tape('Handler should return array of handlers', t => {
-  var obj = {};
-  var h = new Handler();
+  const obj = {};
+  let h = new Handler();
   t.deepEqual(h.handlers(), []);
   h._handlers = {'click':[obj]};
   h = h.handlers();

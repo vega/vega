@@ -147,7 +147,7 @@ inherits(Aggregate, Transform, {
     // initialize group-by dimensions
     this._dims = array(_.groupby);
     this._dnames = this._dims.map(d => {
-      var dname = accessorName(d);
+      const dname = accessorName(d);
       inputVisit(d);
       outputs.push(dname);
       return dname;

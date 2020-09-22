@@ -46,7 +46,7 @@ inherits(GeoPath, Transform, {
         : out.ADD;
     }
 
-    var prev = initPath(path, _.pointRadius);
+    const prev = initPath(path, _.pointRadius);
     out.visit(flag, t => t[as] = path(field(t)));
     path.pointRadius(prev);
 
@@ -55,7 +55,7 @@ inherits(GeoPath, Transform, {
 });
 
 function initPath(path, pointRadius) {
-  var prev = path.pointRadius();
+  const prev = path.pointRadius();
   path.context(null);
   if (pointRadius != null) {
     path.pointRadius(pointRadius);
