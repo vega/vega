@@ -1,6 +1,6 @@
 {
   "name": "vega-time",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "JavaScript date/time utilities for Vega.",
   "keywords": [
     "vega",
@@ -22,8 +22,8 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.0",
+    "d3-array": "^2.7.1",
     "d3-time": "^2.0.0",
-    "vega-util": "^1.15.1"
+    "vega-util": "^1.15.2"
   }
 }

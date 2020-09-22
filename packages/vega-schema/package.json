@@ -1,6 +1,6 @@
 {
   "name": "vega-schema",
-  "version": "5.15.0",
+  "version": "5.16.0",
   "description": "Generate the Vega JSON schema.",
   "keywords": [
     "vega",
@@ -20,7 +20,7 @@
     "prepublishOnly": "yarn test"
   },
   "dependencies": {
-    "vega-scale": "^7.1.0"
+    "vega-scale": "^7.1.1"
   },
   "devDependencies": {
     "vega-crossfilter": "*",
