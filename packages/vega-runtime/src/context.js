@@ -96,7 +96,7 @@ Context.prototype = Subcontext.prototype = {
     }
 
     if (spec.parent) {
-      var p = ctx.get(spec.parent.$ref);
+      let p = ctx.get(spec.parent.$ref);
       if (p) {
         df.connect(p, [op]);
         op.targets().add(p);

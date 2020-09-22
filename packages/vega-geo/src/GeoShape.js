@@ -53,7 +53,7 @@ inherits(GeoShape, Transform, {
 });
 
 function shapeGenerator(path, field, pointRadius) {
-  var shape = pointRadius == null
+  const shape = pointRadius == null
     ? _ => path(field(_))
     : _ => {
       var prev = path.pointRadius(),

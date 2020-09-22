@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../');
 
 tape('Parameters handles parameter values', t => {
-  var p = new vega.Parameters;
+  const p = new vega.Parameters;
 
   // test initial state
   t.equal(p.modified('foo'), false);
@@ -20,7 +20,7 @@ tape('Parameters handles parameter values', t => {
   t.equal(p.foo, 3);
 
   // test array parameter
-  var bar = ['a', 'b', 'c'];
+  const bar = ['a', 'b', 'c'];
   t.equal(p.set('bar', -1, bar), p);
   t.equal(p.modified('bar'), true);
   t.equal(p.modified('bar', 0), true);

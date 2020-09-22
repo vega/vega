@@ -2,7 +2,7 @@ import HierarchyLayout from './HierarchyLayout';
 import {error, hasOwnProperty, inherits} from 'vega-util';
 import {cluster, tree} from 'd3-hierarchy';
 
-var Layouts = {
+const Layouts = {
   tidy: tree,
   cluster: cluster
 };
@@ -38,7 +38,7 @@ inherits(Tree, HierarchyLayout, {
    * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
    */
   layout(method) {
-    var m = method || 'tidy';
+    const m = method || 'tidy';
     if (hasOwnProperty(Layouts, m)) return Layouts[m]();
     else error('Unrecognized Tree layout method: ' + m);
   },

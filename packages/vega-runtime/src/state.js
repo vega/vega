@@ -1,6 +1,6 @@
 import {truthy} from 'vega-util';
 
-var SKIP = {skip: true};
+const SKIP = {skip: true};
 
 export function getState(options) {
   var ctx = this,
@@ -9,7 +9,7 @@ export function getState(options) {
   if (options.signals) {
     var signals = (state.signals = {});
     Object.keys(ctx.signals).forEach(key => {
-      var op = ctx.signals[key];
+      const op = ctx.signals[key];
       if (options.signals(key, op)) {
         signals[key] = op.value;
       }
@@ -19,7 +19,7 @@ export function getState(options) {
   if (options.data) {
     var data = (state.data = {});
     Object.keys(ctx.data).forEach(key => {
-      var dataset = ctx.data[key];
+      const dataset = ctx.data[key];
       if (options.data(key, dataset)) {
         data[key] = dataset.input.value;
       }
@@ -51,7 +51,7 @@ export function setState(state) {
   });
 
   (state.subcontext  || []).forEach((substate, i) => {
-    var subctx = ctx.subcontext[i];
+    const subctx = ctx.subcontext[i];
     if (subctx) subctx.setState(substate);
   });
 }

@@ -7,7 +7,7 @@ var tape = require('tape'),
     Fold = tx.fold;
 
 tape('Fold folds tuples', t => {
-  var data = [
+  const data = [
     {a:'!', b:5, c:7},
     {a:'?', b:2, c:4}
   ];

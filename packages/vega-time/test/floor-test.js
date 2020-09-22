@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../'),
     {local, utc} = require('./util');
 
-var UNITS = [
+const UNITS = [
   'year',
   'quarter',
   'month',
@@ -45,7 +45,7 @@ function testFloor(t, data, f, g) {
 }
 
 tape('timeFloor generates local floor function', t => {
-  var data = [
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, doy: 1},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, doy: 93},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, doy: 185},
@@ -62,7 +62,7 @@ tape('timeFloor generates local floor function', t => {
 });
 
 tape('utcFloor generates utc floor function', t => {
-  var data = [
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, doy: 1},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, doy: 93},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, doy: 185},

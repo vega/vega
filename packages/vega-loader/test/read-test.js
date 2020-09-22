@@ -3,30 +3,30 @@ var tape = require('tape'),
     vega = require('../'),
     read = vega.read;
 
-var fields = ['a', 'b', 'c', 'd', 'e'];
+const fields = ['a', 'b', 'c', 'd', 'e'];
 
-var data = [
+const data = [
   {a:1, b:'aaa', c:true,  d:'1/1/2001', e:1.2},
   {a:2, b:'bbb', c:false, d:'1/2/2001', e:3.4},
   {a:3, b:'ccc', c:false, d:'1/3/2001', e:5.6},
   {a:4, b:'ddd', c:true,  d:'1/4/2001', e:7.8}
 ];
 
-var parsed = [
+const parsed = [
   {a:1, b:'aaa', c:true,  d:Date.parse('1/1/2001'), e:1.2},
   {a:2, b:'bbb', c:false, d:Date.parse('1/2/2001'), e:3.4},
   {a:3, b:'ccc', c:false, d:Date.parse('1/3/2001'), e:5.6},
   {a:4, b:'ddd', c:true,  d:Date.parse('1/4/2001'), e:7.8}
 ];
 
-var strings = [
+const strings = [
   {a:'1', b:'aaa', c:'true',  d:'1/1/2001', e:'1.2'},
   {a:'2', b:'bbb', c:'false', d:'1/2/2001', e:'3.4'},
   {a:'3', b:'ccc', c:'false', d:'1/3/2001', e:'5.6'},
   {a:'4', b:'ddd', c:'true',  d:'1/4/2001', e:'7.8'}
 ];
 
-var types = {
+const types = {
   a: 'integer',
   b: 'string',
   c: 'boolean',
@@ -35,9 +35,9 @@ var types = {
 };
 
 function toDelimitedText(data, delimiter) {
-  var head = fields.join(delimiter);
-  var body = data.map(row => fields.map(f => {
-    var v = row[f];
+  const head = fields.join(delimiter);
+  const body = data.map(row => fields.map(f => {
+    const v = row[f];
     return typeof v === 'string' ? ('"'+v+'"') : v;
   }).join(delimiter));
   return head + '\n' + body.join('\n');
@@ -45,7 +45,7 @@ function toDelimitedText(data, delimiter) {
 
 // JSON
 
-var json = JSON.stringify(data);
+const json = JSON.stringify(data);
 
 tape('JSON reader should read json data', t => {
   t.deepEqual(read(json), data);
@@ -66,8 +66,16 @@ tape('JSON reader should auto-parse json fields', t => {
 });
 
 tape('JSON reader should read json from property', t => {
-  var json = JSON.stringify({foo: data});
+  const json = JSON.stringify({foo: data});
   t.deepEqual(read(json, {type:'json', property:'foo'}), data);
+  t.end();
+});
+
+tape('JSON reader should copy data when "copy: true" provided', t => {
+  var copy = read(data, { type: 'json', copy: true });
+  t.deepEqual(copy, data);
+  t.notEqual(copy, data);
+  copy.forEach((obj, i) => t.notEqual(obj, data[i]));
   t.end();
 });
 
@@ -213,7 +221,7 @@ tape('JSON reader should throw error if format is unrecognized', t => {
 
 // CSV
 
-var csv = toDelimitedText(data, ',');
+const csv = toDelimitedText(data, ',');
 
 tape('CSV reader should read csv data', t => {
   t.deepEqual(read(csv, {type:'csv'}), strings);
@@ -233,7 +241,7 @@ tape('CSV reader should auto-parse csv fields', t => {
 
 // TSV
 
-var tsv = toDelimitedText(data, '\t');
+const tsv = toDelimitedText(data, '\t');
 
 tape('TSV reader should read tsv data', t => {
   t.deepEqual(read(tsv, {type:'tsv'}), strings);
@@ -253,7 +261,7 @@ tape('TSV reader should auto-parse tsv fields', t => {
 
 // // DSV
 
-var psv = toDelimitedText(data, '|');
+const psv = toDelimitedText(data, '|');
 
 tape('DSV reader should read dsv data', t => {
   t.deepEqual(read(psv, {type:'dsv', delimiter:'|'}), strings);
@@ -262,7 +270,7 @@ tape('DSV reader should read dsv data', t => {
 });
 
 tape('DSV reader should accept header parameter', t => {
-  var body = psv.slice(psv.indexOf('\n')+1);
+  const body = psv.slice(psv.indexOf('\n')+1);
   t.deepEqual(read(body, {
     type: 'dsv',
     delimiter: '|',
@@ -283,39 +291,39 @@ tape('DSV reader should auto-parse dsv fields', t => {
 
 // TopoJSON
 
-var worldText = require('fs').readFileSync('./test/data/world-110m.json', 'utf8');
-var world = JSON.parse(worldText);
+const worldText = require('fs').readFileSync('./test/data/world-110m.json', 'utf8');
+const world = JSON.parse(worldText);
 
 tape('TopoJSON reader should read TopoJSON mesh', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries'});
-  var tj = topojson.mesh(world, world.objects['countries']);
+  const tj = topojson.mesh(world, world.objects['countries']);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
 tape('TopoJSON reader should read TopoJSON mesh interior', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'interior'});
-  var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a !== b);
+  const tj = topojson.mesh(world, world.objects['countries'], (a, b) => a !== b);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
 tape('TopoJSON reader should read TopoJSON mesh exterior', t => {
   var mesh = read(worldText, {type:'topojson', mesh: 'countries', filter: 'exterior'});
-  var tj = topojson.mesh(world, world.objects['countries'], (a, b) => a === b);
+  const tj = topojson.mesh(world, world.objects['countries'], (a, b) => a === b);
   t.equal(JSON.stringify(tj), JSON.stringify(mesh[0]));
   t.end();
 });
 
 tape('TopoJSON reader should read TopoJSON feature', t => {
   var feature = read(worldText, {type:'topojson', feature: 'countries'});
-  var tj = topojson.feature(world, world.objects['countries']).features;
+  const tj = topojson.feature(world, world.objects['countries']).features;
   t.equal(JSON.stringify(tj), JSON.stringify(feature));
   t.end();
 });
 
 tape('TopoJSON reader should throw error if TopoJSON is invalid', t => {
-  var data = {objects: {}};
+  const data = {objects: {}};
   t.throws(() => { read(data, {type:'topojson', feature: 'countries'}); });
   t.throws(() => { read(data, {type:'topojson', mesh: 'countries'}); });
   t.end();

@@ -2,7 +2,7 @@ var tape = require('tape'),
     vega = require('../');
 
 tape('Parser parses event selector strings', t => {
-  var events;
+  let events;
 
   events = vega.selector('rect:mousedown');
   t.equal(events.length, 1);
@@ -178,7 +178,7 @@ tape('Parser parses event selector strings', t => {
 });
 
 tape('Parser allows configurable source', t => {
-  var events = vega.selector('rect:mousedown', 'scope');
+  const events = vega.selector('rect:mousedown', 'scope');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'scope',

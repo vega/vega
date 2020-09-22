@@ -6,7 +6,7 @@ var tape = require('tape'),
     Bin = tx.bin,
     Collect = tx.collect;
 
-var TOLERANCE = 2e-14;
+const TOLERANCE = 2e-14;
 
 tape('Bin discretizes values', t => {
   var df = new vega.Dataflow(),
@@ -20,7 +20,7 @@ tape('Bin discretizes values', t => {
       });
 
   // stress test floating point math
-  var extents = [
+  const extents = [
     [0, 1e-50],
     [0, 0.1],
     [0, 0.5],
@@ -31,7 +31,7 @@ tape('Bin discretizes values', t => {
     [0, 20]
   ];
 
-  var divs = [5, 10, 20, 40];
+  const divs = [5, 10, 20, 40];
 
   extents.forEach(e => {
     divs.forEach(d => {
@@ -96,7 +96,7 @@ tape('Bin handles tail aggregation for last bin', t => {
 });
 
 tape('Bin supports point output', t => {
-  var data = [{v: 5.5}];
+  const data = [{v: 5.5}];
 
   var df = new vega.Dataflow(),
       c = df.add(Collect),

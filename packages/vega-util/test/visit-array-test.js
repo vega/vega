@@ -4,7 +4,7 @@ var tape = require('tape'),
 tape('visitArray should visit arrays', t => {
   // check visited item count
   function run(array, filter) {
-    var count = 0;
+    let count = 0;
     vega.visitArray(array, filter, () => { ++count; });
     return count;
   }

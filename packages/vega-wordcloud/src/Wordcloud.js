@@ -4,9 +4,9 @@ import {constant, error, extent, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';
 import {random} from 'vega-statistics';
 
-var Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+const Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
 
-var Params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
+const Params = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
 
 export default function Wordcloud(params) {
   Transform.call(this, cloud(), params);
@@ -37,7 +37,7 @@ inherits(Wordcloud, Transform, {
     }
 
     function modp(param) {
-      var p = _[param];
+      const p = _[param];
       return isFunction(p) && pulse.modified(p.fields);
     }
 

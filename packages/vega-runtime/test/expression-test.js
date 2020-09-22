@@ -5,14 +5,14 @@ var tape = require('tape'),
     runtime = require('../');
 
 tape('Parser parses expressions', t => {
-  var values = [
+  const values = [
     {'x': 1,  'y': 28},
     {'x': 2,  'y': 43},
     {'x': 3,  'y': 81},
     {'x': 4,  'y': 19}
   ];
 
-  var spec = {operators: [
+  const spec = {operators: [
     {id:0, type:'Operator', value: 50},
     {id:1, type:'Operator', update: {code: '2 * _.foo'}, params: {foo:{$ref:0}}},
     {id:2, type:'Collect',  value: {$ingest: values}},

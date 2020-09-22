@@ -7,13 +7,13 @@ var tape = require('tape'),
     Window = tx.window;
 
 function match(t, actual, expect) {
-  for (var k in expect) {
+  for (const k in expect) {
     t.equal(actual[k], expect[k]);
   }
 }
 
 tape('Window processes single partition', t => {
-  var data = [
+  const data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
     {k:'a', v:2, key:2},
@@ -52,7 +52,7 @@ tape('Window processes single partition', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {
     k: 'a', v: 1, key: 0,
@@ -120,7 +120,7 @@ tape('Window processes single partition', t => {
 });
 
 tape('Window processes peers correctly', t => {
-  var data = [
+  const data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
     {k:'a', v:2, key:2},
@@ -144,7 +144,7 @@ tape('Window processes peers correctly', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {k: 'a', v: 1, count: 1, sum: 1});
   match(t, d[1], {k: 'b', v: 3, count: 2, sum: 4});
@@ -164,7 +164,7 @@ tape('Window processes peers correctly', t => {
 });
 
 tape('Window processes multiple partitions', t => {
-  var data = [
+  const data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
     {k:'a', v:2, key:2},
@@ -204,7 +204,7 @@ tape('Window processes multiple partitions', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value.sort(util.compare('k', 'key'));
+  const d = out.value.sort(util.compare('k', 'key'));
   t.equal(d.length, data.length);
   match(t, d[0], {
     k: 'a', v: 1, key: 0,
@@ -246,7 +246,7 @@ tape('Window processes multiple partitions', t => {
 });
 
 tape('Window processes range frames', t => {
-  var data = [
+  const data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
     {k:'a', v:2, key:2},
@@ -269,7 +269,7 @@ tape('Window processes range frames', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {
     k: 'a', v: 1, key: 0,
@@ -331,7 +331,7 @@ tape('Window processes range frames', t => {
 });
 
 tape('Window processes row frames', t => {
-  var data = [
+  const data = [
     {k:'a', v:1, key:0},
     {k:'b', v:3, key:1},
     {k:'a', v:2, key:2},
@@ -354,7 +354,7 @@ tape('Window processes row frames', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {
     k: 'a', v: 1, key: 0,
@@ -381,7 +381,7 @@ tape('Window processes row frames', t => {
 });
 
 tape('Window processes unsorted values', t => {
-  var data = [
+  const data = [
     {key:0}, {key:1}, {key:2}, {key:3}, {key:4}
   ];
 
@@ -394,7 +394,7 @@ tape('Window processes unsorted values', t => {
       out = df.add(Collect, {pulse: agg});
 
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {key: 0, rank: 1, dense_rank: 1});
   match(t, d[1], {key: 1, rank: 2, dense_rank: 2});
@@ -406,7 +406,7 @@ tape('Window processes unsorted values', t => {
 });
 
 tape('Window processes fill operations', t => {
-  var data = [
+  const data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
     {u: null,      x: false,     key:2},
@@ -434,7 +434,7 @@ tape('Window processes fill operations', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {
     u: 'a', v: 1, x: null, key: 0,
@@ -457,7 +457,7 @@ tape('Window processes fill operations', t => {
 });
 
 tape('Window handles next_value with overwrite', t => {
-  var data = [
+  const data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
     {u: null,      x: false,     key:2},
@@ -481,7 +481,7 @@ tape('Window handles next_value with overwrite', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {key: 0, u: 'a', v: 1, x: true});
   match(t, d[1], {key: 1, u: 'b', v: 3, x: true});
@@ -492,7 +492,7 @@ tape('Window handles next_value with overwrite', t => {
 });
 
 tape('Window handles prev_value with overwrite', t => {
-  var data = [
+  const data = [
     {u: 'a',  v:1, x: null,      key:0},
     {u: null, v:3, x: true,      key:1},
     {u: null,      x: false,     key:2},
@@ -516,7 +516,7 @@ tape('Window handles prev_value with overwrite', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {key: 0, u: 'a', v: 1, x: null});
   match(t, d[1], {key: 1, u: 'a', v: 3, x: true});
@@ -527,7 +527,7 @@ tape('Window handles prev_value with overwrite', t => {
 });
 
 tape('Window fill operations handle partition state', t => {
-  var data = [
+  const data = [
     {u: 'a',  v: null, key:0, idx:0},
     {u: null, v: 'b',  key:1, idx:0}
   ];
@@ -551,7 +551,7 @@ tape('Window fill operations handle partition state', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, data.length);
   match(t, d[0], {
     u: 'a', v: null, key: 0, idx: 0,

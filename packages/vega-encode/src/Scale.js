@@ -126,7 +126,7 @@ function isContinuousColor(_) {
 
 function configureDomain(scale, _, df) {
   // check raw domain, if provided use that and exit early
-  var raw = rawDomain(scale, _.domainRaw, df);
+  const raw = rawDomain(scale, _.domainRaw, df);
   if (raw > -1) return raw;
 
   var domain = _.domain,

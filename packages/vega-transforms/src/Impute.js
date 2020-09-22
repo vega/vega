@@ -63,7 +63,7 @@ function getValue(_) {
 }
 
 function getField(_) {
-  var f = _.field;
+  const f = _.field;
   return t => t ? f(t) : NaN;
 }
 

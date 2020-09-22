@@ -2,15 +2,15 @@ var tape = require('tape'),
     vega = require('../'),
     loader = vega.loader();
 
-var host = 'vega.github.io';
-var dir = '/datalib/';
-var base = 'http://' + host + dir;
-var uri = 'data/flare.json';
-var url = base + uri;
-var rel = '//' + host + dir + uri;
-var file = './test/' + uri;
-var fake = 'https://vega.github.io/vega/dne.html';
-var text = require('fs').readFileSync(file, 'utf8');
+const host = 'vega.github.io';
+const dir = '/datalib/';
+const base = 'http://' + host + dir;
+const uri = 'data/flare.json';
+const url = base + uri;
+const rel = '//' + host + dir + uri;
+const file = './test/' + uri;
+const fake = 'https://vega.github.io/vega/dne.html';
+const text = require('fs').readFileSync(file, 'utf8');
 
 function sanityTest(t, uri, options, result) {
   if (result != null) {

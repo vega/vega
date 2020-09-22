@@ -1,9 +1,9 @@
 import {bezier, segments} from './arc';
 
-var temp = ['l', 0, 0, 0, 0, 0, 0, 0];
+const temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 
 function scale(current, sX, sY) {
-  var c = (temp[0] = current[0]);
+  const c = (temp[0] = current[0]);
   if (c === 'a' || c === 'A') {
     temp[1] = sX * current[1];
     temp[2] = sY * current[2];
@@ -306,7 +306,7 @@ export default function(context, path, l, t, sX, sY) {
 }
 
 function drawArc(context, x, y, coords) {
-  var seg = segments(
+  const seg = segments(
     coords[5], // end x
     coords[6], // end y
     coords[0], // radius x
@@ -316,8 +316,8 @@ function drawArc(context, x, y, coords) {
     coords[2], // rotation
     x, y
   );
-  for (var i=0; i<seg.length; ++i) {
-    var bez = bezier(seg[i]);
+  for (let i=0; i<seg.length; ++i) {
+    const bez = bezier(seg[i]);
     context.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5]);
   }
 }

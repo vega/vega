@@ -59,10 +59,10 @@ inherits(Encode, Transform, {
     }
 
     if (reenter || set !== falsy) {
-      var flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
+      const flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
       if (reenter) {
         pulse.visit(flag, t => {
-          var mod = enter(t, _) || fmod;
+          const mod = enter(t, _) || fmod;
           if (set(t, _) || mod) out.mod.push(t);
         });
         if (out.mod.length) out.modifies(enter.output);

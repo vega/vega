@@ -8,7 +8,7 @@ var tape = require('tape'),
     Values = tx.values;
 
 tape('Values extracts values', t => {
-  var data = [
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'c', v:2}, {k:'d', v:4}
   ];
@@ -20,7 +20,7 @@ tape('Values extracts values', t => {
       val = df.add(Values, {field:key, sort:srt, pulse:col});
 
   df.pulse(col, changeset().insert(data)).run();
-  var values = val.value;
+  const values = val.value;
   t.deepEqual(values, ['a', 'b', 'c', 'd']);
 
   df.touch(val).run(); // no-op pulse

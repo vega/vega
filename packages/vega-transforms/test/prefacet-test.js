@@ -8,16 +8,16 @@ var tape = require('tape'),
     PreFacet = tx.prefacet;
 
 tape('PreFacet partitions pre-faceted tuple sets', t => {
-  var data = [
+  const data = [
     {'id': 'a', 'tuples': [{x:1},{x:2}]},
     {'id': 'b', 'tuples': [{x:3},{x:4}]},
     {'id': 'c', 'tuples': [{x:5},{x:6}]}
   ];
 
-  var subs = [];
+  const subs = [];
 
   function subflow(df, key) {
-    var col = df.add(Collect);
+    const col = df.add(Collect);
     subs.push({key: key, data: col});
     return col;
   }
@@ -100,7 +100,7 @@ tape('PreFacet partitions pre-faceted tuple sets', t => {
 });
 
 tape('PreFacet raises error if tuple sets are modified', t => {
-  var data = [
+  const data = [
     {'id': 'a', 'tuples': [{x:1},{x:2}]},
     {'id': 'b', 'tuples': [{x:3},{x:4}]},
     {'id': 'c', 'tuples': [{x:5},{x:6}]}

@@ -31,7 +31,7 @@ export default function Density(params) {
   Transform.call(this, null, params);
 }
 
-var distributions = [
+const distributions = [
   {
     'key': {'function': 'normal'},
     'params': [
@@ -63,7 +63,7 @@ var distributions = [
   }
 ];
 
-var mixture = {
+const mixture = {
   'key': {'function': 'mixture'},
   'params': [
     { 'name': 'distributions', 'type': 'param', 'array': true,

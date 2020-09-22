@@ -36,13 +36,13 @@ inherits(Projection, Transform, {
 });
 
 function fit(proj, _) {
-  var data = collectGeoJSON(_.fit);
+  const data = collectGeoJSON(_.fit);
   _.extent ? proj.fitExtent(_.extent, data)
     : _.size ? proj.fitSize(_.size, data) : 0;
 }
 
 function create(type) {
-  var constructor = projection((type || 'mercator').toLowerCase());
+  const constructor = projection((type || 'mercator').toLowerCase());
   if (!constructor) error('Unrecognized projection type: ' + type);
   return constructor();
 }

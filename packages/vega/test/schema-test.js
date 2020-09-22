@@ -6,14 +6,14 @@ var tape = require('tape'),
     validSpecs = require('./specs-valid.json'),
     invalidSpecs = require('./specs-invalid.json');
 
-var validator = new ajv({
+const validator = new ajv({
     allErrors: true,
     verbose: true,
     extendRefs: 'fail'
   })
   .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
 
-var validate = validator.compile(schema);
+const validate = validator.compile(schema);
 
 tape('JSON schema is valid', t => {
   t.ok(validator.validateSchema(schema));
@@ -21,7 +21,7 @@ tape('JSON schema is valid', t => {
 });
 
 tape('JSON schema recognizes valid specifications', t => {
-  var dir = process.cwd() + '/test/specs-valid/';
+  const dir = process.cwd() + '/test/specs-valid/';
   validSpecs.forEach(file => {
     var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
         valid = validate(spec);
@@ -33,9 +33,9 @@ tape('JSON schema recognizes valid specifications', t => {
 });
 
 tape('JSON schema recognizes invalid specifications', t => {
-  var dir = process.cwd() + '/test/specs-invalid/';
+  const dir = process.cwd() + '/test/specs-invalid/';
   invalidSpecs.forEach(file => {
-    var specs = JSON.parse(fs.readFileSync(dir + file + '.json'));
+    const specs = JSON.parse(fs.readFileSync(dir + file + '.json'));
     specs.forEach((spec, index) => {
       t.notOk(validate(spec),
         'invalid schema (' + index + '): ' + file);

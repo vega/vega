@@ -55,7 +55,7 @@ const hasOverlap = (items, pad) => {
 };
 
 const hasBounds = item => {
-  var b = item.bounds;
+  const b = item.bounds;
   return b.width() > 1 && b.height() > 1;
 };
 

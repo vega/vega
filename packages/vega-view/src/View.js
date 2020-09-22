@@ -128,7 +128,7 @@ function findOperatorHandler(op, handler) {
 }
 
 function addOperatorListener(view, name, op, handler) {
-  var h = findOperatorHandler(op, handler);
+  let h = findOperatorHandler(op, handler);
   if (!h) {
     h = trap(view, () => handler(name, op.value));
     h.handler = handler;
@@ -138,7 +138,7 @@ function addOperatorListener(view, name, op, handler) {
 }
 
 function removeOperatorListener(view, op, handler) {
-  var h = findOperatorHandler(op, handler);
+  const h = findOperatorHandler(op, handler);
   if (h) op._targets.remove(h);
   return view;
 }
@@ -201,7 +201,7 @@ inherits(View, Dataflow, {
   },
 
   signal(name, value, options) {
-    var op = lookupSignal(this, name);
+    const op = lookupSignal(this, name);
     return arguments.length === 1
       ? op.value
       : this.update(op, value, options);
@@ -277,7 +277,7 @@ inherits(View, Dataflow, {
   // -- EVENT HANDLING ----
 
   addEventListener(type, handler, options) {
-    var callback = handler;
+    let callback = handler;
     if (!(options && options.trap === false)) {
       // wrap callback in error handler
       callback = trap(this, handler);
@@ -304,7 +304,7 @@ inherits(View, Dataflow, {
   },
 
   addResizeListener(handler) {
-    var l = this._resizeListeners;
+    const l = this._resizeListeners;
     if (l.indexOf(handler) < 0) {
       // add handler if it isn't already registered
       // note: error trapping handled elsewhere, so

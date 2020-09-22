@@ -7,7 +7,7 @@ var tape = require('tape'),
     DataJoin = encode.datajoin;
 
 tape('DataJoin joins tuples and items', t => {
-  var data = [
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
