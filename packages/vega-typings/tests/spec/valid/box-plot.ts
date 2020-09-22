@@ -2,7 +2,7 @@ import { Spec } from 'vega';
 
 export const spec: Spec = {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "A violin plot example showing distributions for pengiun body mass.",
+  "description": "A box plot example showing aggregate statistics for penguin body mass.",
   "width": 500,
   "padding": 5,
 
@@ -16,11 +16,7 @@ export const spec: Spec = {
 
   "signals": [
     { "name": "plotWidth", "value": 60 },
-    { "name": "height", "update": "(plotWidth + 10) * 3"},
-    { "name": "trim", "value": true,
-      "bind": {"input": "checkbox"} },
-    { "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} }
+    { "name": "height", "update": "(plotWidth + 10) * 3"}
   ],
 
   "data": [
@@ -31,32 +27,6 @@ export const spec: Spec = {
         {
           "type": "filter",
           "expr": "datum.Species != null && datum['Body Mass (g)'] != null"
-        }
-      ]
-    },
-    {
-      "name": "density",
-      "source": "penguins",
-      "transform": [
-        {
-          "type": "kde",
-          "field": "Body Mass (g)",
-          "groupby": ["Species"],
-          "bandwidth": {"signal": "bandwidth"},
-          "extent": {"signal": "trim ? null : [2000, 6500]"}
-        }
-      ]
-    },
-    {
-      "name": "stats",
-      "source": "penguins",
-      "transform": [
-        {
-          "type": "aggregate",
-          "groupby": ["Species"],
-          "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
-          "ops": ["q1", "median", "q3"],
-          "as": ["q1", "median", "q3"]
         }
       ]
     }
@@ -76,18 +46,6 @@ export const spec: Spec = {
       "domain": {"data": "penguins", "field": "Body Mass (g)"},
       "domainMin": 2000,
       "zero": false, "nice": true
-    },
-    {
-      "name": "hscale",
-      "type": "linear",
-      "range": [0, {"signal": "plotWidth"}],
-      "domain": {"data": "density", "field": "density"}
-    },
-    {
-      "name": "color",
-      "type": "ordinal",
-      "domain": {"data": "penguins", "field": "Species"},
-      "range": "category"
     }
   ],
 
@@ -101,8 +59,8 @@ export const spec: Spec = {
       "type": "group",
       "from": {
         "facet": {
-          "data": "density",
-          "name": "violin",
+          "data": "penguins",
+          "name": "species",
           "groupby": "Species"
         }
       },
@@ -118,11 +76,13 @@ export const spec: Spec = {
       "data": [
         {
           "name": "summary",
-          "source": "stats",
+          "source": "species",
           "transform": [
             {
-              "type": "filter",
-              "expr": "datum.Species === parent.Species"
+              "type": "aggregate",
+              "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
+              "ops": ["min", "q1", "median", "q3", "max"],
+              "as": ["min", "q1", "median", "q3", "max"]
             }
           ]
         }
@@ -130,31 +90,33 @@ export const spec: Spec = {
 
       "marks": [
         {
-          "type": "area",
-          "from": {"data": "violin"},
+          "type": "rect",
+          "from": {"data": "summary"},
           "encode": {
             "enter": {
-              "fill": {"scale": "color", "field": {"parent": "Species"}}
+              "fill": {"value": "black"},
+              "height": {"value": 1}
             },
             "update": {
-              "x": {"scale": "xscale", "field": "value"},
+              "yc": {"signal": "plotWidth / 2", "offset": -0.5},
+              "x": {"scale": "xscale", "field": "min"},
+              "x2": {"scale": "xscale", "field": "max"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "steelblue"},
+              "cornerRadius": {"value": 4}
+            },
+            "update": {
               "yc": {"signal": "plotWidth / 2"},
-              "height": {"scale": "hscale", "field": "density"}
-            }
-          }
-        },
-        {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "black"},
-              "height": {"value": 2}
-            },
-            "update": {
+              "height": {"signal": "plotWidth / 2"},
               "x": {"scale": "xscale", "field": "q1"},
-              "x2": {"scale": "xscale", "field": "q3"},
-              "yc": {"signal": "plotWidth / 2"}
+              "x2": {"scale": "xscale", "field": "q3"}
             }
           }
         },
@@ -163,13 +125,13 @@ export const spec: Spec = {
           "from": {"data": "summary"},
           "encode": {
             "enter": {
-              "fill": {"value": "black"},
-              "width": {"value": 2},
-              "height": {"value": 8}
+              "fill": {"value": "aliceblue"},
+              "width": {"value": 2}
             },
             "update": {
-              "x": {"scale": "xscale", "field": "median"},
-              "yc": {"signal": "plotWidth / 2"}
+              "yc": {"signal": "plotWidth / 2"},
+              "height": {"signal": "plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "median"}
             }
           }
         }
