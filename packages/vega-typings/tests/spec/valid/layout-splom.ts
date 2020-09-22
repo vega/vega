@@ -149,12 +149,15 @@ export const spec: Spec = {
 
   "data": [
     {
-      "name": "iris",
-      "url": "data/iris.json"
+      "name": "penguins",
+      "url": "data/penguins.json",
+      "transform": [
+        {"type": "filter", "expr": "datum['Beak Length (mm)'] != null"}
+      ]
     },
     {
       "name": "fields",
-      "values": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"]
+      "values": ["Beak Length (mm)", "Beak Depth (mm)", "Flipper Length (mm)", "Body Mass (g)"]
     },
     {
       "name": "cross",
@@ -171,7 +174,7 @@ export const spec: Spec = {
     {
       "name": "color",
       "type": "ordinal",
-      "domain": {"data": "iris", "field": "species"},
+      "domain": {"data": "penguins", "field": "Species"},
       "range": "category"
     }
   ],
@@ -243,13 +246,13 @@ export const spec: Spec = {
         {
           "name": "innerX", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.x.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.x.data"}},
           "range": "width"
         },
         {
           "name": "innerY", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.y.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.y.data"}},
           "range": "height"
         }
       ],
@@ -257,7 +260,7 @@ export const spec: Spec = {
       "marks": [
         {
           "type": "symbol",
-          "from": {"data": "iris"},
+          "from": {"data": "penguins"},
           "interactive": false,
           "encode": {
             "enter": {
@@ -276,7 +279,7 @@ export const spec: Spec = {
               "fill": [
                 {
                   "test": "!cell || inrange(datum[cell.datum.x.data], rangeX) && inrange(datum[cell.datum.y.data], rangeY)",
-                  "scale": "color", "field": "species"
+                  "scale": "color", "field": "Species"
                 },
                 {"value": "#ddd"}
               ]
@@ -307,7 +310,7 @@ export const spec: Spec = {
         {
           "name": "innerY", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
           "range": "height"
         }
       ],
@@ -339,7 +342,7 @@ export const spec: Spec = {
         {
           "name": "innerY", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
           "range": "height"
         }
       ],
@@ -371,7 +374,7 @@ export const spec: Spec = {
         {
           "name": "innerX", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
           "range": "width"
         }
       ],
@@ -403,7 +406,7 @@ export const spec: Spec = {
         {
           "name": "innerX", "type": "linear",
           "zero": false, "nice": true,
-          "domain": {"data": "iris", "field": {"signal": "parent.data"}},
+          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
           "range": "width"
         }
       ],

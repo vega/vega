@@ -8,10 +8,10 @@ export const spec: Spec = {
   "autosize": {"type": "fit", "resize": true},
 
   "signals": [
-    { "name": "yField", "value": "IMDB_Rating",
-      "bind": {"input": "select", "options": ["IMDB_Rating", "Rotten_Tomatoes_Rating", "US_Gross", "Worldwide_Gross"]} },
-    { "name": "xField", "value": "Rotten_Tomatoes_Rating",
-      "bind": {"input": "select", "options": ["IMDB_Rating", "Rotten_Tomatoes_Rating", "US_Gross", "Worldwide_Gross"]} },
+    { "name": "yField", "value": "IMDB Rating",
+      "bind": {"input": "select", "options": ["IMDB Rating", "Rotten Tomatoes Rating", "US Gross", "Worldwide Gross"]} },
+    { "name": "xField", "value": "Rotten Tomatoes Rating",
+      "bind": {"input": "select", "options": ["IMDB Rating", "Rotten Tomatoes Rating", "US Gross", "Worldwide Gross"]} },
     { "name": "nullSize", "value": 8 },
     { "name": "nullGap", "update": "nullSize + 10" }
   ],
@@ -23,7 +23,7 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "formula",
-          "expr": "datum.Title + ' (' + (year(datum.Release_Date) || '?') + ')'",
+          "expr": "datum.Title + ' (' + (year(datum['Release Date']) || '?') + ')'",
           "as":   "tooltip"
         }
       ]
