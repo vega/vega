@@ -73,10 +73,11 @@ Transforms for modeling spatial data, cartographic projection, and geographic gu
 
 Transforms for calculating spatial coordinates to achieve various layouts.
 
+- [`force`](force) - Compute a force-directed layout via physical simulation.
+- [`label`](label) - Compute text position and opacity to label a chart. {% include tag ver="5.16" %}
 - [`linkpath`](linkpath) - Route visual links between node elements.
 - [`pie`](pie) - Compute angular layout for pie and donut charts.
 - [`stack`](stack) - Compute stacked layouts for groups of values.
-- [`force`](force) - Compute a force-directed layout via physical simulation.
 - [`voronoi`](voronoi) - Compute a Voronoi diagram for a set of points.
 - [`wordcloud`](wordcloud) - Compute a word cloud layout of text strings.
 
