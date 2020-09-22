@@ -6,7 +6,7 @@ function expression(ctx, args, code) {
   if (code[code.length-1] !== ';') {
     code = 'return(' + code + ');';
   }
-  const fn = Function.apply(null, args.concat(code));
+  const fn = Function(...args.concat(code));
   return ctx && ctx.functions ? fn.bind(ctx.functions) : fn;
 }
 
