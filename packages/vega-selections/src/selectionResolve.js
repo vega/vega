@@ -54,7 +54,7 @@ export function selectionResolve(name, op, isMulti) {
   entries = Object.keys(multiRes);
   if (isMulti && entries.length) {
     resolved[VlMulti] = op === Union
-      ? {[Or]: entries.reduce((acc, k) => (acc.push.apply(acc, multiRes[k]), acc), [])}
+      ? {[Or]: entries.reduce((acc, k) => (acc.push(...multiRes[k]), acc), [])}
       : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
   }
 
