@@ -20,6 +20,7 @@
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
+    "bundle": "rollup -c --config-bundle",
     "prebuild": "rimraf build && rimraf build-es5",
     "build": "rollup -c --config-core --config-bundle --config-ie",
     "postbuild": "node schema-copy",

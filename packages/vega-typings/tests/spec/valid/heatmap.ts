@@ -82,8 +82,8 @@ export const spec: Spec = {
   "data": [
     {
       "name": "temperature",
-      "url": "data/seattle-temps.csv",
-      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
+      "url": "data/seattle-weather-hourly-normals.csv",
+      "format": {"type": "csv", "parse": {"temperature": "number", "date": "date"}},
       "transform": [
         { "type": "formula", "as": "hour", "expr": "hours(datum.date)" },
         { "type": "formula", "as": "day",
@@ -112,7 +112,7 @@ export const spec: Spec = {
       "name": "color",
       "type": "linear",
       "range": {"scheme": {"signal": "palette"}},
-      "domain": {"data": "temperature", "field": "temp"},
+      "domain": {"data": "temperature", "field": "temperature"},
       "reverse": {"signal": "reverse"},
       "zero": false, "nice": true
     }
@@ -139,7 +139,7 @@ export const spec: Spec = {
       "orient": "none",
       "direction": "vertical",
       "gradientLength": {"signal": "height"},
-      "title": "Avg. Temp (°F)",
+      "title": "Avg. Temp (°C)",
       "format": "0.1f",
       "encode": {
         "legend": {
@@ -162,10 +162,10 @@ export const spec: Spec = {
           "y": {"scale": "y", "field": "hour"},
           "width": {"value": 5},
           "height": {"scale": "y", "band": 1},
-          "tooltip": {"signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temp + '°'"}
+          "tooltip": {"signal": "timeFormat(datum.date, '%b %d %I:00 %p') + ': ' + datum.temperature + '°'"}
         },
         "update": {
-          "fill": {"scale": "color", "field": "temp"}
+          "fill": {"scale": "color", "field": "temperature"}
         }
       }
     }

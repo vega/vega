@@ -936,12 +936,12 @@
                           "items": [
                             {
                               "x": 18,
-                              "y": 341.3333333333333,
+                              "y": 336,
                               "align": "left",
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "40.0",
+                              "text": "5.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -952,40 +952,40 @@
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "50.0",
+                              "text": "10.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
                             {
                               "x": 18,
-                              "y": 170.66666666666666,
+                              "y": 176,
                               "align": "left",
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "60.0",
+                              "text": "15.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
                             {
                               "x": 18,
-                              "y": 85.33333333333333,
+                              "y": 96,
                               "align": "left",
                               "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "70.0",
+                              "text": "20.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
                             {
                               "x": 18,
-                              "y": 0,
+                              "y": 15.999999999999986,
                               "align": "left",
-                              "baseline": "top",
+                              "baseline": "middle",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "80.0",
+                              "text": "25.0",
                               "font": "sans-serif",
                               "fontSize": 10
                             }
@@ -1013,7 +1013,7 @@
                       "fill": "#000",
                       "opacity": 1,
                       "orient": "top",
-                      "text": "Avg. Temp (°F)",
+                      "text": "Avg. Temp (°C)",
                       "angle": 0,
                       "limit": 180,
                       "font": "sans-serif",
