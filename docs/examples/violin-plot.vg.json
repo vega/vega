@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "A violin plot example showing distributions for iris flower data.",
+  "description": "A violin plot example showing distributions for pengiun body mass.",
   "width": 500,
   "padding": 5,
 
@@ -13,49 +13,46 @@
   },
 
   "signals": [
-    { "name": "fields",
-      "value": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"] },
     { "name": "plotWidth", "value": 60 },
-    { "name": "height", "update": "(plotWidth + 10) * length(fields)"},
+    { "name": "height", "update": "(plotWidth + 10) * 3"},
     { "name": "trim", "value": true,
       "bind": {"input": "checkbox"} },
-    { "name": "bandwidth", "value": 0.3,
-      "bind": {"input": "range", "min": 0, "max": 1.0, "step": 0.01} }
+    { "name": "bandwidth", "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} }
   ],
 
   "data": [
     {
-      "name": "iris",
-      "url": "data/iris.json",
+      "name": "penguins",
+      "url": "data/penguins.json",
       "transform": [
         {
-          "type": "fold",
-          "fields": {"signal": "fields"},
-          "as": ["organ", "value"]
+          "type": "filter",
+          "expr": "datum.Species != null && datum['Body Mass (g)'] != null"
         }
       ]
     },
     {
       "name": "density",
-      "source": "iris",
+      "source": "penguins",
       "transform": [
         {
           "type": "kde",
-          "field": "value",
-          "groupby": ["organ"],
+          "field": "Body Mass (g)",
+          "groupby": ["Species"],
           "bandwidth": {"signal": "bandwidth"},
-          "extent": {"signal": "trim ? null : [0, 8]"}
+          "extent": {"signal": "trim ? null : [2000, 6500]"}
         }
       ]
     },
     {
       "name": "stats",
-      "source": "iris",
+      "source": "penguins",
       "transform": [
         {
           "type": "aggregate",
-          "groupby": ["organ"],
-          "fields": ["value", "value", "value"],
+          "groupby": ["Species"],
+          "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
           "ops": ["q1", "median", "q3"],
           "as": ["q1", "median", "q3"]
         }
@@ -68,14 +65,15 @@
       "name": "layout",
       "type": "band",
       "range": "height",
-      "domain": {"data": "iris", "field": "organ"}
+      "domain": {"data": "penguins", "field": "Species"}
     },
     {
       "name": "xscale",
       "type": "linear",
       "range": "width", "round": true,
-      "domain": {"data": "iris", "field": "value"},
-      "zero": true, "nice": true
+      "domain": {"data": "penguins", "field": "Body Mass (g)"},
+      "domainMin": 2000,
+      "zero": false, "nice": true
     },
     {
       "name": "hscale",
@@ -86,7 +84,7 @@
     {
       "name": "color",
       "type": "ordinal",
-      "domain": {"data": "iris", "field": "organ"},
+      "domain": {"data": "penguins", "field": "Species"},
       "range": "category"
     }
   ],
@@ -103,13 +101,13 @@
         "facet": {
           "data": "density",
           "name": "violin",
-          "groupby": "organ"
+          "groupby": "Species"
         }
       },
 
       "encode": {
         "enter": {
-          "yc": {"scale": "layout", "field": "organ", "band": 0.5},
+          "yc": {"scale": "layout", "field": "Species", "band": 0.5},
           "height": {"signal": "plotWidth"},
           "width": {"signal": "width"}
         }
@@ -122,7 +120,7 @@
           "transform": [
             {
               "type": "filter",
-              "expr": "datum.organ === parent.organ"
+              "expr": "datum.Species === parent.Species"
             }
           ]
         }
@@ -134,7 +132,7 @@
           "from": {"data": "violin"},
           "encode": {
             "enter": {
-              "fill": {"scale": "color", "field": {"parent": "organ"}}
+              "fill": {"scale": "color", "field": {"parent": "Species"}}
             },
             "update": {
               "x": {"scale": "xscale", "field": "value"},

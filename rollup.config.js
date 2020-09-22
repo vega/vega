@@ -55,7 +55,7 @@ export default function(commandLineArgs) {
 
   const browser = !!commandLineArgs['config-browser'];
   const bundle = !!commandLineArgs['config-bundle'];
-  const ie = !!commandLineArgs['config-bundle'];
+  const ie = !!commandLineArgs['config-ie'];
   const test = !!commandLineArgs['config-test'];
 
   const dependencies = Object.keys(pkg.dependencies || {});

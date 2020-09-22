@@ -1,0 +1,139 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A box plot example showing aggregate statistics for penguin body mass.",
+  "width": 500,
+  "padding": 5,
+
+  "config": {
+    "axisBand": {
+      "bandPosition": 1,
+      "tickExtra": true,
+      "tickOffset": 0
+    }
+  },
+
+  "signals": [
+    { "name": "plotWidth", "value": 60 },
+    { "name": "height", "update": "(plotWidth + 10) * 3"}
+  ],
+
+  "data": [
+    {
+      "name": "penguins",
+      "url": "data/penguins.json",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Species != null && datum['Body Mass (g)'] != null"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "layout",
+      "type": "band",
+      "range": "height",
+      "domain": {"data": "penguins", "field": "Species"}
+    },
+    {
+      "name": "xscale",
+      "type": "linear",
+      "range": "width", "round": true,
+      "domain": {"data": "penguins", "field": "Body Mass (g)"},
+      "domainMin": 2000,
+      "zero": false, "nice": true
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale", "zindex": 1},
+    {"orient": "left", "scale": "layout", "tickCount": 5, "zindex": 1}
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "penguins",
+          "name": "species",
+          "groupby": "Species"
+        }
+      },
+
+      "encode": {
+        "enter": {
+          "yc": {"scale": "layout", "field": "Species", "band": 0.5},
+          "height": {"signal": "plotWidth"},
+          "width": {"signal": "width"}
+        }
+      },
+
+      "data": [
+        {
+          "name": "summary",
+          "source": "species",
+          "transform": [
+            {
+              "type": "aggregate",
+              "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
+              "ops": ["min", "q1", "median", "q3", "max"],
+              "as": ["min", "q1", "median", "q3", "max"]
+            }
+          ]
+        }
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "black"},
+              "height": {"value": 1}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2", "offset": -0.5},
+              "x": {"scale": "xscale", "field": "min"},
+              "x2": {"scale": "xscale", "field": "max"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "steelblue"},
+              "cornerRadius": {"value": 4}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2"},
+              "height": {"signal": "plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "q1"},
+              "x2": {"scale": "xscale", "field": "q3"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "summary"},
+          "encode": {
+            "enter": {
+              "fill": {"value": "aliceblue"},
+              "width": {"value": 2}
+            },
+            "update": {
+              "yc": {"signal": "plotWidth / 2"},
+              "height": {"signal": "plotWidth / 2"},
+              "x": {"scale": "xscale", "field": "median"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
