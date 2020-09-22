@@ -1,0 +1,202 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A calendar visualization of daily changes to the S&P 500 since 2000.",
+  "padding": 5,
+
+  "signals": [
+    {"name": "step", "value": 16},
+    {"name": "offset", "value": 10},
+    {"name": "width", "update": "step * 52 + offset * 11"},
+    {"name": "height", "update": "step * 5"},
+    {
+      "name": "scheme", "value": "pinkyellowgreen",
+      "bind": {
+        "input": "select",
+        "options": [
+          "pinkyellowgreen",
+          "blueorange",
+          "brownbluegreen",
+          "purplegreen",
+          "purpleorange",
+          "redblue",
+          "redgrey",
+          "redyellowblue",
+          "redyellowgreen",
+          "spectral"
+        ]
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "sp500",
+      "url": "data/sp500-2000.csv",
+      "format": {"type": "csv", "parse": {"close": "number", "date": "date"}},
+      "transform": [
+        {
+          "type": "window",
+          "sort": {"field": "date", "order": "ascending"},
+          "ops": ["lag"],
+          "fields": ["close"],
+          "as": ["prev"]
+        },
+        {
+          "type": "formula",
+          "expr": "datum.prev ? (datum.close - datum.prev) / datum.prev : 0",
+          "as": "value"
+        },
+        {
+          "type": "formula",
+          "expr": "year(datum.date)",
+          "as": "year"
+        },
+        {
+          "type": "timeunit", "field": "date",
+          "units": ["year", "week"],
+          "as": ["w0", "w1"]
+        },
+        {"type": "formula", "expr": "timeOffset('day', datum.w0)", "as": "w0"},
+        {
+          "type": "timeunit", "field": "date",
+          "units": ["day"],
+          "as": ["d0", "d1"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {"data": "sp500", "field": "d0", "sort": true},
+      "range": {"step": {"signal": "step"}}
+    },
+    {
+      "name": "color",
+      "type": "linear",
+      "clamp": true,
+      "range": {"scheme": {"signal": "scheme"}},
+      "domain": [-0.06, 0, 0.06]
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "title": "Daily Change, S&P 500",
+      "titleFontSize": 12,
+      "titleOrient": "left",
+      "titlePadding": 20,
+      "offset": 15,
+      "orient": "top",
+      "type": "gradient",
+      "direction": "horizontal",
+      "gradientLength": 250,
+      "gradientThickness": 10,
+      "format": "%"
+    }
+  ],
+
+  "layout": {
+    "columns": 1,
+    "padding": 15
+  },
+
+  "marks": [
+    {
+      "type": "group",
+
+      "from": {
+        "facet": {
+          "data": "sp500",
+          "name": "values",
+          "groupby": "year"
+        }
+      },
+
+      "sort": {
+        "field": "datum.year",
+        "order": "descending"
+      },
+
+      "data": [
+        {
+          "name": "max",
+          "source": "values",
+          "transform": [
+            {"type": "aggregate", "ops": ["max"], "fields": ["date"]}
+          ]
+        },
+        {
+          "name": "weeks",
+          "transform": [
+            {"type": "sequence", "start": 0, "stop": 53, "as": "weeknum"},
+            {"type": "formula", "expr": "datetime(parent.year, 0, 1 + datum.weeknum * 7)", "as": "date"},
+            {"type": "timeunit", "units": ["year", "week"], "field": "date", "as": ["w0", "w1"]},
+            {"type": "formula", "expr": "timeOffset('day', datum.w0)", "as": "w0"},
+            {"type": "filter", "expr": "datum.date < data('max')[0].max_date"}
+          ]
+        }
+      ],
+
+      "scales": [
+        {
+          "name": "x",
+          "type": "band",
+          "domain": {"data": "weeks", "field": "w0", "sort": true},
+          "range": {"step": {"signal": "step"}}
+        }
+      ],
+
+      "axes": [
+        {
+          "orient": "left", "scale": "y",
+          "ticks": false, "domain": false, "labelPadding": 8,
+          "format": "%a", "formatType": "time",
+          "title": {"signal": "parent.year"},
+          "titleAngle": 0, "titleAlign": "right",
+          "titleX": -8, "titleY": -2,  "titleFontSize": 10
+        },
+        {
+          "orient": "top", "scale": "x",
+          "ticks": false, "domain": false,
+          "format": "%b", "formatType": "time",
+          "labelAlign": "left",
+          "encode": {
+            "labels": {
+              "update": {
+                "x": {
+                  "scale": "x", "field": "value", "band": 0,
+                  "offset": {"signal": "month(datum.value) * offset"}
+                },
+                "opacity": {"signal": "date(datum.value) < 8 ? 1 : 0"}
+              }
+            }
+          }
+        }
+      ],
+
+      "marks": [
+        {
+          "type": "rect",
+          "from": {"data": "values"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "w0", "offset": {"signal": "month(datum.date) * offset"}},
+              "width": {"scale": "x", "band": 1, "offset": -1},
+              "y": {"scale": "y", "field": "d0"},
+              "height": {"scale": "y", "band": 1, "offset": -1},
+              "cornerRadius": {"value": 2},
+              "tooltip": {"signal": "timeFormat(datum.date, '%a %b %d, %Y') + '\\n' + format(datum.value, '+.2%')"}
+            },
+            "update": {
+              "fill": {"scale": "color", "field": "value"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
