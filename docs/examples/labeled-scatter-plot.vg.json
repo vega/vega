@@ -93,7 +93,7 @@
           "avoidMarks": ["trend"],
           "anchor": ["top", "bottom", "right", "left"],
           "offset": [1],
-          "size": [{"signal": "width + 60"}, {"signal": "height"}]
+          "size": {"signal": "[width + 60, height]"}
         }
       ]
     }
