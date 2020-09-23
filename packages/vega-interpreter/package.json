@@ -1,6 +1,6 @@
 {
   "name": "vega-interpreter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CSP-compliant interpreter for Vega expressions.",
   "keywords": [
     "vega",
