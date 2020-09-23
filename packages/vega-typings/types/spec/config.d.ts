@@ -130,8 +130,6 @@ export interface MarkConfig {
 
   /**
    * The URL of the image file for image marks.
-   *
-   * @format uri
    */
   url?: URI | SignalRef;
 
