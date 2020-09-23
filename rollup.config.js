@@ -161,7 +161,7 @@ export default function(commandLineArgs) {
       onwarn,
       output: bundleOutputs({
         file: pkg.unpkg,
-        format: 'iife',
+        format: 'umd',
         sourcemap: true,
         globals,
         name
@@ -176,7 +176,7 @@ export default function(commandLineArgs) {
         onwarn,
         output: bundleOutputs({
           file: pkg.unpkg.replace('build/', 'build-es5/'),
-          format: 'iife',
+          format: 'umd',
           sourcemap: true,
           globals,
           name
@@ -194,7 +194,7 @@ export default function(commandLineArgs) {
       onwarn,
       output: bundleOutputs({
         file: pkg.unpkg.replace('.min.js', '-core.min.js'),
-        format: 'iife',
+        format: 'umd',
         sourcemap: true,
         globals,
         name
@@ -208,8 +208,10 @@ export default function(commandLineArgs) {
         external: [...vgDependencies, ...coreExternal],
         onwarn,
         output: bundleOutputs({
-          file: pkg.unpkg.replace('.min.js', '-core.min.js').replace('build/', 'build-es5/'),
-          format: 'iife',
+          file: pkg.unpkg
+            .replace('.min.js', '-core.min.js')
+            .replace('build/', 'build-es5/'),
+          format: 'umd',
           sourcemap: true,
           globals,
           name
