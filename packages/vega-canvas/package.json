@@ -20,9 +20,5 @@
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
-  },
-  "browser": {
-    "./build/vega-canvas.node.js": "./build/vega-canvas.js",
-    "./index.js": "./index.browser.js"
   }
 }
