@@ -53,7 +53,7 @@ export default function(commandLineArgs) {
     console.info(commandLineArgs);
   }
 
-  const browser = !!commandLineArgs['config-browser'];
+  const browser = !!pkg.browser;
   const bundle = !!commandLineArgs['config-bundle'];
   const ie = !!commandLineArgs['config-ie'];
   const test = !!commandLineArgs['config-test'];
