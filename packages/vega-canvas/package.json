@@ -10,6 +10,7 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-canvas.node.js",
+  "browser": "build/vega-canvas.browser.js",
   "module": "build/vega-canvas.module.js",
   "unpkg": "build/vega-canvas.min.js",
   "jsdelivr": "build/vega-canvas.js",

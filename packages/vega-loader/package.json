@@ -19,6 +19,7 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-loader.node.js",
+  "browser": "build/vega-loader.browser.js",
   "module": "build/vega-loader.module.js",
   "unpkg": "build/vega-loader.min.js",
   "jsdelivr": "build/vega-loader.min.js",

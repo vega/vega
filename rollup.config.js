@@ -129,6 +129,21 @@ export default function(commandLineArgs) {
     plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
   }];
 
+  if (browser) {
+    outputs.push({
+      input: './index.browser.js',
+      external: dependencies,
+      onwarn,
+      output: {
+        file: pkg.browser,
+        format: 'umd',
+        sourcemap: false,
+        name
+      },
+      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+    });
+  }
+
   if (test) {
     return outputs;
   }
