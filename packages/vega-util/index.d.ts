@@ -36,6 +36,7 @@ export function isArray<T>(a: any | readonly T[]): a is readonly T[];
 export function isBoolean(a: any): a is boolean;
 export function isDate(a: any): a is Date;
 export function isFunction(a: any): a is Function;
+export function isIterable(a: any): boolean;
 export function isNumber(a: any): a is number;
 export function isObject(a: any): a is object;
 export function isRegExp(a: any): a is RegExp;

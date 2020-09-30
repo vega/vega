@@ -1,4 +1,6 @@
-import {field, identity, isFunction, isObject} from 'vega-util';
+import {
+  field, identity, isArray, isFunction, isIterable, isObject
+} from 'vega-util';
 
 function isBuffer(_) {
   return (typeof Buffer === 'function' && isFunction(Buffer.isBuffer))
@@ -15,6 +17,9 @@ export default function json(data, format) {
 json.responseType = 'json';
 
 function parseJSON(data, format) {
+  if (!isArray(data) && isIterable(data)) {
+    data = [...data];
+  }
   return (format && format.copy)
     ? JSON.parse(JSON.stringify(data))
     : data;
