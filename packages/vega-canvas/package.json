@@ -1,6 +1,6 @@
 {
   "name": "vega-canvas",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Canvas and Image utilities.",
   "keywords": [
     "vega",
@@ -22,7 +22,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "browser": {
-    "./build/vega-canvas.node.js": "./build/vega-canvas.js",
-    "./index.js": "./index.browser.js"
+    "./build/vega-canvas.node.js": "./build/vega-canvas.min.js",
+    "./build/vega-canvas.module.js": "./index.browser.js"
   }
 }

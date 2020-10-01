@@ -39,6 +39,6 @@
   },
   "browser": {
     "./build/vega-loader.node.js": "./build/vega-loader.min.js",
-    "./index.js": "./index.browser.js"
+    "./build/vega-loader.module.js": "./index.browser.js"
   }
 }
