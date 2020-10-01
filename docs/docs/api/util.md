@@ -163,6 +163,12 @@ vega.<b>isFunction</b>(<i>value</i>)
 
 Returns `true` if the input *value* is a Function instance, `false` otherwise.
 
+<a name="isIterable" href="#isIterable">#</a>
+vega.<b>isIterable</b>(<i>value</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isIterable.js "Source")
+
+Returns `true` if the input *value* supports the [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterable_protocol) protocol, `false` otherwise.
+
 <a name="isNumber" href="#isNumber">#</a>
 vega.<b>isNumber</b>(<i>value</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/isNumber.js "Source")
