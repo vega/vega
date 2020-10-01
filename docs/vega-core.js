@@ -1,5 +1,8 @@
-var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, d3Scale, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
+}(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, d3Scale, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
 
   function _interopNamespace(e) {
     if (e && e.__esModule) return e;
@@ -681,6 +684,10 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
     return Object.prototype.toString.call(_) === '[object Date]';
   }
 
+  function isIterable(_) {
+    return _ && isFunction(_[Symbol.iterator]);
+  }
+
   function isNumber(_) {
     return typeof _ === 'number';
   }
@@ -868,6 +875,313 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
         array.forEach(visitor);
       }
     }
+  }
+
+  //   https://...    file://...    //...
+
+  const protocol_re = /^([A-Za-z]+:)?\/\//; // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
+
+  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+
+  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+  // Special treatment in node.js for the file: protocol
+
+  const fileProtocol = 'file://';
+  /**
+   * Factory for a loader constructor that provides methods for requesting
+   * files from either the network or disk, and for sanitizing request URIs.
+   * @param {function} fetch - The Fetch API for HTTP network requests.
+   *   If null or undefined, HTTP loading will be disabled.
+   * @param {object} fs - The file system interface for file loading.
+   *   If null or undefined, local file loading will be disabled.
+   * @return {function} A loader constructor with the following signature:
+   *   param {object} [options] - Optional default loading options to use.
+   *   return {object} - A new loader instance.
+   */
+
+  function loaderFactory (fetch, fs) {
+    return options => ({
+      options: options || {},
+      sanitize: sanitize,
+      load: load,
+      fileAccess: !!fs,
+      file: fileLoader(fs),
+      http: httpLoader(fetch)
+    });
+  }
+  /**
+   * Load an external resource, typically either from the web or from the local
+   * filesystem. This function uses {@link sanitize} to first sanitize the uri,
+   * then calls either {@link http} (for web requests) or {@link file} (for
+   * filesystem loading).
+   * @param {string} uri - The resource indicator (e.g., URL or filename).
+   * @param {object} [options] - Optional loading options. These options will
+   *   override any existing default options.
+   * @return {Promise} - A promise that resolves to the loaded content.
+   */
+
+  async function load(uri, options) {
+    const opt = await this.sanitize(uri, options),
+          url = opt.href;
+    return opt.localFile ? this.file(url) : this.http(url, options);
+  }
+  /**
+   * URI sanitizer function.
+   * @param {string} uri - The uri (url or filename) to sanity check.
+   * @param {object} options - An options hash.
+   * @return {Promise} - A promise that resolves to an object containing
+   *  sanitized uri data, or rejects it the input uri is deemed invalid.
+   *  The properties of the resolved object are assumed to be
+   *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
+   *  provided by the 'href' property of the returned object.
+   */
+
+
+  async function sanitize(uri, options) {
+    options = extend({}, this.options, options);
+    const fileAccess = this.fileAccess,
+          result = {
+      href: null
+    };
+    let isFile, loadFile, base;
+    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
+
+    if (uri == null || typeof uri !== 'string' || !isAllowed) {
+      error('Sanitize failure, invalid URI: ' + $(uri));
+    }
+
+    const hasProtocol = protocol_re.test(uri); // if relative url (no protocol/host), prepend baseURL
+
+    if ((base = options.baseURL) && !hasProtocol) {
+      // Ensure that there is a slash between the baseURL (e.g. hostname) and url
+      if (!uri.startsWith('/') && base[base.length - 1] !== '/') {
+        uri = '/' + uri;
+      }
+
+      uri = base + uri;
+    } // should we load from file system?
+
+
+    loadFile = (isFile = uri.startsWith(fileProtocol)) || options.mode === 'file' || options.mode !== 'http' && !hasProtocol && fileAccess;
+
+    if (isFile) {
+      // strip file protocol
+      uri = uri.slice(fileProtocol.length);
+    } else if (uri.startsWith('//')) {
+      if (options.defaultProtocol === 'file') {
+        // if is file, strip protocol and set loadFile flag
+        uri = uri.slice(2);
+        loadFile = true;
+      } else {
+        // if relative protocol (starts with '//'), prepend default protocol
+        uri = (options.defaultProtocol || 'http') + ':' + uri;
+      }
+    } // set non-enumerable mode flag to indicate local file load
+
+
+    Object.defineProperty(result, 'localFile', {
+      value: !!loadFile
+    }); // set uri
+
+    result.href = uri; // set default result target, if specified
+
+    if (options.target) {
+      result.target = options.target + '';
+    } // set default result rel, if specified (#1542)
+
+
+    if (options.rel) {
+      result.rel = options.rel + '';
+    } // provide control over cross-origin image handling (#2238)
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+
+
+    if (options.context === 'image' && options.crossOrigin) {
+      result.crossOrigin = options.crossOrigin + '';
+    } // return
+
+
+    return result;
+  }
+  /**
+   * File system loader factory.
+   * @param {object} fs - The file system interface.
+   * @return {function} - A file loader with the following signature:
+   *   param {string} filename - The file system path to load.
+   *   param {string} filename - The file system path to load.
+   *   return {Promise} A promise that resolves to the file contents.
+   */
+
+
+  function fileLoader(fs) {
+    return fs ? filename => new Promise((accept, reject) => {
+      fs.readFile(filename, (error, data) => {
+        if (error) reject(error);else accept(data);
+      });
+    }) : fileReject;
+  }
+  /**
+   * Default file system loader that simply rejects.
+   */
+
+
+  async function fileReject() {
+    error('No file system access.');
+  }
+  /**
+   * HTTP request handler factory.
+   * @param {function} fetch - The Fetch API method.
+   * @return {function} - An http loader with the following signature:
+   *   param {string} url - The url to request.
+   *   param {object} options - An options hash.
+   *   return {Promise} - A promise that resolves to the file contents.
+   */
+
+
+  function httpLoader(fetch) {
+    return fetch ? async function (url, options) {
+      const opt = extend({}, this.options.http, options),
+            type = options && options.response,
+            response = await fetch(url, opt);
+      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
+    } : httpReject;
+  }
+  /**
+   * Default http request handler that simply rejects.
+   */
+
+
+  async function httpReject() {
+    error('No HTTP fetch method available.');
+  }
+
+  const isValid = _ => _ != null && _ === _;
+
+  const isBoolean$1 = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
+
+  const isDate$1 = _ => !Number.isNaN(Date.parse(_));
+
+  const isNumber$1 = _ => !Number.isNaN(+_) && !(_ instanceof Date);
+
+  const isInteger = _ => isNumber$1(_) && Number.isInteger(+_);
+
+  const typeParsers = {
+    boolean: toBoolean,
+    integer: toNumber,
+    number: toNumber,
+    date: toDate,
+    string: toString,
+    unknown: identity
+  };
+  const typeTests = [isBoolean$1, isInteger, isNumber$1, isDate$1];
+  const typeList = ['boolean', 'integer', 'number', 'date'];
+  function inferType(values, field) {
+    if (!values || !values.length) return 'unknown';
+    const n = values.length,
+          m = typeTests.length,
+          a = typeTests.map((_, i) => i + 1);
+
+    for (let i = 0, t = 0, j, value; i < n; ++i) {
+      value = field ? values[i][field] : values[i];
+
+      for (j = 0; j < m; ++j) {
+        if (a[j] && isValid(value) && !typeTests[j](value)) {
+          a[j] = 0;
+          ++t;
+          if (t === typeTests.length) return 'string';
+        }
+      }
+    }
+
+    return typeList[a.reduce((u, v) => u === 0 ? v : u, 0) - 1];
+  }
+  function inferTypes(data, fields) {
+    return fields.reduce((types, field) => {
+      types[field] = inferType(data, field);
+      return types;
+    }, {});
+  }
+
+  function delimitedFormat(delimiter) {
+    const parse = function (data, format) {
+      const delim = {
+        delimiter: delimiter
+      };
+      return dsv(data, format ? extend(format, delim) : delim);
+    };
+
+    parse.responseType = 'text';
+    return parse;
+  }
+  function dsv(data, format) {
+    if (format.header) {
+      data = format.header.map($).join(format.delimiter) + '\n' + data;
+    }
+
+    return d3Dsv.dsvFormat(format.delimiter).parse(data + '');
+  }
+  dsv.responseType = 'text';
+
+  function isBuffer(_) {
+    return typeof Buffer === 'function' && isFunction(Buffer.isBuffer) ? Buffer.isBuffer(_) : false;
+  }
+
+  function json(data, format) {
+    const prop = format && format.property ? field(format.property) : identity;
+    return isObject(data) && !isBuffer(data) ? parseJSON(prop(data), format) : prop(JSON.parse(data));
+  }
+  json.responseType = 'json';
+
+  function parseJSON(data, format) {
+    if (!isArray(data) && isIterable(data)) {
+      data = [...data];
+    }
+
+    return format && format.copy ? JSON.parse(JSON.stringify(data)) : data;
+  }
+
+  const filters = {
+    interior: (a, b) => a !== b,
+    exterior: (a, b) => a === b
+  };
+  function topojson(data, format) {
+    let method, object, property, filter;
+    data = json(data, format);
+
+    if (format && format.feature) {
+      method = topojsonClient.feature;
+      property = format.feature;
+    } else if (format && format.mesh) {
+      method = topojsonClient.mesh;
+      property = format.mesh;
+      filter = filters[format.filter];
+    } else {
+      error('Missing TopoJSON feature or mesh parameter.');
+    }
+
+    object = (object = data.objects[property]) ? method(data, object, filter) : error('Invalid TopoJSON object: ' + property);
+    return object && object.features || [object];
+  }
+  topojson.responseType = 'json';
+
+  const format = {
+    dsv: dsv,
+    csv: delimitedFormat(','),
+    tsv: delimitedFormat('\t'),
+    json: json,
+    topojson: topojson
+  };
+  function formats(name, reader) {
+    if (arguments.length > 1) {
+      format[name] = reader;
+      return this;
+    } else {
+      return has(format, name) ? format[name] : null;
+    }
+  }
+  function responseType(type) {
+    const f = formats(type);
+    return f && f.responseType || 'text';
   }
 
   const YEAR = 'year';
@@ -1417,317 +1731,7 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
     return defaultLocale();
   }
 
-  const protocol_re = /^([A-Za-z]+:)?\/\//; // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
-
-  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
-
-  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
-  // Special treatment in node.js for the file: protocol
-
-  const fileProtocol = 'file://';
-  /**
-   * Factory for a loader constructor that provides methods for requesting
-   * files from either the network or disk, and for sanitizing request URIs.
-   * @param {function} fetch - The Fetch API for HTTP network requests.
-   *   If null or undefined, HTTP loading will be disabled.
-   * @param {object} fs - The file system interface for file loading.
-   *   If null or undefined, local file loading will be disabled.
-   * @return {function} A loader constructor with the following signature:
-   *   param {object} [options] - Optional default loading options to use.
-   *   return {object} - A new loader instance.
-   */
-
-  function loaderFactory(fetch, fs) {
-    return options => ({
-      options: options || {},
-      sanitize: sanitize,
-      load: load,
-      fileAccess: !!fs,
-      file: fileLoader(fs),
-      http: httpLoader(fetch)
-    });
-  }
-  /**
-   * Load an external resource, typically either from the web or from the local
-   * filesystem. This function uses {@link sanitize} to first sanitize the uri,
-   * then calls either {@link http} (for web requests) or {@link file} (for
-   * filesystem loading).
-   * @param {string} uri - The resource indicator (e.g., URL or filename).
-   * @param {object} [options] - Optional loading options. These options will
-   *   override any existing default options.
-   * @return {Promise} - A promise that resolves to the loaded content.
-   */
-
-
-  async function load(uri, options) {
-    const opt = await this.sanitize(uri, options),
-          url = opt.href;
-    return opt.localFile ? this.file(url) : this.http(url, options);
-  }
-  /**
-   * URI sanitizer function.
-   * @param {string} uri - The uri (url or filename) to sanity check.
-   * @param {object} options - An options hash.
-   * @return {Promise} - A promise that resolves to an object containing
-   *  sanitized uri data, or rejects it the input uri is deemed invalid.
-   *  The properties of the resolved object are assumed to be
-   *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
-   *  provided by the 'href' property of the returned object.
-   */
-
-
-  async function sanitize(uri, options) {
-    options = extend({}, this.options, options);
-    const fileAccess = this.fileAccess,
-          result = {
-      href: null
-    };
-    let isFile, loadFile, base;
-    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
-
-    if (uri == null || typeof uri !== 'string' || !isAllowed) {
-      error('Sanitize failure, invalid URI: ' + $(uri));
-    }
-
-    const hasProtocol = protocol_re.test(uri); // if relative url (no protocol/host), prepend baseURL
-
-    if ((base = options.baseURL) && !hasProtocol) {
-      // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-      if (!uri.startsWith('/') && base[base.length - 1] !== '/') {
-        uri = '/' + uri;
-      }
-
-      uri = base + uri;
-    } // should we load from file system?
-
-
-    loadFile = (isFile = uri.startsWith(fileProtocol)) || options.mode === 'file' || options.mode !== 'http' && !hasProtocol && fileAccess;
-
-    if (isFile) {
-      // strip file protocol
-      uri = uri.slice(fileProtocol.length);
-    } else if (uri.startsWith('//')) {
-      if (options.defaultProtocol === 'file') {
-        // if is file, strip protocol and set loadFile flag
-        uri = uri.slice(2);
-        loadFile = true;
-      } else {
-        // if relative protocol (starts with '//'), prepend default protocol
-        uri = (options.defaultProtocol || 'http') + ':' + uri;
-      }
-    } // set non-enumerable mode flag to indicate local file load
-
-
-    Object.defineProperty(result, 'localFile', {
-      value: !!loadFile
-    }); // set uri
-
-    result.href = uri; // set default result target, if specified
-
-    if (options.target) {
-      result.target = options.target + '';
-    } // set default result rel, if specified (#1542)
-
-
-    if (options.rel) {
-      result.rel = options.rel + '';
-    } // provide control over cross-origin image handling (#2238)
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
-
-
-    if (options.context === 'image' && options.crossOrigin) {
-      result.crossOrigin = options.crossOrigin + '';
-    } // return
-
-
-    return result;
-  }
-  /**
-   * File system loader factory.
-   * @param {object} fs - The file system interface.
-   * @return {function} - A file loader with the following signature:
-   *   param {string} filename - The file system path to load.
-   *   param {string} filename - The file system path to load.
-   *   return {Promise} A promise that resolves to the file contents.
-   */
-
-
-  function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
-  }
-  /**
-   * Default file system loader that simply rejects.
-   */
-
-
-  async function fileReject() {
-    error('No file system access.');
-  }
-  /**
-   * HTTP request handler factory.
-   * @param {function} fetch - The Fetch API method.
-   * @return {function} - An http loader with the following signature:
-   *   param {string} url - The url to request.
-   *   param {object} options - An options hash.
-   *   return {Promise} - A promise that resolves to the file contents.
-   */
-
-
-  function httpLoader(fetch) {
-    return fetch ? async function (url, options) {
-      const opt = extend({}, this.options.http, options),
-            type = options && options.response,
-            response = await fetch(url, opt);
-      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
-    } : httpReject;
-  }
-  /**
-   * Default http request handler that simply rejects.
-   */
-
-
-  async function httpReject() {
-    error('No HTTP fetch method available.');
-  }
-
-  const isValid = _ => _ != null && _ === _;
-
-  const isBoolean$1 = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
-
-  const isDate$1 = _ => !Number.isNaN(Date.parse(_));
-
-  const isNumber$1 = _ => !Number.isNaN(+_) && !(_ instanceof Date);
-
-  const isInteger = _ => isNumber$1(_) && Number.isInteger(+_);
-
-  const typeParsers = {
-    boolean: toBoolean,
-    integer: toNumber,
-    number: toNumber,
-    date: toDate,
-    string: toString,
-    unknown: identity
-  };
-  const typeTests = [isBoolean$1, isInteger, isNumber$1, isDate$1];
-  const typeList = ['boolean', 'integer', 'number', 'date'];
-
-  function inferType(values, field) {
-    if (!values || !values.length) return 'unknown';
-    const n = values.length,
-          m = typeTests.length,
-          a = typeTests.map((_, i) => i + 1);
-
-    for (let i = 0, t = 0, j, value; i < n; ++i) {
-      value = field ? values[i][field] : values[i];
-
-      for (j = 0; j < m; ++j) {
-        if (a[j] && isValid(value) && !typeTests[j](value)) {
-          a[j] = 0;
-          ++t;
-          if (t === typeTests.length) return 'string';
-        }
-      }
-    }
-
-    return typeList[a.reduce((u, v) => u === 0 ? v : u, 0) - 1];
-  }
-
-  function inferTypes(data, fields) {
-    return fields.reduce((types, field) => {
-      types[field] = inferType(data, field);
-      return types;
-    }, {});
-  }
-
-  function delimitedFormat(delimiter) {
-    const parse = function (data, format) {
-      const delim = {
-        delimiter: delimiter
-      };
-      return dsv(data, format ? extend(format, delim) : delim);
-    };
-
-    parse.responseType = 'text';
-    return parse;
-  }
-
-  function dsv(data, format) {
-    if (format.header) {
-      data = format.header.map($).join(format.delimiter) + '\n' + data;
-    }
-
-    return d3Dsv.dsvFormat(format.delimiter).parse(data + '');
-  }
-
-  dsv.responseType = 'text';
-
-  function isBuffer(_) {
-    return typeof Buffer === 'function' && isFunction(Buffer.isBuffer) ? Buffer.isBuffer(_) : false;
-  }
-
-  function json(data, format) {
-    const prop = format && format.property ? field(format.property) : identity;
-    return isObject(data) && !isBuffer(data) ? parseJSON(prop(data), format) : prop(JSON.parse(data));
-  }
-
-  json.responseType = 'json';
-
-  function parseJSON(data, format) {
-    return format && format.copy ? JSON.parse(JSON.stringify(data)) : data;
-  }
-
-  const filters = {
-    interior: (a, b) => a !== b,
-    exterior: (a, b) => a === b
-  };
-
-  function topojson(data, format) {
-    let method, object, property, filter;
-    data = json(data, format);
-
-    if (format && format.feature) {
-      method = topojsonClient.feature;
-      property = format.feature;
-    } else if (format && format.mesh) {
-      method = topojsonClient.mesh;
-      property = format.mesh;
-      filter = filters[format.filter];
-    } else {
-      error('Missing TopoJSON feature or mesh parameter.');
-    }
-
-    object = (object = data.objects[property]) ? method(data, object, filter) : error('Invalid TopoJSON object: ' + property);
-    return object && object.features || [object];
-  }
-
-  topojson.responseType = 'json';
-  const format = {
-    dsv: dsv,
-    csv: delimitedFormat(','),
-    tsv: delimitedFormat('\t'),
-    json: json,
-    topojson: topojson
-  };
-
-  function formats(name, reader) {
-    if (arguments.length > 1) {
-      format[name] = reader;
-      return this;
-    } else {
-      return has(format, name) ? format[name] : null;
-    }
-  }
-
-  function responseType(type) {
-    const f = formats(type);
-    return f && f.responseType || 'text';
-  }
-
-  function read(data, schema, timeParser, utcParser) {
+  function read (data, schema, timeParser, utcParser) {
     schema = schema || {};
     const reader = formats(schema.type || 'json');
     if (!reader) error('Unknown data format type: ' + schema.type);
@@ -9505,7 +9509,6 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
 
     return null;
   }
-
   const domImage = () => typeof Image !== 'undefined' ? Image : null;
 
   function bandSpace(count, paddingInner, paddingOuter) {
@@ -23110,7 +23113,7 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.16.0";
+  var version = "5.17.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -32248,6 +32251,7 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
   exports.isBoolean = isBoolean;
   exports.isDate = isDate;
   exports.isFunction = isFunction;
+  exports.isIterable = isIterable;
   exports.isNumber = isNumber;
   exports.isObject = isObject;
   exports.isRegExp = isRegExp;
@@ -32364,6 +32368,6 @@ var vega = (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time,
   exports.zoomPow = zoomPow;
   exports.zoomSymlog = zoomSymlog;
 
-  return exports;
+  Object.defineProperty(exports, '__esModule', { value: true });
 
-}({}, d3, topojson, d3, d3, d3, d3, d3, d3, d3, d3, d3, d3, d3, d3, d3, d3));
+})));

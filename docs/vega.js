@@ -1,5 +1,8 @@
-var vega = (function (exports) {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}));
+}(this, (function (exports) { 'use strict';
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -659,6 +662,10 @@ var vega = (function (exports) {
     return Object.prototype.toString.call(_) === '[object Date]';
   }
 
+  function isIterable(_) {
+    return _ && isFunction(_[Symbol.iterator]);
+  }
+
   function isNumber(_) {
     return typeof _ === 'number';
   }
@@ -848,6 +855,231 @@ var vega = (function (exports) {
     }
   }
 
+  //   https://...    file://...    //...
+
+  const protocol_re = /^([A-Za-z]+:)?\/\//; // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
+
+  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
+
+  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+  // Special treatment in node.js for the file: protocol
+
+  const fileProtocol = 'file://';
+  /**
+   * Factory for a loader constructor that provides methods for requesting
+   * files from either the network or disk, and for sanitizing request URIs.
+   * @param {function} fetch - The Fetch API for HTTP network requests.
+   *   If null or undefined, HTTP loading will be disabled.
+   * @param {object} fs - The file system interface for file loading.
+   *   If null or undefined, local file loading will be disabled.
+   * @return {function} A loader constructor with the following signature:
+   *   param {object} [options] - Optional default loading options to use.
+   *   return {object} - A new loader instance.
+   */
+
+  function loaderFactory (fetch, fs) {
+    return options => ({
+      options: options || {},
+      sanitize: sanitize,
+      load: load,
+      fileAccess: !!fs,
+      file: fileLoader(fs),
+      http: httpLoader(fetch)
+    });
+  }
+  /**
+   * Load an external resource, typically either from the web or from the local
+   * filesystem. This function uses {@link sanitize} to first sanitize the uri,
+   * then calls either {@link http} (for web requests) or {@link file} (for
+   * filesystem loading).
+   * @param {string} uri - The resource indicator (e.g., URL or filename).
+   * @param {object} [options] - Optional loading options. These options will
+   *   override any existing default options.
+   * @return {Promise} - A promise that resolves to the loaded content.
+   */
+
+  async function load(uri, options) {
+    const opt = await this.sanitize(uri, options),
+          url = opt.href;
+    return opt.localFile ? this.file(url) : this.http(url, options);
+  }
+  /**
+   * URI sanitizer function.
+   * @param {string} uri - The uri (url or filename) to sanity check.
+   * @param {object} options - An options hash.
+   * @return {Promise} - A promise that resolves to an object containing
+   *  sanitized uri data, or rejects it the input uri is deemed invalid.
+   *  The properties of the resolved object are assumed to be
+   *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
+   *  provided by the 'href' property of the returned object.
+   */
+
+
+  async function sanitize(uri, options) {
+    options = extend({}, this.options, options);
+    const fileAccess = this.fileAccess,
+          result = {
+      href: null
+    };
+    let isFile, loadFile, base;
+    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
+
+    if (uri == null || typeof uri !== 'string' || !isAllowed) {
+      error('Sanitize failure, invalid URI: ' + $(uri));
+    }
+
+    const hasProtocol = protocol_re.test(uri); // if relative url (no protocol/host), prepend baseURL
+
+    if ((base = options.baseURL) && !hasProtocol) {
+      // Ensure that there is a slash between the baseURL (e.g. hostname) and url
+      if (!uri.startsWith('/') && base[base.length - 1] !== '/') {
+        uri = '/' + uri;
+      }
+
+      uri = base + uri;
+    } // should we load from file system?
+
+
+    loadFile = (isFile = uri.startsWith(fileProtocol)) || options.mode === 'file' || options.mode !== 'http' && !hasProtocol && fileAccess;
+
+    if (isFile) {
+      // strip file protocol
+      uri = uri.slice(fileProtocol.length);
+    } else if (uri.startsWith('//')) {
+      if (options.defaultProtocol === 'file') {
+        // if is file, strip protocol and set loadFile flag
+        uri = uri.slice(2);
+        loadFile = true;
+      } else {
+        // if relative protocol (starts with '//'), prepend default protocol
+        uri = (options.defaultProtocol || 'http') + ':' + uri;
+      }
+    } // set non-enumerable mode flag to indicate local file load
+
+
+    Object.defineProperty(result, 'localFile', {
+      value: !!loadFile
+    }); // set uri
+
+    result.href = uri; // set default result target, if specified
+
+    if (options.target) {
+      result.target = options.target + '';
+    } // set default result rel, if specified (#1542)
+
+
+    if (options.rel) {
+      result.rel = options.rel + '';
+    } // provide control over cross-origin image handling (#2238)
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+
+
+    if (options.context === 'image' && options.crossOrigin) {
+      result.crossOrigin = options.crossOrigin + '';
+    } // return
+
+
+    return result;
+  }
+  /**
+   * File system loader factory.
+   * @param {object} fs - The file system interface.
+   * @return {function} - A file loader with the following signature:
+   *   param {string} filename - The file system path to load.
+   *   param {string} filename - The file system path to load.
+   *   return {Promise} A promise that resolves to the file contents.
+   */
+
+
+  function fileLoader(fs) {
+    return fs ? filename => new Promise((accept, reject) => {
+      fs.readFile(filename, (error, data) => {
+        if (error) reject(error);else accept(data);
+      });
+    }) : fileReject;
+  }
+  /**
+   * Default file system loader that simply rejects.
+   */
+
+
+  async function fileReject() {
+    error('No file system access.');
+  }
+  /**
+   * HTTP request handler factory.
+   * @param {function} fetch - The Fetch API method.
+   * @return {function} - An http loader with the following signature:
+   *   param {string} url - The url to request.
+   *   param {object} options - An options hash.
+   *   return {Promise} - A promise that resolves to the file contents.
+   */
+
+
+  function httpLoader(fetch) {
+    return fetch ? async function (url, options) {
+      const opt = extend({}, this.options.http, options),
+            type = options && options.response,
+            response = await fetch(url, opt);
+      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
+    } : httpReject;
+  }
+  /**
+   * Default http request handler that simply rejects.
+   */
+
+
+  async function httpReject() {
+    error('No HTTP fetch method available.');
+  }
+
+  const isValid = _ => _ != null && _ === _;
+
+  const isBoolean$1 = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
+
+  const isDate$1 = _ => !Number.isNaN(Date.parse(_));
+
+  const isNumber$1 = _ => !Number.isNaN(+_) && !(_ instanceof Date);
+
+  const isInteger = _ => isNumber$1(_) && Number.isInteger(+_);
+
+  const typeParsers = {
+    boolean: toBoolean,
+    integer: toNumber,
+    number: toNumber,
+    date: toDate,
+    string: toString,
+    unknown: identity
+  };
+  const typeTests = [isBoolean$1, isInteger, isNumber$1, isDate$1];
+  const typeList = ['boolean', 'integer', 'number', 'date'];
+  function inferType(values, field) {
+    if (!values || !values.length) return 'unknown';
+    const n = values.length,
+          m = typeTests.length,
+          a = typeTests.map((_, i) => i + 1);
+
+    for (let i = 0, t = 0, j, value; i < n; ++i) {
+      value = field ? values[i][field] : values[i];
+
+      for (j = 0; j < m; ++j) {
+        if (a[j] && isValid(value) && !typeTests[j](value)) {
+          a[j] = 0;
+          ++t;
+          if (t === typeTests.length) return 'string';
+        }
+      }
+    }
+
+    return typeList[a.reduce((u, v) => u === 0 ? v : u, 0) - 1];
+  }
+  function inferTypes(data, fields) {
+    return fields.reduce((types, field) => {
+      types[field] = inferType(data, field);
+      return types;
+    }, {});
+  }
+
   var EOL = {},
       EOF = {},
       QUOTE = 34,
@@ -1014,6 +1246,44 @@ var vega = (function (exports) {
       formatRow: formatRow,
       formatValue: formatValue
     };
+  }
+
+  function delimitedFormat(delimiter) {
+    const parse = function (data, format) {
+      const delim = {
+        delimiter: delimiter
+      };
+      return dsv(data, format ? extend(format, delim) : delim);
+    };
+
+    parse.responseType = 'text';
+    return parse;
+  }
+  function dsv(data, format) {
+    if (format.header) {
+      data = format.header.map($).join(format.delimiter) + '\n' + data;
+    }
+
+    return dsvFormat(format.delimiter).parse(data + '');
+  }
+  dsv.responseType = 'text';
+
+  function isBuffer(_) {
+    return typeof Buffer === 'function' && isFunction(Buffer.isBuffer) ? Buffer.isBuffer(_) : false;
+  }
+
+  function json(data, format) {
+    const prop = format && format.property ? field(format.property) : identity;
+    return isObject(data) && !isBuffer(data) ? parseJSON(prop(data), format) : prop(JSON.parse(data));
+  }
+  json.responseType = 'json';
+
+  function parseJSON(data, format) {
+    if (!isArray(data) && isIterable(data)) {
+      data = [...data];
+    }
+
+    return format && format.copy ? JSON.parse(JSON.stringify(data)) : data;
   }
 
   function identity$1 (x) {
@@ -1320,6 +1590,50 @@ var vega = (function (exports) {
       if (filter(geoms[0].g, geoms[geoms.length - 1].g)) arcs.push(geoms[0].i);
     });
     return arcs;
+  }
+
+  const filters = {
+    interior: (a, b) => a !== b,
+    exterior: (a, b) => a === b
+  };
+  function topojson(data, format) {
+    let method, object, property, filter;
+    data = json(data, format);
+
+    if (format && format.feature) {
+      method = feature;
+      property = format.feature;
+    } else if (format && format.mesh) {
+      method = mesh;
+      property = format.mesh;
+      filter = filters[format.filter];
+    } else {
+      error('Missing TopoJSON feature or mesh parameter.');
+    }
+
+    object = (object = data.objects[property]) ? method(data, object, filter) : error('Invalid TopoJSON object: ' + property);
+    return object && object.features || [object];
+  }
+  topojson.responseType = 'json';
+
+  const format = {
+    dsv: dsv,
+    csv: delimitedFormat(','),
+    tsv: delimitedFormat('\t'),
+    json: json,
+    topojson: topojson
+  };
+  function formats(name, reader) {
+    if (arguments.length > 1) {
+      format[name] = reader;
+      return this;
+    } else {
+      return has(format, name) ? format[name] : null;
+    }
+  }
+  function responseType(type) {
+    const f = formats(type);
+    return f && f.responseType || 'text';
   }
 
   function ascending$1 (a, b) {
@@ -2007,7 +2321,7 @@ var vega = (function (exports) {
   }
 
   var locale;
-  var format;
+  var format$1;
   var formatPrefix;
   defaultLocale({
     thousands: ",",
@@ -2016,7 +2330,7 @@ var vega = (function (exports) {
   });
   function defaultLocale(definition) {
     locale = formatLocale(definition);
-    format = locale.format;
+    format$1 = locale.format;
     formatPrefix = locale.formatPrefix;
     return locale;
   }
@@ -3477,7 +3791,7 @@ var vega = (function (exports) {
 
   function resetNumberFormatDefaultLocale() {
     return defaultNumberLocale = numberLocale({
-      format: format,
+      format: format$1,
       formatPrefix: formatPrefix
     });
   }
@@ -3572,317 +3886,7 @@ var vega = (function (exports) {
     return defaultLocale$2();
   }
 
-  const protocol_re = /^([A-Za-z]+:)?\/\//; // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
-
-  const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
-
-  const whitespace_re = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
-  // Special treatment in node.js for the file: protocol
-
-  const fileProtocol = 'file://';
-  /**
-   * Factory for a loader constructor that provides methods for requesting
-   * files from either the network or disk, and for sanitizing request URIs.
-   * @param {function} fetch - The Fetch API for HTTP network requests.
-   *   If null or undefined, HTTP loading will be disabled.
-   * @param {object} fs - The file system interface for file loading.
-   *   If null or undefined, local file loading will be disabled.
-   * @return {function} A loader constructor with the following signature:
-   *   param {object} [options] - Optional default loading options to use.
-   *   return {object} - A new loader instance.
-   */
-
-  function loaderFactory(fetch, fs) {
-    return options => ({
-      options: options || {},
-      sanitize: sanitize,
-      load: load,
-      fileAccess: !!fs,
-      file: fileLoader(fs),
-      http: httpLoader(fetch)
-    });
-  }
-  /**
-   * Load an external resource, typically either from the web or from the local
-   * filesystem. This function uses {@link sanitize} to first sanitize the uri,
-   * then calls either {@link http} (for web requests) or {@link file} (for
-   * filesystem loading).
-   * @param {string} uri - The resource indicator (e.g., URL or filename).
-   * @param {object} [options] - Optional loading options. These options will
-   *   override any existing default options.
-   * @return {Promise} - A promise that resolves to the loaded content.
-   */
-
-
-  async function load(uri, options) {
-    const opt = await this.sanitize(uri, options),
-          url = opt.href;
-    return opt.localFile ? this.file(url) : this.http(url, options);
-  }
-  /**
-   * URI sanitizer function.
-   * @param {string} uri - The uri (url or filename) to sanity check.
-   * @param {object} options - An options hash.
-   * @return {Promise} - A promise that resolves to an object containing
-   *  sanitized uri data, or rejects it the input uri is deemed invalid.
-   *  The properties of the resolved object are assumed to be
-   *  valid attributes for an HTML 'a' tag. The sanitized uri *must* be
-   *  provided by the 'href' property of the returned object.
-   */
-
-
-  async function sanitize(uri, options) {
-    options = extend({}, this.options, options);
-    const fileAccess = this.fileAccess,
-          result = {
-      href: null
-    };
-    let isFile, loadFile, base;
-    const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
-
-    if (uri == null || typeof uri !== 'string' || !isAllowed) {
-      error('Sanitize failure, invalid URI: ' + $(uri));
-    }
-
-    const hasProtocol = protocol_re.test(uri); // if relative url (no protocol/host), prepend baseURL
-
-    if ((base = options.baseURL) && !hasProtocol) {
-      // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-      if (!uri.startsWith('/') && base[base.length - 1] !== '/') {
-        uri = '/' + uri;
-      }
-
-      uri = base + uri;
-    } // should we load from file system?
-
-
-    loadFile = (isFile = uri.startsWith(fileProtocol)) || options.mode === 'file' || options.mode !== 'http' && !hasProtocol && fileAccess;
-
-    if (isFile) {
-      // strip file protocol
-      uri = uri.slice(fileProtocol.length);
-    } else if (uri.startsWith('//')) {
-      if (options.defaultProtocol === 'file') {
-        // if is file, strip protocol and set loadFile flag
-        uri = uri.slice(2);
-        loadFile = true;
-      } else {
-        // if relative protocol (starts with '//'), prepend default protocol
-        uri = (options.defaultProtocol || 'http') + ':' + uri;
-      }
-    } // set non-enumerable mode flag to indicate local file load
-
-
-    Object.defineProperty(result, 'localFile', {
-      value: !!loadFile
-    }); // set uri
-
-    result.href = uri; // set default result target, if specified
-
-    if (options.target) {
-      result.target = options.target + '';
-    } // set default result rel, if specified (#1542)
-
-
-    if (options.rel) {
-      result.rel = options.rel + '';
-    } // provide control over cross-origin image handling (#2238)
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
-
-
-    if (options.context === 'image' && options.crossOrigin) {
-      result.crossOrigin = options.crossOrigin + '';
-    } // return
-
-
-    return result;
-  }
-  /**
-   * File system loader factory.
-   * @param {object} fs - The file system interface.
-   * @return {function} - A file loader with the following signature:
-   *   param {string} filename - The file system path to load.
-   *   param {string} filename - The file system path to load.
-   *   return {Promise} A promise that resolves to the file contents.
-   */
-
-
-  function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
-  }
-  /**
-   * Default file system loader that simply rejects.
-   */
-
-
-  async function fileReject() {
-    error('No file system access.');
-  }
-  /**
-   * HTTP request handler factory.
-   * @param {function} fetch - The Fetch API method.
-   * @return {function} - An http loader with the following signature:
-   *   param {string} url - The url to request.
-   *   param {object} options - An options hash.
-   *   return {Promise} - A promise that resolves to the file contents.
-   */
-
-
-  function httpLoader(fetch) {
-    return fetch ? async function (url, options) {
-      const opt = extend({}, this.options.http, options),
-            type = options && options.response,
-            response = await fetch(url, opt);
-      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
-    } : httpReject;
-  }
-  /**
-   * Default http request handler that simply rejects.
-   */
-
-
-  async function httpReject() {
-    error('No HTTP fetch method available.');
-  }
-
-  const isValid = _ => _ != null && _ === _;
-
-  const isBoolean$1 = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
-
-  const isDate$1 = _ => !Number.isNaN(Date.parse(_));
-
-  const isNumber$1 = _ => !Number.isNaN(+_) && !(_ instanceof Date);
-
-  const isInteger = _ => isNumber$1(_) && Number.isInteger(+_);
-
-  const typeParsers = {
-    boolean: toBoolean,
-    integer: toNumber,
-    number: toNumber,
-    date: toDate,
-    string: toString,
-    unknown: identity
-  };
-  const typeTests = [isBoolean$1, isInteger, isNumber$1, isDate$1];
-  const typeList = ['boolean', 'integer', 'number', 'date'];
-
-  function inferType(values, field) {
-    if (!values || !values.length) return 'unknown';
-    const n = values.length,
-          m = typeTests.length,
-          a = typeTests.map((_, i) => i + 1);
-
-    for (let i = 0, t = 0, j, value; i < n; ++i) {
-      value = field ? values[i][field] : values[i];
-
-      for (j = 0; j < m; ++j) {
-        if (a[j] && isValid(value) && !typeTests[j](value)) {
-          a[j] = 0;
-          ++t;
-          if (t === typeTests.length) return 'string';
-        }
-      }
-    }
-
-    return typeList[a.reduce((u, v) => u === 0 ? v : u, 0) - 1];
-  }
-
-  function inferTypes(data, fields) {
-    return fields.reduce((types, field) => {
-      types[field] = inferType(data, field);
-      return types;
-    }, {});
-  }
-
-  function delimitedFormat(delimiter) {
-    const parse = function (data, format) {
-      const delim = {
-        delimiter: delimiter
-      };
-      return dsv(data, format ? extend(format, delim) : delim);
-    };
-
-    parse.responseType = 'text';
-    return parse;
-  }
-
-  function dsv(data, format) {
-    if (format.header) {
-      data = format.header.map($).join(format.delimiter) + '\n' + data;
-    }
-
-    return dsvFormat(format.delimiter).parse(data + '');
-  }
-
-  dsv.responseType = 'text';
-
-  function isBuffer(_) {
-    return typeof Buffer === 'function' && isFunction(Buffer.isBuffer) ? Buffer.isBuffer(_) : false;
-  }
-
-  function json(data, format) {
-    const prop = format && format.property ? field(format.property) : identity;
-    return isObject(data) && !isBuffer(data) ? parseJSON(prop(data), format) : prop(JSON.parse(data));
-  }
-
-  json.responseType = 'json';
-
-  function parseJSON(data, format) {
-    return format && format.copy ? JSON.parse(JSON.stringify(data)) : data;
-  }
-
-  const filters = {
-    interior: (a, b) => a !== b,
-    exterior: (a, b) => a === b
-  };
-
-  function topojson(data, format) {
-    let method, object, property, filter;
-    data = json(data, format);
-
-    if (format && format.feature) {
-      method = feature;
-      property = format.feature;
-    } else if (format && format.mesh) {
-      method = mesh;
-      property = format.mesh;
-      filter = filters[format.filter];
-    } else {
-      error('Missing TopoJSON feature or mesh parameter.');
-    }
-
-    object = (object = data.objects[property]) ? method(data, object, filter) : error('Invalid TopoJSON object: ' + property);
-    return object && object.features || [object];
-  }
-
-  topojson.responseType = 'json';
-  const format$1 = {
-    dsv: dsv,
-    csv: delimitedFormat(','),
-    tsv: delimitedFormat('\t'),
-    json: json,
-    topojson: topojson
-  };
-
-  function formats(name, reader) {
-    if (arguments.length > 1) {
-      format$1[name] = reader;
-      return this;
-    } else {
-      return has(format$1, name) ? format$1[name] : null;
-    }
-  }
-
-  function responseType(type) {
-    const f = formats(type);
-    return f && f.responseType || 'text';
-  }
-
-  function read(data, schema, timeParser, utcParser) {
+  function read (data, schema, timeParser, utcParser) {
     schema = schema || {};
     const reader = formats(schema.type || 'json');
     if (!reader) error('Unknown data format type: ' + schema.type);
@@ -13291,7 +13295,6 @@ var vega = (function (exports) {
 
     return null;
   }
-
   const domImage = () => typeof Image !== 'undefined' ? Image : null;
 
   function initRange(domain, range) {
@@ -14500,13 +14503,13 @@ var vega = (function (exports) {
     quantize: quantize
   });
 
-  function constant$3 (x) {
+  function constants(x) {
     return function () {
       return x;
     };
   }
 
-  function number$1 (x) {
+  function number$1(x) {
     return +x;
   }
 
@@ -14518,7 +14521,7 @@ var vega = (function (exports) {
   function normalize(a, b) {
     return (b -= a = +a) ? function (x) {
       return (x - a) / b;
-    } : constant$3(isNaN(b) ? NaN : 0.5);
+    } : constants(isNaN(b) ? NaN : 0.5);
   }
 
   function clamper(a, b) {
@@ -14628,7 +14631,7 @@ var vega = (function (exports) {
     return transformer()(identity$4, identity$4);
   }
 
-  function tickFormat$1 (start, stop, count, specifier) {
+  function tickFormat(start, stop, count, specifier) {
     var step = tickStep(start, stop, count),
         precision;
     specifier = formatSpecifier(specifier == null ? ",f" : specifier);
@@ -14659,7 +14662,7 @@ var vega = (function (exports) {
         }
     }
 
-    return format(specifier);
+    return format$1(specifier);
   }
 
   function linearish(scale) {
@@ -14672,7 +14675,7 @@ var vega = (function (exports) {
 
     scale.tickFormat = function (count, specifier) {
       var d = domain();
-      return tickFormat$1(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
+      return tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
     };
 
     scale.nice = function (count) {
@@ -14752,7 +14755,7 @@ var vega = (function (exports) {
     return linearish(scale);
   }
 
-  function nice (domain, interval) {
+  function nice(domain, interval) {
     domain = domain.slice();
     var i0 = 0,
         i1 = domain.length - 1,
@@ -14877,7 +14880,7 @@ var vega = (function (exports) {
 
     scale.tickFormat = function (count, specifier) {
       if (specifier == null) specifier = base === 10 ? ".0e" : ",";
-      if (typeof specifier !== "function") specifier = format(specifier);
+      if (typeof specifier !== "function") specifier = format$1(specifier);
       if (count === Infinity) return specifier;
       if (count == null) count = 10;
       var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
@@ -14998,7 +15001,7 @@ var vega = (function (exports) {
           n = Math.max(1, range.length);
       thresholds = new Array(n - 1);
 
-      while (++i < n) thresholds[i - 1] = quantile(domain, i / n);
+      while (++i < n) thresholds[i - 1] = quantileSorted(domain, i / n);
 
       return scale;
     }
@@ -15224,11 +15227,11 @@ var vega = (function (exports) {
 
     return scale;
   }
-  function scaleTime () {
+  function time() {
     return initRange.apply(calendar(year, month, sunday, day, hour, minute, second, millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
   }
 
-  function scaleUtc () {
+  function utcTime() {
     return initRange.apply(calendar(utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, millisecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]), arguments);
   }
 
@@ -15704,7 +15707,7 @@ var vega = (function (exports) {
     };
 
     scale.tickFormat = function (count, specifier) {
-      return tickFormat$1(domain[0], peek(domain), count == null ? 10 : count, specifier);
+      return tickFormat(domain[0], peek(domain), count == null ? 10 : count, specifier);
     };
 
     scale.copy = function () {
@@ -15752,8 +15755,8 @@ var vega = (function (exports) {
   scale(Pow, pow$2, Continuous);
   scale(Sqrt, sqrt$1, Continuous);
   scale(Symlog, symlog$1, Continuous);
-  scale(Time, scaleTime, [Continuous, Temporal]);
-  scale(UTC, scaleUtc, [Continuous, Temporal]); // sequential scales
+  scale(Time, time, [Continuous, Temporal]);
+  scale(UTC, utcTime, [Continuous, Temporal]); // sequential scales
 
   scale(Sequential, sequential, [Continuous, Interpolating]); // backwards compat
 
@@ -16081,7 +16084,7 @@ var vega = (function (exports) {
    */
 
 
-  function tickFormat(locale, scale, count, specifier, formatType, noSkip) {
+  function tickFormat$1(locale, scale, count, specifier, formatType, noSkip) {
     const type = scale.type;
     let format = defaultFormatter;
 
@@ -16169,7 +16172,7 @@ var vega = (function (exports) {
   const isDiscreteRange = scale => symbols[scale.type] || scale.bins;
 
   function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
-    const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC ? thresholdFormat(locale, scale, specifier) : tickFormat(locale, scale, count, specifier, formatType, noSkip);
+    const format = formats$1[scale.type] && formatType !== Time && formatType !== UTC ? thresholdFormat(locale, scale, specifier) : tickFormat$1(locale, scale, count, specifier, formatType, noSkip);
     return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format) : type === DiscreteLegend ? formatDiscrete(format) : formatPoint(format);
   }
 
@@ -22909,7 +22912,7 @@ var vega = (function (exports) {
           scale = _.scale,
           tally = _.count == null ? _.values ? _.values.length : 10 : _.count,
           count = tickCount(scale, tally, _.minstep),
-          format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
+          format = _.format || tickFormat$1(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
           values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
       if (ticks) out.rem = ticks;
       ticks = values.map((value, i) => ingest({
@@ -28841,7 +28844,7 @@ var vega = (function (exports) {
   treeProto.x = tree_x;
   treeProto.y = tree_y;
 
-  function constant$4 (x) {
+  function constant$3 (x) {
     return function () {
       return x;
     };
@@ -28865,7 +28868,7 @@ var vega = (function (exports) {
         random,
         strength = 1,
         iterations = 1;
-    if (typeof radius !== "function") radius = constant$4(radius == null ? 1 : +radius);
+    if (typeof radius !== "function") radius = constant$3(radius == null ? 1 : +radius);
 
     function force() {
       var i,
@@ -28953,7 +28956,7 @@ var vega = (function (exports) {
     };
 
     force.radius = function (_) {
-      return arguments.length ? (radius = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : radius;
+      return arguments.length ? (radius = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : radius;
     };
 
     return force;
@@ -28973,7 +28976,7 @@ var vega = (function (exports) {
     var id = index,
         strength = defaultStrength,
         strengths,
-        distance = constant$4(30),
+        distance = constant$3(30),
         distances,
         nodes,
         count,
@@ -29062,11 +29065,11 @@ var vega = (function (exports) {
     };
 
     force.strength = function (_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initializeStrength(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$3(+_), initializeStrength(), force) : strength;
     };
 
     force.distance = function (_) {
-      return arguments.length ? (distance = typeof _ === "function" ? _ : constant$4(+_), initializeDistance(), force) : distance;
+      return arguments.length ? (distance = typeof _ === "function" ? _ : constant$3(+_), initializeDistance(), force) : distance;
     };
 
     return force;
@@ -29470,7 +29473,7 @@ var vega = (function (exports) {
         node,
         random,
         alpha,
-        strength = constant$4(-30),
+        strength = constant$3(-30),
         strengths,
         distanceMin2 = 1,
         distanceMax2 = Infinity,
@@ -29566,7 +29569,7 @@ var vega = (function (exports) {
     };
 
     force.strength = function (_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : strength;
     };
 
     force.distanceMin = function (_) {
@@ -29585,11 +29588,11 @@ var vega = (function (exports) {
   }
 
   function forceX (x) {
-    var strength = constant$4(0.1),
+    var strength = constant$3(0.1),
         nodes,
         strengths,
         xz;
-    if (typeof x !== "function") x = constant$4(x == null ? 0 : +x);
+    if (typeof x !== "function") x = constant$3(x == null ? 0 : +x);
 
     function force(alpha) {
       for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -29615,22 +29618,22 @@ var vega = (function (exports) {
     };
 
     force.strength = function (_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : strength;
     };
 
     force.x = function (_) {
-      return arguments.length ? (x = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : x;
+      return arguments.length ? (x = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : x;
     };
 
     return force;
   }
 
   function forceY (y) {
-    var strength = constant$4(0.1),
+    var strength = constant$3(0.1),
         nodes,
         strengths,
         yz;
-    if (typeof y !== "function") y = constant$4(y == null ? 0 : +y);
+    if (typeof y !== "function") y = constant$3(y == null ? 0 : +y);
 
     function force(alpha) {
       for (var i = 0, n = nodes.length, node; i < n; ++i) {
@@ -29656,11 +29659,11 @@ var vega = (function (exports) {
     };
 
     force.strength = function (_) {
-      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : strength;
+      return arguments.length ? (strength = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : strength;
     };
 
     force.y = function (_) {
-      return arguments.length ? (y = typeof _ === "function" ? _ : constant$4(+_), initialize(), force) : y;
+      return arguments.length ? (y = typeof _ === "function" ? _ : constant$3(+_), initialize(), force) : y;
     };
 
     return force;
@@ -30628,7 +30631,7 @@ var vega = (function (exports) {
   function constantZero() {
     return 0;
   }
-  function constant$5 (x) {
+  function constant$4 (x) {
     return function () {
       return x;
     };
@@ -30665,7 +30668,7 @@ var vega = (function (exports) {
     };
 
     pack.padding = function (x) {
-      return arguments.length ? (padding = typeof x === "function" ? x : constant$5(+x), pack) : padding;
+      return arguments.length ? (padding = typeof x === "function" ? x : constant$4(+x), pack) : padding;
     };
 
     return pack;
@@ -31250,7 +31253,7 @@ var vega = (function (exports) {
     };
 
     treemap.paddingInner = function (x) {
-      return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$5(+x), treemap) : paddingInner;
+      return arguments.length ? (paddingInner = typeof x === "function" ? x : constant$4(+x), treemap) : paddingInner;
     };
 
     treemap.paddingOuter = function (x) {
@@ -31258,19 +31261,19 @@ var vega = (function (exports) {
     };
 
     treemap.paddingTop = function (x) {
-      return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$5(+x), treemap) : paddingTop;
+      return arguments.length ? (paddingTop = typeof x === "function" ? x : constant$4(+x), treemap) : paddingTop;
     };
 
     treemap.paddingRight = function (x) {
-      return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$5(+x), treemap) : paddingRight;
+      return arguments.length ? (paddingRight = typeof x === "function" ? x : constant$4(+x), treemap) : paddingRight;
     };
 
     treemap.paddingBottom = function (x) {
-      return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$5(+x), treemap) : paddingBottom;
+      return arguments.length ? (paddingBottom = typeof x === "function" ? x : constant$4(+x), treemap) : paddingBottom;
     };
 
     treemap.paddingLeft = function (x) {
-      return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$5(+x), treemap) : paddingLeft;
+      return arguments.length ? (paddingLeft = typeof x === "function" ? x : constant$4(+x), treemap) : paddingLeft;
     };
 
     return treemap;
@@ -35885,7 +35888,7 @@ var vega = (function (exports) {
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.16.0";
+  var version = "5.17.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -37953,7 +37956,7 @@ var vega = (function (exports) {
   const utcParse$1 = wrap('utcParse');
   const dateObj = new Date(2000, 0, 1);
 
-  function time(month, day, specifier) {
+  function time$1(month, day, specifier) {
     if (!Number.isInteger(month) || !Number.isInteger(day)) return '';
     dateObj.setYear(2000);
     dateObj.setMonth(month);
@@ -37962,19 +37965,19 @@ var vega = (function (exports) {
   }
 
   function monthFormat(month) {
-    return time.call(this, month, 1, '%B');
+    return time$1.call(this, month, 1, '%B');
   }
 
   function monthAbbrevFormat(month) {
-    return time.call(this, month, 1, '%b');
+    return time$1.call(this, month, 1, '%b');
   }
 
   function dayFormat(day) {
-    return time.call(this, 0, 2 + day, '%A');
+    return time$1.call(this, 0, 2 + day, '%A');
   }
 
   function dayAbbrevFormat(day) {
-    return time.call(this, 0, 2 + day, '%a');
+    return time$1.call(this, 0, 2 + day, '%a');
   }
 
   const DataPrefix$1 = ':';
@@ -45000,7 +45003,7 @@ var vega = (function (exports) {
   exports.font = font;
   exports.fontFamily = fontFamily;
   exports.fontSize = fontSize;
-  exports.format = format$1;
+  exports.format = format;
   exports.formatLocale = numberFormatDefaultLocale;
   exports.formats = formats;
   exports.hasOwnProperty = has;
@@ -45023,6 +45026,7 @@ var vega = (function (exports) {
   exports.isBoolean = isBoolean;
   exports.isDate = isDate;
   exports.isFunction = isFunction;
+  exports.isIterable = isIterable;
   exports.isNumber = isNumber;
   exports.isObject = isObject;
   exports.isRegExp = isRegExp;
@@ -45139,6 +45143,6 @@ var vega = (function (exports) {
   exports.zoomPow = zoomPow;
   exports.zoomSymlog = zoomSymlog;
 
-  return exports;
+  Object.defineProperty(exports, '__esModule', { value: true });
 
-}({}));
+})));
