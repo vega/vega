@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Iterable Data Test</title>
+    <script src="../../build/vega.min.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+let key = 0;
+function generate(n) {
+  const data = [];
+  for (let i=0; i<n; ++i) {
+    data.push({u: 1 + (key++ % 100), v: 5 + ~~(90 * Math.random())});
+  }
+  return data;
+}
+const array = generate(20);
+const data = {
+  [Symbol.iterator]() {
+    return array[Symbol.iterator]();
+  }
+}
+
+const runtimeSpec = vega.parse({
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "count", "value": 0 },
+    { "name": "size", "value": 0 }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": data
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "table", "field": "v"},
+      "zero": true,
+      "nice": true
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "left", "scale": "yscale"}
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "update": {
+          "x": {"scale": "xscale", "field": "u", "offset": 1},
+          "width": {"scale": "xscale", "band": 1, "offset": -1},
+          "y": {"scale": "yscale", "field": "v"},
+          "y2": {"scale": "yscale", "value": 0},
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "red"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": -2},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "black"}
+        },
+        "update": {
+          "text": {"signal": "'Count: ' + count + ', Size: ' + size"}
+        }
+      }
+    }
+  ]
+});
+
+const view = new vega.View(runtimeSpec, {
+  container: '#view',
+  renderer:  'svg',
+  hover:     true
+}).runAsync();
+    </script>
+  </body>
+</html>

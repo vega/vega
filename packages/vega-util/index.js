@@ -62,6 +62,7 @@ export {default as isArray} from './src/isArray';
 export {default as isBoolean} from './src/isBoolean';
 export {default as isDate} from './src/isDate';
 export {default as isFunction} from './src/isFunction';
+export {default as isIterable} from './src/isIterable';
 export {default as isNumber} from './src/isNumber';
 export {default as isObject} from './src/isObject';
 export {default as isRegExp} from './src/isRegExp';
