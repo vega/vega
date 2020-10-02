@@ -118,7 +118,7 @@ export default function(commandLineArgs) {
     },
     plugins: [nodePlugin(false), ...commonPlugins({node: true})]
   }, {
-    input: browser ? './index.browser.js' : './index.js',
+    input: './index.js',
     external: dependencies,
     onwarn,
     output: {
@@ -130,18 +130,16 @@ export default function(commandLineArgs) {
   }];
 
   if (browser) {
-    outputs.push({
-      input: './index.browser.js',
-      external: dependencies,
-      onwarn,
-      output: {
-        file: pkg.browser,
-        format: 'umd',
-        sourcemap: false,
-        name
-      },
-      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
-    });
+    outputs.push(
+      ...outputs.map(out => ({
+        ...out,
+        input: './index.browser.js',
+        output: {
+          ...out.output,
+          file: out.output.file.replace('node', 'browser')
+        }
+      }))
+    );
   }
 
   if (test) {
