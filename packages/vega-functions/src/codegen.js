@@ -138,6 +138,8 @@ import {
   pinchDistance
 } from './functions/pinch';
 
+import pluck from './functions/pluck';
+
 import {
   bandspace,
   bandwidth,
@@ -214,6 +216,7 @@ export const functionContext = {
   merge,
   pad,
   peek,
+  pluck,
   span,
   inrange,
   truncate,
