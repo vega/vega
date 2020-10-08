@@ -140,6 +140,8 @@ import {
   pinchDistance
 } from './functions/pinch';
 
+import pluck from './functions/pluck';
+
 import {
   indexof,
   join,
@@ -231,6 +233,7 @@ export const functionContext = {
   merge,
   pad,
   peek,
+  pluck,
   span,
   inrange,
   truncate,
