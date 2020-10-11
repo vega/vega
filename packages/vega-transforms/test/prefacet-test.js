@@ -79,7 +79,7 @@ tape('PreFacet partitions pre-faceted tuple sets', t => {
 
   // -- test rem with garbage collection
   df.pulse(source, changeset().remove(util.truthy).clean(true)).run();
-  t.equal(facet.targets().active, 4); // 4 subflows updated
+  t.equal(facet.targets().active, 0); // empty subflows removed
   t.equal(subs.length, 4); // no new subflows added
   t.deepEqual(values(0), []);
   t.deepEqual(values(1), []);
