@@ -86,7 +86,7 @@ The `'date'` data type also accepts an optional format string (`'date:format'`).
 ```js
 // read loaded csv data, automatically infer value types
 var data = null;
-loader.load('data/stocks.csv').then(function(data) {
+loader.load('data/stocks.csv').then(function(csv_data) {
   data = vega.read(csv_data, {type: 'csv', parse: 'auto'});
 });
 ```
@@ -94,8 +94,8 @@ loader.load('data/stocks.csv').then(function(data) {
 ```js
 // read loaded csv data, using provided value types
 var data = null;
-loader.load('data/stocks.csv').then(function(data) {
-  data = vega.read(data, {
+loader.load('data/stocks.csv').then(function(csv_data) {
+  data = vega.read(csv_data, {
     type: 'csv',
     parse: {'date': 'date', 'price': 'number'}
   });
