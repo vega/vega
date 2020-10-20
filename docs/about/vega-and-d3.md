@@ -8,7 +8,7 @@ A number of great tools for web-based visualization already exist. Principal amo
 
 To be clear, Vega is **not** intended as a "replacement" for D3. D3 is intentionally a lower-level library. During the early design of D3, we even referred to it as a "visualization kernel" rather than a "toolkit" or "framework". In addition to custom design, D3 is intended as a supporting layer for higher-level visualization tools. Vega is one such tool, and Vega uses D3 heavily within its implementation.
 
-Vega provides a higher-level visualization specification language on top of D3. By design, D3 will maintain an "expressivity advantage" and in some cases will be better suited for novel design ideas. On the other hand, we intend Vega to be convenient for a wide range of common yet customizable visualizations. Vega's design builds on concepts we developed in both [Protovis](http://protovis.org) and D3, and is informed by years of research at Stanford and UW.
+Vega provides a higher-level visualization specification language on top of D3. By design, D3 will maintain an "expressivity advantage" and in some cases will be better suited for novel design ideas. On the other hand, we intend Vega to be convenient for a wide range of common yet customizable visualizations. Vega's design builds on concepts we developed in both [Protovis](https://mbostock.github.io/protovis/) and D3, and is informed by years of research at Stanford and UW.
 
 We had a number of motivations for creating Vega:
 
