@@ -55,7 +55,7 @@ async function load(uri, options) {
 
 /**
  * URI sanitizer function.
- * @param {string} uri - The uri (url or filename) to sanity check.
+ * @param {string} uri - The uri (url or filename) to check.
  * @param {object} options - An options hash.
  * @return {Promise} - A promise that resolves to an object containing
  *  sanitized uri data, or rejects it the input uri is deemed invalid.
