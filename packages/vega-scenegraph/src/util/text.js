@@ -18,7 +18,7 @@ function useCanvas(use) {
   textMetrics.width = (use && context) ? measureWidth : estimateWidth;
 }
 
-// make dumb, simple estimate if no canvas is available
+// make simple estimate if no canvas is available
 function estimateWidth(item, text) {
   return _estimateWidth(textValue(item, text), fontSize(item));
 }
