@@ -55,22 +55,24 @@ export interface ToCanvasOptions {
   externalContext?: any;
 }
 
+export interface ViewOptions {
+  background?: Color;
+  bind?: Element | string;
+  container?: Element | string;
+  hover?: boolean;
+  loader?: Loader;
+  logger?: LoggerInterface;
+  logLevel?: number;
+  renderer?: Renderers;
+  tooltip?: TooltipHandler;
+  locale?: LocaleFormatters;
+  expr?: any;
+}
+
 export class View {
   constructor(
     runtime: Runtime,
-    opt?: {
-      background?: Color;
-      bind?: Element | string;
-      container?: Element | string;
-      hover?: boolean;
-      loader?: Loader;
-      logger?: LoggerInterface;
-      logLevel?: number;
-      renderer?: Renderers;
-      tooltip?: TooltipHandler;
-      locale?: LocaleFormatters;
-      expr?: any;
-    },
+    opt?: ViewOptions
   );
 
   // View Configuration
