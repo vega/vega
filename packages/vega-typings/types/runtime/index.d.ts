@@ -70,10 +70,7 @@ export interface ViewOptions {
 }
 
 export class View {
-  constructor(
-    runtime: Runtime,
-    opt?: ViewOptions
-  );
+  constructor(runtime: Runtime, opt?: ViewOptions);
 
   // View Configuration
 
