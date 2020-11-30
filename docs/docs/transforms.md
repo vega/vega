@@ -99,3 +99,8 @@ Transforms for supporting fast incremental filtering of multi-dimensional data.
 
 - [`crossfilter`](crossfilter) - Maintain a filter mask for multiple dimensional queries.
 - [`resolvefilter`](resolvefilter) - Resolve crossfilter output to generate filtered data streams.
+
+## Custom Transforms
+
+In addition to the above, custom transformations can also be added to Vega as part of its Extensibility API.
+See the [Transformations](https://vega.github.io/vega/docs/api/extensibility/#transform) section of the API documentation.
