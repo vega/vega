@@ -1,8 +1,8 @@
 import {error, isArray, isObject, stringValue} from 'vega-util';
 
 export default function(proj, scope) {
-  const config = scope.config.projection || {},
-        params = {};
+  const config = scope.config.projection || {};
+  const params = {};
 
   for (const name in proj) {
     if (name === 'name') continue;

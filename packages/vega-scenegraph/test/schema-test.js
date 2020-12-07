@@ -1,6 +1,6 @@
-var fs = require('fs'),
-    ajv = require('ajv'),
-    tape = require('tape');
+var fs = require('fs');
+var ajv = require('ajv');
+var tape = require('tape');
 
 const schemaFile = './build/vega-scenegraph-schema.json';
 const schema = JSON.parse(fs.readFileSync(schemaFile));

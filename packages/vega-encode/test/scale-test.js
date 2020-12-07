@@ -1,20 +1,22 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    vs = require('vega-scale'),
-    encode = require('../');
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var vs = require('vega-scale');
+var encode = require('../');
 
 function scale(params) {
-  var df = new vega.Dataflow(),
-      s = df.add(encode.scale, params),
-      e = false;
+  var df = new vega.Dataflow();
+  var s = df.add(encode.scale, params);
+  var e = false;
   df.error = (_ => e = _);
   df.run();
   return e ? util.error(e) : s.value;
 }
 
 tape('Scale respects domain configuration', t => {
-  var s, params = {
+  var s;
+
+  var params = {
     type: 'linear',
     domain: [1, 9.5]
   };
@@ -101,7 +103,9 @@ tape('Scale respects domain padding', t => {
 });
 
 tape('Ordinal scale respects domainImplicit', t => {
-  var s, params = {
+  var s;
+
+  var params = {
     type: 'ordinal',
     domain: [],
     range: ['a', 'b', 'c']
@@ -126,7 +130,9 @@ tape('Ordinal scale respects domainImplicit', t => {
 });
 
 tape('Scale respects range configuration', t => {
-  var s, params = {
+  var s;
+
+  var params = {
     type: 'linear',
     domain: [0, 10],
     range: [0, 10]
@@ -161,7 +167,9 @@ tape('Scale respects range configuration', t => {
 });
 
 tape('Scale respects range color schemes', t => {
-  var s, u, v;
+  var s;
+  var u;
+  var v;
 
   // performs scheme lookup
   s = scale({type: 'ordinal', scheme: 'category10'});
@@ -213,7 +221,8 @@ tape('Scale respects range color schemes', t => {
 tape('Scale warns for zero in log domain', t => {
   function logScale(domain) {
     return function() {
-      var df = new vega.Dataflow(), e;
+      var df = new vega.Dataflow();
+      var e;
       df.warn = (_ => e = _);
       df.add(encode.scale, {type: 'log', domain: domain});
       df.run();
@@ -233,8 +242,8 @@ tape('Scale warns for zero in log domain', t => {
 
 tape('Scale infers scale key from type, domain, and range', t => {
   function key(params) {
-    const df = new vega.Dataflow(),
-          s = df.add(encode.scale, params);
+    const df = new vega.Dataflow();
+    const s = df.add(encode.scale, params);
     df.run();
     return s.value.type;
   }
@@ -257,10 +266,10 @@ tape('Scale infers scale key from type, domain, and range', t => {
 
   // temporal domain scales should not adapt
   [vs.Time, vs.UTC].forEach(st => {
-    const t0 = new Date(2010, 0, 1),
-          t1 = new Date(2011, 0, 1),
-          t2 = new Date(2012, 0, 1),
-          t3 = new Date(2013, 0, 1);
+    const t0 = new Date(2010, 0, 1);
+    const t1 = new Date(2011, 0, 1);
+    const t2 = new Date(2012, 0, 1);
+    const t3 = new Date(2013, 0, 1);
 
     t.equal(key({type: st, domain:[t0,t1], range:[0,1]}), st);
     t.equal(key({type: st, domain:[t0,t1], range:[true,false]}), st);
@@ -285,10 +294,10 @@ tape('Scale infers scale key from type, domain, and range', t => {
 });
 
 tape('Scale respects bins parameter', t => {
-  var bins = {start: 0, stop: 10, step: 2},
-      vals = [0, 2, 4, 6, 8, 10],
-      val6 = [0, 2, 4, 6],
-      s;
+  var bins = {start: 0, stop: 10, step: 2};
+  var vals = [0, 2, 4, 6, 8, 10];
+  var val6 = [0, 2, 4, 6];
+  var s;
 
   // generates bins array
   s = scale({type: 'linear', domain: [0, 10], bins});

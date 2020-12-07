@@ -53,8 +53,9 @@ export const alignExpr = anchorExpr(
 
 export function tickBand(_) {
   const v = _('tickBand');
-  let offset = _('tickOffset'),
-      band, extra;
+  let offset = _('tickOffset');
+  let band;
+  let extra;
 
   if (!v) {
     // if no tick band entry, fall back on other properties

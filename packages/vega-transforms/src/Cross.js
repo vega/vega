@@ -24,13 +24,15 @@ Cross.Definition = {
 
 inherits(Cross, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.NO_SOURCE),
-          as = _.as || ['a', 'b'],
-          a = as[0], b = as[1],
-          reset = !this.value
-              || pulse.changed(pulse.ADD_REM)
-              || _.modified('as')
-              || _.modified('filter');
+    const out = pulse.fork(pulse.NO_SOURCE);
+    const as = _.as || ['a', 'b'];
+    const a = as[0];
+    const b = as[1];
+
+    const reset = !this.value
+        || pulse.changed(pulse.ADD_REM)
+        || _.modified('as')
+        || _.modified('filter');
 
     let data = this.value;
     if (reset) {
@@ -47,11 +49,12 @@ inherits(Cross, Transform, {
 });
 
 function cross(input, a, b, filter) {
-  var data = [],
-      t = {},
-      n = input.length,
-      i = 0,
-      j, left;
+  var data = [];
+  var t = {};
+  var n = input.length;
+  var i = 0;
+  var j;
+  var left;
 
   for (; i<n; ++i) {
     t[a] = left = input[i];

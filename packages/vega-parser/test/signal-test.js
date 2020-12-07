@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 function parseSignal(spec, scope) {
   vega.signal(spec, scope);
@@ -44,8 +44,12 @@ tape('Parser parses updating signals', t => {
 });
 
 tape('Parser parses signals with event-driven updates', t => {
-  var scope = new vega.Scope(),
-      update, a, b, c, d;
+  var scope = new vega.Scope();
+  var update;
+  var a;
+  var b;
+  var c;
+  var d;
 
   scope.addSignal('a', 1);
 
@@ -133,7 +137,8 @@ tape('Parser parses signals with event-driven updates', t => {
 
 function testSignals(t, df, signals) {
   df.operators.forEach(o => {
-    var s = signals[o.signal], key;
+    var s = signals[o.signal];
+    var key;
     if (!s) return;
     for (key in s) {
       t.deepEqual(o[key], s[key]);

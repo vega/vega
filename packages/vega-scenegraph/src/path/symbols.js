@@ -15,8 +15,8 @@ const builtins = {
   },
   'cross': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          s = r / 2.5;
+      var r = Math.sqrt(size) / 2;
+      var s = r / 2.5;
       context.moveTo(-r, -s);
       context.lineTo(-r, s);
       context.lineTo(-s, s);
@@ -44,17 +44,17 @@ const builtins = {
   },
   'square': {
     draw: function(context, size) {
-      var w = Math.sqrt(size),
-          x = -w / 2;
+      var w = Math.sqrt(size);
+      var x = -w / 2;
       context.rect(x, x, w, w);
     }
   },
   'arrow': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          s = r / 7,
-          t = r / 2.5,
-          v = r / 8;
+      var r = Math.sqrt(size) / 2;
+      var s = r / 7;
+      var t = r / 2.5;
+      var v = r / 8;
       context.moveTo(-s, r);
       context.lineTo(s, r);
       context.lineTo(s, -v);
@@ -67,10 +67,10 @@ const builtins = {
   },
   'wedge': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r,
-          o = (h - r * Tan30),
-          b = r / 4;
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
+      var o = (h - r * Tan30);
+      var b = r / 4;
       context.moveTo(0, -h - o);
       context.lineTo(-b, h - o);
       context.lineTo(b, h - o);
@@ -79,9 +79,9 @@ const builtins = {
   },
   'triangle': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r,
-          o = (h - r * Tan30);
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
+      var o = (h - r * Tan30);
       context.moveTo(0, -h - o);
       context.lineTo(-r, h - o);
       context.lineTo(r, h - o);
@@ -90,8 +90,8 @@ const builtins = {
   },
   'triangle-up': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
       context.moveTo(0, -h);
       context.lineTo(-r, h);
       context.lineTo(r, h);
@@ -100,8 +100,8 @@ const builtins = {
   },
   'triangle-down': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
       context.moveTo(0, h);
       context.lineTo(-r, -h);
       context.lineTo(r, -h);
@@ -110,8 +110,8 @@ const builtins = {
   },
   'triangle-right': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
       context.moveTo(h, 0);
       context.lineTo(-h, -r);
       context.lineTo(-h, r);
@@ -120,8 +120,8 @@ const builtins = {
   },
   'triangle-left': {
     draw: function(context, size) {
-      var r = Math.sqrt(size) / 2,
-          h = HalfSqrt3 * r;
+      var r = Math.sqrt(size) / 2;
+      var h = HalfSqrt3 * r;
       context.moveTo(-h, 0);
       context.lineTo(h, -r);
       context.lineTo(h, r);

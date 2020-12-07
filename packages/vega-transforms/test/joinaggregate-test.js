@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    JoinAggregate = tx.joinaggregate;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var JoinAggregate = tx.joinaggregate;
 
 tape('JoinAggregate extends tuples with aggregate values', t => {
   const data = [
@@ -12,17 +12,19 @@ tape('JoinAggregate extends tuples with aggregate values', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(JoinAggregate, {
-        groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+
+  var agg = df.add(JoinAggregate, {
+    groupby: [key],
+    fields: [val, val, val, val],
+    ops: ['count', 'sum', 'min', 'max'],
+    pulse: col
+  });
+
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -103,9 +105,13 @@ tape('JoinAggregate handles count aggregates', t => {
     {foo:4, bar:5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
-      df, col, agg, out, d;
+  var foo = util.field('foo');
+  var bar = util.field('bar');
+  var df;
+  var col;
+  var agg;
+  var out;
+  var d;
 
   // counts only
   df = new vega.Dataflow();
@@ -191,8 +197,14 @@ tape('JoinAggregate handles distinct aggregates', t => {
     {foo:0}
   ];
 
-  var foo = util.field('foo'),
-      df, col, agg, out, d, i, n;
+  var foo = util.field('foo');
+  var df;
+  var col;
+  var agg;
+  var out;
+  var d;
+  var i;
+  var n;
 
   // counts only
   df = new vega.Dataflow();

@@ -13,19 +13,20 @@ function stripQuotes(s) {
 export default function(opt) {
   opt = opt || {};
 
-  const allowed = opt.allowed ? toSet(opt.allowed) : {},
-        forbidden = opt.forbidden ? toSet(opt.forbidden) : {},
-        constants = opt.constants || Constants,
-        functions = (opt.functions || Functions)(visit),
-        globalvar = opt.globalvar,
-        fieldvar = opt.fieldvar,
-        outputGlobal = isFunction(globalvar)
-          ? globalvar
-          : id => `${globalvar}["${id}"]`;
+  const allowed = opt.allowed ? toSet(opt.allowed) : {};
+  const forbidden = opt.forbidden ? toSet(opt.forbidden) : {};
+  const constants = opt.constants || Constants;
+  const functions = (opt.functions || Functions)(visit);
+  const globalvar = opt.globalvar;
+  const fieldvar = opt.fieldvar;
 
-  let globals = {},
-      fields = {},
-      memberDepth = 0;
+  const outputGlobal = isFunction(globalvar)
+    ? globalvar
+    : id => `${globalvar}["${id}"]`;
+
+  let globals = {};
+  let fields = {};
+  let memberDepth = 0;
 
   function visit(ast) {
     if (isString(ast)) return ast;
@@ -54,30 +55,30 @@ export default function(opt) {
     },
 
     MemberExpression: n => {
-        const d = !n.computed,
-              o = visit(n.object);
-        if (d) memberDepth += 1;
-        const p = visit(n.property);
-        if (o === fieldvar) {
-          // strip quotes to sanitize field name (#1653)
-          fields[stripQuotes(p)] = 1;
-        }
-        if (d) memberDepth -= 1;
-        return o + (d ? '.'+p : '['+p+']');
-      },
+      const d = !n.computed;
+      const o = visit(n.object);
+      if (d) memberDepth += 1;
+      const p = visit(n.property);
+      if (o === fieldvar) {
+        // strip quotes to sanitize field name (#1653)
+        fields[stripQuotes(p)] = 1;
+      }
+      if (d) memberDepth -= 1;
+      return o + (d ? '.'+p : '['+p+']');
+    },
 
     CallExpression: n => {
-        if (n.callee.type !== 'Identifier') {
-          error('Illegal callee type: ' + n.callee.type);
-        }
-        const callee = n.callee.name,
-              args = n.arguments,
-              fn = hasOwnProperty(functions, callee) && functions[callee];
-        if (!fn) error('Unrecognized function: ' + callee);
-        return isFunction(fn)
-          ? fn(args)
-          : fn + '(' + args.map(visit).join(',') + ')';
-      },
+      if (n.callee.type !== 'Identifier') {
+        error('Illegal callee type: ' + n.callee.type);
+      }
+      const callee = n.callee.name;
+      const args = n.arguments;
+      const fn = hasOwnProperty(functions, callee) && functions[callee];
+      if (!fn) error('Unrecognized function: ' + callee);
+      return isFunction(fn)
+        ? fn(args)
+        : fn + '(' + args.map(visit).join(',') + ')';
+    },
 
     ArrayExpression: n =>
         '[' + n.elements.map(visit).join(',') + ']',

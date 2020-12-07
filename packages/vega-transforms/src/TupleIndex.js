@@ -14,10 +14,10 @@ export default function TupleIndex(params) {
 
 inherits(TupleIndex, Transform, {
   transform(_, pulse) {
-    const df = pulse.dataflow,
-        field = _.field,
-        index = this.value,
-        set = t => index.set(field(t), t);
+    const df = pulse.dataflow;
+    const field = _.field;
+    const index = this.value;
+    const set = t => index.set(field(t), t);
 
     let mod = true;
 

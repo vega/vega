@@ -44,8 +44,8 @@ function addEventListener(handler, type) {
 
 function move(moveEvent, overEvent, outEvent) {
   return function(evt) {
-    const a = this._active,
-          p = this.pickEvent(evt);
+    const a = this._active;
+    const p = this.pickEvent(evt);
 
     if (p === a) {
       // active item and picked item are the same
@@ -140,8 +140,8 @@ inherits(CanvasHandler, Handler, {
 
   // fire an event
   fire(type, evt, touch) {
-    const a = touch ? this._touch : this._active,
-          h = this._handlers[type];
+    const a = touch ? this._touch : this._active;
+    const h = this._handlers[type];
 
     // set event type relative to scenegraph items
     evt.vegaType = type;
@@ -163,9 +163,9 @@ inherits(CanvasHandler, Handler, {
 
   // add an event handler
   on(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers,
-          i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type);
+    const h = this._handlers;
+    const i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
       eventListenerCheck(this, type);
@@ -180,9 +180,9 @@ inherits(CanvasHandler, Handler, {
 
   // remove an event handler
   off(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers[name],
-          i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type);
+    const h = this._handlers[name];
+    const i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       h.splice(i, 1);
@@ -192,8 +192,8 @@ inherits(CanvasHandler, Handler, {
   },
 
   pickEvent(evt) {
-    const p = point(evt, this._canvas),
-          o = this._origin;
+    const p = point(evt, this._canvas);
+    const o = this._origin;
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
   },
 
@@ -201,8 +201,8 @@ inherits(CanvasHandler, Handler, {
   // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   pick(scene, x, y, gx, gy) {
-    const g = this.context(),
-          mark = Marks[scene.marktype];
+    const g = this.context();
+    const mark = Marks[scene.marktype];
     return mark.pick.call(this, g, scene, x, y, gx, gy);
   }
 });

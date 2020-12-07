@@ -45,8 +45,8 @@ export default function(fetch, fs) {
  * @return {Promise} - A promise that resolves to the loaded content.
  */
 async function load(uri, options) {
-  const opt = await this.sanitize(uri, options),
-        url = opt.href;
+  const opt = await this.sanitize(uri, options);
+  const url = opt.href;
 
   return opt.localFile
     ? this.file(url)
@@ -66,10 +66,11 @@ async function load(uri, options) {
 async function sanitize(uri, options) {
   options = extend({}, this.options, options);
 
-  const fileAccess = this.fileAccess,
-        result = {href: null};
-
-  let isFile, loadFile, base;
+  const fileAccess = this.fileAccess;
+  const result = {href: null};
+  let isFile;
+  let loadFile;
+  let base;
 
   const isAllowed = allowed_re.test(uri.replace(whitespace_re, ''));
 
@@ -170,15 +171,15 @@ async function fileReject() {
 function httpLoader(fetch) {
   return fetch
     ? async function(url, options) {
-        const opt = extend({}, this.options.http, options),
-              type = options && options.response,
-              response = await fetch(url, opt);
+    const opt = extend({}, this.options.http, options);
+    const type = options && options.response;
+    const response = await fetch(url, opt);
 
-        return !response.ok
-          ? error(response.status + '' + response.statusText)
-          : isFunction(response[type]) ? response[type]()
-          : response.text();
-      }
+    return !response.ok
+      ? error(response.status + '' + response.statusText)
+      : isFunction(response[type]) ? response[type]()
+      : response.text();
+  }
     : httpReject;
 }
 

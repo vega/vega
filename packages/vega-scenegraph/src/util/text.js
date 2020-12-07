@@ -87,15 +87,16 @@ function widthGetter(item) {
 }
 
 function truncate(item, text) {
-  var limit = +item.limit,
-      width = widthGetter(item);
+  var limit = +item.limit;
+  var width = widthGetter(item);
 
   if (width(text) < limit) return text;
 
-  var ellipsis = item.ellipsis || '\u2026',
-      rtl = item.dir === 'rtl',
-      lo = 0,
-      hi = text.length, mid;
+  var ellipsis = item.ellipsis || '\u2026';
+  var rtl = item.dir === 'rtl';
+  var lo = 0;
+  var hi = text.length;
+  var mid;
 
   limit -= width(ellipsis);
 
@@ -136,8 +137,9 @@ export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
   // this also ensures consistent layout across renderers
-  var baseline = item.baseline,
-      h = fontSize(item);
+  var baseline = item.baseline;
+
+  var h = fontSize(item);
 
   return Math.round(
     baseline === 'top'         ?  0.79 * h :

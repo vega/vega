@@ -18,8 +18,8 @@ export default function(expr, scope) {
   // analyze ast function calls for dependencies
   ast.visit(node => {
     if (node.type !== CallExpression) return;
-    const name = node.callee.name,
-          visit = codegenParams.visitors[name];
+    const name = node.callee.name;
+    const visit = codegenParams.visitors[name];
     if (visit) visit(name, node.arguments, scope, params);
   });
 

@@ -8,7 +8,10 @@ const filters = {
 };
 
 export default function topojson(data, format) {
-  let method, object, property, filter;
+  let method;
+  let object;
+  let property;
+  let filter;
   data = json(data, format);
 
   if (format && format.feature) {

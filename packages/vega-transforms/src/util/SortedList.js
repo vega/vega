@@ -2,10 +2,10 @@ import {merge} from 'vega-util';
 
 export default function(idFunc, source, input) {
   const $ = idFunc;
-  let data = source || [],
-      add = input || [],
-      rem = {},
-      cnt = 0;
+  let data = source || [];
+  let add = input || [];
+  let rem = {};
+  let cnt = 0;
 
   return {
     add: t => add.push(t),

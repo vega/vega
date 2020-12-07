@@ -58,8 +58,8 @@ export function array(items, props) {
 }
 
 export function object(properties, addl) {
-  const p = {},
-        r = [];
+  const p = {};
+  const r = [];
 
   for (const key in properties) {
     let k = key;

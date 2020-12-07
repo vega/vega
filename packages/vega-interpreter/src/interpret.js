@@ -18,8 +18,8 @@ const Visitors = {
   },
 
   MemberExpression: ($, n) => {
-    const d = !n.computed,
-          o = $(n.object);
+    const d = !n.computed;
+    const o = $(n.object);
     if (d) $.memberDepth += 1;
     const p = $(n.property);
     if (d) $.memberDepth -= 1;

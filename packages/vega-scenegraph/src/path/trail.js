@@ -2,26 +2,30 @@ import {Tau} from '../util/constants';
 import {path} from 'd3-path';
 
 export default function() {
-  var x,
-      y,
-      size,
-      defined,
-      context = null,
-      ready, x1, y1, r1;
+  var x;
+  var y;
+  var size;
+  var defined;
+  var context = null;
+  var ready;
+  var x1;
+  var y1;
+  var r1;
 
   function point(x2, y2, w2) {
     const r2 = w2 / 2;
 
     if (ready) {
-      var ux = y1 - y2,
-          uy = x2 - x1;
+      var ux = y1 - y2;
+      var uy = x2 - x1;
 
       if (ux || uy) {
         // get normal vector
-        var ud = Math.sqrt(ux * ux + uy * uy),
-            rx = (ux /= ud) * r1,
-            ry = (uy /= ud) * r1,
-            t = Math.atan2(uy, ux);
+        var ud = Math.sqrt(ux * ux + uy * uy);
+
+        var rx = (ux /= ud) * r1;
+        var ry = (uy /= ud) * r1;
+        var t = Math.atan2(uy, ux);
 
         // draw segment
         context.moveTo(x1 - rx, y1 - ry);
@@ -42,11 +46,11 @@ export default function() {
   }
 
   function trail(data) {
-    var i,
-        n = data.length,
-        d,
-        defined0 = false,
-        buffer;
+    var i;
+    var n = data.length;
+    var d;
+    var defined0 = false;
+    var buffer;
 
     if (context == null) context = buffer = path();
 

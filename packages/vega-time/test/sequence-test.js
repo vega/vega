@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+var tape = require('tape');
+var vega = require('../');
+var {local, utc} = require('./util');
 
 function test(t, sequence, offset, unit, start, steps) {
-  const seq1 = range(steps).map(s => +offset(unit, start, s)),
-        seq2 = sequence(unit, start, seq1[seq1.length - 1] + 1);
+  const seq1 = range(steps).map(s => +offset(unit, start, s));
+  const seq2 = sequence(unit, start, seq1[seq1.length - 1] + 1);
   t.deepEqual(seq1, seq2.map(_ => +_));
 }
 

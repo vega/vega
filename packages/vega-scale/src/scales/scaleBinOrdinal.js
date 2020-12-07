@@ -5,8 +5,8 @@ import {numbers} from './numbers';
 import {slice} from './slice';
 
 export function scaleBinOrdinal() {
-  let domain = [],
-      range = [];
+  let domain = [];
+  let range = [];
 
   function scale(x) {
     return x == null || x !== x

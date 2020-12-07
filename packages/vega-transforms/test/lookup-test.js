@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Lookup = tx.lookup,
-    TupleIndex = tx.tupleindex;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Lookup = tx.lookup;
+var TupleIndex = tx.tupleindex;
 
 tape('Lookup looks up matching tuples', t => {
   const lut = [
@@ -21,18 +21,17 @@ tape('Lookup looks up matching tuples', t => {
     {'id': 3, 'x': 3, 'y': 3}
   ];
 
-  var uv = util.field('u.value'),
-      vv = util.field('v.value'),
-      id = util.field('id'),
-      x  = util.field('x'),
-      y  = util.field('y'),
-
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      ti = df.add(TupleIndex, {field:id, pulse:c0}),
-      c1 = df.add(Collect),
-      lk = df.add([x,y]),
-      lu = df.add(Lookup, {index:ti, fields:lk, as:['u','v'], pulse:c1});
+  var uv = util.field('u.value');
+  var vv = util.field('v.value');
+  var id = util.field('id');
+  var x  = util.field('x');
+  var y  = util.field('y');
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var ti = df.add(TupleIndex, {field:id, pulse:c0});
+  var c1 = df.add(Collect);
+  var lk = df.add([x,y]);
+  var lu = df.add(Lookup, {index:ti, fields:lk, as:['u','v'], pulse:c1});
 
   df.run(); // initialize
 
@@ -71,17 +70,16 @@ tape('Lookup looks up matching values', t => {
     {'id': 3, 'x': 3, 'y': 3}
   ];
 
-  var value = util.field('value'),
-      id = util.field('id'),
-      x = util.field('x'),
-      y = util.field('y'),
-
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      ti = df.add(TupleIndex, {field:id, pulse:c0}),
-      c1 = df.add(Collect),
-      lk = df.add([x]),
-      lu = df.add(Lookup, {index:ti, fields:lk, values:[value], pulse:c1});
+  var value = util.field('value');
+  var id = util.field('id');
+  var x = util.field('x');
+  var y = util.field('y');
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var ti = df.add(TupleIndex, {field:id, pulse:c0});
+  var c1 = df.add(Collect);
+  var lk = df.add([x]);
+  var lu = df.add(Lookup, {index:ti, fields:lk, values:[value], pulse:c1});
 
   df.run(); // initialize
 

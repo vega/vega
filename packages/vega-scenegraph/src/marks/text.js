@@ -19,9 +19,10 @@ const textAlign = {
 const tempBounds = new Bounds();
 
 function anchorPoint(item) {
-  var x = item.x || 0,
-      y = item.y || 0,
-      r = item.radius || 0, t;
+  var x = item.x || 0;
+  var y = item.y || 0;
+  var r = item.radius || 0;
+  var t;
 
   if (r) {
     t = (item.theta || 0) - HalfPi;
@@ -35,12 +36,13 @@ function anchorPoint(item) {
 }
 
 function attr(emit, item) {
-  var dx = item.dx || 0,
-      dy = (item.dy || 0) + offset(item),
-      p = anchorPoint(item),
-      x = p.x1,
-      y = p.y1,
-      a = item.angle || 0, t;
+  var dx = item.dx || 0;
+  var dy = (item.dy || 0) + offset(item);
+  var p = anchorPoint(item);
+  var x = p.x1;
+  var y = p.y1;
+  var a = item.angle || 0;
+  var t;
 
   emit('text-anchor', textAlign[item.align] || 'start');
 
@@ -54,15 +56,15 @@ function attr(emit, item) {
 }
 
 function bound(bounds, item, mode) {
-  var h = textMetrics.height(item),
-      a = item.align,
-      p = anchorPoint(item),
-      x = p.x1,
-      y = p.y1,
-      dx = item.dx || 0,
-      dy = (item.dy || 0) + offset(item) - Math.round(0.8*h), // use 4/5 offset
-      tl = textLines(item),
-      w;
+  var h = textMetrics.height(item);
+  var a = item.align;
+  var p = anchorPoint(item);
+  var x = p.x1;
+  var y = p.y1;
+  var dx = item.dx || 0;
+  var dy = (item.dy || 0) + offset(item) - Math.round(0.8*h); // use 4/5 offset
+  var tl = textLines(item);
+  var w;
 
   // get dimensions
   if (isArray(tl)) {
@@ -95,8 +97,14 @@ function bound(bounds, item, mode) {
 
 function draw(context, scene, bounds) {
   visit(scene, item => {
-    var opacity = item.opacity == null ? 1 : item.opacity,
-        p, x, y, i, lh, tl, str;
+    var opacity = item.opacity == null ? 1 : item.opacity;
+    var p;
+    var x;
+    var y;
+    var i;
+    var lh;
+    var tl;
+    var str;
 
     if (bounds && !bounds.intersects(item.bounds) || // bounds check
         opacity === 0 || item.fontSize <= 0 ||
@@ -151,15 +159,16 @@ function hit(context, item, x, y, gx, gy) {
   if (!item.angle) return true; // bounds sufficient if no rotation
 
   // project point into space of unrotated bounds
-  var p = anchorPoint(item),
-      ax = p.x1,
-      ay = p.y1,
-      b = bound(tempBounds, item, 1),
-      a = -item.angle * DegToRad,
-      cos = Math.cos(a),
-      sin = Math.sin(a),
-      px = cos * gx - sin * gy + (ax - cos * ax + sin * ay),
-      py = sin * gx + cos * gy + (ay - sin * ax - cos * ay);
+  var p = anchorPoint(item); // bounds sufficient if no rotation
+
+  var ax = p.x1;
+  var ay = p.y1;
+  var b = bound(tempBounds, item, 1);
+  var a = -item.angle * DegToRad;
+  var cos = Math.cos(a);
+  var sin = Math.sin(a);
+  var px = cos * gx - sin * gy + (ax - cos * ax + sin * ay);
+  var py = sin * gx + cos * gy + (ay - sin * ax - cos * ay);
 
   return b.contains(px, py);
 }

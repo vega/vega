@@ -16,13 +16,12 @@ export default function DataScope(scope, input, output, values, aggr) {
 }
 
 DataScope.fromEntries = function(scope, entries) {
-  const n = entries.length,
-        values = entries[n-1],
-        output = entries[n-2];
-
-  let input = entries[0],
-      aggr = null,
-      i = 1;
+  const n = entries.length;
+  const values = entries[n-1];
+  const output = entries[n-2];
+  let input = entries[0];
+  let aggr = null;
+  let i = 1;
 
   if (input && input.type === 'load') {
     input = entries[1];
@@ -64,11 +63,11 @@ function addSortField(scope, p, sort) {
 }
 
 function cache(scope, ds, name, optype, field, counts, index) {
-  const cache = ds[name] || (ds[name] = {}),
-        sort = sortKey(counts);
-
-  let k = fieldKey(field),
-      v, op;
+  const cache = ds[name] || (ds[name] = {});
+  const sort = sortKey(counts);
+  let k = fieldKey(field);
+  let v;
+  let op;
 
   if (k != null) {
     scope = ds.scope;
@@ -91,11 +90,12 @@ function cache(scope, ds, name, optype, field, counts, index) {
 
 DataScope.prototype = {
   countsRef(scope, field, sort) {
-    const ds = this,
-          cache = ds.counts || (ds.counts = {}),
-          k = fieldKey(field);
-
-    let v, a, p;
+    const ds = this;
+    const cache = ds.counts || (ds.counts = {});
+    const k = fieldKey(field);
+    let v;
+    let a;
+    let p;
 
     if (k != null) {
       scope = ds.scope;

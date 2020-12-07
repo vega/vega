@@ -13,7 +13,8 @@ function attr(emit, item) {
 }
 
 function bound(bounds, item) {
-  var x1, y1;
+  var x1;
+  var y1;
   return boundStroke(bounds.set(
     x1 = item.x || 0,
     y1 = item.y || 0,
@@ -23,7 +24,10 @@ function bound(bounds, item) {
 }
 
 function path(context, item, opacity) {
-  var x1, y1, x2, y2;
+  var x1;
+  var y1;
+  var x2;
+  var y2;
 
   if (item.stroke && stroke(context, item, opacity)) {
     x1 = item.x || 0;

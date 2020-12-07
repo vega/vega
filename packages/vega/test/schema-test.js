@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    vega = require('../'), // eslint-disable-line no-unused-vars
-    ajv = require('ajv'),
-    fs = require('fs'),
-    schema = require('../build/vega-schema.json'),
-    validSpecs = require('./specs-valid.json'),
-    invalidSpecs = require('./specs-invalid.json');
+var tape = require('tape');
+var vega = require('../'); // eslint-disable-line no-unused-vars
+var ajv = require('ajv');
+var fs = require('fs');
+var schema = require('../build/vega-schema.json');
+var validSpecs = require('./specs-valid.json');
+var invalidSpecs = require('./specs-invalid.json');
 
 const validator = new ajv({
     allErrors: true,
@@ -23,8 +23,8 @@ tape('JSON schema is valid', t => {
 tape('JSON schema recognizes valid specifications', t => {
   const dir = process.cwd() + '/test/specs-valid/';
   validSpecs.forEach(file => {
-    var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json')),
-        valid = validate(spec);
+    var spec = JSON.parse(fs.readFileSync(dir + file + '.vg.json'));
+    var valid = validate(spec);
     t.ok(valid, 'valid schema: ' + file);
     if (!valid) console.log(validate.errors); // eslint-disable-line no-console
   });

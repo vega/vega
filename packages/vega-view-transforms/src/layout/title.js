@@ -2,16 +2,21 @@ import {Bottom, End, Group, Left, Right, Start, Top} from '../constants';
 import {set, tempBounds} from './util';
 
 export function titleLayout(view, mark, width, height, viewBounds) {
-  var group = mark.items[0],
-      frame = group.frame,
-      orient = group.orient,
-      anchor = group.anchor,
-      offset = group.offset,
-      padding = group.padding,
-      title = group.items[0].items[0],
-      subtitle = group.items[1] && group.items[1].items[0],
-      end = (orient === Left || orient === Right) ? height : width,
-      start = 0, x = 0, y = 0, sx = 0, sy = 0, pos;
+  var group = mark.items[0];
+  var frame = group.frame;
+  var orient = group.orient;
+  var anchor = group.anchor;
+  var offset = group.offset;
+  var padding = group.padding;
+  var title = group.items[0].items[0];
+  var subtitle = group.items[1] && group.items[1].items[0];
+  var end = (orient === Left || orient === Right) ? height : width;
+  var start = 0;
+  var x = 0;
+  var y = 0;
+  var sx = 0;
+  var sy = 0;
+  var pos;
 
   if (frame !== Group) {
     orient === Left ? (start = viewBounds.y2, end = viewBounds.y1)

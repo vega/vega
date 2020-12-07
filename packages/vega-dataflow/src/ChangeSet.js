@@ -6,25 +6,26 @@ export function isChangeSet(v) {
 }
 
 export default function changeset() {
-  const add = [],  // insert tuples
-        rem = [],  // remove tuples
-        mod = [],  // modify tuples
-        remp = [], // remove by predicate
-        modp = []; // modify by predicate
-  let clean = null,
-      reflow = false;
+  const add = [];  // insert tuples
+  const rem = [];  // remove tuples
+  const mod = [];  // modify tuples
+  const remp = []; // remove by predicate
+  const modp = []; // modify by predicate
+  let clean = null; // modify by predicate
+  let reflow = false;
 
   return {
     constructor: changeset,
     insert(t) {
-      const d = array(t), n = d.length;
+      const d = array(t);
+      const n = d.length;
       for (let i = 0; i < n; ++i) add.push(d[i]);
       return this;
     },
     remove(t) {
-      const a = isFunction(t) ? remp : rem,
-            d = array(t),
-            n = d.length;
+      const a = isFunction(t) ? remp : rem;
+      const d = array(t);
+      const n = d.length;
       for (let i = 0; i < n; ++i) a.push(d[i]);
       return this;
     },
@@ -53,8 +54,14 @@ export default function changeset() {
       return this;
     },
     pulse(pulse, tuples) {
-      const cur = {}, out = {};
-      let i, n, m, f, t, id;
+      const cur = {};
+      const out = {};
+      let i;
+      let n;
+      let m;
+      let f;
+      let t;
+      let id;
 
       // build lookup table of current tuples
       for (i = 0, n = tuples.length; i < n; ++i) {

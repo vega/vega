@@ -48,10 +48,10 @@ inherits(Window, Transform, {
   transform(_, pulse) {
     this.stamp = pulse.stamp;
 
-    const mod = _.modified(),
-          cmp = stableCompare(_.sort),
-          key = groupkey(_.groupby),
-          group = t => this.group(key(t));
+    const mod = _.modified();
+    const cmp = stableCompare(_.sort);
+    const key = groupkey(_.groupby);
+    const group = t => this.group(key(t));
 
     // initialize window state
     let state = this.state;
@@ -97,16 +97,17 @@ inherits(Window, Transform, {
 });
 
 function processPartition(list, state, cmp, _) {
-  const sort = _.sort,
-        range = sort && !_.ignorePeers,
-        frame = _.frame || [null, 0],
-        data = list.data(cmp), // use cmp for stable sort
-        n = data.length,
-        b = range ? bisector(sort) : null,
-        w = {
-          i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
-          data: data, compare: sort || constant(-1)
-        };
+  const sort = _.sort;
+  const range = sort && !_.ignorePeers;
+  const frame = _.frame || [null, 0];
+  const data = list.data(cmp); // use cmp for stable sort
+  const n = data.length;
+  const b = range ? bisector(sort) : null;
+
+  const w = {
+    i0: 0, i1: 0, p0: 0, p1: 0, index: 0,
+    data: data, compare: sort || constant(-1)
+  };
 
   state.init();
   for (let i=0; i<n; ++i) {
@@ -126,11 +127,11 @@ function setWindow(w, f, i, n) {
 
 // if frame type is 'range', adjust window for peer values
 function adjustRange(w, bisect) {
-  const r0 = w.i0,
-        r1 = w.i1 - 1,
-        c = w.compare,
-        d = w.data,
-        n = d.length - 1;
+  const r0 = w.i0;
+  const r1 = w.i1 - 1;
+  const c = w.compare;
+  const d = w.data;
+  const n = d.length - 1;
 
   if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect.left(d, d[r0]);
   if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);

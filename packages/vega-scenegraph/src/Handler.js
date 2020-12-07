@@ -113,7 +113,8 @@ Handler.prototype = {
    * @return {Array} - A new array containing all registered event handlers.
    */
   handlers(type) {
-    const h = this._handlers, a = [];
+    const h = this._handlers;
+    const a = [];
     if (type) {
       a.push(...h[this.eventName(type)]);
     } else {
@@ -143,11 +144,11 @@ Handler.prototype = {
     this._loader
       .sanitize(href, {context:'href'})
       .then(opt => {
-        const e = new MouseEvent(event.type, event),
-              a = domCreate(null, 'a');
-        for (const name in opt) a.setAttribute(name, opt[name]);
-        a.dispatchEvent(e);
-      })
+      const e = new MouseEvent(event.type, event);
+      const a = domCreate(null, 'a');
+      for (const name in opt) a.setAttribute(name, opt[name]);
+      a.dispatchEvent(e);
+    })
       .catch(() => { /* do nothing */ });
   },
 
@@ -178,14 +179,13 @@ Handler.prototype = {
     const el = this.canvas();
     if (!el) return;
 
-    const rect = el.getBoundingClientRect(),
-          origin = this._origin,
-          bounds = item.bounds,
-          width = bounds.width(),
-          height = bounds.height();
-
-    let x = bounds.x1 + origin[0] + rect.left,
-        y = bounds.y1 + origin[1] + rect.top;
+    const rect = el.getBoundingClientRect();
+    const origin = this._origin;
+    const bounds = item.bounds;
+    const width = bounds.width();
+    const height = bounds.height();
+    let x = bounds.x1 + origin[0] + rect.left;
+    let y = bounds.y1 + origin[1] + rect.top;
 
     // translate coordinate for each parent group
     while (item.mark && (item = item.mark.group)) {

@@ -3,9 +3,9 @@ import {error} from 'vega-util';
 import Bounds from './Bounds';
 
 export function intersect(scene, bounds, filter) {
-  const hits = [], // intersection results
-        box = new Bounds().union(bounds), // defensive copy
-        type = scene.marktype;
+  const hits = []; // intersection results
+  const box = new Bounds().union(bounds); // defensive copy
+  const type = scene.marktype;
 
   return type ? intersectMark(scene, box, filter, hits)
     : type === 'group' ? intersectGroup(scene, box, filter, hits)
@@ -14,9 +14,9 @@ export function intersect(scene, bounds, filter) {
 
 function intersectMark(mark, box, filter, hits) {
   if (visitMark(mark, box, filter)) {
-    const items = mark.items,
-          type = mark.marktype,
-          n = items.length;
+    const items = mark.items;
+    const type = mark.marktype;
+    const n = items.length;
 
     let i = 0;
 
@@ -54,12 +54,13 @@ function intersectGroup(group, box, filter, hits) {
 
   // recursively test children marks
   // translate box to group coordinate space
-  const marks = group.items,
-        n = marks && marks.length;
+  const marks = group.items;
+
+  const n = marks && marks.length;
 
   if (n) {
-    const x = group.x || 0,
-          y = group.y || 0;
+    const x = group.x || 0;
+    const y = group.y || 0;
     box.translate(-x, -y);
     for (let i=0; i<n; ++i) {
       intersectMark(marks[i], box, filter, hits);

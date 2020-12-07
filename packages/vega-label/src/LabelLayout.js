@@ -6,12 +6,13 @@ import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill';
 import placeMarkLabel from './util/placeMarkLabel';
 
 // 8-bit representation of anchors
-const TOP    = 0x0,
-      MIDDLE = 0x4,
-      BOTTOM = 0x8,
-      LEFT   = 0x0,
-      CENTER = 0x1,
-      RIGHT  = 0x2;
+const TOP    = 0x0;
+
+const MIDDLE = 0x4;
+const BOTTOM = 0x8;
+const LEFT   = 0x0;
+const CENTER = 0x1;
+const RIGHT  = 0x2;
 
 // Mapping from text anchor to number representation
 const anchorCode = {
@@ -38,15 +39,15 @@ export default function(texts, size, compare, offset, anchor,
   // early exit for empty data
   if (!texts.length) return texts;
 
-  const positions = Math.max(offset.length, anchor.length),
-        offsets = getOffsets(offset, positions),
-        anchors = getAnchors(anchor, positions),
-        marktype = markType(texts[0].datum),
-        grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
-        isGroupArea = grouptype === 'area',
-        boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        $ = scaler(size[0], size[1], padding),
-        isNaiveGroupArea = isGroupArea && method === 'naive';
+  const positions = Math.max(offset.length, anchor.length);
+  const offsets = getOffsets(offset, positions);
+  const anchors = getAnchors(anchor, positions);
+  const marktype = markType(texts[0].datum);
+  const grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype;
+  const isGroupArea = grouptype === 'area';
+  const boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex);
+  const $ = scaler(size[0], size[1], padding);
+  const isNaiveGroupArea = isGroupArea && method === 'naive';
 
   // prepare text mark data for placing
   const data = texts.map(d => ({
@@ -98,16 +99,16 @@ export default function(texts, size, compare, offset, anchor,
 }
 
 function getOffsets(_, count) {
-  const offsets = new Float64Array(count),
-        n = _.length;
+  const offsets = new Float64Array(count);
+  const n = _.length;
   for (let i=0; i<n; ++i) offsets[i] = _[i] || 0;
   for (let i=n; i<count; ++i) offsets[i] = offsets[n - 1];
   return offsets;
 }
 
 function getAnchors(_, count) {
-  const anchors = new Int8Array(count),
-        n = _.length;
+  const anchors = new Int8Array(count);
+  const n = _.length;
   for (let i=0; i<n; ++i) anchors[i] |= anchorCode[_[i]];
   for (let i=n; i<count; ++i) anchors[i] = anchors[n - 1];
   return anchors;

@@ -11,19 +11,22 @@ import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {
-  const _ = lookup(spec, config),
-        entries = userEncode.entries,
-        interactive = !!(entries && entries.interactive),
-        name = entries ? entries.name : undefined,
-        height = _('clipHeight'),
-        symbolOffset = _('symbolOffset'),
-        valueRef = {data: 'value'},
-        xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`,
-        yEncode = height ? encoder(height) : {field: Size},
-        index = `datum.${Index}`,
-        ncols = `max(1, ${columns})`;
-
-  let encode, enter, update, nrows, sort;
+  const _ = lookup(spec, config);
+  const entries = userEncode.entries;
+  const interactive = !!(entries && entries.interactive);
+  const name = entries ? entries.name : undefined;
+  const height = _('clipHeight');
+  const symbolOffset = _('symbolOffset');
+  const valueRef = {data: 'value'};
+  const xSignal = `(${columns}) ? datum.${Offset} : datum.${Size}`;
+  const yEncode = height ? encoder(height) : {field: Size};
+  const index = `datum.${Index}`;
+  const ncols = `max(1, ${columns})`;
+  let encode;
+  let enter;
+  let update;
+  let nrows;
+  let sort;
 
   yEncode.mult = 0.5;
 
@@ -44,8 +47,8 @@ export default function(spec, config, userEncode, dataRef, columns) {
     }
   };
 
-  let baseFill = null,
-      baseStroke = null;
+  let baseFill = null;
+  let baseStroke = null;
   if (!spec.fill) {
     baseFill = config.symbolBaseFillColor;
     baseStroke = config.symbolBaseStrokeColor;

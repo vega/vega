@@ -13,18 +13,19 @@ import {array} from 'vega-util';
  * @return {EventStream}
  */
 export default function(source, type, filter, apply) {
-  const df = this,
-        s = stream(filter, apply),
-        send = function(e) {
-          e.dataflow = df;
-          try {
-            s.receive(e);
-          } catch (error) {
-            df.error(error);
-          } finally {
-            df.run();
-          }
-        };
+  const df = this;
+  const s = stream(filter, apply);
+
+  const send = function(e) {
+    e.dataflow = df;
+    try {
+      s.receive(e);
+    } catch (error) {
+      df.error(error);
+    } finally {
+      df.run();
+    }
+  };
 
   let sources;
   if (typeof source === 'string' && typeof document !== 'undefined') {

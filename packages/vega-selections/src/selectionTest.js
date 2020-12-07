@@ -1,19 +1,21 @@
 import {Intersect} from './constants';
 import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
 
-var TYPE_ENUM = 'E',
-    TYPE_RANGE_INC = 'R',
-    TYPE_RANGE_EXC = 'R-E',
-    TYPE_RANGE_LE = 'R-LE',
-    TYPE_RANGE_RE = 'R-RE',
-    UNIT_INDEX = 'index:unit';
+var TYPE_ENUM = 'E';
+var TYPE_RANGE_INC = 'R';
+var TYPE_RANGE_EXC = 'R-E';
+var TYPE_RANGE_LE = 'R-LE';
+var TYPE_RANGE_RE = 'R-RE';
+var UNIT_INDEX = 'index:unit';
 
 // TODO: revisit date coercion?
 function testPoint(datum, entry) {
-  var fields = entry.fields,
-      values = entry.values,
-      n = fields.length,
-      i = 0, dval, f;
+  var fields = entry.fields;
+  var values = entry.values;
+  var n = fields.length;
+  var i = 0;
+  var dval;
+  var f;
 
   for (; i<n; ++i) {
     f = fields[i];
@@ -62,13 +64,17 @@ function testPoint(datum, entry) {
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
 export function selectionTest(name, datum, op) {
-  var data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-      intersect = op === Intersect,
-      n = entries.length,
-      i = 0,
-      entry, miss, count, unit, b;
+  var data = this.context.data[name];
+  var entries = data ? data.values.value : [];
+  var unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined;
+  var intersect = op === Intersect;
+  var n = entries.length;
+  var i = 0;
+  var entry;
+  var miss;
+  var count;
+  var unit;
+  var b;
 
   for (; i<n; ++i) {
     entry = entries[i];

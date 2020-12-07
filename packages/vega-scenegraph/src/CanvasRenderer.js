@@ -100,12 +100,12 @@ inherits(CanvasRenderer, Renderer, {
   },
 
   _render(scene) {
-    const g = this.context(),
-          o = this._origin,
-          w = this._width,
-          h = this._height,
-          db = this._dirty,
-          vb = viewBounds(o, w, h);
+    const g = this.context();
+    const o = this._origin;
+    const w = this._width;
+    const h = this._height;
+    const db = this._dirty;
+    const vb = viewBounds(o, w, h);
 
     // setup
     g.save();
@@ -133,8 +133,8 @@ inherits(CanvasRenderer, Renderer, {
   },
 
   clear(x, y, w, h) {
-    const opt = this._options,
-          g = this.context();
+    const opt = this._options;
+    const g = this.context();
 
     if (opt.type !== 'pdf' && !opt.externalContext) {
       // calling clear rect voids vector output in pdf mode

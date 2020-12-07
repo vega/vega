@@ -13,8 +13,8 @@ export function isGradient(value) {
 export function gradientRef(g, defs, base) {
   const type = g.gradient;
 
-  let id = g.id,
-      prefix = type === 'radial' ? patternPrefix : '';
+  let id = g.id;
+  let prefix = type === 'radial' ? patternPrefix : '';
 
   // check id, assign default values as needed
   if (!id) {
@@ -47,7 +47,8 @@ function get(val, def) {
 }
 
 export default function(p0, p1) {
-  var stops = [], gradient;
+  var stops = [];
+  var gradient;
   return gradient = {
     gradient: 'linear',
     x1: p0 ? p0[0] : 0,

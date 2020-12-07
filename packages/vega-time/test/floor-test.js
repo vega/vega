@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+var tape = require('tape');
+var vega = require('../');
+var {local, utc} = require('./util');
 
 const UNITS = [
   'year',
@@ -79,10 +79,10 @@ tape('utcFloor generates utc floor function', t => {
 });
 
 tape('timeFloor handles step parameter', t => {
-  const d1 = local(2020, 5, 15),
-        d2 = local(2020, 5, 22),
-        yq = ['year', 'quarter'],
-        yw = ['year', 'week'];
+  const d1 = local(2020, 5, 15);
+  const d2 = local(2020, 5, 22);
+  const yq = ['year', 'quarter'];
+  const yw = ['year', 'week'];
 
   t.equal(+vega.timeFloor(yq)(d1), +local(2020, 3, 1));
   t.equal(+vega.timeFloor(yq, 1)(d1), +local(2020, 3, 1));
@@ -99,10 +99,10 @@ tape('timeFloor handles step parameter', t => {
 });
 
 tape('utcFloor handles step parameter', t => {
-  const d1 = utc(2020, 5, 15),
-        d2 = utc(2020, 5, 22),
-        yq = ['year', 'quarter'],
-        yw = ['year', 'week'];
+  const d1 = utc(2020, 5, 15);
+  const d2 = utc(2020, 5, 22);
+  const yq = ['year', 'quarter'];
+  const yw = ['year', 'week'];
 
   t.equal(+vega.utcFloor(yq)(d1), +utc(2020, 3, 1));
   t.equal(+vega.utcFloor(yq, 1)(d1), +utc(2020, 3, 1));
