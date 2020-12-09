@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "5.1.0",
+  "version": "5.1.4",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -9,21 +9,19 @@
   ],
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "license": "BSD-3-Clause",
-  "main": "build/vega-selections.js",
-  "module": "index",
+  "main": "build/vega-selection.js",
+  "module": "build/vega-selection.module.js",
+  "unpkg": "build/vega-selection.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-expression:vega,vega-util:vega -f umd -n vega -o build/vega-selections.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-selections.js -c -m -o build/vega-selections.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-expression": "^2.6.1",
-    "vega-util": "^1.11.0"
+    "vega-expression": "^3.0.0",
+    "vega-util": "^1.15.2"
   }
 }

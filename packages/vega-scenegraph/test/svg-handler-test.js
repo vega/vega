@@ -6,12 +6,12 @@ var tape = require('tape'),
     jsdom = require('jsdom'),
     doc = (new jsdom.JSDOM()).window.document;
 
-var res = './test/resources/';
+const res = './test/resources/';
 
-var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.sceneFromJSON(marks[name]); }
+const marks = JSON.parse(load('marks.json'));
+for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
-var events = [
+const events = [
   'keydown',
   'keypress',
   'keyup',
@@ -42,7 +42,7 @@ function loadScene(file) {
 
 function render(scene, w, h) {
   global.document = doc;
-  var r = new Renderer()
+  const r = new Renderer()
     .initialize(doc.body, w, h)
     .render(scene);
   delete global.document;
@@ -50,14 +50,14 @@ function render(scene, w, h) {
 }
 
 function event(name, x, y) {
-  var evt = doc.createEvent('MouseEvents');
+  const evt = doc.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
   evt.clientX = x || 0;
   evt.clientY = y || 0;
   return evt;
 }
 
-tape('SVGHandler should add/remove event callbacks', function(t) {
+tape('SVGHandler should add/remove event callbacks', t => {
   var array = function(_) { return _ || []; },
       object = function(_) { return _ || {}; },
       handler = new Handler(),
@@ -107,24 +107,24 @@ tape('SVGHandler should add/remove event callbacks', function(t) {
   t.end();
 });
 
-tape('SVGHandler should handle input events', function(t) {
-  var scene = loadScene('scenegraph-rect.json');
-  var handler = new Handler()
+tape('SVGHandler should handle input events', t => {
+  const scene = loadScene('scenegraph-rect.json');
+  const handler = new Handler()
     .initialize(render(scene, 400, 200))
     .scene(scene);
 
   t.equal(handler.scene(), scene);
 
-  var svg = handler.canvas();
-  var count = 0;
-  var increment = function() { count++; };
+  const svg = handler.canvas();
+  let count = 0;
+  const increment = function() { count++; };
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     handler.on(name, increment);
   });
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     svg.dispatchEvent(event(name));
   });
 
@@ -149,7 +149,7 @@ tape('SVGHandler should handle input events', function(t) {
   handler.off('nonevent');
   t.equal(handler.handlers().length, events.length);
 
-  events.forEach(function(name) {
+  events.forEach(name => {
     handler.off(name, increment);
   });
 

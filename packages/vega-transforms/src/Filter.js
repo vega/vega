@@ -13,58 +13,58 @@ export default function Filter(params) {
 }
 
 Filter.Definition = {
-  "type": "Filter",
-  "metadata": {"changes": true},
-  "params": [
-    { "name": "expr", "type": "expr", "required": true }
+  'type': 'Filter',
+  'metadata': {'changes': true},
+  'params': [
+    { 'name': 'expr', 'type': 'expr', 'required': true }
   ]
 };
 
-var prototype = inherits(Filter, Transform);
+inherits(Filter, Transform, {
+  transform(_, pulse) {
+    const df = pulse.dataflow,
+          cache = this.value, // cache ids of filtered tuples
+          output = pulse.fork(),
+          add = output.add,
+          rem = output.rem,
+          mod = output.mod,
+          test = _.expr;
+    let isMod = true;
 
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      cache = this.value, // cache ids of filtered tuples
-      output = pulse.fork(),
-      add = output.add,
-      rem = output.rem,
-      mod = output.mod,
-      test = _.expr,
-      isMod = true;
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t);
+      if (!cache.has(id)) rem.push(t);
+      else cache.delete(id);
+    });
 
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t);
-    if (!cache.has(id)) rem.push(t);
-    else cache.delete(id);
-  });
+    pulse.visit(pulse.ADD, t => {
+      if (test(t, _)) add.push(t);
+      else cache.set(tupleid(t), 1);
+    });
 
-  pulse.visit(pulse.ADD, function(t) {
-    if (test(t, _)) add.push(t);
-    else cache.set(tupleid(t), 1);
-  });
-
-  function revisit(t) {
-    var id = tupleid(t),
-        b = test(t, _),
-        s = cache.get(id);
-    if (b && s) {
-      cache.delete(id);
-      add.push(t);
-    } else if (!b && !s) {
-      cache.set(id, 1);
-      rem.push(t);
-    } else if (isMod && b && !s) {
-      mod.push(t);
+    function revisit(t) {
+      const id = tupleid(t),
+            b = test(t, _),
+            s = cache.get(id);
+      if (b && s) {
+        cache.delete(id);
+        add.push(t);
+      } else if (!b && !s) {
+        cache.set(id, 1);
+        rem.push(t);
+      } else if (isMod && b && !s) {
+        mod.push(t);
+      }
     }
+
+    pulse.visit(pulse.MOD, revisit);
+
+    if (_.modified()) {
+      isMod = false;
+      pulse.visit(pulse.REFLOW, revisit);
+    }
+
+    if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
+    return output;
   }
-
-  pulse.visit(pulse.MOD, revisit);
-
-  if (_.modified()) {
-    isMod = false;
-    pulse.visit(pulse.REFLOW, revisit);
-  }
-
-  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
-  return output;
-};
+});

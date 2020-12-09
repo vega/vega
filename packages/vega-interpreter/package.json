@@ -1,0 +1,28 @@
+{
+  "name": "vega-interpreter",
+  "version": "1.0.3",
+  "description": "CSP-compliant interpreter for Vega expressions.",
+  "keywords": [
+    "vega",
+    "expression",
+    "interpreter",
+    "runtime"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-interpreter.js",
+  "module": "build/vega-interpreter.module.js",
+  "unpkg": "build/vega-interpreter.min.js",
+  "types": "index.d.ts",
+  "repository": "vega/vega",
+  "scripts": {
+    "prebuild": "rimraf build",
+    "build": "rollup -c --extend",
+    "pretest": "yarn build --config-test",
+    "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
+  },
+  "devDependencies": {
+    "vega": "*"
+  }
+}

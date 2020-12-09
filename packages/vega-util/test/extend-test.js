@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('extend extends objects with other object properties', function(t) {
+tape('extend extends objects with other object properties', t => {
   var grandparent = {p2_1: 'vp2_1', p2_2: 'vp2_2'},
       parent = Object.create(grandparent),
       object1 = Object.create(parent),
@@ -11,7 +11,7 @@ tape('extend extends objects with other object properties', function(t) {
   object1.o1_2 = 'vo1_2';
   object1.override_1 = 'x';
   parent.p1_1 = 'vp1_1';
-  var o = vega.extend({c1: 'vc1', p2_2: 'x', o1_1: 'y'}, object1, object2);
+  const o = vega.extend({c1: 'vc1', p2_2: 'x', o1_1: 'y'}, object1, object2);
 
   // should inherit all direct properties
   t.equal(o['o1_1'], 'vo1_1');

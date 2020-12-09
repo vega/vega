@@ -1,4 +1,4 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits, isArray} from 'vega-util';
 import {transform} from './Isocontour';
 import {params} from './KDE2D';
@@ -38,50 +38,50 @@ export default function Contour(params) {
 }
 
 Contour.Definition = {
-  "type": "Contour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "size", "type": "number", "array": true, "length": 2, "required": true },
-    { "name": "values", "type": "number", "array": true },
-    { "name": "x", "type": "field" },
-    { "name": "y", "type": "field" },
-    { "name": "weight", "type": "field" },
-    { "name": "cellSize", "type": "number" },
-    { "name": "bandwidth", "type": "number" },
-    { "name": "count", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "smooth", "type": "boolean", "default": true }
+  'type': 'Contour',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'size', 'type': 'number', 'array': true, 'length': 2, 'required': true },
+    { 'name': 'values', 'type': 'number', 'array': true },
+    { 'name': 'x', 'type': 'field' },
+    { 'name': 'y', 'type': 'field' },
+    { 'name': 'weight', 'type': 'field' },
+    { 'name': 'cellSize', 'type': 'number' },
+    { 'name': 'bandwidth', 'type': 'number' },
+    { 'name': 'count', 'type': 'number' },
+    { 'name': 'nice', 'type': 'boolean', 'default': false },
+    { 'name': 'thresholds', 'type': 'number', 'array': true },
+    { 'name': 'smooth', 'type': 'boolean', 'default': true }
   ]
 };
 
-var prototype = inherits(Contour, Transform);
+inherits(Contour, Transform, {
+  transform(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
+    }
 
-prototype.transform = function(_, pulse) {
-  if (this.value && !pulse.changed() && !_.modified()) {
-    return pulse.StopPropagation;
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        contour = contours().smooth(_.smooth !== false),
+        values = _.values,
+        thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
+        size = _.size, grid, post;
+
+    if (!values) {
+      values = pulse.materialize(pulse.SOURCE).source;
+      grid = params(density2D(), _)(values, true);
+      post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
+      size = [grid.width, grid.height];
+      values = grid.values;
+    }
+
+    thresh = isArray(thresh) ? thresh : thresh(values);
+    values = contour.size(size)(values, thresh);
+    if (post) values.forEach(post);
+
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = (values || []).map(ingest);
+
+    return out;
   }
-
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      contour = contours().smooth(_.smooth !== false),
-      values = _.values,
-      thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
-      size = _.size, grid, post;
-
-  if (!values) {
-    values = pulse.materialize(pulse.SOURCE).source;
-    grid = params(density2D(), _)(values, true);
-    post = transform(grid, grid.scale || 1, grid.scale || 1, 0, 0);
-    size = [grid.width, grid.height];
-    values = grid.values;
-  }
-
-  thresh = isArray(thresh) ? thresh : thresh(values);
-  values = contour.size(size)(values, thresh);
-  if (post) values.forEach(post);
-
-  if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = (values || []).map(ingest);
-
-  return out;
-};
+});

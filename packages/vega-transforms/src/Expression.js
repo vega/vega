@@ -18,7 +18,7 @@ export default function Expression(params) {
 inherits(Expression, Operator);
 
 function update(_) {
-  var expr = _.expr;
+  const expr = _.expr;
   return this.value && !_.modified('expr')
     ? this.value
     : accessor(

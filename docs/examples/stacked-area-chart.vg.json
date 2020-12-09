@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A basic stacked area chart example.",
   "width": 500,
   "height": 200,
   "padding": 5,

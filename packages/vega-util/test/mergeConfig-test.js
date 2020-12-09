@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('mergeConfig merges configuration objects', function(t) {
+tape('mergeConfig merges configuration objects', t => {
   t.deepEqual(
     vega.mergeConfig(
       {mark: {fill: 'blue', stroke: {value: 'black'}, dashArray: [1, 2]}},
@@ -12,7 +12,7 @@ tape('mergeConfig merges configuration objects', function(t) {
   t.end();
 });
 
-tape('mergeConfig merges legend objects', function(t) {
+tape('mergeConfig merges legend objects', t => {
   t.deepEqual(
     vega.mergeConfig(
       {
@@ -51,7 +51,7 @@ tape('mergeConfig merges legend objects', function(t) {
   t.end();
 });
 
-tape('mergeConfig merges signal arrays', function(t) {
+tape('mergeConfig merges signal arrays', t => {
   t.deepEqual(
     vega.mergeConfig(
       {signals: [{name: 'foo', value: 1}, {name: 'bar', value: 2}]},
@@ -68,7 +68,7 @@ tape('mergeConfig merges signal arrays', function(t) {
   t.end();
 });
 
-tape('mergeConfig handles empty arguments', function(t) {
+tape('mergeConfig handles empty arguments', t => {
   const c = {autosize:'pad'};
   t.deepEqual(vega.mergeConfig(), {});
   t.deepEqual(vega.mergeConfig(null), {});
@@ -76,5 +76,17 @@ tape('mergeConfig handles empty arguments', function(t) {
   t.deepEqual(vega.mergeConfig(c, null, undefined), c);
   t.deepEqual(vega.mergeConfig(null, c, undefined), c);
   t.deepEqual(vega.mergeConfig(null, undefined, c), c);
+  t.end();
+});
+
+tape('mergeConfig must not allow prototype pollution', t => {
+  const config = {symbol: {shape: 'triangle-right'}},
+        payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}'),
+        merged = vega.mergeConfig(config, payload, {symbol: payload});
+
+  t.equal(merged.__proto__.vulnerable, undefined);
+  t.equal(merged.symbol.__proto__.vulnerable, undefined);
+  t.equal(Object.prototype.vulnerable, undefined);
+
   t.end();
 });

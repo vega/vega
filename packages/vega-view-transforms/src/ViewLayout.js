@@ -1,8 +1,8 @@
 import {
-  AxisRole, LegendRole, TitleRole, FrameRole, ScopeRole,
-  RowHeader, RowFooter, RowTitle, ColHeader, ColFooter, ColTitle,
-  Top, Bottom, Left, Right,
-  Fit, FitX, FitY, Pad, None, Padding
+  AxisRole, Bottom, ColFooter, ColHeader, ColTitle,
+  Fit, FitX, FitY, FrameRole, Left, LegendRole,
+  None, Pad, Padding, Right,
+  RowFooter, RowHeader, RowTitle, ScopeRole, TitleRole, Top
 } from './constants';
 
 import {axisLayout, isYAxis} from './layout/axis';
@@ -25,18 +25,25 @@ export default function ViewLayout(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(ViewLayout, Transform);
+inherits(ViewLayout, Transform, {
+  transform(_, pulse) {
+    const view = pulse.dataflow;
+    _.mark.items.forEach(group => {
+      if (_.layout) trellisLayout(view, group, _.layout);
+      layoutGroup(view, group, _);
+    });
+    return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
+  }
+});
 
-prototype.transform = function(_, pulse) {
-  // TODO incremental update, output?
-  var view = pulse.dataflow;
-  _.mark.items.forEach(function(group) {
-    if (_.layout) trellisLayout(view, group, _.layout);
-    layoutGroup(view, group, _);
-  });
-  if (_.modified()) pulse.reflow();
-  return pulse;
-};
+function shouldReflow(group) {
+  // We typically should reflow if layout is invoked (#2568), as child items
+  // may have resized and reflow ensures group bounds are re-calculated.
+  // However, legend entries have a special exception to avoid instability.
+  // For example, if a selected legend symbol gains a stroke on hover,
+  // we don't want to re-position subsequent elements in the legend.
+  return group && group.mark.role !== 'legend-entry';
+}
 
 function layoutGroup(view, group, _) {
   var items = group.items,
@@ -88,7 +95,7 @@ function layoutGroup(view, group, _) {
     });
 
     // perform grid layout for each orient group
-    for (let orient in l) {
+    for (const orient in l) {
       const g = l[orient];
       gridLayout(view, g, legendParams(
         g, orient, _.legends, xBounds, yBounds, width, height
@@ -143,22 +150,23 @@ function layoutGroup(view, group, _) {
 }
 
 function viewSizeLayout(view, group, viewBounds, _) {
-  var auto = _.autosize || {},
-      type = auto.type,
-      viewWidth = view._width,
-      viewHeight = view._height,
-      padding = view.padding();
+  const auto = _.autosize || {},
+        type = auto.type;
 
   if (view._autosize < 1 || !type) return;
 
-  var width  = Math.max(0, group.width || 0),
+  let viewWidth = view._width,
+      viewHeight = view._height,
+      width  = Math.max(0, group.width || 0),
       left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-      right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
       height = Math.max(0, group.height || 0),
-      top    = Math.max(0, Math.ceil(-viewBounds.y1)),
-      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+      top    = Math.max(0, Math.ceil(-viewBounds.y1));
+
+  const right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
   if (auto.contains === Padding) {
+    const padding = view.padding();
     viewWidth -= padding.left + padding.right;
     viewHeight -= padding.top + padding.bottom;
   }

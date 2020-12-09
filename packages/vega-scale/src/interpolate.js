@@ -5,8 +5,8 @@ import * as $ from 'd3-interpolate';
 const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
 
 export function interpolateRange(interpolator, range) {
-  var start = range[0],
-      span = peek(range) - start;
+  const start = range[0],
+        span = peek(range) - start;
   return function(i) { return interpolator(start + i * span); };
 }
 
@@ -15,9 +15,9 @@ export function interpolateColors(colors, type, gamma) {
 }
 
 export function quantizeInterpolator(interpolator, count) {
-  var samples = new Array(count),
-      n = count + 1;
-  for (var i = 0; i < count;) samples[i] = interpolator(++i / n);
+  const samples = new Array(count),
+        n = count + 1;
+  for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
   return samples;
 }
 
@@ -29,7 +29,8 @@ export function scaleCopy(scale) {
 }
 
 export function scaleFraction(scale, min, max) {
-  var delta = max - min, i, t, s;
+  const delta = max - min;
+  let i, t, s;
 
   if (!delta || !Number.isFinite(delta)) {
     return constant(0.5);
@@ -43,7 +44,7 @@ export function scaleFraction(scale, min, max) {
 }
 
 export function interpolate(type, gamma) {
-  var interp = $[method(type)];
+  const interp = $[method(type)];
   return (gamma != null && interp && interp.gamma)
     ? interp.gamma(gamma)
     : interp;
@@ -52,6 +53,6 @@ export function interpolate(type, gamma) {
 function method(type) {
   return 'interpolate' + type.toLowerCase()
     .split('-')
-    .map(function(s) { return s[0].toUpperCase() + s.slice(1); })
+    .map(s => s[0].toUpperCase() + s.slice(1))
     .join('');
 }

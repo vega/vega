@@ -1,10 +1,11 @@
+import blend from './blend';
 import fill from './fill';
 import stroke from './stroke';
 import {visit} from '../visit';
 
 export function drawAll(path) {
   return function(context, scene, bounds) {
-    visit(scene, function(item) {
+    visit(scene, item => {
       if (!bounds || bounds.intersects(item.bounds)) {
         drawPath(path, context, item, item);
       }
@@ -25,6 +26,8 @@ function drawPath(path, context, item, items) {
   if (opacity === 0) return;
 
   if (path(context, items)) return;
+
+  blend(context, item);
 
   if (item.fill && fill(context, item, opacity)) {
     context.fill();

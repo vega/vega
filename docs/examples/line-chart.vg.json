@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A basic line chart example.",
   "width": 500,
   "height": 200,
   "padding": 5,
@@ -94,10 +95,10 @@
             },
             "update": {
               "interpolate": {"signal": "interpolate"},
-              "fillOpacity": {"value": 1}
+              "strokeOpacity": {"value": 1}
             },
             "hover": {
-              "fillOpacity": {"value": 0.5}
+              "strokeOpacity": {"value": 0.5}
             }
           }
         }

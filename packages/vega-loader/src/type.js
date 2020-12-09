@@ -1,6 +1,19 @@
 import {identity, toBoolean, toDate, toNumber, toString} from 'vega-util';
 
-export var typeParsers = {
+const isValid = _ => _ != null && _ === _;
+
+const isBoolean = _ => _ === 'true'
+  || _ === 'false'
+  || _ === true
+  || _ === false;
+
+const isDate = _ => !Number.isNaN(Date.parse(_));
+
+const isNumber = _ => !Number.isNaN(+_) && !(_ instanceof Date);
+
+const isInteger = _ => isNumber(_) && Number.isInteger(+_);
+
+export const typeParsers = {
   boolean: toBoolean,
   integer: toNumber,
   number:  toNumber,
@@ -9,14 +22,14 @@ export var typeParsers = {
   unknown: identity
 };
 
-var typeTests = [
+const typeTests = [
   isBoolean,
   isInteger,
   isNumber,
   isDate
 ];
 
-var typeList = [
+const typeList = [
   'boolean',
   'integer',
   'number',
@@ -26,14 +39,13 @@ var typeList = [
 export function inferType(values, field) {
   if (!values || !values.length) return 'unknown';
 
-  var value, i, j, t = 0,
-      n = values.length,
-      m = typeTests.length,
-      a = typeTests.map(function(_, i) { return i + 1; });
+  const n = values.length,
+        m = typeTests.length,
+        a = typeTests.map((_, i) => i + 1);
 
-  for (i=0, n=values.length; i<n; ++i) {
+  for (let i = 0, t = 0, j, value; i < n; ++i) {
     value = field ? values[i][field] : values[i];
-    for (j=0; j<m; ++j) {
+    for (j = 0; j < m; ++j) {
       if (a[j] && isValid(value) && !typeTests[j](value)) {
         a[j] = 0;
         ++t;
@@ -42,35 +54,14 @@ export function inferType(values, field) {
     }
   }
 
-  t = a.reduce(function(u, v) { return u === 0 ? v : u; }, 0) - 1;
-  return typeList[t];
+  return typeList[
+    a.reduce((u, v) => u === 0 ? v : u, 0) - 1
+  ];
 }
 
 export function inferTypes(data, fields) {
-  return fields.reduce(function(types, field) {
+  return fields.reduce((types, field) => {
     types[field] = inferType(data, field);
     return types;
   }, {});
-}
-
-// -- Type Checks ----
-
-function isValid(_) {
-  return _ != null && _ === _;
-}
-
-function isBoolean(_) {
-  return _ === 'true' || _ === 'false' || _ === true || _ === false;
-}
-
-function isDate(_) {
-  return !Number.isNaN(Date.parse(_));
-}
-
-function isNumber(_) {
-  return !Number.isNaN(+_) && !(_ instanceof Date);
-}
-
-function isInteger(_) {
-  return isNumber(_) && Number.isInteger(+_);
 }

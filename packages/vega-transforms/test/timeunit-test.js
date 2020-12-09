@@ -7,7 +7,7 @@ var tape = require('tape'),
     Collect = tx.collect,
     TimeUnit = tx.timeunit;
 
-var UNITS = [
+const UNITS = [
   'year',
   'quarter',
   'month',
@@ -80,8 +80,8 @@ function testDates(t, data, unit, step, date) {
   });
 }
 
-tape('TimeUnit truncates dates to time units', function(t) {
-  var data = [
+tape('TimeUnit truncates dates to time units', t => {
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
@@ -98,7 +98,7 @@ tape('TimeUnit truncates dates to time units', function(t) {
   df.pulse(c, changeset().insert(data));
 
   UNITS.forEach((u, i) => {
-    var a = u.split('-');
+    const a = u.split('-');
     df.update(units, a).run();
     t.equal(s.pulse.rem.length, 0);
     t.equal(s.pulse.add.length, i ? 0 : 4);
@@ -111,8 +111,8 @@ tape('TimeUnit truncates dates to time units', function(t) {
   t.end();
 });
 
-tape('TimeUnit truncates UTC dates to time units', function(t) {
-  var data = [
+tape('TimeUnit truncates UTC dates to time units', t => {
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
@@ -129,7 +129,7 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
   df.pulse(c, changeset().insert(data));
 
   UNITS.forEach((u, i) => {
-    var a = u.split('-');
+    const a = u.split('-');
     df.update(units, a).run();
     t.equal(s.pulse.rem.length, 0);
     t.equal(s.pulse.add.length, i ? 0 : 4);
@@ -142,8 +142,8 @@ tape('TimeUnit truncates UTC dates to time units', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit steps', function(t) {
-  var data = [
+tape('TimeUnit supports unit steps', t => {
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
@@ -175,8 +175,8 @@ tape('TimeUnit supports unit steps', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit inference', function(t) {
-  var data = [
+tape('TimeUnit supports unit inference', t => {
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
@@ -225,8 +225,8 @@ tape('TimeUnit supports unit inference', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports unit inference with extent', function(t) {
-  var data = [
+tape('TimeUnit supports unit inference with extent', t => {
+  const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
     {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
     {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
@@ -265,8 +265,8 @@ tape('TimeUnit supports unit inference with extent', function(t) {
   t.end();
 });
 
-tape('TimeUnit supports point output', function(t) {
-  var data = [{date: new Date(2012, 0, 1)}];
+tape('TimeUnit supports point output', t => {
+  const data = [{date: new Date(2012, 0, 1)}];
 
   var df = new vega.Dataflow(),
       date = field('date'),

@@ -1,55 +1,41 @@
+import {addEncoders, extendEncode} from './encode/util';
 import axisConfig from './guides/axis-config';
 import axisDomain from './guides/axis-domain';
 import axisGrid from './guides/axis-grid';
 import axisTicks from './guides/axis-ticks';
 import axisLabels from './guides/axis-labels';
 import axisTitle from './guides/axis-title';
+import {Skip} from './guides/constants';
 import guideGroup from './guides/guide-group';
 import {lookup, tickBand} from './guides/guide-util';
 import {AxisRole} from './marks/roles';
 import parseMark from './mark';
-import {encoder, extendEncode} from './encode/encode-util';
-import {Skip} from './guides/constants';
+import {AxisTicks, Collect} from '../transforms';
 import {ref, value} from '../util';
-import {Collect, AxisTicks} from '../transforms';
 
 export default function(spec, scope) {
-  var config = axisConfig(spec, scope),
-      encode = spec.encode || {},
-      axisEncode = encode.axis || {},
-      name = axisEncode.name || undefined,
-      interactive = axisEncode.interactive,
-      style = axisEncode.style,
-      _ = lookup(spec, config),
-      band = tickBand(_),
-      datum, dataRef, ticksRef, size, group, children;
+  const config = axisConfig(spec, scope),
+        encode = spec.encode || {},
+        axisEncode = encode.axis || {},
+        name = axisEncode.name || undefined,
+        interactive = axisEncode.interactive,
+        style = axisEncode.style,
+        _ = lookup(spec, config),
+        band = tickBand(_);
 
   // single-element data source for axis group
-  datum = {
-    orient: spec.orient,
+  const datum = {
+    scale:  spec.scale,
     ticks:  !!_('ticks'),
     labels: !!_('labels'),
     grid:   !!_('grid'),
     domain: !!_('domain'),
-    title:  spec.title != null,
-    translate: _('translate')
+    title:  spec.title != null
   };
-  dataRef = ref(scope.add(Collect({}, [datum])));
-
-  // encoding properties for axis group item
-  axisEncode = extendEncode({
-    update: {
-      offset:       encoder(_('offset') || 0),
-      position:     encoder(value(spec.position, 0)),
-      titlePadding: encoder(_('titlePadding')),
-      minExtent:    encoder(_('minExtent')),
-      maxExtent:    encoder(_('maxExtent')),
-      range:        {signal: `abs(span(range("${spec.scale}")))`}
-    }
-  }, encode.axis, Skip);
+  const dataRef = ref(scope.add(Collect({}, [datum])));
 
   // data source for axis ticks
-  ticksRef = ref(scope.add(AxisTicks({
+  const ticksRef = ref(scope.add(AxisTicks({
     scale:   scope.scaleRef(spec.scale),
     extra:   scope.property(band.extra),
     count:   scope.objectProperty(spec.tickCount),
@@ -60,7 +46,8 @@ export default function(spec, scope) {
   })));
 
   // generate axis marks
-  children = [];
+  const children = [];
+  let size;
 
   // include axis gridlines if requested
   if (datum.grid) {
@@ -89,10 +76,41 @@ export default function(spec, scope) {
     children.push(axisTitle(spec, config, encode.title, dataRef));
   }
 
-  // build axis specification
-  group = guideGroup(AxisRole, style, name, dataRef, interactive, axisEncode, children);
-  if (spec.zindex) group.zindex = spec.zindex;
-
   // parse axis specification
-  return parseMark(group, scope);
+  return parseMark(
+    guideGroup({
+      role:        AxisRole,
+      from:        dataRef,
+      encode:      extendEncode(buildAxisEncode(_, spec), axisEncode, Skip),
+      marks:       children,
+      aria:        _('aria'),
+      description: _('description'),
+      zindex:      _('zindex'),
+      name,
+      interactive,
+      style
+    }),
+    scope
+  );
+}
+
+function buildAxisEncode(_, spec) {
+  const encode = {enter: {}, update: {}};
+
+  addEncoders(encode, {
+    orient:       _('orient'),
+    offset:       _('offset') || 0,
+    position:     value(spec.position, 0),
+    titlePadding: _('titlePadding'),
+    minExtent:    _('minExtent'),
+    maxExtent:    _('maxExtent'),
+    range:        {signal: `abs(span(range("${spec.scale}")))`},
+    translate:    _('translate'),
+
+    // accessibility support
+    format:       spec.format,
+    formatType:   spec.formatType
+  });
+
+  return encode;
 }

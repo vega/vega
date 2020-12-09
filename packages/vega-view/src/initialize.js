@@ -1,3 +1,4 @@
+import {initializeAria} from './aria';
 import bind from './bind';
 import element from './element';
 import initializeRenderer from './initialize-renderer';
@@ -5,19 +6,21 @@ import initializeHandler from './initialize-handler';
 import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
 export default function(el, elBind) {
-  var view = this,
-      type = view._renderType,
-      config = view._eventConfig.bind,
-      module = renderModule(type),
-      Handler, Renderer;
+  const view = this,
+        type = view._renderType,
+        config = view._eventConfig.bind,
+        module = renderModule(type);
 
   // containing dom element
   el = view._el = el ? lookup(view, el) : null;
 
+  // initialize aria attributes
+  initializeAria(view);
+
   // select appropriate renderer & handler
   if (!module) view.error('Unrecognized renderer type: ' + type);
-  Handler = module.handler || CanvasHandler;
-  Renderer = (el ? module.renderer : module.headless);
+  const Handler = module.handler || CanvasHandler,
+        Renderer = (el ? module.renderer : module.headless);
 
   // initialize renderer and input handler
   view._renderer = !Renderer ? null
@@ -28,15 +31,15 @@ export default function(el, elBind) {
   // initialize signal bindings
   if (el && config !== 'none') {
     elBind = elBind ? (view._elBind = lookup(view, elBind))
-      : el.appendChild(element('div', {'class': 'vega-bindings'}));
+      : el.appendChild(element('form', {'class': 'vega-bindings'}));
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(_ => {
       if (_.param.element && config !== 'container') {
         _.element = lookup(view, _.param.element);
       }
     });
 
-    view._bind.forEach(function(_) {
+    view._bind.forEach(_ => {
       bind(view, _.element || elBind, _);
     });
   }

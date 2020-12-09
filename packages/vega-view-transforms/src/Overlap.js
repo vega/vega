@@ -1,4 +1,4 @@
-import {Top, Bottom} from './constants';
+import {Bottom, Top} from './constants';
 import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
 import {inherits, peek} from 'vega-util';
@@ -30,48 +30,36 @@ export default function Overlap(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Overlap, Transform);
-
-var methods = {
-  parity: function(items) {
-    return items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1);
-  },
-  greedy: function(items, sep) {
-    var a;
-    return items.filter((b, i) => {
-      if (!i || !intersect(a.bounds, b.bounds, sep)) {
-        a = b;
-        return 1;
-      } else {
-        return b.opacity = 0;
-      }
-    });
+const methods = {
+  parity: items =>
+    items.filter((item, i) => i % 2 ? (item.opacity = 0) : 1),
+  greedy: (items, sep) => {
+    let a;
+    return items.filter((b, i) =>
+      (!i || !intersect(a.bounds, b.bounds, sep))
+        ? (a = b, 1)
+        : (b.opacity = 0)
+    );
   }
 };
 
 // compute bounding box intersection
 // including padding pixels of separation
-function intersect(a, b, sep) {
-  return sep > Math.max(
-    b.x1 - a.x2,
-    a.x1 - b.x2,
-    b.y1 - a.y2,
-    a.y1 - b.y2
-  );
-}
+const intersect = (a, b, sep) =>
+  sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
 
-function hasOverlap(items, pad) {
+const hasOverlap = (items, pad) => {
   for (var i=1, n=items.length, a=items[0].bounds, b; i<n; a=b, ++i) {
     if (intersect(a, b = items[i].bounds, pad)) return true;
   }
-}
+};
 
-function hasBounds(item) {
-  var b = item.bounds;
+const hasBounds = item => {
+  const b = item.bounds;
   return b.width() > 1 && b.height() > 1;
-}
+};
 
-function boundTest(scale, orient, tolerance) {
+const boundTest = (scale, orient, tolerance) => {
   var range = scale.range(),
       b = new Bounds();
 
@@ -83,70 +71,75 @@ function boundTest(scale, orient, tolerance) {
   b.expand(tolerance || 1);
 
   return item => b.encloses(item.bounds);
-}
+};
 
 // reset all items to be fully opaque
-function reset(source) {
+const reset = source => {
   source.forEach(item => item.opacity = 1);
   return source;
-}
+};
 
 // add all tuples to mod, fork pulse if parameters were modified
 // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
-function reflow(pulse, _) {
-  return pulse.reflow(_.modified()).modifies('opacity');
-}
+const reflow = (pulse, _) =>
+  pulse.reflow(_.modified()).modifies('opacity');
 
-prototype.transform = function(_, pulse) {
-  var reduce = methods[_.method] || methods.parity,
-      source = pulse.materialize(pulse.SOURCE).source,
-      sep = _.separation || 0,
-      items, test, bounds;
+inherits(Overlap, Transform, {
+  transform(_, pulse) {
+    const reduce = methods[_.method] || methods.parity,
+          sep = _.separation || 0;
 
-  if (!source || !source.length) return;
+    let source = pulse.materialize(pulse.SOURCE).source,
+        items, test;
 
-  if (!_.method) {
-    // early exit if method is falsy
-    if (_.modified('method')) {
-      reset(source);
-      pulse = reflow(pulse, _);
+    if (!source || !source.length) return;
+
+    if (!_.method) {
+      // early exit if method is falsy
+      if (_.modified('method')) {
+        reset(source);
+        pulse = reflow(pulse, _);
+      }
+      return pulse;
     }
+
+    // skip labels with no content
+    source = source.filter(hasBounds);
+
+    // early exit, nothing to do
+    if (!source.length) return;
+
+    if (_.sort) {
+      source = source.slice().sort(_.sort);
+    }
+
+    items = reset(source);
+    pulse = reflow(pulse, _);
+
+    if (items.length >= 3 && hasOverlap(items, sep)) {
+      do {
+        items = reduce(items, sep);
+      } while (items.length >= 3 && hasOverlap(items, sep));
+
+      if (items.length < 3 && !peek(source).opacity) {
+        if (items.length > 1) peek(items).opacity = 0;
+        peek(source).opacity = 1;
+      }
+    }
+
+    if (_.boundScale && _.boundTolerance >= 0) {
+      test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
+      source.forEach(item => {
+        if (!test(item)) item.opacity = 0;
+      });
+    }
+
+    // re-calculate mark bounds
+    const bounds = items[0].mark.bounds.clear();
+    source.forEach(item => {
+      if (item.opacity) bounds.union(item.bounds);
+    });
+
     return pulse;
   }
-
-  if (_.sort) {
-    source = source.slice().sort(_.sort);
-  }
-
-  // skip labels with no content
-  source = source.filter(hasBounds);
-
-  items = reset(source);
-  pulse = reflow(pulse, _);
-
-  if (items.length >= 3 && hasOverlap(items, sep)) {
-    do {
-      items = reduce(items, sep);
-    } while (items.length >= 3 && hasOverlap(items, sep));
-
-    if (items.length < 3 && !peek(source).opacity) {
-      if (items.length > 1) peek(items).opacity = 0;
-      peek(source).opacity = 1;
-    }
-  }
-
-  if (_.boundScale && _.boundTolerance >= 0) {
-    test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-    source.forEach(item => {
-      if (!test(item)) item.opacity = 0;
-    });
-  }
-
-  // re-calculate mark bounds
-  bounds = items[0].mark.bounds.clear();
-  source.forEach(item => {
-    if (item.opacity) bounds.union(item.bounds);
-  });
-
-  return pulse;
-};
+});

@@ -1,27 +1,27 @@
 import {
-  Index, Label, Perc, Value, GuideLabelStyle, zero, one,
-  Top, Bottom, Left, Right, Center, Middle
+  Bottom, Center, GuideLabelStyle, Index, Label, Left, Middle,
+  Perc, Right, Top, Value, one, zero
 } from './constants';
 import guideMark from './guide-mark';
 import {lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 import {value} from '../../util';
 
 const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,
       baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      vertical = _.isVertical(),
-      thickness = encoder(_.gradientThickness()),
-      length = _.gradientLength(),
-      overlap = _('labelOverlap'),
-      separation = _('labelSeparation'),
-      encode, enter, update, u, v, adjust = '';
+  const _ = lookup(spec, config),
+        vertical = _.isVertical(),
+        thickness = encoder(_.gradientThickness()),
+        length = _.gradientLength();
 
-  encode = {
+  let overlap = _('labelOverlap'),
+      enter, update, u, v, adjust = '';
+
+  const encode = {
     enter: enter = {
       opacity: zero
     },
@@ -59,13 +59,20 @@ export default function(spec, config, userEncode, dataRef) {
   enter[v] = update[v] = thickness;
   thickness.offset = value(spec.labelOffset, config.gradientLabelOffset) || 0;
 
-  spec = guideMark(TextMark, LegendLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
-  if (overlap) {
-    spec.overlap = {
-      separation: separation,
-      method: overlap,
-      order: 'datum.' + Index
-    };
-  }
-  return spec;
+  overlap = overlap ? {
+    separation: _('labelSeparation'),
+    method: overlap,
+    order: 'datum.' + Index
+  } : undefined;
+
+  // type, role, style, key, dataRef, encode, extras
+  return guideMark({
+    type:  TextMark,
+    role:  LegendLabelRole,
+    style: GuideLabelStyle,
+    key:   Value,
+    from: dataRef,
+    encode,
+    overlap
+  }, userEncode);
 }

@@ -1,3 +1,6 @@
+import {resetSVGGradientId} from './src/Gradient';
+import {resetSVGClipId} from './src/util/svg/clip';
+
 export {default as Bounds} from './src/Bounds';
 export {default as Gradient} from './src/Gradient';
 export {default as GroupItem} from './src/GroupItem';
@@ -32,7 +35,7 @@ export {default as pathRender} from './src/path/render';
 
 export {default as point} from './src/util/point';
 export {domCreate, domFind, domChild, domClear} from './src/util/dom';
-export {openTag, closeTag} from './src/util/tags';
+export {markup, serializeXML} from './src/util/markup';
 export {
   font,
   fontFamily,
@@ -41,7 +44,6 @@ export {
   multiLineOffset,
   textMetrics
 } from './src/util/text';
-export {resetSVGClipId} from './src/util/svg/clip';
 
 export {sceneEqual, pathEqual} from './src/util/equal';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
@@ -56,3 +58,11 @@ export {
   visit as sceneVisit,
   pickVisit as scenePickVisit
 } from './src/util/visit';
+
+// deprecated, remove in next major version
+export {resetSVGClipId} from './src/util/svg/clip';
+
+export function resetSVGDefIds() {
+  resetSVGClipId();
+  resetSVGGradientId();
+}

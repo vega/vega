@@ -3,10 +3,10 @@ var tape = require('tape'),
     vega = require('vega-dataflow'),
     Expr = require('../').expression;
 
-tape('Expression wraps expression functions', function(t) {
+tape('Expression wraps expression functions', t => {
   var df = new vega.Dataflow(),
       f = util.accessor(
-            function(d, _) { return d.value + _.offset; },
+            (d, _) => d.value + _.offset,
             ['value'], 'shift'
           ),
       o = df.add(2),

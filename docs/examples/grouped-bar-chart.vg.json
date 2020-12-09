@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A basic grouped bar chart example.",
   "width": 300,
   "height": 240,
   "padding": 5,

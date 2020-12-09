@@ -37,13 +37,13 @@ export default function() {
     var polygons = [],
         holes = [];
 
-    isorings(values, value, function(ring) {
+    isorings(values, value, ring => {
       smooth(ring, values, value);
       if (area(ring) > 0) polygons.push([ring]);
       else holes.push(ring);
     });
 
-    holes.forEach(function(hole) {
+    holes.forEach(hole => {
       for (var i = 0, n = polygons.length, polygon; i < n; ++i) {
         if (contains((polygon = polygons[i])[0], hole) !== -1) {
           polygon.push(hole);
@@ -147,7 +147,7 @@ export default function() {
   }
 
   function smoothLinear(ring, values, value) {
-    ring.forEach(function(point) {
+    ring.forEach(point => {
       var x = point[0],
           y = point[1],
           xt = x | 0,
@@ -169,8 +169,8 @@ export default function() {
 
   contours.size = function(_) {
     if (!arguments.length) return [dx, dy];
-    var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-    if (!(_0 > 0) || !(_1 > 0)) error('invalid size');
+    var _0 = Math.floor(_[0]), _1 = Math.floor(_[1]);
+    if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
     return dx = _0, dy = _1, contours;
   };
 

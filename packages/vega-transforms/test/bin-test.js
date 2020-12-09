@@ -6,9 +6,9 @@ var tape = require('tape'),
     Bin = tx.bin,
     Collect = tx.collect;
 
-var TOLERANCE = 2e-14;
+const TOLERANCE = 2e-14;
 
-tape('Bin discretizes values', function(t) {
+tape('Bin discretizes values', t => {
   var df = new vega.Dataflow(),
       extent = df.add([0, 10]),
       step = df.add(10 / 20),
@@ -20,7 +20,7 @@ tape('Bin discretizes values', function(t) {
       });
 
   // stress test floating point math
-  var extents = [
+  const extents = [
     [0, 1e-50],
     [0, 0.1],
     [0, 0.5],
@@ -31,7 +31,7 @@ tape('Bin discretizes values', function(t) {
     [0, 20]
   ];
 
-  var divs = [5, 10, 20, 40];
+  const divs = [5, 10, 20, 40];
 
   extents.forEach(e => {
     divs.forEach(d => {
@@ -39,7 +39,7 @@ tape('Bin discretizes values', function(t) {
         .update(step, (e[1] - e[0]) / d)
         .run();
       testBin(t, bin.value, extent.value, step.value);
-    })
+    });
   });
 
   t.end();
@@ -74,7 +74,7 @@ function testBin(t, b, extent, step) {
   t.equal(b({v: f(steps+1)}), Infinity);
 }
 
-tape('Bin handles tail aggregation for last bin', function(t) {
+tape('Bin handles tail aggregation for last bin', t => {
   var df = new vega.Dataflow(),
       bin = df.add(Bin, {
         field:   util.field('v'),
@@ -95,8 +95,8 @@ tape('Bin handles tail aggregation for last bin', function(t) {
   t.end();
 });
 
-tape('Bin supports point output', function(t) {
-  var data = [{v: 5.5}];
+tape('Bin supports point output', t => {
+  const data = [{v: 5.5}];
 
   var df = new vega.Dataflow(),
       c = df.add(Collect),
@@ -117,6 +117,28 @@ tape('Bin supports point output', function(t) {
   t.equal(b.pulse.add[0].bin1, undefined);
   t.equal(b.pulse.fields.bin0, true);
   t.equal(b.pulse.fields.bin1, undefined);
+
+  t.end();
+});
+
+tape('Bin ignores invalid values', t => {
+  var df = new vega.Dataflow(),
+      extent = df.add([0, 10]),
+      step = df.add(10 / 20),
+      bin = df.add(Bin, {
+        field:  util.field('v'),
+        extent: extent,
+        step:   step,
+        nice:   false
+      });
+
+  df.run();
+
+  t.equal(bin.value({v: 0}), 0);
+  t.equal(bin.value({v: null}), null);
+  t.equal(bin.value({v: undefined}), null);
+  t.equal(bin.value({v: NaN}), NaN);
+  t.equal(bin.value({v: ''}), null);
 
   t.end();
 });

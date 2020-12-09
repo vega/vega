@@ -5,8 +5,8 @@ var tape = require('tape'),
     Regression = require('../').regression,
     changeset = vega.changeset;
 
-tape('Regression fits linear regression model', function(t) {
-  var data = [
+tape('Regression fits linear regression model', t => {
+  const data = [
     {k: 'a', u: 2, v: 2}, {k: 'a', u: 1, v: 1},
     {k: 'b', u: 3, v: 2}, {k: 'b', u: 2, v: 1}
   ];
@@ -27,7 +27,7 @@ tape('Regression fits linear regression model', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 4);
 
   t.equal(d[0].k, 'a');
@@ -49,7 +49,7 @@ tape('Regression fits linear regression model', function(t) {
   t.end();
 });
 
-tape('Regression fits quadratic regression model', function(t) {
+tape('Regression fits quadratic regression model', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
       x = util.field('x'),
       y = util.field('y'),
@@ -60,7 +60,7 @@ tape('Regression fits quadratic regression model', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d[0].x, 0);
   t.equal(d[0].y, 1);
   t.equal(d[d.length-1].x, 3);
@@ -69,7 +69,7 @@ tape('Regression fits quadratic regression model', function(t) {
   t.end();
 });
 
-tape('Regression outputs model parameters', function(t) {
+tape('Regression outputs model parameters', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
       x = util.field('x'),
       y = util.field('y'),
@@ -80,7 +80,7 @@ tape('Regression outputs model parameters', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 1);
   t.deepEqual(d[0].coef, [1, 0, 1]);
   t.equal(d[0].rSquared, 1);

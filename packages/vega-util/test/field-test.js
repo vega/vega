@@ -1,8 +1,8 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('field creates a field accessor', function(t) {
-  var f = vega.field('x');
+tape('field creates a field accessor', t => {
+  let f = vega.field('x');
   t.equal(typeof f, 'function');
   t.equal(vega.accessorName(f), 'x');
   t.deepEqual(vega.accessorFields(f), ['x']);

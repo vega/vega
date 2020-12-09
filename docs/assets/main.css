@@ -462,16 +462,17 @@ ul.column-set, .column-set ul {
 .view .vega-bind input[type="range"] {
   padding: 0;
   width: 100px;
+  margin-right: 4px;
+}
+.view .vega-bind input[type="radio"] {
+  margin-right: 4px;
 }
 .view .vega-bind select {
   max-width: 200px;
 }
-.view .vega-bind label {
-  margin-left: 4px;
-}
 .view .vega-bind-radio label {
   margin-left: 0;
-  margin-right: 4px;
+  margin-right: 0.5em;
 }
 .embed > a {
   visibility: hidden;

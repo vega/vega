@@ -12,27 +12,27 @@ export default function TupleIndex(params) {
   Transform.call(this, fastmap(), params);
 }
 
-var prototype = inherits(TupleIndex, Transform);
+inherits(TupleIndex, Transform, {
+  transform(_, pulse) {
+    const df = pulse.dataflow,
+        field = _.field,
+        index = this.value,
+        set = t => index.set(field(t), t);
 
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      field = _.field,
-      index = this.value,
-      mod = true;
+    let mod = true;
 
-  function set(t) { index.set(field(t), t); }
+    if (_.modified('field') || pulse.modified(field.fields)) {
+      index.clear();
+      pulse.visit(pulse.SOURCE, set);
+    } else if (pulse.changed()) {
+      pulse.visit(pulse.REM, t => index.delete(field(t)));
+      pulse.visit(pulse.ADD, set);
+    } else {
+      mod = false;
+    }
 
-  if (_.modified('field') || pulse.modified(field.fields)) {
-    index.clear();
-    pulse.visit(pulse.SOURCE, set);
-  } else if (pulse.changed()) {
-    pulse.visit(pulse.REM, function(t) { index.delete(field(t)); });
-    pulse.visit(pulse.ADD, set);
-  } else {
-    mod = false;
+    this.modified(mod);
+    if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
+    return pulse.fork();
   }
-
-  this.modified(mod);
-  if (index.empty > df.cleanThreshold) df.runAfter(index.clean);
-  return pulse.fork();
-};
+});

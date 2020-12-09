@@ -1,6 +1,6 @@
 import {
-  def, enums, not, object, oneOf, orSignal, ref, type,
-  anyType, arrayType, booleanType, numberType, stringType, textType
+  anyType, arrayType, booleanType, def, enums, not, numberType, object,
+  oneOf, orSignal, ref, stringType, textType, type
 } from './util';
 
 // types defined elsewhere

@@ -1,4 +1,4 @@
-import {Union, VlMulti, Or, And} from './constants';
+import {And, Or, Union, VlMulti} from './constants';
 import {array, toNumber} from 'vega-util';
 
 /**
@@ -45,7 +45,7 @@ export function selectionResolve(name, op, isMulti) {
 
   // Then resolve fields across units as per the op.
   op = op || Union;
-  Object.keys(resolved).forEach(function (field) {
+  Object.keys(resolved).forEach(field => {
     resolved[field] = Object.keys(resolved[field])
       .map(unit => resolved[field][unit])
       .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
@@ -54,7 +54,7 @@ export function selectionResolve(name, op, isMulti) {
   entries = Object.keys(multiRes);
   if (isMulti && entries.length) {
     resolved[VlMulti] = op === Union
-      ? {[Or]: entries.reduce((acc, k) => (acc.push.apply(acc, multiRes[k]), acc), [])}
+      ? {[Or]: entries.reduce((acc, k) => (acc.push(...multiRes[k]), acc), [])}
       : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
   }
 
@@ -72,7 +72,7 @@ var ops = {
 
   E_intersect: function(base, value) {
     return !base.length ? value :
-      base.filter(function (v) { return value.indexOf(v) >= 0; });
+      base.filter(v => value.indexOf(v) >= 0);
   },
 
   R_union: function(base, value) {

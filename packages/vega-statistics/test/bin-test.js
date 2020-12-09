@@ -1,8 +1,8 @@
 var tape = require('tape'),
     bin = require('../').bin;
 
-tape('bin generates boundaries for exact step size', function(t) {
-  var b = bin({extent:[1.3, 10.2], step:1, nice:false});
+tape('bin generates boundaries for exact step size', t => {
+  let b = bin({extent:[1.3, 10.2], step:1, nice:false});
   t.equal(b.start, 1.3);
   t.equal(b.stop, 10.2);
   t.equal(b.step, 1);
@@ -20,8 +20,8 @@ tape('bin generates boundaries for exact step size', function(t) {
   t.end();
 });
 
-tape('bin generates boundaries for zero-span extent', function (t) {
-  var b = bin({extent: [1, 1], maxbins: 1});
+tape('bin generates boundaries for zero-span extent', t => {
+  let b = bin({extent: [1, 1], maxbins: 1});
   t.equal(b.start, 1);
   t.equal(b.stop, 2);
   t.equal(b.step, 1);
@@ -44,8 +44,8 @@ tape('bin generates boundaries for zero-span extent', function (t) {
   t.end();
 });
 
-tape('bin generates boundaries for inferred step size', function(t) {
-  var b = bin({extent:[1.3, 10.2], maxbins:10, nice:false});
+tape('bin generates boundaries for inferred step size', t => {
+  let b = bin({extent:[1.3, 10.2], maxbins:10, nice:false});
   t.equal(b.start, 1.3);
   t.equal(b.stop, 10.2);
   t.equal(b.step, 1);
@@ -68,8 +68,8 @@ tape('bin generates boundaries for inferred step size', function(t) {
   t.end();
 });
 
-tape('bin generates boundaries with minimum step size', function(t) {
-  var b = bin({extent:[0, 10], minstep:1, maxbins:100});
+tape('bin generates boundaries with minimum step size', t => {
+  const b = bin({extent:[0, 10], minstep:1, maxbins:100});
   t.equal(b.start, 0);
   t.equal(b.stop, 10);
   t.equal(b.step, 1);
@@ -77,8 +77,8 @@ tape('bin generates boundaries with minimum step size', function(t) {
   t.end();
 });
 
-tape('bin generates boundaries for given span size', function(t) {
-  var b = bin({extent:[0, 100], span:10, maxbins:10, nice:false});
+tape('bin generates boundaries for given span size', t => {
+  let b = bin({extent:[0, 100], span:10, maxbins:10, nice:false});
   t.equal(b.start, 0);
   t.equal(b.stop, 100);
   t.equal(b.step, 1);

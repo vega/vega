@@ -13,27 +13,28 @@ import {array} from 'vega-util';
  * @return {EventStream}
  */
 export default function(source, type, filter, apply) {
-  var df = this,
-      s = stream(filter, apply),
-      send = function(e) {
-        e.dataflow = df;
-        try {
-          s.receive(e);
-        } catch (error) {
-          df.error(error);
-        } finally {
-          df.run();
-        }
-      },
-      sources;
+  const df = this,
+        s = stream(filter, apply),
+        send = function(e) {
+          e.dataflow = df;
+          try {
+            s.receive(e);
+          } catch (error) {
+            df.error(error);
+          } finally {
+            df.run();
+          }
+        };
 
+  let sources;
   if (typeof source === 'string' && typeof document !== 'undefined') {
     sources = document.querySelectorAll(source);
   } else {
     sources = array(source);
   }
 
-  for (var i=0, n=sources.length; i<n; ++i) {
+  const n = sources.length;
+  for (let i = 0; i < n; ++i) {
     sources[i].addEventListener(type, send);
   }
 

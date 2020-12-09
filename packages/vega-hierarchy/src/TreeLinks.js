@@ -1,4 +1,4 @@
-import {ingest, tupleid, Transform} from 'vega-dataflow';
+import {Transform, ingest, tupleid} from 'vega-dataflow';
 import {error, inherits} from 'vega-util';
 
  /**
@@ -13,50 +13,50 @@ export default function TreeLinks(params) {
 }
 
 TreeLinks.Definition = {
-  "type": "TreeLinks",
-  "metadata": {"tree": true, "generates": true, "changes": true},
-  "params": []
+  'type': 'TreeLinks',
+  'metadata': {'tree': true, 'generates': true, 'changes': true},
+  'params': []
 };
 
-var prototype = inherits(TreeLinks, Transform);
+inherits(TreeLinks, Transform, {
+  transform(_, pulse) {
+    const links = this.value,
+          tree = pulse.source && pulse.source.root,
+          out = pulse.fork(pulse.NO_SOURCE),
+          lut = {};
 
-prototype.transform = function(_, pulse) {
-  var links = this.value,
-      tree = pulse.source && pulse.source.root,
-      out = pulse.fork(pulse.NO_SOURCE),
-      lut = {};
+    if (!tree) error('TreeLinks transform requires a tree data source.');
 
-  if (!tree) error('TreeLinks transform requires a tree data source.');
+    if (pulse.changed(pulse.ADD_REM)) {
+      // remove previous links
+      out.rem = links;
 
-  if (pulse.changed(pulse.ADD_REM)) {
-    // remove previous links
-    out.rem = links;
+      // build lookup table of valid tuples
+      pulse.visit(pulse.SOURCE, t => lut[tupleid(t)] = 1);
 
-    // build lookup table of valid tuples
-    pulse.visit(pulse.SOURCE, function(t) { lut[tupleid(t)] = 1; });
+      // generate links for all edges incident on valid tuples
+      tree.each(node => {
+        const t = node.data,
+              p = node.parent && node.parent.data;
+        if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
+          out.add.push(ingest({source: p, target: t}));
+        }
+      });
+      this.value = out.add;
+    }
 
-    // generate links for all edges incident on valid tuples
-    tree.each(function(node) {
-      var t = node.data,
-          p = node.parent && node.parent.data;
-      if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
-        out.add.push(ingest({source: p, target: t}));
-      }
-    });
-    this.value = out.add;
+    else if (pulse.changed(pulse.MOD)) {
+      // build lookup table of modified tuples
+      pulse.visit(pulse.MOD, t => lut[tupleid(t)] = 1);
+
+      // gather links incident on modified tuples
+      links.forEach(link => {
+        if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
+          out.mod.push(link);
+        }
+      });
+    }
+
+    return out;
   }
-
-  else if (pulse.changed(pulse.MOD)) {
-    // build lookup table of modified tuples
-    pulse.visit(pulse.MOD, function(t) { lut[tupleid(t)] = 1; });
-
-    // gather links incident on modified tuples
-    links.forEach(function(link) {
-      if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
-        out.mod.push(link);
-      }
-    });
-  }
-
-  return out;
-};
+});

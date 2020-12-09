@@ -70,9 +70,8 @@ export function multiLineOffset(item) {
 }
 
 export function textValue(item, line) {
-  return line == null ? ''
-    : item.limit > 0 ? truncate(item, line)
-    : line + '';
+  const text = line == null ? '' : (line + '').trim();
+  return item.limit > 0 && text.length ? truncate(item, text) : text;
 }
 
 function widthGetter(item) {
@@ -87,9 +86,8 @@ function widthGetter(item) {
   }
 }
 
-function truncate(item, line) {
+function truncate(item, text) {
   var limit = +item.limit,
-      text = line + '',
       width = widthGetter(item);
 
   if (width(text) < limit) return text;
@@ -137,11 +135,15 @@ export function font(item, quote) {
 export function offset(item) {
   // perform our own font baseline calculation
   // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+  // this also ensures consistent layout across renderers
   var baseline = item.baseline,
       h = fontSize(item);
+
   return Math.round(
-    baseline === 'top'    ?  0.79*h :
-    baseline === 'middle' ?  0.30*h :
-    baseline === 'bottom' ? -0.21*h : 0
+    baseline === 'top'         ?  0.79 * h :
+    baseline === 'middle'      ?  0.30 * h :
+    baseline === 'bottom'      ? -0.21 * h :
+    baseline === 'line-top'    ?  0.29 * h + 0.5 * lineHeight(item) :
+    baseline === 'line-bottom' ?  0.29 * h - 0.5 * lineHeight(item) : 0
   );
 }

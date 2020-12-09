@@ -1,14 +1,15 @@
 export default function*(values, valueof) {
-  if (valueof === undefined) {
+  if (valueof == null) {
     for (let value of values) {
-      if (value != null && (value = +value) >= value) {
+      if (value != null && value !== '' && (value = +value) >= value) {
         yield value;
       }
     }
   } else {
     let index = -1;
     for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null && (value = +value) >= value) {
+      value = valueof(value, ++index, values);
+      if (value != null && value !== '' && (value = +value) >= value) {
         yield value;
       }
     }

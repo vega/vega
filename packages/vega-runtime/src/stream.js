@@ -1,11 +1,11 @@
-import {eventExpression} from './expression';
 import {error} from 'vega-util';
 
 /**
  * Parse an event stream specification.
  */
-export default function(spec, ctx) {
-  var filter = spec.filter != null ? eventExpression(spec.filter, ctx) : undefined,
+export default function(spec) {
+  var ctx = this,
+      filter = spec.filter != null ? ctx.eventExpression(spec.filter) : undefined,
       stream = spec.stream != null ? ctx.get(spec.stream) : undefined,
       args;
 
@@ -13,12 +13,12 @@ export default function(spec, ctx) {
     stream = ctx.events(spec.source, spec.type, filter);
   }
   else if (spec.merge) {
-    args = spec.merge.map(ctx.get.bind(ctx));
+    args = spec.merge.map(_ => ctx.get(_));
     stream = args[0].merge.apply(args[0], args.slice(1));
   }
 
   if (spec.between) {
-    args = spec.between.map(ctx.get.bind(ctx));
+    args = spec.between.map(_ => ctx.get(_));
     stream = stream.between(args[0], args[1]);
   }
 

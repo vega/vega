@@ -1,26 +1,26 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-tape('Parser parses Vega specs with axes', function(t) {
-  var spec = {
-    "scales": [
+tape('Parser parses Vega specs with axes', t => {
+  const spec = {
+    'scales': [
       {
-        "name": "xscale",
-        "domain": [0, 1],
-        "range": [0, 500]
+        'name': 'xscale',
+        'domain': [0, 1],
+        'range': [0, 500]
       }
     ],
-    "axes": [
+    'axes': [
       {
-        "scale": "xscale",
-        "orient": "bottom"
+        'scale': 'xscale',
+        'orient': 'bottom'
       }
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 46);
+  t.equal(dfs.operators.length, 47);
 
   t.end();
 });

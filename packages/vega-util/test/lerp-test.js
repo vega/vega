@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('lerp linearly interpolates numbers', function(t) {
+tape('lerp linearly interpolates numbers', t => {
   const a = [0, 100],
         b = [100, 0];
 

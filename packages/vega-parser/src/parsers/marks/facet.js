@@ -1,15 +1,14 @@
 import {getDataRef} from './data';
-import parseSpec from '../spec';
 import DataScope from '../../DataScope';
-import {ref} from '../../util';
 import {Collect, Facet, PreFacet, Sieve} from '../../transforms';
+import {ref} from '../../util';
 import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {
-  var facet = spec.from.facet,
-      name = facet.name,
-      data = getDataRef(facet, scope),
-      subscope, source, values, op;
+  const facet = spec.from.facet,
+        name = facet.name,
+        data = getDataRef(facet, scope);
+  let op;
 
   if (!facet.name) {
     error('Facet must have a name: ' + stringValue(facet));
@@ -34,14 +33,14 @@ export default function(spec, scope, group) {
   }
 
   // initialize facet subscope
-  subscope = scope.fork();
-  source = subscope.add(Collect());
-  values = subscope.add(Sieve({pulse: ref(source)}));
+  const subscope = scope.fork(),
+        source = subscope.add(Collect()),
+        values = subscope.add(Sieve({pulse: ref(source)}));
   subscope.addData(name, new DataScope(subscope, source, source, values));
   subscope.addSignal('parent', null);
 
   // parse faceted subflow
   op.params.subflow = {
-    $subflow: parseSpec(spec, subscope).toRuntime()
+    $subflow: subscope.parse(spec).toRuntime()
   };
 }

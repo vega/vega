@@ -23,6 +23,7 @@ The date-time utilities support a set of pre-defined time units. A single _unit_
 - `'date'` - Calendar day of the month (January 1, January 2, _etc._).
 - `'week'` - Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 - `'day'` - Day of the week (Sunday, Monday, _etc._).
+- `'dayofyear'` - Day of the year (1, 2, ..., 365, _etc._).
 - `'hours'` - Hours of the day (12:00am, 1:00am, _etc_.).
 - `'minutes'` - Minutes in an hour (12:00, 12:01, _etc_.).
 - `'seconds'` - Seconds in a minute (12:00:00, 12:00:01, _etc_.).
@@ -126,6 +127,18 @@ vega.<b>timeSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>])
 
 Returns an array of Date instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time _unit_ in the local timezone. The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
 
+<a name="dayofyear" href="#dayofyear">#</a>
+vega.<b>dayofyear</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the one-based day of the year for the given _date_, which should be either a `Date` object or timestamp value.
+
+<a name="week" href="#week">#</a>
+vega.<b>week</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the week number of the year for the given _date_, which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
 
 ### <a name="utc-time-utilities"></a>UTC Time Utilities
 
@@ -160,3 +173,9 @@ vega.<b>utcSequence</b>(<i>unit</i>, <i>start</i>, <i>stop</i>[, <i>step</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/interval.js "Source")
 
 Returns an array of Date instances from _start_ (inclusive) to _stop_ (exclusive), with each entry separated by the given time _unit_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC). The optional _step_ argument indicates the number of time unit steps to take between each sequence entry (default 1).
+
+<a name="utcweek" href="#utcweek">#</a>
+vega.<b>utcweek</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the week number of the year for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.

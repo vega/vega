@@ -1,4 +1,6 @@
-export {default as bandSpace} from './src/scales/bandSpace';
+export {
+  default as bandSpace
+} from './src/scales/bandSpace';
 
 export {
   Identity,
@@ -41,6 +43,33 @@ export {
   isTemporal
 } from './src/scales';
 
-export {scheme} from './src/schemes';
+export {
+  scheme
+} from './src/schemes';
 
-export {scaleImplicit, tickFormat} from 'd3-scale';
+export {
+  SymbolLegend,
+  DiscreteLegend,
+  GradientLegend
+} from './src/legend-types';
+
+export {
+  tickCount,
+  tickFormat,
+  tickValues,
+  validTicks
+} from './src/ticks';
+
+export {
+  labelFormat,
+  labelFraction,
+  labelValues
+} from './src/labels';
+
+export {
+  domainCaption
+} from './src/caption';
+
+export {
+  scaleImplicit
+} from 'd3-scale';

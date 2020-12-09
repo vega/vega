@@ -19,7 +19,7 @@ export const spec: Spec = {
       "transform": [
         {
           "type": "filter",
-          "expr": "datum.Rotten_Tomatoes_Rating != null && datum.IMDB_Rating != null"
+          "expr": "datum['Rotten Tomatoes Rating'] != null && datum['IMDB Rating'] != null"
         }
       ]
     },
@@ -37,13 +37,13 @@ export const spec: Spec = {
     {
       "name": "x",
       "type": "linear",
-      "domain": {"data": "movies", "field": "Rotten_Tomatoes_Rating"},
+      "domain": {"data": "movies", "field": "Rotten Tomatoes Rating"},
       "range": [0, {"signal": "plotSize"}]
     },
     {
       "name": "y",
       "type": "linear",
-      "domain": {"data": "movies", "field": "IMDB_Rating"},
+      "domain": {"data": "movies", "field": "IMDB Rating"},
       "range": [{"signal": "plotSize"}, 0]
     }
   ],
@@ -66,8 +66,8 @@ export const spec: Spec = {
             {
               "type": "regression",
               "method": {"signal": "parent.data"},
-              "x": "Rotten_Tomatoes_Rating",
-              "y": "IMDB_Rating",
+              "x": "Rotten Tomatoes Rating",
+              "y": "IMDB Rating",
               "as": ["u", "v"]
             }
           ]
@@ -82,8 +82,8 @@ export const spec: Spec = {
           "from": {"data": "movies"},
           "encode": {
             "enter": {
-              "x": {"scale": "x", "field": "Rotten_Tomatoes_Rating"},
-              "y": {"scale": "y", "field": "IMDB_Rating"},
+              "x": {"scale": "x", "field": "Rotten Tomatoes Rating"},
+              "y": {"scale": "y", "field": "IMDB Rating"},
               "fillOpacity": {"value": 0.5},
               "size": {"value": 4}
             }
@@ -114,8 +114,8 @@ export const spec: Spec = {
             {
               "type": "loess",
               "bandwidth": {"signal": "parent.data"},
-              "x": "Rotten_Tomatoes_Rating",
-              "y": "IMDB_Rating",
+              "x": "Rotten Tomatoes Rating",
+              "y": "IMDB Rating",
               "as": ["u", "v"]
             }
           ]
@@ -130,8 +130,8 @@ export const spec: Spec = {
           "from": {"data": "movies"},
           "encode": {
             "enter": {
-              "x": {"scale": "x", "field": "Rotten_Tomatoes_Rating"},
-              "y": {"scale": "y", "field": "IMDB_Rating"},
+              "x": {"scale": "x", "field": "Rotten Tomatoes Rating"},
+              "y": {"scale": "y", "field": "IMDB Rating"},
               "fillOpacity": {"value": 0.5},
               "size": {"value": 4}
             }

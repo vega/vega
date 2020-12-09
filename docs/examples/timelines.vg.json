@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A timeline visualization of the lives of the first five U.S. presidents.",
   "width": 500,
   "height": 80,
   "padding": 5,

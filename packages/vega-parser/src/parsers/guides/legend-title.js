@@ -1,9 +1,9 @@
-import {GuideTitleStyle, zero, one} from './constants';
+import {GuideTitleStyle, one, zero} from './constants';
 import guideMark from './guide-mark';
-import {lookup, alignExpr, anchorExpr} from './guide-util';
+import {alignExpr, anchorExpr, lookup} from './guide-util';
+import {addEncoders} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
-import {addEncoders} from '../encode/encode-util';
 
 // expression logic for align, anchor, angle, and baseline calculation
 const isL = 'item.orient === "left"',
@@ -18,9 +18,9 @@ const isL = 'item.orient === "left"',
       exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config), encode;
+  const _ = lookup(spec, config);
 
-  encode = {
+  const encode = {
     enter: {opacity: zero},
     update: {
       opacity: one,
@@ -48,8 +48,14 @@ export default function(spec, config, userEncode, dataRef) {
     lineHeight:  _('titleLineHeight')
   }, { // require update
     align:       _('titleAlign'),
-    baseline:    _('titleBaseline'),
+    baseline:    _('titleBaseline')
   });
 
-  return guideMark(TextMark, LegendTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+  return guideMark({
+    type:  TextMark,
+    role:  LegendTitleRole,
+    style: GuideTitleStyle,
+    from:  dataRef,
+    encode
+  }, userEncode);
 }

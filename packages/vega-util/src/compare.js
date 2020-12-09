@@ -1,69 +1,51 @@
 import {default as accessor, accessorFields} from './accessor';
 import array from './array';
+import field from './field';
 import isFunction from './isFunction';
-import splitAccessPath from './splitAccessPath';
-import stringValue from './stringValue';
 
-export default function(fields, orders) {
-  var idx = [],
-      cmp = (fields = array(fields)).map(function(f, i) {
-        if (f == null) {
-          return null;
-        } else {
-          idx.push(i);
-          return isFunction(f) ? f
-            : splitAccessPath(f).map(stringValue).join('][');
-        }
-      }),
-      n = idx.length - 1,
-      ord = array(orders),
-      code = 'var u,v;return ',
-      i, j, f, u, v, d, t, lt, gt;
+const DESCENDING = 'descending';
 
-  if (n < 0) return null;
+export default function(fields, orders, opt) {
+  opt = opt || {};
+  orders = array(orders) || [];
 
-  for (j=0; j<=n; ++j) {
-    i = idx[j];
-    f = cmp[i];
+  const ord = [], get = [], fmap = {},
+        gen = opt.comparator || comparator;
 
-    if (isFunction(f)) {
-      d = 'f' + i;
-      u = '(u=this.' + d + '(a))';
-      v = '(v=this.' + d + '(b))';
-      (t = t || {})[d] = f;
-    } else {
-      u = '(u=a['+f+'])';
-      v = '(v=b['+f+'])';
-    }
+  array(fields).forEach((f, i) => {
+    if (f == null) return;
+    ord.push(orders[i] === DESCENDING ? -1 : 1);
+    get.push(f = isFunction(f) ? f : field(f, null, opt));
+    (accessorFields(f) || []).forEach(_ => fmap[_] = 1);
+  });
 
-    d = '((v=v instanceof Date?+v:v),(u=u instanceof Date?+u:u))';
-
-    if (ord[i] !== 'descending') {
-      gt = 1;
-      lt = -1;
-    } else {
-      gt = -1;
-      lt = 1;
-    }
-
-    code += '(' + u+'<'+v+'||u==null)&&v!=null?' + lt
-      + ':(u>v||v==null)&&u!=null?' + gt
-      + ':'+d+'!==u&&v===v?' + lt
-      + ':v!==v&&u===u?' + gt
-      + (i < n ? ':' : ':0');
-  }
-
-  f = Function('a', 'b', code + ';');
-  if (t) f = f.bind(t);
-
-  fields = fields.reduce(function(map, field) {
-    if (isFunction(field)) {
-      (accessorFields(field) || []).forEach(function(_) { map[_] = 1; });
-    } else if (field != null) {
-      map[field + ''] = 1;
-    }
-    return map;
-  }, {});
-
-  return accessor(f, Object.keys(fields));
+  return get.length === 0
+    ? null
+    : accessor(gen(get, ord), Object.keys(fmap));
 }
+
+export const ascending = (u, v) => (u < v || u == null) && v != null ? -1
+  : (u > v || v == null) && u != null ? 1
+  : ((v = v instanceof Date ? +v : v), (u = u instanceof Date ? +u : u)) !== u && v === v ? -1
+  : v !== v && u === u ? 1
+  : 0;
+
+const comparator = (fields, orders) => fields.length === 1
+  ? compare1(fields[0], orders[0])
+  : compareN(fields, orders, fields.length);
+
+const compare1 = (field, order) => function(a, b) {
+  return ascending(field(a), field(b)) * order;
+};
+
+const compareN = (fields, orders, n) => {
+  orders.push(0); // pad zero for convenient lookup
+  return function(a, b) {
+    let f, c = 0, i = -1;
+    while (c === 0 && ++i < n) {
+      f = fields[i];
+      c = ascending(f(a), f(b));
+    }
+    return c * orders[i];
+  };
+};

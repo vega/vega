@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Stack = encode.stack;
 
-tape('Stack stacks numeric values', function(t) {
-  var data = [
+tape('Stack stacks numeric values', t => {
+  const data = [
     {key: 'a', value: 1},
     {key: 'a', value: 2},
     {key: 'b', value: 3},
@@ -29,7 +29,7 @@ tape('Stack stacks numeric values', function(t) {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, 1);
   t.equal(d[1].y0, 1);
@@ -58,8 +58,8 @@ tape('Stack stacks numeric values', function(t) {
   t.end();
 });
 
-tape('Stack stacks negative values', function(t) {
-  var data = [
+tape('Stack stacks negative values', t => {
+  const data = [
     {key: 'a', value: -1},
     {key: 'a', value: 2},
     {key: 'b', value: 3},
@@ -81,7 +81,7 @@ tape('Stack stacks negative values', function(t) {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, -1);
   t.equal(d[1].y0, 0);
@@ -110,8 +110,8 @@ tape('Stack stacks negative values', function(t) {
   t.end();
 });
 
-tape('Stack stacks coerced string values', function(t) {
-  var data = [
+tape('Stack stacks coerced string values', t => {
+  const data = [
     {key: 'a', value: '1'},
     {key: 'a', value: '2'},
     {key: 'b', value: '3'},
@@ -133,7 +133,7 @@ tape('Stack stacks coerced string values', function(t) {
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 0);
 
-  var d = c0.value;
+  let d = c0.value;
   t.equal(d[0].y0, 0);
   t.equal(d[0].y1, 1);
   t.equal(d[1].y0, 1);

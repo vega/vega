@@ -1,6 +1,6 @@
 import {Transform} from 'vega-dataflow';
 import {getProjectionPath} from 'vega-projection';
-import {inherits, identity} from 'vega-util';
+import {identity, inherits} from 'vega-util';
 
 /**
  * Map GeoJSON data to an SVG path string.
@@ -18,46 +18,44 @@ export default function GeoPath(params) {
 }
 
 GeoPath.Definition = {
-  "type": "GeoPath",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "projection", "type": "projection" },
-    { "name": "field", "type": "field" },
-    { "name": "pointRadius", "type": "number", "expr": true },
-    { "name": "as", "type": "string", "default": "path" }
+  'type': 'GeoPath',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'projection', 'type': 'projection' },
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'pointRadius', 'type': 'number', 'expr': true },
+    { 'name': 'as', 'type': 'string', 'default': 'path' }
   ]
 };
 
-var prototype = inherits(GeoPath, Transform);
+inherits(GeoPath, Transform, {
+  transform(_, pulse) {
+    var out = pulse.fork(pulse.ALL),
+        path = this.value,
+        field = _.field || identity,
+        as = _.as || 'path',
+        flag = out.SOURCE;
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.ALL),
-      path = this.value,
-      field = _.field || identity,
-      as = _.as || 'path',
-      flag = out.SOURCE;
+    if (!path || _.modified()) {
+      // parameters updated, reset and reflow
+      this.value = path = getProjectionPath(_.projection);
+      out.materialize().reflow();
+    } else {
+      flag = field === identity || pulse.modified(field.fields)
+        ? out.ADD_MOD
+        : out.ADD;
+    }
 
-  function set(t) { t[as] = path(field(t)); }
+    const prev = initPath(path, _.pointRadius);
+    out.visit(flag, t => t[as] = path(field(t)));
+    path.pointRadius(prev);
 
-  if (!path || _.modified()) {
-    // parameters updated, reset and reflow
-    this.value = path = getProjectionPath(_.projection);
-    out.materialize().reflow();
-  } else {
-    flag = field === identity || pulse.modified(field.fields)
-      ? out.ADD_MOD
-      : out.ADD;
+    return out.modifies(as);
   }
-
-  var prev = initPath(path, _.pointRadius);
-  out.visit(flag, set);
-  path.pointRadius(prev);
-
-  return out.modifies(as);
-};
+});
 
 function initPath(path, pointRadius) {
-  var prev = path.pointRadius();
+  const prev = path.pointRadius();
   path.context(null);
   if (pointRadius != null) {
     path.pointRadius(pointRadius);

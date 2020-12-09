@@ -1,6 +1,6 @@
 import Pulse from '../Pulse';
 
-var NO_OPT = {skip: false, force: false};
+const NO_OPT = {skip: false, force: false};
 
 /**
  * Touches an operator, scheduling it to be evaluated. If invoked outside of
@@ -15,7 +15,7 @@ var NO_OPT = {skip: false, force: false};
  * @return {Dataflow}
  */
 export function touch(op, options) {
-  var opt = options || NO_OPT;
+  const opt = options || NO_OPT;
   if (this._pulse) {
     // if in midst of propagation, add to priority queue
     this._enqueue(op);
@@ -39,7 +39,7 @@ export function touch(op, options) {
  * @return {Dataflow}
  */
 export function update(op, value, options) {
-  var opt = options || NO_OPT;
+  const opt = options || NO_OPT;
   if (op.set(value) || opt.force) {
     this.touch(op, opt);
   }
@@ -63,8 +63,8 @@ export function update(op, value, options) {
 export function pulse(op, changeset, options) {
   this.touch(op, options || NO_OPT);
 
-  var p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
-      t = op.pulse && op.pulse.source || [];
+  const p = new Pulse(this, this._clock + (this._pulse ? 0 : 1)),
+        t = op.pulse && op.pulse.source || [];
 
   p.target = op;
   this._input[op.id] = changeset.pulse(p, t);

@@ -1,7 +1,7 @@
 export function multikey(f) {
-  return function(x) {
-    var n = f.length,
-        i = 1,
+  return x => {
+    const n = f.length;
+    let i = 1,
         k = String(f[0](x));
 
     for (; i<n; ++i) {

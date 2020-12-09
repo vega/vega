@@ -1,12 +1,12 @@
 import {identity} from 'vega-util';
 
 export default function UniqueList(idFunc) {
-  var $ = idFunc || identity,
-      list = [],
-      ids = {};
+  const $ = idFunc || identity,
+        list = [],
+        ids = {};
 
-  list.add = function(_) {
-    var id = $(_);
+  list.add = _ => {
+    const id = $(_);
     if (!ids[id]) {
       ids[id] = 1;
       list.push(_);
@@ -14,13 +14,12 @@ export default function UniqueList(idFunc) {
     return list;
   };
 
-  list.remove = function(_) {
-    var id = $(_), idx;
+  list.remove = _ => {
+    const id = $(_);
     if (ids[id]) {
       ids[id] = 0;
-      if ((idx = list.indexOf(_)) >= 0) {
-        list.splice(idx, 1);
-      }
+      const idx = list.indexOf(_);
+      if (idx >= 0) list.splice(idx, 1);
     }
     return list;
   };

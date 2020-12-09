@@ -7,14 +7,14 @@ var tape = require('tape'),
     Lookup = tx.lookup,
     TupleIndex = tx.tupleindex;
 
-tape('Lookup looks up matching tuples', function(t) {
-  var lut = [
+tape('Lookup looks up matching tuples', t => {
+  const lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}
   ];
 
-  var data = [
+  const data = [
     {'id': 0, 'x': 5, 'y': 1},
     {'id': 1, 'x': 3, 'y': 5},
     {'id': 2, 'x': 1, 'y': 5},
@@ -42,7 +42,7 @@ tape('Lookup looks up matching tuples', function(t) {
 
   // add primary data
   df.pulse(c1, changeset().insert(data)).run();
-  var p = lu.pulse.add;
+  let p = lu.pulse.add;
   t.equal(p.length, 4);
   t.deepEqual(p.map(uv), ['baz', 'bar', 'foo', 'bar']);
   t.deepEqual(p.map(vv), ['foo', 'baz', 'baz', 'bar']);
@@ -57,14 +57,14 @@ tape('Lookup looks up matching tuples', function(t) {
   t.end();
 });
 
-tape('Lookup looks up matching values', function(t) {
-  var lut = [
+tape('Lookup looks up matching values', t => {
+  const lut = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}
   ];
 
-  var data = [
+  const data = [
     {'id': 0, 'x': 5, 'y': 1},
     {'id': 1, 'x': 3, 'y': 5},
     {'id': 2, 'x': 1, 'y': 5},
@@ -91,7 +91,7 @@ tape('Lookup looks up matching values', function(t) {
 
   // add primary data
   df.pulse(c1, changeset().insert(data)).run();
-  var p = lu.pulse.add;
+  let p = lu.pulse.add;
   t.equal(p.length, 4);
   t.deepEqual(p.map(value), ['baz', 'bar', 'foo', 'bar']);
 

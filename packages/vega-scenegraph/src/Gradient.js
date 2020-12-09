@@ -1,4 +1,8 @@
-var gradient_id = 0;
+let gradient_id = 0;
+
+export function resetSVGGradientId() {
+  gradient_id = 0;
+}
 
 export const patternPrefix = 'p_';
 
@@ -7,8 +11,9 @@ export function isGradient(value) {
 }
 
 export function gradientRef(g, defs, base) {
+  const type = g.gradient;
+
   let id = g.id,
-      type = g.gradient,
       prefix = type === 'radial' ? patternPrefix : '';
 
   // check id, assign default values as needed

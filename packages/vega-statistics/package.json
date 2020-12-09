@@ -1,6 +1,6 @@
 {
   "name": "vega-statistics",
-  "version": "1.7.3",
+  "version": "1.7.9",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
     "vega",
@@ -11,19 +11,17 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-statistics.js",
-  "module": "index",
+  "module": "build/vega-statistics.module.js",
+  "unpkg": "build/vega-statistics.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3 -f umd -n vega -o build/vega-statistics.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-statistics.js -c -m -o build/vega-statistics.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.4.0"
+    "d3-array": "^2.7.1"
   }
 }

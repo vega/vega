@@ -41,6 +41,9 @@
             "type"
           ],
           "additionalProperties": false
+        },
+        {
+          "$ref": "#/refs/signal"
         }
       ]
     },
@@ -48,11 +51,18 @@
       "type": "object",
       "properties": {
         "orient": {
-          "enum": [
-            "top",
-            "bottom",
-            "left",
-            "right"
+          "oneOf": [
+            {
+              "enum": [
+                "top",
+                "bottom",
+                "left",
+                "right"
+              ]
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
           ]
         },
         "scale": {
@@ -169,13 +179,26 @@
           ]
         },
         "translate": {
-          "type": "number"
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
         },
         "values": {
           "$ref": "#/refs/arrayOrSignal"
         },
         "zindex": {
           "type": "number"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
         },
         "title": {
           "$ref": "#/refs/textOrSignal"
@@ -256,7 +279,9 @@
                 "top",
                 "middle",
                 "bottom",
-                "alphabetic"
+                "alphabetic",
+                "line-top",
+                "line-bottom"
               ]
             },
             {
@@ -374,6 +399,16 @@
         "domain": {
           "type": "boolean"
         },
+        "domainCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
+        },
         "domainColor": {
           "oneOf": [
             {
@@ -435,6 +470,16 @@
         },
         "tickBand": {
           "$ref": "#/refs/tickBand"
+        },
+        "tickCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
         },
         "tickColor": {
           "oneOf": [
@@ -537,6 +582,16 @@
         "gridScale": {
           "type": "string"
         },
+        "gridCap": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/stringValue"
+            }
+          ]
+        },
         "gridColor": {
           "oneOf": [
             {
@@ -617,7 +672,9 @@
                 "top",
                 "middle",
                 "bottom",
-                "alphabetic"
+                "alphabetic",
+                "line-top",
+                "line-bottom"
               ]
             },
             {
@@ -754,7 +811,27 @@
             }
           ]
         },
+        "labelLineHeight": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
         "labelOpacity": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/numberValue"
+            }
+          ]
+        },
+        "labelOffset": {
           "oneOf": [
             {
               "type": "number"
@@ -809,7 +886,7 @@
       "additionalProperties": false
     },
     "background": {
-      "type": "string"
+      "$ref": "#/refs/stringOrSignal"
     },
     "bind": {
       "oneOf": [
@@ -1646,6 +1723,9 @@
         "strokeMiterLimit": {
           "$ref": "#/refs/numberValue"
         },
+        "blend": {
+          "$ref": "#/refs/blendValue"
+        },
         "cursor": {
           "$ref": "#/refs/stringValue"
         },
@@ -1654,6 +1734,18 @@
         },
         "zindex": {
           "$ref": "#/refs/numberValue"
+        },
+        "description": {
+          "$ref": "#/refs/stringValue"
+        },
+        "aria": {
+          "$ref": "#/refs/booleanValue"
+        },
+        "ariaRole": {
+          "$ref": "#/refs/stringValue"
+        },
+        "ariaRoleDescription": {
+          "$ref": "#/refs/stringValue"
         },
         "clip": {
           "$ref": "#/refs/booleanValue"
@@ -2162,6 +2254,12 @@
             "zindex": {
               "type": "number"
             },
+            "aria": {
+              "type": "boolean"
+            },
+            "description": {
+              "type": "string"
+            },
             "cornerRadius": {
               "oneOf": [
                 {
@@ -2277,7 +2375,9 @@
                     "top",
                     "middle",
                     "bottom",
-                    "alphabetic"
+                    "alphabetic",
+                    "line-top",
+                    "line-bottom"
                   ]
                 },
                 {
@@ -2662,7 +2762,9 @@
                     "top",
                     "middle",
                     "bottom",
-                    "alphabetic"
+                    "alphabetic",
+                    "line-top",
+                    "line-bottom"
                   ]
                 },
                 {
@@ -2869,6 +2971,12 @@
         },
         "name": {
           "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
         },
         "style": {
           "$ref": "#/refs/style"
@@ -3138,6 +3246,9 @@
             }
           },
           "additionalProperties": false
+        },
+        {
+          "$ref": "#/refs/signal"
         }
       ]
     },
@@ -6060,6 +6171,9 @@
                 }
               ]
             },
+            "aria": {
+              "type": "boolean"
+            },
             "limit": {
               "oneOf": [
                 {
@@ -6069,12 +6183,6 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
-            },
-            "text": {
-              "$ref": "#/refs/textOrSignal"
-            },
-            "subtitle": {
-              "$ref": "#/refs/textOrSignal"
             },
             "zindex": {
               "type": "number"
@@ -6110,7 +6218,9 @@
                     "top",
                     "middle",
                     "bottom",
-                    "alphabetic"
+                    "alphabetic",
+                    "line-top",
+                    "line-bottom"
                   ]
                 },
                 {
@@ -6137,6 +6247,9 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
+            },
+            "text": {
+              "$ref": "#/refs/textOrSignal"
             },
             "color": {
               "oneOf": [
@@ -6224,6 +6337,9 @@
                   "$ref": "#/refs/numberValue"
                 }
               ]
+            },
+            "subtitle": {
+              "$ref": "#/refs/textOrSignal"
             },
             "subtitleColor": {
               "oneOf": [
@@ -6426,6 +6542,9 @@
           "$ref": "#/defs/treemapTransform"
         },
         {
+          "$ref": "#/defs/labelTransform"
+        },
+        {
           "$ref": "#/defs/loessTransform"
         },
         {
@@ -6560,6 +6679,9 @@
         },
         {
           "$ref": "#/defs/treemapTransform"
+        },
+        {
+          "$ref": "#/defs/labelTransform"
         },
         {
           "$ref": "#/defs/binTransform"
@@ -9019,6 +9141,197 @@
       ],
       "additionalProperties": false
     },
+    "labelTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "label"
+          ]
+        },
+        "signal": {
+          "type": "string"
+        },
+        "size": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "sort": {
+          "$ref": "#/refs/compare"
+        },
+        "anchor": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": [
+            "top-left",
+            "left",
+            "bottom-left",
+            "top",
+            "bottom",
+            "top-right",
+            "right",
+            "bottom-right"
+          ]
+        },
+        "offset": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": [
+            1
+          ]
+        },
+        "padding": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "lineAnchor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "end"
+        },
+        "markIndex": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "avoidBaseMark": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": true
+        },
+        "avoidMarks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "default": "naive"
+        },
+        "as": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/refs/signal"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/refs/signal"
+            }
+          ],
+          "maxItems": 5,
+          "minItems": 5,
+          "default": [
+            "x",
+            "y",
+            "opacity",
+            "align",
+            "baseline"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "size"
+      ],
+      "additionalProperties": false
+    },
     "loessTransform": {
       "type": "object",
       "properties": {
@@ -9308,6 +9621,7 @@
                       "missing",
                       "valid",
                       "sum",
+                      "product",
                       "mean",
                       "average",
                       "variance",
@@ -9321,10 +9635,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
@@ -10593,6 +10907,7 @@
                       "missing",
                       "valid",
                       "sum",
+                      "product",
                       "mean",
                       "average",
                       "variance",
@@ -10606,10 +10921,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
@@ -11014,6 +11329,7 @@
                 "missing",
                 "valid",
                 "sum",
+                "product",
                 "mean",
                 "average",
                 "variance",
@@ -11027,10 +11343,10 @@
                 "median",
                 "q1",
                 "q3",
-                "argmin",
-                "argmax",
                 "min",
-                "max"
+                "max",
+                "argmin",
+                "argmax"
               ]
             },
             {
@@ -11373,7 +11689,19 @@
               "items": {
                 "anyOf": [
                   {
-                    "type": "string"
+                    "enum": [
+                      "year",
+                      "quarter",
+                      "month",
+                      "week",
+                      "date",
+                      "day",
+                      "dayofyear",
+                      "hours",
+                      "minutes",
+                      "seconds",
+                      "milliseconds"
+                    ]
                   },
                   {
                     "$ref": "#/refs/signal"
@@ -11539,6 +11867,7 @@
                       "missing",
                       "valid",
                       "sum",
+                      "product",
                       "mean",
                       "average",
                       "variance",
@@ -11552,10 +11881,10 @@
                       "median",
                       "q1",
                       "q3",
-                      "argmin",
-                      "argmax",
                       "min",
-                      "max"
+                      "max",
+                      "argmin",
+                      "argmax"
                     ]
                   },
                   {
@@ -12359,6 +12688,210 @@
                       "type": "object",
                       "properties": {
                         "value": {}
+                      },
+                      "required": [
+                        "value"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "$ref": "#/refs/field"
+                        }
+                      },
+                      "required": [
+                        "field"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "range": {
+                          "oneOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "boolean"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "range"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "scale",
+                    "value"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "scale",
+                    "band"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "offset"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "blendValue": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/defs/rule"
+              },
+              {
+                "allOf": [
+                  {
+                    "$ref": "#/refs/stringModifiers"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "oneOf": [
+                          {
+                            "$ref": "#/refs/signal"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "enum": [
+                                  null,
+                                  "multiply",
+                                  "screen",
+                                  "overlay",
+                                  "darken",
+                                  "lighten",
+                                  "color-dodge",
+                                  "color-burn",
+                                  "hard-light",
+                                  "soft-light",
+                                  "difference",
+                                  "exclusion",
+                                  "hue",
+                                  "saturation",
+                                  "color",
+                                  "luminosity"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "field": {
+                                "$ref": "#/refs/field"
+                              }
+                            },
+                            "required": [
+                              "field"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "range": {
+                                "oneOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "range"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "scale",
+                          "value"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "scale",
+                          "band"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "offset"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/refs/stringModifiers"
+            },
+            {
+              "anyOf": [
+                {
+                  "oneOf": [
+                    {
+                      "$ref": "#/refs/signal"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "enum": [
+                            null,
+                            "multiply",
+                            "screen",
+                            "overlay",
+                            "darken",
+                            "lighten",
+                            "color-dodge",
+                            "color-burn",
+                            "hard-light",
+                            "soft-light",
+                            "difference",
+                            "exclusion",
+                            "hue",
+                            "saturation",
+                            "color",
+                            "luminosity"
+                          ]
+                        }
                       },
                       "required": [
                         "value"
@@ -15694,10 +16227,10 @@
           "type": "string"
         },
         "width": {
-          "type": "number"
+          "$ref": "#/refs/numberOrSignal"
         },
         "height": {
-          "type": "number"
+          "$ref": "#/refs/numberOrSignal"
         },
         "padding": {
           "$ref": "#/defs/padding"

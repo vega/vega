@@ -1,11 +1,11 @@
 import {timeIntervals} from './scale';
 import {
-  numberValue, stringValue, booleanValue, colorValue, alignValue,
-  anchorValue, baselineValue, fontWeightValue, dashArrayValue,
-  booleanOrSignal, arrayOrSignal, numberOrSignal,
-  textOrSignal, booleanOrNumberOrSignal, formatTypeOrSignal,
-  def, enums, object, oneOf, orSignal, ref,
-  booleanType, formatTypeType, numberType, stringType, signalRef
+  alignValue, anchorValue, arrayOrSignal, baselineValue,
+  booleanOrNumberOrSignal, booleanOrSignal, booleanType, booleanValue,
+  colorValue, dashArrayValue, def, enums,
+  fontWeightValue, formatTypeOrSignal, formatTypeType,
+  numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
+  ref, signalRef, stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -46,8 +46,10 @@ const axisOrientEnum = [
   'right'
 ];
 
+const axisOrient = orSignal(enums(axisOrientEnum));
+
 const axis = object({
-  _orient_: enums(axisOrientEnum),
+  _orient_: axisOrient,
   _scale_: stringType,
   format: formatTypeOrSignal,
   formatType: orSignal(formatTypeType),
@@ -56,9 +58,13 @@ const axis = object({
   offset: numberValue,
   position: numberValue,
   bandPosition: numberValue,
-  translate: numberType,
+  translate: numberValue,
   values: arrayOrSignal,
   zindex: numberType,
+
+  // ARIA CONFIG
+  aria: booleanType,
+  description: stringType,
 
   // TITLE CONFIG
   title: textOrSignal,
@@ -80,6 +86,7 @@ const axis = object({
 
   // DOMAIN CONFIG
   domain: booleanType,
+  domainCap: stringValue,
   domainColor: colorValue,
   domainDash: dashArrayValue,
   domainDashOffset: numberValue,
@@ -89,6 +96,7 @@ const axis = object({
   // TICK CONFIG
   ticks: booleanType,
   tickBand: tickBandRef,
+  tickCap: stringValue,
   tickColor: colorValue,
   tickDash: dashArrayValue,
   tickDashOffset: numberValue,
@@ -104,6 +112,7 @@ const axis = object({
   // GRID CONFIG
   grid: booleanType,
   gridScale: stringType,
+  gridCap: stringValue,
   gridColor: colorValue,
   gridDash: dashArrayValue,
   gridDashOffset: numberValue,
@@ -125,7 +134,9 @@ const axis = object({
   labelFontWeight: fontWeightValue,
   labelFontStyle: stringValue,
   labelLimit: numberValue,
+  labelLineHeight: numberValue,
   labelOpacity: numberValue,
+  labelOffset: numberValue,
   labelPadding: numberValue,
   labelSeparation: numberOrSignal,
 

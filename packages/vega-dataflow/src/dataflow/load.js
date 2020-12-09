@@ -1,7 +1,10 @@
 import {read, responseType} from 'vega-loader';
 import {truthy} from 'vega-util';
 
-export const parse = read;
+export function parse(data, format) {
+  const locale = this.locale();
+  return read(data, format, locale.timeParse, locale.utcParse);
+}
 
 /**
  * Ingests new data into the dataflow. First parses the data using the
@@ -15,7 +18,8 @@ export const parse = read;
  * @returns {Dataflow}
  */
 export function ingest(target, data, format) {
-  return this.pulse(target, this.changeset().insert(parse(data, format)));
+  data = this.parse(data, format);
+  return this.pulse(target, this.changeset().insert(data));
 }
 
 /**
@@ -39,7 +43,7 @@ export async function request(url, format) {
       response: responseType(format && format.type)
     });
     try {
-      data = parse(data, format);
+      data = df.parse(data, format);
     } catch (err) {
       status = -2;
       df.warn('Data ingestion failed', url, err);
@@ -66,12 +70,12 @@ export async function preload(target, url, format) {
 }
 
 function loadPending(df) {
-  var pending = new Promise(function(a) { accept = a; }),
-      accept;
+  let accept;
+  const pending = new Promise(a => accept = a);
 
   pending.requests = 0;
 
-  pending.done = function() {
+  pending.done = () => {
     if (--pending.requests === 0) {
       df._pending = null;
       accept(df);

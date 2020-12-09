@@ -24,7 +24,7 @@ function image(view, type) {
 var view = new vega.View(vega.parse(spec), {
   loader: vega.loader({baseURL: '{{ site.baseurl }}/'}),
   logLevel: vega.Warn,
-  renderer: 'canvas'
+  renderer: '{{ include.renderer | default: "svg" }}'
 }).initialize('#{{id}}').hover().run();
 
 document.querySelector('#{{id}}-png').addEventListener('click', image(view, 'png'));

@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Vega Streaming Data Test</title>
-    <script src="../../build/vega.js"></script>
+    <script src="../../build/vega.min.js"></script>
     <style>
       body { margin: 10px; font: 14px Helvetica Neue; }
       canvas, svg { border: 1px solid #ccc; }
@@ -11,7 +11,7 @@
   <body>
     <div id="view"></div>
     <script>
-var runtimeSpec = vega.parse({
+const runtimeSpec = vega.parse({
   "width": 400,
   "height": 200,
   "padding": 5,
@@ -83,20 +83,22 @@ var runtimeSpec = vega.parse({
   ]
 });
 
-var key = 0;
+let key = 0;
 function generate(n) {
-  var data = [];
-  for (var i=0; i<n; ++i) {
+  const data = [];
+  for (let i=0; i<n; ++i) {
     data.push({u: 1 + (key++ % 100), v: 5 + ~~(90 * Math.random())});
   }
   return data;
 }
 
-var view = new vega.View(runtimeSpec, {
+const view = new vega.View(runtimeSpec, {
   container: '#view',
   renderer:  'svg',
   hover:     true
 });
+
+const join = view._runtime.nodes[85];
 
 view.insert('table', generate(20))
     .signal('count', 20)
@@ -104,15 +106,25 @@ view.insert('table', generate(20))
 
 // clean caches once they have 500 empty slots
 view.cleanThreshold = 500;
+let clean = true;
 
-setInterval(function() {
-  view.change('table', vega.changeset()
+function step() {
+  view.change('table', vega.changeset().clean(clean)
       .remove(view.data('table')[0])
       .insert(generate(1)))
     .signal('count', view.signal('count') + 1) // tuples so far
-    .signal('size', view._runtime.nodes[83].value.size) // datajoin map size
+    .signal('size', join.value.size) // datajoin map size
     .runAsync();
-}, 20);
+}
+
+function start(gc) {
+  clean = !!gc;
+  intId = setInterval(step, 10);
+}
+
+function stop() {
+  clearInterval(intId);
+}
     </script>
   </body>
 </html>

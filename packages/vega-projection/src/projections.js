@@ -13,18 +13,18 @@ import {
   geoMercator,
   geoNaturalEarth1,
   geoOrthographic,
+  geoPath,
   geoStereographic,
-  geoTransverseMercator,
-  geoPath
+  geoTransverseMercator
 } from 'd3-geo';
 
 import {
   geoMollweide
 } from 'd3-geo-projection';
 
-var defaultPath = geoPath();
+const defaultPath = geoPath();
 
-export var projectionProperties = [
+export const projectionProperties = [
   // standard properties in d3-geo
   'clipAngle',
   'clipExtent',
@@ -54,15 +54,15 @@ export var projectionProperties = [
  */
 function create(type, constructor) {
   return function projection() {
-    var p = constructor();
+    const p = constructor();
 
     p.type = type;
 
     p.path = geoPath().projection(p);
 
     p.copy = p.copy || function() {
-      var c = projection();
-      projectionProperties.forEach(function(prop) {
+      const c = projection();
+      projectionProperties.forEach(prop => {
         if (p[prop]) c[prop](p[prop]());
       });
       c.path.pointRadius(p.path.pointRadius());
@@ -90,7 +90,7 @@ export function getProjectionPath(proj) {
   return (proj && proj.path) || defaultPath;
 }
 
-var projections = {
+const projections = {
   // base d3-geo projection types
   albers:               geoAlbers,
   albersusa:            geoAlbersUsa,
@@ -111,6 +111,6 @@ var projections = {
   transversemercator:   geoTransverseMercator
 };
 
-for (var key in projections) {
+for (const key in projections) {
   projection(key, projections[key]);
 }

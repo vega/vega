@@ -1,23 +1,22 @@
-import {Top, Bottom, Left, GuideTitleStyle, zero, one} from './constants';
+import {getSign, ifTop, ifX, ifY, mult, patch} from './axis-util';
+import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
-import {encoder, has} from '../encode/encode-util';
+import {addEncoders, encoder, has} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisTitleRole} from '../marks/roles';
-import {addEncode, addEncoders} from '../encode/encode-util';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  var _ = lookup(spec, config),
-      orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      horizontal = (orient === Top || orient === Bottom),
-      encode, enter, update, titlePos;
+  const _ = lookup(spec, config),
+        orient = spec.orient,
+        sign = getSign(orient, -1, 1);
 
-  encode = {
+  let enter, update;
+  const encode = {
     enter: enter = {
       opacity: zero,
-      anchor: encoder(_('titleAnchor')),
+      anchor: encoder(_('titleAnchor', null)),
       align: {signal: alignExpr}
     },
     update: update = extend({}, enter, {
@@ -29,23 +28,18 @@ export default function(spec, config, userEncode, dataRef) {
     }
   };
 
-  titlePos = {
+  const titlePos = {
     signal: `lerp(range("${spec.scale}"), ${anchorExpr(0, 1, 0.5)})`
   };
 
-  if (horizontal) {
-    update.x = titlePos;
-    enter.angle = {value: 0};
-    enter.baseline = {value: orient === Top ? 'bottom' : 'top'};
-  } else {
-    update.y = titlePos;
-    enter.angle = {value: sign * 90};
-    enter.baseline = {value: 'bottom'};
-  }
+  update.x = ifX(orient, titlePos);
+  update.y = ifY(orient, titlePos);
+  enter.angle = ifX(orient, zero, mult(sign, 90));
+  enter.baseline = ifX(orient, ifTop(orient, Bottom, Top), {value: Bottom});
+  update.angle = enter.angle;
+  update.baseline = enter.baseline;
 
   addEncoders(encode, {
-    angle:       _('titleAngle'),
-    baseline:    _('titleBaseline'),
     fill:        _('titleColor'),
     fillOpacity: _('titleOpacity'),
     font:        _('titleFont'),
@@ -55,16 +49,34 @@ export default function(spec, config, userEncode, dataRef) {
     limit:       _('titleLimit'),
     lineHeight:  _('titleLineHeight')
   }, { // require update
-    align:       _('titleAlign')
+    align:       _('titleAlign'),
+    angle:       _('titleAngle'),
+    baseline:    _('titleBaseline')
   });
 
-  !addEncode(encode, 'x', _('titleX'), 'update')
-    && !horizontal && !has('x', userEncode)
-    && (encode.enter.auto = {value: true});
+  autoLayout(_, orient, encode, userEncode);
+  encode.update.align = patch(encode.update.align, enter.align);
+  encode.update.angle = patch(encode.update.angle, enter.angle);
+  encode.update.baseline = patch(encode.update.baseline, enter.baseline);
 
-  !addEncode(encode, 'y', _('titleY'), 'update')
-    && horizontal && !has('y', userEncode)
-    && (encode.enter.auto = {value: true});
+  return guideMark({
+    type:  TextMark,
+    role:  AxisTitleRole,
+    style: GuideTitleStyle,
+    from:  dataRef,
+    encode
+  }, userEncode);
+}
 
-  return guideMark(TextMark, AxisTitleRole, GuideTitleStyle, null, dataRef, encode, userEncode);
+function autoLayout(_, orient, encode, userEncode) {
+  const auto = (value, dim) => value != null
+    ? (encode.update[dim] = patch(encoder(value), encode.update[dim]), false)
+    : !has(dim, userEncode) ? true : false;
+
+  const autoY = auto(_('titleX'), 'x'),
+        autoX = auto(_('titleY'), 'y');
+
+  encode.enter.auto = autoX === autoY
+    ? encoder(autoX)
+    : ifX(orient, encoder(autoX), encoder(autoY));
 }

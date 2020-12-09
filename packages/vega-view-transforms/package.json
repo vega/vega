@@ -1,6 +1,6 @@
 {
   "name": "vega-view-transforms",
-  "version": "4.5.0",
+  "version": "4.5.8",
   "description": "View-specific transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -10,22 +10,20 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-view-transforms.js",
-  "module": "index",
+  "module": "build/vega-view-transforms.module.js",
+  "unpkg": "build/vega-view-transforms.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g vega-dataflow:vega,vega-scenegraph:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-view-transforms.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-view-transforms.js -c -m -o build/vega-view-transforms.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.4.1",
-    "vega-scenegraph": "^4.4.0",
-    "vega-util": "^1.12.0"
+    "vega-dataflow": "^5.7.3",
+    "vega-scenegraph": "^4.9.2",
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

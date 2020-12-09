@@ -1,6 +1,6 @@
 {
   "name": "vega-regression",
-  "version": "1.0.5",
+  "version": "1.0.9",
   "description": "Regression transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -10,23 +10,21 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-regression.js",
-  "module": "index",
+  "module": "build/vega-regression.module.js",
+  "unpkg": "build/vega-regression.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -g d3-array:d3,vega-dataflow:vega,vega-statistics:vega,vega-util:vega -f umd -n vega.transforms -o build/vega-regression.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-regression.js -c -m -o build/vega-regression.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.4.0",
-    "vega-dataflow": "^5.4.1",
-    "vega-statistics": "^1.7.3",
-    "vega-util": "^1.12.2"
+    "d3-array": "^2.7.1",
+    "vega-dataflow": "^5.7.3",
+    "vega-statistics": "^1.7.9",
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

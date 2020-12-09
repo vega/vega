@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     DataJoin = encode.datajoin;
 
-tape('DataJoin joins tuples and items', function(t) {
-  var data = [
+tape('DataJoin joins tuples and items', t => {
+  const data = [
     {key: 'a', value: 1},
     {key: 'b', value: 2},
     {key: 'c', value: 3}
@@ -63,7 +63,7 @@ tape('DataJoin joins tuples and items', function(t) {
   t.end();
 });
 
-tape('DataJoin garbage collects if requested', function(t) {
+tape('DataJoin garbage collects if requested', t => {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       dj = df.add(DataJoin, {clean:true, pulse:c0}),

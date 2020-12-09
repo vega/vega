@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A contour plot example, overlaying a density estimate on scatter plot points.",
   "width": 500,
   "height": 400,
   "padding": 5,

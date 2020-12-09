@@ -1,4 +1,4 @@
-import { object, oneOf, numberType } from './util';
+import { numberType, object, oneOf, signalRef } from './util';
 
 const padding = oneOf(
   numberType,
@@ -7,7 +7,8 @@ const padding = oneOf(
     bottom: numberType,
     left: numberType,
     right: numberType
-  })
+  }),
+  signalRef
 );
 
 export default {

@@ -26,7 +26,8 @@
         {"name": "error-bars"},
         {"name": "barley-trellis-plot"},
         {"name": "regression"},
-        {"name": "loess-regression"}
+        {"name": "loess-regression"},
+        {"name": "labeled-scatter-plot"}
     ],
     "Distributions": [
         {"name": "top-k-plot"},
@@ -76,14 +77,16 @@
         {"name": "density-heatmaps"},
         {"name": "parallel-coordinates"},
         {"name": "word-cloud"},
-        {"name": "beeswarm-plot"}
+        {"name": "beeswarm-plot"},
+        {"name": "calendar-view"}
     ],
-    "Custom Visual Designs": [
+    "Custom Designs": [
         {"name": "budget-forecasts"},
         {"name": "wheat-and-wages"},
         {"name": "falkensee-population"},
         {"name": "annual-temperature"},
         {"name": "weekly-temperature"},
+        {"name": "flight-passengers"},
         {"name": "timelines"},
         {"name": "u-district-cuisine"},
         {"name": "clock"},

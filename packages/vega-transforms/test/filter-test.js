@@ -6,11 +6,11 @@ var tape = require('tape'),
     Collect = tx.collect,
     Filter = tx.filter;
 
-tape('Filter filters tuples', function(t) {
-  var lt3 = util.accessor(function(d) { return d.id < 3; }, ['id']);
-  var baz = util.accessor(function(d) { return d.value === 'baz'; }, ['value']);
+tape('Filter filters tuples', t => {
+  const lt3 = util.accessor(d => d.id < 3, ['id']);
+  const baz = util.accessor(d => d.value === 'baz', ['value']);
 
-  var data = [
+  const data = [
     {'id': 1, 'value': 'foo'},
     {'id': 3, 'value': 'bar'},
     {'id': 5, 'value': 'baz'}
@@ -47,7 +47,7 @@ tape('Filter filters tuples', function(t) {
   t.end();
 });
 
-tape('Filter does not leak memory', function(t) {
+tape('Filter does not leak memory', t => {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
       f0 = df.add(Filter, {expr: util.field('value'), pulse: c0}),

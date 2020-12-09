@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A gallery of maps showcasing different cartographic projections.",
   "autosize": "pad",
 
   "signals": [

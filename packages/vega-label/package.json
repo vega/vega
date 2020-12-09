@@ -1,0 +1,35 @@
+{
+  "name": "vega-label",
+  "version": "1.0.0",
+  "description": "Label layout transform for Vega dataflows.",
+  "keywords": [
+    "vega",
+    "label",
+    "layout"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
+  "maintainers": [
+    "Chanwut Kittivorawong"
+  ],
+  "main": "build/vega-label.js",
+  "module": "build/vega-label.module.js",
+  "unpkg": "build/vega-label.min.js",
+  "repository": "vega/vega",
+  "scripts": {
+    "prebuild": "rimraf build",
+    "build": "rollup -c --config-transform",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
+  },
+  "dependencies": {
+    "vega-canvas": "^1.2.5",
+    "vega-dataflow": "^5.7.3",
+    "vega-scenegraph": "^4.9.2",
+    "vega-util": "^1.15.2"
+  },
+  "devDependencies": {
+    "vega-transforms": "*"
+  }
+}

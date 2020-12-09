@@ -1,48 +1,48 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-tape('Parser parses Vega specs with marks', function(t) {
-  var spec = {
-    "signals": [
-      { "name": "color", "value": "steelblue" }
+tape('Parser parses Vega specs with marks', t => {
+  const spec = {
+    'signals': [
+      { 'name': 'color', 'value': 'steelblue' }
     ],
-    "data": [
+    'data': [
       {
-        "name": "table",
-        "values": [{"x": 0.5}]
+        'name': 'table',
+        'values': [{'x': 0.5}]
       }
     ],
-    "scales": [
+    'scales': [
       {
-        "name": "xscale",
-        "domain": [0, 1],
-        "range": [0, 500]
+        'name': 'xscale',
+        'domain': [0, 1],
+        'range': [0, 500]
       }
     ],
-    "marks": [
+    'marks': [
       {
-        "type": "rect",
-        "from": {"data": "table"},
-        "key": "k",
-        "sort": {"field": ["x", "y"]},
-        "encode": {
-          "enter": {
-            "fill": {"signal": "color"},
-            "height": {"field": {"parent": "h"}},
-            "y": {"value": 0},
-            "x1": {"scale": "xscale", "value": 0}
+        'type': 'rect',
+        'from': {'data': 'table'},
+        'key': 'k',
+        'sort': {'field': ['x', 'y']},
+        'encode': {
+          'enter': {
+            'fill': {'signal': 'color'},
+            'height': {'field': {'parent': 'h'}},
+            'y': {'value': 0},
+            'x1': {'scale': 'xscale', 'value': 0}
           },
-          "update": {
-            "x2": {"scale": "xscale", "field": "x"}
+          'update': {
+            'x2': {'scale': 'xscale', 'field': 'x'}
           }
         }
       }
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 25);
+  t.equal(dfs.operators.length, 26);
 
   t.end();
 });

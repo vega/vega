@@ -18,12 +18,14 @@ function update(_) {
     return this.value;
   }
 
-  var min = +Infinity,
-      max = -Infinity,
-      ext = _.extents,
-      i, n, e;
+  const ext = _.extents,
+        n = ext.length;
 
-  for (i=0, n=ext.length; i<n; ++i) {
+  let min = +Infinity,
+      max = -Infinity,
+      i, e;
+
+  for (i = 0; i < n; ++i) {
     e = ext[i];
     if (e[0] < min) min = e[0];
     if (e[1] > max) max = e[1];

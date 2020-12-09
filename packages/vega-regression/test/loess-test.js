@@ -5,8 +5,8 @@ var tape = require('tape'),
     Loess = require('../').loess,
     changeset = vega.changeset;
 
-  tape('Loess handles repeated x-values', function(t) {
-    var data = [
+  tape('Loess handles repeated x-values', t => {
+    const data = [
       {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
       {k: 'b', u: 1, v: 3}, {k: 'b', u: 2, v: 6}, {k: 'b', u: 3, v: 7}
     ];
@@ -20,7 +20,7 @@ var tape = require('tape'),
 
     // -- test adds
     df.pulse(col, changeset().insert(data)).run();
-    var d = out.value;
+    const d = out.value;
     t.equal(d.length, 3);
     t.equal(d[0].u, 1);
     t.equal(d[1].u, 2);
@@ -32,8 +32,8 @@ var tape = require('tape'),
     t.end();
   });
 
-tape('Loess adapts bandwidth when too small', function(t) {
-  var data = [
+tape('Loess adapts bandwidth when too small', t => {
+  const data = [
     {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
     {k: 'b', u: 1, v: 2}, {k: 'b', u: 2, v: 5}, {k: 'b', u: 3, v: 6}
   ];
@@ -54,9 +54,9 @@ tape('Loess adapts bandwidth when too small', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
 
-  var a = d.filter(_ => _.k === 'a');
+  const a = d.filter(_ => _.k === 'a');
   t.equal(a.length, 3);
   t.equal(a[0].u, 1);
   t.equal(a[0].v, 1);
@@ -65,7 +65,7 @@ tape('Loess adapts bandwidth when too small', function(t) {
   t.equal(a[2].u, 3);
   t.equal(a[2].v, 5);
 
-  var b = d.filter(_ => _.k === 'b');
+  const b = d.filter(_ => _.k === 'b');
   t.equal(b.length, 3);
   t.equal(b[0].u, 1);
   t.equal(b[0].v, 2);

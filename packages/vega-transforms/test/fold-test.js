@@ -6,13 +6,13 @@ var tape = require('tape'),
     Collect = tx.collect,
     Fold = tx.fold;
 
-tape('Fold folds tuples', function(t) {
-  var data = [
+tape('Fold folds tuples', t => {
+  const data = [
     {a:'!', b:5, c:7},
     {a:'?', b:2, c:4}
   ];
 
-  var fields = ['b', 'c'].map(function(k) { return util.field(k); }),
+  var fields = ['b', 'c'].map(k => util.field(k)),
       df = new vega.Dataflow(),
       c0 = df.add(Collect),
       fd = df.add(Fold, {fields: fields, pulse: c0}),

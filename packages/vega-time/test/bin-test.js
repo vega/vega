@@ -1,8 +1,8 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('timeBin determines time unit bins', function(t) {
-  var extent = [new Date(2000, 0, 1), new Date(2001, 0, 1)];
+tape('timeBin determines time unit bins', t => {
+  const extent = [new Date(2000, 0, 1), new Date(2001, 0, 1)];
 
   t.deepEqual(
     vega.timeBin({extent: [new Date(2000, 0, 1), new Date(2010, 0, 1)], maxbins: 2}),

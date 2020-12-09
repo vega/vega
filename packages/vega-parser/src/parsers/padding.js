@@ -1,21 +1,16 @@
 import {isObject} from 'vega-util';
 
-export default function(spec, config) {
-  spec = spec || config.padding;
-  return isObject(spec)
-    ? {
+const number = _ => +_ || 0;
+
+const paddingObject = _ => ({top: _, bottom: _, left: _, right: _});
+
+export default function(spec) {
+  return !isObject(spec) ? paddingObject(number(spec))
+    : spec.signal ? spec
+    : {
         top:    number(spec.top),
         bottom: number(spec.bottom),
         left:   number(spec.left),
         right:  number(spec.right)
-      }
-    : paddingObject(number(spec));
-}
-
-function number(_) {
-  return +_ || 0;
-}
-
-function paddingObject(_) {
-  return {top: _, bottom: _, left: _, right: _};
+      };
 }

@@ -2,7 +2,7 @@ import Operator from '../Operator';
 import {isChangeSet} from '../ChangeSet';
 import {constant, extend, isFunction} from 'vega-util';
 
-var SKIP = {skip: true};
+const SKIP = {skip: true};
 
 /**
  * Perform operator updates in response to events. Applies an
@@ -31,13 +31,14 @@ var SKIP = {skip: true};
  * @return {Dataflow}
  */
 export default function(source, target, update, params, options) {
-  var fn = source instanceof Operator ? onOperator : onStream;
+  const fn = source instanceof Operator ? onOperator : onStream;
   fn(this, source, target, update, params, options);
   return this;
 }
 
 function onStream(df, stream, target, update, params, options) {
-  var opt = extend({}, options, SKIP), func, op;
+  const opt = extend({}, options, SKIP);
+  let func, op;
 
   if (!isFunction(target)) target = constant(target);
 

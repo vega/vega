@@ -25,10 +25,11 @@ All valid aggregate operations.
 | Operation | Description  |
 | :-------- | :------------|
 | count     | The total count of data objects in the group.|
-| valid     | The count of field values that are not null, undefined or NaN.|
-| missing   | The count of null or undefined field values.|
+| valid     | The count of field values that are not missing or `NaN`.|
+| missing   | The count of `null`, `undefined`, or empty string (`''`) field values.|
 | distinct  | The count of distinct field values.|
 | sum       | The sum of field values.|
+| product   | The product of field values. {% include tag ver="5.10" %}|
 | mean      | The mean (average) field value.|
 | average   | The mean (average) field value. Identical to mean.|
 | variance  | The sample variance of field values.|
@@ -45,6 +46,7 @@ All valid aggregate operations.
 | max       | The maximum field value.|
 | argmin    | An input data object containing the minimum field value.|
 | argmax    | An input data object containing the maximum field value.|
+| values    | The list of data objects in the group.|
 
 ## Usage
 

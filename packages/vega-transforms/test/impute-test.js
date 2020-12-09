@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = tx.collect,
     Impute = tx.impute;
 
-tape('Impute imputes missing tuples', function(t) {
-  var data = [
+tape('Impute imputes missing tuples', t => {
+  const data = [
     {'x': 0, 'y': 28, 'c':0},
     {'x': 0, 'y': 55, 'c':1},
     {'x': 1, 'y': 43, 'c':0}
@@ -30,13 +30,13 @@ tape('Impute imputes missing tuples', function(t) {
 
   df.pulse(co, changeset().insert(data)).run();
 
-  var p = im.pulse;
+  let p = im.pulse;
   t.equal(p.add.length, 4);
   t.equal(p.add[3].c, 1);
   t.equal(p.add[3].x, 1);
   t.equal(p.add[3].y, -1);
 
-  ['min', 'max', 'mean', 'median'].forEach(function(method) {
+  ['min', 'max', 'mean', 'median'].forEach(method => {
     df.update(m, method).run();
     p = im.pulse;
     t.equal(p.rem.length, 1);
@@ -49,8 +49,8 @@ tape('Impute imputes missing tuples', function(t) {
   t.end();
 });
 
-tape('Impute imputes missing tuples for provided domain', function(t) {
-  var data = [
+tape('Impute imputes missing tuples for provided domain', t => {
+  const data = [
     {c: 0, x: 0, y: 28},
     {c: 1, x: 0, y: 55},
     {c: 0, x: 1, y: 43},
@@ -79,9 +79,9 @@ tape('Impute imputes missing tuples for provided domain', function(t) {
 
   df.pulse(co, changeset().insert(data.slice(0, 3))).run();
 
-  var p = im.pulse;
+  const p = im.pulse;
   t.equal(p.add.length, 8);
-  for (var i=0; i<data.length; ++i) {
+  for (let i=0; i<data.length; ++i) {
     t.equal(p.add[i].c, data[i].c);
     t.equal(p.add[i].x, data[i].x);
     t.equal(p.add[i].y, data[i].y);
@@ -90,8 +90,8 @@ tape('Impute imputes missing tuples for provided domain', function(t) {
   t.end();
 });
 
-tape('Impute imputes missing tuples without groupby', function(t) {
-  var data = [
+tape('Impute imputes missing tuples without groupby', t => {
+  const data = [
     {x: 0, y: 28},
     {x: 1, y: 43},
     {x: 2, y: -1},
@@ -114,9 +114,9 @@ tape('Impute imputes missing tuples without groupby', function(t) {
 
   df.pulse(co, changeset().insert(data.slice(0, 2))).run();
 
-  var p = im.pulse;
+  const p = im.pulse;
   t.equal(p.add.length, 4);
-  for (var i=0; i<data.length; ++i) {
+  for (let i=0; i<data.length; ++i) {
     t.equal(p.add[i].c, data[i].c);
     t.equal(p.add[i].x, data[i].x);
     t.equal(p.add[i].y, data[i].y);

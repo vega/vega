@@ -1,15 +1,15 @@
 var tape = require('tape'),
     parse = require('../').parse;
 
-var geojson = {
-  "type": "FeatureCollection",
-  "features": [
+const geojson = {
+  'type': 'FeatureCollection',
+  'features': [
     {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
           8.547449111938477,
           47.365222618998935
         ]
@@ -18,23 +18,23 @@ var geojson = {
   ]
 };
 
-tape('Parser parses Vega specs with projection', function(t) {
-  var spec = {
-    "projections": [
+tape('Parser parses Vega specs with projection', t => {
+  const spec = {
+    'projections': [
         {
-          "name": "projection",
-          "type": "mercator",
-          "fit":  geojson,
-          "size": [200, 200]
+          'name': 'projection',
+          'type': 'mercator',
+          'fit':  geojson,
+          'size': [200, 200]
         }
     ]
   };
 
-  var dfs = parse(spec);
+  const dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 14);
-  t.equal(dfs.operators[9].type, 'projection');
-  t.equal(dfs.operators[9].params.fit, geojson);
+  t.equal(dfs.operators.length, 15);
+  t.equal(dfs.operators[10].type, 'projection');
+  t.equal(dfs.operators[10].params.fit, geojson);
 
   t.end();
 });

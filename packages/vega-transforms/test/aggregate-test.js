@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = tx.collect,
     Aggregate = tx.aggregate;
 
-tape('Aggregate aggregates tuples', function(t) {
-  var data = [
+tape('Aggregate aggregates tuples', t => {
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
   ];
@@ -18,26 +18,28 @@ tape('Aggregate aggregates tuples', function(t) {
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
+        fields: [val, val, val, val, val],
+        ops: ['count', 'sum', 'min', 'max', 'product'],
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, 2);
   t.equal(d[0].k, 'a');
   t.equal(d[0].count_v, 2);
   t.equal(d[0].sum_v, 3);
   t.equal(d[0].min_v, 1);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 2);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 2);
   t.equal(d[1].sum_v, 7);
   t.equal(d[1].min_v, 3);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 12);
 
   // -- test rems
   df.pulse(col, changeset().remove(data.slice(0, 2))).run();
@@ -48,11 +50,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 2);
   t.equal(d[0].min_v, 2);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 2);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 1);
   t.equal(d[1].sum_v, 4);
   t.equal(d[1].min_v, 4);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 4);
 
   // -- test mods, no groupby change
   df.pulse(col, changeset().modify(data[2], 'v', 3)).run();
@@ -63,11 +67,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 3);
   t.equal(d[0].min_v, 3);
   t.equal(d[0].max_v, 3);
+  t.equal(d[0].product_v, 3);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 1);
   t.equal(d[1].sum_v, 4);
   t.equal(d[1].min_v, 4);
   t.equal(d[1].max_v, 4);
+  t.equal(d[1].product_v, 4);
 
   // -- test mods, groupby change
   df.pulse(col, changeset().modify(data[2], 'k', 'b')).run();
@@ -78,12 +84,13 @@ tape('Aggregate aggregates tuples', function(t) {
   t.equal(d[0].sum_v, 7);
   t.equal(d[0].min_v, 3);
   t.equal(d[0].max_v, 4);
+  t.equal(d[0].product_v, 12);
 
   t.end();
 });
 
-tape('Aggregate handles count aggregates', function(t) {
-  var data = [
+tape('Aggregate handles count aggregates', t => {
+  const data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
     {foo:4, bar:5}
@@ -133,9 +140,8 @@ tape('Aggregate handles count aggregates', function(t) {
   t.end();
 });
 
-
-tape('Aggregate properly handles empty aggregation cells', function(t) {
-  var data = [
+tape('Aggregate properly handles empty aggregation cells', t => {
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
   ];
@@ -146,8 +152,8 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
-        fields: [val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max'],
+        fields: [val, val, val, val, val],
+        ops: ['count', 'sum', 'min', 'max', 'product'],
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
@@ -158,25 +164,26 @@ tape('Aggregate properly handles empty aggregation cells', function(t) {
 
   // -- remove category 'b'
   df.pulse(col, changeset()
-    .remove(function(d) { return d.k === 'b'; })).run();
+    .remove(d => d.k === 'b')).run();
   t.equal(out.value.length, 1);
 
   // -- modify tuple
   df.pulse(col, changeset().modify(data[0], 'v', 2)).run();
 
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 1);
   t.equal(d[0].k, 'a');
   t.equal(d[0].count_v, 2);
   t.equal(d[0].sum_v, 4);
   t.equal(d[0].min_v, 2);
   t.equal(d[0].max_v, 2);
+  t.equal(d[0].product_v, 4);
 
   t.end();
 });
 
-tape('Aggregate handles distinct aggregates', function(t) {
-  var data = [
+tape('Aggregate handles distinct aggregates', t => {
+  const data = [
     {foo:null},
     {foo:null},
     {foo:undefined},
@@ -218,8 +225,8 @@ tape('Aggregate handles distinct aggregates', function(t) {
   t.end();
 });
 
-tape('Aggregate handles cross-product', function(t) {
-  var data = [
+tape('Aggregate handles cross-product', t => {
+  const data = [
     {a: 0, b: 2},
     {a: 1, b: 3}
   ];
@@ -240,7 +247,7 @@ tape('Aggregate handles cross-product', function(t) {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
   t.equal(d.length, 4);
   t.equal(d[0].a, 0);
   t.equal(d[0].b, 2);
@@ -304,11 +311,13 @@ tape('Aggregate handles cross-product', function(t) {
   t.end();
 });
 
-tape('Aggregate handles empty/invalid data', function(t) {
-  var ops = [
+tape('Aggregate handles empty/invalid data', t => {
+  const ops = [
     'count',
+    'missing',
     'valid',
     'sum',
+    'product',
     'mean',
     'variance',
     'stdev',
@@ -316,23 +325,28 @@ tape('Aggregate handles empty/invalid data', function(t) {
     'max',
     'median'
   ];
-  var res = [1, 0, 0]; // higher indices 'undefined'
+  const res = [4, 3, 0, 0]; // higher indices 'undefined'
 
   var v = util.field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
-        fields: ops.map(function() { return v; }),
+        fields: ops.map(() => v),
         ops: ops,
         as: ops,
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
 
-  df.pulse(col, changeset().insert([{v: NaN}])).run();
-  var d = out.value[0];
+  df.pulse(
+    col,
+    changeset().insert([
+      {v: NaN}, {v: null}, {v: undefined}, {v: ''}
+    ])
+  ).run();
+  const d = out.value[0];
 
-  ops.forEach(function(op, i) {
+  ops.forEach((op, i) => {
     t.equal(d[op], res[i], op);
   });
 

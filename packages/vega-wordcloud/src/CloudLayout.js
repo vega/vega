@@ -57,26 +57,24 @@ export default function() {
         n = words.length,
         i = -1,
         tags = [],
-        data = words.map(function(d) {
-          return {
-            text: text(d),
-            font: font(d),
-            style: fontStyle(d),
-            weight: fontWeight(d),
-            rotate: rotate(d),
-            size: ~~(fontSize(d) + 1e-14),
-            padding: padding(d),
-            xoff: 0,
-            yoff: 0,
-            x1: 0,
-            y1: 0,
-            x0: 0,
-            y0: 0,
-            hasText: false,
-            sprite: null,
-            datum: d
-          };
-        }).sort(function(a, b) { return b.size - a.size; });
+        data = words.map(d => ({
+          text: text(d),
+          font: font(d),
+          style: fontStyle(d),
+          weight: fontWeight(d),
+          rotate: rotate(d),
+          size: ~~(fontSize(d) + 1e-14),
+          padding: padding(d),
+          xoff: 0,
+          yoff: 0,
+          x1: 0,
+          y1: 0,
+          x0: 0,
+          y0: 0,
+          hasText: false,
+          sprite: null,
+          datum: d
+        })).sort((a, b) => b.size - a.size);
 
     while (++i < n) {
       var d = data[i];
@@ -98,13 +96,13 @@ export default function() {
 
   function getContext(canvas) {
     canvas.width = canvas.height = 1;
-    var ratio = Math.sqrt(canvas.getContext("2d").getImageData(0, 0, 1, 1).data.length >> 2);
+    var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2);
     canvas.width = (cw << 5) / ratio;
     canvas.height = ch / ratio;
 
-    var context = canvas.getContext("2d");
-    context.fillStyle = context.strokeStyle = "red";
-    context.textAlign = "center";
+    var context = canvas.getContext('2d');
+    context.fillStyle = context.strokeStyle = 'red';
+    context.textAlign = 'center';
 
     return {context: context, ratio: ratio};
   }
@@ -277,8 +275,8 @@ function cloudSprite(contextAndRatio, d, data, di) {
   while (++di < n) {
     d = data[di];
     c.save();
-    c.font = d.style + " " + d.weight + " " + ~~((d.size + 1) / ratio) + "px " + d.font;
-    w = c.measureText(d.text + "m").width * ratio;
+    c.font = d.style + ' ' + d.weight + ' ' + ~~((d.size + 1) / ratio) + 'px ' + d.font;
+    w = c.measureText(d.text + 'm').width * ratio;
     h = d.size << 1;
     if (d.rotate) {
       var sr = Math.sin(d.rotate * cloudRadians),
@@ -422,7 +420,7 @@ function zeroArray(n) {
 }
 
 function functor(d) {
-  return typeof d === "function" ? d : function() { return d; };
+  return typeof d === 'function' ? d : function() { return d; };
 }
 
 var spirals = {

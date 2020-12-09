@@ -16,8 +16,8 @@ export function rank(op) {
  * @param {Operator} op - The operator to re-rank.
  */
 export function rerank(op) {
-  var queue = [op],
-      cur, list, i;
+  const queue = [op];
+  let cur, list, i;
 
   while (queue.length) {
     this.rank(cur = queue.pop());

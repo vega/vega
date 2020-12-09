@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('pad pads strings', function(t) {
+tape('pad pads strings', t => {
   // should increase string length
   t.equal(vega.pad('12345', 8), '12345   ');
   t.equal(vega.pad('12345', 8, '!'), '12345!!!');
@@ -17,7 +17,7 @@ tape('pad pads strings', function(t) {
   t.end();
 });
 
-tape('pad pads numbers', function(t) {
+tape('pad pads numbers', t => {
   // should increase string length
   t.equal(vega.pad(12345, 8), '12345   ');
   t.equal(vega.pad(12345, 8, '!'), '12345!!!');

@@ -1,19 +1,19 @@
 import {merge} from 'vega-util';
 
 export default function(idFunc, source, input) {
-  var $ = idFunc,
-      data = source || [],
+  const $ = idFunc;
+  let data = source || [],
       add = input || [],
       rem = {},
       cnt = 0;
 
   return {
-    add: function(t) { add.push(t); },
-    remove: function(t) { rem[$(t)] = ++cnt; },
-    size: function() { return data.length; },
-    data: function(compare, resort) {
+    add: t => add.push(t),
+    remove: t => rem[$(t)] = ++cnt,
+    size: () => data.length,
+    data: (compare, resort) => {
       if (cnt) {
-        data = data.filter(function(t) { return !rem[$(t)]; });
+        data = data.filter(t => !rem[$(t)]);
         rem = {};
         cnt = 0;
       }
@@ -28,5 +28,5 @@ export default function(idFunc, source, input) {
       }
       return data;
     }
-  }
+  };
 }

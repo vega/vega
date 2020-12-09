@@ -19,13 +19,13 @@ export function operator(value, params) {
 // -----
 
 export function ref(op) {
-  var ref = {$ref: op.id};
+  const ref = {$ref: op.id};
   // if operator not yet registered, cache ref to resolve later
   if (op.id < 0) (op.refs = op.refs || []).push(ref);
   return ref;
 }
 
-export var tupleidRef = {
+export const tupleidRef = {
   $tupleid: 1,
   toString: function() { return ':_tupleid_:'; }
 };
@@ -34,23 +34,23 @@ export function fieldRef(field, name) {
   return name ? {$field: field, $name: name} : {$field: field};
 }
 
-export var keyFieldRef = fieldRef('key');
+export const keyFieldRef = fieldRef('key');
 
 export function compareRef(fields, orders) {
   return {$compare: fields, $order: orders};
 }
 
 export function keyRef(fields, flat) {
-  var ref = {$key: fields};
+  const ref = {$key: fields};
   if (flat) ref.$flat = true;
   return ref;
 }
 
 // -----
 
-export var Ascending  = 'ascending';
+export const Ascending  = 'ascending';
 
-export var Descending = 'descending';
+export const Descending = 'descending';
 
 export function sortKey(sort) {
   return !isObject(sort) ? ''
@@ -66,9 +66,9 @@ export function aggrField(op, field) {
 
 // -----
 
-export var Scope = 'scope';
+export const Scope = 'scope';
 
-export var View = 'view';
+export const View = 'view';
 
 export function isSignal(_) {
   return _ && _.signal;
@@ -80,7 +80,7 @@ export function isExpr(_) {
 
 export function hasSignal(_) {
   if (isSignal(_)) return true;
-  if (isObject(_)) for (var key in _) {
+  if (isObject(_)) for (const key in _) {
     if (hasSignal(_[key])) return true;
   }
   return false;

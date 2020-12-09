@@ -1,5 +1,5 @@
-import {DataPrefix, IndexPrefix, ScalePrefix} from './prefix';
-import {Identifier, Literal} from 'vega-expression';
+import {DataPrefix, IndexPrefix, ScalePrefix} from './constants';
+import {Literal} from 'vega-expression';
 import {error, hasOwnProperty} from 'vega-util';
 
 export function dataVisitor(name, args, scope, params) {
@@ -36,8 +36,7 @@ export function scaleVisitor(name, args, scope, params) {
   if (args[0].type === Literal) {
     // add scale dependency
     addScaleDependency(scope, params, args[0].value);
-  }
-  else if (args[0].type === Identifier) {
+  } else {
     // indirect scale lookup; add all scales as parameters
     for (name in scope.scales) {
       addScaleDependency(scope, params, name);

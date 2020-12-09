@@ -1,4 +1,4 @@
-import {stableCompare, Transform} from 'vega-dataflow';
+import {Transform, stableCompare} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -15,18 +15,18 @@ export default function Values(params) {
   Transform.call(this, null, params);
 }
 
-var prototype = inherits(Values, Transform);
+inherits(Values, Transform, {
+  transform(_, pulse) {
+    const run = !this.value
+      || _.modified('field')
+      || _.modified('sort')
+      || pulse.changed()
+      || (_.sort && pulse.modified(_.sort.fields));
 
-prototype.transform = function(_, pulse) {
-  var run = !this.value
-    || _.modified('field')
-    || _.modified('sort')
-    || pulse.changed()
-    || (_.sort && pulse.modified(_.sort.fields));
-
-  if (run) {
-    this.value = (_.sort
-      ? pulse.source.slice().sort(stableCompare(_.sort))
-      : pulse.source).map(_.field);
+    if (run) {
+      this.value = (_.sort
+        ? pulse.source.slice().sort(stableCompare(_.sort))
+        : pulse.source).map(_.field);
+    }
   }
-};
+});

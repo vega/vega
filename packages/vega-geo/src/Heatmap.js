@@ -31,53 +31,53 @@ export default function Heatmap(params) {
 }
 
 Heatmap.Definition = {
-  "type": "heatmap",
-  "metadata": {"modifies": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "color", "type": "string", "expr": true},
-    { "name": "opacity", "type": "number", "expr": true},
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "as", "type": "string", "default": "image" }
+  'type': 'heatmap',
+  'metadata': {'modifies': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'color', 'type': 'string', 'expr': true},
+    { 'name': 'opacity', 'type': 'number', 'expr': true},
+    { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+    { 'name': 'as', 'type': 'string', 'default': 'image' }
   ]
 };
 
-var prototype = inherits(Heatmap, Transform);
+inherits(Heatmap, Transform, {
+  transform(_, pulse) {
+    if (!pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
+    }
 
-prototype.transform = function(_, pulse) {
-  if (!pulse.changed() && !_.modified()) {
-    return pulse.StopPropagation;
+    var source = pulse.materialize(pulse.SOURCE).source,
+        shared = _.resolve === 'shared',
+        field = _.field || identity,
+        opacity = opacity_(_.opacity, _),
+        color = color_(_.color, _),
+        as = _.as || 'image',
+        obj = {
+          $x: 0, $y: 0, $value: 0,
+          $max: shared ? max(source.map(t => max(field(t).values))) : 0
+        };
+
+    source.forEach(t => {
+      const v = field(t);
+
+      // build proxy data object
+      const o = extend({}, t, obj);
+      // set maximum value if not globally shared
+      if (!shared) o.$max = max(v.values || []);
+
+      // generate canvas image
+      // optimize color/opacity if not pixel-dependent
+      t[as] = toCanvas(v, o,
+        color.dep ? color : constant(color(o)),
+        opacity.dep ? opacity : constant(opacity(o))
+      );
+    });
+
+    return pulse.reflow(true).modifies(as);
   }
-
-  var source = pulse.materialize(pulse.SOURCE).source,
-      shared = _.resolve === 'shared',
-      field = _.field || identity,
-      opacity = opacity_(_.opacity, _),
-      color = color_(_.color, _),
-      as = _.as || 'image',
-      obj = {
-        $x: 0, $y: 0, $value: 0,
-        $max: shared ? max(source.map(t => max(field(t).values))) : 0
-      };
-
-  source.forEach(t => {
-    const v = field(t);
-
-    // build proxy data object
-    const o = extend({}, t, obj);
-    // set maximum value if not globally shared
-    if (!shared) o.$max = max(v.values || []);
-
-    // generate canvas image
-    // optimize color/opacity if not pixel-dependent
-    t[as] = toCanvas(v, o,
-      color.dep ? color : constant(color(o)),
-      opacity.dep ? opacity : constant(opacity(o))
-    );
-  });
-
-  return pulse.reflow(true).modifies(as);
-};
+});
 
 // get image color function
 function color_(color, _) {

@@ -4,7 +4,11 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Nest = require('../').nest;
 
-tape('Nest tuples', function(t) {
+function toObject(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+tape('Nest tuples', t => {
   var dataA = {id: 'A', job: 'Doctor'},
       nodeA = {key: dataA.job, values: [dataA]},
       childA = {data: dataA, height: 0, depth: 2};
@@ -22,8 +26,8 @@ tape('Nest tuples', function(t) {
   // -- test adds
   df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
 
-  var expected = [dataA, dataB];
-  expected.root = {
+  let expected = [dataA, dataB];
+  let expectedRoot = {
     data: {values: [nodeA, nodeB]},
     height: 2,
     depth: 0,
@@ -39,7 +43,7 @@ tape('Nest tuples', function(t) {
   };
 
   // test and remove circular properties first
-  var d = out.value;
+  let d = out.value;
   t.equal(d.root.children[0].parent, d.root);
   t.equal(d.root.children[1].parent, d.root);
   t.equal(d.root.lookup['1'].parent, d.root.children[0]);
@@ -48,14 +52,14 @@ tape('Nest tuples', function(t) {
   delete d.root.children[1].parent;
   delete d.root.lookup['1'].parent;
   delete d.root.lookup['2'].parent;
-  t.deepEqual(d, expected);
-
+  t.deepEqual(toObject(d), expected);
+  t.deepEqual(toObject(d.root), expectedRoot);
 
   // -- test data removals
   df.pulse(collect, vega.changeset().remove([dataA])).run();
 
   expected = [dataB];
-  expected.root = {
+  expectedRoot = {
     data: {values: [nodeB]},
     height: 2,
     depth: 0,
@@ -74,12 +78,13 @@ tape('Nest tuples', function(t) {
   t.equal(d.root.lookup['2'].parent, d.root.children[0]);
   delete d.root.children[0].parent;
   delete d.root.lookup['2'].parent;
-  t.deepEqual(d, expected);
+  t.deepEqual(toObject(d), expected);
+  t.deepEqual(toObject(d.root), expectedRoot);
 
   t.end();
 });
 
-tape('Nest empty data', function(t) {
+tape('Nest empty data', t => {
   // Setup nest aggregation
   var df = new vega.Dataflow(),
       collect = df.add(Collect),

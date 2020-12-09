@@ -1,7 +1,7 @@
 import {isObject, stringValue} from 'vega-util';
 
 export default function(clip, scope) {
-  var expr;
+  let expr;
 
   if (isObject(clip)) {
     if (clip.signal) {

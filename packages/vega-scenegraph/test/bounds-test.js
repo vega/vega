@@ -1,8 +1,8 @@
 var tape = require('tape'),
     Bounds = require('../').Bounds;
 
-tape('Bounds should support constuctor without arguments', function(t) {
-  var b = new Bounds();
+tape('Bounds should support constructor without arguments', t => {
+  const b = new Bounds();
   t.equal(b.x1, +Number.MAX_VALUE);
   t.equal(b.y1, +Number.MAX_VALUE);
   t.equal(b.x2, -Number.MAX_VALUE);
@@ -10,8 +10,8 @@ tape('Bounds should support constuctor without arguments', function(t) {
   t.end();
 });
 
-tape('Bounds should support constructor with bounds argument', function(t) {
-  var b = new Bounds((new Bounds()).set(1,1,2,2));
+tape('Bounds should support constructor with bounds argument', t => {
+  const b = new Bounds((new Bounds()).set(1,1,2,2));
   t.equal(b.x1, 1);
   t.equal(b.y1, 1);
   t.equal(b.x2, 2);
@@ -19,9 +19,9 @@ tape('Bounds should support constructor with bounds argument', function(t) {
   t.end();
 });
 
-tape('Bounds should support clone', function(t) {
-  var a = (new Bounds()).set(1,1,2,2);
-  var b = a.clone();
+tape('Bounds should support clone', t => {
+  const a = (new Bounds()).set(1,1,2,2);
+  const b = a.clone();
   t.notEqual(a, b);
   t.equal(b.x1, 1);
   t.equal(b.y1, 1);
@@ -30,8 +30,8 @@ tape('Bounds should support clone', function(t) {
   t.end();
 });
 
-tape('Bounds should support set', function(t) {
-  var b = (new Bounds()).set(1,1,2,2);
+tape('Bounds should support set', t => {
+  const b = (new Bounds()).set(1,1,2,2);
   t.equal(b.x1, 1);
   t.equal(b.y1, 1);
   t.equal(b.x2, 2);
@@ -39,8 +39,8 @@ tape('Bounds should support set', function(t) {
   t.end();
 });
 
-tape('Bounds should support add point', function(t) {
-  var b = (new Bounds()).add(1,1).add(2,2);
+tape('Bounds should support add point', t => {
+  const b = (new Bounds()).add(1,1).add(2,2);
   t.equal(b.x1, 1);
   t.equal(b.y1, 1);
   t.equal(b.x2, 2);
@@ -48,8 +48,8 @@ tape('Bounds should support add point', function(t) {
   t.end();
 });
 
-tape('Bounds should support expand', function(t) {
-  var b = (new Bounds()).add(1,1).add(2,2).expand(1);
+tape('Bounds should support expand', t => {
+  const b = (new Bounds()).add(1,1).add(2,2).expand(1);
   t.equal(b.x1, 0);
   t.equal(b.y1, 0);
   t.equal(b.x2, 3);
@@ -57,8 +57,8 @@ tape('Bounds should support expand', function(t) {
   t.end();
 });
 
-tape('Bounds should support round', function(t) {
-  var b = (new Bounds()).add(0.5, 0.5).add(1.5, 1.5).round();
+tape('Bounds should support round', t => {
+  const b = (new Bounds()).add(0.5, 0.5).add(1.5, 1.5).round();
   t.equal(b.x1, 0);
   t.equal(b.y1, 0);
   t.equal(b.x2, 2);
@@ -66,8 +66,8 @@ tape('Bounds should support round', function(t) {
   t.end();
 });
 
-tape('Bounds should support translate', function(t) {
-  var b = (new Bounds()).set(1,1,2,2).translate(2,3);
+tape('Bounds should support translate', t => {
+  const b = (new Bounds()).set(1,1,2,2).translate(2,3);
   t.equal(b.x1, 3);
   t.equal(b.y1, 4);
   t.equal(b.x2, 4);
@@ -75,8 +75,8 @@ tape('Bounds should support translate', function(t) {
   t.end();
 });
 
-tape('Bounds should support rotate', function(t) {
-  var b = (new Bounds()).set(0,0,2,2).rotate(Math.PI, 0, 0);
+tape('Bounds should support rotate', t => {
+  const b = (new Bounds()).set(0,0,2,2).rotate(Math.PI, 0, 0);
   t.true(Math.abs(b.x1 - -2) < 1e-10);
   t.true(Math.abs(b.y1 - -2) < 1e-10);
   t.true(Math.abs(b.x2 - 0) < 1e-10);
@@ -84,8 +84,8 @@ tape('Bounds should support rotate', function(t) {
   t.end();
 });
 
-tape('Bounds should support union', function(t) {
-  var b = (new Bounds()).set(1,1,3,3).union((new Bounds()).set(2,2,5,5));
+tape('Bounds should support union', t => {
+  const b = (new Bounds()).set(1,1,3,3).union((new Bounds()).set(2,2,5,5));
   t.equal(b.x1, 1);
   t.equal(b.y1, 1);
   t.equal(b.x2, 5);
@@ -93,7 +93,7 @@ tape('Bounds should support union', function(t) {
   t.end();
 });
 
-tape('Bounds should support encloses', function(t) {
+tape('Bounds should support encloses', t => {
   var a = (new Bounds()).set(1,1,3,3),
       b = (new Bounds()).set(2,2,5,5),
       c = (new Bounds()).set(3,3,4,4);
@@ -106,7 +106,7 @@ tape('Bounds should support encloses', function(t) {
   t.end();
 });
 
-tape('Bounds should support intersects', function(t) {
+tape('Bounds should support intersects', t => {
   var a = (new Bounds()).set(1,1,3,3),
       b = (new Bounds()).set(2,2,5,5),
       c = (new Bounds()).set(4,4,5,5);
@@ -119,7 +119,7 @@ tape('Bounds should support intersects', function(t) {
   t.end();
 });
 
-tape('Bounds should support alignsWith', function(t) {
+tape('Bounds should support alignsWith', t => {
   var a = (new Bounds()).set(1,1,5,5),
       b = (new Bounds()).set(1,2,8,4),
       c = (new Bounds()).set(5,5,8,8);
@@ -132,8 +132,8 @@ tape('Bounds should support alignsWith', function(t) {
   t.end();
 });
 
-tape('Bounds should support contains', function(t) {
-  var b = (new Bounds()).set(1,1,3,3);
+tape('Bounds should support contains', t => {
+  const b = (new Bounds()).set(1,1,3,3);
   t.false(b.contains(0,0));
   t.true(b.contains(1,1));
   t.true(b.contains(2,2));
@@ -142,14 +142,14 @@ tape('Bounds should support contains', function(t) {
   t.end();
 });
 
-tape('Bounds should support width', function(t) {
-  var b = (new Bounds()).set(1,1,3,5);
+tape('Bounds should support width', t => {
+  const b = (new Bounds()).set(1,1,3,5);
   t.equal(b.width(), 2);
   t.end();
 });
 
-tape('Bounds should support height', function(t) {
-  var b = (new Bounds()).set(1,1,3,5);
+tape('Bounds should support height', t => {
+  const b = (new Bounds()).set(1,1,3,5);
   t.equal(b.height(), 4);
   t.end();
 });

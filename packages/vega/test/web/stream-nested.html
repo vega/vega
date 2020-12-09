@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Streaming Data Test</title>
+    <script src="../../build/vega.min.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <script>
+const runtimeSpec = vega.parse({
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "signals": [
+    { "name": "count", "value": 0 },
+    { "name": "size", "value": 0 }
+  ],
+
+  "data": [
+    {
+      "name": "table"
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "domain": {"signal": "sequence(1, 21, 1)"},
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": [0, 100]
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"signal": "sequence(0, 20, 1)"},
+      "range": {"scheme": "category20"}
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "left", "scale": "yscale"}
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "table",
+          "name": "facet",
+          "groupby": ["k"]
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "facet"},
+          "encode": {
+            "update": {
+              "x": {"scale": "xscale", "field": "u", "band": 0.5},
+              "y": {"scale": "yscale", "field": "v"},
+              "stroke": {"scale": "color", "signal": "(datum.k-1) % 20"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 0},
+          "y": {"value": -2},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "black"}
+        },
+        "update": {
+          "text": {"signal": "'Count: ' + count + ', Size: ' + size"}
+        }
+      }
+    }
+  ]
+});
+
+let k = 0;
+function generate(n) {
+  const data = [];
+  for (let j=0; j<n; ++j) {
+    ++k;
+    for (let i=0; i<20; ++i) {
+      data.push({
+        k: k,
+        u: i + 1,
+        v: i ? (data[data.length-1].v + (2*Math.random() - 1)) : (5 + ~~(90 * Math.random()))
+      });
+    }
+  }
+  return data;
+}
+
+const view = new vega.View(runtimeSpec, {
+  container: '#view',
+  renderer:  'svg',
+  hover:     true
+});
+
+const facet = view._runtime.nodes[94];
+
+function step() {
+  view.change('table', vega.changeset()
+      .insert(generate(1))
+      .remove(d => d.k === k-20)
+    )
+    .signal('count', view.signal('count') + 1) // cycles so far
+    .signal('size', Object.keys(facet.value).length
+      + '/' + view._runtime.subcontext.length)
+    .runAsync();
+}
+
+view.insert('table', generate(20))
+    .signal('count', 20)
+    .runAsync();
+
+// clean caches once they have 500 empty slots
+view.cleanThreshold = 500;
+
+let intId;
+
+function start() {
+  intId = setInterval(step, 10);
+}
+
+function stop() {
+  clearInterval(intId);
+}
+    </script>
+  </body>
+</html>

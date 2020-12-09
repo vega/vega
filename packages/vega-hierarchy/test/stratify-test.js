@@ -5,12 +5,12 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Stratify = require('../').stratify;
 
-tape('Stratify tuples', function(t) {
-  var data = [
+tape('Stratify tuples', t => {
+  const data = [
     {id: 'a'},
     {id: 'b', pid: 'a'},
     {id: 'c', pid: 'a'},
-    {id: 'd', pid: 'c'},
+    {id: 'd', pid: 'c'}
   ];
 
   // Setup tree stratification
@@ -36,7 +36,7 @@ tape('Stratify tuples', function(t) {
   t.end();
 });
 
-tape('Stratify empty data', function(t) {
+tape('Stratify empty data', t => {
   // Setup tree stratification
   var df = new vega.Dataflow(),
       collect = df.add(Collect),

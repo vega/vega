@@ -1,30 +1,47 @@
-import adjustSpatial from './encode/adjust-spatial';
+import applyDefaults from './encode/defaults';
 import entry from './encode/entry';
 import rule from './encode/rule';
-import set from './encode/set';
-import {isArray} from 'vega-util';
 
-export default function parseEncode(encode, marktype, params, scope) {
-  var fields = {},
-      code = 'var o=item,datum=o.datum,m=0,$;',
-      channel, enc, value;
+import {parseExpression} from 'vega-functions';
+import {extend, isArray} from 'vega-util';
 
-  for (channel in encode) {
-    enc = encode[channel];
-    if (isArray(enc)) { // rule
-      code += rule(channel, enc, scope, params, fields);
-    } else {
-      value = entry(channel, enc, scope, params, fields);
-      code += set('o', channel, value);
+export default function(encode, type, role, style, scope, params) {
+  const enc = {};
+  params = params || {};
+  params.encoders = {$encode: enc};
+
+  encode = applyDefaults(encode, type, role, style, scope.config);
+  for (const key in encode) {
+    enc[key] = parseBlock(encode[key], type, params, scope);
+  }
+
+  return params;
+}
+
+function parseBlock(block, marktype, params, scope) {
+  const channels = {},
+        fields = {};
+
+  for (const name in block) {
+    if (block[name] != null) { // skip any null entries
+      channels[name] = parse(expr(block[name]), scope, params, fields);
     }
   }
 
-  code += adjustSpatial(encode, marktype);
-  code += 'return m;';
-
   return {
-    $expr:   code,
+    $expr:   {marktype, channels},
     $fields: Object.keys(fields),
-    $output: Object.keys(encode)
+    $output: Object.keys(block)
   };
+}
+
+function expr(enc) {
+  return isArray(enc) ? rule(enc) : entry(enc);
+}
+
+function parse(code, scope, params, fields) {
+  const expr = parseExpression(code, scope);
+  expr.$fields.forEach(name => fields[name] = 1);
+  extend(params, expr.$params);
+  return expr.$expr;
 }

@@ -1,9 +1,9 @@
 import repeat from './repeat';
 
 export default function(str, length, padchar, align) {
-  var c = padchar || ' ',
-      s = str + '',
-      n = length - s.length;
+  const c = padchar || ' ',
+        s = str + '',
+        n = length - s.length;
 
   return n <= 0 ? s
     : align === 'left' ? repeat(c, n) + s

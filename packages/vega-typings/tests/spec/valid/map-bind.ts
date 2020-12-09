@@ -8,7 +8,7 @@ export const spec: Spec = {
 
   "encode": {
     "update": {
-      "fill": {"signal": "background"}
+      "fill": {"signal": "bgcolor"}
     }
   },
 
@@ -56,7 +56,7 @@ export const spec: Spec = {
       "bind": {"input": "radio", "options": [0, 3, 5, 10]} },
     { "name": "borderWidth", "value": 1,
       "bind": {"input": "text"} },
-    { "name": "background", "value": "#ffffff",
+    { "name": "bgcolor", "value": "#ffffff",
       "bind": {"input": "color"} },
     { "name": "invert", "value": false,
       "bind": {"input": "checkbox"} }

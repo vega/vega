@@ -1,5 +1,5 @@
 import {max} from 'd3-array';
-import {ingest, rederive, Transform} from 'vega-dataflow';
+import {Transform, ingest, rederive} from 'vega-dataflow';
 import {identity, inherits, isArray, isFunction, isNumber} from 'vega-util';
 import contours from './util/contours';
 import quantize from './util/quantize';
@@ -37,59 +37,59 @@ export default function Isocontour(params) {
 }
 
 Isocontour.Definition = {
-  "type": "Isocontour",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "field", "type": "field" },
-    { "name": "thresholds", "type": "number", "array": true },
-    { "name": "levels", "type": "number" },
-    { "name": "nice", "type": "boolean", "default": false },
-    { "name": "resolve", "type": "enum", "values": ["shared", "independent"], "default": "independent" },
-    { "name": "zero", "type": "boolean", "default": true },
-    { "name": "smooth", "type": "boolean", "default": true },
-    { "name": "scale", "type": "number", "expr": true },
-    { "name": "translate", "type": "number", "array": true, "expr": true },
-    { "name": "as", "type": "string", "null": true, "default": "contour" }
+  'type': 'Isocontour',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'field', 'type': 'field' },
+    { 'name': 'thresholds', 'type': 'number', 'array': true },
+    { 'name': 'levels', 'type': 'number' },
+    { 'name': 'nice', 'type': 'boolean', 'default': false },
+    { 'name': 'resolve', 'type': 'enum', 'values': ['shared', 'independent'], 'default': 'independent' },
+    { 'name': 'zero', 'type': 'boolean', 'default': true },
+    { 'name': 'smooth', 'type': 'boolean', 'default': true },
+    { 'name': 'scale', 'type': 'number', 'expr': true },
+    { 'name': 'translate', 'type': 'number', 'array': true, 'expr': true },
+    { 'name': 'as', 'type': 'string', 'null': true, 'default': 'contour' }
   ]
 };
 
-var prototype = inherits(Isocontour, Transform);
+inherits(Isocontour, Transform, {
+  transform(_, pulse) {
+    if (this.value && !pulse.changed() && !_.modified()) {
+      return pulse.StopPropagation;
+    }
 
-prototype.transform = function(_, pulse) {
-  if (this.value && !pulse.changed() && !_.modified()) {
-    return pulse.StopPropagation;
-  }
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        field = _.field || identity,
+        contour = contours().smooth(_.smooth !== false),
+        tz = _.thresholds || levels(source, field, _),
+        as = _.as === null ? null : _.as || 'contour',
+        values = [];
 
-  var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-      source = pulse.materialize(pulse.SOURCE).source,
-      field = _.field || identity,
-      contour = contours().smooth(_.smooth !== false),
-      tz = _.thresholds || levels(source, field, _),
-      as = _.as === null ? null : _.as || 'contour',
-      values = [];
+    source.forEach(t => {
+      const grid = field(t);
 
-  source.forEach(t => {
-    const grid = field(t);
+      // generate contour paths in GeoJSON format
+      const paths = contour.size([grid.width, grid.height])(
+        grid.values, isArray(tz) ? tz : tz(grid.values)
+      );
 
-    // generate contour paths in GeoJSON format
-    const paths = contour.size([grid.width, grid.height])(
-      grid.values, isArray(tz) ? tz : tz(grid.values)
-    );
+      // adjust contour path coordinates as needed
+      transformPaths(paths, grid, t, _);
 
-    // adjust contour path coordinates as needed
-    transformPaths(paths, grid, t, _);
-
-    // ingest; copy source data properties to output
-    paths.forEach(p => {
-      values.push(rederive(t, ingest(as != null ? {[as]: p} : p)));
+      // ingest; copy source data properties to output
+      paths.forEach(p => {
+        values.push(rederive(t, ingest(as != null ? {[as]: p} : p)));
+      });
     });
-  });
 
-  if (this.value) out.rem = this.value;
-  this.value = out.source = out.add = values;
+    if (this.value) out.rem = this.value;
+    this.value = out.source = out.add = values;
 
-  return out;
-};
+    return out;
+  }
+});
 
 function levels(values, f, _) {
   const q = quantize(_.levels || 10, _.nice, _.zero !== false);

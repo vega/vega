@@ -3,7 +3,7 @@
  * form [min, max]. Ignores null, undefined, and NaN values.
  */
 export default function(array, f) {
-  var i = 0, n, v, min, max;
+  let i = 0, n, v, min, max;
 
   if (array && (n = array.length)) {
     if (f == null) {

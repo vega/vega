@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Area charts showing average daily temperatures in Seattle for each hour of the day.",
   "width": 800,
   "padding": 5,
 
@@ -20,8 +21,8 @@
   "data": [
     {
       "name": "temperature",
-      "url": "data/seattle-temps.csv",
-      "format": {"type": "csv", "parse": {"temp": "number", "date": "date"}},
+      "url": "data/seattle-weather-hourly-normals.csv",
+      "format": {"type": "csv", "parse": {"temperature": "number", "date": "date"}},
       "transform": [
         {"type": "formula", "as": "hour", "expr": "hours(datum.date)"},
         { "type": "formula", "as": "date",
@@ -49,7 +50,7 @@
     {
       "name": "y",
       "type": "linear", "zero": false,
-      "domain": {"data": "temperature", "field": "temp"},
+      "domain": {"data": "temperature", "field": "temperature"},
       "range": [{"signal": "rangeStep"}, 1]
     }
   ],
@@ -94,7 +95,7 @@
           "encode": {
             "enter": {
               "x": {"scale": "x", "field": "date"},
-              "y": {"scale": "y", "field": "temp"},
+              "y": {"scale": "y", "field": "temperature"},
               "y2": {"signal": "rangeStep"}
             }
           }

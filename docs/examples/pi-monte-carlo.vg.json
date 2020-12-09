@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Estimating the value of π via random sampling methods.",
   "autosize": "pad",
   "padding": 5,
   "height": 380,
@@ -57,10 +58,9 @@
   ],
 
   "layout": {
-    "padding": 10,
-    "offset": 20,
-    "bounds": "full",
-    "align": "all"
+    "padding": 70,
+    "bounds": "flush",
+    "align": "none"
   },
 
   "marks": [

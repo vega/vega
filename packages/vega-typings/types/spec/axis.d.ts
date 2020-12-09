@@ -7,7 +7,7 @@ import {
   TimeInterval,
 } from '.';
 import { Text } from './encode';
-import { LayoutAlign } from './layout';
+import { TimeIntervalStep } from './scale';
 import {
   AlignValue,
   AnchorValue,
@@ -18,6 +18,7 @@ import {
   FontWeightValue,
   NumberValue,
   StringValue,
+  StrokeCapValue,
   TextBaselineValue,
 } from './values';
 
@@ -25,7 +26,7 @@ export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
 export type LabelOverlap = boolean | 'parity' | 'greedy';
 
-export type TickCount = number | TimeInterval | SignalRef;
+export type TickCount = number | TimeInterval | TimeIntervalStep | SignalRef;
 
 export type FormatType = 'number' | 'time' | 'utc';
 
@@ -48,7 +49,7 @@ export interface Axis extends BaseAxis {
    *
    * __Default value:__ `"bottom"` for x-axes and `"left"` for y-axes.
    */
-  orient: AxisOrient;
+  orient: AxisOrient | SignalRef;
 
   /**
    * The name of the scale backing the axis component.
@@ -107,14 +108,6 @@ export interface Axis extends BaseAxis {
   values?: any[] | SignalRef;
 
   /**
-   * The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups.
-   *
-   * @TJS-type integer
-   * @minimum 0
-   */
-  zindex?: number;
-
-  /**
    * Mark definitions for custom axis encoding.
    */
   encode?: AxisEncode;
@@ -149,9 +142,11 @@ export interface AxisEncode {
 
 export interface BaseAxis {
   /**
-   * Translation offset in pixels applied to the axis group mark x and y. If specified, overrides the default behavior of a 0.5 offset to pixel-align stroked lines.
+   * Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case translate can be changed (for example, to zero).
+   *
+   * __Default value:__ `0.5`
    */
-  translate?: number;
+  translate?: NumberValue;
 
   /**
    * The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles.
@@ -173,6 +168,22 @@ export interface BaseAxis {
    *  __Default value:__ `0.5`
    */
   bandPosition?: NumberValue;
+
+  // ---------- ARIA ----------
+  /**
+   * A boolean flag indicating if [ARIA attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) should be included (SVG output only).
+   * If `false`, the "aria-hidden" attribute will be set on the output SVG group, removing the axis from the ARIA accessibility tree.
+   *
+   * __Default value:__ `true`
+   */
+  aria?: boolean;
+
+  /**
+   * A text description of this axis for [ARIA accessibility](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) (SVG output only).
+   * If the `aria` property is true, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description.
+   * If the description is unspecified it will be automatically generated.
+   */
+  description?: string;
 
   // ---------- Title ----------
   /**
@@ -206,7 +217,7 @@ export interface BaseAxis {
   titleY?: NumberValue;
 
   /**
-   * Vertical text baseline for axis titles.
+   * Vertical text baseline for axis titles. One of `"alphabetic"` (default), `"top"`, `"middle"`, `"bottom"`, `"line-top"`, or `"line-bottom"`. The `"line-top"` and `"line-bottom"` values operate similarly to `"top"` and `"bottom"`, but are calculated relative to the *lineHeight* rather than *fontSize* alone.
    */
   titleBaseline?: TextBaselineValue;
 
@@ -246,7 +257,7 @@ export interface BaseAxis {
   titleLimit?: NumberValue;
 
   /**
-   * Line height in pixels for multi-line title text.
+   * Line height in pixels for multi-line title text or title text with `"line-top"` or `"line-bottom"` baseline.
    */
   titleLineHeight?: NumberValue;
 
@@ -262,6 +273,13 @@ export interface BaseAxis {
    * __Default value:__ `true`
    */
   domain?: boolean;
+
+  /**
+   * The stroke cap for the domain line's ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+  domainCap?: StrokeCapValue;
 
   /**
    * An array of alternating [stroke, space] lengths for dashed domain lines.
@@ -301,9 +319,17 @@ export interface BaseAxis {
   ticks?: BooleanValue;
 
   /**
-   * For band scales, indicates if ticks and grid lines should be placed at the center of a band (default) or at the band extents to indicate intervals.
+   * For band scales, indicates if ticks and grid lines should be placed at the `"center"` of a band (default) or at the band `"extent"`s to indicate intervals
    */
   tickBand?: 'center' | 'extent' | SignalRef;
+
+  /**
+   * The stroke cap for the tick lines' ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+
+  tickCap?: StrokeCapValue;
 
   /**
    * The color of the axis's tick.
@@ -367,6 +393,13 @@ export interface BaseAxis {
   grid?: boolean;
 
   /**
+   * The stroke cap for grid lines' ending style. One of `"butt"`, `"round"` or `"square"`.
+   *
+   * __Default value:__ `"butt"`
+   */
+  gridCap?: StrokeCapValue;
+
+  /**
    * Color of gridlines.
    *
    * __Default value:__ `"lightGray"`.
@@ -414,7 +447,8 @@ export interface BaseAxis {
   labelAlign?: AlignValue;
 
   /**
-   * Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation. Can be `"top"`, `"middle"`, `"bottom"`, or `"alphabetic"`.
+   * Vertical text baseline of axis tick labels, overriding the default setting for the current axis orientation.
+   * One of `"alphabetic"` (default), `"top"`, `"middle"`, `"bottom"`, `"line-top"`, or `"line-bottom"`. The `"line-top"` and `"line-bottom"` values operate similarly to `"top"` and `"bottom"`, but are calculated relative to the *lineHeight* rather than *fontSize* alone.
    */
   labelBaseline?: TextBaselineValue;
 
@@ -436,6 +470,11 @@ export interface BaseAxis {
    * __Default value:__ `0`.
    */
   labelFlushOffset?: number | SignalRef;
+
+  /**
+   * Line height in pixels for multi-line label text or label text with `"line-top"` or `"line-bottom"` baseline.
+   */
+  labelLineHeight?: NumberValue;
 
   /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
@@ -497,10 +536,24 @@ export interface BaseAxis {
   labelOpacity?: NumberValue;
 
   /**
+   * Position offset in pixels to apply to labels, in addition to tickOffset.
+   *
+   * __Default value:__ `0`
+   */
+  labelOffset?: NumberValue;
+
+  /**
    * The padding in pixels between labels and ticks.
    *
    * __Default value:__ `2`
    */
-
   labelPadding?: NumberValue;
+
+  /**
+   * The integer z-index indicating the layering of the axis group relative to other axis, mark, and legend groups.
+   *
+   * @TJS-type integer
+   * @minimum 0
+   */
+  zindex?: number;
 }

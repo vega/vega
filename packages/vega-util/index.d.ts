@@ -9,6 +9,7 @@ export function accessorName(fn: AccessorFn): string;
 
 export type Order = 'ascending' | 'descending';
 
+export function ascending(a: any, b: any): number;
 export function compare(fields: string | readonly string[] | AccessorFn | readonly AccessorFn[], orders?: Order | readonly Order[]): (a: any, b: any) => number;
 
 export function constant<V>(v: V): () => V;
@@ -35,6 +36,7 @@ export function isArray<T>(a: any | readonly T[]): a is readonly T[];
 export function isBoolean(a: any): a is boolean;
 export function isDate(a: any): a is Date;
 export function isFunction(a: any): a is Function;
+export function isIterable(a: any): boolean;
 export function isNumber(a: any): a is number;
 export function isObject(a: any): a is object;
 export function isRegExp(a: any): a is RegExp;
@@ -52,7 +54,8 @@ export function toString(a: any): string;
 export function extend<T>(target: T, ...source: readonly Partial<T>[]): T;
 export function inherits<C extends object, P extends object>(
   child: C,
-  parent: P
+  parent: P,
+  members?: object
 ): C & P;
 
 export function hasOwnProperty(object: object, property: PropertyKey): boolean;
@@ -143,14 +146,16 @@ export function truncate(a: string, length: number,
 // Logging
 
 export interface LoggerInterface {
-  level: (_: number) => number | LoggerInterface;
-  error(...args: readonly any[]): LoggerInterface;
-  warn(...args: readonly any[]): LoggerInterface;
-  info(...args: readonly any[]): LoggerInterface;
-  debug(...args: readonly any[]): LoggerInterface;
+  level(_: number): this;
+  level(): number;
+  error(...args: readonly any[]): this;
+  warn(...args: readonly any[]): this;
+  info(...args: readonly any[]): this;
+  debug(...args: readonly any[]): this;
 }
 
 export const None: number;
+export const Error: number;
 export const Warn: number;
 export const Info: number;
 export const Debug: number;

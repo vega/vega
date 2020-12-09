@@ -1,5 +1,5 @@
 export default function Heap(cmp) {
-  var nodes = [];
+  let nodes = [];
   return {
     clear: () => nodes = [],
     size: () => nodes.length,
@@ -9,7 +9,8 @@ export default function Heap(cmp) {
       return siftdown(nodes, 0, nodes.length - 1, cmp);
     },
     pop: () => {
-      var last = nodes.pop(), item;
+      const last = nodes.pop();
+      let item;
       if (nodes.length) {
         item = nodes[0];
         nodes[0] = last;
@@ -23,9 +24,9 @@ export default function Heap(cmp) {
 }
 
 function siftdown(array, start, idx, cmp) {
-  var item, parent, pidx;
+  let parent, pidx;
 
-  item = array[idx];
+  const item = array[idx];
   while (idx > start) {
     pidx = (idx - 1) >> 1;
     parent = array[pidx];
@@ -40,10 +41,10 @@ function siftdown(array, start, idx, cmp) {
 }
 
 function siftup(array, idx, cmp) {
-  var start = idx,
-      end = array.length,
-      item = array[idx],
-      cidx = (idx << 1) + 1, ridx;
+  const start = idx,
+        end = array.length,
+        item = array[idx];
+  let cidx = (idx << 1) + 1, ridx;
 
   while (cidx < end) {
     ridx = cidx + 1;

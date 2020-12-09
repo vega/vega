@@ -3,19 +3,20 @@ import {DegToRad, HalfPi} from '../util/constants';
 import {font, lineHeight, offset, textLines, textMetrics, textValue} from '../util/text';
 import {intersectBoxLine} from '../util/intersect';
 import {visit} from '../util/visit';
+import blend from '../util/canvas/blend';
 import fill from '../util/canvas/fill';
 import {pick} from '../util/canvas/pick';
 import stroke from '../util/canvas/stroke';
-import {translate, rotate} from '../util/svg/transform';
+import {rotate, translate} from '../util/svg/transform';
 import {isArray} from 'vega-util';
 
-var textAlign = {
+const textAlign = {
   'left':   'start',
   'center': 'middle',
   'right':  'end'
 };
 
-var tempBounds = new Bounds();
+const tempBounds = new Bounds();
 
 function anchorPoint(item) {
   var x = item.x || 0,
@@ -93,7 +94,7 @@ function bound(bounds, item, mode) {
 }
 
 function draw(context, scene, bounds) {
-  visit(scene, function(item) {
+  visit(scene, item => {
     var opacity = item.opacity == null ? 1 : item.opacity,
         p, x, y, i, lh, tl, str;
 
@@ -118,6 +119,7 @@ function draw(context, scene, bounds) {
     y += (item.dy || 0) + offset(item);
 
     tl = textLines(item);
+    blend(context, item);
     if (isArray(tl)) {
       lh = lineHeight(item);
       for (i=0; i<tl.length; ++i) {
@@ -163,7 +165,7 @@ function hit(context, item, x, y, gx, gy) {
 }
 
 function intersectText(item, box) {
-  var p = bound(tempBounds, item, 2);
+  const p = bound(tempBounds, item, 2);
   return intersectBoxLine(box, p[0], p[1], p[2], p[3])
       || intersectBoxLine(box, p[0], p[1], p[4], p[5])
       || intersectBoxLine(box, p[4], p[5], p[6], p[7])

@@ -1,7 +1,7 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('timeUnits standardizes time units', function(t) {
+tape('timeUnits standardizes time units', t => {
   t.deepEqual(vega.timeUnits('year'), ['year']);
   t.deepEqual(vega.timeUnits(['year']), ['year']);
 
@@ -12,6 +12,9 @@ tape('timeUnits standardizes time units', function(t) {
   t.deepEqual(vega.timeUnits(['year', 'week', 'day']), ['year', 'week', 'day']);
   t.deepEqual(vega.timeUnits(['year', 'day', 'week']), ['year', 'week', 'day']);
   t.deepEqual(vega.timeUnits(['day', 'week', 'year']), ['year', 'week', 'day']);
+
+  t.deepEqual(vega.timeUnits(['year', 'dayofyear']), ['year', 'dayofyear']);
+  t.deepEqual(vega.timeUnits(['dayofyear', 'year']), ['year', 'dayofyear']);
 
   t.deepEqual(vega.timeUnits(['hours', 'minutes', 'seconds']), ['hours', 'minutes', 'seconds']);
   t.deepEqual(vega.timeUnits(['hours', 'seconds', 'minutes']), ['hours', 'minutes', 'seconds']);
@@ -25,8 +28,13 @@ tape('timeUnits standardizes time units', function(t) {
   t.throws(() => vega.timeUnits(['month', 'week']));
   t.throws(() => vega.timeUnits(['quarter', 'day']));
   t.throws(() => vega.timeUnits(['month', 'day']));
+  t.throws(() => vega.timeUnits(['quarter', 'dayofyear']));
+  t.throws(() => vega.timeUnits(['month', 'dayofyear']));
   t.throws(() => vega.timeUnits(['date', 'day']));
+  t.throws(() => vega.timeUnits(['date', 'dayofyear']));
+  t.throws(() => vega.timeUnits(['day', 'dayofyear']));
   t.throws(() => vega.timeUnits(['week', 'date']));
+  t.throws(() => vega.timeUnits(['week', 'dayofyear']));
 
   t.end();
 });

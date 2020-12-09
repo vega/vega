@@ -1,4 +1,4 @@
-import {Left, Right, Center, Start, End, Vertical} from './constants';
+import {Center, End, Left, Right, Start, Vertical} from './constants';
 import {value} from '../../util';
 import {isObject, stringValue} from 'vega-util';
 
@@ -29,7 +29,7 @@ export function lookup(spec, config) {
 }
 
 export function getEncoding(name, encode) {
-  var v = encode && (
+  const v = encode && (
     (encode.update && encode.update[name]) ||
     (encode.enter && encode.enter[name])
   );
@@ -37,12 +37,12 @@ export function getEncoding(name, encode) {
 }
 
 export function getStyle(name, scope, style) {
-  var s = scope.config.style[style];
+  const s = scope.config.style[style];
   return s && s[name];
 }
 
 export function anchorExpr(s, e, m) {
-  return `item.anchor === "${Start}" ? ${s} : item.anchor === "${End}" ? ${e} : ${m}`;
+  return `item.anchor === '${Start}' ? ${s} : item.anchor === '${End}' ? ${e} : ${m}`;
 }
 
 export const alignExpr = anchorExpr(
@@ -52,8 +52,8 @@ export const alignExpr = anchorExpr(
 );
 
 export function tickBand(_) {
-  let v = _('tickBand'),
-      offset = _('tickOffset'),
+  const v = _('tickBand');
+  let offset = _('tickOffset'),
       band, extra;
 
   if (!v) {
@@ -62,10 +62,10 @@ export function tickBand(_) {
     extra = _('tickExtra');
   } else if (v.signal) {
     // if signal, augment code to interpret values
-    band = {signal: `(${v.signal})==='extent'?1:0.5`};
-    extra = {signal: `(${v.signal})==='extent'?true:false`};
+    band = {signal: `(${v.signal}) === 'extent' ? 1 : 0.5`};
+    extra = {signal: `(${v.signal}) === 'extent'`};
     if (!isObject(offset)) {
-      offset = {signal: `(${v.signal})==='extent'?0:${offset}`};
+      offset = {signal: `(${v.signal}) === 'extent' ? 0 : ${offset}`};
     }
   } else if (v === 'extent') {
     // if constant, simply set values
@@ -78,4 +78,11 @@ export function tickBand(_) {
   }
 
   return {extra, band, offset};
+}
+
+export function extendOffset(value, offset) {
+  return !offset ? value
+    : !value ? offset
+    : !isObject(value) ? { value, offset }
+    : Object.assign({}, value, { offset: extendOffset(value.offset, offset) });
 }

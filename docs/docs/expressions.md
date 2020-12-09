@@ -56,7 +56,7 @@ If the expression is being invoked in response to an event, an _event_ variable 
 <a name="signal" href="#signal">#</a>
 <i>signal names</i>
 
-Any in-scope signal value can be referenced directly by name. For example, if you have defined a signal named `hover` within your Vega specification, you can refer to it directly within an expression (e.g., `hover.value`).
+Any in-scope signal value can be referenced directly by name. For example, if you have defined a signal named `hover` within your Vega specification, you can refer to it directly within an expression (e.g., `hover.value`). Similarly, to lookup an object property whose name is bound to the signal `property_name`, you could use `datum[property_name]`.
 
 [Back to Top](#reference)
 
@@ -351,6 +351,10 @@ Returns the day of the month for the given _datetime_ value, in local time.
 <b>day</b>(<i>datetime</i>)<br/>
 Returns the day of the week for the given _datetime_ value, in local time.
 
+<a name="dayofyear" href="#dayofyear">#</a>
+<b>dayofyear</b>(<i>datetime</i>) {% include tag ver="5.11" %}<br/>
+Returns the one-based day of the year for the given _datetime_ value, in local time.
+
 <a name="year" href="#year">#</a>
 <b>year</b>(<i>datetime</i>)<br/>
 Returns the year for the given _datetime_ value, in local time.
@@ -362,6 +366,10 @@ Returns the quarter of the year (0-3) for the given _datetime_ value, in local t
 <a name="month" href="#month">#</a>
 <b>month</b>(<i>datetime</i>)<br/>
 Returns the (zero-based) month for the given _datetime_ value, in local time.
+
+<a name="week" href="#week">#</a>
+<b>week</b>(<i>date</i>) {% include tag ver="5.11" %}<br/>
+Returns the week number of the year for the given _datetime_, in local time. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 
 <a name="hours" href="#hours">#</a>
 <b>hours</b>(<i>datetime</i>)<br/>
@@ -407,6 +415,10 @@ Returns the day of the month for the given _datetime_ value, in UTC time.
 <b>utcday</b>(<i>datetime</i>)<br/>
 Returns the day of the week for the given _datetime_ value, in UTC time.
 
+<a name="utcdayofyear" href="#utcdayofyear">#</a>
+<b>utcdayofyear</b>(<i>datetime</i>) {% include tag ver="5.11" %}<br/>
+Returns the one-based day of the year for the given _datetime_ value, in UTC time.
+
 <a name="utcyear" href="#utcyear">#</a>
 <b>utcyear</b>(<i>datetime</i>)<br/>
 Returns the year for the given _datetime_ value, in UTC time.
@@ -418,6 +430,10 @@ Returns the quarter of the year (0-3) for the given _datetime_ value, in UTC tim
 <a name="utcmonth" href="#utcmonth">#</a>
 <b>utcmonth</b>(<i>datetime</i>)<br/>
 Returns the (zero-based) month for the given _datetime_ value, in UTC time.
+
+<a name="utcweek" href="#utcweek">#</a>
+<b>utcweek</b>(<i>date</i>) {% include tag ver="5.11" %}<br/>
+Returns the week number of the year for the given _datetime_, in UTC time. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 
 <a name="utchours" href="#utchours">#</a>
 <b>utchours</b>(<i>datetime</i>)<br/>

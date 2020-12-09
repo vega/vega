@@ -3,7 +3,7 @@ import {default as Pulse, StopPropagation} from '../Pulse';
 import MultiPulse from '../MultiPulse';
 import asyncCallback from '../util/asyncCallback';
 import UniqueList from '../util/UniqueList';
-import {id, isArray, Info, Debug} from 'vega-util';
+import {id, isArray} from 'vega-util';
 
 /**
  * Evaluates the dataflow and returns a Promise that resolves when pulse
@@ -27,41 +27,34 @@ import {id, isArray, Info, Debug} from 'vega-util';
  */
 export async function evaluate(encode, prerun, postrun) {
   const df = this,
-        level = df.logLevel(),
         async = [];
 
   // if the pulse value is set, this is a re-entrant call
   if (df._pulse) return reentrant(df);
 
   // wait for pending datasets to load
-  if (df._pending) {
-    await df._pending;
-  }
+  if (df._pending) await df._pending;
 
   // invoke prerun function, if provided
   if (prerun) await asyncCallback(df, prerun);
 
   // exit early if there are no updates
   if (!df._touched.length) {
-    df.info('Dataflow invoked, but nothing to do.');
+    df.debug('Dataflow invoked, but nothing to do.');
     return df;
   }
 
   // increment timestamp clock
-  let stamp = ++df._clock,
-      count = 0, op, next, dt, error;
+  const stamp = ++df._clock;
 
   // set the current pulse
   df._pulse = new Pulse(df, stamp, encode);
 
-  if (level >= Info) {
-    dt = Date.now();
-    df.debug('-- START PROPAGATION (' + stamp + ') -----');
-  }
-
   // initialize priority queue, reset touched operators
   df._touched.forEach(op => df._enqueue(op, true));
   df._touched = UniqueList(id);
+
+  let count = 0, op, next, error;
 
   try {
     while (df._heap.size() > 0) {
@@ -69,7 +62,10 @@ export async function evaluate(encode, prerun, postrun) {
       op = df._heap.pop();
 
       // re-queue if rank changed
-      if (op.rank !== op.qrank) { df._enqueue(op, true); continue; }
+      if (op.rank !== op.qrank) {
+        df._enqueue(op, true);
+        continue;
+      }
 
       // otherwise, evaluate the operator
       next = op.run(df._getPulse(op, encode));
@@ -81,10 +77,6 @@ export async function evaluate(encode, prerun, postrun) {
         // queue parallel asynchronous execution
         async.push(next.async);
         next = StopPropagation;
-      }
-
-      if (level >= Debug) {
-        df.debug(op.id, next === StopPropagation ? 'STOP' : next, op);
       }
 
       // propagate evaluation, enqueue dependent operators
@@ -104,10 +96,7 @@ export async function evaluate(encode, prerun, postrun) {
   df._input = {};
   df._pulse = null;
 
-  if (level >= Info) {
-    dt = Date.now() - dt;
-    df.info('> Pulse ' + stamp + ': ' + count + ' operators; ' + dt + 'ms');
-  }
+  df.debug(`Pulse ${stamp}: ${count} operators`);
 
   if (error) {
     df._postrun = [];
@@ -128,9 +117,10 @@ export async function evaluate(encode, prerun, postrun) {
 
   // handle non-blocking asynchronous callbacks
   if (async.length) {
-    Promise.all(async).then(cb => df.runAsync(null, () => {
-      cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
-    }));
+    Promise.all(async)
+      .then(cb => df.runAsync(null, () => {
+        cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
+      }));
   }
 
   return df;
@@ -244,7 +234,7 @@ function reentrant(df) {
  *   dataflow graph is dynamically modified and the operator rank changes.
  */
 export function enqueue(op, force) {
-  var q = op.stamp < this._clock;
+  const q = op.stamp < this._clock;
   if (q) op.stamp = this._clock;
   if (q || force) {
     op.qrank = op.rank;
@@ -265,8 +255,8 @@ export function enqueue(op, force) {
  *   annotate the returned pulse. See {@link run} for more information.
  */
 export function getPulse(op, encode) {
-  var s = op.source,
-      stamp = this._clock;
+  const s = op.source,
+        stamp = this._clock;
 
   return s && isArray(s)
     ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)

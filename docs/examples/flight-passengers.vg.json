@@ -1,0 +1,142 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Passenger Traffic at Seattle-Tacoma International Airport, Percentage Change from October 2019 to March 2020",
+  "width": 500,
+  "height": 250,
+  "autosize": {"type": "fit", "contains": "padding"},
+  "background": "#fff",
+  "padding": 5,
+
+  "config": {
+    "axis": {
+      "domain": false,
+      "labelColor": "#555",
+      "ticks": false,
+      "titleColor": "#555"
+    }
+  },
+
+  "data": [
+    {
+      "name": "traffic",
+      "values": [
+        {"date": "2019-10-01", "curr": 4292562, "prev": 4044655},
+        {"date": "2019-11-01", "curr": 3892767, "prev": 3817267},
+        {"date": "2019-12-01", "curr": 4320042, "prev": 3937790},
+        {"date": "2020-01-01", "curr": 3764192, "prev": 3560276},
+        {"date": "2020-02-01", "curr": 3620083, "prev": 3192656},
+        {"date": "2020-03-01", "curr": 1824676, "prev": 4111729},
+        {"date": "2020-04-01", "curr":  259153, "prev": 4033516}
+      ],
+      "format": {
+        "type": "json",
+        "parse": {"date": "date"}
+      },
+      "transform": [
+        {
+          "type": "timeunit",
+          "units": ["year", "month"],
+          "field": "date"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.curr / datum.prev - 1",
+          "as": "change"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "range": "width",
+      "padding": 24,
+      "domain": {"data": "traffic", "field": "unit0"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "traffic", "field": "change"}
+    }
+  ],
+
+  "title": {
+    "text": "Passenger Traffic at Seattle-Tacoma International Airport, One Year to the Next",
+    "subtitle": "Source: Port of Seattle, Airport Statistics",
+    "subtitleFontStyle": "italic",
+    "subtitlePadding": 5,
+    "frame": "bounds",
+    "anchor": "start",
+    "offset": 12,
+    "zindex": 0
+  },
+
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "x",
+      "format": "%b %Y",
+      "labelPadding": 10,
+      "zindex": 1
+    },
+    {
+      "orient": "left",
+      "scale": "y",
+      "format": "+%",
+      "grid": true,
+      "gridColor": {"signal": "datum.value ? '#eee' : '#888'"},
+      "gridDash": {"signal": "datum.value ? [] : [5, 4]"},
+      "tickCount": 5,
+      "labelOpacity": {"signal": "datum.value ? 1 : 0"},
+      "title": "Change from Prior Year",
+      "titleAlign": "left",
+      "titleAngle": 0,
+      "titleAnchor": "end",
+      "titleBaseline": "middle",
+      "titleFontSize": 10,
+      "titleFontWeight": "normal",
+      "titleX": 1,
+      "zindex": 1
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "line",
+      "aria": false,
+      "from": {"data": "traffic"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "unit0"},
+          "y": {"scale": "y", "field": "change"},
+          "stroke": {"value": "steelblue"},
+          "strokeWidth": {"value": 3}
+        }
+      },
+      "zindex": 2
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "traffic"},
+      "encode": {
+        "enter": {
+          "description": {
+            "signal": "timeFormat(datum.unit0, '%B %Y') + ': ' + format(datum.change, '+.1%') + ' change from prior year'"
+          },
+          "tooltip": {
+            "signal": "format(datum.change, '+.1%')"
+          },
+          "x": {"scale": "x", "field": "unit0"},
+          "y": {"scale": "y", "field": "change"},
+          "fill": {"value": "steelblue"}
+        }
+      },
+      "zindex": 2
+    }
+  ]
+}

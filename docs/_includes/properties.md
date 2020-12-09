@@ -21,6 +21,7 @@
 | strokeDashOffset  | {% include type t="Number" %} | The pixel offset at which to start the stroke dash array.|
 | strokeJoin        | {% include type t="String" %} | The stroke line join method. One of `miter` (default), `round` or `bevel`.|
 | strokeMiterLimit  | {% include type t="Number" %} | The miter limit at which to bevel a line join.|
+| blend             | {% include type t="String" %} | The color blend mode for drawing an item on its current background. Any valid [CSS mix-blend-mode](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode) value except for `"normal"` can be used. The default value `null` maps to blend values of [normal](https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode) for SVG and [source-over](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation) for Canvas.|
 | cursor            | {% include type t="String" %} | The mouse cursor used over the mark. Any valid [CSS cursor type](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor#Values) can be used.|
 | href              | {% include type t="URL" %}    | A URL to load upon mouse click. If defined, the mark acts as a hyperlink.|
 | tooltip           | {% include type t="Any" %} | The tooltip text to show upon mouse hover. If the value is an object (other than a Date or an array), then all key-value pairs in the object will be shown in the tooltip, one per line (e.g., `"key1: value1\nkey2: value2"`). Array values will be shown in brackets `[value1, value2, ...]`.  Other values will be coerced to strings. Nested object values will _not_ be recursively printed.|
@@ -31,3 +32,12 @@ For marks that support width and height settings (including `rect` and `area`), 
 For marks that do not support width or height (including `path` and `arc`) similar calculations are applied, but are only used to determine the mark's ultimate _x_ and _y_ position. The _width_ property may affect the final _x_ position, but otherwise is not visualized.
 
 When using multiple spatial properties along the same dimension (_x_ and _x2_, or _y_ and _y2_), the properties **must** be specified in the same encoding set; for example, all within `"enter": {...}` or all within `"update": {...}`. Dividing the properties across encoding sets can cause unexpected behavior.
+
+### Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output. Vega will automatically generate ARIA attributes for container SVG `<g>` elements for each mark definition; this can be configured using [mark-level accessibility properties](/docs/marks/#accessibility). Use the properties below in encode sets to add ARIA attributes for individual mark items.
+
+| Property          | Type                          | Description  |
+| :---------------- | :---------------------------: | :------------|
+| aria              | {% include type t="Boolean" %}| A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG element, removing the mark item from the ARIA accessibility tree. |
+| description       | {% include type t="String" %} | A text description of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute). |

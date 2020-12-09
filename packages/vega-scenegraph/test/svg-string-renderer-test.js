@@ -5,11 +5,11 @@ var tape = require('tape'),
     Bounds = vega.Bounds,
     Renderer = vega.SVGStringRenderer;
 
-var res = './test/resources/';
-var GENERATE = require('./resources/generate-tests');
+const res = './test/resources/';
+const GENERATE = require('./resources/generate-tests');
 
-var marks = JSON.parse(load('marks.json'));
-for (var name in marks) { vega.sceneFromJSON(marks[name]); }
+const marks = JSON.parse(load('marks.json'));
+for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, str) {
   if (GENERATE) fs.writeFileSync(res + path, str);
@@ -24,7 +24,7 @@ function loadScene(file) {
 }
 
 function render(scene, w, h) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
   return new Renderer()
     .initialize(null, w, h)
     .render(scene)
@@ -32,48 +32,57 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  vega.resetSVGClipId();
+  vega.resetSVGDefIds();
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
-    .then(function(r) { callback(r.svg()); });
+    .then(r => { callback(r.svg()); });
 }
 
-tape('SVGStringRenderer should build empty group for item-less area mark', function(t) {
-  var r = new Renderer();
-  var str = r.mark({marktype: 'area', items:[]});
+tape('SVGStringRenderer should build empty group for item-less area mark', t => {
+  const r = new Renderer();
+  const str = r.mark(vega.markup(), {marktype: 'area', items:[]}) + '';
   generate('svg/marks-itemless-area.svg', str);
-  var file = load('svg/marks-itemless-area.svg');
+  const file = load('svg/marks-itemless-area.svg');
   t.equal(str, file);
   t.end();
 });
 
-tape('SVGStringRenderer should build empty group for item-less line mark', function(t) {
-  var r = new Renderer();
-  var str = r.mark({marktype: 'line', items:[]});
+tape('SVGStringRenderer should build empty group for item-less line mark', t => {
+  const r = new Renderer();
+  const str = r.mark(vega.markup(), {marktype: 'line', items:[]}) + '';
   generate('svg/marks-itemless-line.svg', str);
-  var file = load('svg/marks-itemless-line.svg');
+  const file = load('svg/marks-itemless-line.svg');
   t.equal(str, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render scenegraph to SVG string', function(t) {
-  var scene = loadScene('scenegraph-rect.json');
-  var str = render(scene, 400, 200);
+tape('SVGStringRenderer should render scenegraph to SVG string', t => {
+  const scene = loadScene('scenegraph-rect.json');
+  const str = render(scene, 400, 200);
   generate('svg/scenegraph-rect.svg', str);
-  var file = load('svg/scenegraph-rect.svg');
+  const file = load('svg/scenegraph-rect.svg');
   t.equal(str, file);
   t.end();
 });
 
-tape('SVGStringRenderer should support clipping and gradients', function(t) {
-  var scene = loadScene('scenegraph-defs.json');
-  var str = render(scene, 102, 102);
+tape('SVGStringRenderer should support descriptions', t => {
+  const scene = loadScene('scenegraph-description.json');
+  const str = render(scene, 400, 200);
+  generate('svg/scenegraph-description.svg', str);
+  const file = load('svg/scenegraph-description.svg');
+  t.equal(str, file);
+  t.end();
+});
+
+tape('SVGStringRenderer should support clipping and gradients', t => {
+  const scene = loadScene('scenegraph-defs.json');
+  let str = render(scene, 102, 102);
   generate('svg/scenegraph-defs.svg', str);
-  var file = load('svg/scenegraph-defs.svg');
+  let file = load('svg/scenegraph-defs.svg');
   t.equal(str, file);
 
-  var scene2 = loadScene('scenegraph-defs.json');
+  const scene2 = loadScene('scenegraph-defs.json');
   delete scene2.items[0].clip;
   scene2.items[0].fill = 'red';
   str = render(scene2, 102, 102);
@@ -84,34 +93,34 @@ tape('SVGStringRenderer should support clipping and gradients', function(t) {
   t.end();
 });
 
-tape('SVGStringRenderer should support axes, legends and sub-groups', function(t) {
-  var scene = loadScene('scenegraph-barley.json');
-  var str = render(scene, 360, 740);
+tape('SVGStringRenderer should support axes, legends and sub-groups', t => {
+  const scene = loadScene('scenegraph-barley.json');
+  const str = render(scene, 360, 740);
   generate('svg/scenegraph-barley.svg', str);
-  var file = load('svg/scenegraph-barley.svg');
+  const file = load('svg/scenegraph-barley.svg');
   t.equal(str, file);
   t.end();
 });
 
-tape('SVGStringRenderer should support full redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support full redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var mark = scene.items[0].items[0].items;
-  var rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
+  const mark = scene.items[0].items[0].items;
+  const rect = mark[1]; rect.fill = 'red'; rect.width *= 2;
   mark.push({
     mark:mark, x:0, y:0, width:10, height:10, fill:'purple'
   });
   r.render(scene);
 
-  var str = r.svg();
+  let str = r.svg();
   generate('svg/scenegraph-full-redraw.svg', str);
-  var file = load('svg/scenegraph-full-redraw.svg');
+  let file = load('svg/scenegraph-full-redraw.svg');
   t.equal(str, file);
 
   mark.pop();
@@ -125,124 +134,124 @@ tape('SVGStringRenderer should support full redraw', function(t) {
   t.end();
 });
 
-tape('SVGStringRenderer should support enter-item redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support enter-item redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rects = scene.items[0].items[0];
+  const rects = scene.items[0].items[0];
 
-  var rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
+  const rect1 = {x:10, y:10, width:50, height:50, fill:'red'};
   rect1.mark = rects;
   rect1.bounds = new Bounds().set(10, 10, 60, 60);
   rects.items.push(rect1);
 
-  var rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
+  const rect2 = {x:70, y:10, width:50, height:50, fill:'blue'};
   rect2.mark = rects;
   rect2.bounds = new Bounds().set(70, 10, 120, 60);
   rects.items.push(rect2);
 
-  var str = r.render(scene, [rect1, rect2]).svg();
+  const str = r.render(scene, [rect1, rect2]).svg();
   generate('svg/scenegraph-enter-redraw.svg', str);
-  var file = load('svg/scenegraph-enter-redraw.svg');
+  const file = load('svg/scenegraph-enter-redraw.svg');
   t.equal(str, file);
 
   t.end();
 });
 
-tape('SVGStringRenderer should support exit-item redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support exit-item redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rect = scene.items[0].items[0].items.pop();
+  const rect = scene.items[0].items[0].items.pop();
   rect.status = 'exit';
   r.render(scene, [rect]);
 
-  var str = r.svg();
+  const str = r.svg();
   generate('svg/scenegraph-exit-redraw.svg', str);
-  var file = load('svg/scenegraph-exit-redraw.svg');
+  const file = load('svg/scenegraph-exit-redraw.svg');
   t.equal(str, file);
 
   t.end();
 });
 
-tape('SVGStringRenderer should support single-item redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support single-item redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = loadScene('scenegraph-rect.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-rect.json');
+  const r = new Renderer()
     .initialize(null, 400, 200)
     .background('white')
     .render(scene);
 
-  var rect = scene.items[0].items[0].items[1];
+  const rect = scene.items[0].items[0].items[1];
   rect.fill = 'red';
   rect.width *= 2;
   r.render(scene, [rect]);
 
-  var str = r.svg();
+  const str = r.svg();
   generate('svg/scenegraph-single-redraw.svg', str);
-  var file = load('svg/scenegraph-single-redraw.svg');
+  const file = load('svg/scenegraph-single-redraw.svg');
   t.equal(str, file);
 
   t.end();
 });
 
-tape('SVGStringRenderer should support multi-item redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support multi-item redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
-  var r = new Renderer()
+  const scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
+  const r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
     .render(scene);
 
-  var line1 = scene.items[1]; line1.y = 5;                        // update
-  var line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
-  var line3 = {x:400, y:200}; line3.mark = scene;                 // enter
+  const line1 = scene.items[1]; line1.y = 5;                        // update
+  const line2 = scene.items.splice(2, 1)[0]; line2.status = 'exit'; // exit
+  const line3 = {x:400, y:200}; line3.mark = scene;                 // enter
   scene.items.push(line3);
 
-  var str = r.render(scene, [line1, line2, line3]).svg();
+  const str = r.render(scene, [line1, line2, line3]).svg();
   generate('svg/scenegraph-line-redraw.svg', str);
-  var file = load('svg/scenegraph-line-redraw.svg');
+  const file = load('svg/scenegraph-line-redraw.svg');
   t.equal(str, file);
 
   t.end();
 });
 
-tape('SVGStringRenderer should support enter-group redraw', function(t) {
-  vega.resetSVGClipId();
+tape('SVGStringRenderer should support enter-group redraw', t => {
+  vega.resetSVGDefIds();
 
-  var scene = loadScene('scenegraph-barley.json');
-  var r = new Renderer()
+  const scene = loadScene('scenegraph-barley.json');
+  const r = new Renderer()
     .initialize(null, 500, 600)
     .background('white')
     .render(scene);
 
-  var group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
+  const group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
   group.x = 200;
   group.mark = scene;
   scene.items.push(group);
 
-  var str = r.render(scene, [group]).svg();
+  const str = r.render(scene, [group]).svg();
   generate('svg/scenegraph-enter-group-redraw.svg', str);
-  var file = load('svg/scenegraph-enter-group-redraw.svg');
+  const file = load('svg/scenegraph-enter-group-redraw.svg');
   t.equal(str, file);
 
   t.end();
 });
 
-tape('SVGStringRenderer should handle empty item sets', function(t) {
-  var types = [
+tape('SVGStringRenderer should handle empty item sets', t => {
+  const types = [
     'arc',
     'area',
     'group',
@@ -256,7 +265,7 @@ tape('SVGStringRenderer should handle empty item sets', function(t) {
   ];
   var scene, file, str;
 
-  for (var i=0; i<types.length; ++i) {
+  for (let i=0; i<types.length; ++i) {
     scene = {marktype:types[i], items:[]};
     file = 'svg/marks-empty-' + types[i] + '.svg';
     str = render(scene, 500, 500);
@@ -267,67 +276,67 @@ tape('SVGStringRenderer should handle empty item sets', function(t) {
   t.end();
 });
 
-tape('SVGStringRenderer should render arc mark', function(t) {
-  var svg = render(marks.arc, 500, 500);
+tape('SVGStringRenderer should render arc mark', t => {
+  const svg = render(marks.arc, 500, 500);
   generate('svg/marks-arc.svg', svg);
-  var file = load('svg/marks-arc.svg');
+  const file = load('svg/marks-arc.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render horizontal area mark', function(t) {
-  var svg = render(marks['area-h'], 500, 500);
+tape('SVGStringRenderer should render horizontal area mark', t => {
+  const svg = render(marks['area-h'], 500, 500);
   generate('svg/marks-area-h.svg', svg);
-  var file = load('svg/marks-area-h.svg');
+  const file = load('svg/marks-area-h.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render vertical area mark', function(t) {
-  var svg = render(marks['area-v'], 500, 500);
+tape('SVGStringRenderer should render vertical area mark', t => {
+  const svg = render(marks['area-v'], 500, 500);
   generate('svg/marks-area-v.svg', svg);
-  var file = load('svg/marks-area-v.svg');
+  const file = load('svg/marks-area-v.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render area mark with breaks', function(t) {
-  var svg = render(marks['area-breaks'], 500, 500);
+tape('SVGStringRenderer should render area mark with breaks', t => {
+  const svg = render(marks['area-breaks'], 500, 500);
   generate('svg/marks-area-breaks.svg', svg);
-  var file = load('svg/marks-area-breaks.svg');
+  const file = load('svg/marks-area-breaks.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render trail mark', function(t) {
-  var svg = render(marks['trail'], 500, 500);
+tape('SVGStringRenderer should render trail mark', t => {
+  const svg = render(marks['trail'], 500, 500);
   generate('svg/marks-area-trail.svg', svg);
-  var file = load('svg/marks-area-trail.svg');
+  const file = load('svg/marks-area-trail.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render group mark', function(t) {
-  var svg = render(marks.group, 500, 500);
+tape('SVGStringRenderer should render group mark', t => {
+  const svg = render(marks.group, 500, 500);
   generate('svg/marks-group.svg', svg);
-  var file = load('svg/marks-group.svg');
+  const file = load('svg/marks-group.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render image mark', function(t) {
-  renderAsync(marks.image, 500, 500, function(svg) {
+tape('SVGStringRenderer should render image mark', t => {
+  renderAsync(marks.image, 500, 500, svg => {
     generate('svg/marks-image.svg', svg);
-    var file = load('svg/marks-image.svg');
+    const file = load('svg/marks-image.svg');
     t.equal(svg, file);
     t.end();
   });
 });
 
-tape('SVGStringRenderer should render line mark', function(t) {
-  var svg = render(marks['line-1'], 500, 500);
+tape('SVGStringRenderer should render line mark', t => {
+  let svg = render(marks['line-1'], 500, 500);
   generate('svg/marks-line-1.svg', svg);
-  var file = load('svg/marks-line-1.svg');
+  let file = load('svg/marks-line-1.svg');
   t.equal(svg, file);
 
   svg = render(marks['line-2'], 500, 500);
@@ -338,59 +347,59 @@ tape('SVGStringRenderer should render line mark', function(t) {
   t.end();
 });
 
-tape('SVGStringRenderer should render line mark with breaks', function(t) {
-  var svg = render(marks['line-breaks'], 500, 500);
+tape('SVGStringRenderer should render line mark with breaks', t => {
+  const svg = render(marks['line-breaks'], 500, 500);
   generate('svg/marks-line-breaks.svg', svg);
-  var file = load('svg/marks-line-breaks.svg');
+  const file = load('svg/marks-line-breaks.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render path mark', function(t) {
-  var svg = render(marks.path, 500, 500);
+tape('SVGStringRenderer should render path mark', t => {
+  const svg = render(marks.path, 500, 500);
   generate('svg/marks-path.svg', svg);
-  var file = load('svg/marks-path.svg');
+  const file = load('svg/marks-path.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render rect mark', function(t) {
-  var svg = render(marks.rect, 500, 500);
+tape('SVGStringRenderer should render rect mark', t => {
+  const svg = render(marks.rect, 500, 500);
   generate('svg/marks-rect.svg', svg);
-  var file = load('svg/marks-rect.svg');
+  const file = load('svg/marks-rect.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render rule mark', function(t) {
-  var svg = render(marks.rule, 500, 500);
+tape('SVGStringRenderer should render rule mark', t => {
+  const svg = render(marks.rule, 500, 500);
   generate('svg/marks-rule.svg', svg);
-  var file = load('svg/marks-rule.svg');
+  const file = load('svg/marks-rule.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render symbol mark', function(t) {
-  var svg = render(marks.symbol, 500, 500);
+tape('SVGStringRenderer should render symbol mark', t => {
+  const svg = render(marks.symbol, 500, 500);
   generate('svg/marks-symbol.svg', svg);
-  var file = load('svg/marks-symbol.svg');
+  const file = load('svg/marks-symbol.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should render text mark', function(t) {
-  var svg = render(marks.text, 500, 500);
+tape('SVGStringRenderer should render text mark', t => {
+  const svg = render(marks.text, 500, 500);
   generate('svg/marks-text.svg', svg);
-  var file = load('svg/marks-text.svg');
+  const file = load('svg/marks-text.svg');
   t.equal(svg, file);
   t.end();
 });
 
-tape('SVGStringRenderer should inject hyperlinks', function(t) {
-  var scene = loadScene('scenegraph-href.json');
-  renderAsync(scene, 400, 200, function(svg) {
+tape('SVGStringRenderer should inject hyperlinks', t => {
+  const scene = loadScene('scenegraph-href.json');
+  renderAsync(scene, 400, 200, svg => {
     generate('svg/scenegraph-href.svg', svg);
-    var file = load('svg/scenegraph-href.svg');
+    const file = load('svg/scenegraph-href.svg');
     t.equal(svg, file);
     t.end();
   });

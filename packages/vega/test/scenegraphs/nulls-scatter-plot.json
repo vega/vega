@@ -294,7 +294,7 @@
                       "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "Rotten_Tomatoes_Rating",
+                      "text": "Rotten Tomatoes Rating",
                       "angle": 0,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -305,7 +305,8 @@
                 }
               ],
               "x": 0.5,
-              "y": 413.5
+              "y": 413.5,
+              "orient": "bottom"
             }
           ],
           "zindex": 0
@@ -597,7 +598,7 @@
                       "baseline": "bottom",
                       "fill": "#000",
                       "opacity": 1,
-                      "text": "IMDB_Rating",
+                      "text": "IMDB Rating",
                       "angle": -90,
                       "font": "sans-serif",
                       "fontSize": 11,
@@ -608,7 +609,8 @@
                 }
               ],
               "x": -4.5,
-              "y": 0.5
+              "y": 0.5,
+              "orient": "left"
             }
           ],
           "zindex": 0

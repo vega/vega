@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A top-k bar chart ranking film directors by revenue.",
   "width": 500,
   "height": 410,
   "padding": 5,
@@ -33,13 +34,13 @@
       "transform": [
         {
           "type": "filter",
-          "expr": "datum.Director != null && datum.Worldwide_Gross != null"
+          "expr": "datum.Director != null && datum['Worldwide Gross'] != null"
         },
         {
           "type": "aggregate",
           "groupby": ["Director"],
           "ops": [{"signal": "op"}],
-          "fields": ["Worldwide_Gross"],
+          "fields": ["Worldwide Gross"],
           "as": ["Gross"]
         },
         {

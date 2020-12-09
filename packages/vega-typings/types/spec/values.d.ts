@@ -1,3 +1,5 @@
+import { Color } from './color';
+import { StrokeCap } from './config';
 import {
   Align,
   AlignValueRef,
@@ -13,13 +15,13 @@ import {
   Orient,
   OrientValueRef,
   StringValueRef,
+  StrokeCapValueRef,
   SymbolShape,
   SymbolShapeValueRef,
   TextBaseline,
   TextBaselineValueRef,
 } from './encode';
 import { TitleAnchor } from './title';
-import { Color } from './color';
 
 export type NumberValue = number | NumericValueRef;
 
@@ -32,6 +34,8 @@ export type StringValue = string | StringValueRef;
 export type ColorValue = null | Color | ColorValueRef;
 
 export type AlignValue = Align | AlignValueRef;
+
+export type StrokeCapValue = StrokeCap | StrokeCapValueRef;
 
 export type TextBaselineValue = TextBaseline | TextBaselineValueRef;
 

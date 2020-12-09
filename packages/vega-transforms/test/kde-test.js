@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = tx.collect,
     KDE = tx.kde;
 
-tape('KDE computes kernel density estimates', function(t) {
-  var data = [
+tape('KDE computes kernel density estimates', t => {
+  const data = [
     {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:2}, {k:'a', v:3},
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
@@ -27,7 +27,7 @@ tape('KDE computes kernel density estimates', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 22);
   t.equal(d[10].k, 'a');
   t.equal(d[10].value, 3);
@@ -39,8 +39,8 @@ tape('KDE computes kernel density estimates', function(t) {
   t.end();
 });
 
-tape('KDE computes estimates with shared configurations', function(t) {
-  var data = [
+tape('KDE computes estimates with shared configurations', t => {
+  const data = [
     {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:2}, {k:'a', v:3},
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
@@ -60,7 +60,7 @@ tape('KDE computes estimates with shared configurations', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 22);
   for (let i=0; i<11; ++i) {
     t.equal(d[i].value, d[i+11].value);
@@ -69,8 +69,8 @@ tape('KDE computes estimates with shared configurations', function(t) {
   t.end();
 });
 
-tape('KDE computes unnormalized kernel density estimates', function(t) {
-  var data = [
+tape('KDE computes unnormalized kernel density estimates', t => {
+  const data = [
     {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:2}, {k:'a', v:3},
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
@@ -91,7 +91,7 @@ tape('KDE computes unnormalized kernel density estimates', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  const d = out.value;
   t.equal(d.length, 22);
   t.equal(d[10].k, 'a');
   t.equal(d[10].value, 3);

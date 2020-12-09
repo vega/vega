@@ -16,43 +16,44 @@ export default function Stratify(params) {
 }
 
 Stratify.Definition = {
-  "type": "Stratify",
-  "metadata": {"treesource": true},
-  "params": [
-    { "name": "key", "type": "field", "required": true },
-    { "name": "parentKey", "type": "field", "required": true  }
+  'type': 'Stratify',
+  'metadata': {'treesource': true},
+  'params': [
+    { 'name': 'key', 'type': 'field', 'required': true },
+    { 'name': 'parentKey', 'type': 'field', 'required': true  }
   ]
 };
 
-var prototype = inherits(Stratify, Transform);
-
-prototype.transform = function(_, pulse) {
-  if (!pulse.source) {
-    error('Stratify transform requires an upstream data source.');
-  }
-
-  var tree = this.value,
-      mod = _.modified(),
-      out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
-      run = !this.value
-         || mod
-         || pulse.changed(pulse.ADD_REM)
-         || pulse.modified(_.key.fields)
-         || pulse.modified(_.parentKey.fields);
-
-  // prevent upstream source pollution
-  out.source = out.source.slice();
-
-  if (run) {
-    if (out.source.length) {
-      tree = lookup(
-        stratify().id(_.key).parentId(_.parentKey)(out.source)
-        , _.key, truthy);
-    } else {
-      tree = lookup(stratify()([{}]), _.key, _.key);
+inherits(Stratify, Transform, {
+  transform(_, pulse) {
+    if (!pulse.source) {
+      error('Stratify transform requires an upstream data source.');
     }
-  }
 
-  out.source.root = this.value = tree;
-  return out;
-};
+    let tree = this.value;
+
+    const mod = _.modified(),
+          out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
+          run = !tree
+            || mod
+            || pulse.changed(pulse.ADD_REM)
+            || pulse.modified(_.key.fields)
+            || pulse.modified(_.parentKey.fields);
+
+    // prevent upstream source pollution
+    out.source = out.source.slice();
+
+    if (run) {
+      tree = out.source.length
+        ? lookup(
+            stratify().id(_.key).parentId(_.parentKey)(out.source),
+            _.key,
+            truthy
+          )
+        : lookup(stratify()([{}]), _.key, _.key);
+    }
+
+    out.source.root = this.value = tree;
+    return out;
+  }
+});

@@ -4,15 +4,15 @@ var tape = require('tape'),
     transforms = util.extend({}, require('vega-transforms'), require('vega-encode')),
     runtime = require('../');
 
-tape('Parser parses dataflow specs', function(t) {
-  var values = [
-    {"x": 1,  "y": 28},
-    {"x": 2,  "y": 43},
-    {"x": 3,  "y": 81},
-    {"x": 4,  "y": 19},
-    {"x": 4,  "y": 20}
+tape('Parser parses dataflow specs', t => {
+  const values = [
+    {'x': 1,  'y': 28},
+    {'x': 2,  'y': 43},
+    {'x': 3,  'y': 81},
+    {'x': 4,  'y': 19},
+    {'x': 4,  'y': 20}
   ];
-  var spec = {operators: [
+  const spec = {operators: [
     {id:0, type:'Operator', value:500},
     {id:1, type:'Operator', value:300},
     {id:2, type:'Collect',  value:{$ingest: values}},
@@ -25,7 +25,7 @@ tape('Parser parses dataflow specs', function(t) {
   ]};
 
   var df  = new vega.Dataflow(),
-      ctx = runtime.parse(spec, runtime.context(df, transforms)),
+      ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes,
       ids = Object.keys(ops);
 
@@ -34,9 +34,7 @@ tape('Parser parses dataflow specs', function(t) {
 
   df.run();
 
-  t.equal(ids.reduce(function(sum, id) {
-    return sum + +(ops[id].stamp === df.stamp());
-  }, 0), spec.operators.length);
+  t.equal(ids.reduce((sum, id) => sum + +(ops[id].stamp === df.stamp()), 0), spec.operators.length);
 
   t.equal(ops[0].value, 500);
 
@@ -50,13 +48,13 @@ tape('Parser parses dataflow specs', function(t) {
 
   t.deepEqual(ops[5].value, [1, 2, 3, 4]);
 
-  var sx = ops[6].value;
+  const sx = ops[6].value;
   t.deepEqual(sx.domain(), [1, 2, 3, 4]);
   t.deepEqual(sx.range(), [0, 500]);
 
   t.deepEqual(ops[7].value, [19, 81]);
 
-  var sy = ops[8].value;
+  const sy = ops[8].value;
   t.deepEqual(sy.domain(), [19, 81]);
   t.deepEqual(sy.range(), [300, 0]);
 

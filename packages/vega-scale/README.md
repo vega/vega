@@ -100,4 +100,4 @@ range(1);   // 8
 vega.<b>quantizeInterpolator</b>(<i>interpolator</i>, <i>count</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-scale/src/interpolate.js "Source")
 
-Given an *interpolator* function, returns *count* evenly-spaced samples. This method is particularly useful for generating a discrete color scheme from a continuous color interpolator.
+Given an *interpolator* function, returns *count* evenly-spaced samples. This method is useful for generating a discrete color scheme from a continuous color interpolator.

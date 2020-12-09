@@ -12,8 +12,8 @@ function geodata() {
   ];
 }
 
-tape('GeoJSON transform consolidates lon/lat data', function(t) {
-  var data = geodata();
+tape('GeoJSON transform consolidates lon/lat data', t => {
+  const data = geodata();
 
   var df = new vega.Dataflow(),
       lon = util.field('lon'),
@@ -36,8 +36,8 @@ tape('GeoJSON transform consolidates lon/lat data', function(t) {
   t.end();
 });
 
-tape('GeoJSON transform consolidates geojson data', function(t) {
-  var data = geodata();
+tape('GeoJSON transform consolidates geojson data', t => {
+  const data = geodata();
 
   var df = new vega.Dataflow(),
       geo = util.field('geo'),
@@ -59,8 +59,8 @@ tape('GeoJSON transform consolidates geojson data', function(t) {
   t.end();
 });
 
-tape('GeoJSON transform consolidates both lon/lat and geojson data', function(t) {
-  var data = geodata();
+tape('GeoJSON transform consolidates both lon/lat and geojson data', t => {
+  const data = geodata();
 
   var df = new vega.Dataflow(),
       lon = util.field('lon'),

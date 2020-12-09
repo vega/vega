@@ -4,7 +4,7 @@ var tape = require('tape'),
     Graticule = geo.graticule,
     Projection = geo.projection;
 
-tape('Projection transform fits parameters to GeoJSON data', function(t) {
+tape('Projection transform fits parameters to GeoJSON data', t => {
   var df = new vega.Dataflow(),
       gr = df.add(Graticule),
       pr = df.add(Projection, {
@@ -15,7 +15,7 @@ tape('Projection transform fits parameters to GeoJSON data', function(t) {
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);
@@ -23,7 +23,7 @@ tape('Projection transform fits parameters to GeoJSON data', function(t) {
   t.end();
 });
 
-tape('Projection transform handles fit input with null data', function(t) {
+tape('Projection transform handles fit input with null data', t => {
   var df = new vega.Dataflow(),
       gr = df.add(Graticule),
       pr = df.add(Projection, {
@@ -34,7 +34,7 @@ tape('Projection transform handles fit input with null data', function(t) {
 
   df.run();
 
-  var proj = pr.value;
+  const proj = pr.value;
   t.equal(proj.scale(), 250);
   t.equal(Math.round(proj.translate()[0]), 250);
   t.equal(Math.round(proj.translate()[1]), 250);

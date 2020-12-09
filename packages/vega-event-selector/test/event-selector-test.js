@@ -1,8 +1,8 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Parser parses event selector strings', function(t) {
-  var events;
+tape('Parser parses event selector strings', t => {
+  let events;
 
   events = vega.selector('rect:mousedown');
   t.equal(events.length, 1);
@@ -177,8 +177,8 @@ tape('Parser parses event selector strings', function(t) {
   t.end();
 });
 
-tape('Parser allows configurable source', function(t) {
-  var events = vega.selector('rect:mousedown', 'scope');
+tape('Parser allows configurable source', t => {
+  const events = vega.selector('rect:mousedown', 'scope');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'scope',
@@ -188,35 +188,35 @@ tape('Parser allows configurable source', function(t) {
   t.end();
 });
 
-tape('Parser rejects invalid event selector strings', function(t) {
-  t.throws(function() { vega.selector(''); });
-  t.throws(function() { vega.selector('foo{}'); });
-  t.throws(function() { vega.selector('foo{a}'); });
-  t.throws(function() { vega.selector('foo{1,2,3}'); });
+tape('Parser rejects invalid event selector strings', t => {
+  t.throws(() => { vega.selector(''); });
+  t.throws(() => { vega.selector('foo{}'); });
+  t.throws(() => { vega.selector('foo{a}'); });
+  t.throws(() => { vega.selector('foo{1,2,3}'); });
 
-  t.throws(function() { vega.selector('{foo'); });
-  t.throws(function() { vega.selector('}foo'); });
-  t.throws(function() { vega.selector('foo{'); });
-  t.throws(function() { vega.selector('foo}'); });
-  t.throws(function() { vega.selector('foo{1'); });
-  t.throws(function() { vega.selector('foo}1'); });
-  t.throws(function() { vega.selector('foo{1}a'); });
-  t.throws(function() { vega.selector('{}'); });
-  t.throws(function() { vega.selector('{1}'); });
-  t.throws(function() { vega.selector('{1}a'); });
+  t.throws(() => { vega.selector('{foo'); });
+  t.throws(() => { vega.selector('}foo'); });
+  t.throws(() => { vega.selector('foo{'); });
+  t.throws(() => { vega.selector('foo}'); });
+  t.throws(() => { vega.selector('foo{1'); });
+  t.throws(() => { vega.selector('foo}1'); });
+  t.throws(() => { vega.selector('foo{1}a'); });
+  t.throws(() => { vega.selector('{}'); });
+  t.throws(() => { vega.selector('{1}'); });
+  t.throws(() => { vega.selector('{1}a'); });
 
-  t.throws(function() { vega.selector('[foo'); });
-  t.throws(function() { vega.selector(']foo'); });
-  t.throws(function() { vega.selector('foo['); });
-  t.throws(function() { vega.selector('foo]'); });
-  t.throws(function() { vega.selector('foo[1'); });
-  t.throws(function() { vega.selector('foo]1'); });
-  t.throws(function() { vega.selector('foo[1]a'); });
+  t.throws(() => { vega.selector('[foo'); });
+  t.throws(() => { vega.selector(']foo'); });
+  t.throws(() => { vega.selector('foo['); });
+  t.throws(() => { vega.selector('foo]'); });
+  t.throws(() => { vega.selector('foo[1'); });
+  t.throws(() => { vega.selector('foo]1'); });
+  t.throws(() => { vega.selector('foo[1]a'); });
 
-  t.throws(function() { vega.selector('[]'); });
-  t.throws(function() { vega.selector('[a]'); });
-  t.throws(function() { vega.selector('[a,b]'); });
-  t.throws(function() { vega.selector('[a,b] >'); });
+  t.throws(() => { vega.selector('[]'); });
+  t.throws(() => { vega.selector('[a]'); });
+  t.throws(() => { vega.selector('[a,b]'); });
+  t.throws(() => { vega.selector('[a,b] >'); });
 
   t.end();
 });

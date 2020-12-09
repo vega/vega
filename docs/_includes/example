@@ -1,5 +1,5 @@
 <div class="example">
-{% include embed spec=include.spec %}
+{% include embed spec=include.spec renderer=include.renderer %}
 </div>
 
 <div class="editor-link">

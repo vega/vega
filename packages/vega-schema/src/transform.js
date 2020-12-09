@@ -1,6 +1,6 @@
 import {
-  array, enums, object, anyOf, oneOf, def, ref,
-  booleanType, numberType, nullType, stringType, signalRef
+  anyOf, array, booleanType, def, enums, nullType, numberType,
+  object, oneOf, ref, signalRef, stringType
 } from './util';
 
 // types defined elsewhere
@@ -16,14 +16,14 @@ function req(key) {
 
 function transformSchema(name, def) {
   function parameters(list) {
-    list.forEach(function(param) {
+    list.forEach(param => {
       if (param.type === 'param') {
         const schema = {
           oneOf: param.params.map(subParameterSchema)
         };
         props[param.name] = param.array ? array(schema) : schema;
       } else if (param.params) {
-        parameters(param.params)
+        parameters(param.params);
       } else {
         const key = param.required ? req(param.name) : param.name;
         props[key] = parameterSchema(param);
@@ -42,7 +42,7 @@ function transformSchema(name, def) {
 }
 
 function parameterSchema(param) {
-  var p = {};
+  let p = {};
 
   switch (param.type) {
     case 'projection':
@@ -111,7 +111,7 @@ function subParameterSchema(sub) {
     props[req(name)] = enums([key[name]]);
   }
 
-  sub.params.forEach(function(param) {
+  sub.params.forEach(param => {
     const key = param.required ? req(param.name) : param.name;
     props[key] = parameterSchema(param);
   });

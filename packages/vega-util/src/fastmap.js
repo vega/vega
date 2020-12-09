@@ -1,25 +1,24 @@
 import hasOwnProperty from './hasOwnProperty';
 
-var NULL = {};
+const NULL = {};
 
 export default function(input) {
-  var obj = {},
-      map,
+  let obj = {},
       test;
 
   function has(key) {
     return hasOwnProperty(obj, key) && obj[key] !== NULL;
   }
 
-  map = {
+  const map = {
     size: 0,
     empty: 0,
     object: obj,
     has: has,
-    get: function(key) {
+    get(key) {
       return has(key) ? obj[key] : undefined;
     },
-    set: function(key, value) {
+    set(key, value) {
       if (!has(key)) {
         ++map.size;
         if (obj[key] === NULL) --map.empty;
@@ -27,7 +26,7 @@ export default function(input) {
       obj[key] = value;
       return this;
     },
-    delete: function(key) {
+    delete(key) {
       if (has(key)) {
         --map.size;
         ++map.empty;
@@ -35,11 +34,11 @@ export default function(input) {
       }
       return this;
     },
-    clear: function() {
+    clear() {
       map.size = map.empty = 0;
       map.object = obj = {};
     },
-    test: function(_) {
+    test(_) {
       if (arguments.length) {
         test = _;
         return map;
@@ -47,12 +46,11 @@ export default function(input) {
         return test;
       }
     },
-    clean: function() {
-      var next = {},
-          size = 0,
-          key, value;
-      for (key in obj) {
-        value = obj[key];
+    clean() {
+      const next = {};
+      let size = 0;
+      for (const key in obj) {
+        const value = obj[key];
         if (value !== NULL && (!test || !test(value))) {
           next[key] = value;
           ++size;
@@ -64,7 +62,7 @@ export default function(input) {
     }
   };
 
-  if (input) Object.keys(input).forEach(function(key) {
+  if (input) Object.keys(input).forEach(key => {
     map.set(key, input[key]);
   });
 

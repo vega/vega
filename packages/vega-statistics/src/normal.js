@@ -36,14 +36,15 @@ export function cumulativeNormal(value, mean, stdev) {
   mean = mean || 0;
   stdev = stdev == null ? 1 : stdev;
 
-  let cd,
-      z = (value - mean) / stdev,
-      Z = Math.abs(z);
+  const z = (value - mean) / stdev,
+        Z = Math.abs(z);
+  let cd;
 
   if (Z > 37) {
     cd = 0;
   } else {
-    let sum, exp = Math.exp(-Z * Z / 2);
+    const exp = Math.exp(-Z * Z / 2);
+    let sum;
     if (Z < 7.07106781186547) {
       sum = 3.52624965998911e-02 * Z + 0.700383064443688;
       sum = sum * Z + 6.37396220353165;
@@ -161,30 +162,30 @@ function erfinv(x) {
 }
 
 export default function(mean, stdev) {
-  var mu,
-      sigma,
-      dist = {
-        mean: function(_) {
-          if (arguments.length) {
-            mu = _ || 0;
-            return dist;
-          } else {
-            return mu;
-          }
-        },
-        stdev: function(_) {
-          if (arguments.length) {
-            sigma = _ == null ? 1 : _;
-            return dist;
-          } else {
-            return sigma;
-          }
-        },
-        sample: () => sampleNormal(mu, sigma),
-        pdf: value => densityNormal(value, mu, sigma),
-        cdf: value => cumulativeNormal(value, mu, sigma),
-        icdf: p => quantileNormal(p, mu, sigma)
-      };
+  let mu, sigma;
+
+  const dist = {
+    mean(_) {
+      if (arguments.length) {
+        mu = _ || 0;
+        return dist;
+      } else {
+        return mu;
+      }
+    },
+    stdev(_) {
+      if (arguments.length) {
+        sigma = _ == null ? 1 : _;
+        return dist;
+      } else {
+        return sigma;
+      }
+    },
+    sample: () => sampleNormal(mu, sigma),
+    pdf: value => densityNormal(value, mu, sigma),
+    cdf: value => cumulativeNormal(value, mu, sigma),
+    icdf: p => quantileNormal(p, mu, sigma)
+  };
 
   return dist.mean(mean).stdev(stdev);
 }

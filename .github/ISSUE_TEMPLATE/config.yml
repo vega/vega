@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or Help
+    url: https://stackoverflow.com/tags/vega-lite
+    about: Please ask questions on Stack Overflow (https://stackoverflow.com/tags/vega), on Slack (https://bit.ly/join-vega-slack-2020), or on [the mailing list](https://bit.ly/vega-discuss).

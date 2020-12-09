@@ -1,4 +1,4 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -15,33 +15,34 @@ export default function Generate(params) {
   Transform.call(this, [], params);
 }
 
-var prototype = inherits(Generate, Transform);
+inherits(Generate, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.ALL),
+          gen = _.generator;
 
-prototype.transform = function(_, pulse) {
-  var data = this.value,
-      out = pulse.fork(pulse.ALL),
-      num = _.size - data.length,
-      gen = _.generator,
-      add, rem, t;
+    let data = this.value,
+        num = _.size - data.length,
+        add, rem, t;
 
-  if (num > 0) {
-    // need more tuples, generate and add
-    for (add=[]; --num >= 0;) {
-      add.push(t = ingest(gen(_)));
-      data.push(t);
+    if (num > 0) {
+      // need more tuples, generate and add
+      for (add=[]; --num >= 0;) {
+        add.push(t = ingest(gen(_)));
+        data.push(t);
+      }
+      out.add = out.add.length
+        ? out.materialize(out.ADD).add.concat(add)
+        : add;
+    } else {
+      // need fewer tuples, remove
+      rem = data.slice(0, -num);
+      out.rem = out.rem.length
+        ? out.materialize(out.REM).rem.concat(rem)
+        : rem;
+      data = data.slice(-num);
     }
-    out.add = out.add.length
-      ? out.materialize(out.ADD).add.concat(add)
-      : add;
-  } else {
-    // need fewer tuples, remove
-    rem = data.slice(0, -num);
-    out.rem = out.rem.length
-      ? out.materialize(out.REM).rem.concat(rem)
-      : rem;
-    data = data.slice(-num);
-  }
 
-  out.source = this.value = data;
-  return out;
-};
+    out.source = this.value = data;
+    return out;
+  }
+});

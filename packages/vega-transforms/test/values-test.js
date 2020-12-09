@@ -7,8 +7,8 @@ var tape = require('tape'),
     Collect = tx.collect,
     Values = tx.values;
 
-tape('Values extracts values', function(t) {
-  var data = [
+tape('Values extracts values', t => {
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'c', v:2}, {k:'d', v:4}
   ];
@@ -20,7 +20,7 @@ tape('Values extracts values', function(t) {
       val = df.add(Values, {field:key, sort:srt, pulse:col});
 
   df.pulse(col, changeset().insert(data)).run();
-  var values = val.value;
+  const values = val.value;
   t.deepEqual(values, ['a', 'b', 'c', 'd']);
 
   df.touch(val).run(); // no-op pulse
@@ -32,7 +32,7 @@ tape('Values extracts values', function(t) {
   t.end();
 });
 
-tape('Values extracts sorted domain values', function(t) {
+tape('Values extracts sorted domain values', t => {
   var byCount = util.compare('count', 'descending'),
       key = util.field('k'),
       df = new vega.Dataflow(),
@@ -56,7 +56,7 @@ tape('Values extracts sorted domain values', function(t) {
   t.end();
 });
 
-tape('Values extracts multi-domain values', function(t) {
+tape('Values extracts multi-domain values', t => {
   var byCount = util.compare('count', 'descending'),
       count = util.field('count'),
       key = util.field('key'),

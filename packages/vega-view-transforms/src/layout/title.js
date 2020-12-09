@@ -1,4 +1,4 @@
-import {Top, Bottom, Left, Right, Start, End, Group} from '../constants';
+import {Bottom, End, Group, Left, Right, Start, Top} from '../constants';
 import {set, tempBounds} from './util';
 
 export function titleLayout(view, mark, width, height, viewBounds) {

@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "5.0.2",
+  "version": "6.1.3",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -11,21 +11,19 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-runtime.js",
-  "module": "index",
+  "module": "build/vega-runtime.module.js",
+  "unpkg": "build/vega-runtime.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g vega-dataflow:vega,vega-util:vega -n vega -o build/vega-runtime.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-runtime.js -c -m -o build/vega-runtime.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.1.1",
-    "vega-util": "^1.11.0"
+    "vega-dataflow": "^5.7.3",
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-encode": "*",

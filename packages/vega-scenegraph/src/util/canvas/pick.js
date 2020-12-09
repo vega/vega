@@ -8,8 +8,8 @@ export function pick(test) {
     x *= context.pixelRatio;
     y *= context.pixelRatio;
 
-    return pickVisit(scene, function(item) {
-      var b = item.bounds;
+    return pickVisit(scene, item => {
+      const b = item.bounds;
       // first hit test against bounding box
       if ((b && !b.contains(gx, gy)) || !b) return;
       // if in bounding box, perform more careful test

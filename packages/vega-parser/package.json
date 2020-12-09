@@ -1,6 +1,6 @@
 {
   "name": "vega-parser",
-  "version": "5.12.1",
+  "version": "6.1.0",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
     "vega",
@@ -11,24 +11,21 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-parser.js",
-  "module": "index",
+  "module": "build/vega-parser.module.js",
+  "unpkg": "build/vega-parser.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "rollup": "rollup -f umd -g d3-array:d3,d3-color:d3,vega-dataflow:vega,vega-event-selector:vega,vega-expression:vega,vega-functions:vega,vega-scale:vega,vega-selections:vega,vega-scenegraph:vega,vega-statistics:vega,vega-util:vega -n vega -o build/vega-parser.js -- index.js",
-    "prebuild": "rimraf build && mkdir build",
-    "build": "yarn rollup",
-    "postbuild": "terser build/vega-parser.js -c -m -o build/vega-parser.min.js",
-    "pretest": "yarn prebuild && yarn rollup",
-    "test": "tape 'test/**/*-test.js' && eslint index.js src test",
-    "prepublishOnly": "yarn test && yarn build",
-    "postpublish": "git push && git push --tags"
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.5.0",
-    "vega-event-selector": "^2.0.2",
-    "vega-expression": "^2.6.3",
-    "vega-functions": "^5.5.0",
-    "vega-scale": "^6.0.0",
-    "vega-util": "^1.12.1"
+    "vega-dataflow": "^5.7.3",
+    "vega-event-selector": "^2.0.6",
+    "vega-functions": "^5.8.0",
+    "vega-scale": "^7.1.1",
+    "vega-util": "^1.15.2"
   }
 }

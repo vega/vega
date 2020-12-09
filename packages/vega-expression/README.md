@@ -18,7 +18,7 @@ Parse the JavaScript *expression* string and return the resulting abstract synta
 <b>codegen</b>(<i>options</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/codegen.js "Source")
 
-Create a new output code generator configured according to the provided options. The resulting generator function accepts a parsed AST as input and returns `eval`'able JavaScript code as output. The output is an object hash with the properties `code` (the generated code as a string), `fields` (a hash of all properties referenced within the _fieldvar_ scope), and `globals` (a hash of all properties referenced outside a provided whitelist).
+Create a new output code generator configured according to the provided options. The resulting generator function accepts a parsed AST as input and returns `eval`'able JavaScript code as output. The output is an object hash with the properties `code` (the generated code as a string), `fields` (a hash of all properties referenced within the _fieldvar_ scope), and `globals` (a hash of all properties referenced outside a provided allowed).
 
 The supported _options_ include:
 
@@ -27,16 +27,16 @@ The supported _options_ include:
 - *functions*: A function that is given an AST visitor instance as input and returns an object of allowed functions. The resulting object maps from
 function names to function values. The values may either be strings (which will be injected as-is into generated code and subsequently appended with arguments) or functions (which take an array of argument AST nodes as input and return generated code to inject). If this option is not specified, the [functions](#functions) method is used by default.
 
-- *blacklist*: An array of variable names that may **not** be referenced within the expression scope. These may correspond to disallowed global variables.
+- *forbidden*: An array of variable names that may **not** be referenced within the expression scope. These may correspond to disallowed global variables.
 
-- *whitelist*: An array of variable names that may be referenced within the expression scope. These typically correspond to function parameter names for the expression. Variable names not included in the white list will be collected as global variables (see *globalvar* below).
+- *allowed*: An array of variable names that may be referenced within the expression scope. These typically correspond to function parameter names for the expression. Variable names not included in the white list will be collected as global variables (see *globalvar* below).
 
 - *fieldvar*: The name of the primary data input argument within the generated expression function. For example, in the function `function(d) { return d.x * d.y; }`, the variable `d` serves as the field variable, and `x` and `y` are it's accessed properties. All properties accessed under the scope of _fieldvar_ will be tracked by the code generator and returned as part of the output. This is necessary to perform dependency tracking of referenced data fields.
 
 - *globalvar*: (Required) The name of the variable upon which to lookup global variables. This variable name will be included in the generated code as the scope for any global variable references. Alternatively, this property can be a function that maps from variable names in the source input to generated code to write to the output.
 
 <a name="constants" href="#constants">#</a>
-<b>constants</b>(<i>codegen</i>)
+<b>constants</b>
 [<>](https://github.com/vega/vega/blob/master/packages/vega-expression/src/constants.js "Source")
 
 An object defining default constant values for the Vega expression language. The object maps from constant identifiers to JavaScript code to defining the constant value (for example, `'PI'` maps to `'Math.PI`').

@@ -1,4 +1,4 @@
-import {ingest, Transform} from 'vega-dataflow';
+import {Transform, ingest} from 'vega-dataflow';
 import {inherits, truthy} from 'vega-util';
 
 /**
@@ -14,37 +14,37 @@ export default function Cross(params) {
 }
 
 Cross.Definition = {
-  "type": "Cross",
-  "metadata": {"generates": true},
-  "params": [
-    { "name": "filter", "type": "expr" },
-    { "name": "as", "type": "string", "array": true, "length": 2, "default": ["a", "b"] }
+  'type': 'Cross',
+  'metadata': {'generates': true},
+  'params': [
+    { 'name': 'filter', 'type': 'expr' },
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['a', 'b'] }
   ]
 };
 
-var prototype = inherits(Cross, Transform);
+inherits(Cross, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.NO_SOURCE),
+          as = _.as || ['a', 'b'],
+          a = as[0], b = as[1],
+          reset = !this.value
+              || pulse.changed(pulse.ADD_REM)
+              || _.modified('as')
+              || _.modified('filter');
 
-prototype.transform = function(_, pulse) {
-  var out = pulse.fork(pulse.NO_SOURCE),
-      data = this.value,
-      as = _.as || ['a', 'b'],
-      a = as[0], b = as[1],
-      reset = !data
-          || pulse.changed(pulse.ADD_REM)
-          || _.modified('as')
-          || _.modified('filter');
+    let data = this.value;
+    if (reset) {
+      if (data) out.rem = data;
+      data = pulse.materialize(pulse.SOURCE).source;
+      out.add = this.value = cross(data, a, b, _.filter || truthy);
+    } else {
+      out.mod = data;
+    }
 
-  if (reset) {
-    if (data) out.rem = data;
-    data = pulse.materialize(pulse.SOURCE).source;
-    out.add = this.value = cross(data, a, b, _.filter || truthy);
-  } else {
-    out.mod = data;
+    out.source = this.value;
+    return out.modifies(as);
   }
-
-  out.source = this.value;
-  return out.modifies(as);
-};
+});
 
 function cross(input, a, b, filter) {
   var data = [],

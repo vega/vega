@@ -1,9 +1,10 @@
-import {Top, Bottom, Left, Right, Label, Value, GuideLabelStyle, zero, one} from './constants';
+import {getSign, ifRight, ifTop, ifX, ifY, patch} from './axis-util';
+import {GuideLabelStyle, Label, Value, one, zero} from './constants';
 import guideMark from './guide-mark';
-import {lookup} from './guide-util';
+import {extendOffset, lookup} from './guide-util';
+import {addEncoders, encoder} from '../encode/util';
 import {TextMark} from '../marks/marktypes';
 import {AxisLabelRole} from '../marks/roles';
-import {addEncoders, encoder} from '../encode/encode-util';
 import {deref} from '../../util';
 
 function flushExpr(scale, threshold, a, b, c) {
@@ -15,60 +16,62 @@ function flushExpr(scale, threshold, a, b, c) {
 }
 
 export default function(spec, config, userEncode, dataRef, size, band) {
-  var _ = lookup(spec, config),
-      orient = spec.orient,
-      sign = (orient === Left || orient === Top) ? -1 : 1,
-      isXAxis = (orient === Top || orient === Bottom),
-      scale = spec.scale,
-      flush = deref(_('labelFlush')),
-      flushOffset = deref(_('labelFlushOffset')),
-      flushOn = flush === 0 || !!flush,
-      labelAlign = _('labelAlign'),
-      labelBaseline = _('labelBaseline'),
-      encode, enter, tickSize, tickPos, align, baseline, offset,
-      bound, overlap, separation;
+  const _ = lookup(spec, config),
+        orient = spec.orient,
+        scale = spec.scale,
+        sign = getSign(orient, -1, 1),
+        flush = deref(_('labelFlush')),
+        flushOffset = deref(_('labelFlushOffset')),
+        labelAlign = _('labelAlign'),
+        labelBaseline = _('labelBaseline');
 
-  tickSize = encoder(size);
+  let flushOn = flush === 0 || !!flush,
+      update;
+
+  const tickSize = encoder(size);
   tickSize.mult = sign;
   tickSize.offset = encoder(_('labelPadding') || 0);
   tickSize.offset.mult = sign;
 
-  tickPos = {
+  const tickPos = {
     scale:  scale,
     field:  Value,
     band:   0.5,
-    offset: band.offset
+    offset: extendOffset(band.offset, _('labelOffset'))
   };
 
-  if (isXAxis) {
-    align = labelAlign || (flushOn
+  const align = ifX(orient,
+    flushOn
       ? flushExpr(scale, flush, '"left"', '"right"', '"center"')
-      : 'center');
-    baseline = labelBaseline || (orient === Top ? 'bottom' : 'top');
-    offset = !labelAlign;
-  } else {
-    align = labelAlign || (orient === Right ? 'left' : 'right');
-    baseline = labelBaseline || (flushOn
+      : {value: 'center'},
+    ifRight(orient, 'left', 'right')
+  );
+
+  const baseline = ifX(orient,
+    ifTop(orient, 'bottom', 'top'),
+    flushOn
       ? flushExpr(scale, flush, '"top"', '"bottom"', '"middle"')
-      : 'middle');
-    offset = !labelBaseline;
-  }
+      : {value: 'middle'}
+  );
 
-  offset = offset && flushOn && flushOffset
-    ? flushExpr(scale, flush, '-(' + flushOffset + ')', flushOffset, 0)
-    : null;
+  const offsetExpr = flushExpr(scale, flush, `-(${flushOffset})`, flushOffset, 0);
+  flushOn = flushOn && flushOffset;
 
-  encode = {
-    enter: enter = {
-      opacity: zero,
-      x: isXAxis ? tickPos : tickSize,
-      y: isXAxis ? tickSize : tickPos
-    },
-    update: {
+  const enter = {
+    opacity: zero,
+    x: ifX(orient, tickPos, tickSize),
+    y: ifY(orient, tickPos, tickSize)
+  };
+
+  const encode = {
+    enter: enter,
+    update: update = {
       opacity: one,
       text: {field: Label},
       x: enter.x,
-      y: enter.y
+      y: enter.y,
+      align,
+      baseline
     },
     exit: {
       opacity: zero,
@@ -78,9 +81,11 @@ export default function(spec, config, userEncode, dataRef, size, band) {
   };
 
   addEncoders(encode, {
-    [isXAxis ? 'dx' : 'dy']: offset,
-    align:       align,
-    baseline:    baseline,
+    dx: !labelAlign && flushOn ? ifX(orient, offsetExpr) : null,
+    dy: !labelBaseline && flushOn ? ifY(orient, offsetExpr) : null
+  });
+
+  addEncoders(encode, {
     angle:       _('labelAngle'),
     fill:        _('labelColor'),
     fillOpacity: _('labelOpacity'),
@@ -88,24 +93,38 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     fontSize:    _('labelFontSize'),
     fontWeight:  _('labelFontWeight'),
     fontStyle:   _('labelFontStyle'),
-    limit:       _('labelLimit')
+    limit:       _('labelLimit'),
+    lineHeight:  _('labelLineHeight')
+  }, {
+    align:       labelAlign,
+    baseline:    labelBaseline
   });
 
-  bound   = _('labelBound');
-  overlap = _('labelOverlap');
-  separation = _('labelSeparation');
-
-  spec = guideMark(TextMark, AxisLabelRole, GuideLabelStyle, Value, dataRef, encode, userEncode);
+  const bound   = _('labelBound');
+  let overlap = _('labelOverlap');
 
   // if overlap method or bound defined, request label overlap removal
-  if (overlap || bound) {
-    spec.overlap = {
-      separation: separation,
-      method: overlap,
-      order: 'datum.index',
-      bound: bound ? {scale: scale, orient: orient, tolerance: bound} : null
-    };
+  overlap = overlap || bound ? {
+    separation: _('labelSeparation'),
+    method: overlap,
+    order: 'datum.index',
+    bound: bound ? {scale, orient, tolerance: bound} : null
+  } : undefined;
+
+  if (update.align !== align) {
+    update.align = patch(update.align, align);
+  }
+  if (update.baseline !== baseline) {
+    update.baseline = patch(update.baseline, baseline);
   }
 
-  return spec;
+  return guideMark({
+    type:  TextMark,
+    role:  AxisLabelRole,
+    style: GuideLabelStyle,
+    key:   Value,
+    from:  dataRef,
+    encode,
+    overlap
+  }, userEncode);
 }

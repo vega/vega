@@ -16,101 +16,125 @@ export default function Facet(params) {
 
   // keep track of active subflows, use as targets array for listeners
   // this allows us to limit propagation to only updated subflows
-  var a = this._targets = [];
+  const a = this._targets = [];
   a.active = 0;
-  a.forEach = function(f) {
-    for (var i=0, n=a.active; i<n; ++i) f(a[i], i, a);
+  a.forEach = f => {
+    for (let i=0, n=a.active; i<n; ++i) {
+      f(a[i], i, a);
+    }
   };
 }
 
-var prototype = inherits(Facet, Transform);
+inherits(Facet, Transform, {
+  activate(flow) {
+    this._targets[this._targets.active++] = flow;
+  },
 
-prototype.activate = function(flow) {
-  this._targets[this._targets.active++] = flow;
-};
+  // parent argument provided by PreFacet subclass
+  subflow(key, flow, pulse, parent) {
+    const flows = this.value;
+    let sf = hasOwnProperty(flows, key) && flows[key],
+        df, p;
 
-prototype.subflow = function(key, flow, pulse, parent) {
-  var flows = this.value,
-      sf = hasOwnProperty(flows, key) && flows[key],
-      df, p;
-
-  if (!sf) {
-    p = parent || (p = this._group[key]) && p.tuple;
-    df = pulse.dataflow;
-    sf = df.add(new Subflow(pulse.fork(pulse.NO_SOURCE), this))
-      .connect(flow(df, key, p));
-    flows[key] = sf;
-    this.activate(sf);
-  } else if (sf.value.stamp < pulse.stamp) {
-    sf.init(pulse);
-    this.activate(sf);
-  }
-
-  return sf;
-};
-
-prototype.transform = function(_, pulse) {
-  var df = pulse.dataflow,
-      self = this,
-      key = _.key,
-      flow = _.subflow,
-      cache = this._keys,
-      rekey = _.modified('key');
-
-  function subflow(key) {
-    return self.subflow(key, flow, pulse);
-  }
-
-  this._group = _.group || {};
-  this._targets.active = 0; // reset list of active subflows
-
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t),
-        k = cache.get(id);
-    if (k !== undefined) {
-      cache.delete(id);
-      subflow(k).rem(t);
+    if (!sf) {
+      p = parent || (p = this._group[key]) && p.tuple;
+      df = pulse.dataflow;
+      sf = new Subflow(pulse.fork(pulse.NO_SOURCE), this);
+      df.add(sf).connect(flow(df, key, p));
+      flows[key] = sf;
+      this.activate(sf);
+    } else if (sf.value.stamp < pulse.stamp) {
+      sf.init(pulse);
+      this.activate(sf);
     }
-  });
 
-  pulse.visit(pulse.ADD, function(t) {
-    var k = key(t);
-    cache.set(tupleid(t), k);
-    subflow(k).add(t);
-  });
+    return sf;
+  },
 
-  if (rekey || pulse.modified(key.fields)) {
-    pulse.visit(pulse.MOD, function(t) {
-      var id = tupleid(t),
-          k0 = cache.get(id),
-          k1 = key(t);
-      if (k0 === k1) {
-        subflow(k1).mod(t);
-      } else {
-        cache.set(id, k1);
-        subflow(k0).rem(t);
-        subflow(k1).add(t);
+  clean() {
+    const flows = this.value;
+    for (const key in flows) {
+      if (flows[key].count === 0) {
+        const detach = flows[key].detachSubflow;
+        if (detach) detach();
+        delete flows[key];
+      }
+    }
+  },
+
+  initTargets() {
+    const a = this._targets,
+          n = a.length;
+    for (let i=0; i<n && a[i] != null; ++i) {
+      a[i] = null; // ensure old flows can be garbage collected
+    }
+    a.active = 0;
+  },
+
+  transform(_, pulse) {
+    const df = pulse.dataflow,
+          key = _.key,
+          flow = _.subflow,
+          cache = this._keys,
+          rekey = _.modified('key'),
+          subflow = key => this.subflow(key, flow, pulse);
+
+    this._group = _.group || {};
+    this.initTargets(); // reset list of active subflows
+
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t),
+            k = cache.get(id);
+      if (k !== undefined) {
+        cache.delete(id);
+        subflow(k).rem(t);
       }
     });
-  } else if (pulse.changed(pulse.MOD)) {
-    pulse.visit(pulse.MOD, function(t) {
-      subflow(cache.get(tupleid(t))).mod(t);
-    });
-  }
 
-  if (rekey) {
-    pulse.visit(pulse.REFLOW, function(t) {
-      var id = tupleid(t),
-          k0 = cache.get(id),
-          k1 = key(t);
-      if (k0 !== k1) {
-        cache.set(id, k1);
-        subflow(k0).rem(t);
-        subflow(k1).add(t);
-      }
+    pulse.visit(pulse.ADD, t => {
+      const k = key(t);
+      cache.set(tupleid(t), k);
+      subflow(k).add(t);
     });
-  }
 
-  if (cache.empty > df.cleanThreshold) df.runAfter(cache.clean);
-  return pulse;
-};
+    if (rekey || pulse.modified(key.fields)) {
+      pulse.visit(pulse.MOD, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
+        if (k0 === k1) {
+          subflow(k1).mod(t);
+        } else {
+          cache.set(id, k1);
+          subflow(k0).rem(t);
+          subflow(k1).add(t);
+        }
+      });
+    } else if (pulse.changed(pulse.MOD)) {
+      pulse.visit(pulse.MOD, t => {
+        subflow(cache.get(tupleid(t))).mod(t);
+      });
+    }
+
+    if (rekey) {
+      pulse.visit(pulse.REFLOW, t => {
+        const id = tupleid(t),
+              k0 = cache.get(id),
+              k1 = key(t);
+        if (k0 !== k1) {
+          cache.set(id, k1);
+          subflow(k0).rem(t);
+          subflow(k1).add(t);
+        }
+      });
+    }
+
+    if (pulse.clean()) {
+      df.runAfter(() => { this.clean(); cache.clean(); });
+    } else if (cache.empty > df.cleanThreshold) {
+      df.runAfter(cache.clean);
+    }
+
+    return pulse;
+  }
+});

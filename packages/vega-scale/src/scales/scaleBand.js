@@ -1,12 +1,12 @@
 import bandSpace from './bandSpace';
-import {range as sequence, bisectRight} from 'd3-array';
+import {bisectRight, range as sequence} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 
 export function band() {
-  var scale = ordinal().unknown(undefined),
-      domain = scale.domain,
-      ordinalRange = scale.range,
-      range = [0, 1],
+  const scale = ordinal().unknown(undefined),
+        domain = scale.domain,
+        ordinalRange = scale.range;
+  let range = [0, 1],
       step,
       bandwidth,
       round = false,
@@ -17,11 +17,12 @@ export function band() {
   delete scale.unknown;
 
   function rescale() {
-    var n = domain().length,
-        reverse = range[1] < range[0],
-        start = range[reverse - 0],
-        stop = range[1 - reverse],
-        space = bandSpace(n, paddingInner, paddingOuter);
+    const n = domain().length,
+          reverse = range[1] < range[0],
+          stop = range[1 - reverse],
+          space = bandSpace(n, paddingInner, paddingOuter);
+
+    let start = range[reverse - 0];
 
     step = (stop - start) / (space || 1);
     if (round) {
@@ -33,7 +34,7 @@ export function band() {
       start = Math.round(start);
       bandwidth = Math.round(bandwidth);
     }
-    var values = sequence(n).map(function(i) { return start + step * i; });
+    const values = sequence(n).map(i => start + step * i);
     return ordinalRange(reverse ? values.reverse() : values);
   }
 
@@ -119,11 +120,13 @@ export function band() {
     // bail if range has null or undefined values
     if (_[0] == null || _[1] == null) return;
 
-    var lo = +_[0],
+    const reverse = range[1] < range[0],
+          values = reverse ? ordinalRange().reverse() : ordinalRange(),
+          n = values.length - 1;
+
+    let lo = +_[0],
         hi = +_[1],
-        reverse = range[1] < range[0],
-        values = reverse ? ordinalRange().reverse() : ordinalRange(),
-        n = values.length - 1, a, b, t;
+        a, b, t;
 
     // bail if either range endpoint is invalid
     if (lo !== lo || hi !== hi) return;
@@ -153,7 +156,7 @@ export function band() {
   };
 
   scale.invert = function(_) {
-    var value = scale.invertRange([_, _]);
+    const value = scale.invertRange([_, _]);
     return value ? value[0] : value;
   };
 
@@ -171,7 +174,7 @@ export function band() {
 }
 
 function pointish(scale) {
-  var copy = scale.copy;
+  const copy = scale.copy;
 
   scale.padding = scale.paddingOuter;
   delete scale.paddingInner;

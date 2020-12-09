@@ -1,7 +1,7 @@
 import {
-  Symbols, Start, Middle, End, Top, Bottom, Left, Right,
-  TopLeft, TopRight, BottomLeft, BottomRight, None,
-  Each, Flush
+  Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
+  None, Right, Start, Symbols, Top,
+  TopLeft, TopRight
 } from '../constants';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
@@ -15,7 +15,7 @@ function lookup(config, orient) {
 
 // if legends specify offset directly, use the maximum specified value
 function offsets(legends, value) {
-  var max = -Infinity;
+  let max = -Infinity;
   legends.forEach(item => {
     if (item.offset != null) max = Math.max(max, item.offset);
   });
@@ -206,13 +206,13 @@ function translate(view, item, dx, dy) {
 
 function legendEntryLayout(entries) {
   // get max widths for each column
-  var widths = entries.reduce(function(w, g) {
+  const widths = entries.reduce((w, g) => {
     w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
     return w;
   }, {});
 
   // set dimensions of legend entry groups
-  entries.forEach(function(g) {
+  entries.forEach(g => {
     g.width  = widths[g.column];
     g.height = g.bounds.y2 - g.y;
   });

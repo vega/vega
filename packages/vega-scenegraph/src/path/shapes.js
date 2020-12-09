@@ -6,9 +6,9 @@ import {default as vg_trail} from './trail';
 
 import {
   arc as d3_arc,
-  symbol as d3_symbol,
   area as d3_area,
-  line as d3_line
+  line as d3_line,
+  symbol as d3_symbol
 } from 'd3-shape';
 
 function value(a, b) {
@@ -59,16 +59,16 @@ export function arc(context, item) {
 }
 
 export function area(context, items) {
-  var item = items[0],
-      interp = item.interpolate || 'linear';
+  const item = items[0],
+        interp = item.interpolate || 'linear';
   return (item.orient === 'horizontal' ? areahShape : areavShape)
     .curve(curves(interp, item.orient, item.tension))
     .context(context)(items);
 }
 
 export function line(context, items) {
-  var item = items[0],
-      interp = item.interpolate || 'linear';
+  const item = items[0],
+        interp = item.interpolate || 'linear';
   return lineShape.curve(curves(interp, item.orient, item.tension))
     .context(context)(items);
 }

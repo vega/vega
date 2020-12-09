@@ -1,8 +1,8 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('compare compares numbers', function(t) {
-  var c = vega.compare('x');
+tape('compare compares numbers', t => {
+  const c = vega.compare('x');
   t.equal(c({x:1}, {x:0}), 1);
   t.equal(c({x:0}, {x:1}), -1);
   t.equal(c({x:1}, {x:1}), 0);
@@ -17,8 +17,8 @@ tape('compare compares numbers', function(t) {
   t.end();
 });
 
-tape('compare compares strings', function(t) {
-  var c = vega.compare('x');
+tape('compare compares strings', t => {
+  const c = vega.compare('x');
   t.equal(c({x:'b'}, {x:'a'}), 1);
   t.equal(c({x:'a'}, {x:'b'}), -1);
   t.equal(c({x:'b'}, {x:'b'}), 0);
@@ -33,8 +33,8 @@ tape('compare compares strings', function(t) {
   t.end();
 });
 
-tape('compare compares dates', function(t) {
-  var c = vega.compare('x');
+tape('compare compares dates', t => {
+  const c = vega.compare('x');
   t.equal(c({x:new Date(1)}, {x:new Date(0)}), 1);
   t.equal(c({x:new Date(0)}, {x:new Date(1)}), -1);
   t.equal(c({x:new Date(1)}, {x:new Date(1)}), 0);
@@ -50,8 +50,8 @@ tape('compare compares dates', function(t) {
   t.end();
 });
 
-tape('compare compares null, undefined and NaN', function(t) {
-  var c = vega.compare('x');
+tape('compare compares null, undefined and NaN', t => {
+  const c = vega.compare('x');
   // null and undefined are treated as equivalent
   t.equal(c({x:null}, {x:undefined}), 0);
   t.equal(c({x:undefined}, {x:null}), 0);
@@ -67,17 +67,17 @@ tape('compare compares null, undefined and NaN', function(t) {
   t.end();
 });
 
-tape('compare supports descending order', function(t) {
-  var c = vega.compare('x', 'descending');
+tape('compare supports descending order', t => {
+  const c = vega.compare('x', 'descending');
   t.equal(c({x:1}, {x:0}), -1);
   t.equal(c({x:0}, {x:1}), 1);
-  t.equal(c({x:1}, {x:1}), 0);
+  t.equal(c({x:1}, {x:1}), -0);
   t.deepEqual(vega.accessorFields(c), ['x']);
   t.end();
 });
 
-tape('compare supports nested comparison', function(t) {
-  var c = vega.compare(['x', 'y'], ['descending', 'ascending']);
+tape('compare supports nested comparison', t => {
+  const c = vega.compare(['x', 'y'], ['descending', 'ascending']);
   t.equal(c({x:1,y:0}, {x:0,y:1}), -1);
   t.equal(c({x:0,y:1}, {x:1,y:0}), 1);
   t.equal(c({x:0,y:0}, {x:0,y:1}), -1);
@@ -87,7 +87,7 @@ tape('compare supports nested comparison', function(t) {
   t.end();
 });
 
-tape('compare supports accessor functions', function(t) {
+tape('compare supports accessor functions', t => {
   var fx = vega.field('x'),
       fy = vega.field('y'),
       c = vega.compare([fx, fy], ['descending', 'ascending']);

@@ -2,8 +2,8 @@ var tape = require('tape'),
     vega = require('../'),
     {local, utc} = require('./util');
 
-tape('timeInterval provides local intervals for time units', function(t) {
-  var ti;
+tape('timeInterval provides local intervals for time units', t => {
+  let ti;
 
   ti = vega.timeInterval('year');
   t.equal(+local(2000), +ti(local(2000, 0, 1)));
@@ -30,6 +30,10 @@ tape('timeInterval provides local intervals for time units', function(t) {
   t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 12)));
   t.equal(+local(2012, 3, 4), +ti(local(2012, 3, 4, 7)));
 
+  ti = vega.timeInterval('dayofyear');
+  t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 12)));
+  t.equal(+local(2012, 3, 4), +ti(local(2012, 3, 4, 7)));
+
   ti = vega.timeInterval('hours');
   t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 0, 15)));
   t.equal(+local(2000, 0, 1, 7), +ti(local(2000, 0, 1, 7, 30)));
@@ -43,14 +47,14 @@ tape('timeInterval provides local intervals for time units', function(t) {
   t.equal(+local(2000, 0, 1, 7, 30, 20), +ti(local(2000, 0, 1, 7, 30, 20, 45)));
 
   ti = vega.timeInterval('milliseconds');
-  var d = local(2000, 1, 2, 7, 15, 30, 120);
+  const d = local(2000, 1, 2, 7, 15, 30, 120);
   t.equal(+d, +ti(d));
 
   t.end();
 });
 
-tape('utcInterval provides utc intervals for time units', function(t) {
-  var ti;
+tape('utcInterval provides utc intervals for time units', t => {
+  let ti;
 
   ti = vega.utcInterval('year');
   t.equal(+utc(2000), +ti(utc(2000, 0, 1)));
@@ -77,6 +81,10 @@ tape('utcInterval provides utc intervals for time units', function(t) {
   t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 12)));
   t.equal(+utc(2012, 3, 4), +ti(utc(2012, 3, 4, 7)));
 
+  ti = vega.utcInterval('dayofyear');
+  t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 12)));
+  t.equal(+utc(2012, 3, 4), +ti(utc(2012, 3, 4, 7)));
+
   ti = vega.utcInterval('hours');
   t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 0, 15)));
   t.equal(+utc(2000, 0, 1, 7), +ti(utc(2000, 0, 1, 7, 30)));
@@ -90,7 +98,7 @@ tape('utcInterval provides utc intervals for time units', function(t) {
   t.equal(+utc(2000, 0, 1, 7, 30, 20), +ti(utc(2000, 0, 1, 7, 30, 20, 45)));
 
   ti = vega.utcInterval('milliseconds');
-  var d = utc(2000, 1, 2, 7, 15, 30, 120);
+  const d = utc(2000, 1, 2, 7, 15, 30, 120);
   t.equal(+d, +ti(d));
 
   t.end();

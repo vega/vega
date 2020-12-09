@@ -6,8 +6,8 @@ var tape = require('tape'),
     Collect = tx.collect,
     JoinAggregate = tx.joinaggregate;
 
-tape('JoinAggregate extends tuples with aggregate values', function(t) {
-  var data = [
+tape('JoinAggregate extends tuples with aggregate values', t => {
+  const data = [
     {k:'a', v:1}, {k:'b', v:3},
     {k:'a', v:2}, {k:'b', v:4}
   ];
@@ -26,7 +26,7 @@ tape('JoinAggregate extends tuples with aggregate values', function(t) {
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
-  var d = out.value;
+  let d = out.value;
 
   t.equal(d.length, 4);
   t.equal(d[0].k, 'a');
@@ -96,8 +96,8 @@ tape('JoinAggregate extends tuples with aggregate values', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles count aggregates', function(t) {
-  var data = [
+tape('JoinAggregate handles count aggregates', t => {
+  let data = [
     {foo:0, bar:1},
     {foo:2, bar:3},
     {foo:4, bar:5}
@@ -179,8 +179,8 @@ tape('JoinAggregate handles count aggregates', function(t) {
   t.end();
 });
 
-tape('JoinAggregate handles distinct aggregates', function(t) {
-  var data = [
+tape('JoinAggregate handles distinct aggregates', t => {
+  const data = [
     {foo:null},
     {foo:null},
     {foo:undefined},

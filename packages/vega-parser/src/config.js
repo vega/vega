@@ -1,18 +1,21 @@
-var defaultFont = 'sans-serif',
-    defaultSymbolSize = 30,
-    defaultStrokeWidth = 2,
-    defaultColor = '#4c78a8',
-    black = '#000',
-    gray = '#888',
-    lightGray = '#ddd';
-
 /**
  * Standard configuration defaults for Vega specification parsing.
  * Users can provide their own (sub-)set of these default values
  * by passing in a config object to the top-level parse method.
  */
 export default function() {
+  const defaultFont = 'sans-serif',
+        defaultSymbolSize = 30,
+        defaultStrokeWidth = 2,
+        defaultColor = '#4c78a8',
+        black = '#000',
+        gray = '#888',
+        lightGray = '#ddd';
+
   return {
+    // default visualization description
+    description: 'Vega visualization',
+
     // default padding around visualization
     padding: 0,
 
@@ -38,17 +41,29 @@ export default function() {
     // defaults for basic mark types
     // each subset accepts mark properties (fill, stroke, etc)
     mark: null,
-    arc: { fill: defaultColor },
-    area: { fill: defaultColor },
+    arc: {
+      fill: defaultColor
+    },
+    area: {
+      fill: defaultColor
+    },
     image: null,
     line: {
       stroke: defaultColor,
       strokeWidth: defaultStrokeWidth
     },
-    path: { stroke: defaultColor },
-    rect: { fill: defaultColor },
-    rule: { stroke: black },
-    shape: { stroke: defaultColor },
+    path: {
+      stroke: defaultColor
+    },
+    rect: {
+      fill: defaultColor
+    },
+    rule: {
+      stroke: black
+    },
+    shape: {
+      stroke: defaultColor
+    },
     symbol: {
       fill: defaultColor,
       size: 64
@@ -57,6 +72,10 @@ export default function() {
       fill: black,
       font: defaultFont,
       fontSize: 11
+    },
+    trail: {
+      fill: defaultColor,
+      size: defaultStrokeWidth
     },
 
     // style definitions
@@ -131,6 +150,7 @@ export default function() {
       labels: true,
       labelAngle: 0,
       labelLimit: 180,
+      labelOffset: 0,
       labelPadding: 2,
       ticks: true,
       tickColor: gray,

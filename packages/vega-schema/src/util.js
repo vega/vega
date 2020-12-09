@@ -6,7 +6,7 @@ const fontWeightEnum = [
 
 const alignEnum = ['left', 'right', 'center'];
 
-const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic'];
+const baselineEnum = ['top', 'middle', 'bottom', 'alphabetic', 'line-top', 'line-bottom'];
 
 const anchorEnum = [null, 'start', 'middle', 'end'];
 
@@ -61,7 +61,7 @@ export function object(properties, addl) {
   const p = {},
         r = [];
 
-  for (let key in properties) {
+  for (const key in properties) {
     let k = key;
     if (key.startsWith('_') && key.endsWith('_')) {
       r.push(k = key.slice(1, -1));

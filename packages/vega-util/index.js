@@ -45,7 +45,7 @@ export {
 
 export {default as array} from './src/array';
 export {default as clampRange} from './src/clampRange';
-export {default as compare} from './src/compare';
+export {default as compare, ascending} from './src/compare';
 export {default as constant} from './src/constant';
 export {default as debounce} from './src/debounce';
 export {default as error} from './src/error';
@@ -62,6 +62,7 @@ export {default as isArray} from './src/isArray';
 export {default as isBoolean} from './src/isBoolean';
 export {default as isDate} from './src/isDate';
 export {default as isFunction} from './src/isFunction';
+export {default as isIterable} from './src/isIterable';
 export {default as isNumber} from './src/isNumber';
 export {default as isObject} from './src/isObject';
 export {default as isRegExp} from './src/isRegExp';

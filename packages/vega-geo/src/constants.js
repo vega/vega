@@ -1,3 +1,3 @@
-export var Feature = 'Feature';
-export var FeatureCollection = 'FeatureCollection';
-export var MultiPoint = 'MultiPoint';
+export const Feature = 'Feature';
+export const FeatureCollection = 'FeatureCollection';
+export const MultiPoint = 'MultiPoint';

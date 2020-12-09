@@ -59,7 +59,6 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | :------------ | :----------------------------: | :------------- |
 | type          | {% include type t="String" %}  | {% include required %} The graphical mark type. Must be one of the [supported mark types](#types).|
 | clip          | [Clip](#clip) | Indicates if the marks should be clipped to a specified shape (default `false`). If boolean-valued, the clipping region is the enclosing group's width and height. If object-valued, should specify either an arbitrary SVG path string or a cartographic projection with which to clip to the sphere of the Earth.|
-| description   | {% include type t="String" %}  | An optional description of this mark. Can be used as a comment.|
 | encode        | [Encode](#encode)              | An object containing a set of visual encoding rules for mark properties.|
 | from          | [From](#from)                  | An object describing the data this mark set should visualize. If undefined, a single element data set containing an empty object is assumed. The _from_ property can either specify a data set to use (e.g., `{"data": "table"}`) or provide a faceting directive to subdivide a data set across a set of [`group` marks](../marks/group).|
 | interactive   | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if the marks can serve as input event sources. If `false`, no mouse or touch events corresponding to the marks will be generated. This property can also take a [Signal](../types/#Signal) value to dynamically toggle interactive status.|
@@ -71,6 +70,15 @@ There is also a special group mark type (`group`) that can contain other marks, 
 | role          | {% include type t="String" %}  | A metadata string indicating the role of the mark. SVG renderers will add this role value (prepended with the prefix `role-`) as a CSS class name on the enclosing SVG group (`g`) element containing the mark instances. Roles are used internally by Vega to guide layout. _Do not set this property unless you know which layout effect you are trying to achieve._|
 | style         | {% include type t="String|String[]" %}  | A string or array of strings indicating the name of custom styles to apply to the mark. A style is a named collection of mark property defaults defined within the [configuration](../config). These properties will be applied to the mark's `enter` encoding set, with later styles overriding earlier styles. Any properties explicitly defined within the mark's `encode` block will override a style default.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of this mark set relative to other marks, axes, or legends. The default value is _0_; higher values (_1_) will cause this mark set to be drawn on top of other mark, axis, or legend definitions with lower z-index values. Note that this value applies to the all marks in a set, not individual mark _items_. To adjust the ordering of items within a set, use the _zindex_ encoding channel.|
+
+### <a name="accessibility"></a>Accessibility Properties {% include tag ver="5.11" %}
+
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output. Vega will automatically generate ARIA "role" and "roleDescription" attributes for container SVG `<g>` elements for a set of mark items. The properties below can be used to disable ARIA attributes or add additional description text. In addition, individual mark items can have per-item ARIA attributes, defined within encoding channels.
+
+| Property      | Type                           | Description    |
+| :------------ | :----------------------------: | :------------- |
+| aria          | {% include type t="Boolean" %} | A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG group for the marks, removing the mark from the ARIA accessibility tree. |
+| description   | {% include type t="String" %}  | A text description of this mark for ARIA accessibility (SVG output only). If the *aria* property is `true`, for SVG output the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) will be set to this description. |
 
 ## <a name="clip"></a>Mark Clipping
 
@@ -144,7 +152,7 @@ Here is an example in which point marks serve as the backing data for a set of t
 
 All visual mark property definitions are specified as name-value pairs in a property set (such as `update`, `enter`, or `exit`). The name is simply the name of the visual property: individual mark types support standardized encoding channel names, but arbitrary names are also allowed, resulting in new named properties on output scenegraph items. The value of a property definition should be a [_value reference_](../types/#Value) or [_production rule_](#production-rule), as defined below.
 
-The `enter` set is invoked when a mark item is first instantiated and also when a visualization is resized. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
+The `enter` set is invoked when a mark item is first instantiated. Unless otherwise indicated, the `update` set is invoked whenever data or display properties update. The `exit` set is invoked when the data value backing a mark item is removed. If hover processing is requested on the Vega View instance, the `hover` set will be invoked upon mouse hover.
 
 Custom encoding sets with arbitrary names are also allowed. To invoke a custom encoding set (e.g., instead of the `update` set), either pass the encoding set name to the [Vega View run method](../api/view/#view_run) or define a [signal event handler with an `"encode"` directive](../signals/#handlers).
 

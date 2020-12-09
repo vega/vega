@@ -4,7 +4,7 @@ title: Statistics API
 permalink: /docs/api/statistics/index.html
 ---
 
-Vega includes **statistics** functions for to model probability distributions and perform other statistical calculations. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-statistics](https://github.com/vega/vega-statistics) project.
+Vega includes **statistics** functions for to model probability distributions and perform other statistical calculations. These methods are bound to the top-level `vega` object, and can also be used in a stand-alone fashion by using the [vega-statistics](https://github.com/vega/vega/blob/master/packages/vega-statistics) project.
 
 ## Statistics API Reference
 
@@ -91,7 +91,7 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 
 <a name="sampleUniform" href="#sampleUniform">#</a>
 vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
-[<>](https://github.com/vega/vega-statistics/blob/master/src/uniform.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
 Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 

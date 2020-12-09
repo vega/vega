@@ -23,6 +23,6 @@ export default async function(type, scaleFactor) {
 }
 
 function toBlobURL(data, mime) {
-  var blob = new Blob([data], {type: mime});
+  const blob = new Blob([data], {type: mime});
   return window.URL.createObjectURL(blob);
 }

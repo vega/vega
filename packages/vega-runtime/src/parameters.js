@@ -1,25 +1,23 @@
-import parseDataflow from './dataflow';
-import {parameterExpression, encodeExpression} from './expression';
 import {tupleid} from 'vega-dataflow';
 import {
   accessor, array, compare, error, field,
-  isArray, isObject, hasOwnProperty, key
+  hasOwnProperty, isArray, isObject, key
 } from 'vega-util';
 
 /**
  * Parse a set of operator parameters.
  */
-export default function parseParameters(spec, ctx, params) {
+export default function parseParameters(spec, params) {
   params = params || {};
-  var key, value;
+  const ctx = this;
 
-  for (key in spec) {
-    value = spec[key];
-
+  for (const key in spec) {
+    const value = spec[key];
     params[key] = isArray(value)
-      ? value.map(function(v) { return parseParameter(v, ctx, params); })
+      ? value.map(v => parseParameter(v, ctx, params))
       : parseParameter(value, ctx, params);
   }
+
   return params;
 }
 
@@ -29,12 +27,13 @@ export default function parseParameters(spec, ctx, params) {
 function parseParameter(spec, ctx, params) {
   if (!spec || !isObject(spec)) return spec;
 
-  for (var i=0, n=PARSERS.length, p; i<n; ++i) {
+  for (let i=0, n=PARSERS.length, p; i<n; ++i) {
     p = PARSERS[i];
     if (hasOwnProperty(spec, p.key)) {
       return p.parse(spec, ctx, params);
     }
   }
+
   return spec;
 }
 
@@ -63,19 +62,22 @@ function getOperator(_, ctx) {
  */
 function getExpression(_, ctx, params) {
   if (_.$params) { // parse expression parameters
-    parseParameters(_.$params, ctx, params);
+    ctx.parseParameters(_.$params, params);
   }
-  var k = 'e:' + _.$expr + '_' + _.$name;
-  return ctx.fn[k]
-    || (ctx.fn[k] = accessor(parameterExpression(_.$expr, ctx), _.$fields, _.$name));
+  const k = 'e:' + _.$expr.code + '_' + _.$name;
+  return ctx.fn[k] || (ctx.fn[k] = accessor(
+    ctx.parameterExpression(_.$expr),
+    _.$fields,
+    _.$name
+  ));
 }
 
 /**
  * Resolve a key accessor reference.
  */
 function getKey(_, ctx) {
-  var k = 'k:' + _.$key + '_' + (!!_.$flat);
-  return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat));
+  const k = 'k:' + _.$key + '_' + (!!_.$flat);
+  return ctx.fn[k] || (ctx.fn[k] = key(_.$key, _.$flat, ctx.expr.codegen));
 }
 
 /**
@@ -83,8 +85,8 @@ function getKey(_, ctx) {
  */
 function getField(_, ctx) {
   if (!_.$field) return null;
-  var k = 'f:' + _.$field + '_' + _.$name;
-  return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name));
+  const k = 'f:' + _.$field + '_' + _.$name;
+  return ctx.fn[k] || (ctx.fn[k] = field(_.$field, _.$name, ctx.expr.codegen));
 }
 
 /**
@@ -93,23 +95,21 @@ function getField(_, ctx) {
 function getCompare(_, ctx) {
   // As of Vega 5.5.3, $tupleid sort is no longer used.
   // Keep here for now for backwards compatibility.
-  var k = 'c:' + _.$compare + '_' + _.$order,
-      c = array(_.$compare).map(function(_) {
-        return (_ && _.$tupleid) ? tupleid : _;
-      });
-  return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order));
+  const k = 'c:' + _.$compare + '_' + _.$order,
+        c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
+  return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order, ctx.expr.codegen));
 }
 
 /**
  * Resolve an encode operator reference.
  */
 function getEncode(_, ctx) {
-  var spec = _.$encode,
-      encode = {}, name, enc;
+  const spec = _.$encode,
+        encode = {};
 
-  for (name in spec) {
-    enc = spec[name];
-    encode[name] = accessor(encodeExpression(enc.$expr, ctx), enc.$fields);
+  for (const name in spec) {
+    const enc = spec[name];
+    encode[name] = accessor(ctx.encodeExpression(enc.$expr), enc.$fields);
     encode[name].output = enc.$output;
   }
   return encode;
@@ -126,12 +126,13 @@ function getContext(_, ctx) {
  * Resolve a recursive subflow specification.
  */
 function getSubflow(_, ctx) {
-  var spec = _.$subflow;
+  const spec = _.$subflow;
   return function(dataflow, key, parent) {
-    var subctx = parseDataflow(spec, ctx.fork()),
-        op = subctx.get(spec.operators[0].id),
-        p = subctx.signals.parent;
+    const subctx = ctx.fork().parse(spec),
+          op = subctx.get(spec.operators[0].id),
+          p = subctx.signals.parent;
     if (p) p.set(parent);
+    op.detachSubflow = () => ctx.detach(subctx);
     return op;
   };
 }

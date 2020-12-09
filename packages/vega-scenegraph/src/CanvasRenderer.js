@@ -6,59 +6,35 @@ import {domClear} from './util/dom';
 import clip from './util/canvas/clip';
 import resize from './util/canvas/resize';
 import {canvas} from 'vega-canvas';
-import {inherits} from 'vega-util';
+import {error, inherits} from 'vega-util';
 
 export default function CanvasRenderer(loader) {
   Renderer.call(this, loader);
+  this._options = {};
   this._redraw = false;
   this._dirty = new Bounds();
+  this._tempb = new Bounds();
 }
 
-var prototype = inherits(CanvasRenderer, Renderer),
-    base = Renderer.prototype,
-    tempBounds = new Bounds();
+const base = Renderer.prototype;
 
-prototype.initialize = function(el, width, height, origin, scaleFactor, options) {
-  this._options = options;
-  this._canvas = canvas(1, 1, options && options.type); // instantiate a small canvas
-
-  if (el) {
-    domClear(el, 0).appendChild(this._canvas);
-    this._canvas.setAttribute('class', 'marks');
-  }
-  // this method will invoke resize to size the canvas appropriately
-  return base.initialize.call(this, el, width, height, origin, scaleFactor);
-};
-
-prototype.resize = function(width, height, origin, scaleFactor) {
-  base.resize.call(this, width, height, origin, scaleFactor);
-  resize(this._canvas, this._width, this._height,
-    this._origin, this._scale, this._options && this._options.context);
-  this._redraw = true;
-  return this;
-};
-
-prototype.canvas = function() {
-  return this._canvas;
-};
-
-prototype.context = function() {
-  return this._canvas ? this._canvas.getContext('2d') : null;
-};
-
-prototype.dirty = function(item) {
-  var b = translate(item.bounds, item.mark.group);
-  this._dirty.union(b);
-};
+const viewBounds = (origin, width, height) => new Bounds()
+  .set(0, 0, width, height)
+  .translate(-origin[0], -origin[1]);
 
 function clipToBounds(g, b, origin) {
   // expand bounds by 1 pixel, then round to pixel boundaries
   b.expand(1).round();
 
+  // align to base pixel grid in case of non-integer scaling (#2425)
+  if (g.pixelRatio % 1) {
+    b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+  }
+
   // to avoid artifacts translate if origin has fractional pixels
   b.translate(-(origin[0] % 1), -(origin[1] % 1));
 
-  // set clipping path
+  // set clip path
   g.beginPath();
   g.rect(b.x1, b.y1, b.width(), b.height());
   g.clip();
@@ -66,61 +42,109 @@ function clipToBounds(g, b, origin) {
   return b;
 }
 
-function viewBounds(origin, width, height) {
-  return tempBounds
-    .set(0, 0, width, height)
-    .translate(-origin[0], -origin[1]);
-}
+inherits(CanvasRenderer, Renderer, {
+  initialize(el, width, height, origin, scaleFactor, options) {
+    this._options = options || {};
 
-function translate(bounds, group) {
-  if (group == null) return bounds;
-  var b = tempBounds.clear().union(bounds);
-  for (; group != null; group = group.mark.group) {
-    b.translate(group.x || 0, group.y || 0);
+    this._canvas = this._options.externalContext
+      ? null
+      : canvas(1, 1, this._options.type); // instantiate a small canvas
+
+    if (el && this._canvas) {
+      domClear(el, 0).appendChild(this._canvas);
+      this._canvas.setAttribute('class', 'marks');
+    }
+
+    // this method will invoke resize to size the canvas appropriately
+    return base.initialize.call(this, el, width, height, origin, scaleFactor);
+  },
+
+  resize(width, height, origin, scaleFactor) {
+    base.resize.call(this, width, height, origin, scaleFactor);
+
+    if (this._canvas) {
+      // configure canvas size and transform
+      resize(this._canvas, this._width, this._height,
+        this._origin, this._scale, this._options.context);
+    } else {
+      // external context needs to be scaled and positioned to origin
+      const ctx = this._options.externalContext;
+      if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
+      ctx.scale(this._scale, this._scale);
+      ctx.translate(this._origin[0], this._origin[1]);
+    }
+
+    this._redraw = true;
+    return this;
+  },
+
+  canvas() {
+    return this._canvas;
+  },
+
+  context() {
+    return this._options.externalContext
+      || (this._canvas ? this._canvas.getContext('2d') : null);
+  },
+
+  dirty(item) {
+    const b = this._tempb.clear().union(item.bounds);
+    let g = item.mark.group;
+
+    while (g) {
+      b.translate(g.x || 0, g.y || 0);
+      g = g.mark.group;
+    }
+
+    this._dirty.union(b);
+  },
+
+  _render(scene) {
+    const g = this.context(),
+          o = this._origin,
+          w = this._width,
+          h = this._height,
+          db = this._dirty,
+          vb = viewBounds(o, w, h);
+
+    // setup
+    g.save();
+    const b = this._redraw || db.empty()
+      ? (this._redraw = false, vb.expand(1))
+      : clipToBounds(g, vb.intersect(db), o);
+
+    this.clear(-o[0], -o[1], w, h);
+
+    // render
+    this.draw(g, scene, b);
+
+    // takedown
+    g.restore();
+    db.clear();
+
+    return this;
+  },
+
+  draw(ctx, scene, bounds) {
+    const mark = marks[scene.marktype];
+    if (scene.clip) clip(ctx, scene);
+    mark.draw.call(this, ctx, scene, bounds);
+    if (scene.clip) ctx.restore();
+  },
+
+  clear(x, y, w, h) {
+    const opt = this._options,
+          g = this.context();
+
+    if (opt.type !== 'pdf' && !opt.externalContext) {
+      // calling clear rect voids vector output in pdf mode
+      // and could remove external context content (#2615)
+      g.clearRect(x, y, w, h);
+    }
+
+    if (this._bgcolor != null) {
+      g.fillStyle = this._bgcolor;
+      g.fillRect(x, y, w, h);
+    }
   }
-  return b;
-}
-
-prototype._render = function(scene) {
-  var g = this.context(),
-      o = this._origin,
-      w = this._width,
-      h = this._height,
-      b = this._dirty;
-
-  // setup
-  g.save();
-  if (this._redraw || b.empty()) {
-    this._redraw = false;
-    b = viewBounds(o, w, h).expand(1);
-  } else {
-    b = clipToBounds(g, b.intersect(viewBounds(o, w, h)), o, w, h);
-  }
-
-  this.clear(-o[0], -o[1], w, h);
-
-  // render
-  this.draw(g, scene, b);
-
-  // takedown
-  g.restore();
-
-  this._dirty.clear();
-  return this;
-};
-
-prototype.draw = function(ctx, scene, bounds) {
-  var mark = marks[scene.marktype];
-  if (scene.clip) clip(ctx, scene);
-  mark.draw.call(this, ctx, scene, bounds);
-  if (scene.clip) ctx.restore();
-};
-
-prototype.clear = function(x, y, w, h) {
-  var g = this.context();
-  g.clearRect(x, y, w, h);
-  if (this._bgcolor != null) {
-    g.fillStyle = this._bgcolor;
-    g.fillRect(x, y, w, h);
-  }
-};
+});

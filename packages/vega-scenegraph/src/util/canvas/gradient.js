@@ -1,32 +1,59 @@
-export default function(context, gradient, bounds) {
-  const w = bounds.width(),
-        h = bounds.height(),
-        stop = gradient.stops,
-        n = stop.length;
+import value from '../value';
+import {canvas} from 'vega-canvas';
 
-  const canvasGradient = gradient.gradient === 'radial'
-    ? context.createRadialGradient(
-        bounds.x1 + v(gradient.x1, 0.5) * w,
-        bounds.y1 + v(gradient.y1, 0.5) * h,
-        Math.max(w, h) * v(gradient.r1, 0),
-        bounds.x1 + v(gradient.x2, 0.5) * w,
-        bounds.y1 + v(gradient.y2, 0.5) * h,
-        Math.max(w, h) * v(gradient.r2, 0.5)
-      )
-    : context.createLinearGradient(
-        bounds.x1 + v(gradient.x1, 0) * w,
-        bounds.y1 + v(gradient.y1, 0) * h,
-        bounds.x1 + v(gradient.x2, 1) * w,
-        bounds.y1 + v(gradient.y2, 0) * h
-      );
-
+function addStops(gradient, stops) {
+  const n = stops.length;
   for (let i=0; i<n; ++i) {
-    canvasGradient.addColorStop(stop[i].offset, stop[i].color);
+    gradient.addColorStop(stops[i].offset, stops[i].color);
   }
-
-  return canvasGradient;
+  return gradient;
 }
 
-function v(value, dflt) {
-  return value == null ? dflt : value;
+export default function(context, spec, bounds) {
+  const w = bounds.width(),
+        h = bounds.height();
+  let gradient;
+
+
+  if (spec.gradient === 'radial') {
+    gradient = context.createRadialGradient(
+      bounds.x1 + value(spec.x1, 0.5) * w,
+      bounds.y1 + value(spec.y1, 0.5) * h,
+      Math.max(w, h) * value(spec.r1, 0),
+      bounds.x1 + value(spec.x2, 0.5) * w,
+      bounds.y1 + value(spec.y2, 0.5) * h,
+      Math.max(w, h) * value(spec.r2, 0.5)
+    );
+  } else { // linear gradient
+    const x1 = value(spec.x1, 0),
+          y1 = value(spec.y1, 0),
+          x2 = value(spec.x2, 1),
+          y2 = value(spec.y2, 0);
+
+    if (x1 === x2 || y1 === y2 || w === h) {
+      // axis aligned: use normal gradient
+      gradient = context.createLinearGradient(
+        bounds.x1 + x1 * w,
+        bounds.y1 + y1 * h,
+        bounds.x1 + x2 * w,
+        bounds.y1 + y2 * h
+      );
+    } else {
+      // not axis aligned: render gradient into a pattern (#2365)
+      // this allows us to use normalized bounding box coordinates
+      const image = canvas(Math.ceil(w), Math.ceil(h)),
+            ictx = image.getContext('2d');
+
+      ictx.scale(w, h);
+      ictx.fillStyle = addStops(
+        ictx.createLinearGradient(x1, y1, x2, y2),
+        spec.stops
+      );
+      ictx.fillRect(0, 0, w, h);
+
+      return context.createPattern(image, 'no-repeat');
+    }
+  }
+
+  return addStops(gradient, spec.stops);
 }

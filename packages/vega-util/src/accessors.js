@@ -1,16 +1,14 @@
 import accessor from './accessor';
 import field from './field';
 
-var empty = [];
+export const id = field('id');
 
-export var id = field('id');
+export const identity = accessor(_ => _, [], 'identity');
 
-export var identity = accessor(function(_) { return _; }, empty, 'identity');
+export const zero = accessor(() => 0, [], 'zero');
 
-export var zero = accessor(function() { return 0; }, empty, 'zero');
+export const one = accessor(() => 1, [], 'one');
 
-export var one = accessor(function() { return 1; }, empty, 'one');
+export const truthy = accessor(() => true, [], 'true');
 
-export var truthy = accessor(function() { return true; }, empty, 'true');
-
-export var falsy = accessor(function() { return false; }, empty, 'false');
+export const falsy = accessor(() => false, [], 'false');

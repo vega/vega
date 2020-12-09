@@ -1,60 +1,60 @@
+import {addEncoders, extendEncode} from './encode/util';
 import {
-  GuideLabelStyle, Skip,
-  Symbols, Gradient, Discrete, LegendScales
+  Discrete, Gradient,
+  GuideLabelStyle, LegendScales, Skip, Symbols
 } from './guides/constants';
+import guideGroup from './guides/guide-group';
+import {getEncoding, getStyle, lookup} from './guides/guide-util';
 import legendGradient from './guides/legend-gradient';
 import legendGradientDiscrete from './guides/legend-gradient-discrete';
 import legendGradientLabels from './guides/legend-gradient-labels';
-import {default as legendSymbolGroups, legendSymbolLayout} from './guides/legend-symbol-groups';
+import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
 import legendTitle from './guides/legend-title';
-import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, lookup} from './guides/guide-util';
-import parseExpression from './expression';
 import parseMark from './mark';
-import {LegendRole, LegendEntryRole} from './marks/roles';
-import {addEncoders, extendEncode} from './encode/encode-util';
-import {ref, deref} from '../util';
+import {LegendEntryRole, LegendRole} from './marks/roles';
+
+import {deref, ref} from '../util';
 import {Collect, LegendEntries} from '../transforms';
 
+import {parseExpression} from 'vega-functions';
 import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  var config = scope.config.legend,
-      encode = spec.encode || {},
-      legendEncode = encode.legend || {},
-      name = legendEncode.name || undefined,
-      interactive = legendEncode.interactive,
-      style = legendEncode.style,
-      _ = lookup(spec, config),
-      entryEncode, entryLayout, params, children,
-      type, datum, dataRef, entryRef, group;
+  const config = scope.config.legend,
+        encode = spec.encode || {},
+        _ = lookup(spec, config),
+        legendEncode = encode.legend || {},
+        name = legendEncode.name || undefined,
+        interactive = legendEncode.interactive,
+        style = legendEncode.style,
+        scales = {};
 
-  // resolve 'canonical' scale name
-  var scale = LegendScales.reduce(function(a, b) { return a || spec[b]; }, 0);
+  let scale = 0, entryLayout, params, children;
+
+  // resolve scales and 'canonical' scale name
+  LegendScales.forEach(s => spec[s]
+    ? (scales[s] = spec[s], scale = scale || spec[s]) : 0
+  );
   if (!scale) error('Missing valid scale for legend.');
 
   // resolve legend type (symbol, gradient, or discrete gradient)
-  type = legendType(spec, scope.scaleType(scale));
+  const type = legendType(spec, scope.scaleType(scale));
 
   // single-element data source for legend group
-  datum = {
+  const datum = {
     title:  spec.title != null,
+    scales: scales,
     type:   type,
     vgrad:  type !== 'symbol' &&  _.isVertical()
   };
-  dataRef = ref(scope.add(Collect(null, [datum])));
-
-  // encoding properties for legend group
-  legendEncode = extendEncode(
-    buildLegendEncode(_, config), legendEncode, Skip
-  );
+  const dataRef = ref(scope.add(Collect(null, [datum])));
 
   // encoding properties for legend entry sub-group
-  entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
+  const entryEncode = {enter: {x: {value: 0}, y: {value: 0}}};
 
   // data source for legend values
-  entryRef = ref(scope.add(LegendEntries(params = {
+  const entryRef = ref(scope.add(LegendEntries(params = {
     type:    type,
     scale:   scope.scaleRef(scale),
     count:   scope.objectProperty(_('tickCount')),
@@ -98,8 +98,14 @@ export default function(spec, scope) {
 
   // generate legend marks
   children = [
-    guideGroup(LegendEntryRole, null, null, dataRef, interactive,
-               entryEncode, children, entryLayout)
+    guideGroup({
+      role: LegendEntryRole,
+      from: dataRef,
+      encode: entryEncode,
+      marks: children,
+      layout: entryLayout,
+      interactive
+    })
   ];
 
   // include legend title if defined
@@ -107,16 +113,26 @@ export default function(spec, scope) {
     children.push(legendTitle(spec, config, encode.title, dataRef));
   }
 
-  // build legend specification
-  group = guideGroup(LegendRole, style, name, dataRef, interactive, legendEncode, children);
-  if (spec.zindex) group.zindex = spec.zindex;
-
   // parse legend specification
-  return parseMark(group, scope);
+  return parseMark(
+    guideGroup({
+      role:        LegendRole,
+      from:        dataRef,
+      encode:      extendEncode(buildLegendEncode(_, spec, config), legendEncode, Skip),
+      marks:       children,
+      aria:        _('aria'),
+      description: _('description'),
+      zindex:      _('zindex'),
+      name,
+      interactive,
+      style
+    }),
+    scope
+  );
 }
 
 function legendType(spec, scaleType) {
-  var type = spec.type || Symbols;
+  let type = spec.type || Symbols;
 
   if (!spec.type && scaleCount(spec) === 1 && (spec.fill || spec.stroke)) {
     type = isContinuous(scaleType) ? Gradient
@@ -130,13 +146,11 @@ function legendType(spec, scaleType) {
 }
 
 function scaleCount(spec) {
-  return LegendScales.reduce(function(count, type) {
-    return count + (spec[type] ? 1 : 0);
-  }, 0);
+  return LegendScales.reduce((count, type) => count + (spec[type] ? 1 : 0), 0);
 }
 
-function buildLegendEncode(_, config) {
-  var encode = {enter: {}, update: {}};
+function buildLegendEncode(_, spec, config) {
+  const encode = {enter: {}, update: {}};
 
   addEncoders(encode, {
     orient:       _('orient'),
@@ -150,15 +164,19 @@ function buildLegendEncode(_, config) {
     strokeDash:   config.strokeDash,
     x:            _('legendX'),
     y:            _('legendY'),
+
+    // accessibility support
+    format:       spec.format,
+    formatType:   spec.formatType
   });
 
   return encode;
 }
 
 function sizeExpression(spec, scope, marks) {
-  var size = deref(getChannel('size', spec, marks)),
-      strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
-      fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
+  const size = deref(getChannel('size', spec, marks)),
+        strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
+        fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
   return parseExpression(
     `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,

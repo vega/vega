@@ -1,0 +1,32 @@
+{
+  "name": "vega-format",
+  "version": "1.0.4",
+  "description": "JavaScript string formatting utilities for Vega.",
+  "keywords": [
+    "vega",
+    "format",
+    "number",
+    "date",
+    "time"
+  ],
+  "license": "BSD-3-Clause",
+  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "main": "build/vega-format.js",
+  "module": "build/vega-format.module.js",
+  "unpkg": "build/vega-format.min.js",
+  "repository": "vega/vega",
+  "scripts": {
+    "prebuild": "rimraf build",
+    "build": "rollup -c",
+    "pretest": "yarn build --config-test",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublishOnly": "yarn test && yarn build"
+  },
+  "dependencies": {
+    "d3-array": "^2.7.1",
+    "d3-format": "^2.0.0",
+    "d3-time-format": "^3.0.0",
+    "vega-time": "^2.0.3",
+    "vega-util": "^1.15.2"
+  }
+}

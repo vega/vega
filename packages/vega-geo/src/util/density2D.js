@@ -63,7 +63,7 @@ export default function() {
 
     // scale density estimates
     // density in points per square pixel or probability density
-    let s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
+    const s = counts ? Math.pow(2, -2 * k) : 1 / sum(values);
     for (let i=0, sz=n*m; i<sz; ++i) values[i] *= s;
 
     return {
@@ -92,8 +92,8 @@ export default function() {
 
   density.size = function(_) {
     if (!arguments.length) return [dx, dy];
-    var _0 = Math.ceil(_[0]), _1 = Math.ceil(_[1]);
-    if (!(_0 >= 0) && !(_0 >= 0)) error('invalid size');
+    var _0 = +_[0], _1 = +_[1];
+    if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
     return dx = _0, dy = _1, density;
   };
 

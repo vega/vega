@@ -7,8 +7,8 @@ var tape = require('tape'),
     CrossFilter = xf.crossfilter,
     ResolveFilter = xf.resolvefilter;
 
-tape('Crossfilter filters tuples', function(t) {
-  var data = [
+tape('Crossfilter filters tuples', t => {
+  const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
@@ -79,8 +79,8 @@ tape('Crossfilter filters tuples', function(t) {
   t.end();
 });
 
-tape('Crossfilter consolidates after remove', function(t) {
-  var data = [
+tape('Crossfilter consolidates after remove', t => {
+  const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
@@ -103,10 +103,10 @@ tape('Crossfilter consolidates after remove', function(t) {
   // this happens *after* propagation completes
 
   // were dimensions appropriately remapped?
-  cf._dims.map(function(dim) {
+  cf._dims.map(dim => {
     t.equal(dim.size(), 2);
 
-    var idx = dim.index();
+    const idx = dim.index();
     t.equal(idx[0], 1);
     t.equal(idx[1], 0);
   });

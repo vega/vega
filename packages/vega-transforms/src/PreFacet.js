@@ -15,33 +15,43 @@ export default function PreFacet(params) {
   Facet.call(this, params);
 }
 
-var prototype = inherits(PreFacet, Facet);
+inherits(PreFacet, Facet, {
+  transform(_, pulse) {
+    const flow = _.subflow,
+          field = _.field,
+          subflow = t => this.subflow(tupleid(t), flow, pulse, t);
 
-prototype.transform = function(_, pulse) {
-  var self = this,
-      flow = _.subflow,
-      field = _.field;
+    if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
+      error('PreFacet does not support field modification.');
+    }
 
-  if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
-    error('PreFacet does not support field modification.');
+    this.initTargets(); // reset list of active subflows
+
+    if (field) {
+      pulse.visit(pulse.MOD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.mod(_));
+      });
+
+      pulse.visit(pulse.ADD, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.add(ingest(_)));
+      });
+
+      pulse.visit(pulse.REM, t => {
+        const sf = subflow(t);
+        field(t).forEach(_ => sf.rem(_));
+      });
+    } else {
+      pulse.visit(pulse.MOD, t => subflow(t).mod(t));
+      pulse.visit(pulse.ADD, t => subflow(t).add(t));
+      pulse.visit(pulse.REM, t => subflow(t).rem(t));
+    }
+
+    if (pulse.clean()) {
+      pulse.runAfter(() => this.clean());
+    }
+
+    return pulse;
   }
-
-  this._targets.active = 0; // reset list of active subflows
-
-  pulse.visit(pulse.MOD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.mod(_); }) : sf.mod(t);
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.add(ingest(_)); }) : sf.add(t);
-  });
-
-  pulse.visit(pulse.REM, function(t) {
-    var sf = self.subflow(tupleid(t), flow, pulse, t);
-    field ? field(t).forEach(function(_) { sf.rem(_); }) : sf.rem(t);
-  });
-
-  return pulse;
-};
+});

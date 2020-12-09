@@ -1,37 +1,34 @@
 import {entry} from './util';
 
-function transform(name) {
-  return function(params, value, parent) {
-    return entry(name, value, params || undefined, parent);
-  };
-}
+const transform = name => (params, value, parent) =>
+  entry(name, value, params || undefined, parent);
 
-export var Aggregate = transform('aggregate');
-export var AxisTicks = transform('axisticks');
-export var Bound = transform('bound');
-export var Collect = transform('collect');
-export var Compare = transform('compare');
-export var DataJoin = transform('datajoin');
-export var Encode = transform('encode');
-export var Expression = transform('expression');
-export var Extent = transform('extent');
-export var Facet = transform('facet');
-export var Field = transform('field');
-export var Key = transform('key');
-export var LegendEntries = transform('legendentries');
-export var Load = transform('load');
-export var Mark = transform('mark');
-export var MultiExtent = transform('multiextent');
-export var MultiValues = transform('multivalues');
-export var Overlap = transform('overlap');
-export var Params = transform('params');
-export var PreFacet = transform('prefacet');
-export var Projection = transform('projection');
-export var Proxy = transform('proxy');
-export var Relay = transform('relay');
-export var Render = transform('render');
-export var Scale = transform('scale');
-export var Sieve = transform('sieve');
-export var SortItems = transform('sortitems');
-export var ViewLayout = transform('viewlayout');
-export var Values = transform('values');
+export const Aggregate = transform('aggregate');
+export const AxisTicks = transform('axisticks');
+export const Bound = transform('bound');
+export const Collect = transform('collect');
+export const Compare = transform('compare');
+export const DataJoin = transform('datajoin');
+export const Encode = transform('encode');
+export const Expression = transform('expression');
+export const Extent = transform('extent');
+export const Facet = transform('facet');
+export const Field = transform('field');
+export const Key = transform('key');
+export const LegendEntries = transform('legendentries');
+export const Load = transform('load');
+export const Mark = transform('mark');
+export const MultiExtent = transform('multiextent');
+export const MultiValues = transform('multivalues');
+export const Overlap = transform('overlap');
+export const Params = transform('params');
+export const PreFacet = transform('prefacet');
+export const Projection = transform('projection');
+export const Proxy = transform('proxy');
+export const Relay = transform('relay');
+export const Render = transform('render');
+export const Scale = transform('scale');
+export const Sieve = transform('sieve');
+export const SortItems = transform('sortitems');
+export const ViewLayout = transform('viewlayout');
+export const Values = transform('values');

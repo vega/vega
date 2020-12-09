@@ -1,3 +1,32 @@
+const VIEW    = 'view',
+      LBRACK  = '[',
+      RBRACK  = ']',
+      LBRACE  = '{',
+      RBRACE  = '}',
+      COLON   = ':',
+      COMMA   = ',',
+      NAME    = '@',
+      GT      = '>',
+      ILLEGAL = /[[\]{}]/,
+      DEFAULT_MARKS = {
+        '*': 1,
+        arc: 1,
+        area: 1,
+        group: 1,
+        image: 1,
+        line: 1,
+        path: 1,
+        rect: 1,
+        rule: 1,
+        shape: 1,
+        symbol: 1,
+        text: 1,
+        trail: 1
+      };
+
+let DEFAULT_SOURCE,
+    MARKS;
+
 /**
  * Parse an event selector string.
  * Returns an array of event stream definitions.
@@ -8,43 +37,15 @@ export default function(selector, source, marks) {
   return parseMerge(selector.trim()).map(parseSelector);
 }
 
-var VIEW    = 'view',
-    LBRACK  = '[',
-    RBRACK  = ']',
-    LBRACE  = '{',
-    RBRACE  = '}',
-    COLON   = ':',
-    COMMA   = ',',
-    NAME    = '@',
-    GT      = '>',
-    ILLEGAL = /[[\]{}]/,
-    DEFAULT_SOURCE,
-    MARKS,
-    DEFAULT_MARKS = {
-      '*': 1,
-      arc: 1,
-      area: 1,
-      group: 1,
-      image: 1,
-      line: 1,
-      path: 1,
-      rect: 1,
-      rule: 1,
-      shape: 1,
-      symbol: 1,
-      text: 1,
-      trail: 1
-    };
-
 function isMarkType(type) {
   return MARKS[type];
 }
 
 function find(s, i, endChar, pushChar, popChar) {
-  var count = 0,
-      n = s.length,
-      c;
-  for (; i<n; ++i) {
+  const n = s.length;
+  let count = 0, c;
+
+  for (; i < n; ++i) {
     c = s[i];
     if (!count && c === endChar) return i;
     else if (popChar && popChar.indexOf(c) >= 0) --count;
@@ -54,10 +55,9 @@ function find(s, i, endChar, pushChar, popChar) {
 }
 
 function parseMerge(s) {
-  var output = [],
-      start = 0,
-      n = s.length,
-      i = 0;
+  const output = [],
+        n = s.length;
+  let start = 0, i = 0;
 
   while (i < n) {
     i = find(s, i, COMMA, LBRACK + LBRACE, RBRACK + RBRACE);
@@ -78,9 +78,8 @@ function parseSelector(s) {
 }
 
 function parseBetween(s) {
-  var n = s.length,
-      i = 1,
-      b, stream;
+  const n = s.length;
+  let i = 1, b;
 
   i = find(s, i, RBRACK, LBRACK, RBRACK);
   if (i === n) {
@@ -99,7 +98,7 @@ function parseBetween(s) {
 
   b = b.map(parseSelector);
 
-  stream = parseSelector(s.slice(1).trim());
+  const stream = parseSelector(s.slice(1).trim());
   if (stream.between) {
     return {
       between: b,
@@ -113,9 +112,10 @@ function parseBetween(s) {
 }
 
 function parseStream(s) {
-  var stream = {source: DEFAULT_SOURCE},
-      source = [],
-      throttle = [0, 0],
+  const stream = {source: DEFAULT_SOURCE},
+        source = [];
+
+  let throttle = [0, 0],
       markname = 0,
       start = 0,
       n = s.length,
@@ -188,7 +188,7 @@ function parseStream(s) {
   }
   if (stream.type.slice(-1) === '!') {
     stream.consume = true;
-    stream.type = stream.type.slice(0, -1)
+    stream.type = stream.type.slice(0, -1);
   }
   if (filter != null) stream.filter = filter;
   if (throttle[0]) stream.throttle = throttle[0];
@@ -198,10 +198,10 @@ function parseStream(s) {
 }
 
 function parseThrottle(s) {
-  var a = s.split(COMMA);
+  const a = s.split(COMMA);
   if (!s.length || a.length > 2) throw s;
-  return a.map(function(_) {
-    var x = +_;
+  return a.map(_ => {
+    const x = +_;
     if (x !== x) throw s;
     return x;
   });

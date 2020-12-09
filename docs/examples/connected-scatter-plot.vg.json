@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of a connected scatter plot, tracking changes in miles driven versus the price of gasoline.",
   "width": 800,
   "height": 500,
   "padding": 5,

@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An interactive scatter plot of global health statistics by country and year.",
   "width": 800,
   "height": 600,
   "padding": 5,

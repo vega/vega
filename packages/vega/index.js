@@ -8,11 +8,15 @@ import * as encode from 'vega-encode';
 import * as geo from 'vega-geo';
 import * as force from 'vega-force';
 import * as tree from 'vega-hierarchy';
+import * as label from 'vega-label';
 import * as reg from 'vega-regression';
 import * as voronoi from 'vega-voronoi';
 import * as wordcloud from 'vega-wordcloud';
 import * as xf from 'vega-crossfilter';
-extend(transforms, tx, vtx, encode, geo, force, tree, reg, voronoi, wordcloud, xf);
+extend(
+  transforms,
+  tx, vtx, encode, geo, force, label, tree, reg, voronoi, wordcloud, xf
+);
 
 
 // -- Exports -----
@@ -66,9 +70,15 @@ export {
 } from 'vega-view';
 
 export {
-  expressionFunction,
-  formatLocale,
-  timeFormatLocale
+  numberFormatDefaultLocale as formatLocale,
+  timeFormatDefaultLocale as timeFormatLocale,
+  locale,
+  defaultLocale,
+  resetDefaultLocale
+} from 'vega-format';
+
+export {
+  expressionFunction
 } from 'vega-functions';
 
 export {
@@ -76,6 +86,5 @@ export {
 } from 'vega-parser';
 
 export {
-  parse as runtime,
   context as runtimeContext
 } from 'vega-runtime';

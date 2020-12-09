@@ -4,8 +4,8 @@ var tape = require('tape'),
     Collect = require('vega-transforms').collect,
     Wordcloud = require('../').wordcloud;
 
-tape('Wordcloud generates wordcloud layout', function(t) {
-  var data = [
+tape('Wordcloud generates wordcloud layout', t => {
+  const data = [
     {text: 'foo', size: 49, index: 0},
     {text: 'bar', size: 36, index: 1},
     {text: 'baz', size: 25, index: 2},
@@ -26,8 +26,8 @@ tape('Wordcloud generates wordcloud layout', function(t) {
         pulse: c0
       });
 
-  var angles = [0, 30, 60, 90];
-  rot.set(function(t) { return angles[t.index]; });
+  const angles = [0, 30, 60, 90];
+  rot.set(t => angles[t.index]);
 
   df.pulse(c0, vega.changeset().insert(data)).run();
   t.equal(c0.value.length, data.length);

@@ -179,7 +179,7 @@
                               "baseline": "top",
                               "fill": "#000",
                               "opacity": 1,
-                              "text": "-100",
+                              "text": "−100",
                               "font": "sans-serif",
                               "fontSize": 10
                             },
@@ -670,7 +670,7 @@
                                       "baseline": "middle",
                                       "fill": "#000",
                                       "opacity": 1,
-                                      "text": "-100",
+                                      "text": "−100",
                                       "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
@@ -718,7 +718,7 @@
                                       "baseline": "middle",
                                       "fill": "#000",
                                       "opacity": 1,
-                                      "text": "-35",
+                                      "text": "−35",
                                       "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10
@@ -976,7 +976,7 @@
                                       "baseline": "middle",
                                       "fill": "#000",
                                       "opacity": 1,
-                                      "text": "-50",
+                                      "text": "−50",
                                       "limit": 160,
                                       "font": "sans-serif",
                                       "fontSize": 10

@@ -1,5 +1,5 @@
 import {fieldNames} from './util/util';
-import {ingest, rederive, Transform, tupleid} from 'vega-dataflow';
+import {Transform, ingest, rederive, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 
 /**
@@ -19,54 +19,53 @@ export default function Project(params) {
 }
 
 Project.Definition = {
-  "type": "Project",
-  "metadata": {"generates": true, "changes": true},
-  "params": [
-    { "name": "fields", "type": "field", "array": true },
-    { "name": "as", "type": "string", "null": true, "array": true }
+  'type': 'Project',
+  'metadata': {'generates': true, 'changes': true},
+  'params': [
+    { 'name': 'fields', 'type': 'field', 'array': true },
+    { 'name': 'as', 'type': 'string', 'null': true, 'array': true }
   ]
 };
 
-var prototype = inherits(Project, Transform);
+inherits(Project, Transform, {
+  transform(_, pulse) {
+    const out = pulse.fork(pulse.NO_SOURCE),
+          fields = _.fields,
+          as = fieldNames(_.fields, _.as || []),
+          derive = fields
+            ? (s, t) => project(s, t, fields, as)
+            : rederive;
 
-prototype.transform = function(_, pulse) {
-  var fields = _.fields,
-      as = fieldNames(_.fields, _.as || []),
-      derive = fields
-        ? function(s, t) { return project(s, t, fields, as); }
-        : rederive,
-      out, lut;
+    let lut;
+    if (this.value) {
+      lut = this.value;
+    } else {
+      pulse = pulse.addAll();
+      lut = this.value = {};
+    }
 
-  if (this.value) {
-    lut = this.value;
-  } else {
-    pulse = pulse.addAll();
-    lut = this.value = {};
+    pulse.visit(pulse.REM, t => {
+      const id = tupleid(t);
+      out.rem.push(lut[id]);
+      lut[id] = null;
+    });
+
+    pulse.visit(pulse.ADD, t => {
+      const dt = derive(t, ingest({}));
+      lut[tupleid(t)] = dt;
+      out.add.push(dt);
+    });
+
+    pulse.visit(pulse.MOD, t => {
+      out.mod.push(derive(t, lut[tupleid(t)]));
+    });
+
+    return out;
   }
-
-  out = pulse.fork(pulse.NO_SOURCE);
-
-  pulse.visit(pulse.REM, function(t) {
-    var id = tupleid(t);
-    out.rem.push(lut[id]);
-    lut[id] = null;
-  });
-
-  pulse.visit(pulse.ADD, function(t) {
-    var dt = derive(t, ingest({}));
-    lut[tupleid(t)] = dt;
-    out.add.push(dt);
-  });
-
-  pulse.visit(pulse.MOD, function(t) {
-    out.mod.push(derive(t, lut[tupleid(t)]));
-  });
-
-  return out;
-};
+});
 
 function project(s, t, fields, as) {
-  for (var i=0, n=fields.length; i<n; ++i) {
+  for (let i=0, n=fields.length; i<n; ++i) {
     t[as[i]] = fields[i](s);
   }
   return t;

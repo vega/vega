@@ -1,4 +1,4 @@
-import {extend, error, isFunction, stringValue} from 'vega-util';
+import {error, extend, isFunction, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
@@ -24,16 +24,14 @@ const fileProtocol = 'file://';
  *   return {object} - A new loader instance.
  */
 export default function(fetch, fs) {
-  return function(options) {
-    return {
-      options: options || {},
-      sanitize: sanitize,
-      load: load,
-      fileAccess: !!fs,
-      file: fileLoader(fs),
-      http: httpLoader(fetch)
-    };
-  };
+  return options => ({
+    options: options || {},
+    sanitize: sanitize,
+    load: load,
+    fileAccess: !!fs,
+    file: fileLoader(fs),
+    http: httpLoader(fetch)
+  });
 }
 
 /**
@@ -125,6 +123,12 @@ async function sanitize(uri, options) {
     result.rel = options.rel + '';
   }
 
+  // provide control over cross-origin image handling (#2238)
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+  if (options.context === 'image' && options.crossOrigin) {
+    result.crossOrigin = options.crossOrigin + '';
+  }
+
   // return
   return result;
 }
@@ -139,14 +143,12 @@ async function sanitize(uri, options) {
  */
 function fileLoader(fs) {
   return fs
-    ? function(filename) {
-        return new Promise(function(accept, reject) {
-          fs.readFile(filename, function(error, data) {
-            if (error) reject(error);
-            else accept(data);
-          });
+    ? filename => new Promise((accept, reject) => {
+        fs.readFile(filename, (error, data) => {
+          if (error) reject(error);
+          else accept(data);
         });
-      }
+      })
     : fileReject;
 }
 

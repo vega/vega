@@ -1,5 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A scatter plot matrix of penguin data with interactive linked selections.",
   "padding": 10,
   "config": {
     "axis": {
@@ -9,7 +10,7 @@
 
   "signals": [
     { "name": "chartSize", "value": 120 },
-    { "name": "chartPad", "value": 15 },
+    { "name": "chartPad", "value": 20 },
     { "name": "chartStep", "update": "chartSize + chartPad" },
     { "name": "width", "update": "chartStep * 4" },
     { "name": "height", "update": "chartStep * 4" },
@@ -119,12 +120,20 @@
 
   "data": [
     {
-      "name": "iris",
-      "url": "data/iris.json"
+      "name": "penguins",
+      "url": "data/penguins.json",
+      "transform": [
+        {"type": "filter", "expr": "datum['Beak Length (mm)'] != null"}
+      ]
     },
     {
       "name": "fields",
-      "values": ["petalWidth", "petalLength", "sepalWidth", "sepalLength"]
+      "values": [
+        "Beak Length (mm)",
+        "Beak Depth (mm)",
+        "Flipper Length (mm)",
+        "Body Mass (g)"
+      ]
     },
     {
       "name": "cross",
@@ -153,91 +162,91 @@
     {
       "name": "color",
       "type": "ordinal",
-      "domain": {"data": "iris", "field": "species"},
+      "domain": {"data": "penguins", "field": "Species"},
       "range": "category"
     },
 
     {
-      "name": "petalWidthX", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "petalWidth"},
+      "name": "Beak Length (mm)X", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Beak Length (mm)"},
       "range": [0, {"signal": "chartSize"}]
     },
     {
-      "name": "petalLengthX", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "petalLength"},
+      "name": "Beak Depth (mm)X", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Beak Depth (mm)"},
       "range": [0, {"signal": "chartSize"}]
     },
     {
-      "name": "sepalWidthX", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "sepalWidth"},
+      "name": "Flipper Length (mm)X", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Flipper Length (mm)"},
       "range": [0, {"signal": "chartSize"}]
     },
     {
-      "name": "sepalLengthX", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "sepalLength"},
+      "name": "Body Mass (g)X", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Body Mass (g)"},
       "range": [0, {"signal": "chartSize"}]
     },
 
     {
-      "name": "petalWidthY", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "petalWidth"},
+      "name": "Beak Length (mm)Y", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Beak Length (mm)"},
       "range": [{"signal": "chartSize"}, 0]
     },
     {
-      "name": "petalLengthY", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "petalLength"},
+      "name": "Beak Depth (mm)Y", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Beak Depth (mm)"},
       "range": [{"signal": "chartSize"}, 0]
     },
     {
-      "name": "sepalWidthY", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "sepalWidth"},
+      "name": "Flipper Length (mm)Y", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Flipper Length (mm)"},
       "range": [{"signal": "chartSize"}, 0]
     },
     {
-      "name": "sepalLengthY", "zero": false, "nice": true,
-      "domain": {"data": "iris", "field": "sepalLength"},
+      "name": "Body Mass (g)Y", "zero": false, "nice": true,
+      "domain": {"data": "penguins", "field": "Body Mass (g)"},
       "range": [{"signal": "chartSize"}, 0]
     }
   ],
 
   "axes": [
     {
-      "orient": "left", "scale": "petalWidthY", "minExtent": 25,
-      "title": "Petal Width", "tickCount": 5, "domain": false,
+      "orient": "left", "scale": "Beak Length (mm)Y", "minExtent": 25,
+      "title": "Beak Length (mm)", "tickCount": 5, "domain": false,
       "position": {"signal": "3 * chartStep"}
     },
     {
-      "orient": "left", "scale": "petalLengthY", "minExtent": 25,
-      "title": "Petal Length", "tickCount": 5, "domain": false,
+      "orient": "left", "scale": "Beak Depth (mm)Y", "minExtent": 25,
+      "title": "Beak Depth (mm)", "tickCount": 5, "domain": false,
       "position": {"signal": "2 * chartStep"}
     },
     {
-      "orient": "left", "scale": "sepalWidthY", "minExtent": 25,
-      "title": "Sepal Width", "tickCount": 5, "domain": false,
+      "orient": "left", "scale": "Flipper Length (mm)Y", "minExtent": 25,
+      "title": "Flipper Length (mm)", "tickCount": 5, "domain": false,
       "position": {"signal": "1 * chartStep"}
     },
     {
-      "orient": "left", "scale": "sepalLengthY", "minExtent": 25,
-      "title": "Sepal Length", "tickCount": 5, "domain": false
+      "orient": "left", "scale": "Body Mass (g)Y", "minExtent": 25,
+      "title": "Body Mass (g)", "tickCount": 5, "domain": false
     },
     {
-      "orient": "bottom", "scale": "petalWidthX",
-      "title": "Petal Width", "tickCount": 5, "domain": false,
+      "orient": "bottom", "scale": "Beak Length (mm)X",
+      "title": "Beak Length (mm)", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}
     },
     {
-      "orient": "bottom", "scale": "petalLengthX",
-      "title": "Petal Length", "tickCount": 5, "domain": false,
+      "orient": "bottom", "scale": "Beak Depth (mm)X",
+      "title": "Beak Depth (mm)", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "1 * chartStep"}
     },
     {
-      "orient": "bottom", "scale": "sepalWidthX",
-      "title": "Sepal Width", "tickCount": 5, "domain": false,
+      "orient": "bottom", "scale": "Flipper Length (mm)X",
+      "title": "Flipper Length (mm)", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "2 * chartStep"}
     },
     {
-      "orient": "bottom", "scale": "sepalLengthX",
-      "title": "Sepal Length", "tickCount": 5, "domain": false,
+      "orient": "bottom", "scale": "Body Mass (g)X",
+      "title": "Body Mass (g)", "tickCount": 5, "domain": false,
       "offset": {"signal": "-chartPad"}, "position": {"signal": "3 * chartStep"}
     }
   ],
@@ -293,7 +302,7 @@
       "marks": [
         {
           "type": "symbol",
-          "from": {"data": "iris"},
+          "from": {"data": "penguins"},
           "interactive": false,
           "encode": {
             "enter": {
@@ -312,7 +321,7 @@
               "fill": [
                 {
                   "test": "!cell || inrange(datum[cell.datum.x.data], rangeX) && inrange(datum[cell.datum.y.data], rangeY)",
-                  "scale": "color", "field": "species"
+                  "scale": "color", "field": "Species"
                 },
                 {"value": "#ddd"}
               ]

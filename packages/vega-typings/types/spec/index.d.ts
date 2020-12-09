@@ -1,25 +1,25 @@
 import { AutoSize } from './autosize';
-import { Background } from './background';
+import { Color } from './color';
 import { Config } from './config';
 import { Encodable, EncodeEntry } from './encode';
 import { Padding } from './padding';
 import { Scope } from './scope';
+import { SignalRef } from './signal';
 
 export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
-  width?: number;
-  height?: number;
   config?: Config;
   description?: string;
-  padding?: Padding;
-  autosize?: AutoSize;
-  background?: Background;
+  width?: number | SignalRef;
+  height?: number | SignalRef;
+  padding?: Padding | SignalRef;
+  autosize?: AutoSize | SignalRef;
+  background?: Color | SignalRef;
   style?: string | string[];
 }
 
 export * from './autosize';
 export * from './axis';
-export * from './background';
 export * from './bind';
 export * from './color';
 export * from './config';
@@ -28,6 +28,7 @@ export * from './encode';
 export * from './expr';
 export * from './layout';
 export * from './legend';
+export * from './locale';
 export * from './mark';
 export * from './marktype';
 export * from './on-events';
