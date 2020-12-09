@@ -38,7 +38,7 @@ export default function Force(params) {
 }
 
 Force.Definition = {
-  'type': 'ForceWorker',
+  'type': 'Force',
   'metadata': {'modifies': true},
   'params': [
     { 'name': 'static', 'type': 'boolean', 'default': false },
@@ -110,10 +110,10 @@ Force.Definition = {
 inherits(Force, Transform, {
   transform(_, pulse) {
     var sim = this.value,
-      change = pulse.changed(pulse.ADD_REM),
-      params = _.modified(ForceParams),
-      iters = _.iterations || 300,
-      tick;
+        change = pulse.changed(pulse.ADD_REM),
+        params = _.modified(ForceParams),
+        iters = _.iterations || 300,
+        tick;
     // configure simulation
     if (!sim) {
       this.value = sim = _.worker
@@ -155,7 +155,6 @@ inherits(Force, Transform, {
         return this.finish(_, pulse);
       });
   },
-
 
   finish(_, pulse) {
     const dataflow = pulse.dataflow;

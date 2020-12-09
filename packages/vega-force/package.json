@@ -1,6 +1,6 @@
 {
-  "name": "@datatitian/vega-force",
-  "version": "4.2.0",
+  "name": "vega-force",
+  "version": "4.0.7",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -14,8 +14,8 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-transform",
-    "build:worker": "rollup -p @rollup/plugin-node-resolve -f umd -n vega.transforms -o build/vega-force-worker.js -- index-worker.js",
+    "build": "rollup -c --config-transform && yarn build:worker",
+    "build:worker": "rollup -c --config-bundle -o build/vega-force.worker.js -- index-worker.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
@@ -23,8 +23,7 @@
   "dependencies": {
     "d3-force": "^2.1.1",
     "vega-dataflow": "^5.7.3",
-    "vega-util": "^1.15.2",
-    "@rollup/plugin-node-resolve": "^8.1.0"
+    "vega-util": "^1.15.2"
   },
   "devDependencies": {
     "vega-transforms": "*"

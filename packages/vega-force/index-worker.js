@@ -1,6 +1,6 @@
 import {
-  forceSimulation, forceCenter, forceCollide,
-  forceManyBody, forceLink, forceX, forceY
+  forceCenter, forceCollide, forceLink,
+  forceManyBody, forceSimulation, forceX, forceY
 } from 'd3-force';
 import {
   isFunction, isObject
@@ -15,8 +15,8 @@ const ForceMap = {
   y: forceY
 };
 
-let sim, pulseId,
-    linkDatasets = {};
+const linkDatasets = {};
+let sim, pulseId;
 
 onmessage = function (event) {
   const message = event.data;
