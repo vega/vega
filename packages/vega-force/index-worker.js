@@ -67,12 +67,10 @@ function reportEnd() {
 }
 
 export function getForce(_) {
-  let f;
   if (_ === null) return _;
-
-  f = ForceMap[_.force]();
+  const f = ForceMap[_.force]();
   for (const p in _) {
-    if (isFunction(f[p])) setForceParam(f[p], _[p], _);
+    if (isFunction(f[p])) setForceParam(f[p], _[p]);
   }
 
   return f;
