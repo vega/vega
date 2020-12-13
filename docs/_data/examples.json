@@ -1,106 +1,107 @@
 {
-    "Bar Charts": [
-        {"name": "bar-chart"},
-        {"name": "stacked-bar-chart"},
-        {"name": "grouped-bar-chart"},
-        {"name": "nested-bar-chart"},
-        {"name": "population-pyramid"}
-    ],
-    "Line & Area Charts": [
-        {"name": "line-chart"},
-        {"name": "area-chart"},
-        {"name": "stacked-area-chart"},
-        {"name": "horizon-graph"},
-        {"name": "job-voyager"}
-    ],
-    "Circular Charts": [
-        {"name": "pie-chart"},
-        {"name": "donut-chart"},
-        {"name": "radial-plot"},
-        {"name": "radar-chart"}
-    ],
-    "Scatter Plots": [
-        {"name": "scatter-plot"},
-        {"name": "scatter-plot-null-values"},
-        {"name": "connected-scatter-plot"},
-        {"name": "error-bars"},
-        {"name": "barley-trellis-plot"},
-        {"name": "regression"},
-        {"name": "loess-regression"},
-        {"name": "labeled-scatter-plot"}
-    ],
-    "Distributions": [
-        {"name": "top-k-plot"},
-        {"name": "top-k-plot-with-others"},
-        {"name": "histogram"},
-        {"name": "histogram-null-values"},
-        {"name": "dot-plot"},
-        {"name": "probability-density"},
-        {"name": "box-plot"},
-        {"name": "violin-plot"},
-        {"name": "binned-scatter-plot"},
-        {"name": "contour-plot"},
-        {"name": "wheat-plot"},
-        {"name": "quantile-quantile-plot"},
-        {"name": "quantile-dot-plot"},
-        {"name": "hypothetical-outcome-plots"},
-        {"name": "time-units"}
-    ],
-    "Geographic Maps": [
-        {"name": "county-unemployment"},
-        {"name": "dorling-cartogram"},
-        {"name": "world-map"},
-        {"name": "earthquakes"},
-        {"name": "projections"},
-        {"name": "zoomable-world-map"},
-        {"name": "distortion-comparison"},
-        {"name": "volcano-contours"},
-        {"name": "wind-vectors"},
-        {"name": "annual-precipitation"}
-    ],
-    "Tree Diagrams": [
-        {"name": "tree-layout"},
-        {"name": "radial-tree-layout"},
-        {"name": "treemap"},
-        {"name": "circle-packing"},
-        {"name": "sunburst"}
-    ],
-    "Network Diagrams": [
-        {"name": "edge-bundling"},
-        {"name": "force-directed-layout"},
-        {"name": "reorderable-matrix"},
-        {"name": "arc-diagram"},
-        {"name": "airport-connections"}
-    ],
-    "Other Chart Types": [
-        {"name": "heatmap"},
-        {"name": "density-heatmaps"},
-        {"name": "parallel-coordinates"},
-        {"name": "word-cloud"},
-        {"name": "beeswarm-plot"},
-        {"name": "calendar-view"}
-    ],
-    "Custom Designs": [
-        {"name": "budget-forecasts"},
-        {"name": "wheat-and-wages"},
-        {"name": "falkensee-population"},
-        {"name": "annual-temperature"},
-        {"name": "weekly-temperature"},
-        {"name": "flight-passengers"},
-        {"name": "timelines"},
-        {"name": "u-district-cuisine"},
-        {"name": "clock"},
-        {"name": "watch"}
-    ],
-    "Interaction Techniques": [
-        {"name": "crossfilter-flights"},
-        {"name": "overview-plus-detail"},
-        {"name": "brushing-scatter-plots"},
-        {"name": "zoomable-scatter-plot"},
-        {"name": "global-development"},
-        {"name": "interactive-legend"},
-        {"name": "stock-index-chart"},
-        {"name": "pi-monte-carlo"},
-        {"name": "pacman"}
-    ]
+  "Bar Charts y9y8": [
+    { "name": "bar-chart" },
+    { "name": "stacked-bar-chart" },
+    { "name": "grouped-bar-chart" },
+    { "name": "nested-bar-chart" },
+    { "name": "population-pyramid" }
+  ],
+  "Line & Area Charts": [
+    { "name": "line-chart" },
+    { "name": "area-chart" },
+    { "name": "stacked-area-chart" },
+    { "name": "horizon-graph" },
+    { "name": "job-voyager" }
+  ],
+  "Circular Charts": [
+    { "name": "pie-chart" },
+    { "name": "donut-chart" },
+    { "name": "radial-plot" },
+    { "name": "radar-chart" }
+  ],
+  "Scatter Plots": [
+    { "name": "scatter-plot" },
+    { "name": "scatter-plot-null-values" },
+    { "name": "connected-scatter-plot" },
+    { "name": "error-bars" },
+    { "name": "barley-trellis-plot" },
+    { "name": "regression" },
+    { "name": "loess-regression" },
+    { "name": "labeled-scatter-plot" }
+  ],
+  "Distributions": [
+    { "name": "top-k-plot" },
+    { "name": "top-k-plot-with-others" },
+    { "name": "histogram" },
+    { "name": "histogram-null-values" },
+    { "name": "dot-plot" },
+    { "name": "probability-density" },
+    { "name": "box-plot" },
+    { "name": "violin-plot" },
+    { "name": "binned-scatter-plot" },
+    { "name": "contour-plot" },
+    { "name": "wheat-plot" },
+    { "name": "quantile-quantile-plot" },
+    { "name": "quantile-dot-plot" },
+    { "name": "hypothetical-outcome-plots" },
+    { "name": "time-units" }
+  ],
+  "Geographic Maps": [
+    { "name": "county-unemployment" },
+    { "name": "dorling-cartogram" },
+    { "name": "world-map" },
+    { "name": "earthquakes" },
+    { "name": "projections" },
+    { "name": "zoomable-world-map" },
+    { "name": "distortion-comparison" },
+    { "name": "volcano-contours" },
+    { "name": "wind-vectors" },
+    { "name": "annual-precipitation" }
+  ],
+  "Tree Diagrams": [
+    { "name": "tree-layout" },
+    { "name": "radial-tree-layout" },
+    { "name": "treemap" },
+    { "name": "circle-packing" },
+    { "name": "sunburst" }
+  ],
+  "Network Diagrams": [
+    { "name": "edge-bundling" },
+    { "name": "force-directed-layout" },
+    { "name": "reorderable-matrix" },
+    { "name": "arc-diagram" },
+    { "name": "airport-connections" }
+  ],
+  "Other Chart Types": [
+    { "name": "heatmap" },
+    { "name": "density-heatmaps" },
+    { "name": "parallel-coordinates" },
+    { "name": "word-cloud" },
+    { "name": "beeswarm-plot" },
+    { "name": "calendar-view" }
+  ],
+  "Custom Designs": [
+    { "name": "budget-forecasts" },
+    { "name": "wheat-and-wages" },
+    { "name": "falkensee-population" },
+    { "name": "annual-temperature" },
+    { "name": "weekly-temperature" },
+    { "name": "flight-passengers" },
+    { "name": "timelines" },
+    { "name": "u-district-cuisine" },
+    { "name": "clock" },
+    { "name": "watch" }
+  ],
+  "Interaction Techniques": [
+    { "name": "crossfilter-flights" },
+    { "name": "overview-plus-detail" },
+    { "name": "brushing-scatter-plots" },
+    { "name": "zoomable-scatter-plot" },
+    { "name": "global-development" },
+    { "name": "interactive-legend" },
+    { "name": "stock-index-chart" },
+    { "name": "pi-monte-carlo" },
+    { "name": "pacman" },
+    { "name": "platformer" }
+  ]
 }
