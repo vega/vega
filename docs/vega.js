@@ -905,7 +905,7 @@
   }
   /**
    * URI sanitizer function.
-   * @param {string} uri - The uri (url or filename) to check.
+   * @param {string} uri - The uri (url or filename) to sanity check.
    * @param {object} options - An options hash.
    * @return {Promise} - A promise that resolves to an object containing
    *  sanitized uri data, or rejects it the input uri is deemed invalid.
@@ -18697,7 +18697,7 @@
 
   function useCanvas(use) {
     textMetrics.width = use && context$1 ? measureWidth : estimateWidth;
-  } // make simple estimate if no canvas is available
+  } // make dumb, simple estimate if no canvas is available
 
 
   function estimateWidth(item, text) {
