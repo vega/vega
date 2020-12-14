@@ -7,8 +7,7 @@ import {
 /**
  * Parse a set of operator parameters.
  */
-export default function parseParameters(spec, params) {
-  params = params || {};
+export default function parseParameters(spec, params = {}) {
   const ctx = this;
 
   for (const key in spec) {

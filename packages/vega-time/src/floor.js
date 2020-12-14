@@ -20,8 +20,7 @@ import {constant, one, peek, toSet, zero} from 'vega-util';
 function floor(units, step, get, inv, newDate) {
   const s = step || 1,
         b = peek(units),
-        _ = (unit, p, key) => {
-          key = key || unit;
+        _ = (unit, p, key = unit) => {
           return getUnit(get[key], inv[key], unit === b && s, p);
         };
 

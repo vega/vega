@@ -10,9 +10,7 @@ function stripQuotes(s) {
     ) ? s.slice(1, -1) : s;
 }
 
-export default function(opt) {
-  opt = opt || {};
-
+export default function(opt = {}) {
   const allowed = opt.allowed ? toSet(opt.allowed) : {},
         forbidden = opt.forbidden ? toSet(opt.forbidden) : {},
         constants = opt.constants || Constants,

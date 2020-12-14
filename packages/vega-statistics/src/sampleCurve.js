@@ -2,8 +2,7 @@
 const MIN_RADIANS = 0.1 * Math.PI / 180;
 
 // Adaptively sample an interpolated function over a domain extent
-export default function(f, extent, minSteps, maxSteps) {
-  minSteps = minSteps || 25;
+export default function(f, extent, minSteps = 25, maxSteps) {
   maxSteps = Math.max(minSteps, maxSteps || 200);
 
   const point = x => [x, f(x)],

@@ -3,9 +3,7 @@ import {formats} from './formats/index';
 import {timeFormatDefaultLocale} from 'vega-format';
 import {error, hasOwnProperty} from 'vega-util';
 
-export default function(data, schema, timeParser, utcParser) {
-  schema = schema || {};
-
+export default function(data, schema = {}, timeParser, utcParser) {
   const reader = formats(schema.type || 'json');
   if (!reader) error('Unknown data format type: ' + schema.type);
 

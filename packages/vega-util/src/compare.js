@@ -5,8 +5,7 @@ import isFunction from './isFunction';
 
 const DESCENDING = 'descending';
 
-export default function(fields, orders, opt) {
-  opt = opt || {};
+export default function(fields, orders, opt = {}) {
   orders = array(orders) || [];
 
   const ord = [], get = [], fmap = {},

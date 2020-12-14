@@ -5,9 +5,8 @@ import rule from './encode/rule';
 import {parseExpression} from 'vega-functions';
 import {extend, isArray} from 'vega-util';
 
-export default function(encode, type, role, style, scope, params) {
+export default function(encode, type, role, style, scope, params = {}) {
   const enc = {};
-  params = params || {};
   params.encoders = {$encode: enc};
 
   encode = applyDefaults(encode, type, role, style, scope.config);

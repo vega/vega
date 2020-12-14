@@ -13,8 +13,7 @@ import {
   utcParse as d3_utcParse
 } from 'd3-time-format';
 
-function timeMultiFormat(format, interval, spec) {
-  spec = spec || {};
+function timeMultiFormat(format, interval, spec = {}) {
   if (!isObject(spec)) {
     error(`Invalid time multi-format specifier: ${spec}`);
   }

@@ -16,8 +16,7 @@ function format(locale, scale, specifier, formatType) {
     : labelFormat(locale, scale, 5, null, specifier, formatType, true);
 }
 
-export function domainCaption(locale, scale, opt) {
-  opt = opt || {};
+export function domainCaption(locale, scale, opt = {}) {
   const max = Math.max(3, opt.maxlen || 7),
         fmt = format(locale, scale, opt.format, opt.formatType);
 

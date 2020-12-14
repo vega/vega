@@ -3,10 +3,7 @@ import {random} from './random';
 
 let nextSample = NaN;
 
-export function sampleNormal(mean, stdev) {
-  mean = mean || 0;
-  stdev = stdev == null ? 1 : stdev;
-
+export function sampleNormal(mean = 0, stdev = 1) {
   let x = 0, y = 0, rds, c;
   if (nextSample === nextSample) {
     x = nextSample;
@@ -24,18 +21,14 @@ export function sampleNormal(mean, stdev) {
   return mean + x * stdev;
 }
 
-export function densityNormal(value, mean, stdev) {
-  stdev = stdev == null ? 1 : stdev;
+export function densityNormal(value, mean, stdev = 1) {
   const z = (value - (mean || 0)) / stdev;
   return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
 }
 
 // Approximation from West (2009)
 // Better Approximations to Cumulative Normal Functions
-export function cumulativeNormal(value, mean, stdev) {
-  mean = mean || 0;
-  stdev = stdev == null ? 1 : stdev;
-
+export function cumulativeNormal(value, mean = 0, stdev = 1) {
   const z = (value - mean) / stdev,
         Z = Math.abs(z);
   let cd;

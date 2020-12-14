@@ -38,9 +38,8 @@ import {
  * @constructor
  * @param {object} spec - The Vega dataflow runtime specification.
  */
-export default function View(spec, options) {
+export default function View(spec, options = {}) {
   const view = this;
-  options = options || {};
 
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
