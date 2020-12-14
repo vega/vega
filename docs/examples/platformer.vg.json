@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 400,
   "height": 400,
-  "description": "The most useful platformer!",
+  "description": "A simple platformer. WASD to move, shift to dash.",
   "background": "rgb(8, 3, 15)",
   "data": [
     {
