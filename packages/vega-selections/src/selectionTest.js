@@ -1,7 +1,9 @@
+import {bisector} from 'd3-array';
 import {Intersect} from './constants';
 import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
 
-var TYPE_ENUM = 'E',
+const SELECTION_ID = '_vgsid_',
+    TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
@@ -101,4 +103,28 @@ export function selectionTest(name, datum, op) {
   // if not intersecting, then we saw no matches
   // if no active selections, return false
   return n && intersect;
+}
+
+const selectionId = field(SELECTION_ID),
+  bisect = bisector(selectionId),
+  bisectLeft = bisect.left,
+  bisectRight = bisect.right;
+
+export function selectionIdTest(name, datum, op) {
+  const data = this.context.data[name],
+      entries = data ? data.values.value : [],
+      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
+      intersect = op === Intersect,
+      value = selectionId(datum),
+      index = bisectLeft(entries, value);
+
+  if (index === entries.length) return false;
+  if (selectionId(entries[index]) !== value) return false;
+
+  if (unitIdx && intersect) {
+    if (unitIdx.size === 1) return true;
+    if (bisectRight(entries, value) - index < unitIdx.size) return false;
+  }
+
+  return true;
 }
