@@ -9,8 +9,10 @@ import {
 } from 'vega-dataflow';
 
 import {
+  selectionIdTest,
   selectionResolve,
   selectionTest,
+  selectionTuples,
   selectionVisitor
 } from 'vega-selections';
 
@@ -351,4 +353,6 @@ expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
 // register Vega-Lite selection functions
 expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
+expressionFunction('vlSelectionIdTest', selectionIdTest, selectionVisitor);
 expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
+expressionFunction('vlSelectionTuples', selectionTuples);
