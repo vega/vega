@@ -1,4 +1,4 @@
-import {And, Or, Union, VlMulti} from './constants';
+import {And, Or, Union, VlMulti, VlPoint} from './constants';
 import {array, toNumber} from 'vega-util';
 
 /**
@@ -6,9 +6,15 @@ import {array, toNumber} from 'vega-util';
  * @param {string} name - The name of the dataset representing the selection
  * @param {string} [op='union'] - The set operation for combining selections.
  *                 One of 'intersect' or 'union' (default).
+ * @param {boolean} isMulti - Identifies a "multi" selection to perform more
+ *                 expensive resolution computation.
+ * @param {boolean} vl5 - With Vega-Lite v5, "multi" selections are now called "point"
+ *                 selections, and thus the resolved tuple should reflect this name.
+ *                 This parameter allows us to reflect this change without triggering
+ *                 a major version bump for Vega.
  * @returns {object} An object of selected fields and values.
  */
-export function selectionResolve(name, op, isMulti) {
+export function selectionResolve(name, op, isMulti, vl5) {
   var data = this.context.data[name],
     entries = data ? data.values.value : [],
     resolved = {}, multiRes = {}, types = {},
@@ -53,7 +59,8 @@ export function selectionResolve(name, op, isMulti) {
 
   entries = Object.keys(multiRes);
   if (isMulti && entries.length) {
-    resolved[VlMulti] = op === Union
+    const key = vl5 ? VlPoint : VlMulti;
+    resolved[key] = op === Union
       ? {[Or]: entries.reduce((acc, k) => (acc.push(...multiRes[k]), acc), [])}
       : {[And]: entries.map(k => ({[Or]: multiRes[k]}))};
   }
