@@ -436,6 +436,10 @@ function scanPunctuator() {
     };
   }
 
+  if (ch2 === '//') {
+    throwError({}, MessageUnexpectedToken, ILLEGAL);
+  }
+
   // 1-character punctuators: < > = ! + - * % & | ^ /
 
   if ('<>=!+-*%&|^/'.indexOf(ch1) >= 0) {
