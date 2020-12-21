@@ -905,7 +905,7 @@
   }
   /**
    * URI sanitizer function.
-   * @param {string} uri - The uri (url or filename) to sanity check.
+   * @param {string} uri - The uri (url or filename) to check.
    * @param {object} options - An options hash.
    * @return {Promise} - A promise that resolves to an object containing
    *  sanitized uri data, or rejects it the input uri is deemed invalid.
@@ -18697,7 +18697,7 @@
 
   function useCanvas(use) {
     textMetrics.width = use && context$1 ? measureWidth : estimateWidth;
-  } // make dumb, simple estimate if no canvas is available
+  } // make simple estimate if no canvas is available
 
 
   function estimateWidth(item, text) {
@@ -27175,7 +27175,7 @@
           stop = ex[1],
           span = stop - start,
           step = nice ? tickStep(start, stop, k) : span / (k + 1);
-      return range$1(step, stop, step);
+      return range$1(start + step, stop, step);
     };
   }
   /**
@@ -35888,7 +35888,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.17.0";
+  var version = "5.17.1";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -36433,6 +36433,10 @@
         start: start,
         end: index$1
       };
+    }
+
+    if (ch2 === '//') {
+      throwError({}, MessageUnexpectedToken, ILLEGAL);
     } // 1-character punctuators: < > = ! + - * % & | ^ /
 
 
@@ -37633,7 +37637,7 @@
         return isFunction(fn) ? fn(args) : fn + '(' + args.map(visit).join(',') + ')';
       },
       ArrayExpression: n => '[' + n.elements.map(visit).join(',') + ']',
-      BinaryExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
+      BinaryExpression: n => '(' + visit(n.left) + ' ' + n.operator + ' ' + visit(n.right) + ')',
       UnaryExpression: n => '(' + n.operator + visit(n.argument) + ')',
       ConditionalExpression: n => '(' + visit(n.test) + '?' + visit(n.consequent) + ':' + visit(n.alternate) + ')',
       LogicalExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
