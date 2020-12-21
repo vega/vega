@@ -10,8 +10,7 @@ const validator = new ajv({
     allErrors: true,
     verbose: true,
     extendRefs: 'fail'
-  })
-  .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
+  });
 
 const validate = validator.compile(schema);
 
