@@ -70,7 +70,7 @@ function css_color_names() {
 }
 
 const BASE = {
-  '$schema': 'http://json-schema.org/draft-06/schema#',
+  '$schema': 'http://json-schema.org/draft-07/schema#',
   'title': 'Vega scenegraph',
   'description': 'Vega scenegraph model.',
   'oneOf': [ { '$ref': '#/refs/mark' } ],
