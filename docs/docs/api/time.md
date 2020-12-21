@@ -74,7 +74,7 @@ Determine a temporal binning scheme, for example to create a histogram. Based on
 The supported options properties are:
 
 - _extent_: (required) A two-element (`[min, max]`) array indicating the date range over which the bin values are defined.
-- _maxbins_: The maximum number of allowable bins (default `40`). There will often be fewer bins since the domain get sliced at "nicely-rounded" values.
+- _maxbins_: The maximum number of allowable bins (default `40`). There will often be fewer bins as the domain gets sliced at "nicely" rounded values.
 
 
 ## <a name="local-time-utilities"></a>Local Time Utilities
