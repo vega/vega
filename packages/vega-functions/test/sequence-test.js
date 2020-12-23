@@ -1,5 +1,12 @@
 var tape = require('tape'),
-    {indexof, join, lastindexof, reverse, slice} = require('../');
+    {
+      indexof,
+      join,
+      lastindexof,
+      replace,
+      reverse,
+      slice
+    } = require('../');
 
 tape('indexof finds first index', t => {
   t.deepEqual(indexof([1, 2, 2, 3], 2), [1, 2, 2, 3].indexOf(2));
@@ -12,6 +19,12 @@ tape('lastindexof finds last index', t => {
   t.deepEqual(lastindexof([1, 2, 2, 3], 2), [1, 2, 2, 3].lastIndexOf(2));
   t.equal(lastindexof('hello world', 'l'), 9);
   t.throws(() => lastindexof({lastindexof: v => v + 1}, 1));
+  t.end();
+});
+
+tape('replace replaces substrings', t => {
+  t.equal(replace('hello world', /hello/, 'goodbye'), 'goodbye world');
+  t.throws(() => replace('evil', /.*/,  d => d));
   t.end();
 });
 
