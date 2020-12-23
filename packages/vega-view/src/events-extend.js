@@ -78,7 +78,7 @@ function extension(view, item, point) {
     item:  constant(item || {}),
     group: group,
     xy:    xy,
-    x:     function(item) { return xy(item)[0]; },
-    y:     function(item) { return xy(item)[1]; }
+    x:     item => xy(item)[0],
+    y:     item => xy(item)[1]
   };
 }
