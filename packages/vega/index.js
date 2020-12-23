@@ -1,5 +1,6 @@
 // -- Transforms -----
 
+import package from './package.json';
 import {extend} from 'vega-util';
 import {transforms} from 'vega-dataflow';
 import * as tx from 'vega-transforms';
@@ -21,9 +22,7 @@ extend(
 
 // -- Exports -----
 
-export {
-  version
-} from './package.json';
+export const version = package.version;
 
 export * from 'vega-statistics';
 
