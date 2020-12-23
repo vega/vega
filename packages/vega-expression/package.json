@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -23,6 +23,6 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-util": "^1.15.2"
+    "vega-util": "^1.16.0"
   }
 }

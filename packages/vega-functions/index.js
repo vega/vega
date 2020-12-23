@@ -55,6 +55,14 @@ export {
 } from './src/functions/pinch';
 
 export {
+  indexof,
+  join,
+  lastindexof,
+  reverse,
+  slice
+} from './src/functions/sequence';
+
+export {
   range,
   domain,
   bandwidth,

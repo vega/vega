@@ -76,14 +76,6 @@ export default function(codegen) {
 
     // sequence functions
     length:      fn('length', null, -1),
-    join:        fn('join', null),
-    indexof:     fn('indexOf', null),
-    lastindexof: fn('lastIndexOf', null),
-    slice:       fn('slice', null),
-
-    reverse: function(args) {
-      return '('+codegen(args[0])+').slice().reverse()';
-    },
 
     // STRING functions
     parseFloat:  'parseFloat',

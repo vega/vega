@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -21,7 +21,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-expression": "^3.0.0",
+    "vega-expression": "^4.0.0",
     "vega-util": "^1.15.2"
   }
 }
