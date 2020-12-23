@@ -23113,7 +23113,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.17.2";
+  var version = "5.17.3";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -24771,7 +24771,6 @@
       lower: fn('toLowerCase', STRING, 0),
       substring: fn('substring', STRING),
       split: fn('split', STRING),
-      replace: fn('replace', STRING),
       trim: fn('trim', STRING, 0),
       // REGEXP functions
       regexp: REGEXP,
@@ -25480,6 +25479,11 @@
     return sequence$1(seq).slice(...args);
   }
 
+  function replace$1(str, pattern, repl) {
+    if (isFunction(repl)) error('Function argument passed to replace.');
+    return String(str).replace(pattern, repl);
+  }
+
   function reverse(seq) {
     return array$2(seq).slice().reverse();
   }
@@ -25660,6 +25664,7 @@
     indexof,
     join: join$1,
     lastindexof,
+    replace: replace$1,
     reverse,
     slice: slice$1,
     flush,
