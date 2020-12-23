@@ -142,6 +142,7 @@ import {
   indexof,
   join,
   lastindexof,
+  replace,
   reverse,
   slice
 } from './functions/sequence';
@@ -220,6 +221,7 @@ export const functionContext = {
   indexof,
   join,
   lastindexof,
+  replace,
   reverse,
   slice,
   flush,

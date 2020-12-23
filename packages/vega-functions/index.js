@@ -58,6 +58,7 @@ export {
   indexof,
   join,
   lastindexof,
+  replace,
   reverse,
   slice
 } from './src/functions/sequence';

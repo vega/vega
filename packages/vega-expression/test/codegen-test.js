@@ -212,7 +212,6 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('trim(" 123 ")'), ' 123 '.trim());
   t.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
   t.equal(evaluate('parseInt("42")'),parseInt('42'));
-  t.equal(evaluate('replace("hello world", /hello/, "goodbye")'), 'goodbye world');
 
   // should eval regular expression functions
   t.equal(evaluate('test(/ain/, "spain")'), /ain/.test('spain'));

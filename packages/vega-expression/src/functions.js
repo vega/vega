@@ -84,7 +84,6 @@ export default function(codegen) {
     lower:       fn('toLowerCase', STRING, 0),
     substring:   fn('substring', STRING),
     split:       fn('split', STRING),
-    replace:     fn('replace', STRING),
     trim:        fn('trim', STRING, 0),
 
     // REGEXP functions
