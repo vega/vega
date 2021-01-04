@@ -3252,7 +3252,7 @@ dedent@^0.7.0:
   resolved "https://registry.yarnpkg.com/dedent/-/dedent-0.7.0.tgz#2495ddbaf6eb874abb0e1be9df22d2e5a544326c"
   integrity sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=
 
-deep-equal@^2.0.3:
+deep-equal@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-2.0.5.tgz#55cd2fe326d83f9cbf7261ef0e060b3f724c5cb9"
   integrity sha512-nPiRgmbAtm1a3JsnLCf6/SLfXcjyN5v8L1TXzdCmHrXJ4hx+gW/w1YCcn7z8gJtSiDArZCgYtbao3QqLm/N1Sw==
@@ -4831,7 +4831,7 @@ is-potential-custom-element-name@^1.0.0:
   resolved "https://registry.yarnpkg.com/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.0.tgz#0c52e54bcca391bb2c494b21e8626d7336c6e397"
   integrity sha1-DFLlS8yjkbssSUsh6GJtczbG45c=
 
-is-regex@^1.0.5, is-regex@^1.1.1:
+is-regex@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/is-regex/-/is-regex-1.1.1.tgz#c6f98aacc546f6cec5468a07b7b153ab564a57b9"
   integrity sha512-1+QkEcxiLlB7VEyFtyBg94e08OAsvq7FUBgApTq/w2ymCLyKJgDPsybBENVtA7XCQEgEXxKPonG+mvYRxh/LIg==
@@ -5911,12 +5911,12 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-inspect@^1.7.0, object-inspect@^1.8.0:
+object-inspect@^1.8.0, object-inspect@^1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.9.0.tgz#c90521d74e1127b67266ded3394ad6116986533a"
   integrity sha512-i3Bp9iTqwhaLZBxGkRfo5ZbE07BQRT7MGu8+nNgwW9ItGp1TzCTw2DLEoWwjClxBjOFI/hWljTAmYGCEwmtnOw==
 
-object-is@^1.1.2, object-is@^1.1.4:
+object-is@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/object-is/-/object-is-1.1.4.tgz#63d6c83c00a43f4cbc9434eb9757c8a5b8565068"
   integrity sha512-1ZvAZ4wlF7IyPVOcE1Omikt7UpaFlOQq0HlSti+ZvDH3UiD2brwGMwDbyV43jao2bKJ+4+WdPJHSd7kgzKYVqg==
@@ -7348,7 +7348,7 @@ string-width@^4.1.0, string-width@^4.2.0:
     is-fullwidth-code-point "^3.0.0"
     strip-ansi "^6.0.0"
 
-string.prototype.trim@^1.2.1:
+string.prototype.trim@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/string.prototype.trim/-/string.prototype.trim-1.2.3.tgz#d23a22fde01c1e6571a7fadcb9be11decd8061a7"
   integrity sha512-16IL9pIBA5asNOSukPfxX2W68BaBvxyiRK16H3RA/lWW9BDosh+w7f+LhomPHpXJ82QEe7w7/rY/S1CV97raLg==
@@ -7505,11 +7505,11 @@ table@^6.0.4:
     string-width "^4.2.0"
 
 tape@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/tape/-/tape-5.0.1.tgz#0d70ce90a586387c4efda4393e72872672a416a3"
-  integrity sha512-wVsOl2shKPcjdJdc8a+PwacvrOdJZJ57cLUXlxW4TQ2R6aihXwG0m0bKm4mA4wjtQNTaLMCrYNEb4f9fjHKUYQ==
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/tape/-/tape-5.1.0.tgz#3ae5f8ac5f39dc7d74c70d1d680faa2d4720726b"
+  integrity sha512-3+/QreLoHRe2QhjkIQ6vSjwTRnC3iMQSg943K9EP3rHhY6MWlLxNw/0h46B6DYz5/SSI4GmU1Dr5HNDAlFLhtQ==
   dependencies:
-    deep-equal "^2.0.3"
+    deep-equal "^2.0.5"
     defined "^1.0.0"
     dotignore "^0.1.2"
     for-each "^0.3.3"
@@ -7517,14 +7517,14 @@ tape@^5.0.1:
     glob "^7.1.6"
     has "^1.0.3"
     inherits "^2.0.4"
-    is-regex "^1.0.5"
+    is-regex "^1.1.1"
     minimist "^1.2.5"
-    object-inspect "^1.7.0"
-    object-is "^1.1.2"
-    object.assign "^4.1.0"
-    resolve "^1.17.0"
+    object-inspect "^1.9.0"
+    object-is "^1.1.4"
+    object.assign "^4.1.2"
+    resolve "^1.19.0"
     resumer "^0.0.0"
-    string.prototype.trim "^1.2.1"
+    string.prototype.trim "^1.2.3"
     through "^2.3.8"
 
 tar-stream@^2.1.4:
