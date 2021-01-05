@@ -53,7 +53,7 @@ const scheme = object({
     stringType,
     array(oneOf(stringType, signalRef)), signalRef),
   count: numberOrSignal,
-  extent: oneOf(array(numberOrSignal, {numItems: 2}), signalRef)
+  extent: oneOf(array(numberOrSignal, {minItems: 2, maxItems: 2}), signalRef)
 });
 
 const schemeRange = oneOf(

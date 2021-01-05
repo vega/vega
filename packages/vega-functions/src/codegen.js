@@ -139,6 +139,15 @@ import {
 } from './functions/pinch';
 
 import {
+  indexof,
+  join,
+  lastindexof,
+  replace,
+  reverse,
+  slice
+} from './functions/sequence';
+
+import {
   bandspace,
   bandwidth,
   copy,
@@ -209,6 +218,12 @@ export const functionContext = {
   toDate,
   toNumber,
   toString,
+  indexof,
+  join,
+  lastindexof,
+  replace,
+  reverse,
+  slice,
   flush,
   lerp,
   merge,

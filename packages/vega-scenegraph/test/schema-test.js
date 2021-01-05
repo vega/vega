@@ -1,16 +1,19 @@
 var fs = require('fs'),
     ajv = require('ajv'),
-    tape = require('tape');
+    tape = require('tape'),
+    addFormats = require('ajv-formats');
 
 const schemaFile = './build/vega-scenegraph-schema.json';
 const schema = JSON.parse(fs.readFileSync(schemaFile));
 const res = './test/resources/';
 
-const validator = new ajv({
+const validator = new ajv.default({
     allErrors: true,
     verbose: true,
-    extendRefs: 'fail'
+    strict: false // FIXME: https://github.com/vega/vega/issues/3022
   });
+
+addFormats(validator);
 
 const validate = validator.compile(schema);
 

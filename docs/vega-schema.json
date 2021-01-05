@@ -3593,7 +3593,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -4289,7 +4290,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -4488,7 +4490,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -4674,7 +4677,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -4908,7 +4912,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -5118,7 +5123,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -5328,7 +5334,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -5539,7 +5546,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"
@@ -5750,7 +5758,8 @@
                           "items": {
                             "$ref": "#/refs/numberOrSignal"
                           },
-                          "numItems": 2
+                          "minItems": 2,
+                          "maxItems": 2
                         },
                         {
                           "$ref": "#/refs/signal"

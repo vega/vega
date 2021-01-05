@@ -905,7 +905,7 @@
   }
   /**
    * URI sanitizer function.
-   * @param {string} uri - The uri (url or filename) to sanity check.
+   * @param {string} uri - The uri (url or filename) to check.
    * @param {object} options - An options hash.
    * @return {Promise} - A promise that resolves to an object containing
    *  sanitized uri data, or rejects it the input uri is deemed invalid.
@@ -18697,7 +18697,7 @@
 
   function useCanvas(use) {
     textMetrics.width = use && context$1 ? measureWidth : estimateWidth;
-  } // make dumb, simple estimate if no canvas is available
+  } // make simple estimate if no canvas is available
 
 
   function estimateWidth(item, text) {
@@ -27175,7 +27175,7 @@
           stop = ex[1],
           span = stop - start,
           step = nice ? tickStep(start, stop, k) : span / (k + 1);
-      return range$1(step, stop, step);
+      return range$1(start + step, stop, step);
     };
   }
   /**
@@ -35888,7 +35888,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.17.0";
+  var version = "5.17.3";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -36433,6 +36433,10 @@
         start: start,
         end: index$1
       };
+    }
+
+    if (ch2 === '//') {
+      throwError({}, MessageUnexpectedToken, ILLEGAL);
     } // 1-character punctuators: < > = ! + - * % & | ^ /
 
 
@@ -37535,13 +37539,6 @@
       utcmilliseconds: fn('getUTCMilliseconds', DATE, 0),
       // sequence functions
       length: fn('length', null, -1),
-      join: fn('join', null),
-      indexof: fn('indexOf', null),
-      lastindexof: fn('lastIndexOf', null),
-      slice: fn('slice', null),
-      reverse: function (args) {
-        return '(' + codegen(args[0]) + ').slice().reverse()';
-      },
       // STRING functions
       parseFloat: 'parseFloat',
       parseInt: 'parseInt',
@@ -37549,7 +37546,6 @@
       lower: fn('toLowerCase', STRING, 0),
       substring: fn('substring', STRING),
       split: fn('split', STRING),
-      replace: fn('replace', STRING),
       trim: fn('trim', STRING, 0),
       // REGEXP functions
       regexp: REGEXP,
@@ -37633,7 +37629,7 @@
         return isFunction(fn) ? fn(args) : fn + '(' + args.map(visit).join(',') + ')';
       },
       ArrayExpression: n => '[' + n.elements.map(visit).join(',') + ']',
-      BinaryExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
+      BinaryExpression: n => '(' + visit(n.left) + ' ' + n.operator + ' ' + visit(n.right) + ')',
       UnaryExpression: n => '(' + n.operator + visit(n.argument) + ')',
       ConditionalExpression: n => '(' + visit(n.test) + '?' + visit(n.consequent) + ':' + visit(n.alternate) + ')',
       LogicalExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
@@ -38234,6 +38230,39 @@
     return Math.atan2(t[0].clientY - t[1].clientY, t[0].clientX - t[1].clientX);
   }
 
+  function array$5(seq) {
+    return isArray(seq) || ArrayBuffer.isView(seq) ? seq : null;
+  }
+
+  function sequence$1(seq) {
+    return array$5(seq) || (isString(seq) ? seq : null);
+  }
+
+  function join$1(seq, ...args) {
+    return array$5(seq).join(...args);
+  }
+
+  function indexof(seq, ...args) {
+    return sequence$1(seq).indexOf(...args);
+  }
+
+  function lastindexof(seq, ...args) {
+    return sequence$1(seq).lastIndexOf(...args);
+  }
+
+  function slice$1(seq, ...args) {
+    return sequence$1(seq).slice(...args);
+  }
+
+  function replace$1(str, pattern, repl) {
+    if (isFunction(repl)) error('Function argument passed to replace.');
+    return String(str).replace(pattern, repl);
+  }
+
+  function reverse$1(seq) {
+    return array$5(seq).slice().reverse();
+  }
+
   function bandspace(count, paddingInner, paddingOuter) {
     return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
   }
@@ -38407,6 +38436,12 @@
     toDate,
     toNumber,
     toString,
+    indexof,
+    join: join$1,
+    lastindexof,
+    replace: replace$1,
+    reverse: reverse$1,
+    slice: slice$1,
     flush,
     lerp,
     merge: merge$3,
@@ -39473,12 +39508,8 @@
       item: constant(item || {}),
       group: group,
       xy: xy,
-      x: function (item) {
-        return xy(item)[0];
-      },
-      y: function (item) {
-        return xy(item)[1];
-      }
+      x: item => xy(item)[0],
+      y: item => xy(item)[1]
     };
   }
 

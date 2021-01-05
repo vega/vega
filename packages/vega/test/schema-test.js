@@ -4,13 +4,16 @@ var tape = require('tape'),
     fs = require('fs'),
     schema = require('../build/vega-schema.json'),
     validSpecs = require('./specs-valid.json'),
-    invalidSpecs = require('./specs-invalid.json');
+    invalidSpecs = require('./specs-invalid.json'),
+    addFormats = require('ajv-formats');
 
-const validator = new ajv({
+const validator = new ajv.default({
     allErrors: true,
     verbose: true,
-    extendRefs: 'fail'
+    strict: false // FIXME: https://github.com/vega/vega/issues/3022
   });
+
+addFormats(validator);
 
 const validate = validator.compile(schema);
 
