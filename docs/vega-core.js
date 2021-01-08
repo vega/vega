@@ -26,6 +26,86 @@
 
   var $__namespace = /*#__PURE__*/_interopNamespace($$1);
 
+  var name = "vega";
+  var version = "5.18.0";
+  var description = "The Vega visualization grammar.";
+  var keywords = [
+  	"vega",
+  	"visualization",
+  	"interaction",
+  	"dataflow",
+  	"library",
+  	"data",
+  	"d3"
+  ];
+  var license = "BSD-3-Clause";
+  var author = "UW Interactive Data Lab (http://idl.cs.washington.edu)";
+  var main = "build/vega-node.js";
+  var module = "build/vega.module.js";
+  var unpkg = "build/vega.min.js";
+  var jsdelivr = "build/vega.min.js";
+  var types = "index.d.ts";
+  var repository = "vega/vega";
+  var scripts = {
+  	bundle: "rollup -c --config-bundle",
+  	prebuild: "rimraf build && rimraf build-es5",
+  	build: "rollup -c --config-core --config-bundle --config-ie",
+  	postbuild: "node schema-copy",
+  	pretest: "yarn build --config-test",
+  	test: "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
+  	prepublishOnly: "yarn test && yarn build",
+  	postpublish: "./schema-deploy.sh"
+  };
+  var dependencies = {
+  	"vega-crossfilter": "~4.0.5",
+  	"vega-dataflow": "~5.7.3",
+  	"vega-encode": "~4.8.3",
+  	"vega-event-selector": "~2.0.6",
+  	"vega-expression": "~4.0.1",
+  	"vega-force": "~4.0.7",
+  	"vega-format": "~1.0.4",
+  	"vega-functions": "~5.11.0",
+  	"vega-geo": "~4.3.8",
+  	"vega-hierarchy": "~4.0.9",
+  	"vega-label": "~1.0.0",
+  	"vega-loader": "~4.4.0",
+  	"vega-parser": "~6.1.2",
+  	"vega-projection": "~1.4.5",
+  	"vega-regression": "~1.0.9",
+  	"vega-runtime": "~6.1.3",
+  	"vega-scale": "~7.1.1",
+  	"vega-scenegraph": "~4.9.2",
+  	"vega-statistics": "~1.7.9",
+  	"vega-time": "~2.0.4",
+  	"vega-transforms": "~4.9.3",
+  	"vega-typings": "~0.19.2",
+  	"vega-util": "~1.16.0",
+  	"vega-view": "~5.9.2",
+  	"vega-view-transforms": "~4.5.8",
+  	"vega-voronoi": "~4.1.5",
+  	"vega-wordcloud": "~4.1.3"
+  };
+  var devDependencies = {
+  	"vega-schema": "*"
+  };
+  var pkg = {
+  	name: name,
+  	version: version,
+  	description: description,
+  	keywords: keywords,
+  	license: license,
+  	author: author,
+  	main: main,
+  	module: module,
+  	unpkg: unpkg,
+  	jsdelivr: jsdelivr,
+  	types: types,
+  	repository: repository,
+  	scripts: scripts,
+  	dependencies: dependencies,
+  	devDependencies: devDependencies
+  };
+
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
     fn.fname = name;
@@ -23113,8 +23193,6 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.17.3";
-
   const RawCode = 'RawCode';
   const Literal = 'Literal';
   const Property = 'Property';
@@ -23312,7 +23390,7 @@
   } // 7.6.1.1 Keywords
 
 
-  const keywords = {
+  const keywords$1 = {
     'if': 1,
     'in': 1,
     'do': 1,
@@ -23504,7 +23582,7 @@
 
     if (id.length === 1) {
       type = TokenIdentifier;
-    } else if (keywords.hasOwnProperty(id)) {
+    } else if (keywords$1.hasOwnProperty(id)) {
       // eslint-disable-line no-prototype-builtins
       type = TokenKeyword;
     } else if (id === 'null') {
@@ -24886,6 +24964,7 @@
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
+  const VlPoint = 'vlPoint';
   const Or = 'or';
   const And = 'and';
   var TYPE_ENUM = 'E',
@@ -24996,11 +25075,17 @@
    * @param {string} name - The name of the dataset representing the selection
    * @param {string} [op='union'] - The set operation for combining selections.
    *                 One of 'intersect' or 'union' (default).
+   * @param {boolean} isMulti - Identifies a "multi" selection to perform more
+   *                 expensive resolution computation.
+   * @param {boolean} vl5 - With Vega-Lite v5, "multi" selections are now called "point"
+   *                 selections, and thus the resolved tuple should reflect this name.
+   *                 This parameter allows us to reflect this change without triggering
+   *                 a major version bump for Vega.
    * @returns {object} An object of selected fields and values.
    */
 
 
-  function selectionResolve(name, op, isMulti) {
+  function selectionResolve(name, op, isMulti, vl5) {
     var data = this.context.data[name],
         entries = data ? data.values.value : [],
         resolved = {},
@@ -25055,7 +25140,8 @@
     entries = Object.keys(multiRes);
 
     if (isMulti && entries.length) {
-      resolved[VlMulti] = op === Union ? {
+      const key = vl5 ? VlPoint : VlMulti;
+      resolved[key] = op === Union ? {
         [Or]: entries.reduce((acc, k) => (acc.push(...multiRes[k]), acc), [])
       } : {
         [And]: entries.map(k => ({
@@ -32175,6 +32261,8 @@
   // -- Transforms -----
   extend(transforms, tx, vtx, encode, geo, force, label, tree, reg, voronoi, wordcloud, xf); // -- Exports -----
 
+  const version$1 = pkg.version;
+
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;
   exports.CanvasRenderer = CanvasRenderer;
@@ -32389,7 +32477,7 @@
   exports.utcdayofyear = utcdayofyear;
   exports.utcquarter = utcquarter;
   exports.utcweek = utcweek;
-  exports.version = version;
+  exports.version = version$1;
   exports.visitArray = visitArray;
   exports.week = week;
   exports.writeConfig = writeConfig;
