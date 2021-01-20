@@ -25,7 +25,7 @@
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "@types/node": "^14.14.20",
+    "@types/node": "^14.14.14",
     "ajv": "^7.0.2",
     "ajv-formats": "^1.5.1",
     "canvas": "^2.6.1",

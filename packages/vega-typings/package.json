@@ -15,7 +15,7 @@
     "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
-    "test": "yarn format && dtslint --localTs ../../node_modules/typescript/lib ."
+    "test": "yarn format && dtslint ."
   },
   "dependencies": {
     "vega-util": "^1.15.2"
