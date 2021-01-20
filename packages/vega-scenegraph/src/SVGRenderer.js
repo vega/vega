@@ -44,7 +44,9 @@ inherits(SVGRenderer, Renderer, {
 
     if (el) {
       this._svg = domChild(el, 0, 'svg', ns);
-      setAttributes(this._svg, metadata);
+      this._svg.setAttributeNS(ns, 'xmlns', metadata['xmlns']);
+      this._svg.setAttributeNS(ns, 'xmlns:xlink', metadata['xmlns:xlink']);
+      this._svg.setAttribute('version', metadata['version']);
       this._svg.setAttribute('class', 'marks');
       domClear(el, 1);
 
