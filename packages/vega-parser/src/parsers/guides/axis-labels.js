@@ -16,17 +16,16 @@ function flushExpr(scale, threshold, a, b, c) {
 }
 
 export default function(spec, config, userEncode, dataRef, size, band) {
-  const _ = lookup(spec, config),
-        orient = spec.orient,
-        scale = spec.scale,
-        sign = getSign(orient, -1, 1),
-        flush = deref(_('labelFlush')),
-        flushOffset = deref(_('labelFlushOffset')),
-        labelAlign = _('labelAlign'),
-        labelBaseline = _('labelBaseline');
-
-  let flushOn = flush === 0 || !!flush,
-      update;
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  const scale = spec.scale;
+  const sign = getSign(orient, -1, 1);
+  const flush = deref(_('labelFlush'));
+  const flushOffset = deref(_('labelFlushOffset'));
+  const labelAlign = _('labelAlign');
+  const labelBaseline = _('labelBaseline');
+  let flushOn = flush === 0 || !!flush;
+  let update;
 
   const tickSize = encoder(size);
   tickSize.mult = sign;

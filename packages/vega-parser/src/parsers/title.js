@@ -15,17 +15,18 @@ const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 export default function(spec, scope) {
   spec = isString(spec) ? {text: spec} : spec;
 
-  const _ = lookup(spec, scope.config.title),
-        encode = spec.encode || {},
-        userEncode = encode.group || {},
-        name = userEncode.name || undefined,
-        interactive = userEncode.interactive,
-        style = userEncode.style,
-        children = [];
+  const _ = lookup(spec, scope.config.title);
+  const encode = spec.encode || {};
+  const userEncode = encode.group || {};
+  const name = userEncode.name || undefined;
+  const interactive = userEncode.interactive;
+  const style = userEncode.style;
+  const children = [];
 
   // single-element data source for group title
-  const datum = {},
-        dataRef = ref(scope.add(Collect(null, [datum])));
+  const datum = {};
+
+  const dataRef = ref(scope.add(Collect(null, [datum])));
 
   // include title text
   children.push(buildTitle(spec, _, titleEncode(spec), dataRef));
@@ -82,13 +83,14 @@ function groupEncode(_, userEncode) {
 }
 
 function buildTitle(spec, _, userEncode, dataRef) {
-  const zero = {value: 0},
-        text = spec.text,
-        encode = {
-          enter: {opacity: zero},
-          update: {opacity: {value: 1}},
-          exit: {opacity: zero}
-        };
+  const zero = {value: 0};
+  const text = spec.text;
+
+  const encode = {
+    enter: {opacity: zero},
+    update: {opacity: {value: 1}},
+    exit: {opacity: zero}
+  };
 
   addEncoders(encode, {
     text:       text,
@@ -120,13 +122,14 @@ function buildTitle(spec, _, userEncode, dataRef) {
 }
 
 function buildSubTitle(spec, _, userEncode, dataRef) {
-  const zero = {value: 0},
-        text = spec.subtitle,
-        encode = {
-          enter: {opacity: zero},
-          update: {opacity: {value: 1}},
-          exit: {opacity: zero}
-        };
+  const zero = {value: 0};
+  const text = spec.subtitle;
+
+  const encode = {
+    enter: {opacity: zero},
+    update: {opacity: {value: 1}},
+    exit: {opacity: zero}
+  };
 
   addEncoders(encode, {
     text:       text,

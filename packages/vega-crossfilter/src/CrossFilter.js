@@ -42,12 +42,14 @@ inherits(CrossFilter, Transform, {
   },
 
   init(_, pulse) {
-    const fields = _.fields,
-          query = _.query,
-          indices = this._indices = {},
-          dims = this._dims = [],
-          m = query.length;
-    let i = 0, key, index;
+    const fields = _.fields;
+    const query = _.query;
+    const indices = this._indices = {};
+    const dims = this._dims = [];
+    const m = query.length;
+    let i = 0;
+    let key;
+    let index;
 
     // instantiate indices and dimensions
     for (; i<m; ++i) {
@@ -60,20 +62,28 @@ inherits(CrossFilter, Transform, {
   },
 
   reinit(_, pulse) {
-    const output = pulse.materialize().fork(),
-          fields = _.fields,
-          query = _.query,
-          indices = this._indices,
-          dims = this._dims,
-          bits = this.value,
-          curr = bits.curr(),
-          prev = bits.prev(),
-          all = bits.all(),
-          out = (output.rem = output.add),
-          mod = output.mod,
-          m = query.length,
-          adds = {};
-    let add, index, key, mods, remMap, modMap, i, n, f;
+    const output = pulse.materialize().fork();
+    const fields = _.fields;
+    const query = _.query;
+    const indices = this._indices;
+    const dims = this._dims;
+    const bits = this.value;
+    const curr = bits.curr();
+    const prev = bits.prev();
+    const all = bits.all();
+    const out = (output.rem = output.add);
+    const mod = output.mod;
+    const m = query.length;
+    const adds = {};
+    let add;
+    let index;
+    let key;
+    let mods;
+    let remMap;
+    let modMap;
+    let i;
+    let n;
+    let f;
 
     // set prev to current state
     prev.set(curr);
@@ -127,8 +137,8 @@ inherits(CrossFilter, Transform, {
   },
 
   eval(_, pulse) {
-    const output = pulse.materialize().fork(),
-          m = this._dims.length;
+    const output = pulse.materialize().fork();
+    const m = this._dims.length;
     let mask = 0;
 
     if (pulse.rem.length) {
@@ -155,24 +165,27 @@ inherits(CrossFilter, Transform, {
   },
 
   insert(_, pulse, output) {
-    const tuples = pulse.add,
-          bits = this.value,
-          dims = this._dims,
-          indices = this._indices,
-          fields = _.fields,
-          adds = {},
-          out = output.add,
-          n = bits.size() + tuples.length,
-          m = dims.length;
-    let k = bits.size(), j, key, add;
+    const tuples = pulse.add;
+    const bits = this.value;
+    const dims = this._dims;
+    const indices = this._indices;
+    const fields = _.fields;
+    const adds = {};
+    const out = output.add;
+    const n = bits.size() + tuples.length;
+    const m = dims.length;
+    let k = bits.size();
+    let j;
+    let key;
+    let add;
 
     // resize bitmaps and add tuples as needed
     bits.resize(n, m);
     bits.add(tuples);
 
-    const curr = bits.curr(),
-          prev = bits.prev(),
-          all  = bits.all();
+    const curr = bits.curr();
+    const prev = bits.prev();
+    const all  = bits.all();
 
     // add to dimensional indices
     for (j=0; j<m; ++j) {
@@ -189,12 +202,14 @@ inherits(CrossFilter, Transform, {
   },
 
   modify(pulse, output) {
-    const out = output.mod,
-          bits = this.value,
-          curr = bits.curr(),
-          all  = bits.all(),
-          tuples = pulse.mod;
-    let i, n, k;
+    const out = output.mod;
+    const bits = this.value;
+    const curr = bits.curr();
+    const all  = bits.all();
+    const tuples = pulse.mod;
+    let i;
+    let n;
+    let k;
 
     for (i=0, n=tuples.length; i<n; ++i) {
       k = tuples[i]._index;
@@ -203,15 +218,18 @@ inherits(CrossFilter, Transform, {
   },
 
   remove(_, pulse, output) {
-    const indices = this._indices,
-          bits = this.value,
-          curr = bits.curr(),
-          prev = bits.prev(),
-          all  = bits.all(),
-          map = {},
-          out = output.rem,
-          tuples = pulse.rem;
-    let i, n, k, f;
+    const indices = this._indices;
+    const bits = this.value;
+    const curr = bits.curr();
+    const prev = bits.prev();
+    const all  = bits.all();
+    const map = {};
+    const out = output.rem;
+    const tuples = pulse.rem;
+    let i;
+    let n;
+    let k;
+    let f;
 
     // process tuples, output if passes at least one filter
     for (i=0, n=tuples.length; i<n; ++i) {
@@ -233,8 +251,8 @@ inherits(CrossFilter, Transform, {
 
   // reindex filters and indices after propagation completes
   reindex(pulse, num, map) {
-    const indices = this._indices,
-          bits = this.value;
+    const indices = this._indices;
+    const bits = this.value;
 
     pulse.runAfter(() => {
       const indexMap = bits.remove(num, map);
@@ -243,11 +261,13 @@ inherits(CrossFilter, Transform, {
   },
 
   update(_, pulse, output) {
-    const dims = this._dims,
-          query = _.query,
-          stamp = pulse.stamp,
-          m = dims.length;
-    let mask = 0, i, q;
+    const dims = this._dims;
+    const query = _.query;
+    const stamp = pulse.stamp;
+    const m = dims.length;
+    let mask = 0;
+    let i;
+    let q;
 
     // survey how many queries have changed
     output.filters = 0;
@@ -273,19 +293,21 @@ inherits(CrossFilter, Transform, {
   },
 
   incrementAll(dim, query, stamp, out) {
-    const bits = this.value,
-          seen = bits.seen(),
-          curr = bits.curr(),
-          prev = bits.prev(),
-          index = dim.index(),
-          old = dim.bisect(dim.range),
-          range = dim.bisect(query),
-          lo1 = range[0],
-          hi1 = range[1],
-          lo0 = old[0],
-          hi0 = old[1],
-          one = dim.one;
-    let i, j, k;
+    const bits = this.value;
+    const seen = bits.seen();
+    const curr = bits.curr();
+    const prev = bits.prev();
+    const index = dim.index();
+    const old = dim.bisect(dim.range);
+    const range = dim.bisect(query);
+    const lo1 = range[0];
+    const hi1 = range[1];
+    const lo0 = old[0];
+    const hi0 = old[1];
+    const one = dim.one;
+    let i;
+    let j;
+    let k;
 
     // Fast incremental update based on previous lo index.
     if (lo1 < lo0) {
@@ -337,17 +359,19 @@ inherits(CrossFilter, Transform, {
   },
 
   incrementOne(dim, query, add, rem) {
-    const bits = this.value,
-          curr = bits.curr(),
-          index = dim.index(),
-          old = dim.bisect(dim.range),
-          range = dim.bisect(query),
-          lo1 = range[0],
-          hi1 = range[1],
-          lo0 = old[0],
-          hi0 = old[1],
-          one = dim.one;
-    let i, j, k;
+    const bits = this.value;
+    const curr = bits.curr();
+    const index = dim.index();
+    const old = dim.bisect(dim.range);
+    const range = dim.bisect(query);
+    const lo1 = range[0];
+    const hi1 = range[1];
+    const lo0 = old[0];
+    const hi0 = old[1];
+    const one = dim.one;
+    let i;
+    let j;
+    let k;
 
     // Fast incremental update based on previous lo index.
     if (lo1 < lo0) {

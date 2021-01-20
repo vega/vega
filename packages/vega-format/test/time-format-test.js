@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../'),
-    locale = vega.timeFormatDefaultLocale(),
-    {deDE, local, utc} = require('./util');
+var tape = require('tape');
+var vega = require('../');
+var locale = vega.timeFormatDefaultLocale();
+var {deDE, local, utc} = require('./util');
 
 tape('timeParse supports specifier strings', t => {
   const d = local(2001, 2, 1);
@@ -93,7 +93,8 @@ tape('utcFormat supports specifier objects', t => {
 
 tape('timeFormatLocale creates a new locale', t => {
   const locale = vega.timeFormatLocale(deDE.time);
-  let d, f;
+  let d;
+  let f;
 
   d = local(2001, 2, 1);
   t.equal(+locale.timeParse('%Y-%m-%d')('2001-03-01'), +d);

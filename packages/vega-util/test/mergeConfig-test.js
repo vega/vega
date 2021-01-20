@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('mergeConfig merges configuration objects', t => {
   t.deepEqual(
@@ -80,9 +80,9 @@ tape('mergeConfig handles empty arguments', t => {
 });
 
 tape('mergeConfig must not allow prototype pollution', t => {
-  const config = {symbol: {shape: 'triangle-right'}},
-        payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}'),
-        merged = vega.mergeConfig(config, payload, {symbol: payload});
+  const config = {symbol: {shape: 'triangle-right'}};
+  const payload = JSON.parse('{"__proto__": {"vulnerable": "Polluted"}}');
+  const merged = vega.mergeConfig(config, payload, {symbol: payload});
 
   t.equal(merged.__proto__.vulnerable, undefined);
   t.equal(merged.symbol.__proto__.vulnerable, undefined);

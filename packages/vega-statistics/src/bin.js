@@ -1,13 +1,18 @@
 export default function(_) {
   // determine range
-  const maxb = _.maxbins || 20,
-        base = _.base || 10,
-        logb = Math.log(base),
-        div  = _.divide || [5, 2];
+  const maxb = _.maxbins || 20;
 
-  let min  = _.extent[0],
-      max  = _.extent[1],
-      step, level, minstep, v, i, n;
+  const base = _.base || 10;
+  const logb = Math.log(base);
+  const div  = _.divide || [5, 2];
+  let min  = _.extent[0];
+  let max  = _.extent[1];
+  let step;
+  let level;
+  let minstep;
+  let v;
+  let i;
+  let n;
 
   const span = _.span || (max - min) || Math.abs(min) || 1;
 
@@ -40,8 +45,8 @@ export default function(_) {
 
   // update precision, min and max
   v = Math.log(step);
-  const precision = v >= 0 ? 0 : ~~(-v / logb) + 1,
-        eps = Math.pow(base, -precision - 1);
+  const precision = v >= 0 ? 0 : ~~(-v / logb) + 1;
+  const eps = Math.pow(base, -precision - 1);
   if (_.nice || _.nice === undefined) {
     v = Math.floor(min / step + eps) * step;
     min = min < v ? v - step : v;

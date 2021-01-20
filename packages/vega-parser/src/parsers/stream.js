@@ -18,14 +18,14 @@ function eventSource(source) {
 }
 
 function mergeStream(stream, scope) {
-  const list = stream.merge.map(s => parseStream(s, scope)),
-        entry = streamParameters({merge: list}, stream, scope);
+  const list = stream.merge.map(s => parseStream(s, scope));
+  const entry = streamParameters({merge: list}, stream, scope);
   return scope.addStream(entry).id;
 }
 
 function nestedStream(stream, scope) {
-  const id = parseStream(stream.stream, scope),
-        entry = streamParameters({stream: id}, stream, scope);
+  const id = parseStream(stream.stream, scope);
+  const entry = streamParameters({stream: id}, stream, scope);
   return scope.addStream(entry).id;
 }
 

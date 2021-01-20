@@ -30,11 +30,11 @@ GeoPath.Definition = {
 
 inherits(GeoPath, Transform, {
   transform(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        path = this.value,
-        field = _.field || identity,
-        as = _.as || 'path',
-        flag = out.SOURCE;
+    var out = pulse.fork(pulse.ALL);
+    var path = this.value;
+    var field = _.field || identity;
+    var as = _.as || 'path';
+    var flag = out.SOURCE;
 
     if (!path || _.modified()) {
       // parameters updated, reset and reflow

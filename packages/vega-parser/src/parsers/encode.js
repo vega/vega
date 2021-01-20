@@ -19,8 +19,8 @@ export default function(encode, type, role, style, scope, params) {
 }
 
 function parseBlock(block, marktype, params, scope) {
-  const channels = {},
-        fields = {};
+  const channels = {};
+  const fields = {};
 
   for (const name in block) {
     if (block[name] != null) { // skip any null entries

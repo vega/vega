@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Pivot = tx.pivot;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Pivot = tx.pivot;
 
 tape('Pivot pivots values', t => {
   const data = [
@@ -16,14 +16,14 @@ tape('Pivot pivots values', t => {
     {a:'C', b:'v', c:6}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      c = util.field('c'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      pd = df.add(Pivot, {groupby: [a], field: b, value: c, pulse: c0}),
-      out = df.add(Collect, {pulse: pd}),
-      d;
+  var a = util.field('a');
+  var b = util.field('b');
+  var c = util.field('c');
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var pd = df.add(Pivot, {groupby: [a], field: b, value: c, pulse: c0});
+  var out = df.add(Collect, {pulse: pd});
+  var d;
 
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
@@ -81,14 +81,14 @@ tape('Pivot pivots values within limit', t => {
     {a:'B', b:'w', c:6}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      c = util.field('c'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      pd = df.add(Pivot, {groupby: [a], field: b, value: c, limit: 2, pulse: c0}),
-      out = df.add(Collect, {pulse: pd}),
-      d;
+  var a = util.field('a');
+  var b = util.field('b');
+  var c = util.field('c');
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var pd = df.add(Pivot, {groupby: [a], field: b, value: c, limit: 2, pulse: c0});
+  var out = df.add(Collect, {pulse: pd});
+  var d;
 
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();
@@ -116,14 +116,14 @@ tape('Pivot handles count aggregate', t => {
     {a:'C', b:'u', c:undefined}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      c = util.field('c'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      pd = df.add(Pivot, {groupby: [a], field: b, op: 'count', value: c, pulse: c0}),
-      out = df.add(Collect, {pulse: pd}),
-      d;
+  var a = util.field('a');
+  var b = util.field('b');
+  var c = util.field('c');
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var pd = df.add(Pivot, {groupby: [a], field: b, op: 'count', value: c, pulse: c0});
+  var out = df.add(Collect, {pulse: pd});
+  var d;
 
   // -- process adds
   df.pulse(c0, changeset().insert(data)).run();

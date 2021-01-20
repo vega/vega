@@ -17,9 +17,9 @@ export default function PreFacet(params) {
 
 inherits(PreFacet, Facet, {
   transform(_, pulse) {
-    const flow = _.subflow,
-          field = _.field,
-          subflow = t => this.subflow(tupleid(t), flow, pulse, t);
+    const flow = _.subflow;
+    const field = _.field;
+    const subflow = t => this.subflow(tupleid(t), flow, pulse, t);
 
     if (_.modified('field') || field && pulse.modified(accessorFields(field))) {
       error('PreFacet does not support field modification.');

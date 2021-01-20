@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('repeat repeats strings', t => {
   t.equal(vega.repeat('1', 0), '');

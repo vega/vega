@@ -29,14 +29,14 @@ GeoJSON.Definition = {
 
 inherits(GeoJSON, Transform, {
   transform(_, pulse) {
-    var features = this._features,
-        points = this._points,
-        fields = _.fields,
-        lon = fields && fields[0],
-        lat = fields && fields[1],
-        geojson = _.geojson || (!fields && identity),
-        flag = pulse.ADD,
-        mod;
+    var features = this._features;
+    var points = this._points;
+    var fields = _.fields;
+    var lon = fields && fields[0];
+    var lat = fields && fields[1];
+    var geojson = _.geojson || (!fields && identity);
+    var flag = pulse.ADD;
+    var mod;
 
     mod = _.modified()
       || pulse.changed(pulse.REM)
@@ -56,8 +56,8 @@ inherits(GeoJSON, Transform, {
 
     if (lon && lat) {
       pulse.visit(flag, t => {
-        var x = lon(t),
-            y = lat(t);
+        var x = lon(t);
+        var y = lat(t);
         if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
           points.push([x, y]);
         }

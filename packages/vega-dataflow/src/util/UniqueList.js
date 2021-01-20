@@ -1,9 +1,9 @@
 import {identity} from 'vega-util';
 
 export default function UniqueList(idFunc) {
-  const $ = idFunc || identity,
-        list = [],
-        ids = {};
+  const $ = idFunc || identity;
+  const list = [];
+  const ids = {};
 
   list.add = _ => {
     const id = $(_);

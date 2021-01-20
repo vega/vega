@@ -3,10 +3,10 @@ import {
   oneOf, ref, stringType
 } from './util';
 
-const Checkbox = 'checkbox',
-      Radio = 'radio',
-      Select = 'select',
-      Range = 'range';
+const Checkbox = 'checkbox';
+const Radio = 'radio';
+const Select = 'select';
+const Range = 'range';
 
 const element = stringType;
 const elementRef = ref('element');

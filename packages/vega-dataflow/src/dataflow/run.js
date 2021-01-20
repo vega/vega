@@ -26,8 +26,8 @@ import {id, isArray} from 'vega-util';
  *   evaluation completes.
  */
 export async function evaluate(encode, prerun, postrun) {
-  const df = this,
-        async = [];
+  const df = this;
+  const async = [];
 
   // if the pulse value is set, this is a re-entrant call
   if (df._pulse) return reentrant(df);
@@ -54,7 +54,10 @@ export async function evaluate(encode, prerun, postrun) {
   df._touched.forEach(op => df._enqueue(op, true));
   df._touched = UniqueList(id);
 
-  let count = 0, op, next, error;
+  let count = 0;
+  let op;
+  let next;
+  let error;
 
   try {
     while (df._heap.size() > 0) {
@@ -255,8 +258,8 @@ export function enqueue(op, force) {
  *   annotate the returned pulse. See {@link run} for more information.
  */
 export function getPulse(op, encode) {
-  const s = op.source,
-        stamp = this._clock;
+  const s = op.source;
+  const stamp = this._clock;
 
   return s && isArray(s)
     ? new MultiPulse(this, stamp, s.map(_ => _.pulse), encode)

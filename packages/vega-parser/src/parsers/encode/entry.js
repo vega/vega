@@ -74,7 +74,9 @@ function field(ref) {
 }
 
 function resolveField(ref) {
-  let object, level, field;
+  let object;
+  let level;
+  let field;
 
   if (ref.signal) {
     object = 'datum';

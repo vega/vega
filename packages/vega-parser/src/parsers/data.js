@@ -27,10 +27,14 @@ export default function parseData(data, scope) {
  */
 function analyze(data, scope, ops) {
   const output = [];
-  let source = null,
-      modify = false,
-      generate = false,
-      upstream, i, n, t, m;
+  let source = null;
+  let modify = false;
+  let generate = false;
+  let upstream;
+  let i;
+  let n;
+  let t;
+  let m;
 
   if (data.values) {
     // hard-wired input data set

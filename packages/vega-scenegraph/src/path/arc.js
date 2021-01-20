@@ -70,14 +70,14 @@ export function bezier(params) {
     return bezierCache[key];
   }
 
-  var cx = params[0],
-      cy = params[1],
-      th0 = params[2],
-      th1 = params[3],
-      rx = params[4],
-      ry = params[5],
-      sin_th = params[6],
-      cos_th = params[7];
+  var cx = params[0];
+  var cy = params[1];
+  var th0 = params[2];
+  var th1 = params[3];
+  var rx = params[4];
+  var ry = params[5];
+  var sin_th = params[6];
+  var cos_th = params[7];
 
   const a00 = cos_th * rx;
   const a01 = -sin_th * ry;

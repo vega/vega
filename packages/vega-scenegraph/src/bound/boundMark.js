@@ -5,11 +5,14 @@ import marks from '../marks/index';
 var DUMMY = {mark: null};
 
 export default function(mark, bounds, opt) {
-  var type  = marks[mark.marktype],
-      bound = type.bound,
-      items = mark.items,
-      hasItems = items && items.length,
-      i, n, item, b;
+  var type  = marks[mark.marktype];
+  var bound = type.bound;
+  var items = mark.items;
+  var hasItems = items && items.length;
+  var i;
+  var n;
+  var item;
+  var b;
 
   if (type.nested) {
     if (hasItems) {

@@ -29,7 +29,8 @@ export default function(support, bandwidth) {
     },
 
     pdf(x) {
-      let y = 0, i = 0;
+      let y = 0;
+      let i = 0;
       for (; i<n; ++i) {
         y += kernel.pdf((x - support[i]) / bandwidth);
       }
@@ -37,7 +38,8 @@ export default function(support, bandwidth) {
     },
 
     cdf(x) {
-      let y = 0, i = 0;
+      let y = 0;
+      let i = 0;
       for (; i<n; ++i) {
         y += kernel.cdf((x - support[i]) / bandwidth);
       }

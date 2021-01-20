@@ -14,8 +14,8 @@ import {error, inherits, isArray} from 'vega-util';
  * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
  */
 export default function MultiPulse(dataflow, stamp, pulses, encode) {
-  const p = this,
-        n = pulses.length;
+  const p = this;
+  const n = pulses.length;
   let c = 0;
 
   this.dataflow = dataflow;
@@ -62,7 +62,8 @@ inherits(MultiPulse, Pulse, {
   },
 
   modified(_) {
-    const p = this, fields = p.fields;
+    const p = this;
+    const fields = p.fields;
     return !(fields && (p.changes & p.MOD)) ? 0
       : isArray(_) ? _.some(f => fields[f])
       : fields[_];
@@ -77,9 +78,9 @@ inherits(MultiPulse, Pulse, {
   },
 
   visit(flags, visitor) {
-    const p = this,
-          pulses = p.pulses,
-          n = pulses.length;
+    const p = this;
+    const pulses = p.pulses;
+    const n = pulses.length;
     let i = 0;
 
     if (flags & p.SOURCE) {

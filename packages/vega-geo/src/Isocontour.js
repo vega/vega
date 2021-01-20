@@ -59,13 +59,13 @@ inherits(Isocontour, Transform, {
       return pulse.StopPropagation;
     }
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        field = _.field || identity,
-        contour = contours().smooth(_.smooth !== false),
-        tz = _.thresholds || levels(source, field, _),
-        as = _.as === null ? null : _.as || 'contour',
-        values = [];
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var source = pulse.materialize(pulse.SOURCE).source;
+    var field = _.field || identity;
+    var contour = contours().smooth(_.smooth !== false);
+    var tz = _.thresholds || levels(source, field, _);
+    var as = _.as === null ? null : _.as || 'contour';
+    var values = [];
 
     source.forEach(t => {
       const grid = field(t);
@@ -99,24 +99,24 @@ function levels(values, f, _) {
 }
 
 function transformPaths(paths, grid, datum, _) {
-  let s = _.scale || grid.scale,
-      t = _.translate || grid.translate;
+  let s = _.scale || grid.scale;
+  let t = _.translate || grid.translate;
   if (isFunction(s)) s = s(datum, _);
   if (isFunction(t)) t = t(datum, _);
   if ((s === 1 || s == null) && !t) return;
 
-  const sx = (isNumber(s) ? s : s[0]) || 1,
-        sy = (isNumber(s) ? s : s[1]) || 1,
-        tx = t && t[0] || 0,
-        ty = t && t[1] || 0;
+  const sx = (isNumber(s) ? s : s[0]) || 1;
+  const sy = (isNumber(s) ? s : s[1]) || 1;
+  const tx = t && t[0] || 0;
+  const ty = t && t[1] || 0;
 
   paths.forEach(transform(grid, sx, sy, tx, ty));
 }
 
 export function transform(grid, sx, sy, tx, ty) {
-  const x1 = grid.x1 || 0,
-        y1 = grid.y1 || 0,
-        flip = sx * sy < 0;
+  const x1 = grid.x1 || 0;
+  const y1 = grid.y1 || 0;
+  const flip = sx * sy < 0;
 
   function transformPolygon(coordinates) {
     coordinates.forEach(transformRing);

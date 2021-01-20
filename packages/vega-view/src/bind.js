@@ -2,9 +2,9 @@ import element from './element';
 import {debounce} from 'vega-util';
 import {tickStep} from 'd3-array';
 
-const BindClass = 'vega-bind',
-      NameClass = 'vega-bind-name',
-      RadioClass = 'vega-bind-radio';
+const BindClass = 'vega-bind';
+const NameClass = 'vega-bind-name';
+const RadioClass = 'vega-bind-radio';
 
 /**
  * Bind a signal to an external HTML input element. The resulting two-way
@@ -127,8 +127,8 @@ function checkbox(bind, el, param, value) {
  * Generates a selection list input element.
  */
 function select(bind, el, param, value) {
-  const node = element('select', {name: param.signal}),
-        labels = param.labels || [];
+  const node = element('select', {name: param.signal});
+  const labels = param.labels || [];
 
   param.options.forEach((option, i) => {
     const attr = {value: option};
@@ -156,8 +156,8 @@ function select(bind, el, param, value) {
  * Generates a radio button group.
  */
 function radio(bind, el, param, value) {
-  const group = element('span', {'class': RadioClass}),
-        labels = param.labels || [];
+  const group = element('span', {'class': RadioClass});
+  const labels = param.labels || [];
 
   el.appendChild(group);
 
@@ -180,8 +180,8 @@ function radio(bind, el, param, value) {
   });
 
   bind.set = value => {
-    const nodes = bind.elements,
-          n = nodes.length;
+    const nodes = bind.elements;
+    const n = nodes.length;
     for (let i = 0; i < n; ++i) {
       if (valuesEqual(nodes[i].value, value)) nodes[i].checked = true;
     }
@@ -194,9 +194,9 @@ function radio(bind, el, param, value) {
 function range(bind, el, param, value) {
   value = value !== undefined ? value : ((+param.max) + (+param.min)) / 2;
 
-  const max = param.max != null ? param.max : Math.max(100, +value) || 100,
-        min = param.min || Math.min(0, max, +value) || 0,
-        step = param.step || tickStep(min, max, 100);
+  const max = param.max != null ? param.max : Math.max(100, +value) || 100;
+  const min = param.min || Math.min(0, max, +value) || 0;
+  const step = param.step || tickStep(min, max, 100);
 
   const node = element('input', {
     type:  'range',

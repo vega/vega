@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var transforms = require('vega-transforms');
+var runtime = require('../');
 
 tape('Parser parses faceted dataflow specs', t => {
   const values = [
@@ -43,9 +43,10 @@ tape('Parser parses faceted dataflow specs', t => {
 
   // ----
 
-  var df  = new vega.Dataflow(),
-      ctx = runtime.context(df, transforms).parse(spec),
-      ops = ctx.nodes;
+  var df  = new vega.Dataflow(); // number of tuples per facet in 1st subflow
+
+  var ctx = runtime.context(df, transforms).parse(spec);
+  var ops = ctx.nodes;
 
   t.equal(Object.keys(ops).length, spec.operators.length);
 
@@ -57,11 +58,12 @@ tape('Parser parses faceted dataflow specs', t => {
   );
 
   // test that subflows contain correct values
-  var subflows = ops[1].value,
-      collectA = subflows.a._targets[0],
-      collectB = subflows.b._targets[0],
-      extentA = collectA._targets[0],
-      extentB = collectB._targets[0];
+  var subflows = ops[1].value;
+
+  var collectA = subflows.a._targets[0];
+  var collectB = subflows.b._targets[0];
+  var extentA = collectA._targets[0];
+  var extentB = collectB._targets[0];
 
   t.equal(collectA.value.length, size);
   t.deepEqual(extentA.value, [28, 81]);
@@ -73,7 +75,8 @@ tape('Parser parses faceted dataflow specs', t => {
 });
 
 function count(ctx, stamp) {
-  var sum = 0, ops = ctx.nodes;
+  var sum = 0;
+  var ops = ctx.nodes;
 
   Object.keys(ops).forEach(key => {
     if (ops[key].stamp === stamp) ++sum;

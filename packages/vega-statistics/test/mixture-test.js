@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    d3 = require('d3-array'),
-    stats = require('../'),
-    gaussian = stats.randomNormal();
+var tape = require('tape');
+var d3 = require('d3-array');
+var stats = require('../');
+var gaussian = stats.randomNormal();
 
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
@@ -47,18 +47,18 @@ tape('mixture generates samples', t => {
 });
 
 tape('mixture evaluates the pdf', t => {
-  var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.reduce((sum, x) => sum + Math.abs(mix.pdf(x) - gaussian.pdf(x)), 0);
+  var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]);
+  var domain = d3.range(-5, 5.1, 0.5);
+  var error = domain.reduce((sum, x) => sum + Math.abs(mix.pdf(x) - gaussian.pdf(x)), 0);
 
   t.ok((error / domain.length) < 0.01);
   t.end();
 });
 
 tape('mixture approximates the cdf', t => {
-  var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.reduce((sum, x) => sum + Math.abs(mix.cdf(x) - gaussian.cdf(x)), 0);
+  var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]);
+  var domain = d3.range(-5, 5.1, 0.5);
+  var error = domain.reduce((sum, x) => sum + Math.abs(mix.cdf(x) - gaussian.cdf(x)), 0);
 
   t.ok((error / domain.length) < 0.01);
   t.end();
