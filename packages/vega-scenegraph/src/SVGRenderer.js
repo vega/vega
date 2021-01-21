@@ -12,7 +12,8 @@ import {rootAttributes, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 const RootIndex = 0,
-      ns = metadata.xmlns;
+      xmlns = 'http://www.w3.org/2000/xmlns/',
+      svgns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
@@ -43,15 +44,15 @@ inherits(SVGRenderer, Renderer, {
     this._clearDefs();
 
     if (el) {
-      this._svg = domChild(el, 0, 'svg', ns);
-      this._svg.setAttributeNS(ns, 'xmlns', metadata['xmlns']);
-      this._svg.setAttributeNS(ns, 'xmlns:xlink', metadata['xmlns:xlink']);
+      this._svg = domChild(el, 0, 'svg', svgns);
+      this._svg.setAttributeNS(xmlns, 'xmlns', svgns);
+      this._svg.setAttributeNS(xmlns, 'xmlns:xlink', metadata['xmlns:xlink']);
       this._svg.setAttribute('version', metadata['version']);
       this._svg.setAttribute('class', 'marks');
       domClear(el, 1);
 
       // set the svg root group
-      this._root = domChild(this._svg, RootIndex, 'g', ns);
+      this._root = domChild(this._svg, RootIndex, 'g', svgns);
       setAttributes(this._root, rootAttributes);
 
       // ensure no additional child elements
@@ -122,7 +123,7 @@ inherits(SVGRenderer, Renderer, {
     let node;
     if (bg) {
       svg.removeAttribute('style');
-      node = domChild(svg, RootIndex, 'rect', ns);
+      node = domChild(svg, RootIndex, 'rect', svgns);
       setAttributes(node, {width: this._width, height: this._height, fill: bg});
     }
 
@@ -359,12 +360,12 @@ inherits(SVGRenderer, Renderer, {
         index = 0;
 
     for (const id in defs.gradient) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
       index = updateGradient(el, defs.gradient[id], index);
     }
 
     for (const id in defs.clipping) {
-      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', ns));
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
       index = updateClipping(el, defs.clipping[id], index);
     }
 
@@ -405,7 +406,7 @@ function updateGradient(el, grad, index) {
     // coordinates, in a way that is cumbersome to replicate in canvas.
     // We wrap the radial gradient in a pattern element, allowing us to
     // maintain a circular gradient that matches what canvas provides.
-    let pt = domChild(el, index++, 'pattern', ns);
+    let pt = domChild(el, index++, 'pattern', svgns);
     setAttributes(pt, {
       id: patternPrefix + grad.id,
       viewBox: '0,0,1,1',
@@ -414,14 +415,14 @@ function updateGradient(el, grad, index) {
       preserveAspectRatio: 'xMidYMid slice'
     });
 
-    pt = domChild(pt, 0, 'rect', ns);
+    pt = domChild(pt, 0, 'rect', svgns);
     setAttributes(pt, {
       width: 1,
       height: 1,
       fill: `url(${href()}#${grad.id})`
     });
 
-    el = domChild(el, index++, 'radialGradient', ns);
+    el = domChild(el, index++, 'radialGradient', svgns);
     setAttributes(el, {
       id: grad.id,
       fx: grad.x1,
@@ -432,7 +433,7 @@ function updateGradient(el, grad, index) {
       r: grad.r2
     });
   } else {
-    el = domChild(el, index++, 'linearGradient', ns);
+    el = domChild(el, index++, 'linearGradient', svgns);
     setAttributes(el, {
       id: grad.id,
       x1: grad.x1,
@@ -443,7 +444,7 @@ function updateGradient(el, grad, index) {
   }
 
   for (i=0, n=grad.stops.length; i<n; ++i) {
-    stop = domChild(el, i, 'stop', ns);
+    stop = domChild(el, i, 'stop', svgns);
     stop.setAttribute('offset', grad.stops[i].offset);
     stop.setAttribute('stop-color', grad.stops[i].color);
   }
@@ -456,14 +457,14 @@ function updateGradient(el, grad, index) {
 function updateClipping(el, clip, index) {
   let mask;
 
-  el = domChild(el, index, 'clipPath', ns);
+  el = domChild(el, index, 'clipPath', svgns);
   el.setAttribute('id', clip.id);
 
   if (clip.path) {
-    mask = domChild(el, 0, 'path', ns);
+    mask = domChild(el, 0, 'path', svgns);
     mask.setAttribute('d', clip.path);
   } else {
-    mask = domChild(el, 0, 'rect', ns);
+    mask = domChild(el, 0, 'rect', svgns);
     setAttributes(mask, {x: 0, y: 0, width: clip.width, height: clip.height});
   }
   domClear(el, 1);
@@ -493,7 +494,7 @@ function bind(item, el, sibling, tag, svg) {
   // create a new dom node if needed
   if (!node) {
     doc = el.ownerDocument;
-    node = domCreate(doc, tag, ns);
+    node = domCreate(doc, tag, svgns);
     item._svg = node;
 
     if (item.mark) {
@@ -502,15 +503,15 @@ function bind(item, el, sibling, tag, svg) {
 
       // if group, create background, content, and foreground elements
       if (tag === 'g') {
-        const bg = domCreate(doc, 'path', ns);
+        const bg = domCreate(doc, 'path', svgns);
         node.appendChild(bg);
         bg.__data__ = item;
 
-        const cg = domCreate(doc, 'g', ns);
+        const cg = domCreate(doc, 'g', svgns);
         node.appendChild(cg);
         cg.__data__ = item;
 
-        const fg = domCreate(doc, 'path', ns);
+        const fg = domCreate(doc, 'path', svgns);
         node.appendChild(fg);
         fg.__data__ = item;
         fg.__values__ = {fill: 'default'};
@@ -602,7 +603,7 @@ const mark_extras = {
         doc = el.ownerDocument;
         lh = lineHeight(item);
         value.forEach((t, i) => {
-          const ts = domCreate(doc, 'tspan', ns);
+          const ts = domCreate(doc, 'tspan', svgns);
           ts.__data__ = item; // data binding
           ts.textContent = t;
           if (i) {
