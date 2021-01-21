@@ -10842,14 +10842,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "startAngle",
             "endAngle"
@@ -10939,14 +10939,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "y0",
             "y1"
@@ -11399,14 +11399,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "values": {
           "oneOf": [
@@ -11572,14 +11572,14 @@
                     "$ref": "#/definitions/expr"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "geojson": {
           "oneOf": [
@@ -11690,14 +11690,14 @@
                     "$ref": "#/definitions/expr"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "as": {
           "oneOf": [
@@ -11712,14 +11712,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "x",
             "y"
@@ -11809,40 +11809,40 @@
           "oneOf": [
             {
               "type": "array",
-              "items": {}
+              "items": {},
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "extentMajor": {
           "oneOf": [
             {
               "type": "array",
-              "items": {}
+              "items": {},
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "extentMinor": {
           "oneOf": [
             {
               "type": "array",
-              "items": {}
+              "items": {},
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "step": {
           "oneOf": [
@@ -11857,14 +11857,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "stepMajor": {
           "oneOf": [
@@ -11879,14 +11879,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             90,
             360
@@ -11905,14 +11905,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             10,
             10
@@ -12208,14 +12208,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "x": {
           "oneOf": [
@@ -12302,14 +12302,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "counts": {
           "anyOf": [
@@ -12454,14 +12454,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "as": {
           "oneOf": [
@@ -12476,14 +12476,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 5,
+              "minItems": 5
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 5,
-          "minItems": 5,
           "default": [
             "x",
             "y",
@@ -12558,14 +12558,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "as": {
           "oneOf": [
@@ -12580,14 +12580,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 6,
+              "minItems": 6
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 6,
-          "minItems": 6,
           "default": [
             "x0",
             "y0",
@@ -12702,14 +12702,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "nodeSize": {
           "oneOf": [
@@ -12724,14 +12724,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "separation": {
           "anyOf": [
@@ -12757,14 +12757,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 4,
+              "minItems": 4
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 4,
-          "minItems": 4,
           "default": [
             "x",
             "y",
@@ -12944,14 +12944,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "as": {
           "oneOf": [
@@ -12966,14 +12966,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 6,
+              "minItems": 6
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 6,
-          "minItems": 6,
           "default": [
             "x0",
             "y0",
@@ -13013,14 +13013,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "sort": {
           "$ref": "#/definitions/compare"
@@ -13157,14 +13157,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 5,
+              "minItems": 5
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 5,
-          "minItems": 5,
           "default": [
             "x",
             "y",
@@ -13374,14 +13374,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "params": {
           "anyOf": [
@@ -13693,14 +13693,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "span": {
           "anyOf": [
@@ -13786,14 +13786,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "bin0",
             "bin1"
@@ -13900,14 +13900,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "text",
             "count"
@@ -13947,14 +13947,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "a",
             "b"
@@ -13990,14 +13990,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "steps": {
           "anyOf": [
@@ -14522,14 +14522,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "key",
             "value"
@@ -14918,14 +14918,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "resolve": {
           "anyOf": [
@@ -15631,14 +15631,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             "unit0",
             "unit1"
@@ -15834,14 +15834,14 @@
                     "type": "null"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             null,
             0
@@ -15941,27 +15941,27 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "extent": {
           "oneOf": [
             {
               "type": "array",
-              "items": {}
+              "items": {},
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 2,
-          "minItems": 2,
           "default": [
             [
               -100000,
@@ -16016,14 +16016,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 2,
+              "minItems": 2
             },
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "maxItems": 2,
-          "minItems": 2
+          ]
         },
         "font": {
           "anyOf": [
@@ -16188,14 +16188,14 @@
                     "$ref": "#/definitions/signalRef"
                   }
                 ]
-              }
+              },
+              "maxItems": 7,
+              "minItems": 7
             },
             {
               "$ref": "#/definitions/signalRef"
             }
           ],
-          "maxItems": 7,
-          "minItems": 7,
           "default": [
             "x",
             "y",
