@@ -1,6 +1,5 @@
 import {
-  array, arrayType, enums, not, numberType, object,
-  oneOf, ref, stringType
+  array, arrayType, def, enums, not, numberType, object, oneOf, stringType
 } from './util';
 
 const Checkbox = 'checkbox',
@@ -9,7 +8,7 @@ const Checkbox = 'checkbox',
       Range = 'range';
 
 const element = stringType;
-const elementRef = ref('element');
+const elementRef = def('element');
 
 const bind = oneOf(
   object({
@@ -44,10 +43,6 @@ const bind = oneOf(
 );
 
 export default {
-  refs: {
-    element
-  },
-  defs: {
-    bind
-  }
+  bind,
+  element
 };

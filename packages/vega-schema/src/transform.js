@@ -1,14 +1,14 @@
 import {
   anyOf, array, booleanType, def, enums, nullType, numberType,
-  object, oneOf, ref, signalRef, stringType
+  object, oneOf, signalRef, stringType
 } from './util';
 
 // types defined elsewhere
-const compareRef = ref('compare');
-const scaleFieldRef = ref('scaleField');
-const paramFieldRef = ref('paramField');
-const exprStringRef = ref('exprString');
-const exprRef = ref('expr');
+const compareRef = def('compare');
+const scaleFieldRef = def('scaleField');
+const paramFieldRef = def('paramField');
+const exprStringRef = def('exprString');
+const exprRef = def('expr');
 
 function req(key) {
   return '_' + key + '_';
@@ -104,10 +104,10 @@ function parameterSchema(param) {
 }
 
 function subParameterSchema(sub) {
-  var props = {},
-      key = sub.key;
+  const props = {},
+        key = sub.key;
 
-  for (var name in key) {
+  for (const name in key) {
     props[req(name)] = enums([key[name]]);
   }
 
@@ -120,24 +120,24 @@ function subParameterSchema(sub) {
 }
 
 export default function(definitions) {
-  var transforms = [],
-      marks = [],
-      defs = {
-        transform: {oneOf: transforms},
-        transformMark: {oneOf: marks}
-      };
+  const transforms = [],
+        marks = [],
+        defs = {
+          transform: {oneOf: transforms},
+          transformMark: {oneOf: marks}
+        };
 
-  for (var i=0, n=definitions.length; i<n; ++i) {
-    var d = definitions[i],
-        name = d.type.toLowerCase(),
-        key = name + 'Transform',
-        ref = def(key),
-        md = d.metadata;
+  for (let i=0, n=definitions.length; i<n; ++i) {
+    const d = definitions[i],
+          name = d.type.toLowerCase(),
+          key = name + 'Transform',
+          ref = def(key),
+          md = d.metadata;
 
     defs[key] = transformSchema(name, d);
     if (!(md.generates || md.changes)) marks.push(ref);
     transforms.push(ref);
   }
 
-  return {defs};
+  return defs;
 }

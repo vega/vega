@@ -85,10 +85,6 @@ const data = oneOf(
 );
 
 export default {
-  refs: {
-    paramField
-  },
-  defs: {
-    data
-  }
+  data,
+  paramField
 };

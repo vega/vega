@@ -3,15 +3,15 @@ import {
   baselineValue, booleanType,
   colorValue, def, enums, fontWeightValue,
   numberOrSignal, numberType, numberValue,
-  object, oneOf, orSignal, pattern, ref,
+  object, oneOf, orSignal, pattern,
   stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere
 const guideEncodeRef = def('guideEncode');
 const encodeEntryRef = def('encodeEntry');
-const stringValueRef = ref('stringValue');
-const styleRef = ref('style');
+const stringValueRef = def('stringValue');
+const styleRef = def('style');
 
 const titleOrientEnum = ['none', 'left', 'right', 'top', 'bottom'];
 const titleFrameEnum = ['group', 'bounds'];
@@ -77,7 +77,5 @@ const title = oneOf(
 );
 
 export default {
-  defs: {
-    title
-  }
+  title
 };

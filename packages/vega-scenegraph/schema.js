@@ -13,12 +13,12 @@ function extend(_) {
 function build(strict) {
   const schema = duplicate(BASE);
   for (const type in MARKS) {
-    buildMark(type, schema.refs, strict);
+    buildMark(type, schema.definitions, strict);
   }
   return schema;
 }
 
-function buildMark(type, refs, strict) {
+function buildMark(type, defs, strict) {
   const mark = duplicate(MARK_BASE);
   mark.properties.marktype.enum = [ type ];
   mark.properties.items.items.$ref += type;
@@ -28,9 +28,9 @@ function buildMark(type, refs, strict) {
   extend(item.properties, MARKS[type].properties || {});
   if (strict) item.additionalProperties = false;
 
-  refs.mark.oneOf.push({$ref: '#/refs/mark-' + type});
-  refs['mark-'+type] = mark;
-  refs['item-'+type] = item;
+  defs.mark.oneOf.push({$ref: '#/definitions/mark-' + type});
+  defs['mark-'+type] = mark;
+  defs['item-'+type] = item;
 }
 
 function svg_path() {
@@ -73,8 +73,8 @@ const BASE = {
   '$schema': 'http://json-schema.org/draft-07/schema#',
   'title': 'Vega scenegraph',
   'description': 'Vega scenegraph model.',
-  'oneOf': [ { '$ref': '#/refs/mark' } ],
-  'refs': {
+  'oneOf': [ { '$ref': '#/definitions/mark' } ],
+  'definitions': {
     'mark': { 'oneOf': [] },
     'path': {
       'type': 'string',
@@ -82,9 +82,9 @@ const BASE = {
     },
     'paint': {
       'oneOf': [
-        { '$ref': '#/refs/color' },
-        { '$ref': '#/refs/linearGradient' },
-        { '$ref': '#/refs/radialGradient' }
+        { '$ref': '#/definitions/color' },
+        { '$ref': '#/definitions/linearGradient' },
+        { '$ref': '#/definitions/radialGradient' }
       ]
     },
     'color': {
@@ -115,7 +115,7 @@ const BASE = {
       'type': 'object',
       'properties': {
         'offset': { 'type': 'number' },
-        'color': { '$ref': '#/refs/color' }
+        'color': { '$ref': '#/definitions/color' }
       },
       'required': ['offset', 'color']
     },
@@ -130,7 +130,7 @@ const BASE = {
         'y2': { 'type': 'number' },
         'stops': {
           'type': 'array',
-          'items': { '$ref': '#/refs/gradientStop' }
+          'items': { '$ref': '#/definitions/gradientStop' }
         }
       },
       'required': ['gradient', 'stops'],
@@ -149,7 +149,7 @@ const BASE = {
         'r2': { 'type': 'number' },
         'stops': {
           'type': 'array',
-          'items': { '$ref': '#/refs/gradientStop' }
+          'items': { '$ref': '#/definitions/gradientStop' }
         }
       },
       'required': ['gradient', 'stops'],
@@ -169,7 +169,7 @@ const MARK_BASE = {
     'interactive': { 'type': 'boolean', 'default': true },
     'items': {
       'type': 'array',
-      'items': { '$ref': '#/refs/item-' }
+      'items': { '$ref': '#/definitions/item-' }
     },
     'zindex': { 'type': 'number' }
   },
@@ -204,9 +204,9 @@ const ITEM_BASE = {
     'height': { 'type': 'number' },
     'blend': { 'enum': BLEND_MODE, 'default': null },
     'opacity': { 'type': 'number', 'default': 1 },
-    'fill': { '$ref': '#/refs/paint' },
+    'fill': { '$ref': '#/definitions/paint' },
     'fillOpacity': { 'type': 'number', 'default': 1 },
-    'stroke': { '$ref': '#/refs/paint' },
+    'stroke': { '$ref': '#/definitions/paint' },
     'strokeOpacity': { 'type': 'number', 'default': 1 },
     'strokeWidth': { 'type': 'number', 'default': 1 },
     'strokeCap': { 'enum': [ 'butt', 'cap', 'round' ], 'default': 'butt' },
@@ -291,7 +291,7 @@ const MARKS = {
       'cornerRadiusTopRight': { 'type': 'number' },
       'cornerRadiusBottomRight': { 'type': 'number' },
       'cornerRadiusBottomLeft': { 'type': 'number' },
-      'items': { 'type': 'array', 'items': { '$ref': '#/refs/mark' } },
+      'items': { 'type': 'array', 'items': { '$ref': '#/definitions/mark' } },
       'strokeForeground': { 'type': 'boolean' },
       'strokeOffset': { 'type': 'number' }
     }
@@ -341,7 +341,7 @@ const MARKS = {
   'path': {
     'properties': {
       'angle': { 'type': 'number' },
-      'path': { '$ref': '#/refs/path' },
+      'path': { '$ref': '#/definitions/path' },
       'scaleX': { 'type': 'number' },
       'scaleY': { 'type': 'number' }
     }

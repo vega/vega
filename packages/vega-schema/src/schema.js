@@ -1,4 +1,4 @@
-import {def, numberOrSignal, objectType, ref, stringType, type} from './util';
+import {def, numberOrSignal, objectType, stringType, type} from './util';
 
 import autosize from './autosize';
 import axis from './axis';
@@ -30,16 +30,14 @@ function extend(target, source) {
 }
 
 function addModule(schema, module) {
-  if (module.refs) extend(schema.refs, module.refs);
-  if (module.defs) extend(schema.defs, module.defs);
+  extend(schema.definitions, module);
 }
 
 export default function(definitions) {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     title: 'Vega Visualization Specification Language',
-    defs: {},
-    refs: {},
+    definitions: {},
     type: 'object',
     allOf: [
       def('scope'),
@@ -53,7 +51,7 @@ export default function(definitions) {
           padding: def('padding'),
           autosize: def('autosize'),
           background: def('background'),
-          style: ref('style')
+          style: def('style')
         }
       }
     ]

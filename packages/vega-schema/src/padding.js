@@ -12,7 +12,5 @@ const padding = oneOf(
 );
 
 export default {
-  defs: {
-    padding
-  }
+  padding
 };
