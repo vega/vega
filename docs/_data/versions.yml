@@ -1,4 +1,4 @@
-vega__latest: '5.18.0'
+vega__latest: '5.19.0'
 schema: '5'
 vega: '5'
 interpreter: '1'

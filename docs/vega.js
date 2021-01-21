@@ -5,7 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
   var name = "vega";
-  var version = "5.18.0";
+  var version = "5.19.0";
   var description = "The Vega visualization grammar.";
   var keywords = [
   	"vega",
@@ -42,17 +42,17 @@
   	"vega-expression": "~4.0.1",
   	"vega-force": "~4.0.7",
   	"vega-format": "~1.0.4",
-  	"vega-functions": "~5.11.0",
+  	"vega-functions": "~5.12.0",
   	"vega-geo": "~4.3.8",
   	"vega-hierarchy": "~4.0.9",
   	"vega-label": "~1.0.0",
   	"vega-loader": "~4.4.0",
-  	"vega-parser": "~6.1.2",
+  	"vega-parser": "~6.1.3",
   	"vega-projection": "~1.4.5",
   	"vega-regression": "~1.0.9",
   	"vega-runtime": "~6.1.3",
   	"vega-scale": "~7.1.1",
-  	"vega-scenegraph": "~4.9.2",
+  	"vega-scenegraph": "~4.9.3",
   	"vega-statistics": "~1.7.9",
   	"vega-time": "~2.0.4",
   	"vega-transforms": "~4.9.3",
@@ -20381,7 +20381,8 @@
     'stroke-miterlimit': 10
   };
   const RootIndex = 0,
-        ns = metadata.xmlns;
+        xmlns = 'http://www.w3.org/2000/xmlns/',
+        svgns = metadata.xmlns;
 
   function SVGRenderer(loader) {
     Renderer.call(this, loader);
@@ -20412,14 +20413,19 @@
       this._clearDefs();
 
       if (el) {
-        this._svg = domChild(el, 0, 'svg', ns);
-        setAttributes(this._svg, metadata);
+        this._svg = domChild(el, 0, 'svg', svgns);
+
+        this._svg.setAttributeNS(xmlns, 'xmlns', svgns);
+
+        this._svg.setAttributeNS(xmlns, 'xmlns:xlink', metadata['xmlns:xlink']);
+
+        this._svg.setAttribute('version', metadata['version']);
 
         this._svg.setAttribute('class', 'marks');
 
         domClear(el, 1); // set the svg root group
 
-        this._root = domChild(this._svg, RootIndex, 'g', ns);
+        this._root = domChild(this._svg, RootIndex, 'g', svgns);
         setAttributes(this._root, rootAttributes); // ensure no additional child elements
 
         domClear(this._svg, RootIndex + 1);
@@ -20488,7 +20494,7 @@
 
       if (bg) {
         svg.removeAttribute('style');
-        node = domChild(svg, RootIndex, 'rect', ns);
+        node = domChild(svg, RootIndex, 'rect', svgns);
         setAttributes(node, {
           width: this._width,
           height: this._height,
@@ -20727,12 +20733,12 @@
           index = 0;
 
       for (const id in defs.gradient) {
-        if (!el) defs.el = el = domChild(svg, RootIndex + 1, 'defs', ns);
+        if (!el) defs.el = el = domChild(svg, RootIndex + 1, 'defs', svgns);
         index = updateGradient(el, defs.gradient[id], index);
       }
 
       for (const id in defs.clipping) {
-        if (!el) defs.el = el = domChild(svg, RootIndex + 1, 'defs', ns);
+        if (!el) defs.el = el = domChild(svg, RootIndex + 1, 'defs', svgns);
         index = updateClipping(el, defs.clipping[id], index);
       } // clean-up
 
@@ -20772,7 +20778,7 @@
       // coordinates, in a way that is cumbersome to replicate in canvas.
       // We wrap the radial gradient in a pattern element, allowing us to
       // maintain a circular gradient that matches what canvas provides.
-      let pt = domChild(el, index++, 'pattern', ns);
+      let pt = domChild(el, index++, 'pattern', svgns);
       setAttributes(pt, {
         id: patternPrefix + grad.id,
         viewBox: '0,0,1,1',
@@ -20780,13 +20786,13 @@
         height: '100%',
         preserveAspectRatio: 'xMidYMid slice'
       });
-      pt = domChild(pt, 0, 'rect', ns);
+      pt = domChild(pt, 0, 'rect', svgns);
       setAttributes(pt, {
         width: 1,
         height: 1,
         fill: "url(".concat(href(), "#").concat(grad.id, ")")
       });
-      el = domChild(el, index++, 'radialGradient', ns);
+      el = domChild(el, index++, 'radialGradient', svgns);
       setAttributes(el, {
         id: grad.id,
         fx: grad.x1,
@@ -20797,7 +20803,7 @@
         r: grad.r2
       });
     } else {
-      el = domChild(el, index++, 'linearGradient', ns);
+      el = domChild(el, index++, 'linearGradient', svgns);
       setAttributes(el, {
         id: grad.id,
         x1: grad.x1,
@@ -20808,7 +20814,7 @@
     }
 
     for (i = 0, n = grad.stops.length; i < n; ++i) {
-      stop = domChild(el, i, 'stop', ns);
+      stop = domChild(el, i, 'stop', svgns);
       stop.setAttribute('offset', grad.stops[i].offset);
       stop.setAttribute('stop-color', grad.stops[i].color);
     }
@@ -20820,14 +20826,14 @@
 
   function updateClipping(el, clip, index) {
     let mask;
-    el = domChild(el, index, 'clipPath', ns);
+    el = domChild(el, index, 'clipPath', svgns);
     el.setAttribute('id', clip.id);
 
     if (clip.path) {
-      mask = domChild(el, 0, 'path', ns);
+      mask = domChild(el, 0, 'path', svgns);
       mask.setAttribute('d', clip.path);
     } else {
-      mask = domChild(el, 0, 'rect', ns);
+      mask = domChild(el, 0, 'rect', svgns);
       setAttributes(mask, {
         x: 0,
         y: 0,
@@ -20861,7 +20867,7 @@
 
     if (!node) {
       doc = el.ownerDocument;
-      node = domCreate(doc, tag, ns);
+      node = domCreate(doc, tag, svgns);
       item._svg = node;
 
       if (item.mark) {
@@ -20871,13 +20877,13 @@
         }; // if group, create background, content, and foreground elements
 
         if (tag === 'g') {
-          const bg = domCreate(doc, 'path', ns);
+          const bg = domCreate(doc, 'path', svgns);
           node.appendChild(bg);
           bg.__data__ = item;
-          const cg = domCreate(doc, 'g', ns);
+          const cg = domCreate(doc, 'g', svgns);
           node.appendChild(cg);
           cg.__data__ = item;
-          const fg = domCreate(doc, 'path', ns);
+          const fg = domCreate(doc, 'path', svgns);
           node.appendChild(fg);
           fg.__data__ = item;
           fg.__values__ = {
@@ -20967,7 +20973,7 @@
           doc = el.ownerDocument;
           lh = lineHeight(item);
           value.forEach((t, i) => {
-            const ts = domCreate(doc, 'tspan', ns);
+            const ts = domCreate(doc, 'tspan', svgns);
             ts.__data__ = item; // data binding
 
             ts.textContent = t;
@@ -37736,18 +37742,75 @@
     return codegen;
   }
 
+  function ascending$3(a, b) {
+    return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  function bisector$1(f) {
+    let delta = f;
+    let compare = f;
+
+    if (f.length === 1) {
+      delta = (d, x) => f(d) - x;
+
+      compare = ascendingComparator$1(f);
+    }
+
+    function left(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+
+      while (lo < hi) {
+        const mid = lo + hi >>> 1;
+        if (compare(a[mid], x) < 0) lo = mid + 1;else hi = mid;
+      }
+
+      return lo;
+    }
+
+    function right(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+
+      while (lo < hi) {
+        const mid = lo + hi >>> 1;
+        if (compare(a[mid], x) > 0) hi = mid;else lo = mid + 1;
+      }
+
+      return lo;
+    }
+
+    function center(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      const i = left(a, x, lo, hi - 1);
+      return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
+    }
+
+    return {
+      left,
+      center,
+      right
+    };
+  }
+
+  function ascendingComparator$1(f) {
+    return (d, x) => ascending$3(f(d), x);
+  }
+
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
   const VlPoint = 'vlPoint';
   const Or = 'or';
   const And = 'and';
-  var TYPE_ENUM = 'E',
-      TYPE_RANGE_INC = 'R',
-      TYPE_RANGE_EXC = 'R-E',
-      TYPE_RANGE_LE = 'R-LE',
-      TYPE_RANGE_RE = 'R-RE',
-      UNIT_INDEX = 'index:unit'; // TODO: revisit date coercion?
+  const SELECTION_ID = '_vgsid_',
+        TYPE_ENUM = 'E',
+        TYPE_RANGE_INC = 'R',
+        TYPE_RANGE_EXC = 'R-E',
+        TYPE_RANGE_LE = 'R-LE',
+        TYPE_RANGE_RE = 'R-RE',
+        UNIT_INDEX = 'index:unit'; // TODO: revisit date coercion?
 
   function testPoint(datum, entry) {
     var fields = entry.fields,
@@ -37844,6 +37907,43 @@
 
 
     return n && intersect;
+  }
+
+  const selectionId = field(SELECTION_ID),
+        bisect = bisector$1(selectionId),
+        bisectLeft$1 = bisect.left,
+        bisectRight$1 = bisect.right;
+
+  function selectionIdTest(name, datum, op) {
+    const data = this.context.data[name],
+          entries = data ? data.values.value : [],
+          unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
+          intersect = op === Intersect,
+          value = selectionId(datum),
+          index = bisectLeft$1(entries, value);
+    if (index === entries.length) return false;
+    if (selectionId(entries[index]) !== value) return false;
+
+    if (unitIdx && intersect) {
+      if (unitIdx.size === 1) return true;
+      if (bisectRight$1(entries, value) - index < unitIdx.size) return false;
+    }
+
+    return true;
+  }
+  /**
+   * Maps an array of scene graph items to an array of selection tuples.
+   * @param {string} name  - The name of the dataset representing the selection.
+   * @param {string} unit  - The name of the unit view.
+   *
+   * @returns {array} An array of selection entries for the given unit.
+   */
+
+
+  function selectionTuples(array, base) {
+    return array.map(x => extend({
+      values: base.fields.map(f => (f.getter || (f.getter = field(f.field)))(x.datum))
+    }, base));
   }
   /**
    * Resolves selection for use as a scale domain or reads via the API.
@@ -38316,6 +38416,13 @@
     return Math.atan2(t[0].clientY - t[1].clientY, t[0].clientX - t[1].clientX);
   }
 
+  const accessors = {};
+
+  function pluck(data, name) {
+    const accessor = accessors[name] || (accessors[name] = field(name));
+    return isArray(data) ? data.map(accessor) : accessor(data);
+  }
+
   function array$5(seq) {
     return isArray(seq) || ArrayBuffer.isView(seq) ? seq : null;
   }
@@ -38533,6 +38640,7 @@
     merge: merge$3,
     pad,
     peek,
+    pluck,
     span,
     inrange,
     truncate,
@@ -38656,7 +38764,9 @@
   expressionFunction('treeAncestors', treeAncestors, dataVisitor); // register Vega-Lite selection functions
 
   expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
+  expressionFunction('vlSelectionIdTest', selectionIdTest, selectionVisitor);
   expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
+  expressionFunction('vlSelectionTuples', selectionTuples);
 
   function parser$1(expr, scope) {
     const params = {}; // parse the expression to an abstract syntax tree (ast)
@@ -43506,8 +43616,8 @@
 
     if (data.values) {
       // hard-wired input data set
-      if (hasSignal(data.values) || hasSignal(data.format)) {
-        // if either values or format has signal, use dynamic loader
+      if (isSignal(data.values) || hasSignal(data.format)) {
+        // if either values is signal or format has signal, use dynamic loader
         output.push(load$1(scope, data));
         output.push(source = collect());
       } else {
