@@ -87,10 +87,11 @@ function parameterSchema(param) {
   }
 
   if (param.array) {
-    p = oneOf(array(p), signalRef);
+    p = array(p);
     if (param.length != null) {
       p.minItems = p.maxItems = param.length;
     }
+    p = oneOf(p, signalRef);
     if (param.array === 'nullable') {
       p.oneOf.push(nullType);
     }

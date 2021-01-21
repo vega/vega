@@ -9,8 +9,7 @@ var tape = require('tape'),
 
 const validator = new ajv.default({
     allErrors: true,
-    verbose: true,
-    extendRefs: 'fail'
+    verbose: true
   });
 
 addFormats(validator);
