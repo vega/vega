@@ -55,6 +55,10 @@ export {
 } from './src/functions/pinch';
 
 export {
+  default as pluck
+} from './src/functions/pluck';
+
+export {
   indexof,
   join,
   lastindexof,
