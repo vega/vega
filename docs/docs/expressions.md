@@ -503,7 +503,7 @@ Returns the linearly interpolated value between the first and last entries in th
 Returns the last element in the input _array_. Similar to the built-in `Array.pop` method, except that it does not remove the last element. This method is a convenient shorthand for `array[array.length - 1]`.
 
 <a name="pluck" href="#pluck">#</a>
-<b>pluck</b>(<i>field</i>, <i>array</i>) {% include tag ver="5.18" %}<br/>
+<b>pluck</b>(<i>array</i>, <i>field</i>) {% include tag ver="5.19" %}<br/>
 Retrieves the value for the specified *field* from a given *array* of objects. The input *field* string may include nested properties (e.g., `foo.bar.bz`).
 
 <a name="reverse" href="#reverse">#</a>
