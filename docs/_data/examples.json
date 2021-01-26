@@ -97,6 +97,7 @@
         {"name": "overview-plus-detail"},
         {"name": "brushing-scatter-plots"},
         {"name": "zoomable-scatter-plot"},
+        {"name": "zoomable-binned-agg-plot"},
         {"name": "global-development"},
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
