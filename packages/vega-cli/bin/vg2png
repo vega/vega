@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // Render a Vega specification to PNG, using node canvas
-const {createWriteStream} = require('fs'),
+const {writeFileSync} = require('fs'),
       render = require('../src/render');
 
 render('png', function(canvas, arg) {
-  const file = arg._[1] || null,
-        out = file ? createWriteStream(file) : process.stdout,
-        stream = canvas.createPNGStream();
-  stream.on('data', chunk => { out.write(chunk); });
+  const file = arg._[1] || null;
+  if (file) {
+    writeFileSync(file, canvas.png);
+  } else {
+    process.stdout.write(canvas.png);
+  }
 });

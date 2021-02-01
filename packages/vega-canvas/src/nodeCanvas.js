@@ -1,18 +1,18 @@
-let NodeCanvas;
+let SkiaCanvas;
 
 try {
-  NodeCanvas = require('canvas');
-  if (!(NodeCanvas && NodeCanvas.createCanvas)) {
-    NodeCanvas = null;
+  SkiaCanvas = require('skia-canvas');
+  if (!(SkiaCanvas && SkiaCanvas.Canvas)) {
+    SkiaCanvas = null;
   }
 } catch (error) {
   // do nothing
 }
 
-export function nodeCanvas(w, h, type) {
-  if (NodeCanvas) {
+export function nodeCanvas(w = 0, h = 0) {
+  if (SkiaCanvas) {
     try {
-      return new NodeCanvas.Canvas(w, h, type);
+      return new SkiaCanvas.Canvas(w, h);
     } catch (e) {
       // do nothing, return null on error
     }
@@ -21,4 +21,4 @@ export function nodeCanvas(w, h, type) {
 }
 
 export const nodeImage = () =>
-  (NodeCanvas && NodeCanvas.Image) || null;
+  (SkiaCanvas && SkiaCanvas.Image) || null;

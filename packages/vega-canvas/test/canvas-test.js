@@ -1,6 +1,6 @@
 var tape = require('tape'),
     vega = require('../'),
-    canvas = require('canvas');
+    canvas = require('skia-canvas');
 
 tape('Canvas loader loads node canvas', t => {
   let c = vega.canvas(10, 20);

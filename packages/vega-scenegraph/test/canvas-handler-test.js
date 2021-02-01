@@ -215,10 +215,8 @@ tape('CanvasHandler should pick line mark', t => {
   t.notOk(handler.pick(mark, 100, 144, 100, 144));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
-  // fake isPointInStroke until node canvas supports it
   let g = handler.context();
   g.pixelRatio = 1.1;
-  g.isPointInStroke = function() { return true; };
   t.ok(handler.pick(mark, 0, 144, 0, 144));
 
   mark = marks['line-1'];
@@ -226,9 +224,7 @@ tape('CanvasHandler should pick line mark', t => {
   t.notOk(handler.pick(mark, 100, 144, 100, 144));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
-  // fake isPointInStroke until node canvas supports it
   g = handler.context();
-  g.isPointInStroke = function() { return true; };
   t.ok(handler.pick(mark, 0, 144, 0, 144));
 
   t.end();
@@ -257,10 +253,8 @@ tape('CanvasHandler should pick rule mark', t => {
   t.notOk(handler.pick(mark, 100, 198, 100, 198));
   t.notOk(handler.pick(mark, 800, 800, 800, 800));
 
-  // fake isPointInStroke until node canvas supports it
   const g = handler.context();
   g.pixelRatio = 1.1;
-  g.isPointInStroke = function() { return true; };
   t.ok(handler.pick(mark, 5, 0, 5, 0));
 
   t.end();

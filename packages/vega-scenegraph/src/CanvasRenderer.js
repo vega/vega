@@ -48,7 +48,7 @@ inherits(CanvasRenderer, Renderer, {
 
     this._canvas = this._options.externalContext
       ? null
-      : canvas(1, 1, this._options.type); // instantiate a small canvas
+      : canvas(1, 1); // instantiate a small canvas
 
     if (el && this._canvas) {
       domClear(el, 0).appendChild(this._canvas);

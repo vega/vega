@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // Render a Vega specification to PDF, using node canvas
-const {createWriteStream} = require('fs'),
+const {writeFileSync} = require('fs'),
       render = require('../src/render');
 
 render('pdf', function(canvas, arg) {
-  const file = arg._[1] || null,
-        config = arg.test ? {creationDate: new Date(2012, 0, 1)} : undefined,
-        out = file ? createWriteStream(file) : process.stdout,
-        stream = canvas.createPDFStream(config);
-  stream.on('data', chunk => { out.write(chunk); });
+  const file = arg._[1] || null;
+  if (file) {
+    writeFileSync(file, canvas.pdf);
+  } else {
+    process.stdout.write(canvas.pdf);
+  }
 }, {type: 'pdf', context: {textDrawingMode: 'glyph'}});
