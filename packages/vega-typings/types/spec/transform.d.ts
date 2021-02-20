@@ -506,6 +506,7 @@ export interface LabelTransform {
   lineAnchor?: 'begin' | 'end' | SignalRef;
   avoidBaseMark?: boolean | SignalRef;
   avoidMarks?: string[];
+  method?: 'naive' | 'reduced-search' | 'floodfill';
   as?: Vector7<string | SignalRef> | SignalRef;
 }
 
