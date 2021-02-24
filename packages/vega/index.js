@@ -87,3 +87,12 @@ export {
 export {
   context as runtimeContext
 } from 'vega-runtime';
+
+export {
+  codegen as expressionCodegen,
+  parse as expressionParse
+} from 'vega-expression';
+
+export {
+  selector as parseSelector
+} from 'vega-event-selector';
