@@ -260,4 +260,4 @@ export * from './scene';
 
 export { codegen as codegenExpression, parse as parseExpression } from 'vega-expression';
 
-export { selector } from 'vega-event-selector';
+export { selector as parseSelector } from 'vega-event-selector';
