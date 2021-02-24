@@ -258,6 +258,6 @@ export * from './dataflow';
 export * from './renderer';
 export * from './scene';
 
-export { codegen as expressionCodegen, parse as expressionParse } from 'vega-expression';
+export { codegen as codegenExpression, parse as parseExpression } from 'vega-expression';
 
 export { selector as parseSelector } from 'vega-event-selector';

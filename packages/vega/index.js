@@ -89,8 +89,8 @@ export {
 } from 'vega-runtime';
 
 export {
-  codegen as expressionCodegen,
-  parse as expressionParse
+  codegen as codegenExpression,
+  parse as parseExpression
 } from 'vega-expression';
 
 export {
