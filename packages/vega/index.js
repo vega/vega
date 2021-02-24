@@ -94,5 +94,5 @@ export {
 } from 'vega-expression';
 
 export {
-  selector as parseSelector
+  selector
 } from 'vega-event-selector';
