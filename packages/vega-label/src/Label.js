@@ -86,7 +86,7 @@ inherits(Label, Transform, {
 
     // run label layout
     labelLayout(
-      pulse.materialize(pulse.SOURCE).source,
+      pulse.materialize(pulse.SOURCE).source || [],
       _.size,
       _.sort,
       array(_.offset || 1),
