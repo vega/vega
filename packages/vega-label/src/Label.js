@@ -89,7 +89,7 @@ inherits(Label, Transform, {
       pulse.materialize(pulse.SOURCE).source || [],
       _.size,
       _.sort,
-      array(_.offset || 1),
+      array(_.offset ?? 1),
       array(_.anchor || Anchors),
       _.avoidMarks || [],
       _.avoidBaseMark === false ? false : true,
