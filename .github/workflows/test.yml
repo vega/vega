@@ -1,6 +1,10 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   test:
@@ -11,10 +15,6 @@ jobs:
         node: [10, 12, 14]
 
     name: Node ${{ matrix.node }}
-
-    # We want to run on external PRs, but not on our own internal PRs as they'll be run
-    # by the push to the branch.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
       - uses: actions/checkout@v2
