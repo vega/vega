@@ -708,7 +708,12 @@
 
   function inherits(child, parent, members) {
     const proto = child.prototype = Object.create(parent.prototype);
-    proto.constructor = child;
+    Object.defineProperty(proto, 'constructor', {
+      value: child,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    });
     return extend(proto, members);
   }
   /**
@@ -45235,7 +45240,6 @@
   exports.format = format;
   exports.formatLocale = numberFormatDefaultLocale;
   exports.formats = formats;
-  exports.hasOwnProperty = has;
   exports.id = id;
   exports.identity = identity;
   exports.inferType = inferType;
@@ -45348,7 +45352,6 @@
   exports.toDate = toDate;
   exports.toNumber = toNumber;
   exports.toSet = toSet;
-  exports.toString = toString;
   exports.transform = transform$1;
   exports.transforms = transforms;
   exports.truncate = truncate;
@@ -45371,6 +45374,21 @@
   exports.zoomLog = zoomLog;
   exports.zoomPow = zoomPow;
   exports.zoomSymlog = zoomSymlog;
+
+  Object.defineProperties(exports, {
+    hasOwnProperty: {
+      value: has,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    },
+    toString: {
+      value: toString,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    }
+  });
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
