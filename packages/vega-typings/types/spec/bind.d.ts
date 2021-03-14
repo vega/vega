@@ -24,4 +24,9 @@ export interface BindRange extends BaseBinding {
   max?: number;
   step?: number;
 }
-export type Binding = BindCheckbox | BindRadioSelect | BindRange | InputBinding;
+export interface DirectBinding {
+  element: Element | EventTarget;
+  event?: string;
+  debounce?: number;
+}
+export type Binding = BindCheckbox | BindRadioSelect | BindRange | InputBinding | DirectBinding;
