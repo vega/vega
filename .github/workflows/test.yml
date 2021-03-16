@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [10, 12, 14]
+        node: [10, 12, 14, 15]
 
     name: Node ${{ matrix.node }}
 
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install Canvas and XML dependencies
-        run: sudo apt-get install -y libcairo2-dev libpango1.0-dev libxml2-utils
+        run: sudo apt-get install -y libxml2-utils
 
       - name: Setup Node ${{ matrix.node }}
         uses: actions/setup-node@v1
