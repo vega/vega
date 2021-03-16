@@ -20,7 +20,7 @@
     "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
-    "canvas": "^2.6.1",
+    "canvas": "^2.7.0",
     "vega": "5.19.1",
     "yargs": "16"
   }
