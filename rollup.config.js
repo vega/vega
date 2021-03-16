@@ -53,7 +53,7 @@ export default function(commandLineArgs) {
     console.info(commandLineArgs);
   }
 
-  const browser = !!commandLineArgs['config-browser'];
+  const browser = !!pkg.browser;
   const bundle = !!commandLineArgs['config-bundle'];
   const ie = !!commandLineArgs['config-ie'];
   const test = !!commandLineArgs['config-test'];
@@ -118,7 +118,7 @@ export default function(commandLineArgs) {
     },
     plugins: [nodePlugin(false), ...commonPlugins({node: true})]
   }, {
-    input: browser ? './index.browser.js' : './index.js',
+    input: './index.js',
     external: dependencies,
     onwarn,
     output: {
@@ -128,6 +128,19 @@ export default function(commandLineArgs) {
     },
     plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
   }];
+
+  if (browser) {
+    outputs.push(
+      ...outputs.map(out => ({
+        ...out,
+        input: './index.browser.js',
+        output: {
+          ...out.output,
+          file: out.output.file.replace('node', 'browser')
+        }
+      }))
+    );
+  }
 
   if (test) {
     return outputs;
