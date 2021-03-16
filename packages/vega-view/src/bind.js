@@ -1,4 +1,5 @@
 import element from './element';
+import {trackEventListener} from './events';
 import {debounce} from 'vega-util';
 import {tickStep} from 'd3-array';
 
@@ -44,9 +45,8 @@ export default function(view, el, binding) {
     }
   }
 
-  (param.input == null && param.element ? target : generate)(
-    bind, el, param, view.signal(param.signal)
-  );
+  const create = param.input == null && param.element ? target : generate;
+  create(bind, el, param, view);
 
   if (!bind.active) {
     view.on(view._signals[param.signal], null, () => {
@@ -61,21 +61,25 @@ export default function(view, el, binding) {
 }
 
 /**
- * Bind the signal to an existing EventTarget.
+ * Bind the signal to an external EventTarget.
  */
-function target(bind, node, param, value) {
-  // initialize state
-  if (value !== undefined) {
-    node.value = value;
-  }
+function target(bind, node, param, view) {
+  const type = param.event || 'input';
+  const handler = () => bind.update(node.value);
+
+  // initialize signal value to external input value
+  view.signal(param.signal, node.value);
 
   // listen for changes on the element
-  node.addEventListener('input', () => bind.update(node.value));
+  node.addEventListener(type, handler);
+
+  // register with view, so we can remove it upon finalization
+  trackEventListener(view, node, type, handler);
 
   // propagate change to element
   bind.set = value => {
     node.value = value;
-    node.dispatchEvent(event(param.event || 'input'));
+    node.dispatchEvent(event(type));
   };
 }
 
@@ -86,7 +90,8 @@ function event(type) {
 /**
  * Generate an HTML input form element and bind it to a signal.
  */
-function generate(bind, el, param, value) {
+function generate(bind, el, param, view) {
+  const value = view.signal(param.signal);
   const div = element('div', {'class': BindClass});
 
   const wrapper = param.input === 'radio'
