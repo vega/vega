@@ -1088,6 +1088,24 @@
             "input"
           ],
           "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "element": {
+              "$ref": "#/definitions/element"
+            },
+            "event": {
+              "type": "string"
+            },
+            "debounce": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "element"
+          ],
+          "additionalProperties": false
         }
       ]
     },
