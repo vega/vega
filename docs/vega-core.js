@@ -26983,15 +26983,9 @@
 
   function trackEventListener(view, sources, type, handler) {
     view._eventListeners.push({
-<<<<<<< HEAD
       type: type,
       sources: array$2(sources),
       handler: handler
-=======
-      type,
-      sources: array$2(sources),
-      handler
->>>>>>> docs: Update docs build files.
     });
   }
 
