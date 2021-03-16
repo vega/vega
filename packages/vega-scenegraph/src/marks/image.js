@@ -69,9 +69,12 @@ function draw(context, scene, bounds) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
     const img = getImage(item, this);
-    let w = imageWidth(item, img),
-        h = imageHeight(item, img),
-        x = (item.x || 0) - imageXOffset(item.align, w),
+
+    let w = imageWidth(item, img);
+    let h = imageHeight(item, img);
+    if (w === 0 || h === 0) return; // early exit
+
+    let x = (item.x || 0) - imageXOffset(item.align, w),
         y = (item.y || 0) - imageYOffset(item.baseline, h),
         opacity, ar0, ar1, t;
 
