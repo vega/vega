@@ -46,7 +46,8 @@ function renderAsync(scene, w, h, callback) {
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
-    .then(r => { callback(r.canvas().toBuffer()); });
+    .then(r => { callback(r.canvas().toBuffer()); })
+    .catch(() => { callback(null); });
 }
 
 function clearPathCache(mark) {
@@ -348,9 +349,13 @@ tape('CanvasRenderer should skip invalid image', t => {
     items: [{url: 'does_not_exist.png'}]
   });
   renderAsync(scene, 500, 500, image => {
-    generate('png/marks-empty.png', image);
-    const file = load('png/marks-empty.png');
-    t.equal(comparePNGs(image, file), 0);
+    if (image != null) {
+      generate('png/marks-empty.png', image);
+      const file = load('png/marks-empty.png');
+      t.equal(comparePNGs(image, file), 0);
+    } else {
+      t.fail('Image rendering failed');
+    }
     t.end();
   });
 });
