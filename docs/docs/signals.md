@@ -131,7 +131,7 @@ This signal definition invokes a custom encoding set upon `mousedown` and `mouse
 
 ## <a name="bind"></a>Input Element Binding
 
-The _bind_ property binds a signal to an input element defined outside of the visualization. Vega will generate new HTML form elements and set up a two-way binding: changes to the input element will update the signal, and vice versa. Vega includes dedicated support for `checkbox` (single boolean value), `radio` (group of radio buttons), `select` (drop-down menu), and `range` (slider) input types.
+The _bind_ property binds a signal to an input element defined outside of the visualization. Vega will generate new HTML form elements and set up a two-way binding: changes to the input element will update the signal, and vice versa. Vega includes dedicated support for `checkbox` (single boolean value), `radio` (group of radio buttons), `select` (drop-down menu), and `range` (slider) input types. Alternatively, Vega can also bind directly to [externally-defined input elements](#bind-external).
 
 | Property            | Type                           | Description  |
 | :------------------ | :----------------------------: | :------------|
@@ -163,3 +163,13 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 
 In addition, any valid [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) may be used as the value of the _input_ property. Examples include `"text"` (for single-line text entry), `"color"` (for a color picker), and `"date"` (for entering year, month and day).
 In these cases, any extra properties defined (e.g., _placeholder_ for `"text"` input) will be added as attributes of the generated HTML form element.
+
+### <a name="bind-external"></a>Binding Directly to External Elements
+
+Rather than generate its own input elements, Vega also supports binding directly to an existing element defined externally. To do so, the *input* property must be undefined, and the *element* property must reference an existing, externally defined element.
+
+| Property            | Type                           | Description  |
+| :------------------ | :----------------------------: | :------------|
+| element             | {% include type t="String" %}  | {% include required %} An input element that exposes a *value* property and supports the [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) interface, or a CSS selector string to such an element. When the element updates and dispatches an event, the *value* property will be used as the new, bound signal value. When the signal updates independent of the element, the *value* property will be set to the signal value and a new event will be dispatched on the element. |
+| event               | {% include type t="String" %}  | The event (default `"input"`) to listen for to track changes on the external element. |
+| debounce            | {% include type t="Number" %}  | If defined, delays event handling until the specified milliseconds have elapsed since the last event was fired.|
