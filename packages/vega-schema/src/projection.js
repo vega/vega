@@ -25,7 +25,5 @@ const projection = object({
 }, true);
 
 export default {
-  defs: {
-    projection
-  }
+  projection
 };
