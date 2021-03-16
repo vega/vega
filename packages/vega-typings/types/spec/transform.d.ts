@@ -495,7 +495,7 @@ export interface LoessTransform {
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
-export type LabelAnchor = 
+export type LabelAnchor =
   | 'left'
   | 'right'
   | 'top'
