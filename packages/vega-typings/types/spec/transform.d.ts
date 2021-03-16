@@ -495,18 +495,31 @@ export interface LoessTransform {
   as?: Vector2<string | SignalRef> | SignalRef;
 }
 
+export type LabelAnchor =
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'bottom'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+  | 'middle';
+export type LineLabelAnchor = 'begin' | 'end';
+export type AreaLabelMethod = 'naive' | 'reduced-search' | 'floodfill';
+
 export interface LabelTransform {
   type: 'label';
   size: Vector2<number | SignalRef> | SignalRef;
   sort?: Compare;
   offset?: number[] | number | SignalRef;
-  anchor?: string[] | string | SignalRef;
+  anchor?: LabelAnchor[] | LabelAnchor | SignalRef;
   padding?: number | SignalRef;
   markIndex?: number;
-  lineAnchor?: 'begin' | 'end' | SignalRef;
+  lineAnchor?: LineLabelAnchor | SignalRef;
   avoidBaseMark?: boolean | SignalRef;
   avoidMarks?: string[];
-  method?: 'naive' | 'reduced-search' | 'floodfill';
+  method?: AreaLabelMethod;
   as?: Vector7<string | SignalRef> | SignalRef;
 }
 
