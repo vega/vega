@@ -9,8 +9,10 @@ export default function(fields, orders, opt) {
   opt = opt || {};
   orders = array(orders) || [];
 
-  const ord = [], get = [], fmap = {},
-        gen = opt.comparator || comparator;
+  const ord = [];
+  const get = [];
+  const fmap = {};
+  const gen = opt.comparator || comparator;
 
   array(fields).forEach((f, i) => {
     if (f == null) return;
@@ -41,7 +43,9 @@ const compare1 = (field, order) => function(a, b) {
 const compareN = (fields, orders, n) => {
   orders.push(0); // pad zero for convenient lookup
   return function(a, b) {
-    let f, c = 0, i = -1;
+    let f;
+    let c = 0;
+    let i = -1;
     while (c === 0 && ++i < n) {
       f = fields[i];
       c = ascending(f(a), f(b));

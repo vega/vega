@@ -50,7 +50,8 @@ function content(emit, item, renderer) {
 
 function bound(bounds, group) {
   if (!group.clip && group.items) {
-    const items = group.items, m = items.length;
+    const items = group.items;
+    const m = items.length;
     for (let j=0; j<m; ++j) {
       bounds.union(items[j].bounds);
     }
@@ -77,10 +78,10 @@ const hitCorner = hitPath(rectanglePath, true);
 
 function draw(context, scene, bounds) {
   visit(scene, group => {
-    const gx = group.x || 0,
-          gy = group.y || 0,
-          fore = group.strokeForeground,
-          opacity = group.opacity == null ? 1 : group.opacity;
+    const gx = group.x || 0;
+    const gy = group.y || 0;
+    const fore = group.strokeForeground;
+    const opacity = group.opacity == null ? 1 : group.opacity;
 
     // draw group background
     if ((group.stroke || group.fill) && opacity) {
@@ -125,11 +126,13 @@ function pick(context, scene, x, y, gx, gy) {
     return null;
   }
 
-  const cx = x * context.pixelRatio,
-        cy = y * context.pixelRatio;
+  const cx = x * context.pixelRatio;
+  const cy = y * context.pixelRatio;
 
   return pickVisit(scene, group => {
-    let hit, dx, dy;
+    let hit;
+    let dx;
+    let dy;
 
     // first hit test bounding box
     const b = group.bounds;
@@ -138,9 +141,9 @@ function pick(context, scene, x, y, gx, gy) {
     // passed bounds check, test rectangular clip
     dx = group.x || 0;
     dy = group.y || 0;
-    const dw = dx + (group.width || 0),
-          dh = dy + (group.height || 0),
-          c = group.clip;
+    const dw = dx + (group.width || 0);
+    const dh = dy + (group.height || 0);
+    const c = group.clip;
     if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
 
     // adjust coordinate system
@@ -155,8 +158,8 @@ function pick(context, scene, x, y, gx, gy) {
       return null;
     }
 
-    const fore = group.strokeForeground,
-          ix = scene.interactive !== false;
+    const fore = group.strokeForeground;
+    const ix = scene.interactive !== false;
 
     // hit test against group foreground
     if (ix && fore && group.stroke

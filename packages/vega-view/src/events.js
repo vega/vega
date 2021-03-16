@@ -2,10 +2,10 @@ import eventExtend from './events-extend';
 import {EventStream} from 'vega-dataflow';
 import {extend, isArray, isObject, toSet} from 'vega-util';
 
-const VIEW = 'view',
-      TIMER = 'timer',
-      WINDOW = 'window',
-      NO_TRAP = {trap: false};
+const VIEW = 'view';
+const TIMER = 'timer';
+const WINDOW = 'window';
+const NO_TRAP = {trap: false};
 
 /**
  * Initialize event handling configuration.
@@ -28,9 +28,9 @@ export function initializeEventConfig(config) {
 }
 
 function prevent(view, type) {
-  var def = view._eventConfig.defaults,
-      prevent = def.prevent,
-      allow = def.allow;
+  var def = view._eventConfig.defaults;
+  var prevent = def.prevent;
+  var allow = def.allow;
 
   return prevent === false || allow === true ? false
     : prevent === true || allow === false ? true
@@ -58,17 +58,19 @@ function permit(view, key, type) {
  * @return {EventStream}
  */
 export function events(source, type, filter) {
-  var view = this,
-      s = new EventStream(filter),
-      send = function(e, item) {
-        view.runAsync(null, () => {
-          if (source === VIEW && prevent(view, type)) {
-            e.preventDefault();
-          }
-          s.receive(eventExtend(view, e, item));
-        });
-      },
-      sources;
+  var view = this;
+  var s = new EventStream(filter);
+
+  var send = function(e, item) {
+    view.runAsync(null, () => {
+      if (source === VIEW && prevent(view, type)) {
+        e.preventDefault();
+      }
+      s.receive(eventExtend(view, e, item));
+    });
+  };
+
+  var sources;
 
   if (source === TIMER) {
     if (permit(view, 'timer', type)) {

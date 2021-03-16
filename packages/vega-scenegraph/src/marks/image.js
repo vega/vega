@@ -40,12 +40,12 @@ function imageYOffset(baseline, h) {
 }
 
 function attr(emit, item, renderer) {
-  const img = getImage(item, renderer),
-        w = imageWidth(item, img),
-        h = imageHeight(item, img),
-        x = (item.x || 0) - imageXOffset(item.align, w),
-        y = (item.y || 0) - imageYOffset(item.baseline, h),
-        i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
+  const img = getImage(item, renderer);
+  const w = imageWidth(item, img);
+  const h = imageHeight(item, img);
+  const x = (item.x || 0) - imageXOffset(item.align, w);
+  const y = (item.y || 0) - imageYOffset(item.baseline, h);
+  const i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
 
   emit('href', i, metadata['xmlns:xlink'], 'xlink:href');
   emit('transform', translate(x, y));
@@ -55,11 +55,11 @@ function attr(emit, item, renderer) {
 }
 
 function bound(bounds, item) {
-  const img = item.image,
-        w = imageWidth(item, img),
-        h = imageHeight(item, img),
-        x = (item.x || 0) - imageXOffset(item.align, w),
-        y = (item.y || 0) - imageYOffset(item.baseline, h);
+  const img = item.image;
+  const w = imageWidth(item, img);
+  const h = imageHeight(item, img);
+  const x = (item.x || 0) - imageXOffset(item.align, w);
+  const y = (item.y || 0) - imageYOffset(item.baseline, h);
 
   return bounds.set(x, y, x + w, y + h);
 }
@@ -69,11 +69,14 @@ function draw(context, scene, bounds) {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
 
     const img = getImage(item, this);
-    let w = imageWidth(item, img),
-        h = imageHeight(item, img),
-        x = (item.x || 0) - imageXOffset(item.align, w),
-        y = (item.y || 0) - imageYOffset(item.baseline, h),
-        opacity, ar0, ar1, t;
+    let w = imageWidth(item, img);
+    let h = imageHeight(item, img);
+    let x = (item.x || 0) - imageXOffset(item.align, w);
+    let y = (item.y || 0) - imageYOffset(item.baseline, h);
+    let opacity;
+    let ar0;
+    let ar1;
+    let t;
 
     if (item.aspect !== false) {
       ar0 = img.width / img.height;

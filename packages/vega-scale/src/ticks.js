@@ -56,10 +56,10 @@ export function tickCount(scale, count, minStep) {
  * @return {Array<*>} - The filtered tick values.
  */
 export function validTicks(scale, ticks, count) {
-  let range = scale.range(),
-      lo = range[0],
-      hi = peek(range),
-      cmp = ascending;
+  let range = scale.range();
+  let lo = range[0];
+  let hi = peek(range);
+  let cmp = ascending;
 
   if (lo > hi) {
     range = hi;
@@ -153,10 +153,10 @@ export function tickFormat(locale, scale, count, specifier, formatType, noSkip) 
 }
 
 export function tickLog(scale, count, values) {
-  const ticks = tickValues(scale, count),
-        base = scale.base(),
-        logb = Math.log(base),
-        k = Math.max(1, base * count / ticks.length);
+  const ticks = tickValues(scale, count);
+  const base = scale.base();
+  const logb = Math.log(base);
+  const k = Math.max(1, base * count / ticks.length);
 
   // apply d3-scale's log format filter criteria
   const test = d => {

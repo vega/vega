@@ -46,14 +46,19 @@ function shouldReflow(group) {
 }
 
 function layoutGroup(view, group, _) {
-  var items = group.items,
-      width = Math.max(0, group.width || 0),
-      height = Math.max(0, group.height || 0),
-      viewBounds = new Bounds().set(0, 0, width, height),
-      xBounds = viewBounds.clone(),
-      yBounds = viewBounds.clone(),
-      legends = [], title,
-      mark, orient, b, i, n;
+  var items = group.items;
+  var width = Math.max(0, group.width || 0);
+  var height = Math.max(0, group.height || 0);
+  var viewBounds = new Bounds().set(0, 0, width, height);
+  var xBounds = viewBounds.clone();
+  var yBounds = viewBounds.clone();
+  var legends = [];
+  var title;
+  var mark;
+  var orient;
+  var b;
+  var i;
+  var n;
 
   // layout axes, gather legends, collect bounds
   for (i=0, n=items.length; i<n; ++i) {
@@ -150,20 +155,19 @@ function layoutGroup(view, group, _) {
 }
 
 function viewSizeLayout(view, group, viewBounds, _) {
-  const auto = _.autosize || {},
-        type = auto.type;
+  const auto = _.autosize || {};
+  const type = auto.type;
 
   if (view._autosize < 1 || !type) return;
 
-  let viewWidth = view._width,
-      viewHeight = view._height,
-      width  = Math.max(0, group.width || 0),
-      left   = Math.max(0, Math.ceil(-viewBounds.x1)),
-      height = Math.max(0, group.height || 0),
-      top    = Math.max(0, Math.ceil(-viewBounds.y1));
-
-  const right  = Math.max(0, Math.ceil(viewBounds.x2 - width)),
-        bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+  let viewWidth = view._width;
+  let viewHeight = view._height;
+  let width  = Math.max(0, group.width || 0);
+  let left   = Math.max(0, Math.ceil(-viewBounds.x1));
+  let height = Math.max(0, group.height || 0);
+  let top    = Math.max(0, Math.ceil(-viewBounds.y1));
+  const right  = Math.max(0, Math.ceil(viewBounds.x2 - width));
+  const bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
 
   if (auto.contains === Padding) {
     const padding = view.padding();

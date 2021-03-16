@@ -16,13 +16,18 @@ import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
 export default function(spec, scope) {
-  const role = getRole(spec),
-        group = spec.type === GroupMark,
-        facet = spec.from && spec.from.facet,
-        overlap = spec.overlap;
-
-  let layout = spec.layout || role === ScopeRole || role === FrameRole,
-      ops, op, store, enc, name, layoutRef, boundRef;
+  const role = getRole(spec);
+  const group = spec.type === GroupMark;
+  const facet = spec.from && spec.from.facet;
+  const overlap = spec.overlap;
+  let layout = spec.layout || role === ScopeRole || role === FrameRole;
+  let ops;
+  let op;
+  let store;
+  let enc;
+  let name;
+  let layoutRef;
+  let boundRef;
 
   const nested = role === MarkRole || layout || facet;
 
@@ -65,8 +70,8 @@ export default function(spec, scope) {
   // add post-encoding transforms, if defined
   if (spec.transform) {
     spec.transform.forEach(_ => {
-      const tx = parseTransform(_, scope),
-            md = tx.metadata;
+      const tx = parseTransform(_, scope);
+      const md = tx.metadata;
       if (md.generates || md.changes) {
         error('Mark transforms should not generate new data.');
       }
@@ -121,8 +126,9 @@ export default function(spec, scope) {
   }
 
   // render / sieve items
-  const render = scope.add(Render({pulse: boundRef})),
-        sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
+  const render = scope.add(Render({pulse: boundRef}));
+
+  const sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
@@ -139,9 +145,9 @@ export default function(spec, scope) {
 }
 
 function parseOverlap(overlap, source, scope) {
-  const method = overlap.method,
-        bound = overlap.bound,
-        sep = overlap.separation;
+  const method = overlap.method;
+  const bound = overlap.bound;
+  const sep = overlap.separation;
 
   const params = {
     separation: isSignal(sep) ? scope.signalRef(sep.signal) : sep,

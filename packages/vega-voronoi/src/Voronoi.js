@@ -24,8 +24,8 @@ const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
 
 inherits(Voronoi, Transform, {
   transform(_, pulse) {
-    const as = _.as || 'path',
-          data = pulse.source;
+    const as = _.as || 'path';
+    const data = pulse.source;
 
     // nothing to do if no data
     if (!data || !data.length) return pulse;
@@ -50,8 +50,8 @@ inherits(Voronoi, Transform, {
 
 // suppress duplicated end point vertices
 function toPathString(p) {
-  const x = p[0][0],
-        y = p[0][1];
+  const x = p[0][0];
+  const y = p[0][1];
 
   let n = p.length - 1;
   for (; p[n][0] === x && p[n][1] === y; --n);

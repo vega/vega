@@ -6,10 +6,10 @@ import initializeHandler from './initialize-handler';
 import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
 export default function(el, elBind) {
-  const view = this,
-        type = view._renderType,
-        config = view._eventConfig.bind,
-        module = renderModule(type);
+  const view = this;
+  const type = view._renderType;
+  const config = view._eventConfig.bind;
+  const module = renderModule(type);
 
   // containing dom element
   el = view._el = el ? lookup(view, el) : null;
@@ -19,8 +19,8 @@ export default function(el, elBind) {
 
   // select appropriate renderer & handler
   if (!module) view.error('Unrecognized renderer type: ' + type);
-  const Handler = module.handler || CanvasHandler,
-        Renderer = (el ? module.renderer : module.headless);
+  const Handler = module.handler || CanvasHandler;
+  const Renderer = (el ? module.renderer : module.headless);
 
   // initialize renderer and input handler
   view._renderer = !Renderer ? null

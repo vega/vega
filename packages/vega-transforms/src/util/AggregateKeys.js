@@ -1,8 +1,8 @@
 export function multikey(f) {
   return x => {
     const n = f.length;
-    let i = 1,
-        k = String(f[0](x));
+    let i = 1;
+    let k = String(f[0](x));
 
     for (; i<n; ++i) {
       k += '|' + f[i](x);

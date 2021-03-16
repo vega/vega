@@ -21,16 +21,18 @@ import {isContinuous, isDiscretizing} from 'vega-scale';
 import {error} from 'vega-util';
 
 export default function(spec, scope) {
-  const config = scope.config.legend,
-        encode = spec.encode || {},
-        _ = lookup(spec, config),
-        legendEncode = encode.legend || {},
-        name = legendEncode.name || undefined,
-        interactive = legendEncode.interactive,
-        style = legendEncode.style,
-        scales = {};
-
-  let scale = 0, entryLayout, params, children;
+  const config = scope.config.legend;
+  const encode = spec.encode || {};
+  const _ = lookup(spec, config);
+  const legendEncode = encode.legend || {};
+  const name = legendEncode.name || undefined;
+  const interactive = legendEncode.interactive;
+  const style = legendEncode.style;
+  const scales = {};
+  let scale = 0;
+  let entryLayout;
+  let params;
+  let children;
 
   // resolve scales and 'canonical' scale name
   LegendScales.forEach(s => spec[s]
@@ -174,9 +176,9 @@ function buildLegendEncode(_, spec, config) {
 }
 
 function sizeExpression(spec, scope, marks) {
-  const size = deref(getChannel('size', spec, marks)),
-        strokeWidth = deref(getChannel('strokeWidth', spec, marks)),
-        fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
+  const size = deref(getChannel('size', spec, marks));
+  const strokeWidth = deref(getChannel('strokeWidth', spec, marks));
+  const fontSize = deref(getFontSize(marks[1].encode, scope, GuideLabelStyle));
 
   return parseExpression(
     `max(ceil(sqrt(${size})+${strokeWidth}),${fontSize})`,

@@ -29,8 +29,8 @@ export const TIME_UNITS = [
 const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
 
 export function timeUnits(units) {
-  const u = array(units).slice(),
-        m = {};
+  const u = array(units).slice();
+  const m = {};
 
   // check validity
   if (!u.length) error('Missing time unit.');
@@ -77,11 +77,13 @@ const defaultSpecifiers = {
 };
 
 export function timeUnitSpecifier(units, specifiers) {
-  const s = extend({}, defaultSpecifiers, specifiers),
-        u = timeUnits(units),
-        n = u.length;
-
-  let fmt = '', start = 0, end, key;
+  const s = extend({}, defaultSpecifiers, specifiers);
+  const u = timeUnits(units);
+  const n = u.length;
+  let fmt = '';
+  let start = 0;
+  let end;
+  let key;
 
   for (start=0; start<n; ) {
     for (end=u.length; end > start; --end) {

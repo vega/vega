@@ -4,12 +4,11 @@ import {array16, array32, array8} from './arrays';
  * Maintains CrossFilter state.
  */
 export default function Bitmaps() {
-
-  let width = 8,
-      data = [],
-      seen = array32(0),
-      curr = array(0, width),
-      prev = array(0, width);
+  let width = 8;
+  let data = [];
+  let seen = array32(0);
+  let curr = array(0, width);
+  let prev = array(0, width);
 
   return {
     data: () => data,
@@ -24,11 +23,15 @@ export default function Bitmaps() {
       }
     },
 
-    remove(num, map) { // map: index -> boolean (true => remove)
-      const n = data.length,
-            copy = Array(n - num),
-            reindex = data; // reuse old data array for index map
-      let t, i, j;
+    remove(num, map) {
+      // map: index -> boolean (true => remove)
+      const n = data.length;
+
+      const copy = Array(n - num);
+      const reindex = data; // reuse old data array for index map
+      let t;
+      let i;
+      let j;
 
       // seek forward to first removal
       for (i=0; !map[i] && i<n; ++i) {

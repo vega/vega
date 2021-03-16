@@ -9,13 +9,14 @@ import {isSignal} from '../../util';
 import {extend, isObject} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef, band) {
-  const _ = lookup(spec, config),
-        orient = spec.orient,
-        vscale = spec.gridScale,
-        sign = getSign(orient, 1, -1),
-        offset = offsetValue(spec.offset, sign);
-
-  let enter, exit, update;
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  const vscale = spec.gridScale;
+  const sign = getSign(orient, 1, -1);
+  const offset = offsetValue(spec.offset, sign);
+  let enter;
+  let exit;
+  let update;
   const encode = {
     enter: enter = {opacity: zero},
     update: update = {opacity: one},

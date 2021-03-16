@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    bootstrapCI = require('../').bootstrapCI;
+var tape = require('tape');
+var bootstrapCI = require('../').bootstrapCI;
 
 tape('bootstrapCI returns array of undefined for empty data', t => {
   const ci = bootstrapCI([], 1000, 0.05);

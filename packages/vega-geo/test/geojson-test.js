@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    util = require('vega-util'),
-    GeoJSON = require('../').geojson,
-    Collect = require('vega-transforms').collect;
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var util = require('vega-util');
+var GeoJSON = require('../').geojson;
+var Collect = require('vega-transforms').collect;
 
 function geodata() {
   return [
@@ -15,11 +15,11 @@ function geodata() {
 tape('GeoJSON transform consolidates lon/lat data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      lon = util.field('lon'),
-      lat = util.field('lat'),
-      col = df.add(Collect),
-      gj = df.add(GeoJSON, {fields: [lon, lat], pulse: col});
+  var df = new vega.Dataflow();
+  var lon = util.field('lon');
+  var lat = util.field('lat');
+  var col = df.add(Collect);
+  var gj = df.add(GeoJSON, {fields: [lon, lat], pulse: col});
 
   df.pulse(col, df.changeset().insert([data[0], data[1]])).run();
   t.equal(JSON.stringify(gj.value),
@@ -39,10 +39,10 @@ tape('GeoJSON transform consolidates lon/lat data', t => {
 tape('GeoJSON transform consolidates geojson data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      geo = util.field('geo'),
-      col = df.add(Collect),
-      gj = df.add(GeoJSON, {geojson: geo, pulse: col});
+  var df = new vega.Dataflow();
+  var geo = util.field('geo');
+  var col = df.add(Collect);
+  var gj = df.add(GeoJSON, {geojson: geo, pulse: col});
 
   df.pulse(col, df.changeset().insert([data[0], data[1]])).run();
   t.equal(JSON.stringify(gj.value),
@@ -62,12 +62,12 @@ tape('GeoJSON transform consolidates geojson data', t => {
 tape('GeoJSON transform consolidates both lon/lat and geojson data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      lon = util.field('lon'),
-      lat = util.field('lat'),
-      geo = util.field('geo'),
-      col = df.add(Collect),
-      gj = df.add(GeoJSON, {fields: [lon, lat], geojson: geo, pulse: col});
+  var df = new vega.Dataflow();
+  var lon = util.field('lon');
+  var lat = util.field('lat');
+  var geo = util.field('geo');
+  var col = df.add(Collect);
+  var gj = df.add(GeoJSON, {fields: [lon, lat], geojson: geo, pulse: col});
 
   df.pulse(col, df.changeset().insert([data[0], data[1]])).run();
   t.equal(JSON.stringify(gj.value),

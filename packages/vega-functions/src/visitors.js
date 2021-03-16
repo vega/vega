@@ -7,8 +7,8 @@ export function dataVisitor(name, args, scope, params) {
     error('First argument to data functions must be a string literal.');
   }
 
-  const data = args[0].value,
-        dataName = DataPrefix + data;
+  const data = args[0].value;
+  const dataName = DataPrefix + data;
 
   if (!hasOwnProperty(dataName, params)) {
     try {
@@ -23,9 +23,9 @@ export function indataVisitor(name, args, scope, params) {
   if (args[0].type !== Literal) error('First argument to indata must be a string literal.');
   if (args[1].type !== Literal) error('Second argument to indata must be a string literal.');
 
-  const data = args[0].value,
-        field = args[1].value,
-        indexName = IndexPrefix + field;
+  const data = args[0].value;
+  const field = args[1].value;
+  const indexName = IndexPrefix + field;
 
   if (!hasOwnProperty(indexName, params)) {
     params[indexName] = scope.getData(data).indataRef(scope, field);

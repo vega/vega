@@ -1,11 +1,11 @@
-const specdir = process.cwd() + '/../vega/test/specs-valid/',
-      fs = require('fs'),
-      vega = require('vega'),
-      interp = require('../'),
-      loader = vega.loader({baseURL: '../vega/test/'}),
-      renderer = 'none',
-      expr = interp.expressionInterpreter,
-      specs = require('../../vega/test/specs-valid.json');
+const specdir = process.cwd() + '/../vega/test/specs-valid/';
+const fs = require('fs');
+const vega = require('vega');
+const interp = require('../');
+const loader = vega.loader({baseURL: '../vega/test/'});
+const renderer = 'none';
+const expr = interp.expressionInterpreter;
+const specs = require('../../vega/test/specs-valid.json');
 
 // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));
@@ -19,9 +19,9 @@ specs.forEach(name => { data[name] = [0, 0]; });
 
 async function testStandard() {
   for (const name of specs) {
-    const spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-          t0 = Date.now(),
-          runtime = vega.parse(spec);
+    const spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json'));
+    const t0 = Date.now();
+    const runtime = vega.parse(spec);
 
     // expression interpreter
     await new vega.View(runtime, { loader, renderer })
@@ -34,9 +34,9 @@ async function testStandard() {
 
 async function testInterpret() {
   for (const name of specs) {
-    const spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-          t0 = Date.now(),
-          runtime = vega.parse(spec, null, {ast: true});
+    const spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json'));
+    const t0 = Date.now();
+    const runtime = vega.parse(spec, null, {ast: true});
 
     // expression interpreter
     await new vega.View(runtime, { expr, loader, renderer })
@@ -58,7 +58,8 @@ async function time() {
   await testStandard();
   await testInterpret();
 
-  let sumS = 0, sumI = 0;
+  let sumS = 0;
+  let sumI = 0;
 
   for (const k in data) {
     const ratio = data[k][0] === 0 ? 1 : (data[k][1] / data[k][0]);

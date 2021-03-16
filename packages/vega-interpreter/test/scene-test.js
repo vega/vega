@@ -1,15 +1,16 @@
-const OUTPUT_FAILURES = false, // flag to write scenes upon test failure
-      specdir = process.cwd() + '/../vega/test/specs-valid/',
-      testdir = process.cwd() + '/../vega/test/scenegraphs/',
-      fs = require('fs'),
-      tape = require('tape'),
-      vega = require('vega'),
-      interp = require('../'),
-      loader = vega.loader({baseURL: '../vega/test/'}),
-      specs = require('../../vega/test/specs-valid.json').filter(spec => {
-        // filter wordcloud due to cross-platform canvas issues
-        return spec !== 'wordcloud';
-      });
+const OUTPUT_FAILURES = false; // flag to write scenes upon test failure
+const specdir = process.cwd() + '/../vega/test/specs-valid/';
+const testdir = process.cwd() + '/../vega/test/scenegraphs/';
+const fs = require('fs');
+const tape = require('tape');
+const vega = require('vega');
+const interp = require('../');
+const loader = vega.loader({baseURL: '../vega/test/'});
+
+const specs = require('../../vega/test/specs-valid.json').filter(spec => {
+  // filter wordcloud due to cross-platform canvas issues
+  return spec !== 'wordcloud';
+});
 
 // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));
@@ -22,21 +23,22 @@ tape('Vega generates scenegraphs for specifications', t => {
 
   specs.forEach(async function(name, index) {
     try {
-      const path = testdir + name + '.json',
-            spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json')),
-            runtime = vega.parse(spec, null, {ast: true}),
-            view = new vega.View(runtime, {
-              expr: interp.expressionInterpreter,
-              loader: loader,
-              renderer: 'none'
-            }).finalize(); // remove timers, event listeners
+      const path = testdir + name + '.json';
+      const spec = JSON.parse(fs.readFileSync(specdir + name + '.vg.json'));
+      const runtime = vega.parse(spec, null, {ast: true});
+
+      const view = new vega.View(runtime, {
+        expr: interp.expressionInterpreter,
+        loader: loader,
+        renderer: 'none'
+      }).finalize();
 
       await view.runAsync();
 
-      const actual = view.scenegraph().toJSON(2),
-            expect = fs.readFileSync(path) + '',
-            pair = [JSON.parse(actual), JSON.parse(expect)],
-            isEqual = vega.sceneEqual(...pair);
+      const actual = view.scenegraph().toJSON(2);
+      const expect = fs.readFileSync(path) + '';
+      const pair = [JSON.parse(actual), JSON.parse(expect)];
+      const isEqual = vega.sceneEqual(...pair);
 
       if (OUTPUT_FAILURES && !isEqual) {
         pair.forEach((scene, i) => {

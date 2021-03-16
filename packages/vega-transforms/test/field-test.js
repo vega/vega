@@ -1,13 +1,13 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Field = require('../').field;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var Field = require('../').field;
 
 tape('Field generates field accessors', t => {
-  var df = new vega.Dataflow(),
-      n = df.add('foo'),
-      a = df.add(null),
-      f = df.add(Field, {name:n, as:a});
+  var df = new vega.Dataflow();
+  var n = df.add('foo');
+  var a = df.add(null);
+  var f = df.add(Field, {name:n, as:a});
 
   df.run();
   t.equal(typeof f.value, 'function');

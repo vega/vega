@@ -19,9 +19,9 @@ export default function(type, shape, isect) {
   }
 
   function draw(context, item) {
-    var x = item.x || 0,
-        y = item.y || 0,
-        a = item.angle || 0;
+    var x = item.x || 0;
+    var y = item.y || 0;
+    var a = item.angle || 0;
 
     context.translate(x, y);
     if (a) context.rotate(a *= DegToRad);

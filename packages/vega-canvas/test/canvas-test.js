@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    canvas = require('canvas');
+var tape = require('tape');
+var vega = require('../');
+var canvas = require('canvas');
 
 tape('Canvas loader loads node canvas', t => {
   let c = vega.canvas(10, 20);

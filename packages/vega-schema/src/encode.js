@@ -29,8 +29,8 @@ export function baseValueSchema(type, nullable) {
     : type && type.oneOf ? type
     : {type: type};
 
-  var modType = type.type === 'number' ? 'number' : 'string',
-      valueType = nullable ? oneOf(type, nullType) : type;
+  var modType = type.type === 'number' ? 'number' : 'string';
+  var valueType = nullable ? oneOf(type, nullType) : type;
 
   const valueRef = allOf(
     def(modType + 'Modifiers'),

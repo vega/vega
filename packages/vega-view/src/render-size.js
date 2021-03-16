@@ -9,8 +9,8 @@ export function height(view) {
 }
 
 export function offset(view) {
-  var padding = view.padding(),
-      origin = view._origin;
+  var padding = view.padding();
+  var origin = view._origin;
   return [
     padding.left + origin[0],
     padding.top + origin[1]
@@ -18,9 +18,9 @@ export function offset(view) {
 }
 
 export function resizeRenderer(view) {
-  var origin = offset(view),
-      w = width(view),
-      h = height(view);
+  var origin = offset(view);
+  var w = width(view);
+  var h = height(view);
 
   view._renderer.background(view.background());
   view._renderer.resize(w, h, origin);

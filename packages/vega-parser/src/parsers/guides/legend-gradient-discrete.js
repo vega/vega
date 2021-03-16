@@ -7,12 +7,15 @@ import {LegendBandRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode, dataRef) {
-  const _ = lookup(spec, config),
-        vertical = _.isVertical(),
-        thickness = _.gradientThickness(),
-        length = _.gradientLength();
-
-  let u, v, uu, vv, adjust = '';
+  const _ = lookup(spec, config);
+  const vertical = _.isVertical();
+  const thickness = _.gradientThickness();
+  const length = _.gradientLength();
+  let u;
+  let v;
+  let uu;
+  let vv;
+  let adjust = '';
 
   vertical
     ? (u = 'y', uu = 'y2', v = 'x', vv = 'width', adjust = '1-')

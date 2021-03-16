@@ -142,8 +142,8 @@ Renderer.prototype = {
    * @return {Promise} - A Promise that resolves to the requested resource.
    */
   _load(method, uri) {
-    var r = this,
-        p = r._loader[method](uri);
+    var r = this;
+    var p = r._loader[method](uri);
 
     if (!r._ready) {
       // re-render the scene when loading completes
