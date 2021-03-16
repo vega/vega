@@ -76,14 +76,6 @@ export default function(codegen) {
 
     // sequence functions
     length:      fn('length', null, -1),
-    join:        fn('join', null),
-    indexof:     fn('indexOf', null),
-    lastindexof: fn('lastIndexOf', null),
-    slice:       fn('slice', null),
-
-    reverse: function(args) {
-      return '('+codegen(args[0])+').slice().reverse()';
-    },
 
     // STRING functions
     parseFloat:  'parseFloat',
@@ -92,7 +84,6 @@ export default function(codegen) {
     lower:       fn('toLowerCase', STRING, 0),
     substring:   fn('substring', STRING),
     split:       fn('split', STRING),
-    replace:     fn('replace', STRING),
     trim:        fn('trim', STRING, 0),
 
     // REGEXP functions

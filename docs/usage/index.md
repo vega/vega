@@ -53,6 +53,12 @@ To use Vega on a web page you first need to load the Vega JavaScript files. The 
 </head>
 ```
 
+**Using Vega with a bundler.** If you use Vega with a bundler like [rollup.js](https://rollupjs.org/guide/en/#with-npm-packages), you can import Vega [as a module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
+
+```
+import * as vega from "vega";
+```
+
 
 [Back to reference](#reference)
 

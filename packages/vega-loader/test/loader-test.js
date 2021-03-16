@@ -12,7 +12,7 @@ const file = './test/' + uri;
 const fake = 'https://vega.github.io/vega/dne.html';
 const text = require('fs').readFileSync(file, 'utf8');
 
-function sanityTest(t, uri, options, result) {
+function testSanitize(t, uri, options, result) {
   if (result != null) {
     return loader.sanitize(uri, options)
       .then(opt => { t.equal(opt.href, result); })
@@ -26,14 +26,14 @@ function sanityTest(t, uri, options, result) {
 
 tape('loader should sanitize url', t => {
   Promise.all([
-      sanityTest(t, 'a.txt', {mode: 'file'}, 'a.txt'),
-      sanityTest(t, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
-      sanityTest(t, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
-      sanityTest(t, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
-      sanityTest(t, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
-      sanityTest(t, undefined, {}, null),
-      sanityTest(t, null, {}, null),
-      sanityTest(t, 'javascript:alert("hello")', {}, null)
+      testSanitize(t, 'a.txt', {mode: 'file'}, 'a.txt'),
+      testSanitize(t, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
+      testSanitize(t, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
+      testSanitize(t, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
+      testSanitize(t, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
+      testSanitize(t, undefined, {}, null),
+      testSanitize(t, null, {}, null),
+      testSanitize(t, 'javascript:alert("hello")', {}, null)
     ])
     .then(() => { t.end(); })
     .catch(() => { t.end(); });

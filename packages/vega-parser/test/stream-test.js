@@ -86,7 +86,7 @@ tape('Parser parses stream definitions', t => {
     id: view,
     stream: 3,
     filter: {
-      code: "(event.shiftKey&&((event.item&&(event.item.mark.marktype==='rect'))&&(event.item.mark.name==='foo')))"
+      code: "(event.shiftKey&&((event.item&&(event.item.mark.marktype === 'rect'))&&(event.item.mark.name === 'foo')))"
     },
     throttle: 3,
     debounce: 4

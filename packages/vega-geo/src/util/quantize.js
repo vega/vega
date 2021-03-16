@@ -8,6 +8,6 @@ export default function(k, nice, zero) {
         stop = ex[1],
         span = stop - start,
         step = nice ? tickStep(start, stop, k) : (span / (k + 1));
-    return range(step, stop, step);
+    return range(start + step, stop, step);
   };
 }

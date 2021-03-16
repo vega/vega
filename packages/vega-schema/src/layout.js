@@ -65,7 +65,5 @@ const layout = orSignal(object({
 }));
 
 export default {
-  defs: {
-    layout
-  }
+  layout
 };

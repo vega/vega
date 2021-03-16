@@ -15,7 +15,5 @@ const scope = object({
 }, undefined);
 
 export default {
-  defs: {
-    scope
-  }
+  scope
 };

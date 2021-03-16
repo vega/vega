@@ -1,12 +1,12 @@
 import {
   allOf, anyType, array, booleanType, def, object,
-  oneOf, ref, signalRef, stringType
+  oneOf, signalRef, stringType
 } from './util';
 
 // types defined elsewhere
-const exprStringRef = ref('exprString');
-const exprRef = ref('expr');
-const selectorRef = ref('selector');
+const exprStringRef = def('exprString');
+const exprRef = def('expr');
+const selectorRef = def('selector');
 const streamRef = def('stream');
 const listenerRef = def('listener');
 
@@ -41,8 +41,6 @@ const onEvents = array(allOf(
 ));
 
 export default {
-  defs: {
-    listener,
-    onEvents
-  }
+  listener,
+  onEvents
 };

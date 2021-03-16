@@ -83,7 +83,7 @@ export default function(opt) {
         '[' + n.elements.map(visit).join(',') + ']',
 
     BinaryExpression: n =>
-        '(' + visit(n.left) + n.operator + visit(n.right) + ')',
+        '(' + visit(n.left) + ' ' + n.operator + ' ' + visit(n.right) + ')',
 
     UnaryExpression: n =>
         '(' + n.operator + visit(n.argument) + ')',

@@ -5,7 +5,7 @@ import {
   colorValue, dashArrayValue, def, enums,
   fontWeightValue, formatTypeOrSignal, formatTypeType,
   numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
-  ref, signalRef, stringType, stringValue, textOrSignal
+  signalRef, stringType, stringValue, textOrSignal
 } from './util';
 
 // types defined elsewhere
@@ -18,7 +18,7 @@ const labelOverlap = oneOf(
   enums(overlapEnum),
   signalRef
 );
-const labelOverlapRef = ref('labelOverlap');
+const labelOverlapRef = def('labelOverlap');
 
 const tickBandEnum = ['center', 'extent'];
 
@@ -26,7 +26,7 @@ const tickBand = oneOf(
   enums(tickBandEnum),
   signalRef
 );
-const tickBandRef = ref('tickBand');
+const tickBandRef = def('tickBand');
 
 const tickCount = oneOf(
   numberType,
@@ -37,7 +37,7 @@ const tickCount = oneOf(
   }),
   signalRef
 );
-const tickCountRef = ref('tickCount');
+const tickCountRef = def('tickCount');
 
 const axisOrientEnum = [
   'top',
@@ -152,12 +152,8 @@ const axis = object({
 });
 
 export default {
-  refs: {
-    labelOverlap,
-    tickBand,
-    tickCount
-  },
-  defs: {
-    axis
-  }
+  axis,
+  labelOverlap,
+  tickBand,
+  tickCount
 };
