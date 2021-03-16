@@ -131,7 +131,7 @@ This signal definition invokes a custom encoding set upon `mousedown` and `mouse
 
 ## <a name="bind"></a>Input Element Binding
 
-The _bind_ property binds a signal to an input element defined outside of the visualization. Vega will generate new HTML form elements and set up a two-way binding: changes to the input element will update the signal, and vice versa. Vega includes dedicate support for `checkbox` (single boolean value), `radio` (group of radio buttons), `select` (drop-down menu), and `range` (slider) input types.
+The _bind_ property binds a signal to an input element defined outside of the visualization. Vega will generate new HTML form elements and set up a two-way binding: changes to the input element will update the signal, and vice versa. Vega includes dedicated support for `checkbox` (single boolean value), `radio` (group of radio buttons), `select` (drop-down menu), and `range` (slider) input types.
 
 | Property            | Type                           | Description  |
 | :------------------ | :----------------------------: | :------------|
@@ -161,5 +161,5 @@ The _bind_ property binds a signal to an input element defined outside of the vi
 
 ### Other Input Types
 
-In addition, any valid [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) may be used as the value of the _type_ property. Examples include `"text"` (for single-line text entry), `"color"` (for a color picker), and `"date"` (for entering year, month and day).
+In addition, any valid [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) may be used as the value of the _input_ property. Examples include `"text"` (for single-line text entry), `"color"` (for a color picker), and `"date"` (for entering year, month and day).
 In these cases, any extra properties defined (e.g., _placeholder_ for `"text"` input) will be added as attributes of the generated HTML form element.

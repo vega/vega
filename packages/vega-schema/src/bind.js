@@ -39,7 +39,12 @@ const bind = oneOf(
     element: elementRef,
     debounce: numberType,
     name: stringType
-  }, true)
+  }, true),
+  object({
+    _element_: elementRef,
+    event: stringType,
+    debounce: numberType
+  })
 );
 
 export default {
