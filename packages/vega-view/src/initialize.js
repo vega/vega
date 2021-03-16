@@ -30,12 +30,12 @@ export default function(el, elBind) {
 
   // initialize signal bindings
   if (el && config !== 'none') {
-    elBind = elBind ? (view._elBind = lookup(view, elBind))
+    elBind = elBind ? (view._elBind = lookup(view, elBind, true))
       : el.appendChild(element('form', {'class': 'vega-bindings'}));
 
     view._bind.forEach(_ => {
       if (_.param.element && config !== 'container') {
-        _.element = lookup(view, _.param.element);
+        _.element = lookup(view, _.param.element, !!_.param.input);
       }
     });
 
@@ -47,7 +47,7 @@ export default function(el, elBind) {
   return view;
 }
 
-function lookup(view, el) {
+function lookup(view, el, clear) {
   if (typeof el === 'string') {
     if (typeof document !== 'undefined') {
       el = document.querySelector(el);
@@ -60,7 +60,7 @@ function lookup(view, el) {
       return null;
     }
   }
-  if (el) {
+  if (el && clear) {
     try {
       el.innerHTML = '';
     } catch (e) {

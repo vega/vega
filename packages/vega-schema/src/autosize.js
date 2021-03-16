@@ -26,7 +26,5 @@ const autosize = oneOf(
 );
 
 export default {
-  defs: {
-    autosize
-  }
+  autosize
 };

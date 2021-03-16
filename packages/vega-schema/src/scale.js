@@ -1,7 +1,7 @@
 import {
-  array, arrayType, booleanOrNumberOrSignal, booleanOrSignal, booleanType, enums,
-  nullType, numberOrSignal, numberType, object, oneOf, orSignal,
-  ref, signalRef, stringOrSignal, stringType
+  array, arrayType, booleanOrNumberOrSignal, booleanOrSignal, booleanType,
+  def, enums, nullType, numberOrSignal, numberType, object, oneOf, orSignal,
+  signalRef, stringOrSignal, stringType
 } from './util';
 
 import {
@@ -74,7 +74,7 @@ const bandRange = oneOf(
   signalRef
 );
 
-const scaleBinsRef = ref('scaleBins');
+const scaleBinsRef = def('scaleBins');
 const scaleBins = oneOf(
   array(numberOrSignal),
   object({
@@ -85,7 +85,7 @@ const scaleBins = oneOf(
   signalRef
 );
 
-const scaleInterpolateRef = ref('scaleInterpolate');
+const scaleInterpolateRef = def('scaleInterpolate');
 const scaleInterpolate = oneOf(
   stringType,
   signalRef,
@@ -95,7 +95,7 @@ const scaleInterpolate = oneOf(
   })
 );
 
-const sortOrderRef = ref('sortOrder');
+const sortOrderRef = def('sortOrder');
 const sortOrder = orSignal(enums(sortOrderEnum));
 
 const sortDomain = oneOf(
@@ -117,7 +117,7 @@ const sortMultiDomain = oneOf(
   })
 );
 
-const scaleDataRef = ref('scaleData');
+const scaleDataRef = def('scaleData');
 const scaleData = oneOf(
   object({
     _data_: stringType,
@@ -255,14 +255,10 @@ const scale = oneOf(
 );
 
 export default {
-  refs: {
-    scaleField: stringOrSignal,
-    sortOrder,
-    scaleBins,
-    scaleInterpolate,
-    scaleData
-  },
-  defs: {
-    scale
-  }
+  scale,
+  scaleField: stringOrSignal,
+  sortOrder,
+  scaleBins,
+  scaleInterpolate,
+  scaleData
 };

@@ -86,13 +86,13 @@ inherits(Label, Transform, {
 
     // run label layout
     labelLayout(
-      pulse.materialize(pulse.SOURCE).source,
+      pulse.materialize(pulse.SOURCE).source || [],
       _.size,
       _.sort,
-      array(_.offset || 1),
+      array(_.offset == null ? 1 : _.offset),
       array(_.anchor || Anchors),
       _.avoidMarks || [],
-      _.avoidBaseMark === false ? false : true,
+      _.avoidBaseMark !== false,
       _.lineAnchor || 'end',
       _.markIndex || 0,
       _.padding || 0,

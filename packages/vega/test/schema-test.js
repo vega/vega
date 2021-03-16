@@ -9,10 +9,8 @@ var addFormats = require('ajv-formats');
 
 const validator = new ajv.default({
     allErrors: true,
-    verbose: true,
-    strict: false // FIXME: https://github.com/vega/vega/issues/3022
-  })
-  .addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
+    verbose: true
+  });
 
 addFormats(validator);
 

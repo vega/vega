@@ -9,8 +9,10 @@ import {
 } from 'vega-dataflow';
 
 import {
+  selectionIdTest,
   selectionResolve,
   selectionTest,
+  selectionTuples,
   selectionVisitor
 } from 'vega-selections';
 
@@ -138,6 +140,8 @@ import {
   pinchDistance
 } from './functions/pinch';
 
+import pluck from './functions/pluck';
+
 import {
   indexof,
   join,
@@ -229,6 +233,7 @@ export const functionContext = {
   merge,
   pad,
   peek,
+  pluck,
   span,
   inrange,
   truncate,
@@ -351,4 +356,6 @@ expressionFunction('treeAncestors', treeAncestors, dataVisitor);
 
 // register Vega-Lite selection functions
 expressionFunction('vlSelectionTest', selectionTest, selectionVisitor);
+expressionFunction('vlSelectionIdTest', selectionIdTest, selectionVisitor);
 expressionFunction('vlSelectionResolve', selectionResolve, selectionVisitor);
+expressionFunction('vlSelectionTuples', selectionTuples);

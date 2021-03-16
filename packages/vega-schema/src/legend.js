@@ -5,15 +5,15 @@ import {
   baselineValue, booleanType, colorValue, dashArrayValue, def,
   enums, fontWeightValue, formatTypeOrSignal, formatTypeType,
   numberOrSignal, numberType, numberValue, object, orSignal,
-  orientValue, pattern, ref, required, stringType, stringValue,
+  orientValue, pattern, required, stringType, stringValue,
   textOrSignal, type
 } from './util';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');
-const styleRef = ref('style');
-const labelOverlapRef = ref('labelOverlap');
-const tickCountRef = ref('tickCount');
+const styleRef = def('style');
+const labelOverlapRef = def('labelOverlap');
+const tickCountRef = def('tickCount');
 
 const guideEncodeRef = def('guideEncode');
 const guideEncode = pattern(
@@ -159,8 +159,6 @@ const legend = allOf(
 );
 
 export default {
-  defs: {
-    guideEncode,
-    legend
-  }
+  guideEncode,
+  legend
 };

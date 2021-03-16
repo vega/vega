@@ -31,7 +31,7 @@ export default function(view, el, binding) {
       active: false,
       set: null,
       update: value => {
-        if (value !== view.signal(param.signal)) {
+        if (value != view.signal(param.signal)) {
           view.runAsync(null, () => {
             bind.source = true;
             view.signal(param.signal, value);
@@ -44,7 +44,9 @@ export default function(view, el, binding) {
     }
   }
 
-  generate(bind, el, param, view.signal(param.signal));
+  (param.input == null && param.element ? target : generate)(
+    bind, el, param, view.signal(param.signal)
+  );
 
   if (!bind.active) {
     view.on(view._signals[param.signal], null, () => {
@@ -56,6 +58,29 @@ export default function(view, el, binding) {
   }
 
   return bind;
+}
+
+/**
+ * Bind the signal to an existing EventTarget.
+ */
+function target(bind, node, param, value) {
+  // initialize state
+  if (value !== undefined) {
+    node.value = value;
+  }
+
+  // listen for changes on the element
+  node.addEventListener('input', () => bind.update(node.value));
+
+  // propagate change to element
+  bind.set = value => {
+    node.value = value;
+    node.dispatchEvent(event(param.event || 'input'));
+  };
+}
+
+function event(type) {
+  return typeof Event !== 'undefined' ? new Event(type) : { type };
 }
 
 /**

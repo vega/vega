@@ -8,8 +8,6 @@ const expr = object({
 const exprString = stringType;
 
 export default {
-  refs: {
-    expr,
-    exprString
-  }
+  expr,
+  exprString
 };

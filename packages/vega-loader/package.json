@@ -19,13 +19,17 @@
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "build/vega-loader.node.js",
-  "module": "build/vega-loader.module.js",
+  "module": "build/vega-loader.node.module.js",
   "unpkg": "build/vega-loader.min.js",
   "jsdelivr": "build/vega-loader.min.js",
   "repository": "vega/vega",
+  "browser": {
+    "./build/vega-loader.node.js": "./build/vega-loader.browser.js",
+    "./build/vega-loader.node.module.js": "./build/vega-loader.browser.module.js"
+  },
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-browser",
+    "build": "rollup -c",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
@@ -36,9 +40,5 @@
     "topojson-client": "^3.1.0",
     "vega-format": "^1.0.4",
     "vega-util": "^1.16.0"
-  },
-  "browser": {
-    "./build/vega-loader.node.js": "./build/vega-loader.min.js",
-    "./build/vega-loader.module.js": "./index.browser.js"
   }
 }
