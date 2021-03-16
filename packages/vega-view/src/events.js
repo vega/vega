@@ -1,6 +1,6 @@
 import eventExtend from './events-extend';
 import {EventStream} from 'vega-dataflow';
-import {extend, isArray, isObject, toSet} from 'vega-util';
+import {array, extend, isArray, isObject, toSet} from 'vega-util';
 
 const VIEW = 'view',
       TIMER = 'timer',
@@ -25,6 +25,10 @@ export function initializeEventConfig(config) {
   unpack(events, ['view', 'window', 'selector']);
 
   return events;
+}
+
+export function trackEventListener(view, sources, type, handler) {
+  view._eventListeners.push({ type, sources: array(sources), handler });
 }
 
 function prevent(view, type) {
@@ -100,12 +104,7 @@ export function events(source, type, filter) {
       for (var i=0, n=sources.length; i<n; ++i) {
         sources[i].addEventListener(type, send);
       }
-
-      view._eventListeners.push({
-        type:    type,
-        sources: sources,
-        handler: send
-      });
+      trackEventListener(view, sources, type, send);
     }
   }
 
