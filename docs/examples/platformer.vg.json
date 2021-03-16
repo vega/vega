@@ -1,0 +1,347 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 400,
+  "height": 400,
+  "description": "A simple platformer. WASD to move, shift to dash.",
+  "background": "rgb(8, 3, 15)",
+  "data": [
+    {
+      "name": "wandb",
+      "url": "data/platformer-terrain.json",
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum.x + '-' + datum.y",
+          "as": "key",
+          "initonly": true
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "pixels",
+      "type": "linear",
+      "domain": [0, 128],
+      "range": {
+        "signal": "[0, height]"
+      }
+    }
+  ],
+  "signals": [
+    {
+      "name": "test",
+      "update": "[0, containerSize()[1], height]"
+    },
+    {
+      "name": "frame",
+      "init": "0",
+      "on": [
+        {
+          "events": {
+            "type": "timer",
+            "throttle": 17
+          },
+          "update": "frame + 1"
+        }
+      ]
+    },
+    {
+      "name": "lastFrameOnGround",
+      "value": -99,
+      "update": "playerOnGround ? frame : lastFrameOnGround"
+    },
+    {
+      "name": "lastFrameDashing",
+      "value": -99,
+      "update": "dashing ? frame : lastFrameDashing"
+    },
+    {
+      "name": "playerCanJump",
+      "update": "frame - lastFrameOnGround < 5 && yVelocity >= 0"
+    },
+    {
+      "name": "playerCanDash",
+      "value": true,
+      "update": "dashing ? false : playerOnGround ? true : playerCanDash"
+    },
+    {
+      "name": "collidingBottom",
+      "update": "indata('wandb', 'key', rx + '-' + (ry+2)) || indata('wandb', 'key', (rx+1) + '-' + (ry+2)) || indata('wandb', 'key', (rx+2) + '-' + (ry+2)) || indata('wandb', 'key', (rx+3) + '-' + (ry+2)) || indata('wandb', 'key', rx + '-' + (ry+3)) || indata('wandb', 'key', (rx+1) + '-' + (ry+3)) || indata('wandb', 'key', (rx+2) + '-' + (ry+3)) || indata('wandb', 'key', (rx+3) + '-' + (ry+3))"
+    },
+    {
+      "name": "playerOnGround",
+      "update": "collidingBottom || indata('wandb', 'key', rx + '-' + (ry+4)) || indata('wandb', 'key', (rx+1) + '-' + (ry+4)) || indata('wandb', 'key', (rx+2) + '-' + (ry+4)) || indata('wandb', 'key', (rx+3) + '-' + (ry+4))"
+    },
+    {
+      "name": "collidingLeft",
+      "update": "indata('wandb', 'key', rx + '-' + (ry+0)) || indata('wandb', 'key', rx + '-' + (ry+1)) || indata('wandb', 'key', rx + '-' + (ry+2))"
+    },
+    {
+      "name": "collidingRight",
+      "update": "indata('wandb', 'key', (rx+3) + '-' + (ry+0)) || indata('wandb', 'key', (rx+3) + '-' + (ry+1)) || indata('wandb', 'key', (rx+3) + '-' + (ry+2))"
+    },
+    {
+      "name": "wallOnLeft",
+      "update": "collidingLeft || indata('wandb', 'key', ((rx-1) + '-' + (ry+0))) || indata('wandb', 'key', ((rx-1) + '-' + (ry+1))) || indata('wandb', 'key', ((rx-1) + '-' + (ry+2)))"
+    },
+    {
+      "name": "wallOnRight",
+      "update": "collidingRight || indata('wandb', 'key', ((rx+4) + '-' + (ry+0))) || indata('wandb', 'key', ((rx+4) + '-' + (ry+1))) || indata('wandb', 'key', ((rx+4) + '-' + (ry+2)))"
+    },
+    {
+      "name": "xVelocity",
+      "update": "max(min(keyRight ? dashing ? 2 : max(1, xVelocity-.04) : keyLeft ? (dashing ? -2 : min(-1, xVelocity + .04)) : 0, wallOnRight ? 0 : 999), wallOnLeft ? 0 : -999)"
+    },
+    {
+      "name": "yVelocity",
+      "value": 0,
+      "on": [
+        {
+          "events": {
+            "type": "timer",
+            "throttle": 17
+          },
+          "update": "dashing ? (keyJump ? -1.5 : -.6) :jumping ? -2 : playerOnGround ? min(0, yVelocity) : min(2.5, yVelocity + .15)"
+        }
+      ]
+    },
+    {
+      "name": "playerX",
+      "value": 5,
+      "on": [
+        {
+          "events": {
+            "type": "timer",
+            "throttle": 17
+          },
+          "update": "(collidingRight && !collidingLeft) ? round(playerX - 1) : (collidingLeft && !collidingRight) ? round(playerX + 1) : playerX + xVelocity"
+        }
+      ]
+    },
+    {
+      "name": "playerY",
+      "init": 15,
+      "on": [
+        {
+          "events": {
+            "type": "timer",
+            "throttle": 17
+          },
+          "update": "(collidingBottom && !(collidingRight ^ collidingLeft)) ? round(playerY + yVelocity - 1) : playerY + yVelocity"
+        }
+      ]
+    },
+    {
+      "name": "jumping",
+      "on": [
+        {
+          "events": { "type": "timer", "throttle": 17 },
+          "update": "playerCanJump && keyJump"
+        }
+      ]
+    },
+    {
+      "name": "dashing",
+      "on": [
+        {
+          "events": { "type": "timer", "throttle": 17 },
+          "update": "playerCanDash && keyDash"
+        }
+      ]
+    },
+    {
+      "name": "rx",
+      "update": "round(playerX)"
+    },
+    {
+      "name": "ry",
+      "update": "round(playerY)"
+    },
+    {
+      "name": "scrollX",
+      "update": "max(playerX - 32, 0)"
+    },
+    {
+      "name": "keys",
+      "value": "",
+      "on": [
+        {
+          "events": "window:keydown",
+          "update": "indexof(keys, event.code) > -1 ? keys : keys + event.code + ','"
+        },
+        {
+          "events": "window:keyup",
+          "update": "replace(keys, event.code + ',', '')"
+        }
+      ]
+    },
+    {
+      "name": "keyLeft",
+      "value": false,
+      "update": "indexof(keys, 'KeyA') > -1 || indexof(keys, 'ArrowLeft') > -1"
+    },
+    {
+      "name": "keyRight",
+      "value": false,
+      "update": "indexof(keys, 'KeyD') > -1 || indexof(keys, 'ArrowRight') > -1"
+    },
+    {
+      "name": "keyJump",
+      "value": false,
+      "update": "indexof(keys, 'KeyW') > -1 || indexof(keys, 'ArrowUp') > -1"
+    },
+    {
+      "name": "keyDash",
+      "value": false,
+      "update": "indexof(keys, 'KeyZ') > -1 || indexof(keys, 'ShiftLeft') > -1 || indexof(keys, 'ShiftRight') > -1"
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "name": "everything",
+      "clip": true,
+      "encode": {
+        "update": {
+          "x": {
+            "scale": "pixels",
+            "signal": "-scrollX"
+          }
+        }
+      },
+      "marks": [
+        {
+          "type": "image",
+          "encode": {
+            "enter": {
+              "url": {
+                "value": "https://i.ibb.co/ZBc5RZK/Screen-Shot-2020-12-13-at-3-36-09-PM.png"
+              },
+              "smooth": {
+                "value": false
+              }
+            },
+            "update": {
+              "opacity": {
+                "value": 0.25
+              },
+              "width": {
+                "scale": "pixels",
+                "signal": "350"
+              },
+              "y": {
+                "scale": "pixels",
+                "signal": "-40"
+              },
+              "x": {
+                "scale": "pixels",
+                "signal": "scrollX/2"
+              },
+              "height": {
+                "scale": "pixels",
+                "signal": "200"
+              }
+            }
+          }
+        },
+        {
+          "type": "group",
+          "encode": {
+            "update": {
+              "x": {
+                "scale": "pixels",
+                "signal": "playerX"
+              },
+              "y": {
+                "scale": "pixels",
+                "signal": "playerY"
+              }
+            }
+          },
+          "marks": [
+            {
+              "type": "rect",
+              "name": "trailingGhost",
+              "encode": {
+                "update": {
+                  "x": {
+                    "scale": "pixels",
+                    "signal": "-xVelocity*2"
+                  },
+                  "y": {
+                    "scale": "pixels",
+                    "signal": "-yVelocity*2"
+                  },
+                  "fill": {
+                    "value": "cyan"
+                  },
+                  "fillOpacity": {
+                    "signal": "max(0, (lastFrameDashing + 20 - frame) / 40)"
+                  },
+                  "width": {
+                    "scale": "pixels",
+                    "signal": "4"
+                  },
+                  "height": {
+                    "scale": "pixels",
+                    "signal": "4"
+                  }
+                }
+              }
+            },
+            {
+              "type": "rect",
+              "name": "player",
+              "encode": {
+                "update": {
+                  "fill": {
+                    "signal": "playerCanDash ? 'rgb(167, 66, 60)' : 'rgb(110, 184, 248)'"
+                  },
+                  "width": {
+                    "scale": "pixels",
+                    "signal": "4"
+                  },
+                  "height": {
+                    "scale": "pixels",
+                    "signal": "4"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "rect",
+          "name": "terrainBlocks",
+          "from": {
+            "data": "wandb"
+          },
+          "encode": {
+            "update": {
+              "fill": {
+                "signal": "hsl(hsl(datum.color).h, hsl(datum.color).s + datum.saturation - .5, hsl(datum.color).l + datum.lumosity - .5)"
+              },
+              "x": {
+                "scale": "pixels",
+                "field": "x"
+              },
+              "y": {
+                "scale": "pixels",
+                "field": "y"
+              },
+              "width": {
+                "scale": "pixels",
+                "signal": "1"
+              },
+              "height": {
+                "scale": "pixels",
+                "signal": "1"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
