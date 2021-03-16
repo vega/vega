@@ -28,7 +28,11 @@ export function initializeEventConfig(config) {
 }
 
 export function trackEventListener(view, sources, type, handler) {
-  view._eventListeners.push({ type, sources: array(sources), handler });
+  view._eventListeners.push({
+    type: type,
+    sources: array(sources),
+    handler: handler
+  });
 }
 
 function prevent(view, type) {
