@@ -11,8 +11,8 @@ import metadata from './util/svg/metadata';
 import {rootAttributes, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
-const RootIndex = 0,
-const xmlns = 'http://www.w3.org/2000/xmlns/',
+const RootIndex = 0;
+const xmlns = 'http://www.w3.org/2000/xmlns/';
 const svgns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
