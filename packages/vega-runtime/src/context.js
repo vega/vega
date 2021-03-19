@@ -67,7 +67,6 @@ Context.prototype = Subcontext.prototype = {
     for (const key of keys) ctx.nodes[key]._targets = null;
     for (const key of keys) {
       ctx.nodes[key].detach();
-      delete ctx.nodes[key];
     }
     ctx.nodes = null;
   },
