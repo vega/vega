@@ -2,6 +2,11 @@ import extend from './extend';
 
 export default function(child, parent, members) {
   const proto = (child.prototype = Object.create(parent.prototype));
-  proto.constructor = child;
+  Object.defineProperty(proto, 'constructor', {
+    value: child,
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
   return extend(proto, members);
 }

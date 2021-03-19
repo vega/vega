@@ -1,5 +1,6 @@
 // -- Transforms -----
 
+import pkg from './package.json';
 import {extend} from 'vega-util';
 import {transforms} from 'vega-dataflow';
 import * as tx from 'vega-transforms';
@@ -21,9 +22,7 @@ extend(
 
 // -- Exports -----
 
-export {
-  version
-} from './package.json';
+export const version = pkg.version;
 
 export * from 'vega-statistics';
 
@@ -88,3 +87,12 @@ export {
 export {
   context as runtimeContext
 } from 'vega-runtime';
+
+export {
+  codegen as codegenExpression,
+  parse as parseExpression
+} from 'vega-expression';
+
+export {
+  selector as parseSelector
+} from 'vega-event-selector';

@@ -1,14 +1,14 @@
 import {
   allOf, array, booleanOrSignal, booleanType, def, enums, not, object,
-  oneOf, ref, stringOrSignal, stringType
+  oneOf, stringOrSignal, stringType
 } from './util';
 
 // types defined elsewhere
-const sortOrderRef = ref('sortOrder');
-const marktypeRef = ref('marktype');
-const sortField = oneOf(ref('scaleField'), ref('expr'));
+const sortOrderRef = def('sortOrder');
+const marktypeRef = def('marktype');
+const sortField = oneOf(def('scaleField'), def('expr'));
 
-const compareRef = ref('compare');
+const compareRef = def('compare');
 const compare = oneOf(
   object({
     field: sortField,
@@ -20,7 +20,7 @@ const compare = oneOf(
   })
 );
 
-const facetRef = ref('facet');
+const facetRef = def('facet');
 const facet = object({
   data: stringType,
   _facet_: oneOf(
@@ -44,19 +44,19 @@ const facet = object({
   )
 });
 
-const fromRef = ref('from');
+const fromRef = def('from');
 const from = object({
   data: stringType
 });
 
-const markclipRef = ref('markclip');
+const markclipRef = def('markclip');
 const markclip = oneOf(
   booleanOrSignal,
   object({_path_: stringOrSignal}),
   object({_sphere_: stringOrSignal})
 );
 
-const styleRef = ref('style');
+const styleRef = def('style');
 const style = oneOf(stringType, array(stringType));
 
 const markRef = def('mark');
@@ -94,17 +94,12 @@ const markVisual = allOf(
 );
 
 export default {
-  refs: {
-    compare,
-    from,
-    facet,
-    markclip,
-    style
-  },
-
-  defs: {
-    mark,
-    markGroup,
-    markVisual
-  }
+  compare,
+  from,
+  facet,
+  mark,
+  markclip,
+  markGroup,
+  markVisual,
+  style
 };

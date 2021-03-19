@@ -97,10 +97,12 @@
         {"name": "overview-plus-detail"},
         {"name": "brushing-scatter-plots"},
         {"name": "zoomable-scatter-plot"},
+        {"name": "zoomable-binned-plot"},
         {"name": "global-development"},
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
-        {"name": "pacman"}
+        {"name": "pacman"},
+        {"name": "platformer"}
     ]
 }

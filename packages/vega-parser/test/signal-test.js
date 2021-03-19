@@ -34,11 +34,11 @@ tape('Parser parses updating signals', t => {
   t.equal(Object.keys(scope.signals).length, 2);
   t.equal(scope.signals.a.id, 0);
   t.equal(scope.signals.a.value, undefined);
-  t.equal(scope.signals.a.update.code, '(5*2)');
+  t.equal(scope.signals.a.update.code, '(5 * 2)');
   t.deepEqual(scope.signals.a.params, {});
   t.equal(scope.signals.b.id, 1);
   t.equal(scope.signals.b.value, undefined);
-  t.equal(scope.signals.b.update.code, '(_["$a"]+3)');
+  t.equal(scope.signals.b.update.code, '(_["$a"] + 3)');
   t.deepEqual(scope.signals.b.params, {$a: {$ref: 0}});
   t.end();
 });
@@ -73,7 +73,7 @@ tape('Parser parses signals with event-driven updates', t => {
           {source: 'window', type: 'touchstart'},
           {signal: 'a'}
         ],
-        update: {expr: '2*2'},
+        update: {expr: '2 * 2'},
         force: false
       }
     ]
@@ -112,13 +112,13 @@ tape('Parser parses signals with event-driven updates', t => {
   update = scope.updates[1];
   t.equal(update.source && update.source.$ref, a);
   t.equal(update.target, c);
-  t.equal(update.update.$expr.code, '(2*2)');
+  t.equal(update.update.$expr.code, '(2 * 2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[2];
   t.equal(update.source, 5);
   t.equal(update.target, c);
-  t.equal(update.update.$expr.code, '(2*2)');
+  t.equal(update.update.$expr.code, '(2 * 2)');
   t.equal(update.options, undefined);
 
   update = scope.updates[3];

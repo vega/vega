@@ -1,7 +1,7 @@
 import parseTransform from './transform';
 import parseTrigger from './trigger';
 import {Collect, Load, Relay, Sieve} from '../transforms';
-import {hasSignal, ref} from '../util';
+import {hasSignal, isSignal, ref} from '../util';
 import {array} from 'vega-util';
 
 export default function parseData(data, scope) {
@@ -34,8 +34,8 @@ function analyze(data, scope, ops) {
 
   if (data.values) {
     // hard-wired input data set
-    if (hasSignal(data.values) || hasSignal(data.format)) {
-      // if either values or format has signal, use dynamic loader
+    if (isSignal(data.values) || hasSignal(data.format)) {
+      // if either values is signal or format has signal, use dynamic loader
       output.push(load(scope, data));
       output.push(source = collect());
     } else {

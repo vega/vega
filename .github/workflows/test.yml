@@ -1,6 +1,10 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   test:
@@ -8,19 +12,15 @@ jobs:
 
     strategy:
       matrix:
-        node: [10, 12, 14]
+        node: [10, 12, 14, 15]
 
     name: Node ${{ matrix.node }}
-
-    # We want to run on external PRs, but not on our own internal PRs as they'll be run
-    # by the push to the branch.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install Canvas and XML dependencies
-        run: sudo apt-get install -y libcairo2-dev libpango1.0-dev libxml2-utils
+        run: sudo apt-get install -y libxml2-utils
 
       - name: Setup Node ${{ matrix.node }}
         uses: actions/setup-node@v1

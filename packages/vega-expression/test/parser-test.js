@@ -60,19 +60,14 @@ tape('Parser should allow literal regular expressions', t => {
     regex: { pattern: 'a', flags: ''}
   });
   // Empty regex
-  t.deepEqual(parse('//')(), {
-    type: 'Literal',
-    value: {},
-    raw: '/(?:)/',
-    regex: { pattern: '', flags: ''}
-  });
+  t.throws(parse('//'));
   t.doesNotThrow(parse('/[0-9]+/gi'));
   t.doesNotThrow(parse('/a\\u{41}/u'));
   t.throws(parse('/a\\u{110000}/u'));
 
   t.doesNotThrow(parse('/a/gimuy'));
 
-  // t.throws(parse('/a/a')); // TODO
+  t.throws(parse('/a/a'));
   t.throws(parse('/a/\\u0067'));
   t.throws(parse('/unterminated'));
   t.throws(parse('/unterminated\n'));

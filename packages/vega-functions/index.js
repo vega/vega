@@ -55,6 +55,19 @@ export {
 } from './src/functions/pinch';
 
 export {
+  default as pluck
+} from './src/functions/pluck';
+
+export {
+  indexof,
+  join,
+  lastindexof,
+  replace,
+  reverse,
+  slice
+} from './src/functions/sequence';
+
+export {
   range,
   domain,
   bandwidth,

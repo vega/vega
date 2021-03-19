@@ -326,11 +326,6 @@ export interface ImageEncodeEntry extends EncodeEntry, AlignProperty {
   smooth?: ProductionRule<BooleanValueRef>;
 }
 
-/**
- * @TJS-type integer
- * @minimum 100
- * @maximum 900
- */
 export type Interpolate =
   | 'basis'
   | 'basis-open'
