@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "vega-crossfilter": "~4.0.5",
-    "vega-dataflow": "~5.7.3",
+    "vega-dataflow": "~5.7.4",
     "vega-encode": "~4.8.3",
     "vega-event-selector": "~2.0.6",
     "vega-expression": "~4.0.1",
@@ -50,7 +50,7 @@
     "vega-scenegraph": "~4.9.4",
     "vega-statistics": "~1.7.9",
     "vega-time": "~2.0.4",
-    "vega-transforms": "~4.9.3",
+    "vega-transforms": "~4.9.4",
     "vega-typings": "~0.21.0",
     "vega-util": "~1.16.1",
     "vega-view": "~5.10.0",
