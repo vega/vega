@@ -27,7 +27,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.0",
     "@types/node": "^14.14.35",
-    "ajv": "^7.2.1",
+    "ajv": "^8.0.1",
     "ajv-formats": "^1.5.1",
     "canvas": "^2.7.0",
     "dtslint": "^4.0.7",
