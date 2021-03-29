@@ -122,7 +122,10 @@ EventStream.prototype = {
   },
 
   detach() {
-    // no-op for handling detach requests
     // ensures compatibility with operators (#2753)
+    // Remove any references to other streams
+    // and filter functions that may be bound to subcontexts that need to be garbage collected.
+    this._filter = truthy;
+    this._targets = null;
   }
 };

@@ -60,6 +60,11 @@ inherits(Facet, Transform, {
         delete flows[key];
       }
     }
+    // Remove targets that are no longer active from the active targets array.
+    const tt = this._targets.filter(sf => sf && sf.count > 0);
+    this._targets.splice(0);
+    Array.prototype.push.apply(this._targets, tt);
+    this._targets.active = tt.length;
   },
 
   initTargets() {
