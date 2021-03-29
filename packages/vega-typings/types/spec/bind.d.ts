@@ -1,5 +1,5 @@
 export type Element = string;
-export interface BaseBinding {
+export interface BindBase {
   /**
    * An optional CSS selector string indicating the parent element to which
    * the input element should be added. By default, all input elements are
@@ -18,7 +18,7 @@ export interface BaseBinding {
    */
   name?: string;
 }
-export interface InputBinding extends BaseBinding {
+export interface BindInput extends BindBase {
   /**
    * The type of input element to use.
    * The valid values are `"checkbox"`, `"radio"`, `"range"`, `"select"`,
@@ -35,10 +35,10 @@ export interface InputBinding extends BaseBinding {
    */
   autocomplete?: string;
 }
-export interface BindCheckbox extends BaseBinding {
+export interface BindCheckbox extends BindBase {
   input: 'checkbox';
 }
-export interface BindRadioSelect extends BaseBinding {
+export interface BindRadioSelect extends BindBase {
   input: 'radio' | 'select';
   /**
    * An array of options to select from.
@@ -51,7 +51,7 @@ export interface BindRadioSelect extends BaseBinding {
    */
   labels?: string[];
 }
-export interface BindRange extends BaseBinding {
+export interface BindRange extends BindBase {
   input: 'range';
   /**
    * Sets the minimum slider value. Defaults to the smaller of the signal value and `0`.
@@ -67,7 +67,7 @@ export interface BindRange extends BaseBinding {
    */
   step?: number;
 }
-export interface DirectBinding {
+export interface BindDirect {
   /**
    * An input element that exposes a _value_ property and supports the
    * [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
@@ -89,4 +89,4 @@ export interface DirectBinding {
    */
   debounce?: number;
 }
-export type Binding = BindCheckbox | BindRadioSelect | BindRange | InputBinding | DirectBinding;
+export type Binding = BindCheckbox | BindRadioSelect | BindRange | BindInput | BindDirect;
