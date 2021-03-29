@@ -5,7 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
   var name = "vega";
-  var version$1 = "5.20.0";
+  var version$1 = "5.20.1";
   var description = "The Vega visualization grammar.";
   var keywords$1 = [
   	"vega",
@@ -56,7 +56,7 @@
   	"vega-statistics": "~1.7.9",
   	"vega-time": "~2.0.4",
   	"vega-transforms": "~4.9.3",
-  	"vega-typings": "~0.20.0",
+  	"vega-typings": "~0.21.0",
   	"vega-util": "~1.16.1",
   	"vega-view": "~5.10.0",
   	"vega-view-transforms": "~4.5.8",
@@ -1604,18 +1604,22 @@
     if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
 
     if (step > 0) {
-      start = Math.ceil(start / step);
-      stop = Math.floor(stop / step);
-      ticks = new Array(n = Math.ceil(stop - start + 1));
+      let r0 = Math.round(start / step),
+          r1 = Math.round(stop / step);
+      if (r0 * step < start) ++r0;
+      if (r1 * step > stop) --r1;
+      ticks = new Array(n = r1 - r0 + 1);
 
-      while (++i < n) ticks[i] = (start + i) * step;
+      while (++i < n) ticks[i] = (r0 + i) * step;
     } else {
       step = -step;
-      start = Math.ceil(start * step);
-      stop = Math.floor(stop * step);
-      ticks = new Array(n = Math.ceil(stop - start + 1));
+      let r0 = Math.round(start * step),
+          r1 = Math.round(stop * step);
+      if (r0 / step < start) ++r0;
+      if (r1 / step > stop) --r1;
+      ticks = new Array(n = r1 - r0 + 1);
 
-      while (++i < n) ticks[i] = (start + i) / step;
+      while (++i < n) ticks[i] = (r0 + i) / step;
     }
 
     if (reverse) ticks.reverse();
