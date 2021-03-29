@@ -95,7 +95,7 @@ tape('Facet facets tuples', t => {
     .remove(truthy)
     .clean(true) // remove subflows from internal map
   ).run();
-  t.equal(facet.targets().active, 4); // 4 subflows updated
+  t.equal(facet.targets().active, 0); // empty subflows removed
   t.equal(subs.length, 4); // no new subflows added
   subs.forEach(subtest(0)); // each subflow should now be empty
 
