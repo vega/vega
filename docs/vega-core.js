@@ -28,7 +28,7 @@
   var $$1__namespace = /*#__PURE__*/_interopNamespace($$1$1);
 
   var name = "vega";
-  var version$1 = "5.20.0";
+  var version$1 = "5.20.1";
   var description = "The Vega visualization grammar.";
   var keywords$1 = [
   	"vega",
@@ -79,7 +79,7 @@
   	"vega-statistics": "~1.7.9",
   	"vega-time": "~2.0.4",
   	"vega-transforms": "~4.9.3",
-  	"vega-typings": "~0.20.0",
+  	"vega-typings": "~0.21.0",
   	"vega-util": "~1.16.1",
   	"vega-view": "~5.10.0",
   	"vega-view-transforms": "~4.5.8",
