@@ -206,7 +206,8 @@ Operator.prototype = {
         }
       }
     }
-    //Remove references to the source and pulse object,
+
+    // remove references to the source and pulse object,
     // if present, to prevent memory leaks of old data.
     this.pulse = null;
     this.source = null;

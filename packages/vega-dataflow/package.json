@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "5.7.3",
+  "version": "5.7.4",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -25,6 +25,6 @@
   "dependencies": {
     "vega-format": "^1.0.4",
     "vega-loader": "^4.3.2",
-    "vega-util": "^1.15.2"
+    "vega-util": "^1.16.1"
   }
 }
