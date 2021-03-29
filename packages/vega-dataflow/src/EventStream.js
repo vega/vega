@@ -123,8 +123,8 @@ EventStream.prototype = {
 
   detach() {
     // ensures compatibility with operators (#2753)
-    // Remove any references to other streams
-    // and filter functions that may be bound to subcontexts that need to be garbage collected.
+    // remove references to other streams and filter functions that may
+    // be bound to subcontexts that need to be garbage collected.
     this._filter = truthy;
     this._targets = null;
   }

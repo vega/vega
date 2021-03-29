@@ -53,27 +53,36 @@ inherits(Facet, Transform, {
 
   clean() {
     const flows = this.value;
+    let detached = 0;
     for (const key in flows) {
       if (flows[key].count === 0) {
         const detach = flows[key].detachSubflow;
         if (detach) detach();
         delete flows[key];
+        ++detached;
       }
     }
-    // Remove targets that are no longer active from the active targets array.
-    const tt = this._targets.filter(sf => sf && sf.count > 0);
-    this._targets.splice(0);
-    Array.prototype.push.apply(this._targets, tt);
-    this._targets.active = tt.length;
+
+    // remove inactive targets from the active targets array
+    if (detached) {
+      const active = this._targets.filter(sf => sf && sf.count > 0);
+      this.initTargets(active);
+    }
   },
 
-  initTargets() {
+  initTargets(act) {
     const a = this._targets,
-          n = a.length;
-    for (let i=0; i<n && a[i] != null; ++i) {
+          n = a.length,
+          m = act ? act.length : 0;
+    let i = 0;
+
+    for (; i<m; ++i) {
+      a[i] = act[i];
+    }
+    for (; i<n && a[i] != null; ++i) {
       a[i] = null; // ensure old flows can be garbage collected
     }
-    a.active = 0;
+    a.active = m;
   },
 
   transform(_, pulse) {
