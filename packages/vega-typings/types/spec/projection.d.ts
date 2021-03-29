@@ -83,33 +83,93 @@ export interface BaseProjection {
    * GeoJSON data to which the projection should attempt to automatically fit the `translate` and `scale` parameters. If object-valued, this parameter should be a GeoJSON Feature or FeatureCollection. If array-valued, each array member may be a GeoJSON Feature, FeatureCollection, or a sub-array of GeoJSON Features.
    */
   fit?: Fit | Fit[] | SignalRef;
+
   /*
    * Used in conjunction with fit, provides the pixel area to which the projection should be automatically fit.
    */
   extent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
-  /*
+
+  /**
    * Used in conjunction with fit, provides the width and height in pixels of the area to which the projection should be automatically fit.
    */
   size?: Vector2<number | SignalRef> | SignalRef;
 
   // TODO: use a union tagged by the projection type to determine which of the following is applicable
-  /* The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection */
+  // The following properties are all supported for specific types of projections. Consult the d3-geo-projection library for more information: https://github.com/d3/d3-geo-projection.
+
+  /**
+   * The coefficient parameter for the `hammer` projection.
+   *
+   * __Default value:__ `2`
+   */
   coefficient?: number | SignalRef;
+
+  /**
+   * For the `satellite` projection, the distance from the center of the
+   * sphere to the point of view, as a proportion of the sphere’s radius.
+   * The recommended maximum clip angle for a given `distance` is
+   * acos(1 / distance) converted to degrees. If tilt is also
+   * applied, then more conservative clipping may be necessary.
+   *
+   * __Default value:__ `2.0`
+   */
   distance?: number | SignalRef;
+
+  /**
+   * The fraction parameter for the `bottomley` projection.
+   *
+   * __Default value:__ `0.5`, corresponding to a sin(ψ) where ψ = π/6.
+   */
   fraction?: number | SignalRef;
+
+  /**
+   * The number of lobes in projections that support multi-lobe views:
+   * `berghaus`, `gingery`, or `healpix`.
+   * The default value varies based on the projection type.
+   */
   lobes?: number | SignalRef;
+
+  /**
+   * The parallel parameter for projections that support it:
+   * `armadillo`, `bonne`, `craig`, `cylindricalEqualArea`,
+   * `cylindricalStereographic`, `hammerRetroazimuthal`, `loximuthal`,
+   * or `rectangularPolyconic`.
+   * The default value varies based on the projection type.
+   */
   parallel?: number | SignalRef;
+
+  /**
+   * The radius parameter for the `airy` or `gingery` projection.
+   * The default value varies based on the projection type.
+   */
   radius?: number | SignalRef;
+
+  /**
+   * The ratio parameter for the `hill`, `hufnagel`, or `wagner` projections.
+   * The default value varies based on the projection type.
+   */
   ratio?: number | SignalRef;
+
+  /**
+   * The spacing parameter for the `lagrange` projection.
+   *
+   * __Default value:__ `0.5`
+   */
   spacing?: number | SignalRef;
+
+  /**
+   * The tilt angle (in degrees) for the `satellite` projection.
+   *
+   * __Default value:__ `0`.
+   */
   tilt?: number | SignalRef;
 
-  /*
+  /**
    * Sets whether or not the x-dimension is reflected (negated) in the output.
    */
   reflectX?: boolean | SignalRef;
 
-  /*
+  /**
    * Sets whether or not the y-dimension is reflected (negated) in the output.
    */
   reflectY?: boolean | SignalRef;
