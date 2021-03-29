@@ -89,7 +89,7 @@ export interface BaseProjection {
    */
   extent?: Vector2<Vector2<number | SignalRef>> | SignalRef;
 
-  /*
+  /**
    * Used in conjunction with fit, provides the width and height in pixels of the area to which the projection should be automatically fit.
    */
   size?: Vector2<number | SignalRef> | SignalRef;
@@ -130,7 +130,7 @@ export interface BaseProjection {
   lobes?: number | SignalRef;
 
   /**
-   * The default parallel parameter for projections that support it:
+   * The parallel parameter for projections that support it:
    * `armadillo`, `bonne`, `craig`, `cylindricalEqualArea`,
    * `cylindricalStereographic`, `hammerRetroazimuthal`, `loximuthal`,
    * or `rectangularPolyconic`.
@@ -139,7 +139,7 @@ export interface BaseProjection {
   parallel?: number | SignalRef;
 
   /**
-   * The default radius parameter for the `airy` or `gingery` projection.
+   * The radius parameter for the `airy` or `gingery` projection.
    * The default value varies based on the projection type.
    */
   radius?: number | SignalRef;
@@ -164,12 +164,12 @@ export interface BaseProjection {
    */
   tilt?: number | SignalRef;
 
-  /*
+  /**
    * Sets whether or not the x-dimension is reflected (negated) in the output.
    */
   reflectX?: boolean | SignalRef;
 
-  /*
+  /**
    * Sets whether or not the y-dimension is reflected (negated) in the output.
    */
   reflectY?: boolean | SignalRef;
