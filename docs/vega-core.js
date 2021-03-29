@@ -59,7 +59,7 @@
   };
   var dependencies = {
   	"vega-crossfilter": "~4.0.5",
-  	"vega-dataflow": "~5.7.3",
+  	"vega-dataflow": "~5.7.4",
   	"vega-encode": "~4.8.3",
   	"vega-event-selector": "~2.0.6",
   	"vega-expression": "~4.0.1",
@@ -78,7 +78,7 @@
   	"vega-scenegraph": "~4.9.4",
   	"vega-statistics": "~1.7.9",
   	"vega-time": "~2.0.4",
-  	"vega-transforms": "~4.9.3",
+  	"vega-transforms": "~4.9.4",
   	"vega-typings": "~0.21.0",
   	"vega-util": "~1.16.1",
   	"vega-view": "~5.10.0",
@@ -2503,7 +2503,12 @@
             op._targets.remove(this);
           }
         }
-      }
+      } // remove references to the source and pulse object,
+      // if present, to prevent memory leaks of old data.
+
+
+      this.pulse = null;
+      this.source = null;
     },
 
     /**
@@ -2739,8 +2744,12 @@
       return this.filter(() => active);
     },
 
-    detach() {// no-op for handling detach requests
+    detach() {
       // ensures compatibility with operators (#2753)
+      // remove references to other streams and filter functions that may
+      // be bound to subcontexts that need to be garbage collected.
+      this._filter = truthy;
+      this._targets = null;
     }
 
   };
@@ -7258,25 +7267,40 @@
 
     clean() {
       const flows = this.value;
+      let detached = 0;
 
       for (const key in flows) {
         if (flows[key].count === 0) {
           const detach = flows[key].detachSubflow;
           if (detach) detach();
           delete flows[key];
+          ++detached;
         }
+      } // remove inactive targets from the active targets array
+
+
+      if (detached) {
+        const active = this._targets.filter(sf => sf && sf.count > 0);
+
+        this.initTargets(active);
       }
     },
 
-    initTargets() {
+    initTargets(act) {
       const a = this._targets,
-            n = a.length;
+            n = a.length,
+            m = act ? act.length : 0;
+      let i = 0;
 
-      for (let i = 0; i < n && a[i] != null; ++i) {
+      for (; i < m; ++i) {
+        a[i] = act[i];
+      }
+
+      for (; i < n && a[i] != null; ++i) {
         a[i] = null; // ensure old flows can be garbage collected
       }
 
-      a.active = 0;
+      a.active = m;
     },
 
     transform(_, pulse) {
