@@ -12,7 +12,7 @@ export default function(el, elBind) {
         module = renderModule(type);
 
   // containing dom element
-  el = view._el = el ? lookup(view, el) : null;
+  el = view._el = el ? lookup(view, el, true) : null;
 
   // initialize aria attributes
   initializeAria(view);
