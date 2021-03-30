@@ -28,7 +28,7 @@
   var $$1__namespace = /*#__PURE__*/_interopNamespace($$1$1);
 
   var name = "vega";
-  var version$1 = "5.20.1";
+  var version$1 = "5.20.2";
   var description = "The Vega visualization grammar.";
   var keywords$1 = [
   	"vega",
@@ -81,7 +81,7 @@
   	"vega-transforms": "~4.9.4",
   	"vega-typings": "~0.21.0",
   	"vega-util": "~1.16.1",
-  	"vega-view": "~5.10.0",
+  	"vega-view": "~5.10.1",
   	"vega-view-transforms": "~4.5.8",
   	"vega-voronoi": "~4.1.5",
   	"vega-wordcloud": "~4.1.3"
@@ -27462,7 +27462,7 @@
           config = view._eventConfig.bind,
           module = renderModule(type); // containing dom element
 
-    el = view._el = el ? lookup$1(view, el) : null; // initialize aria attributes
+    el = view._el = el ? lookup$1(view, el, true) : null; // initialize aria attributes
 
     initializeAria(view); // select appropriate renderer & handler
 
