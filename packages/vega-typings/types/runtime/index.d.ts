@@ -1,19 +1,17 @@
+import { LoggerInterface } from 'vega-util';
 import {
   Color,
   Config,
   DataType,
   EncodeEntryName,
   Format,
-  NumberLocale,
   Padding,
   SignalValue,
   Spec,
-  TimeLocale,
 } from '../spec';
-import { Renderers } from './renderer';
 import { Changeset, Transform } from './dataflow';
+import { Renderers } from './renderer';
 import { Scene } from './scene';
-import { LoggerInterface } from 'vega-util';
 
 // TODO
 export type Runtime = any;
@@ -253,11 +251,9 @@ export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
 export const transforms: { [name: string]: Transform };
 
+export { parseSelector } from 'vega-event-selector';
+export { codegenExpression, parseExpression } from 'vega-expression';
 export * from 'vega-util';
 export * from './dataflow';
 export * from './renderer';
 export * from './scene';
-
-export { codegen as codegenExpression, parse as parseExpression } from 'vega-expression';
-
-export { selector as parseSelector } from 'vega-event-selector';
