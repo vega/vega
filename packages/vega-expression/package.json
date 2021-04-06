@@ -23,6 +23,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-util": "^1.16.0"
+    "vega-util": "^1.16.0",
+    "@types/estree": "^0.0.47"
   }
 }

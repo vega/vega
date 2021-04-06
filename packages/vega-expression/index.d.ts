@@ -1,5 +1,9 @@
+import { Node } from "estree";
+
 /** Parse a JavaScript *expression* string and return the resulting abstract syntax tree in the ESTree format */
-export function parse(expression: string): any;
+export function parse(expression: string):  Node.Expression | Node.SequenceExpression;
+
+export const parseExpression = parse;
 
 interface CodegenOptions {
   /** A hash of allowed top-level constant values */
@@ -38,6 +42,8 @@ export function codegen(
   /** A hash of all properties referenced outside a provided allowed list */
   globals: string[];
 };
+
+export const codegenExpression = codegen;
 
 /** An object defining default constant values for the Vega expression language */
 export const constants: { [cn: string]: string };
