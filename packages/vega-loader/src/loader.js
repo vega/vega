@@ -82,7 +82,7 @@ async function sanitize(uri, options) {
   // if relative url (no protocol/host), prepend baseURL
   if ((base = options.baseURL) && !hasProtocol) {
     // Ensure that there is a slash between the baseURL (e.g. hostname) and url
-    if (!uri.startsWith('/') && base[base.length-1] !== '/') {
+    if (!uri.startsWith('/') && !base.endsWith('/')) {
       uri = '/' + uri;
     }
     uri = base + uri;
