@@ -123,6 +123,8 @@ Context.prototype = Subcontext.prototype = {
         spec.data[name].forEach(role => data[role] = op);
       }
     }
+
+    op.src = spec?.src;
   },
   resolve() {
     (this.unresolved || []).forEach(fn => fn());
