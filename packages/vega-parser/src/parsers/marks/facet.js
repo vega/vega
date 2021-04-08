@@ -37,7 +37,7 @@ export default function(spec, scope, group) {
         source = subscope.add(Collect()),
         values = subscope.add(Sieve({pulse: ref(source)}));
   subscope.addData(name, new DataScope(subscope, source, source, values));
-  subscope.addSignal('parent', null);
+  subscope.addSignal('parent', null, spec);
 
   // parse faceted subflow
   op.params.subflow = {

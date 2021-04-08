@@ -12,7 +12,7 @@ export default function(spec, scope) {
   if (!def) error('Unrecognized transform type: ' + stringValue(spec.type));
 
   const t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope));
-  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
+  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t), spec);
   t.metadata = def.metadata || {};
 
   return t;

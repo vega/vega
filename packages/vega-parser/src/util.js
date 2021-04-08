@@ -13,8 +13,8 @@ export function entry(type, value, params, parent, src) {
   return new Entry(type, value, params, parent, src);
 }
 
-export function operator(value, params) {
-  return entry('operator', value, params);
+export function operator(value, params, src) {
+  return entry('operator', value, params, undefined, src);
 }
 
 // -----

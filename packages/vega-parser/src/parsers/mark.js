@@ -34,11 +34,11 @@ export default function(spec, scope, src) {
     key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
     pulse: input.pulse,
     clean: !group
-  }));
+  }, undefined, undefined, src));
   const joinRef = ref(op);
 
   // collect visual items
-  op = store = scope.add(Collect({pulse: joinRef}));
+  op = store = scope.add(Collect({pulse: joinRef}, undefined, undefined, src));
 
   // connect visual items to scenegraph
   op = scope.add(Mark({

@@ -29,7 +29,7 @@ export default function parseView(spec, scope) {
   const config = scope.config;
 
   // add scenegraph root
-  const root = ref(scope.root = scope.add(operator()));
+  const root = ref(scope.root = scope.add(operator(undefined, undefined, spec)));
 
   // parse top-level signal definitions
   const signals = collectSignals(spec, config);

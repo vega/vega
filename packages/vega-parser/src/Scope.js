@@ -287,11 +287,11 @@ Scope.prototype = Subscope.prototype = {
     return hasOwnProperty(this.signals, name);
   },
 
-  addSignal(name, value) {
+  addSignal(name, value, src) {
     if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + stringValue(name));
     }
-    const op = value instanceof Entry ? value : this.add(operator(value));
+    const op = value instanceof Entry ? value : this.add(operator(value, undefined, src));
     return this.signals[name] = op;
   },
 

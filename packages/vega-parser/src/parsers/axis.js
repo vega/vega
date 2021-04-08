@@ -32,7 +32,7 @@ export default function(spec, scope) {
     domain: !!_('domain'),
     title:  spec.title != null
   };
-  const dataRef = ref(scope.add(Collect({}, [datum])));
+  const dataRef = ref(scope.add(Collect({}, [datum], undefined, spec)));
 
   // data source for axis ticks
   const ticksRef = ref(scope.add(AxisTicks({
