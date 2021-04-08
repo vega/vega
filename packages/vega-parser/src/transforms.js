@@ -1,7 +1,7 @@
 import {entry} from './util';
 
-const transform = name => (params, value, parent) =>
-  entry(name, value, params || undefined, parent);
+const transform = name => (params, value, parent, src) =>
+  entry(name, value, params || undefined, parent, src);
 
 export const Aggregate = transform('aggregate');
 export const AxisTicks = transform('axisticks');

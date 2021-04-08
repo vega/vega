@@ -90,7 +90,8 @@ export default function(spec, scope) {
       interactive,
       style
     }),
-    scope
+    scope,
+    spec
   );
 }
 

@@ -15,7 +15,7 @@ import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
-export default function(spec, scope) {
+export default function(spec, scope, src) {
   const role = getRole(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
@@ -50,7 +50,7 @@ export default function(spec, scope) {
     parent:      scope.signals.parent ? scope.signalRef('parent') : null,
     index:       scope.markpath(),
     pulse:       ref(op)
-  }));
+  }, undefined, undefined, src));
   const markRef = ref(op);
 
   // add visual encoders
