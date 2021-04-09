@@ -15,7 +15,7 @@ import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
-export default function(spec, scope, src) {
+export default function(spec, scope) {
   const role = getRole(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
@@ -27,18 +27,18 @@ export default function(spec, scope, src) {
   const nested = role === MarkRole || layout || facet;
 
   // resolve input data
-  const input = parseData(spec.from, group, scope);
+  const input = parseData(spec.from, group, scope, spec);
 
   // data join to map tuples to visual items
   op = scope.add(DataJoin({
     key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
     pulse: input.pulse,
     clean: !group
-  }, undefined, undefined, src));
+  }, undefined, undefined, spec));
   const joinRef = ref(op);
 
   // collect visual items
-  op = store = scope.add(Collect({pulse: joinRef}, undefined, undefined, src));
+  op = store = scope.add(Collect({pulse: joinRef}, undefined, undefined, spec));
 
   // connect visual items to scenegraph
   op = scope.add(Mark({
@@ -50,14 +50,14 @@ export default function(spec, scope, src) {
     parent:      scope.signals.parent ? scope.signalRef('parent') : null,
     index:       scope.markpath(),
     pulse:       ref(op)
-  }, undefined, undefined, src));
+  }, undefined, undefined, spec));
   const markRef = ref(op);
 
   // add visual encoders
   op = enc = scope.add(Encode(parseEncode(
     spec.encode, spec.type, role, spec.style, scope,
     {mod: false, pulse: markRef}
-  )));
+  ), undefined, undefined, spec));
 
   // monitor parent marks to propagate changes
   op.params.parent = scope.encode();
@@ -81,7 +81,7 @@ export default function(spec, scope, src) {
     op = scope.add(SortItems({
       sort:  scope.compareRef(spec.sort),
       pulse: ref(op)
-    }));
+    }, undefined, undefined, spec));
   }
 
   const encodeRef = ref(op);
@@ -93,12 +93,12 @@ export default function(spec, scope, src) {
       legends:  scope.legends,
       mark:     markRef,
       pulse:    encodeRef
-    }));
+    }, undefined, undefined, spec));
     layoutRef = ref(layout);
   }
 
   // compute bounding boxes
-  const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
+  const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}, undefined, undefined, spec));
   boundRef = ref(bound);
 
   // if group mark, recurse to parse nested content
@@ -106,7 +106,7 @@ export default function(spec, scope, src) {
     // juggle layout & bounds to ensure they run *after* any faceting transforms
     if (nested) { ops = scope.operators; ops.pop(); if (layout) ops.pop(); }
 
-    scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
+    scope.pushState(encodeRef, layoutRef || boundRef, joinRef, spec);
     facet ? parseFacet(spec, scope, input)          // explicit facet
         : nested ? parseSubflow(spec, scope, input) // standard mark group
         : scope.parse(spec); // guide group, we can avoid nested scopes
@@ -121,8 +121,8 @@ export default function(spec, scope, src) {
   }
 
   // render / sieve items
-  const render = scope.add(Render({pulse: boundRef})),
-        sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
+  const render = scope.add(Render({pulse: boundRef}, undefined, undefined, spec)),
+        sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent(), spec));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined

@@ -4,7 +4,7 @@ import {Collect, Load, Relay, Sieve} from '../transforms';
 import {hasSignal, isSignal, ref} from '../util';
 import {array} from 'vega-util';
 
-export default function parseData(data, scope) {
+export default function parseData(data, scope, src) {
   const transforms = [];
 
   if (data.transform) {
@@ -19,13 +19,13 @@ export default function parseData(data, scope) {
     });
   }
 
-  scope.addDataPipeline(data.name, analyze(data, scope, transforms));
+  scope.addDataPipeline(data.name, analyze(data, scope, transforms, src));
 }
 
 /**
  * Analyze a data pipeline, add needed operators.
  */
-function analyze(data, scope, ops) {
+function analyze(data, scope, ops, src) {
   const output = [];
   let source = null,
       modify = false,
@@ -95,7 +95,7 @@ function analyze(data, scope, ops) {
   }
 
   if (!source) output.push(collect());
-  output.push(Sieve({}));
+  output.push(Sieve({}, undefined, undefined, src));
   return output;
 }
 

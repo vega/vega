@@ -22,7 +22,7 @@ export function initScale(spec, scope) {
   scope.addScale(spec.name, {
     type,
     domain: undefined
-  });
+  }, spec);
 }
 
 export function parseScale(spec, scope) {
@@ -94,16 +94,16 @@ function singularDomain(domain, spec, scope) {
   if (!data) dataLookupError(domain.data);
 
   return isDiscrete(spec.type)
-      ? data.valuesRef(scope, domain.field, parseSort(domain.sort, false))
-      : isQuantile(spec.type) ? data.domainRef(scope, domain.field)
-      : data.extentRef(scope, domain.field);
+      ? data.valuesRef(scope, domain.field, parseSort(domain.sort, false), spec)
+      : isQuantile(spec.type) ? data.domainRef(scope, domain.field, spec)
+      : data.extentRef(scope, domain.field, spec);
 }
 
 function multipleDomain(domain, spec, scope) {
   const data = domain.data,
         fields = domain.fields.reduce((dom, d) => {
           d = isString(d) ? {data: data, field: d}
-            : (isArray(d) || d.signal) ? fieldRef(d, scope)
+            : (isArray(d) || d.signal) ? fieldRef(d, scope, spec)
             : d;
           dom.push(d);
           return dom;
@@ -111,10 +111,10 @@ function multipleDomain(domain, spec, scope) {
 
   return (isDiscrete(spec.type) ? ordinalMultipleDomain
     : isQuantile(spec.type) ? quantileMultipleDomain
-    : numericMultipleDomain)(domain, scope, fields);
+    : numericMultipleDomain)(domain, scope, fields, spec);
 }
 
-function fieldRef(data, scope) {
+function fieldRef(data, scope, src) {
   const name = '_:vega:_' + (FIELD_REF_ID++),
         coll = Collect({});
 
@@ -124,11 +124,11 @@ function fieldRef(data, scope) {
     const code = 'setdata(' + stringValue(name) + ',' + data.signal + ')';
     coll.params.input = scope.signalRef(code);
   }
-  scope.addDataPipeline(name, [coll, Sieve({})]);
+  scope.addDataPipeline(name, [coll, Sieve({}, undefined, undefined, src)]);
   return {data: name, field: 'data'};
 }
 
-function ordinalMultipleDomain(domain, scope, fields) {
+function ordinalMultipleDomain(domain, scope, fields, src) {
   const sort = parseSort(domain.sort, true);
   let a, v;
 
@@ -136,7 +136,7 @@ function ordinalMultipleDomain(domain, scope, fields) {
   const counts = fields.map(f => {
     const data = scope.getData(f.data);
     if (!data) dataLookupError(f.data);
-    return data.countsRef(scope, f.field, sort);
+    return data.countsRef(scope, f.field, sort, src);
   });
 
   // aggregate the results from each domain field
@@ -148,7 +148,7 @@ function ordinalMultipleDomain(domain, scope, fields) {
     p.fields = [scope.fieldRef(v)];
     p.as = [v];
   }
-  a = scope.add(Aggregate(p));
+  a = scope.add(Aggregate(p, undefined, undefined, src));
 
   // collect aggregate output
   const c = scope.add(Collect({pulse: ref(a)}));
@@ -179,28 +179,28 @@ function parseSort(sort, multidomain) {
   return sort;
 }
 
-function quantileMultipleDomain(domain, scope, fields) {
+function quantileMultipleDomain(domain, scope, fields, src) {
   // get value arrays for each domain field
   const values = fields.map(f => {
     const data = scope.getData(f.data);
     if (!data) dataLookupError(f.data);
-    return data.domainRef(scope, f.field);
+    return data.domainRef(scope, f.field, src);
   });
 
   // combine value arrays
-  return ref(scope.add(MultiValues({values: values})));
+  return ref(scope.add(MultiValues({values: values}, undefined, undefined, src)));
 }
 
-function numericMultipleDomain(domain, scope, fields) {
+function numericMultipleDomain(domain, scope, fields, src) {
   // get extents for each domain field
   const extents = fields.map(f => {
     const data = scope.getData(f.data);
     if (!data) dataLookupError(f.data);
-    return data.extentRef(scope, f.field);
+    return data.extentRef(scope, f.field, src);
   });
 
   // combine extents
-  return ref(scope.add(MultiExtent({extents: extents})));
+  return ref(scope.add(MultiExtent({extents: extents}, undefined, undefined, src)));
 }
 
 // -- SCALE BINS -----

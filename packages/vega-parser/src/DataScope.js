@@ -63,7 +63,7 @@ function addSortField(scope, p, sort) {
   }
 }
 
-function cache(scope, ds, name, optype, field, counts, index) {
+function cache(scope, ds, name, optype, field, counts, index, src) {
   const cache = ds[name] || (ds[name] = {}),
         sort = sortKey(counts);
 
@@ -78,10 +78,10 @@ function cache(scope, ds, name, optype, field, counts, index) {
 
   if (!v) {
     const params = counts
-      ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
+      ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts, src)}
       : {field: scope.fieldRef(field), pulse: ref(ds.output)};
     if (sort) params.sort = scope.sortRef(counts);
-    op = scope.add(entry(optype, undefined, params));
+    op = scope.add(entry(optype, undefined, params, undefined, src));
     if (index) ds.index[field] = op;
     v = ref(op);
     if (k != null) cache[k] = v;
@@ -90,7 +90,7 @@ function cache(scope, ds, name, optype, field, counts, index) {
 }
 
 DataScope.prototype = {
-  countsRef(scope, field, sort) {
+  countsRef(scope, field, sort, src) {
     const ds = this,
           cache = ds.counts || (ds.counts = {}),
           k = fieldKey(field);
@@ -108,8 +108,8 @@ DataScope.prototype = {
         pulse: ref(ds.output)
       };
       if (sort && sort.field) addSortField(scope, p, sort);
-      a = scope.add(Aggregate(p));
-      v = scope.add(Collect({pulse: ref(a)}));
+      a = scope.add(Aggregate(p, undefined, undefined, src));
+      v = scope.add(Collect({pulse: ref(a)}, undefined, undefined, src));
       v = {agg: a, ref: ref(v)};
       if (k != null) cache[k] = v;
     } else if (sort && sort.field) {
@@ -123,16 +123,16 @@ DataScope.prototype = {
     return ref(this.values);
   },
 
-  extentRef(scope, field) {
-    return cache(scope, this, 'extent', 'extent', field, false);
+  extentRef(scope, field, src) {
+    return cache(scope, this, 'extent', 'extent', field, false, undefined, src);
   },
 
-  domainRef(scope, field) {
-    return cache(scope, this, 'domain', 'values', field, false);
+  domainRef(scope, field, src) {
+    return cache(scope, this, 'domain', 'values', field, false, undefined, src);
   },
 
-  valuesRef(scope, field, sort) {
-    return cache(scope, this, 'vals', 'values', field, sort || true);
+  valuesRef(scope, field, sort, src) {
+    return cache(scope, this, 'vals', 'values', field, sort || true, undefined, src);
   },
 
   lookupRef(scope, field) {

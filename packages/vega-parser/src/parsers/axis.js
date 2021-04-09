@@ -43,7 +43,7 @@ export default function(spec, scope) {
     minstep: scope.property(spec.tickMinStep),
     formatType: scope.property(spec.formatType),
     formatSpecifier: scope.property(spec.format)
-  })));
+  }, undefined, undefined, spec)));
 
   // generate axis marks
   const children = [];

@@ -11,8 +11,8 @@ export default function(spec, scope) {
   const def = definition(spec.type);
   if (!def) error('Unrecognized transform type: ' + stringValue(spec.type));
 
-  const t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope));
-  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t), spec);
+  const t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope), undefined, spec);
+  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t, spec), spec);
   t.metadata = def.metadata || {};
 
   return t;

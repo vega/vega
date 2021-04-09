@@ -72,8 +72,8 @@ function Subscope(scope) {
 }
 
 Scope.prototype = Subscope.prototype = {
-  parse(spec) {
-    return parseScope(spec, this);
+  parse(spec, src) {
+    return parseScope(spec, this, src);
   },
 
   fork() {
@@ -112,9 +112,9 @@ Scope.prototype = Subscope.prototype = {
     return op;
   },
 
-  proxy(op) {
+  proxy(op, src) {
     const vref = op instanceof Entry ? ref(op) : op;
-    return this.add(Proxy({value: vref}));
+    return this.add(Proxy({value: vref}, undefined, undefined, src));
   },
 
   addStream(stream) {
@@ -169,10 +169,10 @@ Scope.prototype = Subscope.prototype = {
 
   // ----
 
-  pushState(encode, parent, lookup) {
-    this._encode.push(ref(this.add(Sieve({pulse: encode}))));
+  pushState(encode, parent, lookup, src) {
+    this._encode.push(ref(this.add(Sieve({pulse: encode}, undefined, undefined, src))));
     this._parent.push(parent);
-    this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
+    this._lookup.push(lookup ? ref(this.proxy(lookup, src)) : null);
     this._markpath.push(-1);
   },
 
@@ -306,7 +306,7 @@ Scope.prototype = Subscope.prototype = {
     if (this.signals[s]) {
       return ref(this.signals[s]);
     } else if (!hasOwnProperty(this.lambdas, s)) {
-      this.lambdas[s] = this.add(operator(null));
+      this.lambdas[s] = this.add(operator(null, undefined, s));
     }
     return ref(this.lambdas[s]);
   },
@@ -353,8 +353,8 @@ Scope.prototype = Subscope.prototype = {
     this.scales[name] = this.add(transform);
   },
 
-  addScale(name, params) {
-    this.addScaleProj(name, Scale(params));
+  addScale(name, params, src) {
+    this.addScaleProj(name, Scale(params, undefined, undefined, src));
   },
 
   addProjection(name, params) {
