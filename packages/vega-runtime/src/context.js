@@ -124,7 +124,7 @@ Context.prototype = Subcontext.prototype = {
       }
     }
 
-    op.src = spec?.src;
+    op.src = spec && spec.src;
   },
   resolve() {
     (this.unresolved || []).forEach(fn => fn());
