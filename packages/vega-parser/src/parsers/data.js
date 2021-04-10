@@ -4,7 +4,7 @@ import {Collect, Load, Relay, Sieve} from '../transforms';
 import {hasSignal, isSignal, ref} from '../util';
 import {array} from 'vega-util';
 
-export default function parseData(data, scope, src) {
+export default function parseData(data, scope) {
   const transforms = [];
 
   if (data.transform) {
@@ -19,13 +19,13 @@ export default function parseData(data, scope, src) {
     });
   }
 
-  scope.addDataPipeline(data.name, analyze(data, scope, transforms, src));
+  scope.addDataPipeline(data.name, analyze(data, scope, transforms));
 }
 
 /**
  * Analyze a data pipeline, add needed operators.
  */
-function analyze(data, scope, ops, src) {
+function analyze(data, scope, ops) {
   const output = [];
   let source = null,
       modify = false,
@@ -36,7 +36,7 @@ function analyze(data, scope, ops, src) {
     // hard-wired input data set
     if (isSignal(data.values) || hasSignal(data.format)) {
       // if either values is signal or format has signal, use dynamic loader
-      output.push(load(scope, data, src));
+      output.push(load(scope, data));
       output.push(source = collect());
     } else {
       // otherwise, ingest upon dataflow init
@@ -49,7 +49,7 @@ function analyze(data, scope, ops, src) {
     // load data from external source
     if (hasSignal(data.url) || hasSignal(data.format)) {
       // if either url or format has signal, use dynamic loader
-      output.push(load(scope, data, src));
+      output.push(load(scope, data));
       output.push(source = collect());
     } else {
       // otherwise, request load upon dataflow init
@@ -87,7 +87,7 @@ function analyze(data, scope, ops, src) {
     output[0] = Relay({
       derive: modify,
       pulse: n ? upstream : upstream[0]
-    }, undefined, undefined, src);
+    }, undefined, undefined, data);
     if (modify || n) {
       // collect derived and multi-pulse tuples
       output.splice(1, 0, collect());
@@ -95,7 +95,7 @@ function analyze(data, scope, ops, src) {
   }
 
   if (!source) output.push(collect());
-  output.push(Sieve({}, undefined, undefined, src));
+  output.push(Sieve({}, undefined, undefined, data));
   return output;
 }
 
@@ -105,11 +105,11 @@ function collect(values) {
   return s;
 }
 
-function load(scope, data, src) {
+function load(scope, data) {
   return Load({
     url:    data.url ? scope.property(data.url) : undefined,
     async:  data.async ? scope.property(data.async) : undefined,
     values: data.values ? scope.property(data.values) : undefined,
     format: scope.objectProperty(data.format)
-  }, undefined, undefined, src);
+  }, undefined, undefined, data);
 }

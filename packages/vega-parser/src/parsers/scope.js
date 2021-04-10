@@ -23,7 +23,7 @@ export default function(spec, scope, preprocessed) {
   scales.forEach(_ => initScale(_, scope));
 
   // parse data sources
-  array(spec.data).forEach(_ => parseData(_, scope, _));
+  array(spec.data).forEach(_ => parseData(_, scope));
 
   // parse scale definitions
   scales.forEach(_ => parseScale(_, scope));
