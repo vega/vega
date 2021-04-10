@@ -23,7 +23,7 @@ export default function(spec, scope, preprocessed) {
   scales.forEach(_ => initScale(_, scope));
 
   // parse data sources
-  array(spec.data).forEach(_ => parseData(_, scope, spec));
+  array(spec.data).forEach(_ => parseData(_, scope, _));
 
   // parse scale definitions
   scales.forEach(_ => parseScale(_, scope));
@@ -35,7 +35,7 @@ export default function(spec, scope, preprocessed) {
   array(spec.axes).forEach(_ => parseAxis(_, scope));
 
   // parse mark definitions
-  array(spec.marks).forEach(_ => parseMark(_, scope, spec));
+  array(spec.marks).forEach(_ => parseMark(_, scope, _));
 
   // parse legend definitions
   array(spec.legends).forEach(_ => parseLegend(_, scope));
