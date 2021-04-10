@@ -79,7 +79,7 @@ export default function(spec, scope) {
   // if item sort specified, perform post-encoding
   if (spec.sort) {
     op = scope.add(SortItems({
-      sort:  scope.compareRef(spec.sort),
+      sort:  scope.compareRef(spec.sort, spec),
       pulse: ref(op)
     }, undefined, undefined, spec));
   }
@@ -117,7 +117,7 @@ export default function(spec, scope) {
 
   // if requested, add overlap removal transform
   if (overlap) {
-    boundRef = parseOverlap(overlap, boundRef, scope);
+    boundRef = parseOverlap(overlap, boundRef, scope, spec);
   }
 
   // render / sieve items
@@ -138,7 +138,7 @@ export default function(spec, scope) {
   }
 }
 
-function parseOverlap(overlap, source, scope) {
+function parseOverlap(overlap, source, scope, src) {
   const method = overlap.method,
         bound = overlap.bound,
         sep = overlap.separation;
@@ -150,7 +150,7 @@ function parseOverlap(overlap, source, scope) {
   };
 
   if (overlap.order) {
-    params.sort = scope.compareRef({field: overlap.order});
+    params.sort = scope.compareRef({field: overlap.order}, src);
   }
 
   if (bound) {
@@ -160,5 +160,5 @@ function parseOverlap(overlap, source, scope) {
     params.boundOrient = bound.orient;
   }
 
-  return ref(scope.add(Overlap(params)));
+  return ref(scope.add(Overlap(params, undefined, undefined, src)));
 }

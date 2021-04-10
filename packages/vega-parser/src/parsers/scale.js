@@ -145,7 +145,7 @@ function ordinalMultipleDomain(domain, scope, fields, src) {
     a = sort.op || 'count';
     v = sort.field ? aggrField(a, sort.field) : 'count';
     p.ops = [MULTIDOMAIN_SORT_OPS[a]];
-    p.fields = [scope.fieldRef(v)];
+    p.fields = [scope.fieldRef(v, undefined, src)];
     p.as = [v];
   }
   a = scope.add(Aggregate(p, undefined, undefined, src));
@@ -156,9 +156,9 @@ function ordinalMultipleDomain(domain, scope, fields, src) {
   // extract values for combined domain
   v = scope.add(Values({
     field: keyFieldRef,
-    sort:  scope.sortRef(sort),
+    sort:  scope.sortRef(sort, src),
     pulse: ref(c)
-  }));
+  }, undefined, undefined, src));
 
   return ref(v);
 }

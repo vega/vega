@@ -6,21 +6,21 @@ export default function(proj, scope) {
 
   for (const name in proj) {
     if (name === 'name') continue;
-    params[name] = parseParameter(proj[name], name, scope);
+    params[name] = parseParameter(proj[name], name, scope, proj);
   }
 
   // apply projection defaults from config
   for (const name in config) {
     if (params[name] == null) {
-      params[name] = parseParameter(config[name], name, scope);
+      params[name] = parseParameter(config[name], name, scope, proj);
     }
   }
 
-  scope.addProjection(proj.name, params);
+  scope.addProjection(proj.name, params, proj);
 }
 
-function parseParameter(_, name, scope) {
-  return isArray(_) ? _.map(_ => parseParameter(_, name, scope))
+function parseParameter(_, name, scope, src) {
+  return isArray(_) ? _.map(_ => parseParameter(_, name, scope, src))
     : !isObject(_) ? _
     : _.signal ? scope.signalRef(_.signal)
     : name === 'fit' ? _
