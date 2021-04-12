@@ -1967,9 +1967,11 @@ aggregate-error@^3.0.0:
     indent-string "^4.0.0"
 
 ajv-formats@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.0.1.tgz#16ae6250c8c51bd53a4fa4885ff29ac9a63d04cb"
-  integrity sha512-WOCTxWY8Q+JLBJxJ8fjizSuk72qaAlL3v+XtJakEger28WcevS5tBEH2eND9e7U42thp2Uc/DNDYw9riD+kTAA==
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.0.2.tgz#69875cb99d76c74be46e9c7a4444bc232354eba0"
+  integrity sha512-Brah4Uo5/U8v76c6euTwtjVFFaVishwnJrQBYpev1JRh4vjA1F4HY3UzQez41YUCszUCXKagG8v6eVRBHV1gkw==
+  dependencies:
+    ajv "^8.0.0"
 
 ajv@6.5.3:
   version "6.5.3"
@@ -1991,10 +1993,10 @@ ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.0.1:
-  version "8.0.5"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.0.5.tgz#f07d6fdeffcdbb80485570ce3f1bc845fcc812b9"
-  integrity sha512-RkiLa/AeJx7+9OvniQ/qeWu0w74A8DiPPBclQ6ji3ZQkv5KamO+QGpqmi7O4JIw3rHGUXZ6CoP9tsAkn3gyazg==
+ajv@^8.0.0, ajv@^8.0.1:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.1.0.tgz#45d5d3d36c7cdd808930cc3e603cf6200dbeb736"
+  integrity sha512-B/Sk2Ix7A36fs/ZkuGLIR86EdjbgR6fsAcbx9lOP/QBSXujDNbVmIS/U4Itz5k8fPFDeVZl/zQ/gJW4Jrq6XjQ==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
