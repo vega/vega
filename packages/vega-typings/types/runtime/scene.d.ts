@@ -1,4 +1,4 @@
-import { Operator } from "./dataflow";
+import { Operator } from './dataflow';
 
 export interface Scene {
   bounds: Bounds;
@@ -54,7 +54,7 @@ export interface SceneItem {
 
 export type SceneAxis = SceneItem & {
   orient: 'bottom' | 'left' | 'right' | 'top';
-}
+};
 
 export type SceneRect = SceneItem & {
   fill: string;
