@@ -52,6 +52,10 @@ export interface SceneItem {
   y: number;
 }
 
+export type SceneAxis = SceneItem & {
+  orient: 'bottom' | 'left' | 'right' | 'top';
+}
+
 export type SceneRect = SceneItem & {
   fill: string;
   height: number;
