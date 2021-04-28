@@ -128,7 +128,6 @@ Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaS
 ```html
 <head>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build-es5/vega.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}/build-es5/vega-lite.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}/build-es5/vega-embed.js"></script>
 </head>
 <body>
