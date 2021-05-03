@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [10, 12, 14, 15]
+        node: [12, 14, 15]
 
     name: Node ${{ matrix.node }}
 
