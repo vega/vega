@@ -3041,10 +3041,15 @@ d3-force@^2.1.1:
     d3-quadtree "1 - 2"
     d3-timer "1 - 2"
 
-"d3-format@1 - 2", d3-format@^2.0.0:
+"d3-format@1 - 2":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-2.0.0.tgz#a10bcc0f986c372b729ba447382413aabf5b0767"
   integrity sha512-Ab3S6XuE/Q+flY96HXT0jOXcM4EAClYFnRGY5zsjRGNy6qCYrQsMffs7cV5Q9xejb35zxW5hf/guKw34kvIKsA==
+
+d3-format@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-3.0.0.tgz#49971ce004d9969a2d6eb8385e3bac735a843a2f"
+  integrity sha512-vzHbrRFaD/Jx1zpiQWojO2Lvgmf7pIsA/D4b6ipd1hxBYzMKsZRsF3i+SWlHz8IpMF4epyKUdG+vhxEYUYB/1g==
 
 d3-geo-projection@^3.0.0:
   version "3.0.0"
