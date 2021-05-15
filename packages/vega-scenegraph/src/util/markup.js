@@ -69,11 +69,9 @@ function _serialize(m, node) {
   }
 
   if (node.hasChildNodes()) {
-    const children = node.childNodes,
-          n = children.length;
+    const children = node.childNodes;
 
-    for (let i=0; i<n; i++) {
-      const child = children[i];
+    for (const child of children) {
       child.nodeType === 3 // text node
         ? m.text(child.nodeValue)
         : _serialize(m, child);
