@@ -14,8 +14,7 @@ import {error, inherits, isArray} from 'vega-util';
  * @param {Array<Pulse>} pulses - The sub-pulses for this multi-pulse.
  */
 export default function MultiPulse(dataflow, stamp, pulses, encode) {
-  const p = this,
-        n = pulses.length;
+  const p = this;
   let c = 0;
 
   this.dataflow = dataflow;
@@ -24,8 +23,7 @@ export default function MultiPulse(dataflow, stamp, pulses, encode) {
   this.encode = encode || null;
   this.pulses = pulses;
 
-  for (let i = 0; i < n; ++i) {
-    const pulse = pulses[i];
+  for (const pulse of pulses) {
     if (pulse.stamp !== stamp) continue;
 
     if (pulse.fields) {
