@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: sunday
+      time: '23:00'
+      timezone: PST8PDT
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: 'vega'
+  - package-ecosystem: bundler
+    directory: '/site'
+    schedule:
+      interval: weekly
+      day: sunday
+      time: '23:00'
+      timezone: PST8PDT
+    open-pull-requests-limit: 10
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: sunday
+      time: '23:00'
+      timezone: PST8PDT
+    open-pull-requests-limit: 10
