@@ -49,21 +49,24 @@ function keys(objects) {
 }
 
 export default function(spec, scope) {
-  var config = scope.config,
-      style = config.style,
-      axis = config.axis,
-      band = scope.scaleType(spec.scale) === 'band' && config.axisBand,
-      orient = spec.orient,
-      xy, or, key;
+  var config = scope.config;
+  var style = config.style;
+  var axis = config.axis;
+  var band = scope.scaleType(spec.scale) === 'band' && config.axisBand;
+  var orient = spec.orient;
+  var xy;
+  var or;
+  var key;
 
   if (isSignal(orient)) {
     const xyKeys = keys([
             config.axisX, config.axisY
-          ]),
-          orientKeys = keys([
-            config.axisTop, config.axisBottom,
-            config.axisLeft, config.axisRight
           ]);
+
+    const orientKeys = keys([
+      config.axisTop, config.axisBottom,
+      config.axisLeft, config.axisRight
+    ]);
 
     xy = {};
     for (key of xyKeys) {

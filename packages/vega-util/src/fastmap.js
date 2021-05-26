@@ -3,8 +3,8 @@ import hasOwnProperty from './hasOwnProperty';
 const NULL = {};
 
 export default function(input) {
-  let obj = {},
-      test;
+  let obj = {};
+  let test;
 
   function has(key) {
     return hasOwnProperty(obj, key) && obj[key] !== NULL;

@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    bandScale = vega.scale('band');
+var tape = require('tape');
+var vega = require('../');
+var bandScale = vega.scale('band');
 
 tape('band.invert inverts single value', t => {
   const s = bandScale().domain(['foo', 'bar']);

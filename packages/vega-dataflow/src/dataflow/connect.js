@@ -7,8 +7,8 @@
  *   to the target operator.
  */
 export default function(target, sources) {
-  const targetRank = target.rank,
-        n = sources.length;
+  const targetRank = target.rank;
+  const n = sources.length;
 
   for (let i = 0; i < n; ++i) {
     if (targetRank < sources[i].rank) {

@@ -44,12 +44,11 @@ inherits(Wordcloud, Transform, {
     const mod = _.modified();
     if (!(mod || pulse.changed(pulse.ADD_REM) || Params.some(modp))) return;
 
-    const data = pulse.materialize(pulse.SOURCE).source,
-          layout = this.value,
-          as = _.as || Output;
-
-    let fontSize = _.fontSize || 14,
-        range;
+    const data = pulse.materialize(pulse.SOURCE).source;
+    const layout = this.value;
+    const as = _.as || Output;
+    let fontSize = _.fontSize || 14;
+    let range;
 
     isFunction(fontSize)
       ? (range = _.fontSizeRange)
@@ -57,10 +56,12 @@ inherits(Wordcloud, Transform, {
 
     // create font size scaling function as needed
     if (range) {
-      const fsize = fontSize,
-            sizeScale = scale('sqrt')()
-              .domain(extent(data, fsize))
-              .range(range);
+      const fsize = fontSize;
+
+      const sizeScale = scale('sqrt')()
+        .domain(extent(data, fsize))
+        .range(range);
+
       fontSize = x => sizeScale(fsize(x));
     }
 
@@ -85,10 +86,10 @@ inherits(Wordcloud, Transform, {
       .random(random)
       .layout();
 
-    const size = layout.size(),
-        dx = size[0] >> 1,
-        dy = size[1] >> 1,
-        n = words.length;
+    const size = layout.size();
+    const dx = size[0] >> 1;
+    const dy = size[1] >> 1;
+    const n = words.length;
 
     for (let i = 0, w, t; i<n; ++i) {
       w = words[i];

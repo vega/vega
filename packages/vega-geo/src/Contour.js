@@ -61,11 +61,13 @@ inherits(Contour, Transform, {
       return pulse.StopPropagation;
     }
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        contour = contours().smooth(_.smooth !== false),
-        values = _.values,
-        thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
-        size = _.size, grid, post;
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var contour = contours().smooth(_.smooth !== false);
+    var values = _.values;
+    var thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values);
+    var size = _.size;
+    var grid;
+    var post;
 
     if (!values) {
       values = pulse.materialize(pulse.SOURCE).source;

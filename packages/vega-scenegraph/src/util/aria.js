@@ -100,8 +100,8 @@ function ariaMark(mark) {
 
 function ariaGuide(mark, opt) {
   try {
-    const item = mark.items[0],
-          caption = opt.caption || (() => '');
+    const item = mark.items[0];
+    const caption = opt.caption || (() => '');
     return bundle(
       opt.role || GRAPHICS_SYMBOL,
       opt.desc,
@@ -117,14 +117,14 @@ function titleCaption(item) {
 }
 
 function axisCaption(item) {
-  const datum = item.datum,
-        orient = item.orient,
-        title = datum.title ? extractTitle(item) : null,
-        ctx = item.context,
-        scale = ctx.scales[datum.scale].value,
-        locale = ctx.dataflow.locale(),
-        type = scale.type,
-        xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
+  const datum = item.datum;
+  const orient = item.orient;
+  const title = datum.title ? extractTitle(item) : null;
+  const ctx = item.context;
+  const scale = ctx.scales[datum.scale].value;
+  const locale = ctx.dataflow.locale();
+  const type = scale.type;
+  const xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
 
   return `${xy}-axis`
     + (title ? ` titled '${title}'` : '')
@@ -133,14 +133,14 @@ function axisCaption(item) {
 }
 
 function legendCaption(item) {
-  const datum = item.datum,
-        title = datum.title ? extractTitle(item) : null,
-        type = `${datum.type || ''} legend`.trim(),
-        scales = datum.scales,
-        props = Object.keys(scales),
-        ctx = item.context,
-        scale = ctx.scales[scales[props[0]]].value,
-        locale = ctx.dataflow.locale();
+  const datum = item.datum;
+  const title = datum.title ? extractTitle(item) : null;
+  const type = `${datum.type || ''} legend`.trim();
+  const scales = datum.scales;
+  const props = Object.keys(scales);
+  const ctx = item.context;
+  const scale = ctx.scales[scales[props[0]]].value;
+  const locale = ctx.dataflow.locale();
 
   return capitalize(type)
     + (title ? ` titled '${title}'` : '')

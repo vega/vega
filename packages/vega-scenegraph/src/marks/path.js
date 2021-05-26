@@ -9,8 +9,8 @@ import {transformItem} from '../util/svg/transform';
 import {DegToRad} from '../util/constants';
 
 function attr(emit, item) {
-  var sx = item.scaleX || 1,
-      sy = item.scaleY || 1;
+  var sx = item.scaleX || 1;
+  var sy = item.scaleY || 1;
   if (sx !== 1 || sy !== 1) {
     emit('vector-effect', 'non-scaling-stroke');
   }
@@ -22,12 +22,12 @@ function path(context, item) {
   var path = item.path;
   if (path == null) return true;
 
-  var x = item.x || 0,
-      y = item.y || 0,
-      sx = item.scaleX || 1,
-      sy = item.scaleY || 1,
-      a = (item.angle || 0) * DegToRad,
-      cache = item.pathCache;
+  var x = item.x || 0;
+  var y = item.y || 0;
+  var sx = item.scaleX || 1;
+  var sy = item.scaleY || 1;
+  var a = (item.angle || 0) * DegToRad;
+  var cache = item.pathCache;
 
   if (!cache || cache.path !== path) {
     (item.pathCache = cache = pathParse(path)).path = path;

@@ -7,7 +7,10 @@ export function sampleNormal(mean, stdev) {
   mean = mean || 0;
   stdev = stdev == null ? 1 : stdev;
 
-  let x = 0, y = 0, rds, c;
+  let x = 0;
+  let y = 0;
+  let rds;
+  let c;
   if (nextSample === nextSample) {
     x = nextSample;
     nextSample = NaN;
@@ -36,8 +39,8 @@ export function cumulativeNormal(value, mean, stdev) {
   mean = mean || 0;
   stdev = stdev == null ? 1 : stdev;
 
-  const z = (value - mean) / stdev,
-        Z = Math.abs(z);
+  const z = (value - mean) / stdev;
+  const Z = Math.abs(z);
   let cd;
 
   if (Z > 37) {
@@ -87,7 +90,9 @@ function erfinv(x) {
   // commputed as (1.0 - x) * (1.0 + x),
   // it must NOT be simplified as 1.0 - x * x as this
   // would induce rounding errors near the boundaries +/-1
-  let w = - Math.log((1 - x) * (1 + x)), p;
+  let w = - Math.log((1 - x) * (1 + x));
+
+  let p;
 
   if (w < 6.25) {
       w -= 3.125;
@@ -162,7 +167,8 @@ function erfinv(x) {
 }
 
 export default function(mean, stdev) {
-  let mu, sigma;
+  let mu;
+  let sigma;
 
   const dist = {
     mean(_) {

@@ -1,12 +1,12 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    PNG = require('pngjs').PNG,
-    pixelmatch = require('pixelmatch'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
+var tape = require('tape');
+var fs = require('fs');
+var PNG = require('pngjs').PNG;
+var pixelmatch = require('pixelmatch');
+var loader = require('vega-loader').loader;
+var vega = require('../');
+var Bounds = vega.Bounds;
+var Renderer = vega.CanvasRenderer;
+var res = './test/resources/';
 
 const GENERATE = require('./resources/generate-tests');
 
@@ -268,7 +268,8 @@ tape('CanvasRenderer should skip empty item sets', t => {
     'symbol',
     'text'
   ];
-  var file = load('png/marks-empty.png'), image;
+  var file = load('png/marks-empty.png');
+  var image;
 
   for (let i=0; i<types.length; ++i) {
     scene.marktype = types[i];

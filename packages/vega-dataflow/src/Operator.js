@@ -4,12 +4,13 @@ import {array, error, id, isArray} from 'vega-util';
 
 let OP_ID = 0;
 
-const PULSE = 'pulse',
-      NO_PARAMS = new Parameters();
+const PULSE = 'pulse';
+const NO_PARAMS = new Parameters();
 
 // Boolean Flags
-const SKIP     = 1,
-      MODIFIED = 2;
+const SKIP     = 1;
+
+const MODIFIED = 2;
 
 /**
  * An Operator is a processing node in a dataflow graph.
@@ -114,10 +115,13 @@ Operator.prototype = {
    */
   parameters(params, react, initonly) {
     react = react !== false;
-    const argval = (this._argval = this._argval || new Parameters()),
-          argops = (this._argops = this._argops || []),
-          deps = [];
-    let name, value, n, i;
+    const argval = (this._argval = this._argval || new Parameters());
+    const argops = (this._argops = this._argops || []);
+    const deps = [];
+    let name;
+    let value;
+    let n;
+    let i;
 
     const add = (name, index, value) => {
       if (value instanceof Operator) {
@@ -164,9 +168,12 @@ Operator.prototype = {
    * @return {Parameters} A Parameters object to pass to the update function.
    */
   marshall(stamp) {
-    const argval = this._argval || NO_PARAMS,
-          argops = this._argops;
-    let item, i, op, mod;
+    const argval = this._argval || NO_PARAMS;
+    const argops = this._argops;
+    let item;
+    let i;
+    let op;
+    let mod;
 
     if (argops) {
       const n = argops.length;
@@ -195,7 +202,10 @@ Operator.prototype = {
    */
   detach() {
     const argops = this._argops;
-    let i, n, item, op;
+    let i;
+    let n;
+    let item;
+    let op;
 
     if (argops) {
       for (i = 0, n = argops.length; i < n; ++i) {
@@ -227,8 +237,8 @@ Operator.prototype = {
   evaluate(pulse) {
     const update = this._update;
     if (update) {
-      const params = this.marshall(pulse.stamp),
-            v = update.call(this, params, pulse);
+      const params = this.marshall(pulse.stamp);
+      const v = update.call(this, params, pulse);
 
       params.clear();
       if (v !== this.value) {

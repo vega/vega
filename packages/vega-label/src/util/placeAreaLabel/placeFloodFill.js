@@ -6,25 +6,35 @@ const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
-  const width = $.width,
-      height = $.height,
-      bm0 = bitmaps[0], // where labels have been placed
-      bm1 = bitmaps[1], // area outlines
-      bm2 = $.bitmap(); // flood-fill visitations
+  const width = $.width;
+  const height = $.height;
+  const bm0 = bitmaps[0]; // where labels have been placed
+  const bm1 = bitmaps[1]; // area outlines
+  const bm2 = $.bitmap(); // flood-fill visitations
 
   // try to place a label within an input area mark
   return function(d) {
-    const items = d.datum.datum.items[markIndex].items, // area points
-          n = items.length, // number of points
-          textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum, d.datum.text), // label height
-          stack = []; // flood fill stack
-
-    let maxSize = avoidBaseMark ? textHeight : 0,
-        labelPlaced = false,
-        labelPlaced2 = false,
-        maxAreaWidth = 0,
-        x1, x2, y1, y2, x, y, _x, _y, lo, hi, mid, areaWidth;
+    const items = d.datum.datum.items[markIndex].items; // area points
+    const n = items.length; // number of points
+    const textHeight = d.datum.fontSize; // label width
+    const textWidth = textMetrics.width(d.datum, d.datum.text); // label height
+    const stack = []; // flood fill stack
+    let maxSize = avoidBaseMark ? textHeight : 0;
+    let labelPlaced = false;
+    let labelPlaced2 = false;
+    let maxAreaWidth = 0;
+    let x1;
+    let x2;
+    let y1;
+    let y2;
+    let x;
+    let y;
+    let _x;
+    let _y;
+    let lo;
+    let hi;
+    let mid;
+    let areaWidth;
 
     // for each area sample point
     for (let i=0; i<n; ++i) {

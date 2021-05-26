@@ -29,8 +29,8 @@ inherits(Sequence, Transform, {
   transform(_, pulse) {
     if (this.value && !_.modified()) return;
 
-    const out = pulse.materialize().fork(pulse.MOD),
-          as = _.as || 'data';
+    const out = pulse.materialize().fork(pulse.MOD);
+    const as = _.as || 'data';
 
     out.rem = this.value ? pulse.rem.concat(this.value) : pulse.rem;
 

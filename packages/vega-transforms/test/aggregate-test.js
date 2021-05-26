@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Aggregate = tx.aggregate;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Aggregate = tx.aggregate;
 
 tape('Aggregate aggregates tuples', t => {
   const data = [
@@ -12,17 +12,19 @@ tape('Aggregate aggregates tuples', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Aggregate, {
-        groupby: [key],
-        fields: [val, val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max', 'product'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+
+  var agg = df.add(Aggregate, {
+    groupby: [key],
+    fields: [val, val, val, val, val],
+    ops: ['count', 'sum', 'min', 'max', 'product'],
+    pulse: col
+  });
+
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -96,9 +98,13 @@ tape('Aggregate handles count aggregates', t => {
     {foo:4, bar:5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
-      df, col, agg, out, d;
+  var foo = util.field('foo');
+  var bar = util.field('bar');
+  var df;
+  var col;
+  var agg;
+  var out;
+  var d;
 
   // counts only
   df = new vega.Dataflow();
@@ -146,17 +152,19 @@ tape('Aggregate properly handles empty aggregation cells', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Aggregate, {
-        groupby: [key],
-        fields: [val, val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max', 'product'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+
+  var agg = df.add(Aggregate, {
+    groupby: [key],
+    fields: [val, val, val, val, val],
+    ops: ['count', 'sum', 'min', 'max', 'product'],
+    pulse: col
+  });
+
+  var out = df.add(Collect, {pulse: agg});
 
   // -- add data
   df.pulse(col, changeset().insert(data)).run();
@@ -194,8 +202,12 @@ tape('Aggregate handles distinct aggregates', t => {
     {foo:0}
   ];
 
-  var foo = util.field('foo'),
-      df, col, agg, out, d;
+  var foo = util.field('foo');
+  var df;
+  var col;
+  var agg;
+  var out;
+  var d;
 
   // counts only
   df = new vega.Dataflow();
@@ -231,19 +243,21 @@ tape('Aggregate handles cross-product', t => {
     {a: 1, b: 3}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Aggregate, {
-        groupby: [a, b],
-        cross: true,
-        pulse: col
-      }),
-      out = df.add(Collect, {
-        sort: function(u, v) { return (u.a - v.a) || (u.b - v.b); },
-        pulse: agg
-      });
+  var a = util.field('a');
+  var b = util.field('b');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+
+  var agg = df.add(Aggregate, {
+    groupby: [a, b],
+    cross: true,
+    pulse: col
+  });
+
+  var out = df.add(Collect, {
+    sort: function(u, v) { return (u.a - v.a) || (u.b - v.b); },
+    pulse: agg
+  });
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -327,16 +341,18 @@ tape('Aggregate handles empty/invalid data', t => {
   ];
   const res = [4, 3, 0, 0]; // higher indices 'undefined'
 
-  var v = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Aggregate, {
-        fields: ops.map(() => v),
-        ops: ops,
-        as: ops,
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var v = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+
+  var agg = df.add(Aggregate, {
+    fields: ops.map(() => v),
+    ops: ops,
+    as: ops,
+    pulse: col
+  });
+
+  var out = df.add(Collect, {pulse: agg});
 
   df.pulse(
     col,

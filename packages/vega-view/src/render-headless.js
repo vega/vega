@@ -8,12 +8,12 @@ import {error} from 'vega-util';
  * @return {Promise} - A Promise that resolves to a renderer.
  */
 export default async function(view, type, scaleFactor, opt) {
-  const module = renderModule(type),
-        ctr = module && module.headless;
+ const module = renderModule(type);
+ const ctr = module && module.headless;
 
-  if (!ctr) error('Unrecognized renderer type: ' + type);
+ if (!ctr) error('Unrecognized renderer type: ' + type);
 
-  await view.runAsync();
-  return initializeRenderer(view, null, null, ctr, scaleFactor, opt)
-    .renderAsync(view._scenegraph.root);
+ await view.runAsync();
+ return initializeRenderer(view, null, null, ctr, scaleFactor, opt)
+   .renderAsync(view._scenegraph.root);
 }

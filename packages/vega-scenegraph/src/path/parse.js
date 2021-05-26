@@ -1,19 +1,26 @@
 // Path parsing and rendering code adapted from fabric.js -- Thanks!
-const cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-      regexp = [
-        /([MLHVCSQTAZmlhvcsqtaz])/g,
-        /###/,
-        /(\.\d+)(\.\d)/g,
-        /(\d)([-+])/g,
-        /\s|,|###/
-      ];
+const cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 };
+
+const regexp = [
+  /([MLHVCSQTAZmlhvcsqtaz])/g,
+  /###/,
+  /(\.\d+)(\.\d)/g,
+  /(\d)([-+])/g,
+  /\s|,|###/
+];
 
 export default function(pathstr) {
   const result = [];
-  let curr,
-      chunks,
-      parsed, param,
-      cmd, len, i, j, n, m;
+  let curr;
+  let chunks;
+  let parsed;
+  let param;
+  let cmd;
+  let len;
+  let i;
+  let j;
+  let n;
+  let m;
 
   // First, break path into command sequence
   const path = pathstr

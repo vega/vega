@@ -95,8 +95,9 @@ function getField(_, ctx) {
 function getCompare(_, ctx) {
   // As of Vega 5.5.3, $tupleid sort is no longer used.
   // Keep here for now for backwards compatibility.
-  const k = 'c:' + _.$compare + '_' + _.$order,
-        c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
+  const k = 'c:' + _.$compare + '_' + _.$order;
+
+  const c = array(_.$compare).map(_ => (_ && _.$tupleid) ? tupleid : _);
   return ctx.fn[k] || (ctx.fn[k] = compare(c, _.$order, ctx.expr.codegen));
 }
 
@@ -104,8 +105,8 @@ function getCompare(_, ctx) {
  * Resolve an encode operator reference.
  */
 function getEncode(_, ctx) {
-  const spec = _.$encode,
-        encode = {};
+  const spec = _.$encode;
+  const encode = {};
 
   for (const name in spec) {
     const enc = spec[name];
@@ -128,9 +129,9 @@ function getContext(_, ctx) {
 function getSubflow(_, ctx) {
   const spec = _.$subflow;
   return function(dataflow, key, parent) {
-    const subctx = ctx.fork().parse(spec),
-          op = subctx.get(spec.operators[0].id),
-          p = subctx.signals.parent;
+    const subctx = ctx.fork().parse(spec);
+    const op = subctx.get(spec.operators[0].id);
+    const p = subctx.signals.parent;
     if (p) p.set(parent);
     op.detachSubflow = () => ctx.detach(subctx);
     return op;

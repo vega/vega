@@ -60,8 +60,8 @@ const hasBounds = item => {
 };
 
 const boundTest = (scale, orient, tolerance) => {
-  var range = scale.range(),
-      b = new Bounds();
+  var range = scale.range();
+  var b = new Bounds();
 
   if (orient === Top || orient === Bottom) {
     b.set(range[0], -Infinity, range[1], +Infinity);
@@ -86,11 +86,11 @@ const reflow = (pulse, _) =>
 
 inherits(Overlap, Transform, {
   transform(_, pulse) {
-    const reduce = methods[_.method] || methods.parity,
-          sep = _.separation || 0;
-
-    let source = pulse.materialize(pulse.SOURCE).source,
-        items, test;
+    const reduce = methods[_.method] || methods.parity;
+    const sep = _.separation || 0;
+    let source = pulse.materialize(pulse.SOURCE).source;
+    let items;
+    let test;
 
     if (!source || !source.length) return;
 

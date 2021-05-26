@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    {field, truthy} = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Facet = tx.facet;
+var tape = require('tape');
+var {field, truthy} = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Facet = tx.facet;
 
 tape('Facet facets tuples', t => {
   const data = [
@@ -28,10 +28,10 @@ tape('Facet facets tuples', t => {
     };
   }
 
-  var key = field('k'),
-      df = new vega.Dataflow(),
-      source = df.add(Collect),
-      facet = df.add(Facet, {subflow:subflow, key:key, pulse:source});
+  var key = field('k');
+  var df = new vega.Dataflow();
+  var source = df.add(Collect);
+  var facet = df.add(Facet, {subflow:subflow, key:key, pulse:source});
 
   // -- test adds
   df.pulse(source, changeset()
@@ -133,11 +133,11 @@ tape('Facet handles key parameter change', t => {
     };
   }
 
-  var key1 = field('k1'),
-      key2 = field('k2'),
-      df = new vega.Dataflow(),
-      source = df.add(Collect),
-      facet = df.add(Facet, {subflow:subflow, key:key1, pulse:source});
+  var key1 = field('k1');
+  var key2 = field('k2');
+  var df = new vega.Dataflow();
+  var source = df.add(Collect);
+  var facet = df.add(Facet, {subflow:subflow, key:key1, pulse:source});
 
   // -- add data
   df.pulse(source, changeset().insert(data)).run();
@@ -152,10 +152,10 @@ tape('Facet handles key parameter change', t => {
 });
 
 tape('Facet key cache does not leak memory', t => {
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      ft = df.add(Facet, {subflow:subflow, key:field('key'), pulse:c0}),
-      N = df.cleanThreshold + 1;
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
+  var ft = df.add(Facet, {subflow:subflow, key:field('key'), pulse:c0});
+  var N = df.cleanThreshold + 1;
 
   function subflow(df) {
     return df.add(Collect);

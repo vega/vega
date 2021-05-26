@@ -16,22 +16,25 @@ function axisIndices(datum) {
   ];
 }
 
-export function axisLayout(view, axis, width, height) {  
-  var item = axis.items[0],
-      datum = item.datum,
-      delta = item.translate != null ? item.translate : 0.5,
-      orient = item.orient,
-      indices = axisIndices(datum),
-      range = item.range,
-      offset = item.offset,
-      position = item.position,
-      minExtent = item.minExtent,
-      maxExtent = item.maxExtent,
-      title = datum.title && item.items[indices[2]].items[0],
-      titlePadding = item.titlePadding,
-      bounds = item.bounds,
-      dl = title && multiLineOffset(title),
-      x = 0, y = 0, i, s;
+export function axisLayout(view, axis, width, height) {
+  var item = axis.items[0];
+  var datum = item.datum;
+  var delta = item.translate != null ? item.translate : 0.5;
+  var orient = item.orient;
+  var indices = axisIndices(datum);
+  var range = item.range;
+  var offset = item.offset;
+  var position = item.position;
+  var minExtent = item.minExtent;
+  var maxExtent = item.maxExtent;
+  var title = datum.title && item.items[indices[2]].items[0];
+  var titlePadding = item.titlePadding;
+  var bounds = item.bounds;
+  var dl = title && multiLineOffset(title);
+  var x = 0;
+  var y = 0;
+  var i;
+  var s;
 
   tempBounds.clear().union(bounds);
   bounds.clear();
@@ -91,7 +94,8 @@ function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
 
   if (title.auto) {
     const v = sign * (offset + dl + pad);
-    let dx = 0, dy = 0;
+    let dx = 0;
+    let dy = 0;
 
     view.dirty(title);
     isYAxis

@@ -10,12 +10,12 @@ export default function(index, i, query) {
     size:    index.size,
 
     onAdd(added, curr) {
-      const dim = this,
-            range = dim.bisect(dim.range, added.value),
-            idx = added.index,
-            lo = range[0],
-            hi = range[1],
-            n1 = idx.length;
+      const dim = this;
+      const range = dim.bisect(dim.range, added.value);
+      const idx = added.index;
+      const lo = range[0];
+      const hi = range[1];
+      const n1 = idx.length;
       let i;
 
       for (i=0;  i<lo; ++i) curr[idx[i]] |= bit;

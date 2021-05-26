@@ -14,14 +14,14 @@ import {AxisTicks, Collect} from '../transforms';
 import {ref, value} from '../util';
 
 export default function(spec, scope) {
-  const config = axisConfig(spec, scope),
-        encode = spec.encode || {},
-        axisEncode = encode.axis || {},
-        name = axisEncode.name || undefined,
-        interactive = axisEncode.interactive,
-        style = axisEncode.style,
-        _ = lookup(spec, config),
-        band = tickBand(_);
+  const config = axisConfig(spec, scope);
+  const encode = spec.encode || {};
+  const axisEncode = encode.axis || {};
+  const name = axisEncode.name || undefined;
+  const interactive = axisEncode.interactive;
+  const style = axisEncode.style;
+  const _ = lookup(spec, config);
+  const band = tickBand(_);
 
   // single-element data source for axis group
   const datum = {

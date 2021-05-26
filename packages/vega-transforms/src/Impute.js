@@ -50,7 +50,8 @@ Impute.Definition = {
 };
 
 function getValue(_) {
-  var m = _.method || Methods.value, v;
+  var m = _.method || Methods.value;
+  var v;
 
   if (Methods[m] == null) {
     error('Unrecognized imputation method: ' + m);
@@ -69,17 +70,26 @@ function getField(_) {
 
 inherits(Impute, Transform, {
   transform(_, pulse) {
-    var out = pulse.fork(pulse.ALL),
-        impute = getValue(_),
-        field = getField(_),
-        fName = accessorName(_.field),
-        kName = accessorName(_.key),
-        gNames = (_.groupby || []).map(accessorName),
-        groups = partition(pulse.source, _.groupby, _.key, _.keyvals),
-        curr = [],
-        prev = this.value,
-        m = groups.domain.length,
-        group, value, gVals, kVal, g, i, j, l, n, t;
+    var out = pulse.fork(pulse.ALL);
+    var impute = getValue(_);
+    var field = getField(_);
+    var fName = accessorName(_.field);
+    var kName = accessorName(_.key);
+    var gNames = (_.groupby || []).map(accessorName);
+    var groups = partition(pulse.source, _.groupby, _.key, _.keyvals);
+    var curr = [];
+    var prev = this.value;
+    var m = groups.domain.length;
+    var group;
+    var value;
+    var gVals;
+    var kVal;
+    var g;
+    var i;
+    var j;
+    var l;
+    var n;
+    var t;
 
     for (g=0, l=groups.length; g<l; ++g) {
       group = groups[g];
@@ -110,12 +120,19 @@ inherits(Impute, Transform, {
 });
 
 function partition(data, groupby, key, keyvals) {
-  var get = f => f(t),
-      groups = [],
-      domain = keyvals ? keyvals.slice() : [],
-      kMap = {},
-      gMap = {}, gVals, gKey,
-      group, i, j, k, n, t;
+  var get = f => f(t);
+  var groups = [];
+  var domain = keyvals ? keyvals.slice() : [];
+  var kMap = {};
+  var gMap = {};
+  var gVals;
+  var gKey;
+  var group;
+  var i;
+  var j;
+  var k;
+  var n;
+  var t;
 
   domain.forEach((k, i) => kMap[k] = i + 1);
 

@@ -39,9 +39,9 @@ const typeList = [
 export function inferType(values, field) {
   if (!values || !values.length) return 'unknown';
 
-  const n = values.length,
-        m = typeTests.length,
-        a = typeTests.map((_, i) => i + 1);
+  const n = values.length;
+  const m = typeTests.length;
+  const a = typeTests.map((_, i) => i + 1);
 
   for (let i = 0, t = 0, j, value; i < n; ++i) {
     value = field ? values[i][field] : values[i];

@@ -1,9 +1,9 @@
-const {exec} = require('child_process'),
-      PNG = require('pngjs').PNG,
-      pixelmatch = require('pixelmatch'),
-      {readFileSync} = require('fs'),
-      rimraf = require('rimraf'),
-      res = 'test/resources/';
+const {exec} = require('child_process');
+const PNG = require('pngjs').PNG;
+const pixelmatch = require('pixelmatch');
+const {readFileSync} = require('fs');
+const rimraf = require('rimraf');
+const res = 'test/resources/';
 
 const GENERATE = false;
 

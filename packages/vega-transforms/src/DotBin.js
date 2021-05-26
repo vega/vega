@@ -42,17 +42,21 @@ inherits(DotBin, Transform, {
       return pulse; // early exit
     }
 
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(pulse.source, _.groupby, identity),
-          smooth = _.smooth || false,
-          field = _.field,
-          step = _.step || autostep(source, field),
-          sort = stableCompare((a, b) => field(a) - field(b)),
-          as = _.as || Output,
-          n = groups.length;
+    const source = pulse.materialize(pulse.SOURCE).source;
+    const groups = partition(pulse.source, _.groupby, identity);
+    const smooth = _.smooth || false;
+    const field = _.field;
+    const step = _.step || autostep(source, field);
+    const sort = stableCompare((a, b) => field(a) - field(b));
+    const as = _.as || Output;
+    const n = groups.length;
 
     // compute dotplot bins per group
-    let min = Infinity, max = -Infinity, i = 0, j;
+    let min = Infinity;
+
+    let max = -Infinity;
+    let i = 0;
+    let j;
     for (; i<n; ++i) {
       const g = groups[i].sort(sort);
       j = -1;

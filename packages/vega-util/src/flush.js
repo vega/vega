@@ -4,9 +4,9 @@ export default function(range, value, threshold, left, right, center) {
   if (!threshold && threshold !== 0) return center;
 
   const t = +threshold;
-  let a = range[0],
-      b = peek(range),
-      l;
+  let a = range[0];
+  let b = peek(range);
+  let l;
 
   // swap endpoints if range is reversed
   if (b < a) {

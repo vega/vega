@@ -1,27 +1,27 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Nest = require('../').nest;
+var tape = require('tape');
+var field = require('vega-util').field;
+var vega = require('vega-dataflow');
+var Collect = require('vega-transforms').collect;
+var Nest = require('../').nest;
 
 function toObject(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
 tape('Nest tuples', t => {
-  var dataA = {id: 'A', job: 'Doctor'},
-      nodeA = {key: dataA.job, values: [dataA]},
-      childA = {data: dataA, height: 0, depth: 2};
-
-  var dataB = {id: 'B', job: 'Lawyer'},
-      nodeB = {key: dataB.job, values: [dataB]},
-      childB = {data: dataB, height: 0, depth: 2};
+  var dataA = {id: 'A', job: 'Doctor'};
+  var nodeA = {key: dataA.job, values: [dataA]};
+  var childA = {data: dataA, height: 0, depth: 2};
+  var dataB = {id: 'B', job: 'Lawyer'};
+  var nodeB = {key: dataB.job, values: [dataB]};
+  var childB = {data: dataB, height: 0, depth: 2};
 
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  var df = new vega.Dataflow();
+
+  var collect = df.add(Collect);
+  var nest = df.add(Nest, {keys: [field('job')], pulse: collect});
+  var out = df.add(Collect, {pulse: nest});
 
   // -- test adds
   df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
@@ -86,10 +86,11 @@ tape('Nest tuples', t => {
 
 tape('Nest empty data', t => {
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  var df = new vega.Dataflow();
+
+  var collect = df.add(Collect);
+  var nest = df.add(Nest, {keys: [field('job')], pulse: collect});
+  var out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, vega.changeset().insert([])).run();
   t.equal(out.value.length, 0);
