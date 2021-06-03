@@ -1,9 +1,13 @@
 export default function(scale) {
   return function(_) {
     const range = scale.range();
-    let lo = _[0],
-        hi = _[1],
-        min = -1, max, t, i, n;
+    let lo = _[0];
+    let hi = _[1];
+    let min = -1;
+    let max;
+    let t;
+    let i;
+    let n;
 
     if (hi < lo) {
       t = lo;

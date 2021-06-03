@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.SVGRenderer,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
+var tape = require('tape');
+var fs = require('fs');
+var loader = require('vega-loader').loader;
+var vega = require('../');
+var Bounds = vega.Bounds;
+var Renderer = vega.SVGRenderer;
+var jsdom = require('jsdom');
+var doc = (new jsdom.JSDOM()).window.document;
 
 const res = './test/resources/';
 
@@ -290,7 +290,9 @@ tape('SVGRenderer should handle empty item sets', t => {
     'symbol',
     'text'
   ];
-  var scene, file, svg;
+  var scene;
+  var file;
+  var svg;
 
   for (let i=0; i<types.length; ++i) {
     scene = {marktype:types[i], items:[]};

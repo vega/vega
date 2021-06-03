@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Regression = require('../').regression,
-    changeset = vega.changeset;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var Collect = require('vega-transforms').collect;
+var Regression = require('../').regression;
+var changeset = vega.changeset;
 
 tape('Regression fits linear regression model', t => {
   const data = [
@@ -11,19 +11,19 @@ tape('Regression fits linear regression model', t => {
     {k: 'b', u: 3, v: 2}, {k: 'b', u: 2, v: 1}
   ];
 
-  var k = util.field('k'),
-      u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      reg = df.add(Regression, {
-        method: 'linear',
-        groupby: [k],
-        x: u,
-        y: v,
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: reg});
+  var k = util.field('k');
+  var u = util.field('u');
+  var v = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var reg = df.add(Regression, {
+    method: 'linear',
+    groupby: [k],
+    x: u,
+    y: v,
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: reg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -50,13 +50,13 @@ tape('Regression fits linear regression model', t => {
 });
 
 tape('Regression fits quadratic regression model', t => {
-  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
-      x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      reg = df.add(Regression, {method: 'quad', x: x, y: y, pulse: col}),
-      out = df.add(Collect, {pulse: reg});
+  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x}));
+  var x = util.field('x');
+  var y = util.field('y');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var reg = df.add(Regression, {method: 'quad', x: x, y: y, pulse: col});
+  var out = df.add(Collect, {pulse: reg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -70,13 +70,13 @@ tape('Regression fits quadratic regression model', t => {
 });
 
 tape('Regression outputs model parameters', t => {
-  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
-      x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      reg = df.add(Regression, {method: 'quad', params: true, x: x, y: y, pulse: col}),
-      out = df.add(Collect, {pulse: reg});
+  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x}));
+  var x = util.field('x');
+  var y = util.field('y');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var reg = df.add(Regression, {method: 'quad', params: true, x: x, y: y, pulse: col});
+  var out = df.add(Collect, {pulse: reg});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();

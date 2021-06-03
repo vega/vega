@@ -19,23 +19,23 @@ function timeMultiFormat(format, interval, spec) {
     error(`Invalid time multi-format specifier: ${spec}`);
   }
 
-  const second = interval(SECONDS),
-        minute = interval(MINUTES),
-        hour = interval(HOURS),
-        day = interval(DATE),
-        week = interval(WEEK),
-        month = interval(MONTH),
-        quarter = interval(QUARTER),
-        year = interval(YEAR),
-        L = format(spec[MILLISECONDS] || '.%L'),
-        S = format(spec[SECONDS] || ':%S'),
-        M = format(spec[MINUTES] || '%I:%M'),
-        H = format(spec[HOURS] || '%I %p'),
-        d = format(spec[DATE] || spec[DAY] || '%a %d'),
-        w = format(spec[WEEK] || '%b %d'),
-        m = format(spec[MONTH] || '%B'),
-        q = format(spec[QUARTER] || '%B'),
-        y = format(spec[YEAR] || '%Y');
+  const second = interval(SECONDS);
+  const minute = interval(MINUTES);
+  const hour = interval(HOURS);
+  const day = interval(DATE);
+  const week = interval(WEEK);
+  const month = interval(MONTH);
+  const quarter = interval(QUARTER);
+  const year = interval(YEAR);
+  const L = format(spec[MILLISECONDS] || '.%L');
+  const S = format(spec[SECONDS] || ':%S');
+  const M = format(spec[MINUTES] || '%I:%M');
+  const H = format(spec[HOURS] || '%I %p');
+  const d = format(spec[DATE] || spec[DAY] || '%a %d');
+  const w = format(spec[WEEK] || '%b %d');
+  const m = format(spec[MONTH] || '%B');
+  const q = format(spec[QUARTER] || '%B');
+  const y = format(spec[YEAR] || '%Y');
 
   return date => (
     second(date) < date ? L :
@@ -48,8 +48,8 @@ function timeMultiFormat(format, interval, spec) {
 }
 
 function timeLocale(locale) {
-  const timeFormat = memoize(locale.format),
-        utcFormat = memoize(locale.utcFormat);
+  const timeFormat = memoize(locale.format);
+  const utcFormat = memoize(locale.utcFormat);
 
   return {
     timeFormat: spec => isString(spec)

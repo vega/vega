@@ -4,16 +4,16 @@ import {WindowOp, WindowOps} from './WindowOps';
 import {accessorFields, accessorName, array, error, hasOwnProperty} from 'vega-util';
 
 export default function WindowState(_) {
-  const ops = array(_.ops),
-        fields = array(_.fields),
-        params = array(_.params),
-        as = array(_.as),
-        outputs = this.outputs = [],
-        windows = this.windows = [],
-        inputs = {},
-        map = {},
-        counts = [],
-        measures = [];
+  const ops = array(_.ops);
+  const fields = array(_.fields);
+  const params = array(_.params);
+  const as = array(_.as);
+  const outputs = this.outputs = [];
+  const windows = this.windows = [];
+  const inputs = {};
+  const map = {};
+  const counts = [];
+  const measures = [];
 
   let countOnly = true;
 
@@ -23,9 +23,9 @@ export default function WindowState(_) {
   visitInputs(_.sort);
 
   ops.forEach((op, i) => {
-    const field = fields[i],
-          mname = accessorName(field),
-          name = measureName(op, mname, as[i]);
+    const field = fields[i];
+    const mname = accessorName(field);
+    const name = measureName(op, mname, as[i]);
 
     visitInputs(field);
     outputs.push(name);
@@ -71,10 +71,10 @@ prototype.init = function() {
 };
 
 prototype.update = function(w, t) {
-  const cell = this.cell,
-        wind = this.windows,
-        data = w.data,
-        m = wind && wind.length;
+  const cell = this.cell;
+  const wind = this.windows;
+  const data = w.data;
+  const m = wind && wind.length;
   let j;
 
   if (cell) {
@@ -96,9 +96,9 @@ function cell(measures, counts, countOnly) {
   };
 
   if (!countOnly) {
-    var n = measures.length,
-        a = cell.agg = Array(n),
-        i = 0;
+    var n = measures.length;
+    var a = cell.agg = Array(n);
+    var i = 0;
     for (; i<n; ++i) a[i] = new measures[i](cell);
   }
 
@@ -125,7 +125,8 @@ function cell(measures, counts, countOnly) {
   };
 
   cell.set = function(t) {
-    let i, n;
+    let i;
+    let n;
 
     // consolidate stored values
     if (store) store.values();

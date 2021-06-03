@@ -10,8 +10,8 @@ import parseAxis from './axis';
 import {array} from 'vega-util';
 
 export default function(spec, scope, preprocessed) {
-  const signals = array(spec.signals),
-        scales = array(spec.scales);
+  const signals = array(spec.signals);
+  const scales = array(spec.scales);
 
   // parse signal definitions, if not already preprocessed
   if (!preprocessed) signals.forEach(_ => parseSignal(_, scope));

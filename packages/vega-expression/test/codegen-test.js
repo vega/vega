@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 function regexEqual(x, y) {
   return (x instanceof RegExp) && (y instanceof RegExp) &&
@@ -218,8 +218,8 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('test(/ain/, "france")'), /ain/.test('france'));
 
   // should eval datetime functions
-  var d = new Date(2001,1,1),
-      u = Date.UTC(2009, 9, 1, 10);
+  var d = new Date(2001,1,1);
+  var u = Date.UTC(2009, 9, 1, 10);
 
   t.equal(Math.abs(Date.now() - evaluate('now()')) <= 5, true);
   t.equal(evaluate('+datetime(2001,1,1)'), +d);

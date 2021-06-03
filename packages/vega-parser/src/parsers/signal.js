@@ -1,7 +1,7 @@
 import {error, stringValue} from 'vega-util';
 
-const OUTER = 'outer',
-      OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
+const OUTER = 'outer';
+const OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];
 
 function outerError(prefix, name) {
   error(prefix + ' for "outer" push: ' + stringValue(name));

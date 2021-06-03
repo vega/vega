@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('../').collect,
-    changeset = vega.changeset;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var Collect = require('../').collect;
+var changeset = vega.changeset;
 
 tape('Collect collects tuples', t => {
   const data = [
@@ -11,9 +11,9 @@ tape('Collect collects tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
-      so = df.add(null),
-      c0 = df.add(Collect, {sort:so});
+  var df = new vega.Dataflow();
+  var so = df.add(null);
+  var c0 = df.add(Collect, {sort:so});
 
   df.run(); // initialize
   t.equal(c0.value.length, 0);

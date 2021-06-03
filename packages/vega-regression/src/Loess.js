@@ -33,12 +33,12 @@ inherits(Loess, Transform, {
     const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition(source, _.groupby),
-            names = (_.groupby || []).map(accessorName),
-            m = names.length,
-            as = _.as || [accessorName(_.x), accessorName(_.y)],
-            values = [];
+      const source = pulse.materialize(pulse.SOURCE).source;
+      const groups = partition(source, _.groupby);
+      const names = (_.groupby || []).map(accessorName);
+      const m = names.length;
+      const as = _.as || [accessorName(_.x), accessorName(_.y)];
+      const values = [];
 
       groups.forEach(g => {
         regressionLoess(g, _.x, _.y, _.bandwidth || 0.3).forEach(p => {

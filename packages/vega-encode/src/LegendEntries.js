@@ -34,17 +34,21 @@ inherits(LegendEntries, Transform, {
       return pulse.StopPropagation;
     }
 
-    var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        items = this.value,
-        type  = _.type || SymbolLegend,
-        scale = _.scale,
-        limit = +_.limit,
-        count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        lskip = !!_.values || type === SymbolLegend,
-        format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
-        values = _.values || labelValues(scale, count),
-        domain, fraction, size, offset, ellipsis;
+    var locale = pulse.dataflow.locale();
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var items = this.value;
+    var type  = _.type || SymbolLegend;
+    var scale = _.scale;
+    var limit = +_.limit;
+    var count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep);
+    var lskip = !!_.values || type === SymbolLegend;
+    var format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip);
+    var values = _.values || labelValues(scale, count);
+    var domain;
+    var fraction;
+    var size;
+    var offset;
+    var ellipsis;
 
     if (items) out.rem = items;
 

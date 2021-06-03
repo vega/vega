@@ -288,8 +288,10 @@ inherits(View, Dataflow, {
   },
 
   removeEventListener(type, handler) {
-    var handlers = this._handler.handlers(type),
-        i = handlers.length, h, t;
+    var handlers = this._handler.handlers(type);
+    var i = handlers.length;
+    var h;
+    var t;
 
     // search registered handlers, remove if match found
     while (--i >= 0) {
@@ -315,8 +317,8 @@ inherits(View, Dataflow, {
   },
 
   removeResizeListener(handler) {
-    var l = this._resizeListeners,
-        i = l.indexOf(handler);
+    var l = this._resizeListeners;
+    var i = l.indexOf(handler);
     if (i >= 0) {
       l.splice(i, 1);
     }

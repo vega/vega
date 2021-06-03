@@ -2,22 +2,22 @@ import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, WEEK, YEAR} from './
 import {span} from 'vega-util';
 import {bisector, tickStep} from 'd3-array';
 
-const durationSecond = 1000,
-      durationMinute = durationSecond * 60,
-      durationHour = durationMinute * 60,
-      durationDay = durationHour * 24,
-      durationWeek = durationDay * 7,
-      durationMonth = durationDay * 30,
-      durationYear = durationDay * 365;
+const durationSecond = 1000;
+const durationMinute = durationSecond * 60;
+const durationHour = durationMinute * 60;
+const durationDay = durationHour * 24;
+const durationWeek = durationDay * 7;
+const durationMonth = durationDay * 30;
+const durationYear = durationDay * 365;
 
-const Milli   = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS],
-      Seconds = Milli.slice(0, -1),
-      Minutes = Seconds.slice(0, -1),
-      Hours   = Minutes.slice(0, -1),
-      Day     = Hours.slice(0, -1),
-      Week    = [YEAR, WEEK],
-      Month   = [YEAR, MONTH],
-      Year    = [YEAR];
+const Milli   = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS];
+const Seconds = Milli.slice(0, -1);
+const Minutes = Seconds.slice(0, -1);
+const Hours   = Minutes.slice(0, -1);
+const Day     = Hours.slice(0, -1);
+const Week    = [YEAR, WEEK];
+const Month   = [YEAR, MONTH];
+const Year    = [YEAR];
 
 const intervals = [
   [Seconds,  1,      durationSecond],
@@ -40,12 +40,13 @@ const intervals = [
 ];
 
 export default function(opt) {
-  const ext = opt.extent,
-        max = opt.maxbins || 40,
-        target = Math.abs(span(ext)) / max;
+  const ext = opt.extent;
+  const max = opt.maxbins || 40;
+  const target = Math.abs(span(ext)) / max;
 
-  let i = bisector(i => i[2]).right(intervals, target),
-      units, step;
+  let i = bisector(i => i[2]).right(intervals, target);
+  let units;
+  let step;
 
   if (i === intervals.length) {
     units = Year,

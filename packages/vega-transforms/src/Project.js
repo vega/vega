@@ -29,12 +29,12 @@ Project.Definition = {
 
 inherits(Project, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.NO_SOURCE),
-          fields = _.fields,
-          as = fieldNames(_.fields, _.as || []),
-          derive = fields
-            ? (s, t) => project(s, t, fields, as)
-            : rederive;
+    const out = pulse.fork(pulse.NO_SOURCE);
+    const fields = _.fields;
+    const as = fieldNames(_.fields, _.as || []);
+    const derive = fields
+      ? (s, t) => project(s, t, fields, as)
+      : rederive;
 
     let lut;
     if (this.value) {

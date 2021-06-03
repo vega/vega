@@ -33,8 +33,9 @@ inherits(Facet, Transform, {
   // parent argument provided by PreFacet subclass
   subflow(key, flow, pulse, parent) {
     const flows = this.value;
-    let sf = hasOwnProperty(flows, key) && flows[key],
-        df, p;
+    let sf = hasOwnProperty(flows, key) && flows[key];
+    let df;
+    let p;
 
     if (!sf) {
       p = parent || (p = this._group[key]) && p.tuple;
@@ -71,9 +72,9 @@ inherits(Facet, Transform, {
   },
 
   initTargets(act) {
-    const a = this._targets,
-          n = a.length,
-          m = act ? act.length : 0;
+    const a = this._targets;
+    const n = a.length;
+    const m = act ? act.length : 0;
     let i = 0;
 
     for (; i<m; ++i) {
@@ -86,19 +87,19 @@ inherits(Facet, Transform, {
   },
 
   transform(_, pulse) {
-    const df = pulse.dataflow,
-          key = _.key,
-          flow = _.subflow,
-          cache = this._keys,
-          rekey = _.modified('key'),
-          subflow = key => this.subflow(key, flow, pulse);
+    const df = pulse.dataflow;
+    const key = _.key;
+    const flow = _.subflow;
+    const cache = this._keys;
+    const rekey = _.modified('key');
+    const subflow = key => this.subflow(key, flow, pulse);
 
     this._group = _.group || {};
     this.initTargets(); // reset list of active subflows
 
     pulse.visit(pulse.REM, t => {
-      const id = tupleid(t),
-            k = cache.get(id);
+      const id = tupleid(t);
+      const k = cache.get(id);
       if (k !== undefined) {
         cache.delete(id);
         subflow(k).rem(t);
@@ -113,9 +114,9 @@ inherits(Facet, Transform, {
 
     if (rekey || pulse.modified(key.fields)) {
       pulse.visit(pulse.MOD, t => {
-        const id = tupleid(t),
-              k0 = cache.get(id),
-              k1 = key(t);
+        const id = tupleid(t);
+        const k0 = cache.get(id);
+        const k1 = key(t);
         if (k0 === k1) {
           subflow(k1).mod(t);
         } else {
@@ -132,9 +133,9 @@ inherits(Facet, Transform, {
 
     if (rekey) {
       pulse.visit(pulse.REFLOW, t => {
-        const id = tupleid(t),
-              k0 = cache.get(id),
-              k1 = key(t);
+        const id = tupleid(t);
+        const k0 = cache.get(id);
+        const k1 = key(t);
         if (k0 !== k1) {
           cache.set(id, k1);
           subflow(k0).rem(t);

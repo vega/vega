@@ -8,10 +8,10 @@ export function resetSVGClipId() {
 }
 
 export default function(renderer, item, size) {
-  var clip = item.clip,
-      defs = renderer._defs,
-      id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
-      c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+  var clip = item.clip;
+  var defs = renderer._defs;
+  var id = item.clip_id || (item.clip_id = 'clip' + clip_id++);
+  var c = defs.clipping[id] || (defs.clipping[id] = {id: id});
 
   if (isFunction(clip)) {
     c.path = clip(null);

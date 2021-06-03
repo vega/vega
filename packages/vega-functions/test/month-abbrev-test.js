@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    format = require('vega-format'),
-    {monthAbbrevFormat} = require('../');
+var tape = require('tape');
+var format = require('vega-format');
+var {monthAbbrevFormat} = require('../');
 
 tape('monthAbbrevFormat returns empty string for non-integer values', t => {
-  const locale = format.defaultLocale(),
-        self = { context: { dataflow: { locale: () => locale } } },
-        abbrev = monthAbbrevFormat.bind(self);
+  const locale = format.defaultLocale();
+  const self = { context: { dataflow: { locale: () => locale } } };
+  const abbrev = monthAbbrevFormat.bind(self);
 
   t.equal(abbrev(0), 'Jan');
   t.equal(abbrev(NaN), '');

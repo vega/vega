@@ -15,13 +15,14 @@ export default function Bound(params) {
 
 inherits(Bound, Transform, {
   transform(_, pulse) {
-    const view = pulse.dataflow,
-          mark = _.mark,
-          type = mark.marktype,
-          entry = Marks[type],
-          bound = entry.bound;
+    const view = pulse.dataflow;
+    const mark = _.mark;
+    const type = mark.marktype;
+    const entry = Marks[type];
+    const bound = entry.bound;
 
-    let markBounds = mark.bounds, rebound;
+    let markBounds = mark.bounds;
+    let rebound;
 
     if (entry.nested) {
       // multi-item marks have a single bounds instance

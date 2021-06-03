@@ -73,7 +73,8 @@ export default {
       let t;
       const map = (f, i) => {
         const o = orders[i];
-        let u, v;
+        let u;
+        let v;
         if (f.path) {
           u = `a${f.path}`;
           v = `b${f.path}`;

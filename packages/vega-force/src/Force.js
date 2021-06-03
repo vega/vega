@@ -17,13 +17,13 @@ const ForceMap = {
   y: forceY
 };
 
-const Forces = 'forces',
-      ForceParams = [
-        'alpha', 'alphaMin', 'alphaTarget',
-        'velocityDecay', 'forces'
-      ],
-      ForceConfig = ['static', 'iterations'],
-      ForceOutput = ['x', 'y', 'vx', 'vy'];
+const Forces = 'forces';
+const ForceParams = [
+  'alpha', 'alphaMin', 'alphaTarget',
+  'velocityDecay', 'forces'
+];
+const ForceConfig = ['static', 'iterations'];
+const ForceOutput = ['x', 'y', 'vx', 'vy'];
 
 /**
  * Force simulation layout.
@@ -106,10 +106,10 @@ Force.Definition = {
 
 inherits(Force, Transform, {
   transform(_, pulse) {
-    var sim = this.value,
-        change = pulse.changed(pulse.ADD_REM),
-        params = _.modified(ForceParams),
-        iters = _.iterations || 300;
+    var sim = this.value;
+    var change = pulse.changed(pulse.ADD_REM);
+    var params = _.modified(ForceParams);
+    var iters = _.iterations || 300;
 
     // configure simulation
     if (!sim) {
@@ -175,9 +175,9 @@ function rerun(df, op) {
 }
 
 function simulation(nodes, _) {
-  const sim = forceSimulation(nodes),
-        stop = sim.stop,
-        restart = sim.restart;
+  const sim = forceSimulation(nodes);
+  const stop = sim.stop;
+  const restart = sim.restart;
   let stopped = false;
 
   sim.stopped = () => stopped;
@@ -188,7 +188,11 @@ function simulation(nodes, _) {
 }
 
 function setup(sim, _, init, pulse) {
-  var f = array(_.forces), i, n, p, name;
+  var f = array(_.forces);
+  var i;
+  var n;
+  var p;
+  var name;
 
   for (i=0, n=ForceParams.length; i<n; ++i) {
     p = ForceParams[i];
@@ -212,7 +216,8 @@ function setup(sim, _, init, pulse) {
 }
 
 function modified(f, pulse) {
-  var k, v;
+  var k;
+  var v;
   for (k in f) {
     if (isFunction(v = f[k]) && pulse.modified(accessorFields(v)))
       return 1;
@@ -221,7 +226,8 @@ function modified(f, pulse) {
 }
 
 function getForce(_) {
-  var f, p;
+  var f;
+  var p;
 
   if (!hasOwnProperty(ForceMap, _.force)) {
     error('Unrecognized force: ' + _.force);

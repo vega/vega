@@ -3,24 +3,24 @@ import {bisectRight, range as sequence} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 
 export function band() {
-  const scale = ordinal().unknown(undefined),
-        domain = scale.domain,
-        ordinalRange = scale.range;
-  let range = [0, 1],
-      step,
-      bandwidth,
-      round = false,
-      paddingInner = 0,
-      paddingOuter = 0,
-      align = 0.5;
+  const scale = ordinal().unknown(undefined);
+  const domain = scale.domain;
+  const ordinalRange = scale.range;
+  let range = [0, 1];
+  let step;
+  let bandwidth;
+  let round = false;
+  let paddingInner = 0;
+  let paddingOuter = 0;
+  let align = 0.5;
 
   delete scale.unknown;
 
   function rescale() {
-    const n = domain().length,
-          reverse = range[1] < range[0],
-          stop = range[1 - reverse],
-          space = bandSpace(n, paddingInner, paddingOuter);
+    const n = domain().length;
+    const reverse = range[1] < range[0];
+    const stop = range[1 - reverse];
+    const space = bandSpace(n, paddingInner, paddingOuter);
 
     let start = range[reverse - 0];
 
@@ -120,13 +120,15 @@ export function band() {
     // bail if range has null or undefined values
     if (_[0] == null || _[1] == null) return;
 
-    const reverse = range[1] < range[0],
-          values = reverse ? ordinalRange().reverse() : ordinalRange(),
-          n = values.length - 1;
+    const reverse = range[1] < range[0];
+    const values = reverse ? ordinalRange().reverse() : ordinalRange();
+    const n = values.length - 1;
 
-    let lo = +_[0],
-        hi = +_[1],
-        a, b, t;
+    let lo = +_[0];
+    let hi = +_[1];
+    let a;
+    let b;
+    let t;
 
     // bail if either range endpoint is invalid
     if (lo !== lo || hi !== hi) return;

@@ -8,11 +8,12 @@ import {AxisTitleRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
-  const _ = lookup(spec, config),
-        orient = spec.orient,
-        sign = getSign(orient, -1, 1);
+  const _ = lookup(spec, config);
+  const orient = spec.orient;
+  const sign = getSign(orient, -1, 1);
 
-  let enter, update;
+  let enter;
+  let update;
   const encode = {
     enter: enter = {
       opacity: zero,
@@ -73,8 +74,8 @@ function autoLayout(_, orient, encode, userEncode) {
     ? (encode.update[dim] = patch(encoder(value), encode.update[dim]), false)
     : !has(dim, userEncode) ? true : false;
 
-  const autoY = auto(_('titleX'), 'x'),
-        autoX = auto(_('titleY'), 'y');
+  const autoY = auto(_('titleX'), 'x');
+  const autoX = auto(_('titleY'), 'y');
 
   encode.enter.auto = autoX === autoY
     ? encoder(autoX)

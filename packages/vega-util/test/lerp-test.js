@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('lerp linearly interpolates numbers', t => {
-  const a = [0, 100],
-        b = [100, 0];
+  const a = [0, 100];
+  const b = [100, 0];
 
   // invalid fraction values
   t.equal(vega.lerp(a, null), 0);

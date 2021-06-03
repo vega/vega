@@ -100,14 +100,14 @@ function singularDomain(domain, spec, scope) {
 }
 
 function multipleDomain(domain, spec, scope) {
-  const data = domain.data,
-        fields = domain.fields.reduce((dom, d) => {
-          d = isString(d) ? {data: data, field: d}
-            : (isArray(d) || d.signal) ? fieldRef(d, scope)
-            : d;
-          dom.push(d);
-          return dom;
-        }, []);
+  const data = domain.data;
+  const fields = domain.fields.reduce((dom, d) => {
+    d = isString(d) ? {data: data, field: d}
+      : (isArray(d) || d.signal) ? fieldRef(d, scope)
+      : d;
+    dom.push(d);
+    return dom;
+  }, []);
 
   return (isDiscrete(spec.type) ? ordinalMultipleDomain
     : isQuantile(spec.type) ? quantileMultipleDomain
@@ -115,8 +115,8 @@ function multipleDomain(domain, spec, scope) {
 }
 
 function fieldRef(data, scope) {
-  const name = '_:vega:_' + (FIELD_REF_ID++),
-        coll = Collect({});
+  const name = '_:vega:_' + (FIELD_REF_ID++);
+  const coll = Collect({});
 
   if (isArray(data)) {
     coll.value = {$ingest: data};
@@ -130,7 +130,8 @@ function fieldRef(data, scope) {
 
 function ordinalMultipleDomain(domain, scope, fields) {
   const sort = parseSort(domain.sort, true);
-  let a, v;
+  let a;
+  let v;
 
   // get value counts for each domain field
   const counts = fields.map(f => {

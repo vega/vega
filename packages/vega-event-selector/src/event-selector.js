@@ -1,31 +1,31 @@
-const VIEW    = 'view',
-      LBRACK  = '[',
-      RBRACK  = ']',
-      LBRACE  = '{',
-      RBRACE  = '}',
-      COLON   = ':',
-      COMMA   = ',',
-      NAME    = '@',
-      GT      = '>',
-      ILLEGAL = /[[\]{}]/,
-      DEFAULT_MARKS = {
-        '*': 1,
-        arc: 1,
-        area: 1,
-        group: 1,
-        image: 1,
-        line: 1,
-        path: 1,
-        rect: 1,
-        rule: 1,
-        shape: 1,
-        symbol: 1,
-        text: 1,
-        trail: 1
-      };
+const VIEW    = 'view';
+const LBRACK  = '[';
+const RBRACK  = ']';
+const LBRACE  = '{';
+const RBRACE  = '}';
+const COLON   = ':';
+const COMMA   = ',';
+const NAME    = '@';
+const GT      = '>';
+const ILLEGAL = /[[\]{}]/;
+const DEFAULT_MARKS = {
+  '*': 1,
+  arc: 1,
+  area: 1,
+  group: 1,
+  image: 1,
+  line: 1,
+  path: 1,
+  rect: 1,
+  rule: 1,
+  shape: 1,
+  symbol: 1,
+  text: 1,
+  trail: 1
+};
 
-let DEFAULT_SOURCE,
-    MARKS;
+let DEFAULT_SOURCE;
+let MARKS;
 
 /**
  * Parse an event selector string.
@@ -43,7 +43,8 @@ function isMarkType(type) {
 
 function find(s, i, endChar, pushChar, popChar) {
   const n = s.length;
-  let count = 0, c;
+  let count = 0;
+  let c;
 
   for (; i < n; ++i) {
     c = s[i];
@@ -55,9 +56,10 @@ function find(s, i, endChar, pushChar, popChar) {
 }
 
 function parseMerge(s) {
-  const output = [],
-        n = s.length;
-  let start = 0, i = 0;
+  const output = [];
+  const n = s.length;
+  let start = 0;
+  let i = 0;
 
   while (i < n) {
     i = find(s, i, COMMA, LBRACK + LBRACE, RBRACK + RBRACE);
@@ -79,7 +81,8 @@ function parseSelector(s) {
 
 function parseBetween(s) {
   const n = s.length;
-  let i = 1, b;
+  let i = 1;
+  let b;
 
   i = find(s, i, RBRACK, LBRACK, RBRACK);
   if (i === n) {
@@ -112,15 +115,16 @@ function parseBetween(s) {
 }
 
 function parseStream(s) {
-  const stream = {source: DEFAULT_SOURCE},
-        source = [];
+  const stream = {source: DEFAULT_SOURCE};
+  const source = [];
 
-  let throttle = [0, 0],
-      markname = 0,
-      start = 0,
-      n = s.length,
-      i = 0, j,
-      filter;
+  let throttle = [0, 0];
+  let markname = 0;
+  let start = 0;
+  let n = s.length;
+  let i = 0;
+  let j;
+  let filter;
 
   // extract throttle from end
   if (s[n-1] === RBRACE) {

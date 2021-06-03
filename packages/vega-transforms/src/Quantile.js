@@ -40,21 +40,21 @@ const EPSILON = 1e-14;
 
 inherits(Quantile, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-          as = _.as || ['prob', 'value'];
+    const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    const as = _.as || ['prob', 'value'];
 
     if (this.value && !_.modified() && !pulse.changed()) {
       out.source = this.value;
       return out;
     }
 
-    const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby, _.field),
-          names = (_.groupby || []).map(accessorName),
-          values = [],
-          step = _.step || 0.01,
-          p = _.probs || range(step/2, 1 - EPSILON, step),
-          n = p.length;
+    const source = pulse.materialize(pulse.SOURCE).source;
+    const groups = partition(source, _.groupby, _.field);
+    const names = (_.groupby || []).map(accessorName);
+    const values = [];
+    const step = _.step || 0.01;
+    const p = _.probs || range(step/2, 1 - EPSILON, step);
+    const n = p.length;
 
     groups.forEach(g => {
       const q = quantiles(g, p);

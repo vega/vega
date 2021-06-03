@@ -10,8 +10,8 @@ function addStops(gradient, stops) {
 }
 
 export default function(context, spec, bounds) {
-  const w = bounds.width(),
-        h = bounds.height();
+  const w = bounds.width();
+  const h = bounds.height();
   let gradient;
 
 
@@ -25,10 +25,10 @@ export default function(context, spec, bounds) {
       Math.max(w, h) * value(spec.r2, 0.5)
     );
   } else { // linear gradient
-    const x1 = value(spec.x1, 0),
-          y1 = value(spec.y1, 0),
-          x2 = value(spec.x2, 1),
-          y2 = value(spec.y2, 0);
+    const x1 = value(spec.x1, 0);
+    const y1 = value(spec.y1, 0);
+    const x2 = value(spec.x2, 1);
+    const y2 = value(spec.y2, 0);
 
     if (x1 === x2 || y1 === y2 || w === h) {
       // axis aligned: use normal gradient
@@ -41,8 +41,8 @@ export default function(context, spec, bounds) {
     } else {
       // not axis aligned: render gradient into a pattern (#2365)
       // this allows us to use normalized bounding box coordinates
-      const image = canvas(Math.ceil(w), Math.ceil(h)),
-            ictx = image.getContext('2d');
+      const image = canvas(Math.ceil(w), Math.ceil(h));
+      const ictx = image.getContext('2d');
 
       ictx.scale(w, h);
       ictx.fillStyle = addStops(

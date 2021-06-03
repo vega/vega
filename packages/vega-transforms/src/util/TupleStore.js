@@ -29,14 +29,16 @@ prototype.values = function() {
   this._get = null;
   if (this._rem.length === 0) return this._add;
 
-  const a = this._add,
-        r = this._rem,
-        k = this._key,
-        n = a.length,
-        m = r.length,
-        x = Array(n - m),
-        map = {};
-  let i, j, v;
+  const a = this._add;
+  const r = this._rem;
+  const k = this._key;
+  const n = a.length;
+  const m = r.length;
+  const x = Array(n - m);
+  const map = {};
+  let i;
+  let j;
+  let v;
 
   // use unique key field to clear removed values
   for (i=0; i<m; ++i) {
@@ -57,11 +59,12 @@ prototype.values = function() {
 // memoizing statistics methods
 
 prototype.distinct = function(get) {
-  const v = this.values(),
-        map = {};
+  const v = this.values();
+  const map = {};
 
-  let n = v.length,
-      count = 0, s;
+  let n = v.length;
+  let count = 0;
+  let s;
 
   while (--n >= 0) {
     s = get(v[n]) + '';
@@ -76,8 +79,8 @@ prototype.distinct = function(get) {
 
 prototype.extent = function(get) {
   if (this._get !== get || !this._ext) {
-    const v = this.values(),
-          i = extentIndex(v, get);
+    const v = this.values();
+    const i = extentIndex(v, get);
     this._ext = [v[i[0]], v[i[1]]];
     this._get = get;
   }

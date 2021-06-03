@@ -9,7 +9,8 @@ function attr(emit, item) {
 }
 
 function bound(bounds, item) {
-  var x, y;
+  var x;
+  var y;
   return boundStroke(bounds.set(
     x = item.x || 0,
     y = item.y || 0,

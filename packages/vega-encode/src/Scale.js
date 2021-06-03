@@ -74,9 +74,9 @@ export default function Scale(params) {
 
 inherits(Scale, Transform, {
   transform(_, pulse) {
-    var df = pulse.dataflow,
-        scale = this.value,
-        key = scaleKey(_);
+    var df = pulse.dataflow;
+    var scale = this.value;
+    var key = scaleKey(_);
 
     if (!scale || key !== scale.type) {
       this.value = scale = getScale(key)();
@@ -100,7 +100,9 @@ inherits(Scale, Transform, {
 });
 
 function scaleKey(_) {
-  var t = _.type, d = '', n;
+  var t = _.type;
+  var d = '';
+  var n;
 
   // backwards compatibility pre Vega 5.
   if (t === Sequential) return Sequential + '-' + Linear;
@@ -129,10 +131,11 @@ function configureDomain(scale, _, df) {
   const raw = rawDomain(scale, _.domainRaw, df);
   if (raw > -1) return raw;
 
-  var domain = _.domain,
-      type = scale.type,
-      zero = _.zero || (_.zero === undefined && includeZero(scale)),
-      n, mid;
+  var domain = _.domain;
+  var type = scale.type;
+  var zero = _.zero || (_.zero === undefined && includeZero(scale));
+  var n;
+  var mid;
 
   if (!domain) return 0;
 
@@ -187,13 +190,13 @@ function rawDomain(scale, raw, df) {
 }
 
 function padDomain(type, domain, range, pad, exponent, constant) {
-  var span = Math.abs(peek(range) - range[0]),
-      frac = span / (span - 2 * pad),
-      d = type === Log    ? zoomLog(domain, null, frac)
-        : type === Sqrt   ? zoomPow(domain, null, frac, 0.5)
-        : type === Pow    ? zoomPow(domain, null, frac, exponent || 1)
-        : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1)
-        : zoomLinear(domain, null, frac);
+  var span = Math.abs(peek(range) - range[0]);
+  var frac = span / (span - 2 * pad);
+  var d = type === Log    ? zoomLog(domain, null, frac)
+    : type === Sqrt   ? zoomPow(domain, null, frac, 0.5)
+    : type === Pow    ? zoomPow(domain, null, frac, exponent || 1)
+    : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1)
+    : zoomLinear(domain, null, frac);
 
   domain = domain.slice();
   domain[0] = d[0];
@@ -219,13 +222,13 @@ function configureBins(scale, _, count) {
 
   if (bins && !isArray(bins)) {
     // generate bin boundary array
-    const domain = scale.domain(),
-          lo = domain[0],
-          hi = peek(domain),
-          step = bins.step;
+    const domain = scale.domain();
+    const lo = domain[0];
+    const hi = peek(domain);
+    const step = bins.step;
 
-    let start = bins.start == null ? lo : bins.start,
-        stop = bins.stop == null ? hi : bins.stop;
+    let start = bins.start == null ? lo : bins.start;
+    let stop = bins.stop == null ? hi : bins.stop;
 
     if (!step) error('Scale bins parameter missing step property.');
     if (start < lo) start = step * Math.ceil(lo / step);
@@ -258,9 +261,9 @@ function configureBins(scale, _, count) {
 }
 
 function configureRange(scale, _, count) {
-  var type = scale.type,
-      round = _.round || false,
-      range = _.range;
+  var type = scale.type;
+  var round = _.round || false;
+  var range = _.range;
 
   // if range step specified, calculate full range extent
   if (_.rangeStep != null) {
@@ -304,15 +307,16 @@ function configureRangeStep(type, _, count) {
   }
 
   // calculate full range based on requested step size and padding
-  var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-      inner = type === Point ? 1
-            : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
+  var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0;
+  var inner = type === Point ? 1
+        : ((_.paddingInner != null ? _.paddingInner : _.padding) || 0);
   return [0, _.rangeStep * bandSpace(count, inner, outer)];
 }
 
 function configureScheme(type, _, count) {
-  var extent = _.schemeExtent,
-      name, scheme;
+  var extent = _.schemeExtent;
+  var name;
+  var scheme;
 
   if (isArray(_.scheme)) {
     scheme = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);

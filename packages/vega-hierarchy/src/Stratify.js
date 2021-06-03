@@ -32,13 +32,13 @@ inherits(Stratify, Transform, {
 
     let tree = this.value;
 
-    const mod = _.modified(),
-          out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
-          run = !tree
-            || mod
-            || pulse.changed(pulse.ADD_REM)
-            || pulse.modified(_.key.fields)
-            || pulse.modified(_.parentKey.fields);
+    const mod = _.modified();
+    const out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE);
+    const run = !tree
+      || mod
+      || pulse.changed(pulse.ADD_REM)
+      || pulse.modified(_.key.fields)
+      || pulse.modified(_.parentKey.fields);
 
     // prevent upstream source pollution
     out.source = out.source.slice();

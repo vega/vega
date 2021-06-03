@@ -1,9 +1,14 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('Parser parses stream definitions', t => {
-  var scope = new vega.Scope(),
-      dom, view, between, merge, nested, timer;
+  var scope = new vega.Scope();
+  var dom;
+  var view;
+  var between;
+  var merge;
+  var nested;
+  var timer;
 
   scope.addSignal('zero', true); // id zero
 

@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    Renderer = vega.Renderer;
+var tape = require('tape');
+var vega = require('../');
+var Renderer = vega.Renderer;
 
 tape('Renderer should support argument free constructor', t => {
   const r = new Renderer();

@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('../'),
-    changeset = vega.changeset,
-    Collect = transforms.collect,
-    DotBin = transforms.dotbin;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var transforms = require('../');
+var changeset = vega.changeset;
+var Collect = transforms.collect;
+var DotBin = transforms.dotbin;
 
 tape('DotBin assigns dot plot bin positions', t => {
   const data = [
@@ -17,16 +17,16 @@ tape('DotBin assigns dot plot bin positions', t => {
     {key: 'b', value: 5.5}
   ];
 
-  var df = new vega.Dataflow(),
-      gb = df.add([]),
-      c0 = df.add(Collect),
-      db = df.add(DotBin, {
-        field: util.field('value'),
-        groupby: gb,
-        step: 1.5,
-        pulse: c0,
-        as: 'x'
-      });
+  var df = new vega.Dataflow();
+  var gb = df.add([]);
+  var c0 = df.add(Collect);
+  var db = df.add(DotBin, {
+    field: util.field('value'),
+    groupby: gb,
+    step: 1.5,
+    pulse: c0,
+    as: 'x'
+  });
 
   // Insert data
   df.pulse(c0, changeset().insert(data)).run();

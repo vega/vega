@@ -46,11 +46,11 @@ inherits(Pivot, Aggregate, {
 // First collect all unique pivot field values.
 // Then generate aggregate fields for each output pivot field.
 function aggregateParams(_, pulse) {
-  const key    = _.field,
-        value  = _.value,
-        op     = (_.op === 'count' ? '__count__' : _.op) || 'sum',
-        fields = accessorFields(key).concat(accessorFields(value)),
-        keys   = pivotKeys(key, _.limit || 0, pulse);
+  const key    = _.field;
+  const value  = _.value;
+  const op     = (_.op === 'count' ? '__count__' : _.op) || 'sum';
+  const fields = accessorFields(key).concat(accessorFields(value));
+  const keys   = pivotKeys(key, _.limit || 0, pulse);
 
   // if data stream content changes, pivot fields may change
   // flag parameter modification to ensure re-initialization
@@ -78,8 +78,8 @@ function get(k, key, value, fields) {
 
 // Collect (and optionally limit) all unique pivot values.
 function pivotKeys(key, limit, pulse) {
-  const map = {},
-        list = [];
+  const map = {};
+  const list = [];
 
   pulse.visit(pulse.SOURCE, t => {
     const k = key(t);

@@ -13,9 +13,11 @@ const min = (a, b) => Math.floor(Math.min(a, b));
 const max = (a, b) => Math.ceil(Math.max(a, b));
 
 function gridLayoutGroups(group) {
-  var groups = group.items,
-      n = groups.length,
-      i = 0, mark, items;
+  var groups = group.items;
+  var n = groups.length;
+  var i = 0;
+  var mark;
+  var items;
 
   const views = {
     marks:      [],
@@ -72,20 +74,36 @@ function offsetValue(v) {
 }
 
 export function gridLayout(view, groups, opt) {
-  var dirty = !opt.nodirty,
-      bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
-      bounds = tempBounds.set(0, 0, 0, 0),
-      alignCol = get(opt.align, Column),
-      alignRow = get(opt.align, Row),
-      padCol = get(opt.padding, Column),
-      padRow = get(opt.padding, Row),
-      ncols = opt.columns || groups.length,
-      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
-      n = groups.length,
-      xOffset = Array(n), xExtent = Array(ncols), xMax = 0,
-      yOffset = Array(n), yExtent = Array(nrows), yMax = 0,
-      dx = Array(n), dy = Array(n), boxes = Array(n),
-      m, i, c, r, b, g, px, py, x, y, offset;
+  var dirty = !opt.nodirty;
+  var bbox = opt.bounds === Flush ? bboxFlush : bboxFull;
+  var bounds = tempBounds.set(0, 0, 0, 0);
+  var alignCol = get(opt.align, Column);
+  var alignRow = get(opt.align, Row);
+  var padCol = get(opt.padding, Column);
+  var padRow = get(opt.padding, Row);
+  var ncols = opt.columns || groups.length;
+  var nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols);
+  var n = groups.length;
+  var xOffset = Array(n);
+  var xExtent = Array(ncols);
+  var xMax = 0;
+  var yOffset = Array(n);
+  var yExtent = Array(nrows);
+  var yMax = 0;
+  var dx = Array(n);
+  var dy = Array(n);
+  var boxes = Array(n);
+  var m;
+  var i;
+  var c;
+  var r;
+  var b;
+  var g;
+  var px;
+  var py;
+  var x;
+  var y;
+  var offset;
 
   for (i=0; i<ncols; ++i) xExtent[i] = 0;
   for (i=0; i<nrows; ++i) yExtent[i] = 0;
@@ -229,14 +247,20 @@ export function gridLayout(view, groups, opt) {
 }
 
 export function trellisLayout(view, group, opt) {
-  var views = gridLayoutGroups(group),
-      groups = views.marks,
-      bbox = opt.bounds === Flush ? boundFlush : boundFull,
-      off = opt.offset,
-      ncols = opt.columns || groups.length,
-      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
-      cells = nrows * ncols,
-      x, y, x2, y2, anchor, band, offset;
+  var views = gridLayoutGroups(group);
+  var groups = views.marks;
+  var bbox = opt.bounds === Flush ? boundFlush : boundFull;
+  var off = opt.offset;
+  var ncols = opt.columns || groups.length;
+  var nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols);
+  var cells = nrows * ncols;
+  var x;
+  var y;
+  var x2;
+  var y2;
+  var anchor;
+  var band;
+  var offset;
 
   // -- initial grid layout
   const bounds = gridLayout(view, groups, opt);
@@ -300,10 +324,18 @@ function boundFull(item, field) {
 }
 
 function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
-  var n = groups.length,
-      init = 0,
-      edge = 0,
-      i, j, k, m, b, h, g, x, y;
+  var n = groups.length;
+  var init = 0;
+  var edge = 0;
+  var i;
+  var j;
+  var k;
+  var m;
+  var b;
+  var h;
+  var g;
+  var x;
+  var y;
 
   // if no groups, early exit and return 0
   if (!n) return init;
@@ -365,7 +397,8 @@ function layoutTitle(view, g, offset, isX, bounds, band) {
   view.dirty(g);
 
   // compute title coordinates
-  var x = offset, y = offset;
+  var x = offset;
+  var y = offset;
   isX
     ? (x = Math.round(bounds.x1 + band * bounds.width()))
     : (y = Math.round(bounds.y1 + band * bounds.height()));

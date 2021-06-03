@@ -26,13 +26,13 @@ Formula.Definition = {
 
 inherits(Formula, Transform, {
   transform (_, pulse) {
-    const func = _.expr,
-          as = _.as,
-          mod = _.modified(),
-          flag = _.initonly ? pulse.ADD
-            : mod ? pulse.SOURCE
-            : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
-            : pulse.ADD;
+    const func = _.expr;
+    const as = _.as;
+    const mod = _.modified();
+    const flag = _.initonly ? pulse.ADD
+      : mod ? pulse.SOURCE
+      : pulse.modified(func.fields) || pulse.modified(as) ? pulse.ADD_MOD
+      : pulse.ADD;
 
     if (mod) {
       // parameters updated, need to reflow

@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stack = encode.stack;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var encode = require('../');
+var changeset = vega.changeset;
+var Collect = require('vega-transforms').collect;
+var Stack = encode.stack;
 
 tape('Stack stacks numeric values', t => {
   const data = [
@@ -14,14 +14,14 @@ tape('Stack stacks numeric values', t => {
     {key: 'b', value: 4}
   ];
 
-  var df = new vega.Dataflow(),
-      gb = df.add([]),
-      c0 = df.add(Collect),
-      st = df.add(Stack, {
-        groupby: gb,
-        field: util.field('value'),
-        pulse: c0
-      });
+  var df = new vega.Dataflow();
+  var gb = df.add([]);
+  var c0 = df.add(Collect);
+  var st = df.add(Stack, {
+    groupby: gb,
+    field: util.field('value'),
+    pulse: c0
+  });
 
   // Insert data
   df.pulse(c0, changeset().insert(data)).run();
@@ -66,14 +66,14 @@ tape('Stack stacks negative values', t => {
     {key: 'b', value: -4}
   ];
 
-  var df = new vega.Dataflow(),
-      gb = df.add([]),
-      c0 = df.add(Collect),
-      st = df.add(Stack, {
-        groupby: gb,
-        field: util.field('value'),
-        pulse: c0
-      });
+  var df = new vega.Dataflow();
+  var gb = df.add([]);
+  var c0 = df.add(Collect);
+  var st = df.add(Stack, {
+    groupby: gb,
+    field: util.field('value'),
+    pulse: c0
+  });
 
   // Insert data
   df.pulse(c0, changeset().insert(data)).run();
@@ -118,14 +118,14 @@ tape('Stack stacks coerced string values', t => {
     {key: 'b', value: '4'}
   ];
 
-  var df = new vega.Dataflow(),
-      gb = df.add([]),
-      c0 = df.add(Collect),
-      st = df.add(Stack, {
-        groupby: gb,
-        field: util.field('value'),
-        pulse: c0
-      });
+  var df = new vega.Dataflow();
+  var gb = df.add([]);
+  var c0 = df.add(Collect);
+  var st = df.add(Stack, {
+    groupby: gb,
+    field: util.field('value'),
+    pulse: c0
+  });
 
   // Insert data
   df.pulse(c0, changeset().insert(data)).run();

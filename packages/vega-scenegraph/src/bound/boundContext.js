@@ -1,7 +1,14 @@
 import {DegToRad, Epsilon, HalfPi, Tau} from '../util/constants';
 
 const circleThreshold = Tau - 1e-8;
-let bounds, lx, ly, rot, ma, mb, mc, md;
+let bounds;
+let lx;
+let ly;
+let rot;
+let ma;
+let mb;
+let mc;
+let md;
 
 const add = (x, y) => bounds.add(x, y);
 const addL = (x, y) => add(lx = x, ly = y);
@@ -47,22 +54,22 @@ const context = {
   },
 
   quadraticCurveTo(x1, y1, x2, y2) {
-    const px1 = px(x1, y1),
-          py1 = py(x1, y1),
-          px2 = px(x2, y2),
-          py2 = py(x2, y2);
+    const px1 = px(x1, y1);
+    const py1 = py(x1, y1);
+    const px2 = px(x2, y2);
+    const py2 = py(x2, y2);
     quadExtrema(lx, px1, px2, addX);
     quadExtrema(ly, py1, py2, addY);
     addL(px2, py2);
   },
 
   bezierCurveTo(x1, y1, x2, y2, x3, y3) {
-    const px1 = px(x1, y1),
-          py1 = py(x1, y1),
-          px2 = px(x2, y2),
-          py2 = py(x2, y2),
-          px3 = px(x3, y3),
-          py3 = py(x3, y3);
+    const px1 = px(x1, y1);
+    const py1 = py(x1, y1);
+    const px2 = px(x2, y2);
+    const py2 = py(x2, y2);
+    const px3 = px(x3, y3);
+    const py3 = py(x3, y3);
     cubicExtrema(lx, px1, px2, px3, addX);
     cubicExtrema(ly, py1, py2, py3, addY);
     addL(px3, py3);
@@ -82,7 +89,8 @@ const context = {
       add(cx + r, cy + r);
     } else {
       const update = a => add(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
-      let s, i;
+      let s;
+      let i;
 
       // sample end points
       update(sa);
@@ -117,11 +125,13 @@ function quadExtrema(x0, x1, x2, cb) {
 }
 
 function cubicExtrema(x0, x1, x2, x3, cb) {
-  const a = x3 - x0 + 3 * x1 - 3 * x2,
-        b = x0 + x2 - 2 * x1,
-        c = x0 - x1;
+  const a = x3 - x0 + 3 * x1 - 3 * x2;
+  const b = x0 + x2 - 2 * x1;
+  const c = x0 - x1;
 
-  let t0 = 0, t1 = 0, r;
+  let t0 = 0;
+  let t1 = 0;
+  let r;
 
   // solve for parameter t
   if (Math.abs(a) > Epsilon) {
@@ -143,6 +153,8 @@ function cubicExtrema(x0, x1, x2, x3, cb) {
 }
 
 function cubic(t, x0, x1, x2, x3) {
-  const s = 1 - t, s2 = s * s, t2 = t * t;
+  const s = 1 - t;
+  const s2 = s * s;
+  const t2 = t * t;
   return (s2 * s * x0) + (3 * s2 * t * x1) + (3 * s * t2 * x2) + (t2 * t * x3);
 }

@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stratify = require('../').stratify;
+var tape = require('tape');
+var field = require('vega-util').field;
+var vega = require('vega-dataflow');
+var changeset = vega.changeset;
+var Collect = require('vega-transforms').collect;
+var Stratify = require('../').stratify;
 
 tape('Stratify tuples', t => {
   const data = [
@@ -14,14 +14,14 @@ tape('Stratify tuples', t => {
   ];
 
   // Setup tree stratification
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Stratify, {
-        key: field('id'),
-        parentKey: field('pid'),
-        pulse: collect
-      }),
-      out = df.add(Collect, {pulse: nest});
+  var df = new vega.Dataflow();
+  var collect = df.add(Collect);
+  var nest = df.add(Stratify, {
+    key: field('id'),
+    parentKey: field('pid'),
+    pulse: collect
+  });
+  var out = df.add(Collect, {pulse: nest});
 
   // build tree
   df.pulse(collect, changeset().insert(data)).run();
@@ -38,14 +38,14 @@ tape('Stratify tuples', t => {
 
 tape('Stratify empty data', t => {
   // Setup tree stratification
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Stratify, {
-        key: field('id'),
-        parentKey: field('pid'),
-        pulse: collect
-      }),
-      out = df.add(Collect, {pulse: nest});
+  var df = new vega.Dataflow();
+  var collect = df.add(Collect);
+  var nest = df.add(Stratify, {
+    key: field('id'),
+    parentKey: field('pid'),
+    pulse: collect
+  });
+  var out = df.add(Collect, {pulse: nest});
 
   df.pulse(collect, changeset().insert([])).run();
   t.equal(out.value.length, 0);

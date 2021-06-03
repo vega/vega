@@ -53,15 +53,15 @@ inherits(Regression, Transform, {
     const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition(source, _.groupby),
-            names = (_.groupby || []).map(accessorName),
-            method = _.method || 'linear',
-            order = _.order || 3,
-            dof = degreesOfFreedom(method, order),
-            as = _.as || [accessorName(_.x), accessorName(_.y)],
-            fit = Methods[method],
-            values = [];
+      const source = pulse.materialize(pulse.SOURCE).source;
+      const groups = partition(source, _.groupby);
+      const names = (_.groupby || []).map(accessorName);
+      const method = _.method || 'linear';
+      const order = _.order || 3;
+      const dof = degreesOfFreedom(method, order);
+      const as = _.as || [accessorName(_.x), accessorName(_.y)];
+      const fit = Methods[method];
+      const values = [];
 
       let domain = _.extent;
 
@@ -95,16 +95,16 @@ inherits(Regression, Transform, {
           return;
         }
 
-        const dom = domain || extent(g, _.x),
-              add = p => {
-                const t = {};
-                for (let i=0; i<names.length; ++i) {
-                  t[names[i]] = g.dims[i];
-                }
-                t[as[0]] = p[0];
-                t[as[1]] = p[1];
-                values.push(ingest(t));
-              };
+        const dom = domain || extent(g, _.x);
+        const add = p => {
+          const t = {};
+          for (let i=0; i<names.length; ++i) {
+            t[names[i]] = g.dims[i];
+          }
+          t[as[0]] = p[0];
+          t[as[1]] = p[1];
+          values.push(ingest(t));
+        };
 
         if (method === 'linear') {
           // for linear regression we only need the end points

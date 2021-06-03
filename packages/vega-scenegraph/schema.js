@@ -35,27 +35,27 @@ function buildMark(type, defs, strict) {
 
 function svg_path() {
   // Based on http://www.w3.org/TR/SVG/paths.html#PathDataBNF
-  const wsp  = '[ \t\r\f]*',
-        csp  = '([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?',
-        sep  = csp + '?',
-        pos  = '[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?',
-        num  = '[-+]?' + pos,
-        nseq = num + '(' + sep + num + ')*',
-        p    = num + sep + num,
-        p2   = p + sep + p,
-        p3   = p + '(' + sep + p + '){2}',
-        pseq = p + '(' + sep + p + ')*',
-        arc  = pos + sep + pos + sep + num + csp + '[01]' + sep + '[01]' + sep + p,
-        m  = '[Mm]'   + wsp + pseq,
-        lt = '[LlTt]' + wsp + pseq,
-        hv = '[HhVv]' + wsp + nseq,
-        c  = '[Cc]'   + wsp + p3 + '(' + sep + p3 + ')*',
-        qs = '[QqSs]' + wsp + p2 + '(' + sep + p2 + ')*',
-        a  = '[Aa]'   + wsp + arc + '(' + sep + arc + ')*',
-        z  = '[Zz]',
-        draw = '(' + [z, lt, hv, c, qs, a].join('|') + ')',
-        move = m + wsp + '(' + draw + '(' + sep + draw + ')*' + ')?',
-        path = wsp + '(' + move + '(' + sep + move + ')*' + ')?' + wsp;
+  const wsp  = '[ \t\r\f]*';
+  const csp  = '([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?';
+  const sep  = csp + '?';
+  const pos  = '[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?';
+  const num  = '[-+]?' + pos;
+  const nseq = num + '(' + sep + num + ')*';
+  const p    = num + sep + num;
+  const p2   = p + sep + p;
+  const p3   = p + '(' + sep + p + '){2}';
+  const pseq = p + '(' + sep + p + ')*';
+  const arc  = pos + sep + pos + sep + num + csp + '[01]' + sep + '[01]' + sep + p;
+  const m  = '[Mm]'   + wsp + pseq;
+  const lt = '[LlTt]' + wsp + pseq;
+  const hv = '[HhVv]' + wsp + nseq;
+  const c  = '[Cc]'   + wsp + p3 + '(' + sep + p3 + ')*';
+  const qs = '[QqSs]' + wsp + p2 + '(' + sep + p2 + ')*';
+  const a  = '[Aa]'   + wsp + arc + '(' + sep + arc + ')*';
+  const z  = '[Zz]';
+  const draw = '(' + [z, lt, hv, c, qs, a].join('|') + ')';
+  const move = m + wsp + '(' + draw + '(' + sep + draw + ')*' + ')?';
+  const path = wsp + '(' + move + '(' + sep + move + ')*' + ')?' + wsp;
   return path;
 }
 

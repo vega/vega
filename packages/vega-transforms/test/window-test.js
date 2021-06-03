@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Window = tx.window;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Window = tx.window;
 
 function match(t, actual, expect) {
   for (const k in expect) {
@@ -21,34 +21,34 @@ tape('Window processes single partition', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        sort: util.compare('key'),
-        frame: [null, 0],
-        ignorePeers: true,
-        fields: [
-          null, val, val, val,
-          null, null, null, null,
-          null, null, val, val,
-          val, val, val
-        ],
-        ops: [
-          'count', 'sum', 'min', 'max',
-          'row_number', 'rank', 'dense_rank', 'percent_rank',
-          'cume_dist', 'ntile', 'lag', 'lead',
-          'first_value', 'last_value', 'nth_value'
-        ],
-        params: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 2, 1, 1,
-          0, 0, 2
-        ],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    sort: util.compare('key'),
+    frame: [null, 0],
+    ignorePeers: true,
+    fields: [
+      null, val, val, val,
+      null, null, null, null,
+      null, null, val, val,
+      val, val, val
+    ],
+    ops: [
+      'count', 'sum', 'min', 'max',
+      'row_number', 'rank', 'dense_rank', 'percent_rank',
+      'cume_dist', 'ntile', 'lag', 'lead',
+      'first_value', 'last_value', 'nth_value'
+    ],
+    params: [
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      0, 2, 1, 1,
+      0, 0, 2
+    ],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -128,19 +128,19 @@ tape('Window processes peers correctly', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        sort: util.compare('key'),
-        frame: [null, 0],
-        ignorePeers: false,
-        fields: [null, val],
-        ops: ['count', 'sum'],
-        as: ['count', 'sum'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    sort: util.compare('key'),
+    frame: [null, 0],
+    ignorePeers: false,
+    fields: [null, val],
+    ops: ['count', 'sum'],
+    as: ['count', 'sum'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -172,35 +172,35 @@ tape('Window processes multiple partitions', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        sort: util.compare('key'),
-        groupby: [util.field('k')],
-        frame: [null, 0],
-        ignorePeers: true,
-        fields: [
-          null, val, val, val,
-          null, null, null, null,
-          null, null, val, val,
-          val, val, val
-        ],
-        ops: [
-          'count', 'sum', 'min', 'max',
-          'row_number', 'rank', 'dense_rank', 'percent_rank',
-          'cume_dist', 'ntile', 'lag', 'lead',
-          'first_value', 'last_value', 'nth_value'
-        ],
-        params: [
-          0, 0, 0, 0,
-          0, 0, 0, 0,
-          0, 2, 1, 1,
-          0, 0, 2
-        ],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    sort: util.compare('key'),
+    groupby: [util.field('k')],
+    frame: [null, 0],
+    ignorePeers: true,
+    fields: [
+      null, val, val, val,
+      null, null, null, null,
+      null, null, val, val,
+      val, val, val
+    ],
+    ops: [
+      'count', 'sum', 'min', 'max',
+      'row_number', 'rank', 'dense_rank', 'percent_rank',
+      'cume_dist', 'ntile', 'lag', 'lead',
+      'first_value', 'last_value', 'nth_value'
+    ],
+    params: [
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      0, 2, 1, 1,
+      0, 0, 2
+    ],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -254,18 +254,18 @@ tape('Window processes range frames', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        sort: util.compare('key'),
-        frame: [0, null],
-        ignorePeers: false,
-        fields: [null, val, val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max', 'first_value', 'last_value'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    sort: util.compare('key'),
+    frame: [0, null],
+    ignorePeers: false,
+    fields: [null, val, val, val, val, val],
+    ops: ['count', 'sum', 'min', 'max', 'first_value', 'last_value'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -339,18 +339,18 @@ tape('Window processes row frames', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        sort: util.compare('key'),
-        frame: [-1, 1],
-        ignorePeers: true,
-        fields: [null, val, val, null],
-        ops: ['count', 'sum', 'mean', 'rank'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    sort: util.compare('key'),
+    frame: [-1, 1],
+    ignorePeers: true,
+    fields: [null, val, val, null],
+    ops: ['count', 'sum', 'mean', 'rank'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -385,13 +385,13 @@ tape('Window processes unsorted values', t => {
     {key:0}, {key:1}, {key:2}, {key:3}, {key:4}
   ];
 
-  var df = new vega.Dataflow(),
-      col = df.add(Collect),
-      agg = df.add(Window, {
-        ops: ['rank', 'dense_rank'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: agg});
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var agg = df.add(Window, {
+    ops: ['rank', 'dense_rank'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: agg});
 
   df.pulse(col, changeset().insert(data)).run();
   const d = out.value;
@@ -413,24 +413,24 @@ tape('Window processes fill operations', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      win = df.add(Window, {
-        sort: util.compare('key'),
-        ignorePeers: true,
-        fields: [u, u, v, v, x, x],
-        ops: [
-          'next_value', 'prev_value',
-          'next_value', 'prev_value',
-          'next_value', 'prev_value'
-        ],
-        as: ['un', 'up', 'vn', 'vp', 'xn', 'xp'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: win});
+  var u = util.field('u');
+  var v = util.field('v');
+  var x = util.field('x');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var win = df.add(Window, {
+    sort: util.compare('key'),
+    ignorePeers: true,
+    fields: [u, u, v, v, x, x],
+    ops: [
+      'next_value', 'prev_value',
+      'next_value', 'prev_value',
+      'next_value', 'prev_value'
+    ],
+    as: ['un', 'up', 'vn', 'vp', 'xn', 'xp'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: win});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -464,20 +464,20 @@ tape('Window handles next_value with overwrite', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      win = df.add(Window, {
-        sort: util.compare('key'),
-        ignorePeers: true,
-        fields: [u, v, x],
-        ops: ['next_value', 'next_value', 'next_value'],
-        as: ['u', 'v', 'x'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: win});
+  var u = util.field('u');
+  var v = util.field('v');
+  var x = util.field('x');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var win = df.add(Window, {
+    sort: util.compare('key'),
+    ignorePeers: true,
+    fields: [u, v, x],
+    ops: ['next_value', 'next_value', 'next_value'],
+    as: ['u', 'v', 'x'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: win});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -499,20 +499,20 @@ tape('Window handles prev_value with overwrite', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      win = df.add(Window, {
-        sort: util.compare('key'),
-        ignorePeers: true,
-        fields: [u, v, x],
-        ops: ['prev_value', 'prev_value', 'prev_value'],
-        as: ['u', 'v', 'x'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: win});
+  var u = util.field('u');
+  var v = util.field('v');
+  var x = util.field('x');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var win = df.add(Window, {
+    sort: util.compare('key'),
+    ignorePeers: true,
+    fields: [u, v, x],
+    ops: ['prev_value', 'prev_value', 'prev_value'],
+    as: ['u', 'v', 'x'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: win});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
@@ -532,22 +532,22 @@ tape('Window fill operations handle partition state', t => {
     {u: null, v: 'b',  key:1, idx:0}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      win = df.add(Window, {
-        groupby: [util.field('key')],
-        sort: util.compare('idx'),
-        fields: [u, u, v, v],
-        ops: [
-          'next_value', 'prev_value',
-          'next_value', 'prev_value'
-        ],
-        as: ['un', 'up', 'vn', 'vp'],
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: win});
+  var u = util.field('u');
+  var v = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var win = df.add(Window, {
+    groupby: [util.field('key')],
+    sort: util.compare('idx'),
+    fields: [u, u, v, v],
+    ops: [
+      'next_value', 'prev_value',
+      'next_value', 'prev_value'
+    ],
+    as: ['un', 'up', 'vn', 'vp'],
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: win});
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();

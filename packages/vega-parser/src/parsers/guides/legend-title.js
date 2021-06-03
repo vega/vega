@@ -6,16 +6,16 @@ import {TextMark} from '../marks/marktypes';
 import {LegendTitleRole} from '../marks/roles';
 
 // expression logic for align, anchor, angle, and baseline calculation
-const isL = 'item.orient === "left"',
-      isR = 'item.orient === "right"',
-      isLR = `(${isL} || ${isR})`,
-      isVG = `datum.vgrad && ${isLR}`,
-      baseline = anchorExpr('"top"', '"bottom"', '"middle"'),
-      alignFlip = anchorExpr('"right"', '"left"', '"center"'),
-      exprAlign = `datum.vgrad && ${isR} ? (${alignFlip}) : (${isLR} && !(datum.vgrad && ${isL})) ? "left" : ${alignExpr}`,
-      exprAnchor = `item._anchor || (${isLR} ? "middle" : "start")`,
-      exprAngle = `${isVG} ? (${isL} ? -90 : 90) : 0`,
-      exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
+const isL = 'item.orient === "left"';
+const isR = 'item.orient === "right"';
+const isLR = `(${isL} || ${isR})`;
+const isVG = `datum.vgrad && ${isLR}`;
+const baseline = anchorExpr('"top"', '"bottom"', '"middle"');
+const alignFlip = anchorExpr('"right"', '"left"', '"center"');
+const exprAlign = `datum.vgrad && ${isR} ? (${alignFlip}) : (${isLR} && !(datum.vgrad && ${isL})) ? "left" : ${alignExpr}`;
+const exprAnchor = `item._anchor || (${isLR} ? "middle" : "start")`;
+const exprAngle = `${isVG} ? (${isL} ? -90 : 90) : 0`;
+const exprBaseline = `${isLR} ? (datum.vgrad ? (${isR} ? "bottom" : "top") : ${baseline}) : "top"`;
 
 export default function(spec, config, userEncode, dataRef) {
   const _ = lookup(spec, config);

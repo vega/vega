@@ -18,24 +18,24 @@ function format(locale, scale, specifier, formatType) {
 
 export function domainCaption(locale, scale, opt) {
   opt = opt || {};
-  const max = Math.max(3, opt.maxlen || 7),
-        fmt = format(locale, scale, opt.format, opt.formatType);
+  const max = Math.max(3, opt.maxlen || 7);
+  const fmt = format(locale, scale, opt.format, opt.formatType);
 
   // if scale breaks domain into bins, describe boundaries
   if (isDiscretizing(scale.type)) {
-    const v = labelValues(scale).slice(1).map(fmt),
-          n = v.length;
+    const v = labelValues(scale).slice(1).map(fmt);
+    const n = v.length;
     return `${n} boundar${n === 1 ? 'y' : 'ies'}: ${v.join(', ')}`;
   }
 
   // if scale domain is discrete, list values
   else if (isDiscrete(scale.type)) {
-    const d = scale.domain(),
-          n = d.length,
-          v = n > max
-            ? d.slice(0, max - 2).map(fmt).join(', ')
-              + ', ending with ' + d.slice(-1).map(fmt)
-            : d.map(fmt).join(', ');
+    const d = scale.domain();
+    const n = d.length;
+    const v = n > max
+      ? d.slice(0, max - 2).map(fmt).join(', ')
+        + ', ending with ' + d.slice(-1).map(fmt)
+      : d.map(fmt).join(', ');
     return `${n} value${n === 1 ? '' : 's'}: ${v}`;
   }
 

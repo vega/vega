@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('peek returns last element of a sequence', t => {
   t.equal(vega.peek([1]), 1);

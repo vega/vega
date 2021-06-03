@@ -1,10 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    runtime = require('../'),
-    events = require('./events');
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var runtime = require('../');
+var events = require('./events');
 
 tape('Parser parses event streams', t => {
-
   const spec = {
     streams: [
       { id:0, source:'window', type:'mousemove' },
@@ -21,9 +20,9 @@ tape('Parser parses event streams', t => {
   df.events = events.events;
   df.fire = events.fire;
 
-  var ctx = runtime.context(df, {}).parse(spec),
-      streams = ctx.nodes,
-      counts = [0,0,0,0,0,0,0];
+  var ctx = runtime.context(df, {}).parse(spec);
+  var streams = ctx.nodes;
+  var counts = [0,0,0,0,0,0,0];
 
   Object.keys(streams).forEach((id, i) => {
     streams[id].apply(() => { counts[i] += 1; });

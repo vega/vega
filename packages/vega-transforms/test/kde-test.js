@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    KDE = tx.kde;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var KDE = tx.kde;
 
 tape('KDE computes kernel density estimates', t => {
   const data = [
@@ -12,18 +12,18 @@ tape('KDE computes kernel density estimates', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      kde = df.add(KDE, {
-        groupby: [key],
-        cumulative: true,
-        steps: 10,
-        field: val,
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: kde});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var kde = df.add(KDE, {
+    groupby: [key],
+    cumulative: true,
+    steps: 10,
+    field: val,
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: kde});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -45,18 +45,18 @@ tape('KDE computes estimates with shared configurations', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      kde = df.add(KDE, {
-        groupby: [key],
-        resolve: 'shared',
-        maxsteps: 10,
-        field: val,
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: kde});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var kde = df.add(KDE, {
+    groupby: [key],
+    resolve: 'shared',
+    maxsteps: 10,
+    field: val,
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: kde});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();
@@ -75,19 +75,19 @@ tape('KDE computes unnormalized kernel density estimates', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
-      col = df.add(Collect),
-      kde = df.add(KDE, {
-        groupby: [key],
-        cumulative: true,
-        counts: true,
-        steps: 10,
-        field: val,
-        pulse: col
-      }),
-      out = df.add(Collect, {pulse: kde});
+  var key = util.field('k');
+  var val = util.field('v');
+  var df = new vega.Dataflow();
+  var col = df.add(Collect);
+  var kde = df.add(KDE, {
+    groupby: [key],
+    cumulative: true,
+    counts: true,
+    steps: 10,
+    field: val,
+    pulse: col
+  });
+  var out = df.add(Collect, {pulse: kde});
 
   // -- test adds
   df.pulse(col, changeset().insert(data)).run();

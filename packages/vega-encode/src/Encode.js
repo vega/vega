@@ -19,10 +19,10 @@ export default function Encode(params) {
 
 inherits(Encode, Transform, {
   transform(_, pulse) {
-    var out = pulse.fork(pulse.ADD_REM),
-        fmod = _.mod || false,
-        encoders = _.encoders,
-        encode = pulse.encode;
+    var out = pulse.fork(pulse.ADD_REM);
+    var fmod = _.mod || false;
+    var encoders = _.encoders;
+    var encode = pulse.encode;
 
     // if an array, the encode directive includes additional sets
     // that must be defined in order for the primary set to be invoked
@@ -37,11 +37,11 @@ inherits(Encode, Transform, {
     }
 
     // marshall encoder functions
-    var reenter = encode === 'enter',
-        update = encoders.update || falsy,
-        enter = encoders.enter || falsy,
-        exit = encoders.exit || falsy,
-        set = (encode && !reenter ? encoders[encode] : update) || falsy;
+    var reenter = encode === 'enter';
+    var update = encoders.update || falsy;
+    var enter = encoders.enter || falsy;
+    var exit = encoders.exit || falsy;
+    var set = (encode && !reenter ? encoders[encode] : update) || falsy;
 
     if (pulse.changed(pulse.ADD)) {
       pulse.visit(pulse.ADD, t => { enter(t, _); update(t, _); });

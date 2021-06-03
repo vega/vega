@@ -48,16 +48,16 @@ inherits(Heatmap, Transform, {
       return pulse.StopPropagation;
     }
 
-    var source = pulse.materialize(pulse.SOURCE).source,
-        shared = _.resolve === 'shared',
-        field = _.field || identity,
-        opacity = opacity_(_.opacity, _),
-        color = color_(_.color, _),
-        as = _.as || 'image',
-        obj = {
-          $x: 0, $y: 0, $value: 0,
-          $max: shared ? max(source.map(t => max(field(t).values))) : 0
-        };
+    var source = pulse.materialize(pulse.SOURCE).source;
+    var shared = _.resolve === 'shared';
+    var field = _.field || identity;
+    var opacity = opacity_(_.opacity, _);
+    var color = color_(_.color, _);
+    var as = _.as || 'image';
+    var obj = {
+      $x: 0, $y: 0, $value: 0,
+      $max: shared ? max(source.map(t => max(field(t).values))) : 0
+    };
 
     source.forEach(t => {
       const v = field(t);
@@ -117,18 +117,18 @@ function dependency(f) {
 
 // render raster grid to canvas
 function toCanvas(grid, obj, color, opacity) {
-  const n = grid.width,
-        m = grid.height,
-        x1 = grid.x1 || 0,
-        y1 = grid.y1 || 0,
-        x2 = grid.x2 || n,
-        y2 = grid.y2 || m,
-        val = grid.values,
-        value = val ? i => val[i] : zero,
-        can = canvas(x2 - x1, y2 - y1),
-        ctx = can.getContext('2d'),
-        img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
-        pix = img.data;
+  const n = grid.width;
+  const m = grid.height;
+  const x1 = grid.x1 || 0;
+  const y1 = grid.y1 || 0;
+  const x2 = grid.x2 || n;
+  const y2 = grid.y2 || m;
+  const val = grid.values;
+  const value = val ? i => val[i] : zero;
+  const can = canvas(x2 - x1, y2 - y1);
+  const ctx = can.getContext('2d');
+  const img = ctx.getImageData(0, 0, x2 - x1, y2 - y1);
+  const pix = img.data;
 
   for (let j=y1, k=0; j<y2; ++j) {
     obj.$y = j - y1;

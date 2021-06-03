@@ -24,7 +24,8 @@ export default function Heap(cmp) {
 }
 
 function siftdown(array, start, idx, cmp) {
-  let parent, pidx;
+  let parent;
+  let pidx;
 
   const item = array[idx];
   while (idx > start) {
@@ -41,10 +42,11 @@ function siftdown(array, start, idx, cmp) {
 }
 
 function siftup(array, idx, cmp) {
-  const start = idx,
-        end = array.length,
-        item = array[idx];
-  let cidx = (idx << 1) + 1, ridx;
+  const start = idx;
+  const end = array.length;
+  const item = array[idx];
+  let cidx = (idx << 1) + 1;
+  let ridx;
 
   while (cidx < end) {
     ridx = cidx + 1;

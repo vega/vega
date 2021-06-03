@@ -50,8 +50,8 @@ inherits(Transform, Operator, {
        value (including undefined) will let the input pulse pass through.
   */
   evaluate(pulse) {
-    const params = this.marshall(pulse.stamp),
-          out = this.transform(params, pulse);
+    const params = this.marshall(pulse.stamp);
+    const out = this.transform(params, pulse);
     params.clear();
     return out;
   },

@@ -61,13 +61,13 @@ inherits(KDE2D, Transform, {
     if (this.value && !pulse.changed() && !_.modified())
       return pulse.StopPropagation;
 
-    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        groups = partition(source, _.groupby),
-        names = (_.groupby || []).map(accessorName),
-        kde = params(density2D(), _),
-        as = _.as || 'grid',
-        values = [];
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var source = pulse.materialize(pulse.SOURCE).source;
+    var groups = partition(source, _.groupby);
+    var names = (_.groupby || []).map(accessorName);
+    var kde = params(density2D(), _);
+    var as = _.as || 'grid';
+    var values = [];
 
     function set(t, vals) {
       for (let i=0; i<names.length; ++i) t[names[i]] = vals[i];
@@ -87,9 +87,14 @@ inherits(KDE2D, Transform, {
 });
 
 export function partition(data, groupby) {
-  var groups = [],
-      get = f => f(t),
-      map, i, n, t, k, g;
+  var groups = [];
+  var get = f => f(t);
+  var map;
+  var i;
+  var n;
+  var t;
+  var k;
+  var g;
 
   // partition data points into groups
   if (groupby == null) {
