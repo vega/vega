@@ -15,8 +15,8 @@ import { Changeset, Transform } from './dataflow';
 import { Scene } from './scene';
 import { LoggerInterface } from 'vega-util';
 
-// TODO
-export type Runtime = any;
+export { Runtime } from './runtime';
+import { Runtime } from './runtime';
 
 export const version: string;
 
