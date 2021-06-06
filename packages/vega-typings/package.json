@@ -13,6 +13,7 @@
   "license": "BSD-3-Clause",
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
+    "format-dataflow-tests": "prettier --write --ignore-path none tests/dataflow/*.ts",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
     "test": "yarn format && dtslint ."
