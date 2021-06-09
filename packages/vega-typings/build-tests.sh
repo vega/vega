@@ -28,7 +28,7 @@ do
 
   printf "import { Runtime } from 'vega';\n\n" > "$outputDataflow"
   printf "export const dataflow: Runtime = " >> "$outputDataflow"
-  ./vega-to-dataflow.js "$file" >> "$outputDataflow"
+  ./vega-to-dataflow.js "$file" "$outputDataflow"
 
 done
 
