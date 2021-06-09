@@ -28,7 +28,7 @@ do
 
   printf "import { Runtime } from 'vega';\n\n" > "$outputDataflow"
   printf "export const dataflow: Runtime = " >> "$outputDataflow"
-  node -e "console.log(JSON.stringify(require('vega').parse(require('$file'))) + ';')" >> "$outputDataflow"
+  ./vega-to-dataflow.js "$file" >> "$outputDataflow"
 
 done
 
