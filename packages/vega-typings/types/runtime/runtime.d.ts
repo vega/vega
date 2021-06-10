@@ -1,4 +1,6 @@
-import { EventStream, EventType, WindowEventType } from '..';
+import { AggregateOp, EventType, WindowEventType } from '..';
+
+// All references to source code are from the vega-parser package
 
 export type Runtime = {
   description: string;
@@ -10,48 +12,131 @@ export type Runtime = {
   locale?: any;
 };
 
-// From Scope.js:Scope:add -> transforms.js
-type Entry = { id: id } & (
-  | {
-      type: 'operator';
-      // Adding root property in Scope.finish()
-      // Adding root operator node in parseView
-      root?: true;
-    }
-  | { type: 'aggregate'; value?: any; params?: any; parent?: any }
-  | { type: 'axisticks'; value?: any; params?: any; parent?: any }
-  | { type: 'bound'; value?: any; params?: any; parent?: any }
-  | { type: 'collect'; value?: any; params?: any; parent?: any }
-  | { type: 'compare'; value?: any; params?: any; parent?: any }
-  | { type: 'datajoin'; value?: any; params?: any; parent?: any }
-  | { type: 'encode'; value?: any; params?: any; parent?: any }
-  | { type: 'expression'; value?: any; params?: any; parent?: any }
-  | { type: 'extent'; value?: any; params?: any; parent?: any }
-  | { type: 'facet'; value?: any; params?: any; parent?: any }
-  | { type: 'field'; value?: any; params?: any; parent?: any }
-  | { type: 'key'; value?: any; params?: any; parent?: any }
-  | { type: 'legendentries'; value?: any; params?: any; parent?: any }
-  | { type: 'load'; value?: any; params?: any; parent?: any }
-  | { type: 'mark'; value?: any; params?: any; parent?: any }
-  | { type: 'multiextent'; value?: any; params?: any; parent?: any }
-  | { type: 'multivalues'; value?: any; params?: any; parent?: any }
-  | { type: 'overlap'; value?: any; params?: any; parent?: any }
-  | { type: 'params'; value?: any; params?: any; parent?: any }
-  | { type: 'prefacet'; value?: any; params?: any; parent?: any }
-  | { type: 'projection'; value?: any; params?: any; parent?: any }
-  | { type: 'proxy'; value?: any; params?: any; parent?: any }
-  | { type: 'relay'; value?: any; params?: any; parent?: any }
-  | { type: 'render'; value?: any; params?: any; parent?: any }
-  | { type: 'scale'; value?: any; params?: any; parent?: any }
-  | { type: 'sieve'; value?: any; params?: any; parent?: any }
-  | { type: 'sortitems'; value?: any; params?: any; parent?: any }
-  | { type: 'viewlayout'; value?: any; params?: any; parent?: any }
-  | { type: 'values'; value?: any; params?: any; parent?: any }
-);
+// These are called entries instead of operators because the JS class
+// is also called Entry, defined in util.js:entry
+type Entry = OperatorEntry | TransformEntry;
 
-// from `Scope.js:Scope:id`
-// String if sub id with `:` seperate parent from child id numbers
-type id = string | number;
+type OperatorEntry = EntryType<
+  'operator',
+  | {
+      // Adding root property in Scope.finish()
+      // Adding root operator node in view.parseView
+      root: true;
+    }
+  | ({
+      // operators added by Scope.addSignal
+      value?: unknown;
+      // added in parsers/signal.js
+      react?: false;
+      // Scope.finish (signals that are removed dont have a name)
+      signal?: string;
+    } & (
+      | {}
+      // Saved to scope.signals in Scope.addSignal
+      // retrieved and modified in parsers/signal-updates.js
+      | {
+          initonly?: true;
+          update: expr;
+          params: { [signalName: string]: Ref };
+        }
+    ))
+>;
+
+// All entries defined in transforms.js
+type TransformEntry =
+  | AggregateEntry
+  | AxisTicksEntry
+  | BoundEntry
+  | CollectEntry
+  | CompareEntry
+  | DataJoinEntry
+  | EncodeEntry
+  | ExpressionEntry
+  | ExtentEntry
+  | FacetEntry
+  | FieldEntry
+  | KeyEntry
+  | LegendEntriesEntry
+  | LoadEntry
+  | MarkEntry
+  | MultiextentEntry
+  | MultivaluesEntry
+  | OverlapEntry
+  | ParamsEntry
+  | PrefacetEntry
+  | ProjectionEntry
+  | ProxyEntry
+  | RelayEntry
+  | RenderEntry
+  | ScaleEntry
+  | SieveEntry
+  | SortItemsEntry
+  | ViewLayoutEntry
+  | ValuesEntry;
+
+type AggregateEntry = EntryType<
+  'aggregate',
+  {
+    params: // DataScope.countsRef
+    | {
+          groupby: {
+            $field: string;
+            $name: 'key';
+          };
+          pulse: Ref;
+          // DataScope.addSortFIeld
+          ops: (AggregateOp | Ref)[];
+          // Fields can only be string field refs, not signals
+          fields: (null | { $field: string })[];
+          as: string[];
+        }
+      // scale.ordinalMultipleDomain
+      | {
+          groupby: {
+            $field: 'key';
+          };
+          pulse: Ref[];
+          // DataScope.addSortFIeld
+          ops: ['min' | 'max' | 'sum'];
+          // Fields can only be string field refs, not signals
+          fields: [{ $field: string }];
+          as: [string];
+        };
+  }
+>;
+type AxisTicksEntry = EntryType<'axisticks', { [k: string]: unknown }>;
+type BoundEntry = EntryType<'bound', { [k: string]: unknown }>;
+type CollectEntry = EntryType<'collect', { [k: string]: unknown }>;
+type CompareEntry = EntryType<'compare', { [k: string]: unknown }>;
+type DataJoinEntry = EntryType<'datajoin', { [k: string]: unknown }>;
+type EncodeEntry = EntryType<'encode', { [k: string]: unknown }>;
+type ExpressionEntry = EntryType<'expression', { [k: string]: unknown }>;
+type ExtentEntry = EntryType<'extent', { [k: string]: unknown }>;
+type FacetEntry = EntryType<'facet', { [k: string]: unknown }>;
+type FieldEntry = EntryType<'field', { [k: string]: unknown }>;
+type KeyEntry = EntryType<'key', { [k: string]: unknown }>;
+type LegendEntriesEntry = EntryType<'legendentries', { [k: string]: unknown }>;
+type LoadEntry = EntryType<'load', { [k: string]: unknown }>;
+type MarkEntry = EntryType<'mark', { [k: string]: unknown }>;
+type MultiextentEntry = EntryType<'multiextent', { [k: string]: unknown }>;
+type MultivaluesEntry = EntryType<'multivalues', { [k: string]: unknown }>;
+type OverlapEntry = EntryType<'overlap', { [k: string]: unknown }>;
+type ParamsEntry = EntryType<'params', { [k: string]: unknown }>;
+type PrefacetEntry = EntryType<'prefacet', { [k: string]: unknown }>;
+type ProjectionEntry = EntryType<'projection', { [k: string]: unknown }>;
+type ProxyEntry = EntryType<'proxy', { [k: string]: unknown }>;
+type RelayEntry = EntryType<'relay', { [k: string]: unknown }>;
+type RenderEntry = EntryType<'render', { [k: string]: unknown }>;
+type ScaleEntry = EntryType<'scale', { [k: string]: unknown }>;
+type SieveEntry = EntryType<'sieve', { [k: string]: unknown }>;
+type SortItemsEntry = EntryType<'sortitems', { [k: string]: unknown }>;
+type ViewLayoutEntry = EntryType<'viewlayout', { [k: string]: unknown }>;
+type ValuesEntry = EntryType<'values', { [k: string]: unknown }>;
+
+type EntryType<NAME extends string, BODY extends { [k: string]: unknown }> = {
+  id: id;
+  type: NAME;
+} & BODY;
 
 type Stream = {
   id: id;
@@ -83,5 +168,13 @@ type Stream = {
       consume?: true;
     })
 );
+
+type Ref = {
+  $ref: id;
+};
+
+// from `Scope.js:Scope:id`
+// String if sub id with `:` seperate parent from child id numbers
+type id = string | number;
 
 type expr = { code: string };
