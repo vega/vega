@@ -162,6 +162,10 @@ type ValuesEntry = EntryType<'values', { [k: string]: unknown }>;
 type EntryType<NAME extends string, BODY extends { [k: string]: unknown }> = {
   id: id;
   type: NAME;
+  // Scope.add
+  refs?: null
+  // Scope.finish.annotate
+  data?: { [name: string]: ('input' | 'output' | 'values' | `index:${string}`)[] };
 } & BODY;
 
 type Stream = {
