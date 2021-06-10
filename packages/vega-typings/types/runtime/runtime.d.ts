@@ -104,18 +104,22 @@ type AggregateEntry = EntryType<
   'aggregate',
   {
     params: // DataScope.countsRef
-    | {
+    | ({
           groupby: {
             $field: string;
             $name: 'key';
           };
           pulse: Ref;
+        } & (
+          | {}
           // DataScope.addSortFIeld
-          ops: (AggregateOp | Ref)[];
-          // Fields can only be string field refs, not signals
-          fields: (null | { $field: string })[];
-          as: string[];
-        }
+          | {
+              ops: ['count', ...(AggregateOp | Ref)[]];
+              // Fields can only be string field refs, not signals
+              fields: [null, ...{ $field: string }[]];
+              as: ['count', ...string[]];
+            }
+        ))
       // scale.ordinalMultipleDomain
       | {
           groupby: {
@@ -163,7 +167,7 @@ type EntryType<NAME extends string, BODY extends { [k: string]: unknown }> = {
   id: id;
   type: NAME;
   // Scope.add
-  refs?: null
+  refs?: null;
   // Scope.finish.annotate
   data?: { [name: string]: ('input' | 'output' | 'values' | `index:${string}`)[] };
 } & BODY;
