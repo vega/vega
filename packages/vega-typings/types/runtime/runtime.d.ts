@@ -13,7 +13,25 @@ export interface Runtime {
 
 // These are called entries instead of operators because the JS class
 // is also called Entry, defined in util.js:entry
-export type Entry = OperatorEntry | TransformEntry | DataTransformEntry;
+export type Entry = OperatorEntry | TransformEntry | DataTransformEntry | CacheEntry;
+
+// from DataScope.cache
+export type CacheEntry = ExtentRefEntry | DomainRefEntry | ValuesRefEntry | LookupRefEntry;
+
+// from DataScope.extentRef
+export type ExtentRefEntry = EntryType<'extent', { params: { field: fieldRef; pulse: Ref } }>;
+
+// from DataScope.domainRef
+export type DomainRefEntry = EntryType<'values', { params: { field: fieldRef; pulse: Ref } }>;
+
+// from DataScope.valuesRef
+export type ValuesRefEntry = EntryType<
+  'values',
+  { params: { field: keyFieldRef; pulse: Ref; sort: sortRef } }
+>;
+
+// from DataScope.lookupRef, DataScope.indataRef
+export type LookupRefEntry = EntryType<'tupleindex', { params: { field: fieldRef; pulse: Ref } }>;
 
 export type OperatorEntry = EntryType<
   'operator',
@@ -105,10 +123,7 @@ export type AggregateEntry = EntryType<
   {
     params: // DataScope.countsRef
     | ({
-          groupby: {
-            $field: string;
-            $name: 'key';
-          };
+          groupby: fieldRef<string, 'key'>;
           pulse: Ref;
         } & (
           | {}
@@ -116,20 +131,18 @@ export type AggregateEntry = EntryType<
           | {
               ops: ['count', ...(AggregateOp | Ref)[]];
               // Fields can only be string field refs, not signals
-              fields: [null, ...{ $field: string }[]];
+              fields: [null, ...fieldRef[]];
               as: ['count', ...string[]];
             }
         ))
       // scale.ordinalMultipleDomain
       | {
-          groupby: {
-            $field: 'key';
-          };
+          groupby: keyFieldRef;
           pulse: Ref[];
           // DataScope.addSortFIeld
           ops: ['min' | 'max' | 'sum'];
           // Fields can only be string field refs, not signals
-          fields: [{ $field: string }];
+          fields: [fieldRef];
           as: [string];
         };
   }
@@ -219,3 +232,20 @@ export interface Parse {
   $params: { [signalName: string]: Ref };
   $fields: string[];
 }
+
+// utils.sortKey
+export type sortKey<O> = O extends object ? string : '';
+// Scope.sortRef
+export type sortRef = Ref | compareRef<string, 'ascending' | 'descending'>;
+
+// util.compareRef
+export type compareRef<fields, orders> = { $compare: fields; $orders: orders };
+
+// utils.fieldRef
+export type fieldRef<
+  field extends string = string,
+  name extends string | undefined = undefined
+> = name extends string ? { $field: field; $name: name } : { $field: field };
+
+// utils.keyFieldRef
+export type keyFieldRef = fieldRef<'key'>;
