@@ -1,5 +1,4 @@
-import { AggregateOp, EventType, WindowEventType } from '..';
-
+import { AggregateOp, EventType, WindowEventType, Transforms } from '..';
 // All references to source code are from the vega-parser package
 
 export type Runtime = {
@@ -14,7 +13,7 @@ export type Runtime = {
 
 // These are called entries instead of operators because the JS class
 // is also called Entry, defined in util.js:entry
-type Entry = OperatorEntry | TransformEntry;
+type Entry = OperatorEntry | TransformEntry | DataTransformEntry;
 
 type OperatorEntry = EntryType<
   'operator',
@@ -36,11 +35,38 @@ type OperatorEntry = EntryType<
       // retrieved and modified in parsers/signal-updates.js
       | {
           initonly?: true;
-          update: expr;
-          params: { [signalName: string]: Ref };
+          update: Parse['$expr'];
+          params: Parse['$params'];
         }
     ))
 >;
+
+// The parameters for all builtin vega data transforms
+// from the parsers/transform.js function
+// Possible todo: create per transform type definitions based on transform definitions
+type DataTransformEntry = EntryType<
+  // TODO: Do we allow external transforms as well?
+  // The current vega spec definition does not.
+  Transforms['type'],
+  {
+    value: null;
+    params: {
+      [name: string]: TransformParam;
+    };
+    // Copies metadata from transform definition
+    metadata: { [k: string]: unknown };
+  }
+>;
+
+// // parsers.transform.js:parseParameter
+type TransformParam =
+  // parseIndexParameter
+  | Ref
+  // parseSubParameters
+  | Ref[]
+  // parameterValue
+  | Parse
+  | unknown;
 
 // All entries defined in transforms.js
 type TransformEntry =
@@ -162,7 +188,7 @@ type Stream = {
     ) & {
       // from parsers/stream.js:streamParameters
       between?: [id, id];
-      filter?: expr;
+      filter?: Parse['$expr'];
       throttle?: number;
       debounce?: number;
       consume?: true;
@@ -177,4 +203,11 @@ type Ref = {
 // String if sub id with `:` seperate parent from child id numbers
 type id = string | number;
 
-type expr = { code: string };
+// from vega-functions:parser.js
+type Parse = {
+  // TODO: AST types
+  // TODO: Make ast config as generic param?
+  $expr: { code: string; ast?: unknown };
+  $params: { [signalName: string]: Ref };
+  $fields: string[];
+};
