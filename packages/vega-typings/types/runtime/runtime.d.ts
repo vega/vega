@@ -7,7 +7,7 @@ export interface Runtime {
   operators: Entry[];
   // Event streams that Vega is listening to. Often DOM events
   streams: Stream[];
-  updates: any;
+  updates: Update[];
   bindings: Binding[];
   eventConfig?: Config['events'];
   locale?: Config['locale'];
@@ -227,6 +227,15 @@ export type Stream = {
   // from parsers/stream.js:mergeStream -> streamParameters
   | { merge: id[] }
 );
+export interface Update {
+  // Using an expression as a target is supported in the vega runtime
+  // but not used currently
+  target: id | { $expr: Parse['$expr'] };
+  source: id | Ref;
+  // Unknown if set to value instead of expression
+  update: Parse | unknown;
+  options?: { force?: boolean };
+}
 
 export type Binding = {
   signal: string;
@@ -246,7 +255,7 @@ export interface Parse {
   // TODO: Make ast config as generic param?
   $expr: { code: string; ast?: unknown };
   $params: { [signalName: string]: Ref };
-  $fields: string[];
+  $fields?: string[];
 }
 
 // utils.sortKey
