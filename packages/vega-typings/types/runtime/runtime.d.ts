@@ -10,7 +10,7 @@ export interface Runtime {
   updates: any;
   bindings: Binding[];
   eventConfig?: Config['events'];
-  locale?: any;
+  locale?: Config['locale'];
 }
 
 // These are called entries instead of operators because the JS class
