@@ -1,3 +1,4 @@
+import { Config } from 'types/spec';
 import { AggregateOp, EventType, WindowEventType, Transforms, Binding as SpecBinding } from '..';
 // All references to source code are from the vega-parser package
 
@@ -8,7 +9,7 @@ export interface Runtime {
   streams: Stream[];
   updates: any;
   bindings: Binding[];
-  eventConfig: any;
+  eventConfig?: Config['events'];
   locale?: any;
 }
 
