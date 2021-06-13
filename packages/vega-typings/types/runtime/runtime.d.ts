@@ -187,6 +187,14 @@ export type EntryType<NAME extends string, BODY extends { [k: string]: unknown }
 
 export type Stream = {
   id: id;
+  // from parsers/stream.js:streamParameters
+  // Currently, only merged or streams that reference another stram
+  // use these parameters, but in the vega runtime any stream can have them
+  between?: [id, id];
+  filter?: Parse['$expr'];
+  throttle?: number;
+  debounce?: number;
+  consume?: true;
 } & (
   | // from parsers/stream.js:eventStream -> scope.event
   {
@@ -200,20 +208,10 @@ export type Stream = {
   | {
       source: 'window';
       type: WindowEventType;
-    }
-  | ((
-      | // from parsers/stream.js:eventStream & nestedStream -> streamParameters
-      { stream: id }
-      // from parsers/stream.js:mergeStream -> streamParameters
-      | { merge: id[] }
-    ) & {
-      // from parsers/stream.js:streamParameters
-      between?: [id, id];
-      filter?: Parse['$expr'];
-      throttle?: number;
-      debounce?: number;
-      consume?: true;
-    })
+    } // from parsers/stream.js:eventStream & nestedStream -> streamParameters
+  | { stream: id }
+  // from parsers/stream.js:mergeStream -> streamParameters
+  | { merge: id[] }
 );
 
 export interface Ref {
