@@ -190,10 +190,14 @@ export type Stream = {
   // from parsers/stream.js:streamParameters
   // Currently, only merged or streams that reference another stram
   // use these parameters, but in the vega runtime any stream can have them
+
+  // Filter this stream for events that happen after an event from the first stream
+  // and before an event in the second.
   between?: [id, id];
   filter?: Parse['$expr'];
   throttle?: number;
   debounce?: number;
+  // Whether to stop native event propogation
   consume?: true;
 } & (
   | // from parsers/stream.js:eventStream -> scope.event
