@@ -1,12 +1,13 @@
-import { AggregateOp, EventType, WindowEventType, Transforms } from '..';
+import { AggregateOp, EventType, WindowEventType, Transforms, Binding as SpecBinding } from '..';
 // All references to source code are from the vega-parser package
 
 export interface Runtime {
   description: string;
   operators: Entry[];
+  // Event streams that Vega is listening to. Often DOM events
   streams: Stream[];
   updates: any;
-  bindings: any;
+  bindings: Binding[];
   eventConfig: any;
   locale?: any;
 }
@@ -225,6 +226,10 @@ export type Stream = {
   // from parsers/stream.js:mergeStream -> streamParameters
   | { merge: id[] }
 );
+
+export type Binding = {
+  signal: string;
+} & SpecBinding;
 
 export interface Ref {
   $ref: id;
