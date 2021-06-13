@@ -208,7 +208,15 @@ export type Stream = {
   | {
       source: 'window';
       type: WindowEventType;
-    } // from parsers/stream.js:eventStream & nestedStream -> streamParameters
+    }
+  // in vega-view:events.js any source is supported that is used for
+  // querySelectorAll and then the type is used with addEventListener
+  // on all results
+  | {
+      source: string;
+      event: string;
+    }
+  // from parsers/stream.js:eventStream & nestedStream -> streamParameters
   | { stream: id }
   // from parsers/stream.js:mergeStream -> streamParameters
   | { merge: id[] }
