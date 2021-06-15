@@ -237,10 +237,10 @@ export interface Update {
   options?: { force?: boolean };
 }
 
-type Primitive = number | string | bigint | boolean | symbol | undefined | null;
-type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T; // from lodash
+export type Primitive = number | string | bigint | boolean | symbol | undefined | null;
+export type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T; // from lodash
 
-type ObjectWithoutKeys<T extends object> = Record<any, unknown> & Record<keyof T, never>;
+export type ObjectWithoutKeys<T extends object> = Record<any, unknown> & Record<keyof T, never>;
 export type Binding = {
   signal: string;
 } & SpecBinding;
@@ -262,13 +262,14 @@ export interface Parse {
   $fields?: string[];
 }
 
-// utils.sortKey
-export type sortKey<O> = O extends object ? string : '';
 // Scope.sortRef
-export type sortRef = Ref | compareRef<string, 'ascending' | 'descending'>;
+export type sortRef = Ref | compareRef;
 
-// util.compareRef
-export type compareRef<fields, orders> = { $compare: fields; $orders: orders };
+// utils.compareRef
+export interface compareRef {
+  $compare: string;
+  $orders: 'ascending' | 'descending';
+}
 
 // utils.fieldRef
 export type fieldRef<
