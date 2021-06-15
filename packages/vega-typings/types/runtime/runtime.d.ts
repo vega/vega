@@ -187,6 +187,10 @@ export type EntryType<NAME extends string, BODY extends { [k: string]: unknown }
   data?: { [name: string]: ('input' | 'output' | 'values' | `index:${string}`)[] };
 } & BODY;
 
+/**
+ * A stream is some type of external input. They are created from Vega
+ * EventStreams from signals.
+ * */
 export type Stream = {
   id: id;
   // from parsers/stream.js:streamParameters
@@ -227,13 +231,23 @@ export type Stream = {
   // from parsers/stream.js:mergeStream -> streamParameters
   | { merge: id[] }
 );
+
+// Updates are added in parsers/update.js -> scope.addUpdate
+// which is called from parsers/signal-updates.js for each "on" on each signal
 export interface Update {
+  // The target signal is set to the new value
   // Using an expression as a target is supported in the vega runtime
   // but not used currently
   target: id | { $expr: Parse['$expr'] };
+  // Whenever the source signal fires, the update is triggered
   source: id | Ref;
-  // This is either a primitive, a Parse object, or an object with the keys of parse.
+  // The update either a static value or a parse expxression that
+  // is re-evaluted whenever the source fires, and returns the value
+  // fpr the target
+  // The update is either a static value or a Parse expression.
   update: Truthy<Primitive> | Parse | ObjectWithoutKeys<Parse>;
+  // If force is true, then it will always update the target,
+  // even if the result is the same
   options?: { force?: boolean };
 }
 
