@@ -92,10 +92,10 @@ function buildTitle(spec, _, userEncode, dataRef) {
 
   addEncoders(encode, {
     text:       text,
-    align:      {signal: 'item.mark.group.align'},
-    angle:      {signal: 'item.mark.group.angle'},
-    limit:      {signal: 'item.mark.group.limit'},
-    baseline:   'top',
+    align:      _('align'),
+    angle:      _('angle'),
+    limit:      _('limit'),
+    baseline:   _('baseline'),
     dx:         _('dx'),
     dy:         _('dy'),
     fill:       _('color'),
@@ -130,10 +130,10 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
 
   addEncoders(encode, {
     text:       text,
-    align:      {signal: 'item.mark.group.align'},
-    angle:      {signal: 'item.mark.group.angle'},
-    limit:      {signal: 'item.mark.group.limit'},
-    baseline:   'top',
+    align:      _('align'),
+    angle:      _('angle'),
+    limit:      _('limit'),
+    baseline:   _('baseline'),
     dx:         _('dx'),
     dy:         _('dy'),
     fill:       _('subtitleColor'),
