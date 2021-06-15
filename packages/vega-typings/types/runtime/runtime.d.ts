@@ -232,11 +232,15 @@ export interface Update {
   // but not used currently
   target: id | { $expr: Parse['$expr'] };
   source: id | Ref;
-  // Unknown if set to value instead of expression
-  update: Parse | unknown;
+  // This is either a primitive, a Parse object, or an object with the keys of parse.
+  update: Truthy<Primitive> | Parse | ObjectWithoutKeys<Parse>;
   options?: { force?: boolean };
 }
 
+type Primitive = number | string | bigint | boolean | symbol | undefined | null;
+type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T; // from lodash
+
+type ObjectWithoutKeys<T extends object> = Record<any, unknown> & Record<keyof T, never>;
 export type Binding = {
   signal: string;
 } & SpecBinding;
