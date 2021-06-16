@@ -95,6 +95,8 @@ export interface OtherOperator extends BaseOperator {
 
 // From vega-runtime/parameters.js
 export interface Parameters {
+  // If pulse is a param, it must be a ref
+  pulse?: OperatorParam | OperatorParam[];
   [name: string]: Parameter | Parameter[];
 }
 // A parameter is either builtin, with the proper keys, or some primitive value or other object
@@ -331,7 +333,7 @@ export type ObjectOrAny<T extends object> =
   | (Record<any, unknown> & Record<keyof T, never>)
   | Primitive;
 
-export type Primitive = number | string | bigint | boolean | symbol | null;
+export type Primitive = number | string | bigint | boolean | symbol | null | undefined;
 
 // from `Scope.js:Scope:id`
 // String if sub id with `:` seperate parent from child id numbers
