@@ -5,9 +5,13 @@ import { AggregateOp, EventType, WindowEventType, Transforms, Binding as SpecBin
 export interface Runtime {
   description?: string;
   operators: Operator[];
-  // Event streams that Vega is listening to. Often DOM events
+  // Event streams that Vega is listening to. Often DOM events.
   streams?: Stream[];
+  // Triggers updates of operations based on other operations
   updates?: Update[];
+  // Contains a list of bindings which map singal names to DOM input elements.
+  // When the dom elements are updated, it updates the operator with the signal name
+  // the same as the binding
   bindings: Binding[];
   eventConfig?: Config['events'];
   locale?: Config['locale'];
@@ -16,14 +20,22 @@ export interface Runtime {
 export interface BaseOperator {
   id: id;
   type: string;
+  // Parameters that are passed into the transform when it is updated.
+  // They can either be static values or references to other operators
   params?: Parameters;
+  // The initial value
   value?: unknown;
   root?: boolean;
-  // Scope.add
+
+  // Shows up from Scope.add but isn't used in the runtime
   refs?: null;
+
+  // The name of the signal to bind this to, when the signal is updated, this operator's
+  // value is set to the new value
   signal?: string;
   // Scope.finish.annotate
   data?: { [name: string]: ('input' | 'output' | 'values' | `index:${string}`)[] };
+  // A parent reference to watch for changes
   parent?: OperatorParam;
   scale?: string;
   metadata?: { [k: string]: unknown };
@@ -151,12 +163,17 @@ export interface FieldParam {
  */
 export interface EncodeParam {
   $encode: {
-    [name: string]: {
-      $fields: string[];
-      $ouput: string[];
-      $expr: { marktype: string; channels: { [name: string]: expr } };
-    };
+    update?: EncodeValue;
+    enter?: EncodeValue;
+    exit?: EncodeValue;
   };
+}
+
+export interface EncodeValue {
+  $fields: string[];
+  $ouput: string[];
+  // The keys of the channels is the same as the $output
+  $expr: { marktype: string; channels: Record<string, expr> };
 }
 
 /**
@@ -330,8 +347,11 @@ export type Binding = {
 export type ObjectOrAny<T extends object> =
   | T
   | unknown[]
-  | (Record<any, unknown> & Record<keyof T, never>)
+  | (Record<any, unknown> & Record<KeysOfUnion<T>, never>)
   | Primitive;
+
+// https://stackoverflow.com/a/49402091/907060
+type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 export type Primitive = number | string | bigint | boolean | symbol | null | undefined;
 
