@@ -3,12 +3,12 @@ import { AggregateOp, EventType, WindowEventType, Transforms, Binding as SpecBin
 // All references to source code are from the vega-parser package
 
 export interface Runtime {
-  description?: string;
+  description: string;
   operators: Operator[];
   // Event streams that Vega is listening to. Often DOM events.
-  streams?: Stream[];
+  streams: Stream[];
   // Triggers updates of operations based on other operations
-  updates?: Update[];
+  updates: Update[];
   // Contains a list of bindings which map singal names to DOM input elements.
   // When the dom elements are updated, it updates the operator with the signal name
   // the same as the binding
@@ -162,11 +162,7 @@ export interface FieldParam {
  * Resolve an encode operator reference.
  */
 export interface EncodeParam {
-  $encode: {
-    update?: EncodeValue;
-    enter?: EncodeValue;
-    exit?: EncodeValue;
-  };
+  $encode: Record<string, EncodeValue>
 }
 
 export interface EncodeValue {
@@ -182,7 +178,7 @@ export interface EncodeValue {
 export interface CompareParam {
   // Fields to compare on
   $compare: string | string[];
-  $orders: 'ascending' | 'descending';
+  $order: 'ascending' | 'descending';
 }
 
 /**
@@ -196,7 +192,7 @@ export interface ContextParam {
  * Resolve a recursive subflow specification.
  */
 export interface SubflowParam {
-  $subflow: Runtime;
+  $subflow: Pick<Runtime, 'operators' | 'streams' | 'updates'>;
 }
 
 // // These are called entries instead of operators because the JS class
@@ -347,11 +343,12 @@ export type Binding = {
 export type ObjectOrAny<T extends object> =
   | T
   | unknown[]
-  | (Record<any, unknown> & Record<KeysOfUnion<T>, never>)
+  // https://stackoverflow.com/a/52618536/907060
+  | (Record<string, unknown> & Partial<Record<KeysOfUnion<T>, never>>)
   | Primitive;
 
 // https://stackoverflow.com/a/49402091/907060
-type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 export type Primitive = number | string | bigint | boolean | symbol | null | undefined;
 
