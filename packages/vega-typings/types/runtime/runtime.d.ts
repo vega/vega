@@ -171,7 +171,7 @@ export interface EncodeParam {
 
 export interface EncodeValue {
   $fields: string[];
-  $ouput: string[];
+  $output: string[];
   // The keys of the channels is the same as the $output
   $expr: { marktype: string; channels: Record<string, expr> };
 }
