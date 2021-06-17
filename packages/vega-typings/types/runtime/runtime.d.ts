@@ -162,7 +162,7 @@ export interface FieldParam {
  * Resolve an encode operator reference.
  */
 export interface EncodeParam {
-  $encode: Record<string, EncodeValue>
+  $encode: Record<string, EncodeValue>;
 }
 
 export interface EncodeValue {
@@ -178,8 +178,10 @@ export interface EncodeValue {
 export interface CompareParam {
   // Fields to compare on
   $compare: string | string[];
-  $order: 'ascending' | 'descending';
+  $order: Order | Order[];
 }
+
+export type Order = 'ascending' | 'descending';
 
 /**
  * Resolve a context reference.
