@@ -18,7 +18,7 @@ export interface Runtime {
 }
 
 export interface BaseOperator {
-  id: id;
+  id: ID;
   type: string;
   // Parameters that are passed into the transform when it is updated.
   // They can either be static values or references to other operators
@@ -109,25 +109,25 @@ export interface OtherOperator extends BaseOperator {
 export interface Parameters {
   // If pulse is a param, it must be a ref
   pulse?: OperatorParam | OperatorParam[];
-  [name: string]: Parameter | Parameter[];
+  [name: string]: Parameter;
 }
 // A parameter is either builtin, with the proper keys, or some primitive value or other object
-export type Parameter = ObjectOrAny<
-  | OperatorParam
-  | KeyParam
-  | ExpressionParam
-  | FieldParam
-  | EncodeParam
-  | CompareParam
-  | ContextParam
-  | SubflowParam
->;
+export type Parameter = ObjectOrListObjectOrAny<BuiltinParameter>;
+
+export type BuiltinParameter =   | OperatorParam
+| KeyParam
+| ExpressionParam
+| FieldParam
+| EncodeParam
+| CompareParam
+| ContextParam
+| SubflowParam
 
 /**
  * Resolve an operator reference.
  */
 export interface OperatorParam {
-  $ref: id;
+  $ref: ID;
 }
 
 /**
@@ -194,8 +194,10 @@ export interface ContextParam {
  * Resolve a recursive subflow specification.
  */
 export interface SubflowParam {
-  $subflow: Pick<Runtime, 'operators' | 'streams' | 'updates'>;
+  $subflow: Subflow;
 }
+
+export type Subflow = Pick<Runtime, 'operators' | 'streams' | 'updates'>;
 
 // // These are called entries instead of operators because the JS class
 // // is also called Entry, defined in util.js:entry
@@ -280,14 +282,14 @@ export interface SubflowParam {
  * EventStreams from signals.
  */
 export type Stream = {
-  id: id;
+  id: ID;
   // from parsers/stream.js:streamParameters
   // Currently, only merged or streams that reference another stram
   // use these parameters, but in the vega runtime any stream can have them
 
   // Filter this stream for events that happen after an event from the first stream
   // and before an event in the second.
-  between?: [id, id];
+  between?: [ID, ID];
   filter?: expr;
   throttle?: number;
   debounce?: number;
@@ -308,9 +310,9 @@ export type Stream = {
       type: WindowEventType;
     }
   // from parsers/stream.js:eventStream & nestedStream -> streamParameters
-  | { stream: id }
+  | { stream: ID }
   // from parsers/stream.js:mergeStream -> streamParameters
-  | { merge: id[] }
+  | { merge: ID[] }
 );
 
 // Updates are added in parsers/update.js -> scope.addUpdate
@@ -319,9 +321,9 @@ export interface Update {
   // The target signal is set to the new value
   // Using an expression as a target is supported in the vega runtime
   // but not used currently in any examples, so we don't include it in the typings
-  target: id;
+  target: ID;
   // Whenever the source signal fires, the update is triggered
-  source: id | OperatorParam;
+  source: ID | OperatorParam;
   // The update either a static value or a parse expxression that
   // is re-evaluted whenever the source fires, and returns the value
   // fpr the target
@@ -349,6 +351,16 @@ export type ObjectOrAny<T extends object> =
   | (Record<string, unknown> & Partial<Record<KeysOfUnion<T>, never>>)
   | Primitive;
 
+
+  /**
+   * Like the above, but if it allows a list, then the list can also be of those objects
+   */
+  export type ObjectOrListObjectOrAny<T extends object> =
+  | T
+  | ObjectOrAny<T>[]
+  | (Record<string, unknown> & Partial<Record<KeysOfUnion<T>, never>>)
+  | Primitive;
+
 // https://stackoverflow.com/a/49402091/907060
 export type KeysOfUnion<T> = T extends T ? keyof T : never;
 
@@ -356,4 +368,4 @@ export type Primitive = number | string | bigint | boolean | symbol | null | und
 
 // from `Scope.js:Scope:id`
 // String if sub id with `:` seperate parent from child id numbers
-export type id = string | number;
+export type ID = string | number;
