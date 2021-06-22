@@ -1,3 +1,5 @@
+import { Mark } from "types/spec";
+
 export interface Scene {
   bounds: Bounds;
   clip: boolean;
@@ -36,7 +38,7 @@ export class Bounds {
 export interface SceneItem {
   bounds: Bounds;
   datum?: object;
-  mark: { role: string };
+  mark: Mark;
   x: number;
   y: number;
 }
