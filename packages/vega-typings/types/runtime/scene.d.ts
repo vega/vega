@@ -1,4 +1,4 @@
-import { Mark } from "types/spec";
+import { Mark } from '../spec/mark';
 
 export interface Scene {
   bounds: Bounds;
