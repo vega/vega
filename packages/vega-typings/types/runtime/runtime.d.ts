@@ -1,5 +1,5 @@
 import { Config, Format } from 'types/spec';
-import { AggregateOp, EventType, WindowEventType, Transforms, Binding as SpecBinding } from '..';
+import { EventType, WindowEventType, Transforms, Binding as SpecBinding } from '..';
 // All references to source code are from the vega-parser package
 
 export interface Runtime {
@@ -114,14 +114,15 @@ export interface Parameters {
 // A parameter is either builtin, with the proper keys, or some primitive value or other object
 export type Parameter = ObjectOrListObjectOrAny<BuiltinParameter>;
 
-export type BuiltinParameter =   | OperatorParam
-| KeyParam
-| ExpressionParam
-| FieldParam
-| EncodeParam
-| CompareParam
-| ContextParam
-| SubflowParam
+export type BuiltinParameter =
+  | OperatorParam
+  | KeyParam
+  | ExpressionParam
+  | FieldParam
+  | EncodeParam
+  | CompareParam
+  | ContextParam
+  | SubflowParam;
 
 /**
  * Resolve an operator reference.
@@ -154,7 +155,7 @@ export type expr = ExpressionParam['$expr'];
  * Resolve a field accessor reference.
  */
 export interface FieldParam {
-  $field: string;
+  $field: string | null;
   $name?: string;
 }
 
@@ -351,11 +352,10 @@ export type ObjectOrAny<T extends object> =
   | (Record<string, unknown> & Partial<Record<KeysOfUnion<T>, never>>)
   | Primitive;
 
-
-  /**
-   * Like the above, but if it allows a list, then the list can also be of those objects
-   */
-  export type ObjectOrListObjectOrAny<T extends object> =
+/**
+ * Like the above, but if it allows a list, then the list can also be of those objects
+ */
+export type ObjectOrListObjectOrAny<T extends object> =
   | T
   | ObjectOrAny<T>[]
   | (Record<string, unknown> & Partial<Record<KeysOfUnion<T>, never>>)
