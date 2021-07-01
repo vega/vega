@@ -108,7 +108,7 @@ Operator.prototype = {
    *   this flag determines if the operator registers itself as a listener on
    *   any upstream operators included in the parameters.
    * @param {boolean} [initonly=false] - A flag indicating if this operator
-   *   should calculate an update only upon its initiatal evaluation, then
+   *   should calculate an update only upon its initial evaluation, then
    *   deregister dependencies and suppress all future update invocations.
    * @return {Operator[]} - An array of upstream dependencies.
    */
