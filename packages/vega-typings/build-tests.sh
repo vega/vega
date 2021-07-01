@@ -26,6 +26,8 @@ do
   cat $file | perl -pe 'chomp if eof' >> "$output"
   printf ";\n" >> "$output"
 
+  echo "Creating $outputDataflow"
+
   printf "import { Runtime } from 'vega';\n\n" > "$outputDataflow"
   printf "export const dataflow: Runtime = " >> "$outputDataflow"
   ./vega-to-dataflow.js "$file" "$outputDataflow"
