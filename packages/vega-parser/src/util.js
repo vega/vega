@@ -61,8 +61,8 @@ export function sortKey(sort) {
 export function aggrField(op, field) {
   const removeUnnecessary = (str) => {
     if(str) {
-      s = ''
-      for(i = 0; i < str.length; i++) {
+      let s = ''
+      for(let i = 0; i < str.length; i++) {
         if(str[i] !== '\\' && str[i] !== '.' && str[i] !== '[' && str[i] !== ']') {
           s += str.substring(i,i+1);
         }
