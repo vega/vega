@@ -59,9 +59,24 @@ export function sortKey(sort) {
 }
 
 export function aggrField(op, field) {
+  const removeUnnecessary = (str) => {
+    if(str) {
+      s = ''
+      for(i = 0; i < str.length; i++) {
+        if(str[i] !== '\\' && str[i] !== '.' && str[i] !== '[' && str[i] !== ']') {
+          s += str.substring(i,i+1);
+        }
+      }
+      return s;
+    }
+    else {
+      return str;
+    }
+  }
+
   return (op && op.signal ? '$' + op.signal : op || '')
     + (op && field ? '_' : '')
-    + (field && field.signal ? '$' + field.signal : field || '');
+    + (field && field.signal ? '$' + field.signal : removeUnnecessary(field) || '');
 }
 
 // -----
