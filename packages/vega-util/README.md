@@ -508,7 +508,7 @@ Truncates an input *string* to a target *length*. The optional *align* argument 
 vega.<b>logger</b>([<i>level</i>, <i>method</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-util/src/logger.js "Source")
 
-Generates a new logger instance for selectively writing log messages to the JavaScript console. The optional *level* argument indicates the initial log level to use (one of [None](#none), [Warn](#warn), [Info](#info), or [Debug](#debug)), and defaults to [None](#none) if not specified.
+Generates a new logger instance for selectively writing log messages to the JavaScript console. The optional *level* argument indicates the initial log level to use (one of [None](#none), [Error](#error), [Warn](#warn), [Info](#info), or [Debug](#debug)), and defaults to [None](#none) if not specified.
 
 The generated logger instance provides the following methods:
 
