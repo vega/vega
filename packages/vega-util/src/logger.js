@@ -9,7 +9,7 @@ export const Warn  = 2;
 export const Info  = 3;
 export const Debug = 4;
 
-export default function(_, method) {
+export default function(_, method, handler = log) {
   let level = _ || None;
   return {
     level(_) {
@@ -21,19 +21,19 @@ export default function(_, method) {
       }
     },
     error() {
-      if (level >= Error) log(method || 'error', 'ERROR', arguments);
+      if (level >= Error) handler(method || 'error', 'ERROR', arguments);
       return this;
     },
     warn() {
-      if (level >= Warn) log(method || 'warn', 'WARN', arguments);
+      if (level >= Warn) handler(method || 'warn', 'WARN', arguments);
       return this;
     },
     info() {
-      if (level >= Info) log(method || 'log', 'INFO', arguments);
+      if (level >= Info) handler(method || 'log', 'INFO', arguments);
       return this;
     },
     debug() {
-      if (level >= Debug) log(method || 'log', 'DEBUG', arguments);
+      if (level >= Debug) handler(method || 'log', 'DEBUG', arguments);
       return this;
     }
   };
