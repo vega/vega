@@ -9,9 +9,8 @@ export const Warn  = 2;
 export const Info  = 3;
 export const Debug = 4;
 
-export default function(_, method, handler) {
+export default function(_, method, handler = log) {
   let level = _ || None;
-  let handler = handler || log;
   return {
     level(_) {
       if (arguments.length) {
