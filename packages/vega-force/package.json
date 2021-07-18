@@ -14,7 +14,8 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-transform",
+    "build": "yarn build:worker && rollup -c --config-transform",
+    "build:worker": "rollup -c --config-bundle -o build/vega-force.worker.js -- index-worker.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
