@@ -32,7 +32,7 @@ export default function(spec, scope) {
     domain: !!_('domain'),
     title:  spec.title != null
   };
-  const dataRef = ref(scope.add(Collect({}, [datum])));
+  const dataRef = ref(scope.add(Collect({}, [datum], undefined, spec)));
 
   // data source for axis ticks
   const ticksRef = ref(scope.add(AxisTicks({
@@ -43,7 +43,7 @@ export default function(spec, scope) {
     minstep: scope.property(spec.tickMinStep),
     formatType: scope.property(spec.formatType),
     formatSpecifier: scope.property(spec.format)
-  })));
+  }, undefined, undefined, spec)));
 
   // generate axis marks
   const children = [];
@@ -90,7 +90,8 @@ export default function(spec, scope) {
       interactive,
       style
     }),
-    scope
+    scope,
+    spec
   );
 }
 

@@ -72,8 +72,8 @@ function Subscope(scope) {
 }
 
 Scope.prototype = Subscope.prototype = {
-  parse(spec) {
-    return parseScope(spec, this);
+  parse(spec, src) {
+    return parseScope(spec, this, src);
   },
 
   fork() {
@@ -112,9 +112,9 @@ Scope.prototype = Subscope.prototype = {
     return op;
   },
 
-  proxy(op) {
+  proxy(op, src) {
     const vref = op instanceof Entry ? ref(op) : op;
-    return this.add(Proxy({value: vref}));
+    return this.add(Proxy({value: vref}, undefined, undefined, src));
   },
 
   addStream(stream) {
@@ -169,10 +169,10 @@ Scope.prototype = Subscope.prototype = {
 
   // ----
 
-  pushState(encode, parent, lookup) {
-    this._encode.push(ref(this.add(Sieve({pulse: encode}))));
+  pushState(encode, parent, lookup, src) {
+    this._encode.push(ref(this.add(Sieve({pulse: encode}, undefined, undefined, src))));
     this._parent.push(parent);
-    this._lookup.push(lookup ? ref(this.proxy(lookup)) : null);
+    this._lookup.push(lookup ? ref(this.proxy(lookup, src)) : null);
     this._markpath.push(-1);
   },
 
@@ -202,7 +202,7 @@ Scope.prototype = Subscope.prototype = {
 
   // ----
 
-  fieldRef(field, name) {
+  fieldRef(field, name, src) {
     if (isString(field)) return fieldRef(field, name);
     if (!field.signal) {
       error('Unsupported field reference: ' + stringValue(field));
@@ -214,28 +214,28 @@ Scope.prototype = Subscope.prototype = {
     if (!f) {
       const params = {name: this.signalRef(s)};
       if (name) params.as = name;
-      this.field[s] = f = ref(this.add(Field(params)));
+      this.field[s] = f = ref(this.add(Field(params, undefined, undefined, src)));
     }
     return f;
   },
 
-  compareRef(cmp) {
+  compareRef(cmp, src) {
     let signal = false;
 
     const check = _ => isSignal(_)
       ? (signal = true, this.signalRef(_.signal))
-      : isExpr(_) ? (signal = true, this.exprRef(_.expr))
+      : isExpr(_) ? (signal = true, this.exprRef(_.expr, undefined, src))
       : _;
 
     const fields = array(cmp.field).map(check),
           orders = array(cmp.order).map(check);
 
     return signal
-      ? ref(this.add(Compare({fields: fields, orders: orders})))
+      ? ref(this.add(Compare({fields: fields, orders: orders}, undefined, undefined, src)))
       : compareRef(fields, orders);
   },
 
-  keyRef(fields, flat) {
+  keyRef(fields, flat, src) {
     let signal = false;
 
     const check = _ => isSignal(_)
@@ -246,11 +246,11 @@ Scope.prototype = Subscope.prototype = {
     fields = array(fields).map(check);
 
     return signal
-      ? ref(this.add(Key({fields: fields, flat: flat})))
+      ? ref(this.add(Key({fields: fields, flat: flat}, undefined, undefined, src)))
       : keyRef(fields, flat);
   },
 
-  sortRef(sort) {
+  sortRef(sort, src) {
     if (!sort) return sort;
 
     // including id ensures stable sorting
@@ -261,7 +261,7 @@ Scope.prototype = Subscope.prototype = {
       ? ref(this.add(Compare({
           fields: a,
           orders: this.signalRef(o.signal)
-        })))
+        }, undefined, undefined, src)))
       : compareRef(a, o);
   },
 
@@ -287,11 +287,11 @@ Scope.prototype = Subscope.prototype = {
     return hasOwnProperty(this.signals, name);
   },
 
-  addSignal(name, value) {
+  addSignal(name, value, src) {
     if (this.hasOwnSignal(name)) {
       error('Duplicate signal name: ' + stringValue(name));
     }
-    const op = value instanceof Entry ? value : this.add(operator(value));
+    const op = value instanceof Entry ? value : this.add(operator(value, undefined, src));
     return this.signals[name] = op;
   },
 
@@ -306,7 +306,7 @@ Scope.prototype = Subscope.prototype = {
     if (this.signals[s]) {
       return ref(this.signals[s]);
     } else if (!hasOwnProperty(this.lambdas, s)) {
-      this.lambdas[s] = this.add(operator(null));
+      this.lambdas[s] = this.add(operator(null, undefined, s));
     }
     return ref(this.lambdas[s]);
   },
@@ -331,10 +331,10 @@ Scope.prototype = Subscope.prototype = {
       : this.signalRef(spec.signal || propertyLambda(spec));
   },
 
-  exprRef(code, name) {
+  exprRef(code, name, src) {
     const params = {expr: parseExpression(code, this)};
     if (name) params.expr.$name = name;
-    return ref(this.add(Expression(params)));
+    return ref(this.add(Expression(params, undefined, undefined, src)));
   },
 
   addBinding(name, bind) {
@@ -353,12 +353,12 @@ Scope.prototype = Subscope.prototype = {
     this.scales[name] = this.add(transform);
   },
 
-  addScale(name, params) {
-    this.addScaleProj(name, Scale(params));
+  addScale(name, params, src) {
+    this.addScaleProj(name, Scale(params, undefined, undefined, src));
   },
 
-  addProjection(name, params) {
-    this.addScaleProj(name, Projection(params));
+  addProjection(name, params, src) {
+    this.addScaleProj(name, Projection(params, undefined, undefined, src));
   },
 
   getScale(name) {

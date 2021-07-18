@@ -35,7 +35,7 @@ export default function(spec, scope, preprocessed) {
   array(spec.axes).forEach(_ => parseAxis(_, scope));
 
   // parse mark definitions
-  array(spec.marks).forEach(_ => parseMark(_, scope));
+  array(spec.marks).forEach(_ => parseMark(_, scope, _));
 
   // parse legend definitions
   array(spec.legends).forEach(_ => parseLegend(_, scope));
