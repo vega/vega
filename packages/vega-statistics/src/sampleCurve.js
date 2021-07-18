@@ -1,5 +1,5 @@
-// subdivide up to accuracy of 0.1 degrees
-const MIN_RADIANS = 0.1 * Math.PI / 180;
+// subdivide up to accuracy of 0.5 degrees
+const MIN_RADIANS = 0.5 * Math.PI / 180;
 
 // Adaptively sample an interpolated function over a domain extent
 export default function(f, extent, minSteps, maxSteps) {
@@ -30,16 +30,20 @@ export default function(f, extent, minSteps, maxSteps) {
     }
   }
 
-  let p0 = prev[0],
-      p1 = next[next.length - 1];
+  let p0 = prev[0];
+  let p1 = next[next.length - 1];
+
+  const sx = 1 / span;
+  const sy = scaleY(p0[1], next);
 
   while (p1) {
     // midpoint for potential curve subdivision
     const pm = point((p0[0] + p1[0]) / 2);
+    const dx = pm[0] - p0[0] >= stop;
 
-    if (pm[0] - p0[0] >= stop && angleDelta(p0, pm, p1) > MIN_RADIANS) {
+    if (dx && angleDelta(p0, pm, p1, sx, sy) > MIN_RADIANS) {
       // maximum resolution has not yet been met, and
-      // subdivision midpoint sufficiently different from endpoint
+      // subdivision midpoint is sufficiently different from endpoint
       // save subdivision, push midpoint onto the visitation stack
       next.push(pm);
     } else {
@@ -55,8 +59,22 @@ export default function(f, extent, minSteps, maxSteps) {
   return prev;
 }
 
-function angleDelta(p, q, r) {
-  const a0 = Math.atan2(r[1] - p[1], r[0] - p[0]),
-        a1 = Math.atan2(q[1] - p[1], q[0] - p[0]);
+function scaleY(init, points) {
+  let ymin = init;
+  let ymax = init;
+
+  const n = points.length;
+  for (let i = 0; i < n; ++i) {
+    const y = points[i][1];
+    if (y < ymin) ymin = y;
+    if (y > ymax) ymax = y;
+  }
+
+  return 1 / (ymax - ymin);
+}
+
+function angleDelta(p, q, r, sx, sy) {
+  const a0 = Math.atan2(sy * (r[1] - p[1]), sx * (r[0] - p[0])),
+        a1 = Math.atan2(sy * (q[1] - p[1]), sx * (q[0] - p[0]));
   return Math.abs(a0 - a1);
 }
