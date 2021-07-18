@@ -1,13 +1,14 @@
 import {textMetrics} from 'vega-scenegraph';
-import {collision, outOfBounds} from './common';
+import {getTests} from './common';
 
 // pixel direction offsets for flood fill search
 const X_DIR = [-1, -1, 1, 1];
 const Y_DIR = [-1, 1, -1, 1];
 
-export default function($, bitmaps, avoidBaseMark, markIndex) {
+export default function($, bitmaps, avoidBaseMark, markIndex, infPadding) {
   const width = $.width,
       height = $.height,
+      [collision, outOfBounds] = getTests(infPadding),
       bm0 = bitmaps[0], // where labels have been placed
       bm1 = bitmaps[1], // area outlines
       bm2 = $.bitmap(); // flood-fill visitations

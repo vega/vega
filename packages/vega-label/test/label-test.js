@@ -244,3 +244,130 @@ tape('Label performs label layout with base mark reactive geometry', t => {
 
   t.end();
 });
+
+tape('Label performs label layout over input points with infinity padding', t => {
+  function data() {
+    return [
+      {text: 'very-long-label', x: 5, y: 5, fontSize: 10}
+    ];
+  }
+
+  var df = new vega.Dataflow(),
+      pd = df.add(Infinity),
+      an = df.add('left'),
+      c0 = df.add(Collect),
+      lb = df.add(Label, {
+        size: [10, 10],
+        anchor: [an],
+        offset: [2],
+        padding: pd,
+        pulse: c0
+      });
+
+  df.update(an, 'left')
+    .update(pd, Infinity)
+    .pulse(c0, vega.changeset().insert(data()))
+    .run();
+  t.equal(lb.stamp, df.stamp());
+  let out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 3);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'right');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  df.update(an, 'right')
+    .update(pd, Infinity)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 7);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'left');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  df.update(an, 'left')
+    .update(pd, 0)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  t.equal(out[0].opacity, 0);
+
+  df.update(an, 'right')
+    .update(pd, 0)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  t.equal(out[0].opacity, 0);
+
+  df.update(an, 'left')
+    .update(pd, 'inf')
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 3);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'right');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  df.update(an, 'right')
+    .update(pd, 'inf')
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 7);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'left');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  df.update(an, 'left')
+    .update(pd, 5)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  t.equal(out[0].opacity, 0);
+
+  df.update(an, 'right')
+    .update(pd, 5)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  t.equal(out[0].opacity, 0);
+
+  df.update(an, 'left')
+    .update(pd, 100)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 3);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'right');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  df.update(an, 'right')
+    .update(pd, 100)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, 7);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'left');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  t.end();
+});

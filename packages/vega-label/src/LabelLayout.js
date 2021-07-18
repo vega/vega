@@ -45,7 +45,8 @@ export default function(texts, size, compare, offset, anchor,
         grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
         isGroupArea = grouptype === 'area',
         boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        $ = scaler(size[0], size[1], padding),
+        infPadding = padding === 'inf' || padding === Infinity,
+        $ = scaler(size[0], size[1], infPadding ? 0 : padding),
         isNaiveGroupArea = isGroupArea && method === 'naive';
 
   // prepare text mark data for placing
@@ -88,8 +89,8 @@ export default function(texts, size, compare, offset, anchor,
 
   // generate label placement function
   const place = isGroupArea
-    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex)
-    : placeMarkLabel($, bitmaps, anchors, offsets);
+    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex, infPadding)
+    : placeMarkLabel($, bitmaps, anchors, offsets, infPadding);
 
   // place all labels
   data.forEach(d => d.opacity = +place(d));
