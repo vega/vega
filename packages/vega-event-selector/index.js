@@ -1,1 +1,4 @@
-export {default as selector} from './src/event-selector';
+export {
+    default as selector,
+    default as parseSelector
+} from './src/event-selector';

@@ -1,4 +1,3 @@
-import { Scene, SceneItem } from './scene';
 import { Loader } from '.';
 
 export type Renderers = 'canvas' | 'svg' | 'none';

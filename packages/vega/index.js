@@ -89,10 +89,10 @@ export {
 } from 'vega-runtime';
 
 export {
-  codegen as codegenExpression,
-  parse as parseExpression
+  codegenExpression,
+  parseExpression
 } from 'vega-expression';
 
 export {
-  selector as parseSelector
+  parseSelector
 } from 'vega-event-selector';
