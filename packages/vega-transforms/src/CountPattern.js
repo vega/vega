@@ -37,20 +37,21 @@ function tokenize(text, tcase, match) {
 inherits(CountPattern, Transform, {
   transform(_, pulse) {
     const process = update => tuple => {
-      var tokens = tokenize(get(tuple), _.case, match) || [], t;
+      var tokens = tokenize(get(tuple), _.case, match) || [];
+      var t;
       for (var i=0, n=tokens.length; i<n; ++i) {
         if (!stop.test(t = tokens[i])) update(t);
       }
     };
 
-    const init = this._parameterCheck(_, pulse),
-          counts = this._counts,
-          match = this._match,
-          stop = this._stop,
-          get = _.field,
-          as = _.as || ['text', 'count'],
-          add = process(t => counts[t] = 1 + (counts[t] || 0)),
-          rem = process(t => counts[t] -= 1);
+    const init = this._parameterCheck(_, pulse);
+    const counts = this._counts;
+    const match = this._match;
+    const stop = this._stop;
+    const get = _.field;
+    const as = _.as || ['text', 'count'];
+    const add = process(t => counts[t] = 1 + (counts[t] || 0));
+    const rem = process(t => counts[t] -= 1);
 
     if (init) {
       pulse.visit(pulse.SOURCE, add);
@@ -84,12 +85,14 @@ inherits(CountPattern, Transform, {
   },
 
   _finish(pulse, as) {
-    const counts = this._counts,
-          tuples = this._tuples || (this._tuples = {}),
-          text = as[0],
-          count = as[1],
-          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-    let w, t, c;
+    const counts = this._counts;
+    const tuples = this._tuples || (this._tuples = {});
+    const text = as[0];
+    const count = as[1];
+    const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    let w;
+    let t;
+    let c;
 
     for (w in counts) {
       t = tuples[w];

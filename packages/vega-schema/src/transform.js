@@ -105,8 +105,8 @@ function parameterSchema(param) {
 }
 
 function subParameterSchema(sub) {
-  const props = {},
-        key = sub.key;
+  const props = {};
+  const key = sub.key;
 
   for (const name in key) {
     props[req(name)] = enums([key[name]]);
@@ -121,19 +121,19 @@ function subParameterSchema(sub) {
 }
 
 export default function(definitions) {
-  const transforms = [],
-        marks = [],
-        defs = {
-          transform: {oneOf: transforms},
-          transformMark: {oneOf: marks}
-        };
+  const transforms = [];
+  const marks = [];
+  const defs = {
+    transform: {oneOf: transforms},
+    transformMark: {oneOf: marks}
+  };
 
   for (let i=0, n=definitions.length; i<n; ++i) {
-    const d = definitions[i],
-          name = d.type.toLowerCase(),
-          key = name + 'Transform',
-          ref = def(key),
-          md = d.metadata;
+    const d = definitions[i];
+    const name = d.type.toLowerCase();
+    const key = name + 'Transform';
+    const ref = def(key);
+    const md = d.metadata;
 
     defs[key] = transformSchema(name, d);
     if (!(md.generates || md.changes)) marks.push(ref);

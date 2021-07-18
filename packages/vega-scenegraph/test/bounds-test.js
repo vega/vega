@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    Bounds = require('../').Bounds;
+var tape = require('tape');
+var Bounds = require('../').Bounds;
 
 tape('Bounds should support constructor without arguments', t => {
   const b = new Bounds();
@@ -94,9 +94,9 @@ tape('Bounds should support union', t => {
 });
 
 tape('Bounds should support encloses', t => {
-  var a = (new Bounds()).set(1,1,3,3),
-      b = (new Bounds()).set(2,2,5,5),
-      c = (new Bounds()).set(3,3,4,4);
+  var a = (new Bounds()).set(1,1,3,3);
+  var b = (new Bounds()).set(2,2,5,5);
+  var c = (new Bounds()).set(3,3,4,4);
   t.false(a.encloses(b));
   t.false(a.encloses(c));
   t.false(b.encloses(a));
@@ -107,9 +107,9 @@ tape('Bounds should support encloses', t => {
 });
 
 tape('Bounds should support intersects', t => {
-  var a = (new Bounds()).set(1,1,3,3),
-      b = (new Bounds()).set(2,2,5,5),
-      c = (new Bounds()).set(4,4,5,5);
+  var a = (new Bounds()).set(1,1,3,3);
+  var b = (new Bounds()).set(2,2,5,5);
+  var c = (new Bounds()).set(4,4,5,5);
   t.true(a.intersects(b));
   t.false(a.intersects(c));
   t.true(b.intersects(a));
@@ -120,9 +120,9 @@ tape('Bounds should support intersects', t => {
 });
 
 tape('Bounds should support alignsWith', t => {
-  var a = (new Bounds()).set(1,1,5,5),
-      b = (new Bounds()).set(1,2,8,4),
-      c = (new Bounds()).set(5,5,8,8);
+  var a = (new Bounds()).set(1,1,5,5);
+  var b = (new Bounds()).set(1,2,8,4);
+  var c = (new Bounds()).set(5,5,8,8);
   t.true(a.alignsWith(b));
   t.true(b.alignsWith(a));
   t.false(a.alignsWith(c));

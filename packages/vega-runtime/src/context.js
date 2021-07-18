@@ -75,9 +75,9 @@ Context.prototype = Subcontext.prototype = {
     return this.nodes[id] = node;
   },
   add(spec, op) {
-    const ctx = this,
-          df = ctx.dataflow,
-          data = spec.value;
+    const ctx = this;
+    const df = ctx.dataflow;
+    const data = spec.value;
 
     ctx.set(spec.id, op);
 

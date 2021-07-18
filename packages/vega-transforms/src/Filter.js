@@ -22,13 +22,13 @@ Filter.Definition = {
 
 inherits(Filter, Transform, {
   transform(_, pulse) {
-    const df = pulse.dataflow,
-          cache = this.value, // cache ids of filtered tuples
-          output = pulse.fork(),
-          add = output.add,
-          rem = output.rem,
-          mod = output.mod,
-          test = _.expr;
+    const df = pulse.dataflow;
+    const cache = this.value; // cache ids of filtered tuples
+    const output = pulse.fork();
+    const add = output.add;
+    const rem = output.rem;
+    const mod = output.mod;
+    const test = _.expr;
     let isMod = true;
 
     pulse.visit(pulse.REM, t => {
@@ -43,9 +43,9 @@ inherits(Filter, Transform, {
     });
 
     function revisit(t) {
-      const id = tupleid(t),
-            b = test(t, _),
-            s = cache.get(id);
+      const id = tupleid(t);
+      const b = test(t, _);
+      const s = cache.get(id);
       if (b && s) {
         cache.delete(id);
         add.push(t);

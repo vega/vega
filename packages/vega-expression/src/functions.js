@@ -1,7 +1,6 @@
 import {error} from 'vega-util';
 
 export default function(codegen) {
-
   function fncall(name, args, cast, type) {
     let obj = codegen(args[0]);
     if (cast) {
@@ -17,9 +16,9 @@ export default function(codegen) {
     return args => fncall(name, args, cast, type);
   }
 
-  const DATE = 'new Date',
-        STRING = 'String',
-        REGEXP = 'RegExp';
+  const DATE = 'new Date';
+  const STRING = 'String';
+  const REGEXP = 'RegExp';
 
   return {
     // MATH functions

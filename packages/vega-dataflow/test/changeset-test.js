@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 tape('ChangeSet adds/removes/modifies tuples', t => {
   const data = [
@@ -8,8 +8,8 @@ tape('ChangeSet adds/removes/modifies tuples', t => {
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  var extra = {key: 'd', value: 6};
+  var pulse;
 
   // add tuples
   // should also assign tuple ids to each object
@@ -82,8 +82,8 @@ tape('ChangeSet handles conflicting changes', t => {
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  var extra = {key: 'd', value: 6};
+  var pulse;
 
   // perform initial add, ingest tuples
   pulse = vega.changeset()
@@ -181,8 +181,8 @@ tape('ChangeSet handles reflow', t => {
     {key: 'c', value: 3}
   ];
 
-  var extra = {key: 'd', value: 6},
-      pulse;
+  var extra = {key: 'd', value: 6};
+  var pulse;
 
   // initial add
   pulse = vega.changeset()

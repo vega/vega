@@ -19,10 +19,10 @@ inherits(HierarchyLayout, Transform, {
         + ' transform requires a backing tree data source.');
     }
 
-    const layout = this.layout(_.method),
-          fields = this.fields,
-          root = pulse.source.root,
-          as = _.as || fields;
+    const layout = this.layout(_.method);
+    const fields = this.fields;
+    const root = pulse.source.root;
+    const as = _.as || fields;
 
     if (_.field) root.sum(_.field); else root.count();
     if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
@@ -51,8 +51,8 @@ function setParams(layout, params, _) {
 }
 
 function setFields(node, fields, as) {
-  const t = node.data,
-        n = fields.length - 1;
+  const t = node.data;
+  const n = fields.length - 1;
   for (let i=0; i<n; ++i) {
     t[as[i]] = node[fields[i]];
   }

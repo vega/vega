@@ -13,29 +13,29 @@ function number(_) {
 
 // Implementation adapted from d3/d3-contour. Thanks!
 export default function() {
-  var x = d => d[0],
-      y = d => d[1],
-      weight = one,
-      bandwidth = [-1, -1],
-      dx = 960,
-      dy = 500,
-      k = 2; // log2(cellSize)
+  var x = d => d[0];
+  var y = d => d[1];
+  var weight = one;
+  var bandwidth = [-1, -1];
+  var dx = 960;
+  var dy = 500;
+  var k = 2; // log2(cellSize)
 
   function density(data, counts) {
-    const rx = radius(bandwidth[0], data, x) >> k, // blur x-radius
-          ry = radius(bandwidth[1], data, y) >> k, // blur y-radius
-          ox = rx ? rx + 2 : 0, // x-offset padding for blur
-          oy = ry ? ry + 2 : 0, // y-offset padding for blur
-          n = 2 * ox + (dx >> k), // grid width
-          m = 2 * oy + (dy >> k), // grid height
-          values0 = new Float32Array(n * m),
-          values1 = new Float32Array(n * m);
+    const rx = radius(bandwidth[0], data, x) >> k; // blur x-radius
+    const ry = radius(bandwidth[1], data, y) >> k; // blur y-radius
+    const ox = rx ? rx + 2 : 0; // x-offset padding for blur
+    const oy = ry ? ry + 2 : 0; // y-offset padding for blur
+    const n = 2 * ox + (dx >> k); // grid width
+    const m = 2 * oy + (dy >> k); // grid height
+    const values0 = new Float32Array(n * m);
+    const values1 = new Float32Array(n * m);
 
     let values = values0;
 
     data.forEach(d => {
-      const xi = ox + (+x(d) >> k),
-            yi = oy + (+y(d) >> k);
+      const xi = ox + (+x(d) >> k);
+      const yi = oy + (+y(d) >> k);
 
       if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
         values0[xi + yi * n] += +weight(d);
@@ -92,7 +92,8 @@ export default function() {
 
   density.size = function(_) {
     if (!arguments.length) return [dx, dy];
-    var _0 = +_[0], _1 = +_[1];
+    var _0 = +_[0];
+    var _1 = +_[1];
     if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
     return dx = _0, dy = _1, density;
   };

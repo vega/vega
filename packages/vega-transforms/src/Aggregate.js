@@ -55,9 +55,9 @@ Aggregate.Definition = {
 
 inherits(Aggregate, Transform, {
   transform(_, pulse) {
-    const aggr = this,
-          out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-          mod = _.modified();
+    const aggr = this;
+    const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    const mod = _.modified();
 
     aggr.stamp = out.stamp;
 
@@ -92,15 +92,18 @@ inherits(Aggregate, Transform, {
   },
 
   cross() {
-    const aggr = this,
-          curr = aggr.value,
-          dims = aggr._dnames,
-          vals = dims.map(() => ({})),
-          n = dims.length;
+    const aggr = this;
+    const curr = aggr.value;
+    const dims = aggr._dnames;
+    const vals = dims.map(() => ({}));
+    const n = dims.length;
 
     // collect all group-by domain values
     function collect(cells) {
-      let key, i, t, v;
+      let key;
+      let i;
+      let t;
+      let v;
       for (key in cells) {
         t = cells[key].tuple;
         for (i=0; i<n; ++i) {
@@ -113,8 +116,8 @@ inherits(Aggregate, Transform, {
 
     // iterate over key cross-product, create cells as needed
     function generate(base, tuple, index) {
-      const name = dims[index],
-          v = vals[index++];
+      const name = dims[index];
+      const v = vals[index++];
 
       for (const k in v) {
         const key = base ? base + '|' + k : k;
@@ -128,14 +131,15 @@ inherits(Aggregate, Transform, {
 
   init(_) {
     // initialize input and output fields
-    const inputs = (this._inputs = []),
-          outputs = (this._outputs = []),
-          inputMap = {};
+    const inputs = (this._inputs = []);
+    const outputs = (this._outputs = []);
+    const inputMap = {};
 
     function inputVisit(get) {
-      const fields = array(accessorFields(get)),
-            n = fields.length;
-      let i = 0, f;
+      const fields = array(accessorFields(get));
+      const n = fields.length;
+      let i = 0;
+      let f;
       for (; i<n; ++i) {
         if (!inputMap[f=fields[i]]) {
           inputMap[f] = 1;
@@ -159,12 +163,17 @@ inherits(Aggregate, Transform, {
     this._counts = [];
     this._measures = [];
 
-    const fields = _.fields || [null],
-          ops = _.ops || ['count'],
-          as = _.as || [],
-          n = fields.length,
-          map = {};
-    let field, op, m, mname, outname, i;
+    const fields = _.fields || [null];
+    const ops = _.ops || ['count'];
+    const as = _.as || [];
+    const n = fields.length;
+    const map = {};
+    let field;
+    let op;
+    let m;
+    let mname;
+    let outname;
+    let i;
 
     if (n !== ops.length) {
       error('Unmatched number of fields and aggregate ops.');
@@ -233,8 +242,8 @@ inherits(Aggregate, Transform, {
     };
 
     if (!this._countOnly) {
-      const measures = this._measures,
-            n = measures.length;
+      const measures = this._measures;
+      const n = measures.length;
 
       cell.agg = Array(n);
       for (let i=0; i<n; ++i) {
@@ -250,10 +259,10 @@ inherits(Aggregate, Transform, {
   },
 
   newtuple(t, p) {
-    const names = this._dnames,
-          dims = this._dims,
-          n = dims.length,
-          x = {};
+    const names = this._dnames;
+    const dims = this._dims;
+    const n = dims.length;
+    const x = {};
 
     for (let i=0; i<n; ++i) {
       x[names[i]] = dims[i](t);
@@ -274,8 +283,8 @@ inherits(Aggregate, Transform, {
   // -- Process Tuples -----
 
   add(t) {
-    const key = this.cellkey(t),
-          cell = this.cell(key, t);
+    const key = this.cellkey(t);
+    const cell = this.cell(key, t);
 
     cell.num += 1;
     if (this._countOnly) return;
@@ -289,8 +298,8 @@ inherits(Aggregate, Transform, {
   },
 
   rem(t) {
-    const key = this.cellkey(t),
-          cell = this.cell(key, t);
+    const key = this.cellkey(t);
+    const cell = this.cell(key, t);
 
     cell.num -= 1;
     if (this._countOnly) return;
@@ -304,8 +313,8 @@ inherits(Aggregate, Transform, {
   },
 
   celltuple(cell) {
-    const tuple = cell.tuple,
-          counts = this._counts;
+    const tuple = cell.tuple;
+    const counts = this._counts;
 
     // consolidate stored values
     if (cell.store) {
@@ -327,15 +336,18 @@ inherits(Aggregate, Transform, {
   },
 
   changes(out) {
-    const adds = this._adds,
-          mods = this._mods,
-          prev = this._prev,
-          drop = this._drop,
-          add = out.add,
-          rem = out.rem,
-          mod = out.mod;
+    const adds = this._adds;
+    const mods = this._mods;
+    const prev = this._prev;
+    const drop = this._drop;
+    const add = out.add;
+    const rem = out.rem;
+    const mod = out.mod;
 
-    let cell, key, i, n;
+    let cell;
+    let key;
+    let i;
+    let n;
 
     if (prev) for (key in prev) {
       cell = prev[key];

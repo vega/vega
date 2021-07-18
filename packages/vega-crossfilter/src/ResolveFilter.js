@@ -27,18 +27,18 @@ ResolveFilter.Definition = {
 
 inherits(ResolveFilter, Transform, {
   transform(_, pulse) {
-    const ignore = ~(_.ignore || 0), // bit mask where zeros -> dims to ignore
-          bitmap = _.filter,
-          mask = bitmap.mask;
+    const ignore = ~(_.ignore || 0); // bit mask where zeros -> dims to ignore
+    const bitmap = _.filter;
+    const mask = bitmap.mask;
 
     // exit early if no relevant filter changes
     if ((mask & ignore) === 0) return pulse.StopPropagation;
 
-    const output = pulse.fork(pulse.ALL),
-          data = bitmap.data(),
-          curr = bitmap.curr(),
-          prev = bitmap.prev(),
-          pass = k => !(curr[k] & ignore) ? data[k] : null;
+    const output = pulse.fork(pulse.ALL);
+    const data = bitmap.data();
+    const curr = bitmap.curr();
+    const prev = bitmap.prev();
+    const pass = k => !(curr[k] & ignore) ? data[k] : null;
 
     // propagate all mod tuples that pass the filter
     output.filter(output.MOD, pass);
@@ -54,13 +54,13 @@ inherits(ResolveFilter, Transform, {
 
     } else { // multiple filters changed
       output.filter(output.ADD, k => {
-        const c = curr[k] & ignore,
-              f = !c && (c ^ (prev[k] & ignore));
+        const c = curr[k] & ignore;
+        const f = !c && (c ^ (prev[k] & ignore));
         return f ? data[k] : null;
       });
       output.filter(output.REM, k => {
-        const c = curr[k] & ignore,
-              f = c && !(c ^ (c ^ (prev[k] & ignore)));
+        const c = curr[k] & ignore;
+        const f = c && !(c ^ (c ^ (prev[k] & ignore)));
         return f ? data[k] : null;
       });
     }

@@ -1,10 +1,10 @@
 import {Transform, stableCompare} from 'vega-dataflow';
 import {inherits, one} from 'vega-util';
 
-const Zero = 'zero',
-      Center = 'center',
-      Normalize = 'normalize',
-      DefOutput = ['y0', 'y1'];
+const Zero = 'zero';
+const Center = 'center';
+const Normalize = 'normalize';
+const DefOutput = ['y0', 'y1'];
 
 /**
  * Stack layout for visualization elements.
@@ -33,15 +33,18 @@ Stack.Definition = {
 
 inherits(Stack, Transform, {
   transform(_, pulse) {
-    var as = _.as || DefOutput,
-        y0 = as[0],
-        y1 = as[1],
-        sort = stableCompare(_.sort),
-        field = _.field || one,
-        stack = _.offset === Center ? stackCenter
-              : _.offset === Normalize ? stackNormalize
-              : stackZero,
-        groups, i, n, max;
+    var as = _.as || DefOutput;
+    var y0 = as[0];
+    var y1 = as[1];
+    var sort = stableCompare(_.sort);
+    var field = _.field || one;
+    var stack = _.offset === Center ? stackCenter
+          : _.offset === Normalize ? stackNormalize
+          : stackZero;
+    var groups;
+    var i;
+    var n;
+    var max;
 
     // partition, sum, and sort the stack groups
     groups = partition(pulse.source, _.groupby, sort, field);
@@ -56,9 +59,10 @@ inherits(Stack, Transform, {
 });
 
 function stackCenter(group, max, field, y0, y1) {
-  var last = (max - group.sum) / 2,
-      m = group.length,
-      j = 0, t;
+  var last = (max - group.sum) / 2;
+  var m = group.length;
+  var j = 0;
+  var t;
 
   for (; j<m; ++j) {
     t = group[j];
@@ -68,10 +72,12 @@ function stackCenter(group, max, field, y0, y1) {
 }
 
 function stackNormalize(group, max, field, y0, y1) {
-  var scale = 1 / group.sum,
-      last = 0,
-      m = group.length,
-      j = 0, v = 0, t;
+  var scale = 1 / group.sum;
+  var last = 0;
+  var m = group.length;
+  var j = 0;
+  var v = 0;
+  var t;
 
   for (; j<m; ++j) {
     t = group[j];
@@ -81,10 +87,12 @@ function stackNormalize(group, max, field, y0, y1) {
 }
 
 function stackZero(group, max, field, y0, y1) {
-  var lastPos = 0,
-      lastNeg = 0,
-      m = group.length,
-      j = 0, v, t;
+  var lastPos = 0;
+  var lastNeg = 0;
+  var m = group.length;
+  var j = 0;
+  var v;
+  var t;
 
   for (; j<m; ++j) {
     t = group[j];
@@ -100,9 +108,17 @@ function stackZero(group, max, field, y0, y1) {
 }
 
 function partition(data, groupby, sort, field) {
-  var groups = [],
-      get = f => f(t),
-      map, i, n, m, t, k, g, s, max;
+  var groups = [];
+  var get = f => f(t);
+  var map;
+  var i;
+  var n;
+  var m;
+  var t;
+  var k;
+  var g;
+  var s;
+  var max;
 
   // partition data points into stack groups
   if (groupby == null) {

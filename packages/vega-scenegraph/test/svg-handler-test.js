@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    Renderer = vega.SVGRenderer,
-    Handler = vega.SVGHandler,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
+var tape = require('tape');
+var fs = require('fs');
+var vega = require('../');
+var Renderer = vega.SVGRenderer;
+var Handler = vega.SVGHandler;
+var jsdom = require('jsdom');
+var doc = (new jsdom.JSDOM()).window.document;
 
 const res = './test/resources/';
 
@@ -58,14 +58,14 @@ function event(name, x, y) {
 }
 
 tape('SVGHandler should add/remove event callbacks', t => {
-  var array = function(_) { return _ || []; },
-      object = function(_) { return _ || {}; },
-      handler = new Handler(),
-      h = handler._handlers,
-      f = function() {},
-      atype = 'click',
-      btype = 'click.foo',
-      ctype = 'mouseover';
+  var array = function(_) { return _ || []; };
+  var object = function(_) { return _ || {}; };
+  var handler = new Handler();
+  var h = handler._handlers;
+  var f = function() {};
+  var atype = 'click';
+  var btype = 'click.foo';
+  var ctype = 'mouseover';
 
   // add event callbacks
   handler.on(atype, f);

@@ -3,8 +3,12 @@ import {FrameRole, MarkRole} from '../marks/roles';
 import {array, extend} from 'vega-util';
 
 export default function(encode, type, role, style, config) {
-  const defaults = {}, enter = {};
-  let update, key, skip, props;
+  const defaults = {};
+  const enter = {};
+  let update;
+  let key;
+  let skip;
+  let props;
 
   // if text mark, apply global lineBreak settings (#2370)
   key = 'lineBreak';

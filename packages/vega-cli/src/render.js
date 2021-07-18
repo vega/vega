@@ -1,7 +1,7 @@
-const vega = require('vega'),
-      path = require('path'),
-      args = require('./args'),
-      read = require('./read');
+const vega = require('vega');
+const path = require('path');
+const args = require('./args');
+const read = require('./read');
 
 function load(file) {
   return require(path.resolve(file));

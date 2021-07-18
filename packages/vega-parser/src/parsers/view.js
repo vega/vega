@@ -97,16 +97,16 @@ function signalObject(name, value) {
  * overwriting existing 'value' or 'update' properties.
  */
 function collectSignals(spec, config) {
-  const _ = name => value(spec[name], config[name]),
-        signals = [
-          signalObject('background', _('background')),
-          signalObject('autosize', parseAutosize(_('autosize'))),
-          signalObject('padding', parsePadding(_('padding'))),
-          signalObject('width', _('width') || 0),
-          signalObject('height', _('height') || 0)
-        ],
-        pre = signals.reduce((p, s) => (p[s.name] = s, p), {}),
-        map = {};
+  const _ = name => value(spec[name], config[name]);
+  const signals = [
+    signalObject('background', _('background')),
+    signalObject('autosize', parseAutosize(_('autosize'))),
+    signalObject('padding', parsePadding(_('padding'))),
+    signalObject('width', _('width') || 0),
+    signalObject('height', _('height') || 0)
+  ];
+  const pre = signals.reduce((p, s) => (p[s.name] = s, p), {});
+  const map = {};
 
   // add spec signal array
   array(spec.signals).forEach(s => {

@@ -62,17 +62,17 @@ inherits(KDE, Transform, {
     const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
-      const source = pulse.materialize(pulse.SOURCE).source,
-            groups = partition(source, _.groupby, _.field),
-            names = (_.groupby || []).map(accessorName),
-            bandwidth = _.bandwidth,
-            method = _.cumulative ? 'cdf' : 'pdf',
-            as = _.as || ['value', 'density'],
-            values = [];
+      const source = pulse.materialize(pulse.SOURCE).source;
+      const groups = partition(source, _.groupby, _.field);
+      const names = (_.groupby || []).map(accessorName);
+      const bandwidth = _.bandwidth;
+      const method = _.cumulative ? 'cdf' : 'pdf';
+      const as = _.as || ['value', 'density'];
+      const values = [];
 
-      let domain = _.extent,
-          minsteps = _.steps || _.minsteps || 25,
-          maxsteps = _.steps || _.maxsteps || 200;
+      let domain = _.extent;
+      let minsteps = _.steps || _.minsteps || 25;
+      let maxsteps = _.steps || _.maxsteps || 200;
 
       if (method !== 'pdf' && method !== 'cdf') {
         error('Invalid density method: ' + method);
@@ -84,9 +84,9 @@ inherits(KDE, Transform, {
       }
 
       groups.forEach(g => {
-        const density = randomKDE(g, bandwidth)[method],
-              scale = _.counts ? g.length : 1,
-              local = domain || extent(g);
+        const density = randomKDE(g, bandwidth)[method];
+        const scale = _.counts ? g.length : 1;
+        const local = domain || extent(g);
 
         sampleCurve(density, local, minsteps, maxsteps)
           .forEach(v => {

@@ -4,7 +4,9 @@
  * of inclusive (true) or exclusive (false) comparisons.
  */
 export default function(value, range, left, right) {
-  let r0 = range[0], r1 = range[range.length-1], t;
+  let r0 = range[0];
+  let r1 = range[range.length-1];
+  let t;
   if (r0 > r1) {
     t = r0;
     r0 = r1;

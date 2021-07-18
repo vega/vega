@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+var tape = require('tape');
+var vega = require('../');
+var {local, utc} = require('./util');
 
 tape('dayofyear extracts day of year from datetime', t => {
   t.equal(vega.dayofyear(local(2012, 0, 1)), 1);

@@ -28,14 +28,14 @@ inherits(AxisTicks, Transform, {
       return pulse.StopPropagation;
     }
 
-    var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        ticks = this.value,
-        scale = _.scale,
-        tally = _.count == null ? (_.values ? _.values.length : 10) : _.count,
-        count = tickCount(scale, tally, _.minstep),
-        format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
-        values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
+    var locale = pulse.dataflow.locale();
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var ticks = this.value;
+    var scale = _.scale;
+    var tally = _.count == null ? (_.values ? _.values.length : 10) : _.count;
+    var count = tickCount(scale, tally, _.minstep);
+    var format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values);
+    var values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
 
     if (ticks) out.rem = ticks;
 

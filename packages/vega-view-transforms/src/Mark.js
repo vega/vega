@@ -49,7 +49,8 @@ inherits(Mark, Transform, {
 });
 
 function lookup(_) {
-  const g = _.groups, p = _.parent;
+  const g = _.groups;
+  const p = _.parent;
   return g && g.size === 1 ? g.get(Object.keys(g.object)[0])
     : g && p ? g.lookup(p)
     : null;

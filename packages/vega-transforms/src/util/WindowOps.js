@@ -19,8 +19,8 @@ export const WindowOps = {
     return {
       init: () => rank = 1,
       next: w => {
-        const i = w.index,
-              data = w.data;
+        const i = w.index;
+        const data = w.data;
         return (i && w.compare(data[i - 1], data[i])) ? (rank = i + 1) : rank;
       }
     };
@@ -30,15 +30,15 @@ export const WindowOps = {
     return {
       init: () => drank = 1,
       next: w => {
-        const i = w.index,
-              d = w.data;
+        const i = w.index;
+        const d = w.data;
         return (i && w.compare(d[i - 1], d[i])) ? ++drank : drank;
       }
     };
   },
   percent_rank: function() {
-    const rank = WindowOps.rank(),
-          next = rank.next;
+    const rank = WindowOps.rank();
+    const next = rank.next;
     return {
       init: rank.init,
       next: w => (next(w) - 1) / (w.data.length - 1)
@@ -49,8 +49,8 @@ export const WindowOps = {
     return {
       init: () => cume = 0,
       next: w => {
-        const d = w.data,
-              c = w.compare;
+        const d = w.data;
+        const c = w.compare;
         let i = w.index;
         if (cume < i) {
           while (i + 1 < d.length && !c(d[i], d[i + 1])) ++i;
@@ -63,8 +63,8 @@ export const WindowOps = {
   ntile: function(field, num) {
     num = +num;
     if (!(num > 0)) error('ntile num must be greater than zero.');
-    const cume = WindowOps.cume_dist(),
-          next = cume.next;
+    const cume = WindowOps.cume_dist();
+    const next = cume.next;
     return {
       init: cume.init,
       next: w => Math.ceil(num * next(w))
@@ -84,8 +84,8 @@ export const WindowOps = {
     offset = +offset || 1;
     return {
       next: w => {
-        const i = w.index + offset,
-            d = w.data;
+        const i = w.index + offset;
+        const d = w.data;
         return i < d.length ? field(d[i]) : null;
       }
     };
@@ -123,7 +123,8 @@ export const WindowOps = {
     };
   },
   next_value: function(field) {
-    let v, i;
+    let v;
+    let i;
     return {
       init: () => (v = null, i = -1),
       next: w => {

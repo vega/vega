@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    d3 = require('d3-array'),
-    stats = require('../'),
-    gaussian = stats.randomNormal();
+var tape = require('tape');
+var d3 = require('d3-array');
+var stats = require('../');
+var gaussian = stats.randomNormal();
 
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
@@ -39,20 +39,20 @@ tape('kde generates samples', t => {
 });
 
 tape('kde approximates the pdf', t => {
-  var data = d3.range(0, 1000).map(gaussian.sample),
-      kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(x => Math.abs(kde.pdf(x) - gaussian.pdf(x)));
+  var data = d3.range(0, 1000).map(gaussian.sample);
+  var kde = stats.randomKDE(data);
+  var domain = d3.range(-5, 5.1, 0.5);
+  var error = domain.map(x => Math.abs(kde.pdf(x) - gaussian.pdf(x)));
 
   t.ok((d3.sum(error) / domain.length) < 0.01);
   t.end();
 });
 
 tape('kde approximates the cdf', t => {
-  var data = d3.range(0, 1000).map(gaussian.sample),
-      kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(x => Math.abs(kde.cdf(x) - gaussian.cdf(x)));
+  var data = d3.range(0, 1000).map(gaussian.sample);
+  var kde = stats.randomKDE(data);
+  var domain = d3.range(-5, 5.1, 0.5);
+  var error = domain.map(x => Math.abs(kde.cdf(x) - gaussian.cdf(x)));
 
   t.ok((d3.sum(error) / domain.length) < 0.01);
   t.end();

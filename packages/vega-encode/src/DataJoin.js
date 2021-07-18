@@ -24,11 +24,11 @@ function newMap(key) {
 
 inherits(DataJoin, Transform, {
   transform(_, pulse) {
-    var df = pulse.dataflow,
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        item = _.item || defaultItemCreate,
-        key = _.key || tupleid,
-        map = this.value;
+    var df = pulse.dataflow;
+    var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    var item = _.item || defaultItemCreate;
+    var key = _.key || tupleid;
+    var map = this.value;
 
     // prevent transient (e.g., hover) requests from
     // cascading across marks derived from marks
@@ -67,8 +67,8 @@ inherits(DataJoin, Transform, {
     });
 
     pulse.visit(pulse.MOD, t => {
-      const k = key(t),
-            x = map.get(k);
+      const k = key(t);
+      const x = map.get(k);
 
       if (x) {
         x.datum = t;
@@ -77,8 +77,8 @@ inherits(DataJoin, Transform, {
     });
 
     pulse.visit(pulse.REM, t => {
-      const k = key(t),
-            x = map.get(k);
+      const k = key(t);
+      const x = map.get(k);
 
       if (t === x.datum && !x.exit) {
         out.rem.push(x);

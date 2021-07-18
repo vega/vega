@@ -23,15 +23,21 @@ function parse(data, types, timeParser, utcParser) {
   timeParser = timeParser || locale.timeParse;
   utcParser = utcParser || locale.utcParse;
 
-  let fields = data.columns || Object.keys(data[0]),
-      datum, field, i, j, n, m;
+  let fields = data.columns || Object.keys(data[0]);
+  let datum;
+  let field;
+  let i;
+  let j;
+  let n;
+  let m;
 
   if (types === 'auto') types = inferTypes(data, fields);
 
   fields = Object.keys(types);
   const parsers = fields.map(field => {
     const type = types[field];
-    let parts, pattern;
+    let parts;
+    let pattern;
 
     if (type && (type.startsWith('date:') || type.startsWith('utc:'))) {
       parts = type.split(/:(.+)?/, 2);  // split on first :

@@ -16,9 +16,9 @@ const Distributions = {
   uniform:   randomUniform
 };
 
-const DISTRIBUTIONS = 'distributions',
-      FUNCTION = 'function',
-      FIELD = 'field';
+const DISTRIBUTIONS = 'distributions';
+const FUNCTION = 'function';
+const FIELD = 'field';
 
 /**
  * Parse a parameter object for a probability distribution.

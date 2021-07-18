@@ -17,9 +17,10 @@ export function pathEqual(a, b) {
 }
 
 function objectEqual(a, b) {
-  var ka = Object.keys(a),
-      kb = Object.keys(b),
-      key, i;
+  var ka = Object.keys(a);
+  var kb = Object.keys(b);
+  var key;
+  var i;
 
   if (ka.length !== kb.length) return false;
 

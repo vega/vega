@@ -130,7 +130,8 @@ Scope.prototype = Subscope.prototype = {
 
   // Apply metadata
   finish() {
-    let name, ds;
+    let name;
+    let ds;
 
     // annotate root
     if (this.root) this.root.root = true;
@@ -147,7 +148,8 @@ Scope.prototype = Subscope.prototype = {
 
     // annotate data sets
     function annotate(op, name, type) {
-      let data, list;
+      let data;
+      let list;
       if (op) {
         data = op.data || (op.data = {});
         list = data[name] || (data[name] = []);
@@ -227,8 +229,8 @@ Scope.prototype = Subscope.prototype = {
       : isExpr(_) ? (signal = true, this.exprRef(_.expr))
       : _;
 
-    const fields = array(cmp.field).map(check),
-          orders = array(cmp.order).map(check);
+    const fields = array(cmp.field).map(check);
+    const orders = array(cmp.order).map(check);
 
     return signal
       ? ref(this.add(Compare({fields: fields, orders: orders})))
@@ -254,8 +256,8 @@ Scope.prototype = Subscope.prototype = {
     if (!sort) return sort;
 
     // including id ensures stable sorting
-    const a = aggrField(sort.op, sort.field),
-         o = sort.order || Ascending;
+    const a = aggrField(sort.op, sort.field);
+    const o = sort.order || Ascending;
 
     return o.signal
       ? ref(this.add(Compare({
@@ -314,9 +316,9 @@ Scope.prototype = Subscope.prototype = {
   parseLambdas() {
     const code = Object.keys(this.lambdas);
     for (let i=0, n=code.length; i<n; ++i) {
-      const s = code[i],
-            e = parseExpression(s, this),
-            op = this.lambdas[s];
+      const s = code[i];
+      const e = parseExpression(s, this);
+      const op = this.lambdas[s];
       op.params = e.$params;
       op.update = e.$expr;
     }
@@ -427,9 +429,10 @@ function arrayLambda(array) {
 }
 
 function objectLambda(obj) {
-  let code = '{',
-      i = 0,
-      key, value;
+  let code = '{';
+  let i = 0;
+  let key;
+  let value;
 
   for (key in obj) {
     value = obj[key];

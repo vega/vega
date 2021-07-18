@@ -33,7 +33,8 @@ export function quantileUniform(p, min, max) {
 }
 
 export default function(min, max) {
-  let a, b;
+  let a;
+  let b;
 
   const dist = {
     min(_) {

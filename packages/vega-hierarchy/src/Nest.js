@@ -34,10 +34,10 @@ inherits(Nest, Transform, {
       error('Nest transform requires an upstream data source.');
     }
 
-    var gen = _.generate,
-        mod = _.modified(),
-        out = pulse.clone(),
-        tree = this.value;
+    var gen = _.generate;
+    var mod = _.modified();
+    var out = pulse.clone();
+    var tree = this.value;
 
     if (!tree || mod || pulse.changed()) {
       // collect nodes to remove
@@ -77,23 +77,26 @@ inherits(Nest, Transform, {
 });
 
 function nest() {
-  const keys = [],
-        nest = {
-          entries: array => entries(apply(array, 0), 0),
-          key: d => (keys.push(d), nest)
-        };
+  const keys = [];
+  const nest = {
+    entries: array => entries(apply(array, 0), 0),
+    key: d => (keys.push(d), nest)
+  };
 
   function apply(array, depth) {
     if (depth >= keys.length) {
       return array;
     }
 
-    const n = array.length,
-          key = keys[depth++],
-          valuesByKey = {},
-          result = {};
+    const n = array.length;
+    const key = keys[depth++];
+    const valuesByKey = {};
+    const result = {};
 
-    let i = -1, keyValue, value, values;
+    let i = -1;
+    let keyValue;
+    let value;
+    let values;
 
     while (++i < n) {
       keyValue = key(value = array[i]) + '';

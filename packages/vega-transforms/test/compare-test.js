@@ -1,12 +1,12 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Compare = require('../').compare;
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var Compare = require('../').compare;
 
 tape('Compare generates comparator functions', t => {
-  var df = new vega.Dataflow(),
-      c = df.add('foo'),
-      o = df.add('ascending'),
-      f = df.add(Compare, {fields:c, orders:o});
+  var df = new vega.Dataflow();
+  var c = df.add('foo');
+  var o = df.add('ascending');
+  var f = df.add(Compare, {fields:c, orders:o});
 
   df.run();
   t.equal(typeof f.value, 'function');

@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Bounds = require('vega-scenegraph').Bounds,
-    Collect = require('vega-transforms').collect,
-    tx = require('../'),
-    Overlap = tx.overlap;
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var Bounds = require('vega-scenegraph').Bounds;
+var Collect = require('vega-transforms').collect;
+var tx = require('../');
+var Overlap = tx.overlap;
 
 function items() {
   const mark = {bounds: new Bounds(0, 0, 20, 10)};
@@ -19,10 +19,10 @@ function toObject(value) {
 }
 
 tape('Overlap removes overlapping items (parity)', t => {
-  var data = items(),
-      df = new vega.Dataflow(),
-      co = df.add(Collect),
-      ov = df.add(Overlap, {method: 'parity', pulse: co});
+  var data = items();
+  var df = new vega.Dataflow();
+  var co = df.add(Collect);
+  var ov = df.add(Overlap, {method: 'parity', pulse: co});
 
   df.pulse(co, df.changeset().insert(data)).run();
 
@@ -42,10 +42,10 @@ tape('Overlap removes overlapping items (parity)', t => {
 });
 
 tape('Overlap removes overlapping items (greedy)', t => {
-  var data = items(),
-      df = new vega.Dataflow(),
-      co = df.add(Collect),
-      ov = df.add(Overlap, {method: 'greedy', pulse: co});
+  var data = items();
+  var df = new vega.Dataflow();
+  var co = df.add(Collect);
+  var ov = df.add(Overlap, {method: 'greedy', pulse: co});
 
   // add extra item to test greedy strategy
   data.push({

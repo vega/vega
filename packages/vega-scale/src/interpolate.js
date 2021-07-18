@@ -5,8 +5,8 @@ import * as $ from 'd3-interpolate';
 const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
 
 export function interpolateRange(interpolator, range) {
-  const start = range[0],
-        span = peek(range) - start;
+  const start = range[0];
+  const span = peek(range) - start;
   return function(i) { return interpolator(start + i * span); };
 }
 
@@ -15,22 +15,24 @@ export function interpolateColors(colors, type, gamma) {
 }
 
 export function quantizeInterpolator(interpolator, count) {
-  const samples = new Array(count),
-        n = count + 1;
+  const samples = new Array(count);
+  const n = count + 1;
   for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
   return samples;
 }
 
 export function scaleCopy(scale) {
-  const t = scale.type,
-        s = scale.copy();
+  const t = scale.type;
+  const s = scale.copy();
   s.type = t;
   return s;
 }
 
 export function scaleFraction(scale, min, max) {
   const delta = max - min;
-  let i, t, s;
+  let i;
+  let t;
+  let s;
 
   if (!delta || !Number.isFinite(delta)) {
     return constant(0.5);

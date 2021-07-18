@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Force = require('../').force;
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var Collect = require('vega-transforms').collect;
+var Force = require('../').force;
 
 tape('Force places points', t => {
   const data = [
@@ -11,8 +11,8 @@ tape('Force places points', t => {
     {label: 'd'}
   ];
 
-  var df = new vega.Dataflow(),
-      c0 = df.add(Collect);
+  var df = new vega.Dataflow();
+  var c0 = df.add(Collect);
 
   df.add(Force, {
     static: true,

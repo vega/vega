@@ -2,20 +2,22 @@ import {bisector} from 'd3-array';
 import {Intersect} from './constants';
 import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
 
-const SELECTION_ID = '_vgsid_',
-    TYPE_ENUM = 'E',
-    TYPE_RANGE_INC = 'R',
-    TYPE_RANGE_EXC = 'R-E',
-    TYPE_RANGE_LE = 'R-LE',
-    TYPE_RANGE_RE = 'R-RE',
-    UNIT_INDEX = 'index:unit';
+const SELECTION_ID = '_vgsid_';
+const TYPE_ENUM = 'E';
+const TYPE_RANGE_INC = 'R';
+const TYPE_RANGE_EXC = 'R-E';
+const TYPE_RANGE_LE = 'R-LE';
+const TYPE_RANGE_RE = 'R-RE';
+const UNIT_INDEX = 'index:unit';
 
 // TODO: revisit date coercion?
 function testPoint(datum, entry) {
-  var fields = entry.fields,
-      values = entry.values,
-      n = fields.length,
-      i = 0, dval, f;
+  var fields = entry.fields;
+  var values = entry.values;
+  var n = fields.length;
+  var i = 0;
+  var dval;
+  var f;
 
   for (; i<n; ++i) {
     f = fields[i];
@@ -64,13 +66,17 @@ function testPoint(datum, entry) {
  * @return {boolean} - True if the datum is in the selection, false otherwise.
  */
 export function selectionTest(name, datum, op) {
-  var data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-      intersect = op === Intersect,
-      n = entries.length,
-      i = 0,
-      entry, miss, count, unit, b;
+  var data = this.context.data[name];
+  var entries = data ? data.values.value : [];
+  var unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined;
+  var intersect = op === Intersect;
+  var n = entries.length;
+  var i = 0;
+  var entry;
+  var miss;
+  var count;
+  var unit;
+  var b;
 
   for (; i<n; ++i) {
     entry = entries[i];
@@ -105,18 +111,18 @@ export function selectionTest(name, datum, op) {
   return n && intersect;
 }
 
-const selectionId = field(SELECTION_ID),
-  bisect = bisector(selectionId),
-  bisectLeft = bisect.left,
-  bisectRight = bisect.right;
+const selectionId = field(SELECTION_ID);
+const bisect = bisector(selectionId);
+const bisectLeft = bisect.left;
+const bisectRight = bisect.right;
 
 export function selectionIdTest(name, datum, op) {
-  const data = this.context.data[name],
-      entries = data ? data.values.value : [],
-      unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
-      intersect = op === Intersect,
-      value = selectionId(datum),
-      index = bisectLeft(entries, value);
+  const data = this.context.data[name];
+  const entries = data ? data.values.value : [];
+  const unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined;
+  const intersect = op === Intersect;
+  const value = selectionId(datum);
+  const index = bisectLeft(entries, value);
 
   if (index === entries.length) return false;
   if (selectionId(entries[index]) !== value) return false;

@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    tupleid = vega.tupleid,
-    Collect = tx.collect,
-    PreFacet = tx.prefacet;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var tupleid = vega.tupleid;
+var Collect = tx.collect;
+var PreFacet = tx.prefacet;
 
 tape('PreFacet partitions pre-faceted tuple sets', t => {
   const data = [
@@ -26,10 +26,10 @@ tape('PreFacet partitions pre-faceted tuple sets', t => {
     return subs[index].data.value.map(_ => _.x);
   }
 
-  var tuples = util.field('tuples'),
-      df = new vega.Dataflow(),
-      source = df.add(Collect),
-      facet = df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});
+  var tuples = util.field('tuples');
+  var df = new vega.Dataflow();
+  var source = df.add(Collect);
+  var facet = df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});
 
   // -- test add
   df.pulse(source, changeset().insert(data)).run();
@@ -110,9 +110,9 @@ tape('PreFacet raises error if tuple sets are modified', t => {
     return df.add(Collect);
   }
 
-  var tuples = util.field('tuples'),
-      df = new vega.Dataflow(),
-      source = df.add(Collect);
+  var tuples = util.field('tuples');
+  var df = new vega.Dataflow();
+  var source = df.add(Collect);
 
   df.error = function(e) { throw e; };
   df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});

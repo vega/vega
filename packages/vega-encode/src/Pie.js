@@ -29,19 +29,21 @@ Pie.Definition = {
 
 inherits(Pie, Transform, {
   transform(_, pulse) {
-    var as = _.as || ['startAngle', 'endAngle'],
-        startAngle = as[0],
-        endAngle = as[1],
-        field = _.field || one,
-        start = _.startAngle || 0,
-        stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
-        data = pulse.source,
-        values = data.map(field),
-        n = values.length,
-        a = start,
-        k = (stop - start) / sum(values),
-        index = range(n),
-        i, t, v;
+    var as = _.as || ['startAngle', 'endAngle'];
+    var startAngle = as[0];
+    var endAngle = as[1];
+    var field = _.field || one;
+    var start = _.startAngle || 0;
+    var stop = _.endAngle != null ? _.endAngle : 2 * Math.PI;
+    var data = pulse.source;
+    var values = data.map(field);
+    var n = values.length;
+    var a = start;
+    var k = (stop - start) / sum(values);
+    var index = range(n);
+    var i;
+    var t;
+    var v;
 
     if (_.sort) {
       index.sort((a, b) => values[a] - values[b]);

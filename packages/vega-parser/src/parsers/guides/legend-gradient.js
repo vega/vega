@@ -7,12 +7,16 @@ import {LegendGradientRole} from '../marks/roles';
 import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {
-  const _ = lookup(spec, config),
-        vertical = _.isVertical(),
-        thickness = _.gradientThickness(),
-        length = _.gradientLength();
+  const _ = lookup(spec, config);
+  const vertical = _.isVertical();
+  const thickness = _.gradientThickness();
+  const length = _.gradientLength();
 
-  let enter, start, stop, width, height;
+  let enter;
+  let start;
+  let stop;
+  let width;
+  let height;
 
   if (vertical) {
     start = [0, 1];

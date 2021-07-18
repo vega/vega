@@ -8,9 +8,9 @@ function treeNodes(name, context) {
 }
 
 export function treePath(name, source, target) {
-  const nodes = treeNodes(name, this),
-        s = nodes[source],
-        t = nodes[target];
+  const nodes = treeNodes(name, this);
+  const s = nodes[source];
+  const t = nodes[target];
   return s && t ? s.path(t).map(datum) : undefined;
 }
 

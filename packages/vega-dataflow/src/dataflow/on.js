@@ -38,7 +38,8 @@ export default function(source, target, update, params, options) {
 
 function onStream(df, stream, target, update, params, options) {
   const opt = extend({}, options, SKIP);
-  let func, op;
+  let func;
+  let op;
 
   if (!isFunction(target)) target = constant(target);
 
@@ -48,7 +49,8 @@ function onStream(df, stream, target, update, params, options) {
     op = new Operator(null, update, params, false);
     func = e => {
       op.evaluate(e);
-      const t = target(e), v = op.value;
+      const t = target(e);
+      const v = op.value;
       isChangeSet(v) ? df.pulse(t, v, options) : df.update(t, v, opt);
     };
   } else {
@@ -62,8 +64,8 @@ function onOperator(df, source, target, update, params, options) {
   if (update === undefined) {
     source.targets().add(target);
   } else {
-    const opt = options || {},
-          op = new Operator(null, updater(target, update), params, false);
+    const opt = options || {};
+    const op = new Operator(null, updater(target, update), params, false);
     op.modified(opt.force);
     op.rank = source.rank;       // immediately follow source
     source.targets().add(op);    // add dependency

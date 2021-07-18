@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    {luminance, contrast} = require('../');
+var tape = require('tape');
+var {luminance, contrast} = require('../');
 
 tape('luminance calculation extremes', t => {
   t.equal(luminance('#000000'), 0);

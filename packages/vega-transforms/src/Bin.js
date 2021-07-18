@@ -39,13 +39,13 @@ Bin.Definition = {
 
 inherits(Bin, Transform, {
   transform(_, pulse) {
-    const band = _.interval !== false,
-        bins = this._bins(_),
-        start = bins.start,
-        step = bins.step,
-        as = _.as || ['bin0', 'bin1'],
-        b0 = as[0],
-        b1 = as[1];
+    const band = _.interval !== false;
+    const bins = this._bins(_);
+    const start = bins.start;
+    const step = bins.step;
+    const as = _.as || ['bin0', 'bin1'];
+    const b0 = as[0];
+    const b1 = as[1];
 
     let flag;
     if (_.modified()) {
@@ -77,12 +77,13 @@ inherits(Bin, Transform, {
       return this.value;
     }
 
-    const field = _.field,
-          bins  = bin(_),
-          step  = bins.step;
-    let start = bins.start,
-        stop  = start + Math.ceil((bins.stop - start) / step) * step,
-        a, d;
+    const field = _.field;
+    const bins  = bin(_);
+    const step  = bins.step;
+    let start = bins.start;
+    let stop  = start + Math.ceil((bins.stop - start) / step) * step;
+    let a;
+    let d;
 
     if ((a = _.anchor) != null) {
       d = a - (start + step * Math.floor((a - start) / step));

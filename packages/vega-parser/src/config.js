@@ -4,13 +4,13 @@
  * by passing in a config object to the top-level parse method.
  */
 export default function() {
-  const defaultFont = 'sans-serif',
-        defaultSymbolSize = 30,
-        defaultStrokeWidth = 2,
-        defaultColor = '#4c78a8',
-        black = '#000',
-        gray = '#888',
-        lightGray = '#ddd';
+  const defaultFont = 'sans-serif';
+  const defaultSymbolSize = 30;
+  const defaultStrokeWidth = 2;
+  const defaultColor = '#4c78a8';
+  const black = '#000';
+  const gray = '#888';
+  const lightGray = '#ddd';
 
   return {
     // default visualization description

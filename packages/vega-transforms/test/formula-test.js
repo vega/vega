@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Formula = tx.formula,
-    Collect = tx.collect;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Formula = tx.formula;
+var Collect = tx.collect;
 
 tape('Formula extends tuples', t => {
   const data = [
@@ -13,14 +13,14 @@ tape('Formula extends tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
-      x  = util.field('x'),
-      y  = util.field('y'),
-      f0 = util.accessor(t => t.id * 2, ['id']),
-      f1 = util.accessor(t => t.value[0], ['value']),
-      c0 = df.add(Collect),
-      fa = df.add(Formula, {expr:f0, as:'x', pulse:c0}),
-      fb = df.add(Formula, {expr:f1, as:'y', pulse:fa});
+  var df = new vega.Dataflow();
+  var x  = util.field('x');
+  var y  = util.field('y');
+  var f0 = util.accessor(t => t.id * 2, ['id']);
+  var f1 = util.accessor(t => t.value[0], ['value']);
+  var c0 = df.add(Collect);
+  var fa = df.add(Formula, {expr:f0, as:'x', pulse:c0});
+  var fb = df.add(Formula, {expr:f1, as:'y', pulse:fa});
 
   // add data
   df.pulse(c0, changeset().insert(data)).run();

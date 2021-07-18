@@ -23,10 +23,10 @@ function offsets(legends, value) {
 }
 
 export function legendParams(g, orient, config, xb, yb, w, h) {
-  const _ = lookup(config, orient),
-        offset = offsets(g, _('offset', 0)),
-        anchor = _('anchor', Start),
-        mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
+  const _ = lookup(config, orient);
+  const offset = offsets(g, _('offset', 0));
+  const anchor = _('anchor', Start);
+  const mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
 
   const p = {
     align:   Each,
@@ -80,11 +80,14 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
 }
 
 export function legendLayout(view, legend) {
-  var item = legend.items[0],
-      datum = item.datum,
-      orient = item.orient,
-      bounds = item.bounds,
-      x = item.x, y = item.y, w, h;
+  var item = legend.items[0];
+  var datum = item.datum;
+  var orient = item.orient;
+  var bounds = item.bounds;
+  var x = item.x;
+  var y = item.y;
+  var w;
+  var h;
 
   // cache current bounds for later comparison
   item._bounds
@@ -132,18 +135,18 @@ function legendBounds(item, b) {
 }
 
 function legendGroupLayout(view, item, entry) {
-  var pad = item.padding,
-      ex = pad - entry.x,
-      ey = pad - entry.y;
+  var pad = item.padding;
+  var ex = pad - entry.x;
+  var ey = pad - entry.y;
 
   if (!item.datum.title) {
     if (ex || ey) translate(view, entry, ex, ey);
   } else {
-    var title = item.items[1].items[0],
-        anchor = title.anchor,
-        tpad = item.titlePadding || 0,
-        tx = pad - title.x,
-        ty = pad - title.y;
+    var title = item.items[1].items[0];
+    var anchor = title.anchor;
+    var tpad = item.titlePadding || 0;
+    var tx = pad - title.x;
+    var ty = pad - title.y;
 
     switch (title.orient) {
       case Left:
@@ -183,13 +186,13 @@ function legendGroupLayout(view, item, entry) {
 }
 
 function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
-  const grad = item.datum.type !== 'symbol',
-        vgrad = title.datum.vgrad,
-        e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
-        s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
-        u = vgrad && lr ? s : 0,
-        v = vgrad && lr ? 0 : s,
-        o = y <= 0 ? 0 : multiLineOffset(title);
+  const grad = item.datum.type !== 'symbol';
+  const vgrad = title.datum.vgrad;
+  const e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry;
+  const s = e.bounds[y ? 'y2' : 'x2'] - item.padding;
+  const u = vgrad && lr ? s : 0;
+  const v = vgrad && lr ? 0 : s;
+  const o = y <= 0 ? 0 : multiLineOffset(title);
 
   return Math.round(anchor === Start ? u
     : anchor === End ? (v - o)

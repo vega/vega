@@ -18,21 +18,25 @@ export function baseBitmaps($, data) {
 
 export function markBitmaps($, avoidMarks, labelInside, isGroupArea) {
   // create canvas
-  const width = $.width,
-        height = $.height,
-        border = labelInside || isGroupArea,
-        context = canvas(width, height).getContext('2d');
+  const width = $.width;
+  const height = $.height;
+  const border = labelInside || isGroupArea;
+  const context = canvas(width, height).getContext('2d');
 
   // render all marks to be avoided into canvas
   avoidMarks.forEach(items => draw(context, items, border));
 
   // get canvas buffer, create bitmaps
-  const buffer = new Uint32Array(context.getImageData(0, 0, width, height).data.buffer),
-        layer1 = $.bitmap(),
-        layer2 = border && $.bitmap();
+  const buffer = new Uint32Array(context.getImageData(0, 0, width, height).data.buffer);
+  const layer1 = $.bitmap();
+  const layer2 = border && $.bitmap();
 
   // populate bitmap layers
-  let x, y, u, v, alpha;
+  let x;
+  let y;
+  let u;
+  let v;
+  let alpha;
   for (y=0; y < height; ++y) {
     for (x=0; x < width; ++x) {
       alpha = buffer[y * width + x] & ALPHA_MASK;

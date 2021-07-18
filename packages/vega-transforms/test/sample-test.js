@@ -1,22 +1,23 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    tupleid = vega.tupleid,
-    Collect = tx.collect,
-    Sample = tx.sample;
+var tape = require('tape');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var tupleid = vega.tupleid;
+var Collect = tx.collect;
+var Sample = tx.sample;
 
 tape('Sample samples tuples without backing source', t => {
-  var n = 100,
-      ns = 20,
-      data = Array(n),
-      map = {},
-      i, tid;
+  var n = 100;
+  var ns = 20;
+  var data = Array(n);
+  var map = {};
+  var i;
+  var tid;
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
-  var df = new vega.Dataflow(),
-      s = df.add(Sample, {size:ns});
+  var df = new vega.Dataflow();
+  var s = df.add(Sample, {size:ns});
 
   // -- initial sample
   df.pulse(s, changeset().insert(data)).run();
@@ -51,17 +52,18 @@ tape('Sample samples tuples without backing source', t => {
 });
 
 tape('Sample samples tuples with backing source', t => {
-  var n = 100,
-    ns = 20,
-    data = Array(n),
-    map = {},
-    i, tid;
+  var n = 100;
+  var ns = 20;
+  var data = Array(n);
+  var map = {};
+  var i;
+  var tid;
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
-  var df = new vega.Dataflow(),
-      c = df.add(Collect),
-      s = df.add(Sample, {size:ns, pulse:c});
+  var df = new vega.Dataflow();
+  var c = df.add(Collect);
+  var s = df.add(Sample, {size:ns, pulse:c});
 
   // -- initial sample
   df.pulse(c, changeset().insert(data)).run();

@@ -5,18 +5,20 @@ import {bisectLeft, bisectRight, permute} from 'd3-array';
  * Maintains a list of values, sorted by key.
  */
 export default function SortedIndex() {
-  let index = array32(0),
-      value = [],
-      size = 0;
+  let index = array32(0);
+  let value = [];
+  let size = 0;
 
   function insert(key, data, base) {
     if (!data.length) return [];
 
-    const n0 = size,
-        n1 = data.length,
-        addi = array32(n1);
-    let addv = Array(n1),
-        oldv, oldi, i;
+    const n0 = size;
+    const n1 = data.length;
+    const addi = array32(n1);
+    let addv = Array(n1);
+    let oldv;
+    let oldi;
+    let i;
 
     for (i=0; i<n1; ++i) {
       addv[i] = key(data[i]);
@@ -45,7 +47,9 @@ export default function SortedIndex() {
   function remove(num, map) {
     // map: index -> remove
     const n = size;
-    let idx, i, j;
+    let idx;
+    let i;
+    let j;
 
     // seek forward to first removal
     for (i=0; !map[index[i]] && i<n; ++i);
@@ -94,15 +98,17 @@ export default function SortedIndex() {
 
 function sort(values, index) {
   values.sort.call(index, (a, b) => {
-    const x = values[a],
-          y = values[b];
+    const x = values[a];
+    const y = values[b];
     return x < y ? -1 : x > y ? 1 : 0;
   });
   return permute(values, index);
 }
 
 function merge(base, value0, index0, n0, value1, index1, n1, value, index) {
-  let i0 = 0, i1 = 0, i;
+  let i0 = 0;
+  let i1 = 0;
+  let i;
 
   for (i=0; i0 < n0 && i1 < n1; ++i) {
     if (value0[i0] < value1[i1]) {

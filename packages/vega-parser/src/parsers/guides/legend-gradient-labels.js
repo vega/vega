@@ -9,17 +9,21 @@ import {TextMark} from '../marks/marktypes';
 import {LegendLabelRole} from '../marks/roles';
 import {value} from '../../util';
 
-const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,
-      baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
+const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`;
+const baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
 
 export default function(spec, config, userEncode, dataRef) {
-  const _ = lookup(spec, config),
-        vertical = _.isVertical(),
-        thickness = encoder(_.gradientThickness()),
-        length = _.gradientLength();
+  const _ = lookup(spec, config);
+  const vertical = _.isVertical();
+  const thickness = encoder(_.gradientThickness());
+  const length = _.gradientLength();
 
-  let overlap = _('labelOverlap'),
-      enter, update, u, v, adjust = '';
+  let overlap = _('labelOverlap');
+  let enter;
+  let update;
+  let u;
+  let v;
+  let adjust = '';
 
   const encode = {
     enter: enter = {

@@ -1,9 +1,9 @@
-const tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Voronoi = require('../').voronoi,
-    Collect = require('vega-transforms').collect,
-    changeset = vega.changeset;
+const tape = require('tape');
+const util = require('vega-util');
+const vega = require('vega-dataflow');
+const Voronoi = require('../').voronoi;
+const Collect = require('vega-transforms').collect;
+const changeset = vega.changeset;
 
 tape('Voronoi generates voronoi cell paths', t => {
   const data = [
@@ -12,16 +12,16 @@ tape('Voronoi generates voronoi cell paths', t => {
     {x: 10, y: 20}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      vo = df.add(Voronoi, {
-        x: x,
-        y: y,
-        size: [30, 20],
-        pulse: c0
-      });
+  const x = util.field('x');
+  const y = util.field('y');
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const vo = df.add(Voronoi, {
+    x: x,
+    y: y,
+    size: [30, 20],
+    pulse: c0
+  });
 
   df.pulse(c0, changeset().insert(data)).run();
   const out = vo.pulse.add;
@@ -36,16 +36,16 @@ tape('Voronoi generates voronoi cell paths with 1 input point', t => {
     {x: 10, y: 10}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      vo = df.add(Voronoi, {
-        x: x,
-        y: y,
-        size: [30, 20],
-        pulse: c0
-      });
+  const x = util.field('x');
+  const y = util.field('y');
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const vo = df.add(Voronoi, {
+    x: x,
+    y: y,
+    size: [30, 20],
+    pulse: c0
+  });
 
   df.pulse(c0, changeset().insert(data)).run();
   const out = vo.pulse.add;
@@ -59,16 +59,16 @@ tape('Voronoi generates voronoi cell paths with 2 input points', t => {
     {x: 20, y: 10}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      c0 = df.add(Collect),
-      vo = df.add(Voronoi, {
-        x: x,
-        y: y,
-        size: [30, 20],
-        pulse: c0
-      });
+  const x = util.field('x');
+  const y = util.field('y');
+  const df = new vega.Dataflow();
+  const c0 = df.add(Collect);
+  const vo = df.add(Voronoi, {
+    x: x,
+    y: y,
+    size: [30, 20],
+    pulse: c0
+  });
 
   df.pulse(c0, changeset().insert(data)).run();
   const out = vo.pulse.add;

@@ -1,25 +1,25 @@
-var Width = 'width',
-    Height = 'height',
-    Padding = 'padding',
-    Skip = {skip: true};
+var Width = 'width';
+var Height = 'height';
+var Padding = 'padding';
+var Skip = {skip: true};
 
 export function viewWidth(view, width) {
-  var a = view.autosize(),
-      p = view.padding();
+  var a = view.autosize();
+  var p = view.padding();
   return width - (a && a.contains === Padding ? p.left + p.right : 0);
 }
 
 export function viewHeight(view, height) {
-  var a = view.autosize(),
-      p = view.padding();
+  var a = view.autosize();
+  var p = view.padding();
   return height - (a && a.contains === Padding ? p.top + p.bottom : 0);
 }
 
 export function initializeResize(view) {
-  var s = view._signals,
-      w = s[Width],
-      h = s[Height],
-      p = s[Padding];
+  var s = view._signals;
+  var w = s[Width];
+  var h = s[Height];
+  var p = s[Padding];
 
   function resetSize() {
     view._autosize = view._resize = 1;

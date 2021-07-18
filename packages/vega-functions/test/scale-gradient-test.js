@@ -1,13 +1,13 @@
-var tape = require('tape'),
-    {scale} = require('vega-scale'),
-    {scaleGradient} = require('../');
+var tape = require('tape');
+var {scale} = require('vega-scale');
+var {scaleGradient} = require('../');
 
 tape('scaleGradient handles zero-span domain', t => {
   const s = scale('linear')().range(['#f00', '#00f']);
 
   function testGradient(domain) {
-    const g = scaleGradient.call({}, s.domain(domain), [0, 0], [1, 0], 3),
-          n = g.stops.length - 1;
+    const g = scaleGradient.call({}, s.domain(domain), [0, 0], [1, 0], 3);
+    const n = g.stops.length - 1;
 
     t.equal(g.stops[0].offset, 0);
     t.equal(g.stops[n>>1].offset, 0.5);

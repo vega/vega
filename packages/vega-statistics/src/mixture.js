@@ -1,11 +1,13 @@
 import {random} from './random';
 
 export default function(dists, weights) {
-  let m = 0, w;
+  let m = 0;
+  let w;
 
   function normalize(x) {
     const w = [];
-    let sum = 0, i;
+    let sum = 0;
+    let i;
     for (i = 0; i < m; ++i) { sum += (w[i] = (x[i]==null ? 1 : +x[i])); }
     for (i = 0; i < m; ++i) { w[i] /= sum; }
     return w;
@@ -36,9 +38,9 @@ export default function(dists, weights) {
 
     sample() {
       const r = random();
-      let d = dists[m-1],
-          v = w[0],
-          i = 0;
+      let d = dists[m-1];
+      let v = w[0];
+      let i = 0;
 
       // first select distribution
       for (; i<m-1; v += w[++i]) {
@@ -49,7 +51,8 @@ export default function(dists, weights) {
     },
 
     pdf(x) {
-      let p = 0, i = 0;
+      let p = 0;
+      let i = 0;
       for (; i<m; ++i) {
         p += w[i] * dists[i].pdf(x);
       }
@@ -57,7 +60,8 @@ export default function(dists, weights) {
     },
 
     cdf(x) {
-      let p = 0, i = 0;
+      let p = 0;
+      let i = 0;
       for (; i<m; ++i) {
         p += w[i] * dists[i].cdf(x);
       }

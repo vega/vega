@@ -29,8 +29,8 @@ export default function(type, shape, tip) {
   const hit = hitPath(draw);
 
   function pick(context, scene, x, y, gx, gy) {
-    var items = scene.items,
-        b = scene.bounds;
+    var items = scene.items;
+    var b = scene.bounds;
 
     if (!items || !items.length || b && !b.contains(gx, gy)) {
       return null;

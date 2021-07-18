@@ -22,8 +22,8 @@ export default function(spec, scope) {
  * Parse all parameters of a data transform.
  */
 function parseParameters(def, spec, scope) {
-  const params = {},
-        n = def.params.length;
+  const params = {};
+  const n = def.params.length;
 
   for (let i = 0; i < n; ++i) {
     const pdef = def.params[i];
@@ -36,8 +36,8 @@ function parseParameters(def, spec, scope) {
  * Parse a data transform parameter.
  */
 function parseParameter(def, spec, scope) {
-  const type = def.type,
-        value = spec[def.name];
+  const type = def.type;
+  const value = spec[def.name];
 
   if (type === 'index') {
     return parseIndexParameter(def, spec, scope);

@@ -76,9 +76,9 @@ inherits(SVGStringRenderer, Renderer, {
    * @param {object} scene - The mark parent to render.
    */
   mark(m, scene) {
-    const mdef = Marks[scene.marktype],
-          tag  = mdef.tag,
-          attrList = [ariaItemAttributes, mdef.attr];
+    const mdef = Marks[scene.marktype];
+    const tag  = mdef.tag;
+    const attrList = [ariaItemAttributes, mdef.attr];
 
     // render opening group tag
     m.open('g',
@@ -117,9 +117,9 @@ inherits(SVGStringRenderer, Renderer, {
           m.text(textValue(item, tl));
         }
       } else if (tag === 'g') {
-        const fore = item.strokeForeground,
-              fill = item.fill,
-              stroke = item.stroke;
+        const fore = item.strokeForeground;
+        const fill = item.fill;
+        const stroke = item.stroke;
 
         if (fore && stroke) {
           item.stroke = null;
@@ -198,10 +198,10 @@ inherits(SVGStringRenderer, Renderer, {
    * @param {string} tag - The tag being rendered.
    */
   attr(scene, item, attrs, tag) {
-    const object = {},
-          emit = (name, value, ns, prefixed) => {
-            object[prefixed || name] = value;
-          };
+    const object = {};
+    const emit = (name, value, ns, prefixed) => {
+      object[prefixed || name] = value;
+    };
 
     // apply mark specific attributes
     if (Array.isArray(attrs)) {
@@ -225,17 +225,17 @@ inherits(SVGStringRenderer, Renderer, {
    * @param {object} m - The markup context.
    */
   defs(m) {
-    const gradient = this._defs.gradient,
-          clipping = this._defs.clipping,
-          count = Object.keys(gradient).length + Object.keys(clipping).length;
+    const gradient = this._defs.gradient;
+    const clipping = this._defs.clipping;
+    const count = Object.keys(gradient).length + Object.keys(clipping).length;
 
     if (count === 0) return; // nothing to do
 
     m.open('defs');
 
     for (const id in gradient) {
-      const def = gradient[id],
-            stops = def.stops;
+      const def = gradient[id];
+      const stops = def.stops;
 
       if (def.gradient === 'radial') {
         // SVG radial gradients automatically transform to normalized bbox

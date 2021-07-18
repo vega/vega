@@ -35,27 +35,32 @@ export function intersectPoint(item, box) {
 }
 
 export function intersectRect(item, box) {
-  const x = item.x || 0,
-        y = item.y || 0,
-        w = item.width || 0,
-        h = item.height || 0;
+  const x = item.x || 0;
+  const y = item.y || 0;
+  const w = item.width || 0;
+  const h = item.height || 0;
   return box.intersects(b.set(x, y, x + w, y + h));
 }
 
 export function intersectRule(item, box) {
-  const x = item.x || 0,
-        y = item.y || 0,
-        x2 = item.x2 != null ? item.x2 : x,
-        y2 = item.y2 != null ? item.y2 : y;
+  const x = item.x || 0;
+  const y = item.y || 0;
+  const x2 = item.x2 != null ? item.x2 : x;
+  const y2 = item.y2 != null ? item.y2 : y;
   return intersectBoxLine(box, x, y, x2, y2);
 }
 
 export function intersectBoxLine(box, x, y, u, v) {
-  const {x1, y1, x2, y2} = box,
-        dx = u - x,
-        dy = v - y;
+  const {x1, y1, x2, y2} = box;
+  const dx = u - x;
+  const dy = v - y;
 
-  let t0 = 0, t1 = 1, p, q, r, e;
+  let t0 = 0;
+  let t1 = 1;
+  let p;
+  let q;
+  let r;
+  let e;
 
   for (e=0; e<4; ++e) {
     if (e === 0) { p = -dx; q = -(x1 - x); }

@@ -7,16 +7,16 @@ import {isArray, visitArray} from 'vega-util';
 export const StopPropagation = {};
 
 // Pulse visit type flags
-const ADD       = (1 << 0),
-      REM       = (1 << 1),
-      MOD       = (1 << 2),
-      ADD_REM   = ADD | REM,
-      ADD_MOD   = ADD | MOD,
-      ALL       = ADD | REM | MOD,
-      REFLOW    = (1 << 3),
-      SOURCE    = (1 << 4),
-      NO_SOURCE = (1 << 5),
-      NO_FIELDS = (1 << 6);
+const ADD       = (1 << 0);
+const REM       = (1 << 1);
+const MOD       = (1 << 2);
+const ADD_REM   = ADD | REM;
+const ADD_MOD   = ADD | MOD;
+const ALL       = ADD | REM | MOD;
+const REFLOW    = (1 << 3);
+const SOURCE    = (1 << 4);
+const NO_SOURCE = (1 << 5);
+const NO_FIELDS = (1 << 6);
 
 /**
  * A Pulse enables inter-operator communication during a run of the
@@ -277,8 +277,8 @@ Pulse.prototype = {
   reflow(fork) {
     if (fork) return this.fork(ALL).reflow();
 
-    const len = this.add.length,
-          src = this.source && this.source.length;
+    const len = this.add.length;
+    const src = this.source && this.source.length;
     if (src && src !== len) {
       this.mod = this.source;
       if (len) this.filter(MOD, filter(this, ADD));
@@ -394,7 +394,8 @@ Pulse.prototype = {
    * @return {Pulse} - Returns this pulse instance.
    */
   visit(flags, visitor) {
-    const p = this, v = visitor;
+    const p = this;
+    const v = visitor;
 
     if (flags & SOURCE) {
       visitArray(p.source, p.srcF, v);

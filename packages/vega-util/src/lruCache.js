@@ -6,7 +6,9 @@ const DEFAULT_MAX_SIZE = 10000;
 export default function(maxsize) {
   maxsize = +maxsize || DEFAULT_MAX_SIZE;
 
-  let curr, prev, size;
+  let curr;
+  let prev;
+  let size;
 
   const clear = () => {
     curr = {};

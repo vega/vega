@@ -15,11 +15,24 @@ import {array, toNumber} from 'vega-util';
  * @returns {object} An object of selected fields and values.
  */
 export function selectionResolve(name, op, isMulti, vl5) {
-  var data = this.context.data[name],
-    entries = data ? data.values.value : [],
-    resolved = {}, multiRes = {}, types = {},
-    entry, fields, values, unit, field, res, resUnit, type, union,
-    n = entries.length, i = 0, j, m;
+  var data = this.context.data[name];
+  var entries = data ? data.values.value : [];
+  var resolved = {};
+  var multiRes = {};
+  var types = {};
+  var entry;
+  var fields;
+  var values;
+  var unit;
+  var field;
+  var res;
+  var resUnit;
+  var type;
+  var union;
+  var n = entries.length;
+  var i = 0;
+  var j;
+  var m;
 
   // First union all entries within the same unit.
   for (; i < n; ++i) {
@@ -72,7 +85,8 @@ var ops = {
   E_union: function(base, value) {
     if (!base.length) return value;
 
-    var i = 0, n = value.length;
+    var i = 0;
+    var n = value.length;
     for (; i<n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
     return base;
   },
@@ -83,7 +97,8 @@ var ops = {
   },
 
   R_union: function(base, value) {
-    var lo = toNumber(value[0]), hi = toNumber(value[1]);
+    var lo = toNumber(value[0]);
+    var hi = toNumber(value[1]);
     if (lo > hi) {
       lo = value[1];
       hi = value[0];
@@ -96,7 +111,8 @@ var ops = {
   },
 
   R_intersect: function(base, value) {
-    var lo = toNumber(value[0]), hi = toNumber(value[1]);
+    var lo = toNumber(value[0]);
+    var hi = toNumber(value[1]);
     if (lo > hi) {
       lo = value[1];
       hi = value[0];

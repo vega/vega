@@ -18,8 +18,8 @@ import {isFunction} from 'vega-util';
  * @return {Operator} - The added operator.
  */
 export default function(init, update, params, react) {
-  let shift = 1,
-      op;
+  let shift = 1;
+  let op;
 
   if (init instanceof Operator) {
     op = init;

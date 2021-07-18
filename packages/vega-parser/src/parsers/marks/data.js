@@ -4,7 +4,11 @@ import {ref} from '../../util';
 import {array, error, extend} from 'vega-util';
 
 export default function(from, group, scope) {
-  let facet, key, op, dataRef, parent;
+  let facet;
+  let key;
+  let op;
+  let dataRef;
+  let parent;
 
   // if no source data, generate singleton datum
   if (!from) {

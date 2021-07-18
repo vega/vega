@@ -23,9 +23,9 @@ const cases = [
 
 // Implementation adapted from d3/d3-contour. Thanks!
 export default function() {
-  var dx = 1,
-      dy = 1,
-      smooth = smoothLinear;
+  var dx = 1;
+  var dy = 1;
+  var smooth = smoothLinear;
 
   function contours(values, tz) {
     return tz.map(value => contour(values, value));
@@ -34,8 +34,8 @@ export default function() {
   // Accumulate, smooth contour rings, assign holes to exterior rings.
   // Based on https://github.com/mbostock/shapefile/blob/v0.6.2/shp/polygon.js
   function contour(values, value) {
-    var polygons = [],
-        holes = [];
+    var polygons = [];
+    var holes = [];
 
     isorings(values, value, ring => {
       smooth(ring, values, value);
@@ -62,9 +62,14 @@ export default function() {
   // Marching squares with isolines stitched into rings.
   // Based on https://github.com/topojson/topojson-client/blob/v3.0.0/src/stitch.js
   function isorings(values, value, callback) {
-    var fragmentByStart = new Array,
-        fragmentByEnd = new Array,
-        x, y, t0, t1, t2, t3;
+    var fragmentByStart = new Array;
+    var fragmentByEnd = new Array;
+    var x;
+    var y;
+    var t0;
+    var t1;
+    var t2;
+    var t3;
 
     // Special case for the first row (y = -1, t2 = t3 = 0).
     x = y = -1;
@@ -101,11 +106,12 @@ export default function() {
     cases[t2 << 3].forEach(stitch);
 
     function stitch(line) {
-      var start = [line[0][0] + x, line[0][1] + y],
-          end = [line[1][0] + x, line[1][1] + y],
-          startIndex = index(start),
-          endIndex = index(end),
-          f, g;
+      var start = [line[0][0] + x, line[0][1] + y];
+      var end = [line[1][0] + x, line[1][1] + y];
+      var startIndex = index(start);
+      var endIndex = index(end);
+      var f;
+      var g;
       if (f = fragmentByEnd[startIndex]) {
         if (g = fragmentByStart[endIndex]) {
           delete fragmentByEnd[f.end];
@@ -148,12 +154,12 @@ export default function() {
 
   function smoothLinear(ring, values, value) {
     ring.forEach(point => {
-      var x = point[0],
-          y = point[1],
-          xt = x | 0,
-          yt = y | 0,
-          v0,
-          v1 = values[yt * dx + xt];
+      var x = point[0];
+      var y = point[1];
+      var xt = x | 0;
+      var yt = y | 0;
+      var v0;
+      var v1 = values[yt * dx + xt];
       if (x > 0 && x < dx && xt === x) {
         v0 = values[yt * dx + xt - 1];
         point[0] = x + (value - v0) / (v1 - v0) - 0.5;
@@ -169,7 +175,8 @@ export default function() {
 
   contours.size = function(_) {
     if (!arguments.length) return [dx, dy];
-    var _0 = Math.floor(_[0]), _1 = Math.floor(_[1]);
+    var _0 = Math.floor(_[0]);
+    var _1 = Math.floor(_[1]);
     if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
     return dx = _0, dy = _1, contours;
   };
@@ -182,23 +189,32 @@ export default function() {
 }
 
 function area(ring) {
-  var i = 0,
-      n = ring.length,
-      area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
+  var i = 0;
+  var n = ring.length;
+  var area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
   while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
   return area;
 }
 
 function contains(ring, hole) {
-  var i = -1, n = hole.length, c;
+  var i = -1;
+  var n = hole.length;
+  var c;
   while (++i < n) if (c = ringContains(ring, hole[i])) return c;
   return 0;
 }
 
 function ringContains(ring, point) {
-  var x = point[0], y = point[1], contains = -1;
+  var x = point[0];
+  var y = point[1];
+  var contains = -1;
   for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
-    var pi = ring[i], xi = pi[0], yi = pi[1], pj = ring[j], xj = pj[0], yj = pj[1];
+    var pi = ring[i];
+    var xi = pi[0];
+    var yi = pi[1];
+    var pj = ring[j];
+    var xj = pj[0];
+    var yj = pj[1];
     if (segmentContains(pi, pj, point)) return 0;
     if (((yi > y) !== (yj > y)) && ((x < (xj - xi) * (y - yi) / (yj - yi) + xi))) contains = -contains;
   }

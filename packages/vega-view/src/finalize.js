@@ -5,10 +5,12 @@
  * Remove any currently displayed tooltip.
  */
 export default function() {
-  var tooltip = this._tooltip,
-      timers = this._timers,
-      listeners = this._eventListeners,
-      n, m, e;
+  var tooltip = this._tooltip;
+  var timers = this._timers;
+  var listeners = this._eventListeners;
+  var n;
+  var m;
+  var e;
 
   n = timers.length;
   while (--n >= 0) {

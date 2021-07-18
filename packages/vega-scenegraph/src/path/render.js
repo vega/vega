@@ -25,16 +25,16 @@ function scale(current, sX, sY) {
 }
 
 export default function(context, path, l, t, sX, sY) {
-  var current, // current instruction
-      previous = null,
-      x = 0, // current x
-      y = 0, // current y
-      controlX = 0, // current control point x
-      controlY = 0, // current control point y
-      tempX,
-      tempY,
-      tempControlX,
-      tempControlY;
+  var current; // current instruction
+  var previous = null;
+  var x = 0; // current x
+  var y = 0; // current y
+  var controlX = 0; // current control point x
+  var controlY = 0; // current control point y
+  var tempX;
+  var tempY;
+  var tempControlX;
+  var tempControlY;
 
   if (l == null) l = 0;
   if (t == null) t = 0;

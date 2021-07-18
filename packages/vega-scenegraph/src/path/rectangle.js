@@ -28,35 +28,35 @@ function clamp(value, min, max) {
 }
 
 export default function() {
-  var x = rectangleX,
-      y = rectangleY,
-      width = rectangleWidth,
-      height = rectangleHeight,
-      crTL = number(0),
-      crTR = crTL,
-      crBL = crTL,
-      crBR = crTL,
-      context = null;
+  var x = rectangleX;
+  var y = rectangleY;
+  var width = rectangleWidth;
+  var height = rectangleHeight;
+  var crTL = number(0);
+  var crTR = crTL;
+  var crBL = crTL;
+  var crBR = crTL;
+  var context = null;
 
   function rectangle(_, x0, y0) {
-    var buffer,
-        x1 = x0 != null ? x0 : +x.call(this, _),
-        y1 = y0 != null ? y0 : +y.call(this, _),
-        w  = +width.call(this, _),
-        h  = +height.call(this, _),
-        s  = Math.min(w, h) / 2,
-        tl = clamp(+crTL.call(this, _), 0, s),
-        tr = clamp(+crTR.call(this, _), 0, s),
-        bl = clamp(+crBL.call(this, _), 0, s),
-        br = clamp(+crBR.call(this, _), 0, s);
+    var buffer;
+    var x1 = x0 != null ? x0 : +x.call(this, _);
+    var y1 = y0 != null ? y0 : +y.call(this, _);
+    var w  = +width.call(this, _);
+    var h  = +height.call(this, _);
+    var s  = Math.min(w, h) / 2;
+    var tl = clamp(+crTL.call(this, _), 0, s);
+    var tr = clamp(+crTR.call(this, _), 0, s);
+    var bl = clamp(+crBL.call(this, _), 0, s);
+    var br = clamp(+crBR.call(this, _), 0, s);
 
     if (!context) context = buffer = path();
 
     if (tl <= 0 && tr <= 0 && bl <= 0 && br <= 0) {
       context.rect(x1, y1, w, h);
     } else {
-      var x2 = x1 + w,
-          y2 = y1 + h;
+      var x2 = x1 + w;
+      var y2 = y1 + h;
       context.moveTo(x1 + tl, y1);
       context.lineTo(x2 - tr, y1);
       context.bezierCurveTo(x2 - C * tr, y1, x2, y1 + C * tr, x2, y1 + tr);

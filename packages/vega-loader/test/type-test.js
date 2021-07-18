@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    d3 = require('d3-time-format'),
-    vega = require('../'),
-    inferType = vega.inferType,
-    inferTypes = vega.inferTypes,
-    typeParsers = vega.typeParsers;
+var tape = require('tape');
+var d3 = require('d3-time-format');
+var vega = require('../');
+var inferType = vega.inferType;
+var inferTypes = vega.inferTypes;
+var typeParsers = vega.typeParsers;
 
 const fields = ['a', 'b', 'c', 'd', 'e'];
 

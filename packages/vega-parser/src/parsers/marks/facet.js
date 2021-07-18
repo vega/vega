@@ -5,9 +5,9 @@ import {ref} from '../../util';
 import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {
-  const facet = spec.from.facet,
-        name = facet.name,
-        data = getDataRef(facet, scope);
+  const facet = spec.from.facet;
+  const name = facet.name;
+  const data = getDataRef(facet, scope);
   let op;
 
   if (!facet.name) {
@@ -33,9 +33,9 @@ export default function(spec, scope, group) {
   }
 
   // initialize facet subscope
-  const subscope = scope.fork(),
-        source = subscope.add(Collect()),
-        values = subscope.add(Sieve({pulse: ref(source)}));
+  const subscope = scope.fork();
+  const source = subscope.add(Collect());
+  const values = subscope.add(Sieve({pulse: ref(source)}));
   subscope.addData(name, new DataScope(subscope, source, source, values));
   subscope.addSignal('parent', null);
 

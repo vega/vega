@@ -11,9 +11,9 @@ import metadata from './util/svg/metadata';
 import {rootAttributes, styles} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
-const RootIndex = 0,
-      xmlns = 'http://www.w3.org/2000/xmlns/',
-      svgns = metadata.xmlns;
+const RootIndex = 0;
+const xmlns = 'http://www.w3.org/2000/xmlns/';
+const svgns = metadata.xmlns;
 
 export default function SVGRenderer(loader) {
   Renderer.call(this, loader);
@@ -115,8 +115,8 @@ inherits(SVGRenderer, Renderer, {
    * or null if this renderer is currently headless.
    */
   svg() {
-    const svg = this._svg,
-          bg = this._bgcolor;
+    const svg = this._svg;
+    const bg = this._bgcolor;
 
     if (!svg) return null;
 
@@ -190,7 +190,13 @@ inherits(SVGRenderer, Renderer, {
     if (!items.length || !this._dirtyID) return true;
 
     const id = ++this._dirtyID;
-    let item, mark, type, mdef, i, n, o;
+    let item;
+    let mark;
+    let type;
+    let mdef;
+    let i;
+    let n;
+    let o;
 
     for (i=0, n=items.length; i<n; ++i) {
       item = items[i];
@@ -250,13 +256,13 @@ inherits(SVGRenderer, Renderer, {
   mark(el, scene, prev) {
     if (!this.isDirty(scene)) return scene._svg;
 
-    const svg = this._svg,
-          mdef = marks[scene.marktype],
-          events = scene.interactive === false ? 'none' : null,
-          isGroup = mdef.tag === 'g';
+    const svg = this._svg;
+    const mdef = marks[scene.marktype];
+    const events = scene.interactive === false ? 'none' : null;
+    const isGroup = mdef.tag === 'g';
 
-    let sibling = null,
-        i = 0;
+    let sibling = null;
+    let i = 0;
 
     const parent = bind(scene, el, prev, 'g', svg);
     parent.setAttribute('class', cssClass(scene));
@@ -272,8 +278,8 @@ inherits(SVGRenderer, Renderer, {
       scene.clip ? clip(this, scene, scene.group) : null);
 
     const process = item => {
-      const dirty = this.isDirty(item),
-            node = bind(item, parent, sibling, mdef.tag, svg);
+      const dirty = this.isDirty(item);
+      const node = bind(item, parent, sibling, mdef.tag, svg);
 
       if (dirty) {
         this._update(mdef, node, item);
@@ -353,11 +359,11 @@ inherits(SVGRenderer, Renderer, {
    * collected state is current and accurate.
    */
   defs() {
-    const svg = this._svg,
-          defs = this._defs;
+    const svg = this._svg;
+    const defs = this._defs;
 
-    let el = defs.el,
-        index = 0;
+    let el = defs.el;
+    let index = 0;
 
     for (const id in defs.gradient) {
       if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
@@ -399,7 +405,9 @@ function dirtyParents(item, id) {
 
 // update gradient definitions
 function updateGradient(el, grad, index) {
-  let i, n, stop;
+  let i;
+  let n;
+  let stop;
 
   if (grad.gradient === 'radial') {
     // SVG radial gradients automatically transform to normalized bbox
@@ -475,7 +483,8 @@ function updateClipping(el, clip, index) {
 // Recursively process group contents.
 function recurse(renderer, el, group) {
   el = el.lastChild.previousSibling;
-  let prev, idx = 0;
+  let prev;
+  let idx = 0;
 
   visit(group, item => {
     prev = renderer.mark(el, item, prev);
@@ -489,7 +498,8 @@ function recurse(renderer, el, group) {
 // Bind a scenegraph item to an SVG DOM element.
 // Create new SVG elements as needed.
 function bind(item, el, sibling, tag, svg) {
-  let node = item._svg, doc;
+  let node = item._svg;
+  let doc;
 
   // create a new dom node if needed
   if (!node) {
@@ -536,8 +546,8 @@ function siblingCheck(node, sibling) {
 
 // -- Set attributes & styles on SVG elements ---
 
-let element = null, // temp var for current SVG element
-    values = null;  // temp var for current values hash
+let element = null; // temp var for current SVG element
+let values = null;  // temp var for current values hash
 
 // Extra configuration for certain mark types
 const mark_extras = {
@@ -591,7 +601,10 @@ const mark_extras = {
   },
   text(mdef, el, item) {
     const tl = textLines(item);
-    let key, value, doc, lh;
+    let key;
+    let value;
+    let doc;
+    let lh;
 
     if (isArray(tl)) {
       // multi-line text

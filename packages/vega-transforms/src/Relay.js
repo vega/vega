@@ -17,7 +17,8 @@ export default function Relay(params) {
 
 inherits(Relay, Transform, {
   transform(_, pulse) {
-    let out, lut;
+    let out;
+    let lut;
 
     if (this.value) {
       lut = this.value;

@@ -17,7 +17,9 @@ export default function ASTNode(type) {
 }
 
 ASTNode.prototype.visit = function(visitor) {
-  let c, i, n;
+  let c;
+  let i;
+  let n;
 
   if (visitor(this)) return 1;
 

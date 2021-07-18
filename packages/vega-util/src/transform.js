@@ -18,9 +18,9 @@ const pow = exponent =>
   x => x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
 
 function pan(domain, delta, lift, ground) {
-  const d0 = lift(domain[0]),
-        d1 = lift(peek(domain)),
-        dd = (d1 - d0) * delta;
+  const d0 = lift(domain[0]);
+  const d1 = lift(peek(domain));
+  const dd = (d1 - d0) * delta;
 
   return [
     ground(d0 - dd),
@@ -46,9 +46,9 @@ export function panSymlog(domain, delta, constant) {
 }
 
 function zoom(domain, anchor, scale, lift, ground) {
-  const d0 = lift(domain[0]),
-        d1 = lift(peek(domain)),
-        da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
+  const d0 = lift(domain[0]);
+  const d1 = lift(peek(domain));
+  const da = anchor != null ? lift(anchor) : (d0 + d1) / 2;
 
   return [
     ground(da + (d0 - da) * scale),

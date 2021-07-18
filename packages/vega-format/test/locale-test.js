@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    d3f = require('d3-format'),
-    d3t = require('d3-time-format'),
-    vega = require('../'),
-    {deDE} = require('./util');
+var tape = require('tape');
+var d3f = require('d3-format');
+var d3t = require('d3-time-format');
+var vega = require('../');
+var {deDE} = require('./util');
 
 function isFunction(t, value) {
   t.equal(typeof value, 'function');

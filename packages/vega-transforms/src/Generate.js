@@ -17,12 +17,14 @@ export default function Generate(params) {
 
 inherits(Generate, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.ALL),
-          gen = _.generator;
+    const out = pulse.fork(pulse.ALL);
+    const gen = _.generator;
 
-    let data = this.value,
-        num = _.size - data.length,
-        add, rem, t;
+    let data = this.value;
+    let num = _.size - data.length;
+    let add;
+    let rem;
+    let t;
 
     if (num > 0) {
       // need more tuples, generate and add

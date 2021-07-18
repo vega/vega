@@ -32,20 +32,23 @@ Flatten.Definition = {
 
 inherits(Flatten, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.NO_SOURCE),
-          fields = _.fields,
-          as = fieldNames(fields, _.as || []),
-          index = _.index || null,
-          m = as.length;
+    const out = pulse.fork(pulse.NO_SOURCE);
+    const fields = _.fields;
+    const as = fieldNames(fields, _.as || []);
+    const index = _.index || null;
+    const m = as.length;
 
     // remove any previous results
     out.rem = this.value;
 
     // generate flattened tuples
     pulse.visit(pulse.SOURCE, t => {
-      const arrays = fields.map(f => f(t)),
-            maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0);
-      let i = 0, j, d, v;
+      const arrays = fields.map(f => f(t));
+      const maxlen = arrays.reduce((l, a) => Math.max(l, a.length), 0);
+      let i = 0;
+      let j;
+      let d;
+      let v;
 
       for (; i<maxlen; ++i) {
         d = derive(t);

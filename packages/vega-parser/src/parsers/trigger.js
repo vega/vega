@@ -2,12 +2,12 @@ import {operator} from '../util';
 import {parseExpression} from 'vega-functions';
 
 export default function(spec, scope, name) {
-  const remove = spec.remove,
-        insert = spec.insert,
-        toggle = spec.toggle,
-        modify = spec.modify,
-        values = spec.values,
-        op = scope.add(operator());
+  const remove = spec.remove;
+  const insert = spec.insert;
+  const toggle = spec.toggle;
+  const modify = spec.modify;
+  const values = spec.values;
+  const op = scope.add(operator());
 
   const update = 'if(' + spec.trigger + ',modify("'
     + name + '",'

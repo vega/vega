@@ -13,13 +13,17 @@ export default function(data, x, y, order) {
   if (order === 1) return linear(data, x, y);
   if (order === 2) return quad(data, x, y);
 
-  const [xv, yv, ux, uy] = points(data, x, y),
-        n = xv.length,
-        lhs = [],
-        rhs = [],
-        k = order + 1;
+  const [xv, yv, ux, uy] = points(data, x, y);
+  const n = xv.length;
+  const lhs = [];
+  const rhs = [];
+  const k = order + 1;
 
-  let i, j, l, v, c;
+  let i;
+  let j;
+  let l;
+  let v;
+  let c;
 
   for (i=0; i<k; ++i) {
     for (l=0, v=0; l<n; ++l) {
@@ -38,13 +42,13 @@ export default function(data, x, y, order) {
   }
   rhs.push(lhs);
 
-  const coef = gaussianElimination(rhs),
-        predict = x => {
-          x -= ux;
-          let y = uy + coef[0] + coef[1] * x + coef[2] * x * x;
-          for (i=3; i<k; ++i) y += coef[i] * Math.pow(x, i);
-          return y;
-        };
+  const coef = gaussianElimination(rhs);
+  const predict = x => {
+    x -= ux;
+    let y = uy + coef[0] + coef[1] * x + coef[2] * x * x;
+    for (i=3; i<k; ++i) y += coef[i] * Math.pow(x, i);
+    return y;
+  };
 
   return {
     coef: uncenter(k, coef, -ux, uy),
@@ -55,7 +59,10 @@ export default function(data, x, y, order) {
 
 function uncenter(k, a, x, y) {
   const z = Array(k);
-  let i, j, v, c;
+  let i;
+  let j;
+  let v;
+  let c;
 
   // initialize to zero
   for (i=0; i<k; ++i) z[i] = 0;
@@ -80,10 +87,14 @@ function uncenter(k, a, x, y) {
 // Given an array for a two-dimensional matrix and the polynomial order,
 // solve A * x = b using Gaussian elimination.
 function gaussianElimination(matrix) {
-  const n = matrix.length - 1,
-        coef = [];
+  const n = matrix.length - 1;
+  const coef = [];
 
-  let i, j, k, r, t;
+  let i;
+  let j;
+  let k;
+  let r;
+  let t;
 
   for (i = 0; i < n; ++i) {
     r = i; // max row

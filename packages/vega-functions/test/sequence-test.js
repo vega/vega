@@ -1,12 +1,12 @@
-var tape = require('tape'),
-    {
-      indexof,
-      join,
-      lastindexof,
-      replace,
-      reverse,
-      slice
-    } = require('../');
+var tape = require('tape');
+var {
+  indexof,
+  join,
+  lastindexof,
+  replace,
+  reverse,
+  slice
+} = require('../');
 
 tape('indexof finds first index', t => {
   t.deepEqual(indexof([1, 2, 2, 3], 2), [1, 2, 2, 3].indexOf(2));

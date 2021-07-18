@@ -12,9 +12,9 @@ export default function(view) {
   // evaluate cursor on each mousemove event
   view.on(view.events('view', 'mousemove'), cursor,
     (_, event) => {
-      const value = cursor.value,
-            user = value ? (isString(value) ? value : value.user) : Default,
-            item = event.item && event.item.cursor || null;
+      const value = cursor.value;
+      const user = value ? (isString(value) ? value : value.user) : Default;
+      const item = event.item && event.item.cursor || null;
 
       return (value && user === value.user && item == value.item)
         ? value
@@ -24,8 +24,8 @@ export default function(view) {
 
   // when cursor signal updates, set visible cursor
   view.add(null, function(_) {
-    let user = _.cursor,
-        item = this.value;
+    let user = _.cursor;
+    let item = this.value;
 
     if (!isString(user)) {
       item = user.item;

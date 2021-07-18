@@ -36,8 +36,8 @@ ResourceLoader.prototype = {
   },
 
   loadImage(uri) {
-    const loader = this,
-          Image = image();
+    const loader = this;
+    const Image = image();
     increment(loader);
 
     return loader._loader

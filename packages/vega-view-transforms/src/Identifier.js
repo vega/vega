@@ -28,8 +28,8 @@ Identifier.Definition = {
 
 inherits(Identifier, Transform, {
   transform(_, pulse) {
-    const counter = getCounter(pulse.dataflow),
-          as = _.as;
+    const counter = getCounter(pulse.dataflow);
+    const as = _.as;
     let id = counter.value;
 
     pulse.visit(pulse.ADD, t => (t[as] = t[as] || ++id));

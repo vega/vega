@@ -13,8 +13,8 @@ export function windowSize() {
 }
 
 export function containerSize() {
-  const view = this.context.dataflow,
-        el = view.container && view.container();
+  const view = this.context.dataflow;
+  const el = view.container && view.container();
   return el
     ? [el.clientWidth, el.clientHeight]
     : [undefined, undefined];

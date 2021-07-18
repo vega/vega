@@ -12,8 +12,8 @@ import {
 
 function trimZeroes(numberFormat, decimalChar) {
   return x => {
-    const str = numberFormat(x),
-        dec = str.indexOf(decimalChar);
+    const str = numberFormat(x);
+    const dec = str.indexOf(decimalChar);
 
     if (dec < 0) return str;
 
@@ -26,7 +26,8 @@ function trimZeroes(numberFormat, decimalChar) {
 }
 
 function rightmostDigit(str, dec) {
-  let i = str.lastIndexOf('e'), c;
+  let i = str.lastIndexOf('e');
+  let c;
   if (i > 0) return i;
   for (i=str.length; --i > dec;) {
     c = str.charCodeAt(i);
@@ -35,8 +36,8 @@ function rightmostDigit(str, dec) {
 }
 
 function numberLocale(locale) {
-  const format = memoize(locale.format),
-        formatPrefix = locale.formatPrefix;
+  const format = memoize(locale.format);
+  const formatPrefix = locale.formatPrefix;
 
   return {
     format,
@@ -59,8 +60,8 @@ function numberLocale(locale) {
     },
     formatSpan(start, stop, count, specifier) {
       specifier = formatSpecifier(specifier == null ? ',f' : specifier);
-      const step = tickStep(start, stop, count),
-            value = Math.max(Math.abs(start), Math.abs(stop));
+      const step = tickStep(start, stop, count);
+      const value = Math.max(Math.abs(start), Math.abs(stop));
       let precision;
 
       if (specifier.precision == null) {

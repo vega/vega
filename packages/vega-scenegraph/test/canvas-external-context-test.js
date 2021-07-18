@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    {canvas} = require('vega-canvas'),
-    vega = require('../'),
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
+var tape = require('tape');
+var fs = require('fs');
+var {canvas} = require('vega-canvas');
+var vega = require('../');
+var Renderer = vega.CanvasRenderer;
+var res = './test/resources/';
 
 const GENERATE = require('./resources/generate-tests');
 
@@ -16,10 +16,10 @@ function load(file) {
 }
 
 tape('CanvasRenderer should support supplied external canvas context', t => {
-  const scene = vega.sceneFromJSON(load('scenegraph-rect.json')),
-        externalCanvas = canvas(400, 400),
-        externalContext = externalCanvas.getContext('2d'),
-        cr = new Renderer();
+  const scene = vega.sceneFromJSON(load('scenegraph-rect.json'));
+  const externalCanvas = canvas(400, 400);
+  const externalContext = externalCanvas.getContext('2d');
+  const cr = new Renderer();
 
   externalContext.save();
   cr.initialize(null, 400, 200, [0, 0], 1.0, { externalContext })

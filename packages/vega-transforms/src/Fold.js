@@ -26,13 +26,13 @@ Fold.Definition = {
 
 inherits(Fold, Transform, {
   transform(_, pulse) {
-    const out = pulse.fork(pulse.NO_SOURCE),
-          fields = _.fields,
-          fnames = fields.map(accessorName),
-          as = _.as || ['key', 'value'],
-          k = as[0],
-          v = as[1],
-          n = fields.length;
+    const out = pulse.fork(pulse.NO_SOURCE);
+    const fields = _.fields;
+    const fnames = fields.map(accessorName);
+    const as = _.as || ['key', 'value'];
+    const k = as[0];
+    const v = as[1];
+    const n = fields.length;
 
     out.rem = this.value;
 

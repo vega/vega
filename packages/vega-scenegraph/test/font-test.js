@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    font = vega.font;
+var tape = require('tape');
+var vega = require('../');
+var font = vega.font;
 
 tape('font should produce default font string', t => {
   t.equal(font({}), '11px sans-serif');

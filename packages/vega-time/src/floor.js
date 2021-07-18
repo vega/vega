@@ -18,29 +18,29 @@ import {
 import {constant, one, peek, toSet, zero} from 'vega-util';
 
 function floor(units, step, get, inv, newDate) {
-  const s = step || 1,
-        b = peek(units),
-        _ = (unit, p, key) => {
-          key = key || unit;
-          return getUnit(get[key], inv[key], unit === b && s, p);
-        };
+  const s = step || 1;
+  const b = peek(units);
+  const _ = (unit, p, key) => {
+    key = key || unit;
+    return getUnit(get[key], inv[key], unit === b && s, p);
+  };
 
-  const t = new Date,
-        u = toSet(units),
-        y = u[YEAR] ? _(YEAR) : constant(2012),
-        m = u[MONTH] ? _(MONTH)
-          : u[QUARTER] ? _(QUARTER)
-          : zero,
-        d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY)
-          : u[WEEK] ? _(WEEK, 1)
-          : u[DAY] ? _(DAY, 1)
-          : u[DATE] ? _(DATE, 1)
-          : u[DAYOFYEAR] ? _(DAYOFYEAR, 1)
-          : one,
-        H = u[HOURS] ? _(HOURS) : zero,
-        M = u[MINUTES] ? _(MINUTES) : zero,
-        S = u[SECONDS] ? _(SECONDS) : zero,
-        L = u[MILLISECONDS] ? _(MILLISECONDS) : zero;
+  const t = new Date;
+  const u = toSet(units);
+  const y = u[YEAR] ? _(YEAR) : constant(2012);
+  const m = u[MONTH] ? _(MONTH)
+    : u[QUARTER] ? _(QUARTER)
+    : zero;
+  const d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY)
+    : u[WEEK] ? _(WEEK, 1)
+    : u[DAY] ? _(DAY, 1)
+    : u[DATE] ? _(DATE, 1)
+    : u[DAYOFYEAR] ? _(DAYOFYEAR, 1)
+    : one;
+  const H = u[HOURS] ? _(HOURS) : zero;
+  const M = u[MINUTES] ? _(MINUTES) : zero;
+  const S = u[SECONDS] ? _(SECONDS) : zero;
+  const L = u[MILLISECONDS] ? _(MILLISECONDS) : zero;
 
   return function(v) {
     t.setTime(+v);

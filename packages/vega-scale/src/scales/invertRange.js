@@ -1,8 +1,8 @@
 export default function(scale) {
   return function(_) {
-    let lo = _[0],
-        hi = _[1],
-        t;
+    let lo = _[0];
+    let hi = _[1];
+    let t;
 
     if (hi < lo) {
       t = lo;

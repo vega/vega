@@ -1,10 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Extent = tx.extent;
+var tape = require('tape');
+var util = require('vega-util');
+var vega = require('vega-dataflow');
+var tx = require('../');
+var changeset = vega.changeset;
+var Collect = tx.collect;
+var Extent = tx.extent;
 
 tape('Extent computes extents', t => {
   const data = [
@@ -12,13 +12,13 @@ tape('Extent computes extents', t => {
     {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
   ];
 
-  var x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
-      f = df.add(null),
-      c = df.add(Collect),
-      a = df.add(Extent, {field:f, pulse:c}),
-      b = df.add(Extent, {field:y, pulse:c});
+  var x = util.field('x');
+  var y = util.field('y');
+  var df = new vega.Dataflow();
+  var f = df.add(null);
+  var c = df.add(Collect);
+  var a = df.add(Extent, {field:f, pulse:c});
+  var b = df.add(Extent, {field:y, pulse:c});
 
   df.update(f, x)
     .pulse(c, changeset().insert(data))
@@ -34,10 +34,10 @@ tape('Extent computes extents', t => {
 });
 
 tape('Extent handles empty and invalid data', t => {
-  var x = util.field('x'),
-      df = new vega.Dataflow(),
-      c = df.add(Collect),
-      e = df.add(Extent, {field:x, pulse:c});
+  var x = util.field('x');
+  var df = new vega.Dataflow();
+  var c = df.add(Collect);
+  var e = df.add(Extent, {field:x, pulse:c});
 
   df.pulse(c, changeset().insert([])).run();
   t.deepEqual(e.value, [undefined, undefined]);

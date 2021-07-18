@@ -45,9 +45,9 @@ inherits(SVGHandler, Handler, {
 
   // add an event handler
   on(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers,
-          i = this._handlerIndex(h[name], type, handler);
+    const name = this.eventName(type);
+    const h = this._handlers;
+    const i = this._handlerIndex(h[name], type, handler);
 
     if (i < 0) {
       const x = {
@@ -67,9 +67,9 @@ inherits(SVGHandler, Handler, {
 
   // remove an event handler
   off(type, handler) {
-    const name = this.eventName(type),
-          h = this._handlers[name],
-          i = this._handlerIndex(h, type, handler);
+    const name = this.eventName(type);
+    const h = this._handlers[name];
+    const i = this._handlerIndex(h, type, handler);
 
     if (i >= 0) {
       if (this._svg) {

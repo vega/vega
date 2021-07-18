@@ -28,13 +28,13 @@ GeoPoint.Definition = {
 
 inherits(GeoPoint, Transform, {
   transform(_, pulse) {
-    var proj = _.projection,
-        lon = _.fields[0],
-        lat = _.fields[1],
-        as = _.as || ['x', 'y'],
-        x = as[0],
-        y = as[1],
-        mod;
+    var proj = _.projection;
+    var lon = _.fields[0];
+    var lat = _.fields[1];
+    var as = _.as || ['x', 'y'];
+    var x = as[0];
+    var y = as[1];
+    var mod;
 
     function set(t) {
       const xy = proj([lon(t), lat(t)]);

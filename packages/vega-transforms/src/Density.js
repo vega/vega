@@ -94,9 +94,9 @@ inherits(Density, Transform, {
     const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
 
     if (!this.value || pulse.changed() || _.modified()) {
-      const dist = parseDist(_.distribution, source(pulse)),
-            minsteps = _.steps || _.minsteps || 25,
-            maxsteps = _.steps || _.maxsteps || 200;
+      const dist = parseDist(_.distribution, source(pulse));
+      const minsteps = _.steps || _.minsteps || 25;
+      const maxsteps = _.steps || _.maxsteps || 200;
       let method = _.method || 'pdf';
 
       if (method !== 'pdf' && method !== 'cdf') {
@@ -107,15 +107,15 @@ inherits(Density, Transform, {
       }
       method = dist[method];
 
-      const as = _.as || ['value', 'density'],
-            domain = _.extent || extent(dist.data()),
-            values = sampleCurve(method, domain, minsteps, maxsteps)
-              .map(v => {
-                const tuple = {};
-                tuple[as[0]] = v[0];
-                tuple[as[1]] = v[1];
-                return ingest(tuple);
-              });
+      const as = _.as || ['value', 'density'];
+      const domain = _.extent || extent(dist.data());
+      const values = sampleCurve(method, domain, minsteps, maxsteps)
+        .map(v => {
+          const tuple = {};
+          tuple[as[0]] = v[0];
+          tuple[as[1]] = v[1];
+          return ingest(tuple);
+        });
 
       if (this.value) out.rem = this.value;
       this.value = out.add = out.source = values;

@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+var tape = require('tape');
+var vega = require('../');
 
 function draw(context) {
   context.beginPath();
@@ -12,9 +12,9 @@ function draw(context) {
 }
 
 tape('intersectPath should intersect paths', t => {
-  const b = new vega.Bounds(),
-        p = vega.intersectPath(draw),
-        s = {bounds: new vega.Bounds()};
+  const b = new vega.Bounds();
+  const p = vega.intersectPath(draw);
+  const s = {bounds: new vega.Bounds()};
 
   draw(vega.boundContext(s.bounds)); // calc item bounds
 
@@ -38,9 +38,9 @@ tape('intersectPath should intersect paths', t => {
 });
 
 tape('intersectPoint should intersect point items', t => {
-  const b = new vega.Bounds(),
-        p = {x: 10, y: 10, size: 1000},
-        q = {x: 10, size: 1000};
+  const b = new vega.Bounds();
+  const p = {x: 10, y: 10, size: 1000};
+  const q = {x: 10, size: 1000};
 
   // specified coordinates
   t.ok(vega.intersectPoint(p, b.set( 0,  0, 20, 20))); // enclose
@@ -64,9 +64,9 @@ tape('intersectPoint should intersect point items', t => {
 });
 
 tape('intersectLine should intersect rule items', t => {
-  const b = new vega.Bounds(),
-        r = {x: 10, y: 10, x2: 50, y2: 50},
-        s = {x: 10, y2: 50};
+  const b = new vega.Bounds();
+  const r = {x: 10, y: 10, x2: 50, y2: 50};
+  const s = {x: 10, y2: 50};
 
   // specified coordinates
   t.ok(vega.intersectRule(r, b.set( 0,  0, 60, 60))); // enclose
@@ -92,9 +92,11 @@ tape('intersectLine should intersect rule items', t => {
 });
 
 tape('intersectBoxLine should compute box/line intersection', t => {
-  const b = new vega.Bounds(),
-        x = 10, y = 10,
-        u = 50, v = 50;
+  const b = new vega.Bounds();
+  const x = 10;
+  const y = 10;
+  const u = 50;
+  const v = 50;
 
   t.ok(vega.intersectBoxLine(b.set( 0,  0, 60, 60), x, y, u, v)); // enclose
   t.ok(vega.intersectBoxLine(b.set(20, 20, 30, 30), x, y, u, v)); // midline

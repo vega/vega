@@ -20,10 +20,10 @@ TreeLinks.Definition = {
 
 inherits(TreeLinks, Transform, {
   transform(_, pulse) {
-    const links = this.value,
-          tree = pulse.source && pulse.source.root,
-          out = pulse.fork(pulse.NO_SOURCE),
-          lut = {};
+    const links = this.value;
+    const tree = pulse.source && pulse.source.root;
+    const out = pulse.fork(pulse.NO_SOURCE);
+    const lut = {};
 
     if (!tree) error('TreeLinks transform requires a tree data source.');
 
@@ -36,8 +36,8 @@ inherits(TreeLinks, Transform, {
 
       // generate links for all edges incident on valid tuples
       tree.each(node => {
-        const t = node.data,
-              p = node.parent && node.parent.data;
+        const t = node.data;
+        const p = node.parent && node.parent.data;
         if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
           out.add.push(ingest({source: p, target: t}));
         }
