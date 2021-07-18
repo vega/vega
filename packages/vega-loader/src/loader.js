@@ -2,7 +2,7 @@ import {error, extend, isFunction, stringValue} from 'vega-util';
 
 // Matches absolute URLs with optional protocol
 //   https://...    file://...    //...
-const protocol_re = /^([A-Za-z]+:)?\/\//;
+const protocol_re = /^(data:|([A-Za-z]+:)?\/\/)/;
 
 // Matches allowed URIs. From https://github.com/cure53/DOMPurify/blob/master/src/regexp.js with added file://
 const allowed_re = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp|file|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
