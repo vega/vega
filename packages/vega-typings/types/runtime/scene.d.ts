@@ -1,3 +1,5 @@
+import { Operator } from './dataflow';
+
 export interface Scene {
   bounds: Bounds;
   clip: boolean;
@@ -36,10 +38,23 @@ export class Bounds {
 export interface SceneItem {
   bounds: Bounds;
   datum?: object;
-  mark: { role: string };
+  mark: {
+    bounds: Bounds;
+    clip: boolean;
+    interactive: boolean;
+    items: SceneItem[];
+    marktype: string;
+    role: string;
+    source: Operator;
+    zindex: number;
+  };
   x: number;
   y: number;
 }
+
+export type SceneAxis = SceneItem & {
+  orient: 'bottom' | 'left' | 'right' | 'top';
+};
 
 export type SceneRect = SceneItem & {
   fill: string;

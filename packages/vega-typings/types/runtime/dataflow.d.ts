@@ -7,6 +7,7 @@ export interface Changeset {
 export function changeset(): Changeset;
 
 export class Operator {
+  source?: Operator;
   constructor(init?: any, update?: (obj: any, pulse: any) => any, params?: any, react?: boolean);
   targets(): any;
   set(value: any): 1 | 0;
