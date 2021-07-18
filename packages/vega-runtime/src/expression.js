@@ -3,7 +3,7 @@ import {stringValue} from 'vega-util';
 
 function expression(ctx, args, code) {
   // wrap code in return statement if expression does not terminate
-  if (code[code.length-1] !== ';') {
+  if (!code.endsWith(';')) {
     code = 'return(' + code + ');';
   }
   const fn = Function(...args.concat(code));
