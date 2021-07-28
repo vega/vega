@@ -39,10 +39,20 @@ export interface BaseOperator {
   parent?: OperatorParam;
   scale?: string;
   metadata?: { [k: string]: unknown };
+  // A flag indicating if this operator should
+  // automatically update (react) when parameter values change. In other words,
+  // this flag determines if the operator registers itself as a listener on
+  // any upstream operators included in the parameters.
+  // Default is true
+  react?: boolean;
+  // A flag indicating if this operator
+  // should calculate an update only upon its initiatal evaluation, then
+  // deregister dependencies and suppress all future update invocations.
+  // Default is false
   initonly?: boolean;
 }
 export type Operator = DefinedOperator | OtherOperator;
-export type DefinedOperator = OperatorOperator | CollectOperator;
+export type DefinedOperator = OperatorOperator | CollectOperator | AggregateOperator;
 
 export interface OperatorOperator extends BaseOperator {
   type: 'operator';
@@ -69,9 +79,68 @@ export interface CollectOperator extends BaseOperator {
   >;
 }
 
+/**
+ * Group-by aggregation operator.
+ */
+export interface AggregateOperator extends BaseOperator {
+  type: 'aggregate';
+  params: {
+    pulse: OrArray<OperatorParam>;
+    // An array of accessors to groupby.
+    groupby?: OrArray<AccessorParameters>;
+    // An accessor that should return a string to key by
+    // Defaults to concatonating the groupby accessors
+    key?: AccessorParameters
+    // An array of accessors to aggregate
+    // Can only be null if the op is count
+    fields?: OrArray<AccessorParameters | null>;
+    // An array of strings indicating aggregation operations.
+    ops?: OrArray<AggregateOps | OperatorParam>;
+    //  An array of output field names for aggregated values.
+    as?: OrArray<string | OperatorParam>;
+    // A flag indicating that the full
+    // cross-product of groupby values should be generated, including empty cells.
+    // If true, the drop parameter is ignored and empty cells are retained.
+    // Defaults to false
+    cross?: boolean | OperatorParam;
+    // A flag indicating if empty cells should be removed.
+    // Defaults to true
+    drop?: boolean | OperatorParam;
+  };
+}
+
+export type OrArray<T> = T | T[]
+
+// All valid aggregate operators, from vega-transforms utils/AggregateOps.js
+export type AggregateOps =
+  | 'values'
+  | 'count'
+  | '__count__'
+  | 'missing'
+  | 'valid'
+  | 'sum'
+  | 'product'
+  | 'mean'
+  | 'average'
+  | 'variance'
+  | 'variancep'
+  | 'stdev'
+  | 'stdevp'
+  | 'stderr'
+  | 'distinct'
+  | 'ci0'
+  | 'ci1'
+  | 'median'
+  | 'q1'
+  | 'q3'
+  | 'min'
+  | 'max'
+  | 'argmin'
+  | 'argmax';
+// Support other operators which we haven't added as granular types for yet.
 export interface OtherOperator extends BaseOperator {
-  // TODO: Add more granular types for these
   type: Exclude<
+    // All operator types defined in vega-parser transforms.js
     | 'axisticks'
     | 'bound'
     | 'compare'
@@ -113,6 +182,11 @@ export interface Parameters {
 }
 // A parameter is either builtin, with the proper keys, or some primitive value or other object
 export type Parameter = ObjectOrListObjectOrAny<BuiltinParameter>;
+
+/**
+ * Accessor parameters return an accessor function which can be applied to each row of the data.
+ */
+export type AccessorParameters = KeyParam | ExpressionParam | FieldParam | OperatorParam
 
 export type BuiltinParameter =
   | OperatorParam
@@ -178,8 +252,8 @@ export interface EncodeValue {
  */
 export interface CompareParam {
   // Fields to compare on
-  $compare: string | string[];
-  $order: Order | Order[];
+  $compare: OrArray<string>;
+  $order: OrArray<Order>;
 }
 
 export type Order = 'ascending' | 'descending';
@@ -246,36 +320,6 @@ export type Subflow = Pick<Runtime, 'operators' | 'streams' | 'updates'>;
 //           params: Parse['$params'];
 //         }
 //     ))
-// >;
-
-// export type AggregateEntry = EntryType<
-//   'aggregate',
-//   {
-//     params: // DataScope.countsRef
-//     | ({
-//           groupby: fieldRef<string, 'key'>;
-//           pulse: Ref;
-//         } & (
-//           | {}
-//           // DataScope.addSortFIeld
-//           | {
-//               ops: ['count', ...(AggregateOp | Ref)[]];
-//               // Fields can only be string field refs, not signals
-//               fields: [null, ...fieldRef[]];
-//               as: ['count', ...string[]];
-//             }
-//         ))
-//       // scale.ordinalMultipleDomain
-//       | {
-//           groupby: keyFieldRef;
-//           pulse: Ref[];
-//           // DataScope.addSortFIeld
-//           ops: ['min' | 'max' | 'sum'];
-//           // Fields can only be string field refs, not signals
-//           fields: [fieldRef];
-//           as: [string];
-//         };
-//   }
 // >;
 
 /**
