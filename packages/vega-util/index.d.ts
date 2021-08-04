@@ -160,6 +160,6 @@ export const Warn: number;
 export const Info: number;
 export const Debug: number;
 
-export function logger(_?: number, method?: string): LoggerInterface;
+export function logger(_?: number, method?: string, handler?: typeof log): LoggerInterface;
 export function log(...args: readonly any[]): void;
 export function error(msg: string): Error;
