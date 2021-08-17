@@ -161,5 +161,5 @@ export const Info: number;
 export const Debug: number;
 
 export function logger(_?: number, method?: string, handler?: typeof log): LoggerInterface;
-export function log(...args: readonly any[]): void;
+export function log(method: 'error' | 'warn' | 'log', level: 'error' | 'warn'| 'info' | 'debug', input: readonly any[]): void;
 export function error(msg: string): Error;

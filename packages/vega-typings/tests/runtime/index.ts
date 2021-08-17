@@ -32,6 +32,12 @@ function clientSideApi() {
       render(JSON.parse(data));
     });
 
+  // the vega logger with a custom output handler
+  vega.logger(vega.Info, undefined, (method , level, input) => {
+    const args = ['custom logger', level].concat([].slice.call(input));
+    console[method].apply(console, args); // eslint-disable-line no-console
+  })
+
   function render(spec: vega.Spec) {
     const _view = new vega.View(vega.parse(spec))
       .renderer('canvas') // set renderer (canvas or svg)
