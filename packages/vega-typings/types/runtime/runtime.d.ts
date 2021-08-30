@@ -1,4 +1,4 @@
-import { Config, Format } from 'types/spec';
+import { Config, Format } from '../spec';
 import { EventType, WindowEventType, Transforms, Binding as SpecBinding } from '..';
 // All references to source code are from the vega-parser package
 
@@ -52,6 +52,9 @@ export interface BaseOperator {
   initonly?: boolean;
 }
 export type Operator = DefinedOperator | OtherOperator;
+
+// We have added special typings for a few operators. Ideally, all built in operators would have
+// precise typings, to correspond to their parameters, but we are typing them gradually.
 export type DefinedOperator = OperatorOperator | CollectOperator | AggregateOperator;
 
 export interface OperatorOperator extends BaseOperator {
@@ -90,7 +93,7 @@ export interface AggregateOperator extends BaseOperator {
     groupby?: OrArray<AccessorParameters>;
     // An accessor that should return a string to key by
     // Defaults to concatonating the groupby accessors
-    key?: AccessorParameters
+    key?: AccessorParameters;
     // An array of accessors to aggregate
     // Can only be null if the op is count
     fields?: OrArray<AccessorParameters | null>;
@@ -109,7 +112,7 @@ export interface AggregateOperator extends BaseOperator {
   };
 }
 
-export type OrArray<T> = T | T[]
+export type OrArray<T> = T | T[];
 
 // All valid aggregate operators, from vega-transforms utils/AggregateOps.js
 export type AggregateOps =
@@ -186,7 +189,7 @@ export type Parameter = ObjectOrListObjectOrAny<BuiltinParameter>;
 /**
  * Accessor parameters return an accessor function which can be applied to each row of the data.
  */
-export type AccessorParameters = KeyParam | ExpressionParam | FieldParam | OperatorParam
+export type AccessorParameters = KeyParam | ExpressionParam | FieldParam | OperatorParam;
 
 export type BuiltinParameter =
   | OperatorParam
@@ -274,53 +277,6 @@ export interface SubflowParam {
 
 export type Subflow = Pick<Runtime, 'operators' | 'streams' | 'updates'>;
 
-// // These are called entries instead of operators because the JS class
-// // is also called Entry, defined in util.js:entry
-// export type Entry = OperatorEntry | TransformEntry | DataTransformEntry | CacheEntry;
-
-// // from DataScope.cache
-// export type CacheEntry = ExtentRefEntry | DomainRefEntry | ValuesRefEntry | LookupRefEntry;
-
-// // from DataScope.extentRef
-// export type ExtentRefEntry = EntryType<'extent', { params: { field: fieldRef; pulse: Ref } }>;
-
-// // from DataScope.domainRef
-// export type DomainRefEntry = EntryType<'values', { params: { field: fieldRef; pulse: Ref } }>;
-
-// // from DataScope.valuesRef
-// export type ValuesRefEntry = EntryType<
-//   'values',
-//   { params: { field: keyFieldRef; pulse: Ref; sort: sortRef } }
-// >;
-
-// // from DataScope.lookupRef, DataScope.indataRef
-// export type LookupRefEntry = EntryType<'tupleindex', { params: { field: fieldRef; pulse: Ref } }>;
-
-// export type OperatorEntry = EntryType<
-//   'operator',
-//   | {
-//       // Adding root property in Scope.finish()
-//       // Adding root operator node in view.parseView
-//       root: true;
-//     }
-//   | ({
-//       // operators added by Scope.addSignal
-//       value?: unknown;
-//       // added in parsers/signal.js
-//       react?: false;
-//       // Scope.finish (signals that are removed dont have a name)
-//       signal?: string;
-//     } & (
-//       | {}
-//       // Saved to scope.signals in Scope.addSignal
-//       // retrieved and modified in parsers/signal-updates.js
-//       | {
-//           initonly?: true;
-//           update: Parse['$expr'];
-//           params: Parse['$params'];
-//         }
-//     ))
-// >;
 
 /**
  * A stream is some type of external input. They are created from Vega
