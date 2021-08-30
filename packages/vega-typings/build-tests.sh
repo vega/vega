@@ -4,6 +4,7 @@
 
 set -e
 set -o pipefail
+set -o nounset
 
 rm -rf tests/spec/valid
 mkdir tests/spec/valid
