@@ -370,9 +370,8 @@ export type Stream = {
    */
   consume?: true;
 } & (
-  | /**
-   * from parsers/stream.js:eventStream -> scope.event
-   */
+  |
+   // from parsers/stream.js:eventStream -> scope.event
   {
       source: 'timer';
       type: number;
@@ -457,5 +456,5 @@ export type Primitive = number | string | bigint | boolean | symbol | null | und
 /**
  * from `Scope.js:Scope:id`
  * String if sub id with `:` separate parent from child id numbers
- **/
+ */
 export type ID = string | number;
