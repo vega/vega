@@ -277,7 +277,6 @@ export interface SubflowParam {
 
 export type Subflow = Pick<Runtime, 'operators' | 'streams' | 'updates'>;
 
-
 /**
  * A stream is some type of external input. They are created from Vega
  * EventStreams from signals.
