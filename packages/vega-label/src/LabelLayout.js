@@ -45,7 +45,7 @@ export default function(texts, size, compare, offset, anchor,
         grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
         isGroupArea = grouptype === 'area',
         boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-        infPadding = padding === 'inf' || padding === Infinity,
+        infPadding = padding === 'Infinity' || padding === Infinity,
         $ = scaler(size[0], size[1], infPadding ? 0 : padding),
         isNaiveGroupArea = isGroupArea && method === 'naive';
 
