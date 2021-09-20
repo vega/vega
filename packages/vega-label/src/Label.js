@@ -33,7 +33,7 @@ const Anchors = [
  *   'bottom', 'top-right', 'right', 'bottom-right', 'middle'.
  * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
  *   This parameter  is parallel to the list of anchor points.
- * @param {number | 'inf'} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
+ * @param {number | 'Infinity'} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
  * @param {string} [params.lineAnchor='end'] - For group line mark labels only, indicates the anchor
  *   position for labels. One of 'start' or 'end'.
  * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
