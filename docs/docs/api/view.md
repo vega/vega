@@ -206,7 +206,7 @@ The optional *prerun* and *postrun* functions are callbacks that will be invoked
 
 *Most clients should not use the prerun and postrun callback arguments*. The callbacks are provided to support internal Vega operations. To perform post-processing after dataflow evaluation, in most cases clients should invoke [then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) or [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) the [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) returned by [runAsync](#view_runAsync).
 
-In the presence of streaming data, it might be important to invoke [resize](#view_resize). before executing [runAsync](#view_runAsync) (see [Streaming Data](https://vega.github.io/vega-lite/tutorials/streaming.html)).
+In the presence of streaming data, it might be helpful to invoke [resize](#view_resize) before executing [runAsync](#view_runAsync) (see [Streaming Data](https://vega.github.io/vega-lite/tutorials/streaming.html)).
 
 <a name="view_run" href="#view_run">#</a>
 view.<b>run</b>([<i>encode</i>, <i>prerun</i>, <i>postrun</i>])
