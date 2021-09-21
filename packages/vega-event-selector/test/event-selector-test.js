@@ -1,10 +1,10 @@
 var tape = require('tape'),
     vega = require('../');
 
-tape('Parser parses event selector strings', t => {
+tape('Parser parses event parseSelector strings', t => {
   let events;
 
-  events = vega.selector('rect:mousedown');
+  events = vega.parseSelector('rect:mousedown');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -12,7 +12,7 @@ tape('Parser parses event selector strings', t => {
     marktype: 'rect'
   });
 
-  events = vega.selector('rect:mousedown, rect:touchstart');
+  events = vega.parseSelector('rect:mousedown, rect:touchstart');
   t.equal(events.length, 2);
   t.deepEqual(events[0], {
     source: 'view',
@@ -25,7 +25,7 @@ tape('Parser parses event selector strings', t => {
     marktype: 'rect'
   });
 
-  events = vega.selector('rect:mousedown!');
+  events = vega.parseSelector('rect:mousedown!');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -34,7 +34,7 @@ tape('Parser parses event selector strings', t => {
     consume: true
   });
 
-  events = vega.selector('@foo:mouseup');
+  events = vega.parseSelector('@foo:mouseup');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -42,7 +42,7 @@ tape('Parser parses event selector strings', t => {
     markname: 'foo'
   });
 
-  events = vega.selector('rect:mousedown{1000}');
+  events = vega.parseSelector('rect:mousedown{1000}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -51,7 +51,7 @@ tape('Parser parses event selector strings', t => {
     throttle: 1000
   });
 
-  events = vega.selector('rect:mousedown{100,200}');
+  events = vega.parseSelector('rect:mousedown{100,200}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -61,7 +61,7 @@ tape('Parser parses event selector strings', t => {
     debounce: 200
   });
 
-  events = vega.selector('rect:mousedown{0,200}');
+  events = vega.parseSelector('rect:mousedown{0,200}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -70,7 +70,7 @@ tape('Parser parses event selector strings', t => {
     debounce: 200
   });
 
-  events = vega.selector('rect:mousedown{,200}');
+  events = vega.parseSelector('rect:mousedown{,200}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -79,7 +79,7 @@ tape('Parser parses event selector strings', t => {
     debounce: 200
   });
 
-  events = vega.selector('rect:mousedown{200,0}');
+  events = vega.parseSelector('rect:mousedown{200,0}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -88,7 +88,7 @@ tape('Parser parses event selector strings', t => {
     throttle: 200
   });
 
-  events = vega.selector('rect:mousedown{200,}');
+  events = vega.parseSelector('rect:mousedown{200,}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -97,7 +97,7 @@ tape('Parser parses event selector strings', t => {
     throttle: 200
   });
 
-  events = vega.selector('mousedown[event.x>10][event.metaKey]');
+  events = vega.parseSelector('mousedown[event.x>10][event.metaKey]');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -105,7 +105,7 @@ tape('Parser parses event selector strings', t => {
     filter: ['event.x>10', 'event.metaKey']
   });
 
-  events = vega.selector('wheel![event.shiftKey]');
+  events = vega.parseSelector('wheel![event.shiftKey]');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -114,7 +114,7 @@ tape('Parser parses event selector strings', t => {
     filter: ['event.shiftKey']
   });
 
-  events = vega.selector('wheel![event.shiftKey]{200}');
+  events = vega.parseSelector('wheel![event.shiftKey]{200}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -124,7 +124,7 @@ tape('Parser parses event selector strings', t => {
     throttle: 200
   });
 
-  events = vega.selector('path:wheel![event.shiftKey]{200}');
+  events = vega.parseSelector('path:wheel![event.shiftKey]{200}');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'view',
@@ -135,7 +135,7 @@ tape('Parser parses event selector strings', t => {
     throttle: 200
   });
 
-  events = vega.selector('[mousedown, mouseup] > window:mousemove');
+  events = vega.parseSelector('[mousedown, mouseup] > window:mousemove');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'window',
@@ -146,7 +146,7 @@ tape('Parser parses event selector strings', t => {
     ]
   });
 
-  events = vega.selector('[touchstart, touchend] > [mousedown, mouseup] > window:mousemove');
+  events = vega.parseSelector('[touchstart, touchend] > [mousedown, mouseup] > window:mousemove');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     between: [
@@ -163,7 +163,7 @@ tape('Parser parses event selector strings', t => {
     }
   });
 
-  events = vega.selector('[mousedown[!event.item], window:mouseup] > window:mousemove');
+  events = vega.parseSelector('[mousedown[!event.item], window:mouseup] > window:mousemove');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'window',
@@ -178,7 +178,7 @@ tape('Parser parses event selector strings', t => {
 });
 
 tape('Parser allows configurable source', t => {
-  const events = vega.selector('rect:mousedown', 'scope');
+  const events = vega.parseSelector('rect:mousedown', 'scope');
   t.equal(events.length, 1);
   t.deepEqual(events[0], {
     source: 'scope',
@@ -188,35 +188,35 @@ tape('Parser allows configurable source', t => {
   t.end();
 });
 
-tape('Parser rejects invalid event selector strings', t => {
-  t.throws(() => { vega.selector(''); });
-  t.throws(() => { vega.selector('foo{}'); });
-  t.throws(() => { vega.selector('foo{a}'); });
-  t.throws(() => { vega.selector('foo{1,2,3}'); });
+tape('Parser rejects invalid event parseSelector strings', t => {
+  t.throws(() => { vega.parseSelector(''); });
+  t.throws(() => { vega.parseSelector('foo{}'); });
+  t.throws(() => { vega.parseSelector('foo{a}'); });
+  t.throws(() => { vega.parseSelector('foo{1,2,3}'); });
 
-  t.throws(() => { vega.selector('{foo'); });
-  t.throws(() => { vega.selector('}foo'); });
-  t.throws(() => { vega.selector('foo{'); });
-  t.throws(() => { vega.selector('foo}'); });
-  t.throws(() => { vega.selector('foo{1'); });
-  t.throws(() => { vega.selector('foo}1'); });
-  t.throws(() => { vega.selector('foo{1}a'); });
-  t.throws(() => { vega.selector('{}'); });
-  t.throws(() => { vega.selector('{1}'); });
-  t.throws(() => { vega.selector('{1}a'); });
+  t.throws(() => { vega.parseSelector('{foo'); });
+  t.throws(() => { vega.parseSelector('}foo'); });
+  t.throws(() => { vega.parseSelector('foo{'); });
+  t.throws(() => { vega.parseSelector('foo}'); });
+  t.throws(() => { vega.parseSelector('foo{1'); });
+  t.throws(() => { vega.parseSelector('foo}1'); });
+  t.throws(() => { vega.parseSelector('foo{1}a'); });
+  t.throws(() => { vega.parseSelector('{}'); });
+  t.throws(() => { vega.parseSelector('{1}'); });
+  t.throws(() => { vega.parseSelector('{1}a'); });
 
-  t.throws(() => { vega.selector('[foo'); });
-  t.throws(() => { vega.selector(']foo'); });
-  t.throws(() => { vega.selector('foo['); });
-  t.throws(() => { vega.selector('foo]'); });
-  t.throws(() => { vega.selector('foo[1'); });
-  t.throws(() => { vega.selector('foo]1'); });
-  t.throws(() => { vega.selector('foo[1]a'); });
+  t.throws(() => { vega.parseSelector('[foo'); });
+  t.throws(() => { vega.parseSelector(']foo'); });
+  t.throws(() => { vega.parseSelector('foo['); });
+  t.throws(() => { vega.parseSelector('foo]'); });
+  t.throws(() => { vega.parseSelector('foo[1'); });
+  t.throws(() => { vega.parseSelector('foo]1'); });
+  t.throws(() => { vega.parseSelector('foo[1]a'); });
 
-  t.throws(() => { vega.selector('[]'); });
-  t.throws(() => { vega.selector('[a]'); });
-  t.throws(() => { vega.selector('[a,b]'); });
-  t.throws(() => { vega.selector('[a,b] >'); });
+  t.throws(() => { vega.parseSelector('[]'); });
+  t.throws(() => { vega.parseSelector('[a]'); });
+  t.throws(() => { vega.parseSelector('[a,b]'); });
+  t.throws(() => { vega.parseSelector('[a,b] >'); });
 
   t.end();
 });
