@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
@@ -18,6 +18,8 @@
     "test": "yarn format && dtslint ."
   },
   "dependencies": {
+    "vega-event-selector": "^3.0.0",
+    "vega-expression": "^5.0.0",
     "vega-util": "^1.15.2"
   }
 }
