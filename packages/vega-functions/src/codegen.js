@@ -1,5 +1,5 @@
 import {
-  codegen,
+  codegenExpression,
   constants,
   functions
 } from 'vega-expression';
@@ -308,7 +308,7 @@ export const codegenParams = {
 };
 
 // export code generator
-export const codeGenerator = codegen(codegenParams);
+export const codeGenerator = codegenExpression(codegenParams);
 
 // Build expression function registry
 function buildFunctions(codegen) {

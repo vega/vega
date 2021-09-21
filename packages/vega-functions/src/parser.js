@@ -1,6 +1,6 @@
 import {codeGenerator, codegenParams} from './codegen';
 import {SignalPrefix} from './constants';
-import {CallExpression, parse} from 'vega-expression';
+import {CallExpression, parseExpression} from 'vega-expression';
 import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 
 export default function(expr, scope) {
@@ -10,7 +10,7 @@ export default function(expr, scope) {
   let ast;
   try {
     expr = isString(expr) ? expr : (stringValue(expr) + '');
-    ast = parse(expr);
+    ast = parseExpression(expr);
   } catch (err) {
     error('Expression parse error: ' + expr);
   }
