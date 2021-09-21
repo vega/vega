@@ -13103,6 +13103,9 @@
             },
             {
               "$ref": "#/definitions/signalRef"
+            },
+            {
+              "type": "null"
             }
           ]
         },
