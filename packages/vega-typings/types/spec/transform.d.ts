@@ -514,7 +514,7 @@ export interface LabelTransform {
   sort?: Compare;
   offset?: number[] | number | SignalRef;
   anchor?: LabelAnchor[] | LabelAnchor | SignalRef;
-  padding?: number | 'Infinity' | SignalRef;
+  padding?: number | null | SignalRef;
   markIndex?: number;
   lineAnchor?: LineLabelAnchor | SignalRef;
   avoidBaseMark?: boolean | SignalRef;
