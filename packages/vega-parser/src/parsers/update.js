@@ -1,6 +1,6 @@
 import parseStream from './stream';
 import {Scope, View} from '../util';
-import {selector} from 'vega-event-selector';
+import {parseSelector} from 'vega-event-selector';
 import {parseExpression} from 'vega-functions';
 import {array, error, extend, isString, stringValue} from 'vega-util';
 
@@ -24,7 +24,7 @@ export default function(spec, scope, target) {
 
   // interpret as an event selector string
   if (isString(events)) {
-    events = selector(events, scope.isSubscope() ? Scope : View);
+    events = parseSelector(events, scope.isSubscope() ? Scope : View);
   }
 
   // separate event streams from signal updates
