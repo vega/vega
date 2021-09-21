@@ -1,3 +1,1 @@
-export function selector(selectorName: string, source: string): any[];
-
-export {selector as parseSelector};
+export function parseSelector(selectorName: string, source: string): any[];
