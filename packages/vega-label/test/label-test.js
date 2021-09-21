@@ -306,7 +306,7 @@ tape('Label performs label layout over input points with infinity padding', t =>
   t.equal(out[0].opacity, 0);
 
   df.update(an, 'left')
-    .update(pd, 'Infinity')
+    .update(pd, null)
     .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
     .run();
   out = c0.value;
@@ -318,7 +318,7 @@ tape('Label performs label layout over input points with infinity padding', t =>
   t.equal(out[0].opacity, 1);
 
   df.update(an, 'right')
-    .update(pd, 'Infinity')
+    .update(pd, null)
     .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
     .run();
   out = c0.value;

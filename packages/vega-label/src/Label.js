@@ -32,8 +32,9 @@ const Anchors = [
  *   The available options are 'top-left', 'left', 'bottom-left', 'top',
  *   'bottom', 'top-right', 'right', 'bottom-right', 'middle'.
  * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
- *   This parameter  is parallel to the list of anchor points.
- * @param {number | 'Infinity'} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
+ *   This parameter is parallel to the list of anchor points.
+ * @param {number | null} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
+ *   If this parameter is null, a label may exceed the layout size without any boundary.
  * @param {string} [params.lineAnchor='end'] - For group line mark labels only, indicates the anchor
  *   position for labels. One of 'start' or 'end'.
  * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
@@ -59,7 +60,7 @@ Label.Definition = {
     { name: 'sort', type: 'compare' },
     { name: 'anchor', type: 'string', array: true, default: Anchors },
     { name: 'offset', type: 'number', array: true, default: [1] },
-    { name: 'padding', type: 'number', default: 0 },
+    { name: 'padding', type: 'number', default: 0, null: true },
     { name: 'lineAnchor', type: 'string', values: ['start', 'end'], default: 'end' },
     { name: 'markIndex', type: 'number', default: 0 },
     { name: 'avoidBaseMark', type: 'boolean', default: true },
@@ -95,7 +96,7 @@ inherits(Label, Transform, {
       _.avoidBaseMark !== false,
       _.lineAnchor || 'end',
       _.markIndex || 0,
-      _.padding || 0,
+      _.padding === undefined ? 0 : _.padding,
       _.method || 'naive'
     ).forEach(l => {
       // write layout results to data stream
