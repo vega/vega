@@ -3,7 +3,7 @@ var tape = require('tape'),
 
 function parse(str) {
   return function() {
-    return JSON.parse(JSON.stringify(vega.parse(str)));
+    return JSON.parse(JSON.stringify(vega.parseExpression(str)));
   };
 }
 

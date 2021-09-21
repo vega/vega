@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "vega-util": "^1.16.0",
-    "@types/estree": "^0.0.47"
+    "@types/estree": "^0.0.50"
   }
 }

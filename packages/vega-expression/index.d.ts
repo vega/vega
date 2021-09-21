@@ -1,9 +1,7 @@
 import { SequenceExpression, Expression } from "estree";
 
 /** Parse a JavaScript *expression* string and return the resulting abstract syntax tree in the ESTree format */
-export function parse(expression: string): Expression | SequenceExpression;
-
-export {parse as parseExpression};
+export function parseExpression(expression: string): Expression | SequenceExpression;
 
 export interface CodegenOptions {
   /** A hash of allowed top-level constant values */
@@ -28,7 +26,7 @@ export interface CodegenOptions {
 }
 
 /** Create a new output code generator configured according to the provided options */
-export function codegen(
+export function codegenExpression(
   options: CodegenOptions
 ): (
   ast: any
@@ -42,8 +40,6 @@ export function codegen(
   /** A hash of all properties referenced outside a provided allowed list */
   globals: string[];
 };
-
-export {codegen as codegenExpression};
 
 /** An object defining default constant values for the Vega expression language */
 export const constants: { [cn: string]: string };

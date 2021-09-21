@@ -8,12 +8,12 @@ function regexEqual(x, y) {
 }
 
 tape('Evaluate expressions without white or black list', t => {
-  var codegen = vega.codegen({
+  var codegen = vega.codegenExpression({
     globalvar: 'global'
   });
 
   function evaluate(str) {
-    const value = codegen(vega.parse(str));
+    const value = codegen(vega.parseExpression(str));
     const fn = Function('"use strict"; return (' + value.code + ')');
     return fn();
   }
@@ -43,7 +43,7 @@ tape('Evaluate expressions without white or black list', t => {
 });
 
 tape('Evaluate expressions with black list', t => {
-  var codegen = vega.codegen({
+  var codegen = vega.codegenExpression({
     forbidden: ['a', 'b', 'c'],
     globalvar: 'global',
     fieldvar:  'd'
@@ -51,7 +51,7 @@ tape('Evaluate expressions with black list', t => {
 
   function evaluate(str) {
     const d = {a: 2, föö: 5};
-    const value = codegen(vega.parse(str));
+    const value = codegen(vega.parseExpression(str));
     const fn = Function('d', '"use strict";return(' + value.code + ')');
     return fn(d);
   }
@@ -73,7 +73,7 @@ tape('Evaluate expressions with black list', t => {
 });
 
 tape('Evaluate expressions with white list', t => {
-  var codegen = vega.codegen({
+  var codegen = vega.codegenExpression({
     allowed: ['datum', 'event', 'signals'],
     globalvar: 'global'
   });
@@ -81,7 +81,7 @@ tape('Evaluate expressions with white list', t => {
   function evaluate(str) {
     const datum = {a: 2, föö: 5};
     const evt = {type: 'mousemove'};
-    const value = codegen(vega.parse(str));
+    const value = codegen(vega.parseExpression(str));
     if (value.globals.length > 0) {
       throw Error('Found non-allowed global identifier.');
     }
