@@ -370,8 +370,7 @@ export type Stream = {
    */
   consume?: true;
 } & (
-  |
-   // from parsers/stream.js:eventStream -> scope.event
+  | // from parsers/stream.js:eventStream -> scope.event
   {
       source: 'timer';
       type: number;
