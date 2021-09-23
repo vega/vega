@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 tape('isArray tests arrays', t => {
   t.equal(vega.isArray([]), true);

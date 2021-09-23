@@ -10,9 +10,9 @@ export default function(fields, flat, opt) {
       : array(fields);
   }
 
-  const len = fields && fields.length,
-        gen = opt && opt.get || getter,
-        map = f => gen(flat ? [f] : splitAccessPath(f));
+  const len = fields && fields.length;
+  const gen = opt && opt.get || getter;
+  const map = f => gen(flat ? [f] : splitAccessPath(f));
   let fn;
 
   if (!len) {
@@ -23,7 +23,8 @@ export default function(fields, flat, opt) {
   } else {
     const get = fields.map(map);
     fn = function(_) {
-      let s = '' + get[0](_), i = 0;
+      let s = '' + get[0](_);
+      let i = 0;
       while (++i < len) s += '|' + get[i](_);
       return s;
     };

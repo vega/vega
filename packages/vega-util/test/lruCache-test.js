@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 tape('lruCache should cache items', t => {
   const cache = vega.lruCache();

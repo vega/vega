@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 tape('extent calculates array extents', t => {
   t.deepEqual(vega.extent([0, 0, 0]), [0, 0]);
