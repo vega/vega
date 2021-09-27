@@ -22,6 +22,6 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1"
+    "d3-array": "^3.0.4"
   }
 }
