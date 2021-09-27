@@ -19,7 +19,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-path": "^2.0.0",
+    "d3-path": "^3.0.1",
     "d3-shape": "^2.0.0",
     "vega-canvas": "^1.2.5",
     "vega-loader": "^4.3.3",
