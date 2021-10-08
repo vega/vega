@@ -455,9 +455,9 @@ export interface BaseLegend {
 
   /**
    * The offset of the legend label.
-   * @minimum 0
    *
    * __Default value:__ `4`.
+   * @minimum 0
    */
   labelOffset?: NumberValue;
 
