@@ -103,6 +103,7 @@
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
         {"name": "pacman"},
-        {"name": "platformer"}
+        {"name": "platformer"},
+        {"name": "perspective_r"}
     ]
 }
