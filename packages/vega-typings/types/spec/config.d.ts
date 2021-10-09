@@ -317,16 +317,16 @@ export interface MarkConfig {
   /**
    * The inner radius in pixels of arc marks.
    *
-   * @minimum 0
    * __Default value:__ `0`
+   * @minimum 0
    */
   innerRadius?: number | SignalRef;
 
   /**
    * The outer radius in pixels of arc marks.
    *
-   * @minimum 0
    * __Default value:__ `0`
+   * @minimum 0
    */
   outerRadius?: number | SignalRef;
 
