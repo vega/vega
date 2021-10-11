@@ -82,6 +82,45 @@
       ]
     },
     {"name": "axes", "value": true, "bind": {"input": "checkbox"}},
+    {"name": "grid", "value": "true", "bind": {"input": "checkbox"}},
+    {
+      "name": "scheme",
+      "value": "blueorange",
+      "bind": {
+        "input": "select",
+        "options": [
+          "viridis",
+          "blueorange",
+          "darkgold",
+          "darkblue",
+          "darkgreen",
+          "darkmulti",
+          "purplegreen",
+          "spectral"
+        ]
+      }
+    },
+    {
+      "name": "equation",
+      "value": "10*sin(sqrt(x²+y²))/sqrt(x²+y²)",
+      "bind": {
+        "input": "select",
+        "options": [
+          "10*sin(sqrt(x²+y²))/sqrt(x²+y²)",
+          "x*y³ - y*x³",
+          "sqrt(x²+y²)"
+        ]
+      }
+    },
+    {
+      "name": "equation_id_changed",
+      "update": "equation_id >0 ? setdata('areas',[{}]):null"
+    },
+    {
+      "name": "equation_id",
+      "value": 1,
+      "update": "equation === '10*sin(sqrt(x²+y²))/sqrt(x²+y²)' ? 1:(equation === 'x*y³ - y*x³' ? 2 : 3)"
+    },
     {
       "name": "qrAngle_HOR",
       "init": "PI*(theta)/360",
@@ -163,11 +202,9 @@
       "transform": [
         {
           "type": "formula",
-          "expr": "sqrt(pow(datum.x,2)+pow(datum.y,2))",
+          "expr": "equation_id == 1 ? 10*sin(sqrt(pow(datum.x,2)+pow(datum.y,2)))/sqrt(pow(datum.x,2)+pow(datum.y,2)): (equation_id == 2 ? datum.x*pow(datum.y,3) - datum.y*pow(datum.x,3):sqrt(pow(datum.x,2)+pow(datum.y,2)))",
           "as": "z"
-        },
-        {"type": "formula", "expr": "10*sin(datum.z)/datum.z", "as": "z"},
-        {"type": "formula", "expr": "isValid(datum.z)?datum.z:1", "as": "z"}
+        }
       ]
     },
     {
@@ -211,17 +248,17 @@
         {
           "root": {"x": -100, "y": -100, "z": -85.46316850161281},
           "q1": {
-            "x": -34.7018506991322,
-            "y": -64.94850542456764,
-            "z": -136.5983919913263,
-            "w": 56.76535630901182
+            "x": -33.504383771411625,
+            "y": -43.702235760635965,
+            "z": -143.07123968022117,
+            "w": 61.66153099234177
           },
           "pq2": {
-            "x": -12.325683343243874,
-            "y": 17.916119793712163,
-            "z": -163.80184172345102
+            "x": -24.55756079379457,
+            "y": 59.98031467257948,
+            "z": -151.99750402546906
           },
-          "p_root": {"x": -12.325683343243874, "y": 17.916119793712163},
+          "p_root": {"x": -24.55756079379457, "y": 59.98031467257948},
           "axis": [
             {"label": "x", "x": 100, "y": -100, "z": -85.46316850161281},
             {"label": "y", "x": -100, "y": 100, "z": -85.46316850161281},
@@ -450,7 +487,7 @@
           "name": "color",
           "type": "linear",
           "domain": {"data": "areas", "field": "value"},
-          "range": {"scheme": "blueorange"}
+          "range": {"scheme": {"signal": "scheme"}}
         }
       ],
       "marks": [
@@ -458,8 +495,8 @@
           "type": "area",
           "from": {"data": "area"},
           "encode": {
-            "enter": {"fill": {"field": "value", "scale": "color"}},
             "update": {
+              "fill": {"field": "value", "scale": "color"},
               "x": {"field": "x", "offset": {"signal": "width/2"}},
               "y": {"field": "y", "offset": {"signal": "height/2.5"}},
               "y2": {"value": 0}
@@ -470,11 +507,13 @@
           "type": "line",
           "from": {"data": "area"},
           "encode": {
-            "enter": {
-              "strokeWidth": {"value": 0.3},
-              "stroke": {"signal": "grid_color"}
-            },
+            "enter": {},
             "update": {
+              "strokeWidth": [{"test": "grid", "value": 0.3}, {"value": 1}],
+              "stroke": [
+                {"test": "grid", "signal": "grid_color"},
+                {"field": "value", "scale": "color"}
+              ],
               "x": {"field": "x", "offset": {"signal": "width/2"}},
               "y": {"field": "y", "offset": {"signal": "height/2.5"}},
               "y2": {"value": 0}
