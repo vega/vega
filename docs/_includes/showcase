@@ -20,7 +20,7 @@ function addExample(name) {
   'radial-tree-layout',
   'world-map',
   'histogram-null-values',
-  'violin-plot',
+  'perspective-r',
   'parallel-coordinates',
   'word-cloud',
   'falkensee-population',

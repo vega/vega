@@ -102,8 +102,8 @@
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
+        {"name": "perspective-r"},
         {"name": "pacman"},
-        {"name": "platformer"},
-        {"name": "perspective_r"}
+        {"name": "platformer"}        
     ]
 }
