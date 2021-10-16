@@ -2,18 +2,18 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "width": 400,
   "height": 400,
-  "background": "black",
+  "background": "transparent",
   "title": {
     "text": "R persp emulation",
     "color": {"signal": "axis_color"},
     "dy": 25
   },
   "signals": [
-    {"name": "x_sequence", "value": {"min": -10, "max": 10, "count": 30}},
-    {"name": "y_sequence", "value": {"min": -10, "max": 10, "count": 30}},
+    {"name": "x_sequence", "value": {"min": -1, "max": 1, "count": 30}},
+    {"name": "y_sequence", "value": {"min": -1, "max": 1, "count": 30}},
     {
       "name": "scheme",
-      "value": "blueorange",
+      "value": "viridis",
       "bind": {
         "input": "select",
         "options": [
@@ -29,8 +29,13 @@
       }
     },
     {
+      "name": "theme",
+      "value": "dark",
+      "bind": {"input": "select", "options": ["dark", "light"]}
+    },
+    {
       "name": "theta",
-      "value": 35,
+      "value": 30,
       "bind": {"input": "range", "min": -45, "max": 135, "step": 1},
       "on": [
         {"events": {"signal": "validAngle_HOR"}, "update": "validAngle_HOR"}
@@ -38,7 +43,7 @@
     },
     {
       "name": "phi",
-      "value": 60,
+      "value": 65,
       "bind": {"input": "range", "min": 0, "max": 180, "step": 1},
       "on": [
         {"events": {"signal": "validAngle_VER"}, "update": "validAngle_VER"}
@@ -46,7 +51,7 @@
     },
     {
       "name": "expand",
-      "value": 0.6,
+      "value": "0.5",
       "bind": {"input": "range", "min": 0, "max": 2, "step": 0.1}
     },
     {
@@ -67,7 +72,7 @@
       "value": "lightgrey",
       "bind": {"input": "select", "options": ["lightgrey", "darkgrey"]}
     },
-    {"name": "axis_color", "value": "lightgrey"},
+    {"name": "axis_color", "update": "theme === 'dark' ? 'lightgrey':'black'"},
     {
       "name": "equation",
       "value": "10*sin(sqrt(x²+y²))/sqrt(x²+y²)",
@@ -76,30 +81,34 @@
         "options": [
           "10*sin(sqrt(x²+y²))/sqrt(x²+y²)",
           "x*y³ - y*x³",
-          "sqrt(x²+y²)"
+          "sqrt(x²+y²)",
+          "tore",
+          "sphere"
         ]
       }
     },
     {
-      "name": "equation_id_changed",
-      "update": "equation_id >0 ? setdata('areas',[{}]):null"
+      "name": "equation_id",
+      "value": 1,
+      "update": "equation === '10*sin(sqrt(x²+y²))/sqrt(x²+y²)' ? 1:(equation === 'x*y³ - y*x³' ? 2 : equation === 'sqrt(x²+y²)' ? 3 : equation === 'tore' ? 4: 5)"
     },
     {"name": "size", "init": "min(width,height)/2"},
     {
-      "name":"is_dragging",
-      "update":"false",
-      "on":[{"events":"view:mousedown","update":"true"},
-      {"events":"view:mouseup, view:mousemove[event.buttons !== 1]", "update":"false"}]
+      "name": "is_dragging",
+      "update": "false",
+      "on": [
+        {"events": "view:mousedown", "update": "true"},
+        {
+          "events": "view:mouseup, view:mousemove[event.buttons !== 1]",
+          "update": "false"
+        }
+      ]
     },
     {
       "name": "angle_HOR",
       "on": [
         {
-          "events": {
-            "source": "view",
-            "type": "mousemove",
-            "filter": "event.buttons === 1"
-          },
+          "events": "view:mousemove[event.buttons === 1]",
           "update": "theta + ((event.movementX < 0) ^ (phi > 180) ? 5 : (event.movementX > 0) ^(phi > 180) ? -5 : 0)"
         }
       ]
@@ -109,21 +118,12 @@
       "name": "angle_VER",
       "on": [
         {
-          "events": {
-            "source": "view",
-            "type": "mousemove",
-            "filter": "event.buttons === 1"
-          },
+          "events": "view:mousemove[event.buttons === 1]",
           "update": "phi + (event.movementY < 0 ? 5 : event.movementY > 0 ? -5 : 0)"
         }
       ]
     },
-    {"name": "validAngle_VER", "update": "max(min(angle_VER,180),0)"},    
-    {
-      "name": "equation_id",
-      "value": 1,
-      "update": "equation === '10*sin(sqrt(x²+y²))/sqrt(x²+y²)' ? 1:(equation === 'x*y³ - y*x³' ? 2 : 3)"
-    },
+    {"name": "validAngle_VER", "update": "max(min(angle_VER,180),0)"},
     {
       "name": "qrAngle_HOR",
       "init": "PI*(theta)/360",
@@ -149,7 +149,7 @@
       "on": [
         {
           "events": "area:mouseover,line:mouseover",
-          "update": "{'x':isNumber(datum.x) ? format(datum.x,'.2~f'):datum.x,'y':isNumber(datum.y) ? format(datum.y,'.2~f'):datum.y,'z':format(datum.value,'.2~f')}"
+          "update": "{'x':isNumber(datum.x) ? format(datum.x,'.2~f'):datum.x,'y':isNumber(datum.y) ? format(datum.y,'.2~f'):datum.y,'z':format(datum.value,'.2~f'), id:datum.id}"
         },
         {"events": "area:mouseout,line:mouseout", "update": "{}"}
       ]
@@ -160,19 +160,19 @@
       "name": "scale_x",
       "type": "point",
       "domain": {"data": "z_matrix", "field": "x"},
-      "range": [{"signal": "-size/2"}, {"signal": "size/2"}]
+      "range": [-1, 1]
     },
     {
       "name": "scale_y",
       "type": "point",
       "domain": {"data": "z_matrix", "field": "y"},
-      "range": [{"signal": "-size/2"}, {"signal": "size/2"}]
+      "range": [-1, 1]
     },
     {
       "name": "scale_z",
       "type": "linear",
       "domain": {"data": "z_matrix", "field": "z"},
-      "range": [{"signal": "-size/2"}, {"signal": "size/2"}]
+      "range": [{"signal": "-expand"}, {"signal": "expand"}]
     }
   ],
   "data": [
@@ -205,38 +205,14 @@
       "transform": [
         {
           "type": "formula",
-          "expr": "equation_id == 1 ? 10*sin(sqrt(pow(datum.x,2)+pow(datum.y,2)))/sqrt(pow(datum.x,2)+pow(datum.y,2))||1: (equation_id == 2 ? datum.x*pow(datum.y,3) - datum.y*pow(datum.x,3):sqrt(pow(datum.x,2)+pow(datum.y,2)))",
+          "expr": "equation_id === 1 ?10*sin(sqrt(pow(10*datum.x,2)+pow(10*datum.y,2)))/sqrt(pow(10*datum.x,2)+pow(10*datum.y,2)): equation_id === 2 ? datum.x*pow(datum.y,3)-datum.y*pow(datum.x,3): equation_id === 3 ? sqrt(pow(datum.x,2)+pow(datum.y,2)) : equation_id === 4 ? sqrt(0.08- pow(sqrt(pow(datum.x,2) + pow(datum.y,2)) - 0.7,2)): sqrt(1- (pow(datum.x,2)+pow(datum.y,2)))",
           "as": "z"
         }
       ]
     },
     {
-      "name": "scaled_z_matrix",
-      "source": "z_matrix",
-      "transform": [
-        {"type": "formula", "expr": "expand*datum.z", "as": "scaled_z"},
-        {"type": "formula", "expr": "datum.x+'.'+datum.y", "as": "key"}
-      ]
-    },
-    {
-      "name": "size_matrix_x",
-      "source": "z_matrix",
-      "transform": [
-        {"type": "aggregate", "fields": ["x"], "ops": ["distinct"]},
-        {"type": "extent", "field": "distinct_x", "signal": "size_x"}
-      ]
-    },
-    {
-      "name": "size_matrix_y",
-      "source": "z_matrix",
-      "transform": [
-        {"type": "aggregate", "fields": ["y"], "ops": ["distinct"]},
-        {"type": "extent", "field": "distinct_y", "signal": "size_y"}
-      ]
-    },
-    {
       "name": "projections",
-      "source": "scaled_z_matrix",
+      "source": "z_matrix",
       "transform": [
         {
           "type": "collect",
@@ -244,7 +220,7 @@
         },
         {
           "type": "formula",
-          "expr": "{x:scale('scale_x',datum.x),y:scale('scale_y',datum.y),z:scale('scale_z',datum.scaled_z)}",
+          "expr": "{x:scale('scale_x',datum.x),y:scale('scale_y',datum.y),z:scale('scale_z',isValid(datum.z) ? datum.z : 0)}",
           "as": "points"
         },
         {
@@ -257,20 +233,39 @@
           "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x, z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
           "as": "pq2"
         },
-        {"type": "formula", "expr": "(datum.pq2.x)*scale", "as": "px"},
-        {"type": "formula", "expr": "(datum.pq2.y)*scale", "as": "py"},
-        {"type": "formula", "expr": "(datum.pq2.z)", "as": "pq_z"}
+        {"type": "formula", "expr": "(datum.pq2.x)*scale*size/2", "as": "px"},
+        {"type": "formula", "expr": "(datum.pq2.y)*scale*size/2", "as": "py"},
+        {"type": "formula", "expr": "(datum.pq2.z)", "as": "pz"}
       ]
     },
     {
       "name": "axes",
       "values": [
-        {}
+        {
+          "root": {"x": -1, "y": -1, "z": "-0.5"},
+          "q1": {
+            "x": -1.1267212479480677,
+            "y": -0.48236350543356943,
+            "z": -0.7635415249118548,
+            "w": 0.4059914011201064
+          },
+          "pq2": {
+            "x": -1.3289260487773493,
+            "y": 0.07211258776408813,
+            "z": -0.6919214778910889
+          },
+          "p_root": {"x": -132.89260487773493, "y": 7.211258776408814},
+          "axis": [
+            {"label": "x", "x": 1, "y": -1, "z": "-0.5", "isNumber": true},
+            {"label": "y", "x": -1, "y": 1, "z": "-0.5", "isNumber": true},
+            {"label": "z", "x": -1, "y": -1, "z": "0.5", "isNumber": true}
+          ]
+        }
       ],
       "transform": [
         {
           "type": "formula",
-          "expr": "{x:range('scale_x')[0],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[0]*expand)}",
+          "expr": "{x:range('scale_x')[0],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[0])}",
           "as": "root"
         },
         {
@@ -285,12 +280,12 @@
         },
         {
           "type": "formula",
-          "expr": "{x:(datum.pq2.x)*scale, y:(datum.pq2.y)*scale}",
+          "expr": "{x:(datum.pq2.x)*scale*size/2, y:(datum.pq2.y)*scale*size/2}",
           "as": "p_root"
         },
         {
           "type": "formula",
-          "expr": "[{label:'x', x:range('scale_x')[1],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[0]*expand), 'isNumber':isNumber(domain('scale_x')[0])},{label:'y', x:range('scale_x')[0],y:range('scale_y')[1],z:scale('scale_z',domain('scale_z')[0]*expand), 'isNumber':isNumber(domain('scale_y')[0])},{label:'z', x:range('scale_x')[0],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[1]*expand), 'isNumber':true}]",
+          "expr": "[{label:'x', x:range('scale_x')[1],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[0]), 'isNumber':isNumber(domain('scale_x')[0])},{label:'y', x:range('scale_x')[0],y:range('scale_y')[1],z:scale('scale_z',domain('scale_z')[0]), 'isNumber':isNumber(domain('scale_y')[0])},{label:'z', x:range('scale_x')[0],y:range('scale_y')[0],z:scale('scale_z',domain('scale_z')[1]), 'isNumber':true}]",
           "as": "axis"
         },
         {"type": "flatten", "fields": ["axis"]},
@@ -306,7 +301,7 @@
         },
         {
           "type": "formula",
-          "expr": "{x:(datum.pq2.x)*scale, y:(datum.pq2.y)*scale}",
+          "expr": "{x:(datum.pq2.x)*scale*size/2, y:(datum.pq2.y)*scale*size/2}",
           "as": "p_axis"
         }
       ]
@@ -315,61 +310,143 @@
       "name": "areas",
       "values": [
         {
+          "i": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ],
+          "j": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29
+          ]
         }
       ],
       "transform": [
-        {"type": "formula", "expr": "sequence(1,size_x[0],1)", "as": "i"},
-        {"type": "formula", "expr": "sequence(1,size_y[0],1)", "as": "j"},
+        {
+          "type": "formula",
+          "expr": "sequence(1,x_sequence.count,1)",
+          "as": "i"
+        },
+        {
+          "type": "formula",
+          "expr": "sequence(1,y_sequence.count,1)",
+          "as": "j"
+        },
         {"type": "flatten", "fields": ["i"]},
         {"type": "flatten", "fields": ["j"]},
         {
           "type": "formula",
-          "expr": "[(datum.i-1)*size_y[0]+(datum.j-1),(datum.i)*size_y[0]+(datum.j-1),(datum.i)*size_y[0]+(datum.j),(datum.i-1)*size_y[0]+(datum.j),(datum.i-1)*size_y[0]+(datum.j-1)]",
+          "expr": "[((datum.i-1)*y_sequence.count+(datum.j-1)),((datum.i)*y_sequence.count+(datum.j-1)),((datum.i)*y_sequence.count+(datum.j)),((datum.i-1)*y_sequence.count+(datum.j))]",
           "as": "indice"
         },
-        {"type": "flatten", "fields": ["indice"]},
         {
           "type": "formula",
-          "expr": "data('projections')[datum.indice]",
+          "expr": "[data('projections')[datum.indice[0]],data('projections')[datum.indice[1]],data('projections')[datum.indice[2]],data('projections')[datum.indice[3]],data('projections')[datum.indice[0]]]",
           "as": "item"
         },
         {
+          "type": "formula",
+          "expr": "(datum.item[0].pz + datum.item[1].pz + datum.item[2].pz + datum.item[3].pz)/4",
+          "as": "avg_pz"
+        },
+        {"type": "window", "ops": ["row_number"], "as": ["id"]},
+        {"type": "flatten", "fields": ["item"]},
+        {
           "type": "project",
           "fields": [
-            "i",
-            "j",
+            "id",
             "item.px",
             "item.py",
             "item.x",
             "item.y",
             "item.z",
-            "item.pq_z"
+            "avg_pz"
           ],
-          "as": ["i", "j", "px", "py", "x", "y", "z", "pq_z"]
-        },
+          "as": ["id", "px", "py", "x", "y", "z", "avg_pz"]
+        }
+      ]
+    },
+    {
+      "name": "sorted_areas",
+      "source": "areas",
+      "transform": [
         {
-          "type": "window",
-          "groupby": ["i", "j"],
-          "fields": ["z", "pq_z"],
-          "frame": [null, null],
-          "ops": ["average", "average"],
-          "as": ["value", "avg_pqz"]
+          "type": "joinaggregate",
+          "groupby": ["id"],
+          "fields": ["z"],
+          "ops": ["mean"],
+          "as": ["value"]
         },
-        {"type": "collect", "sort": {"field": ["avg_pqz"]}}
+        {"type": "collect", "sort": {"field": "avg_pz"}}
       ]
     }
   ],
   "marks": [
     {
-      "type":"rect",
+      "type": "rect",
       "encode": {
-        "enter":{
-          "fill":{"value":"transparent"}
-        },
-        "update":{
-          "cursor":[{"test":"is_dragging", "value":"grabbing"},{"value":"pointer"}],
-          "width":{"signal":"width"},
-          "height":{"signal":"height"}
+        "enter": {},
+        "update": {
+          "fill": {"signal": "theme === 'dark'?'black':'white'"},
+          "cursor": [
+            {"test": "is_dragging", "value": "grabbing"},
+            {"value": "pointer"}
+          ],
+          "width": {"signal": "width"},
+          "height": {"signal": "height"}
         }
       }
     },
@@ -378,11 +455,9 @@
       "type": "rule",
       "from": {"data": "axes"},
       "encode": {
-        "enter": {
-          "stroke": {"signal": "axis_color"},
-          "strokewidth": {"value": 1}
-        },
+        "enter": {"strokewidth": {"value": 1}},
         "update": {
+          "stroke": {"signal": "axis_color"},
           "opacity": {"signal": "axes?1:0"},
           "x": {"field": "p_root.x", "offset": {"signal": "width/2"}},
           "y": {"field": "p_root.y", "offset": {"signal": "height/2"}},
@@ -397,10 +472,10 @@
       "encode": {
         "enter": {
           "text": {"field": "datum.axis.label"},
-          "fill": {"signal": "axis_color"},
           "align": {"value": "center"}
         },
         "update": {
+          "fill": {"signal": "axis_color"},
           "opacity": {"signal": "axes?1:0"},
           "xc": {"field": "x2"},
           "yc": {"field": "y2", "offset": -5},
@@ -413,13 +488,14 @@
     {
       "type": "group",
       "from": {
-        "facet": {"name": "area", "data": "areas", "groupby": ["i", "j"]}
+        "facet": {"name": "area", "data": "sorted_areas", "groupby": ["id"]}
       },
+      "data": [],
       "scales": [
         {
           "name": "color",
           "type": "linear",
-          "domain": {"data": "areas", "field": "value"},
+          "domain": {"data": "sorted_areas", "field": "value"},
           "range": {"scheme": {"signal": "scheme"}}
         }
       ],
@@ -429,8 +505,17 @@
           "from": {"data": "area"},
           "encode": {
             "update": {
-              "cursor":[{"test":"is_dragging", "value":"grabbing"},{"value":"pointer"}],
-              "fill": {"field": "value", "scale": "color"},
+              "cursor": [
+                {"test": "is_dragging", "value": "grabbing"},
+                {"value": "pointer"}
+              ],
+              "fill": [
+                {
+                  "test": "grid || !isValid(datum.value)",
+                  "value": "transparent"
+                },
+                {"field": "value", "scale": "color"}
+              ],
               "x": {"field": "px", "offset": {"signal": "width/2"}},
               "y": {"field": "py", "offset": {"signal": "height/2"}},
               "y2": {"value": 0}
@@ -443,7 +528,10 @@
           "encode": {
             "enter": {},
             "update": {
-              "cursor":[{"test":"is_dragging", "value":"grabbing"},{"value":"pointer"}],
+              "cursor": [
+                {"test": "is_dragging", "value": "grabbing"},
+                {"value": "pointer"}
+              ],
               "strokeWidth": [{"test": "grid", "value": 0.3}, {"value": 1}],
               "stroke": [
                 {"test": "grid", "signal": "grid_color"},
@@ -460,15 +548,13 @@
     {
       "type": "text",
       "encode": {
-        "enter": {
-          "fill": {"signal": "axis_color"},
-          "align": {"value": "center"}
-        },
+        "enter": {"align": {"value": "center"}},
         "update": {
+          "fill": {"signal": "axis_color"},
           "xc": {"signal": "width/2"},
           "yc": {"signal": "height*0.9"},
           "text": {
-            "signal": "'x: '+matrix_values.x+', y: '+matrix_values.y+', z: '+matrix_values.z"
+            "signal": "'id: '+ matrix_values.id+', x: '+matrix_values.x+', y: '+matrix_values.y+', z: '+matrix_values.z"
           },
           "opacity": {"signal": "isValid(matrix_values.x)?1:0"}
         }
@@ -477,13 +563,13 @@
     {
       "type": "text",
       "encode": {
-        "enter":{
-          "x":{"value": 15}
-        },
-        "update":{
-          "y":{"signal": "height*0.1"},
-          "fill":{"signal":"axis_color"},
-          "text":{"signal":"'Matrix size: '+size_x[0]+'X'+size_y[0]+'('+size_x[0]*size_y[0]+')'"}
+        "enter": {"x": {"value": 15}},
+        "update": {
+          "y": {"signal": "height*0.1"},
+          "fill": {"signal": "axis_color"},
+          "text": {
+            "signal": "'Matrix size: '+x_sequence.count+'X'+y_sequence.count+'('+x_sequence.count*y_sequence.count+')'"
+          }
         }
       }
     }
