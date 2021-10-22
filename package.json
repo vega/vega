@@ -12,7 +12,8 @@
     "license": "lerna exec -- cp ../../LICENSE .",
     "release": "yarn license && lerna publish from-package",
     "serve": "serve packages/vega/ -l 8080",
-    "test": "lerna run test && yarn lint",
+    "test": "yarn test:no-lint && yarn lint",
+    "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
     "lint": "yarn eslint . --ext .js",
     "format": "yarn lint --fix",
     "postinstall": "yarn data"
