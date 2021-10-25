@@ -6362,9 +6362,9 @@ rollup-plugin-terser@^7.0.2:
     terser "^5.0.0"
 
 rollup@^2.56.3:
-  version "2.56.3"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.56.3.tgz#b63edadd9851b0d618a6d0e6af8201955a77aeff"
-  integrity sha512-Au92NuznFklgQCUcV96iXlxUbHuB1vQMaH76DHl5M11TotjOHwqk9CwcrT78+Tnv4FN9uTBxq6p4EJoYkpyekg==
+  version "2.58.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.58.1.tgz#b9a0f9e601129d9a4686b7ec3159095f7a73825f"
+  integrity sha512-dNhchlN/3k3EKtyPXWdEEI7wiPQ07WInzsklWFm/6dUZspF63nj0O1A9PTsMxbmtQziwnOOl5oR+BgWNjTEYLA==
   optionalDependencies:
     fsevents "~2.3.2"
 
