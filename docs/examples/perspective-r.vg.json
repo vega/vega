@@ -13,7 +13,7 @@
     {"name": "y_sequence", "value": {"min": -1, "max": 1, "count": 40}},
     {
       "name": "scheme",
-      "value": "viridis",
+      "value": "blueorange",
       "bind": {
         "input": "select",
         "options": [
@@ -74,6 +74,14 @@
     },
     {"name": "axes", "value": true, "bind": {"input": "checkbox"}},
     {"name": "grid", "value": false, "bind": {"input": "checkbox"}},
+    {
+      "name": "grid_color",
+      "value": "lightgrey",
+      "bind": {
+        "input": "select",
+        "options": ["scheme", "darkgrey", "lightgrey"]
+      }
+    },
     {
       "name": "equation",
       "value": "10*sin(sqrt(x²+y²))/sqrt(x²+y²)",
@@ -613,7 +621,18 @@
             {"test": "!grid", "field": "avg_z", "scale": "color"},
             {"value": "transparent"}
           ],
-          "stroke": {"field": "avg_z", "scale": "color"},
+          "stroke": [
+            {
+              "test": "grid_color === 'scheme'",
+              "field": "avg_z",
+              "scale": "color"
+            },
+            {"signal": "grid_color"}
+          ],
+          "strokeWidth": [
+            {"test": "grid_color === 'scheme'", "value": 1},
+            {"value": 0.3}
+          ],
           "x": {"signal": "center.x"},
           "y": {"signal": "center.y"},
           "path": {"field": "path"}
