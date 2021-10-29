@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 400,
-  "height": 400,
+  "width": 500,
+  "height": 500,
   "background": {"signal": "theme === 'dark'?'black':'white'"},
   "title": {
     "text": "3D Matrix",
@@ -73,13 +73,14 @@
       ]
     },
     {"name": "axes", "value": true, "bind": {"input": "checkbox"}},
-    {"name": "grid", "value": false, "bind": {"input": "checkbox"}},
+    {"name": "fill", "value": true, "bind": {"input": "checkbox"}},
     {
       "name": "grid_color",
       "value": "lightgrey",
       "bind": {
         "input": "select",
-        "options": ["scheme", "darkgrey", "lightgrey"]
+        "options": ["scheme", "darkgrey", "lightgrey"],
+        "name": "grid color"
       }
     },
     {
@@ -96,6 +97,23 @@
         ]
       }
     },
+    {"name": "ticks", "value": true, "bind": {"input": "checkbox"}},
+    {
+      "name": "ticks_count",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "name": "ticks count"
+      }
+    },
+    {
+      "name": "perspective",
+      "value": 0.1,
+      "bind": {"input": "range", "min": 0, "max": 0.3, "step": 0.01}
+    },
     {"name": "size_x", "init": "length(domain('dx'))"},
     {"name": "size_y", "init": "length(domain('dy'))"},
     {
@@ -108,7 +126,7 @@
         }
       ]
     },
-    {"name": "size", "update": "scale*min(width,height)/2"},
+    {"name": "size", "update": "(1-perspective)*scale*min(width,height)/2"},
     {"name": "center", "init": "{x:width/2, y:height/2}"},
     {
       "name": "angle_HOR",
@@ -155,16 +173,20 @@
       "on": [
         {
           "events": "path:mouseover",
-          "update": "{'x':isNumber(datum.data.x) ? format(datum.data.x,'.2~f'):datum.data.x,'y':isNumber(datum.data.y) ? format(datum.data.y,'.2~f'):datum.data.y,'z':format(datum.data.z,'.2~f'), id:datum.id}"
+          "update": "{'x':isNumber(datum.data.x) ? format(datum.data.x,'.2~f'):datum.data.x,'y':isNumber(datum.data.y) ? format(datum.data.y,'.2~f'):datum.data.y,'z':format(datum.data.z,'.2~f'), id:datum.id, color:fill?scale('color',datum.avg_z):background}"
         },
-        {"events": "path", "update": "{}"}
+        {"events": "path:mouseout", "update": "{}"}
       ]
+    },
+    {
+      "name": "contrast",
+      "update": "isValid(matrix_values.color)?contrast(matrix_values.color,'#ffeb3b'):0"
     },
     {
       "name": "is_dragging",
       "update": "false",
       "on": [
-        {"events": "view:mousedown", "update": "true"},
+        {"events": "view:mousedown[event.buttons === 1]", "update": "true"},
         {
           "events": "view:mouseup, view:mousemove[event.buttons !== 1]",
           "update": "false"
@@ -184,37 +206,21 @@
       "domain": {"data": "id_source", "field": "y", "sort": true}
     },
     {
-      "name": "dz",
-      "type": "ordinal",
-      "domain": {"data": "id_source", "field": "z", "sort": true}
-    },
-    {
-      "name": "ix",
-      "type": "band",
-      "domain": {"data": "matrix", "field": "ix"},
-      "range": [{"signal": "-size/2"}, {"signal": "size/2"}]
-    },
-    {
-      "name": "iy",
-      "type": "band",
-      "domain": {"data": "matrix", "field": "iy"},
-      "range": [{"signal": "-size/2"}, {"signal": "size/2"}]
-    },
-    {
       "name": "x",
-      "type": "band",
+      "type": "point",
       "domain": {"data": "matrix", "field": "ix"},
       "range": [-1, 1]
     },
     {
       "name": "y",
-      "type": "band",
+      "type": "point",
       "domain": {"data": "matrix", "field": "iy"},
       "range": [-1, 1]
     },
     {
       "name": "z",
       "type": "linear",
+      "zero": false,
       "domain": {"data": "matrix", "field": "z"},
       "range": [{"signal": "-expand"}, {"signal": "expand"}]
     },
@@ -278,6 +284,28 @@
           "type": "formula",
           "expr": "data('volcano')[0].values[data('volcano')[0].width*datum.y+datum.x]",
           "as": "z"
+        }
+      ]
+    },
+    {
+      "name": "weather_seattle_source",
+      "url": "https://raw.githubusercontent.com/vega/vega/master/docs/data/seattle-weather-hourly-normals.csv",
+      "format": {
+        "type": "csv",
+        "parse": {"temperature": "number", "date": "date"},
+        "delimiter": ","
+      },
+      "transform": [
+        {"type": "formula", "expr": "hours(datum.date)", "as": "hour"},
+        {
+          "type": "formula",
+          "expr": "timeFormat(datum.date, '%m/%d')",
+          "as": "day"
+        },
+        {
+          "type": "project",
+          "fields": ["day", "hour", "temperature"],
+          "as": ["x", "y", "z"]
         }
       ]
     },
@@ -431,7 +459,7 @@
         },
         {
           "type": "formula",
-          "expr": "{x:datum.q2.x*size/2, y:datum.q2.y*size/2, z:datum.q2.z*size/2}",
+          "expr": "{x:datum.q2.x*size/2*(1+perspective)/(1 - perspective*datum.q2.z), y:datum.q2.y*size/2*(1+perspective)/(1 - perspective*datum.q2.z), z:datum.q2.z*size/2}",
           "as": "projection"
         },
         {
@@ -462,16 +490,22 @@
           "fields": ["point"],
           "values": ["projection", "data"]
         },
+        {"type": "filter", "expr": "isValid(datum.data.z)"},
+        {
+          "type": "formula",
+          "expr": "datum.projection.x+','+datum.projection.y",
+          "as": "point"
+        },
         {
           "type": "aggregate",
           "groupby": ["id"],
-          "fields": ["id", "projection.z", "data.z"],
-          "ops": ["values", "mean", "mean"],
-          "as": ["points", "avg_pz", "avg_z"]
+          "fields": ["id", "projection.z", "data.z", "id"],
+          "ops": ["values", "mean", "mean", "count"],
+          "as": ["points", "avg_pz", "avg_z", "count"]
         },
         {
           "type": "formula",
-          "expr": "'M'+datum.points[0].projection.x+','+datum.points[0].projection.y+' L'+datum.points[1].projection.x+','+datum.points[1].projection.y+' L'+datum.points[2].projection.x+','+datum.points[2].projection.y+' L'+datum.points[3].projection.x+','+datum.points[3].projection.y+'z'",
+          "expr": "(datum.count>0?'M'+datum.points[0].point:'')+(datum.count>1?' L'+datum.points[1].point:'')+(datum.count>2?' L'+datum.points[2].point:'')+(datum.count>3?' L'+datum.points[3].point:'')+'z'",
           "as": "path"
         },
         {
@@ -497,11 +531,17 @@
             "y": -0.03352260941902674,
             "z": -1.4916104177841405
           },
-          "p_root": {"x": -36.60254037844387, "y": -3.352260941902674},
+          "p_root": {"x": -39.416271585595915, "y": -3.6099578429708687},
           "axis": [
             {"label": "x", "x": 1, "y": -1, "z": -0.6, "isNumber": true},
             {"label": "y", "x": -1, "y": 1, "z": -0.6, "isNumber": true},
-            {"label": "z", "x": -1, "y": -1, "z": 0.6, "isNumber": true}
+            {
+              "label": "z [−2.2, 9.8]",
+              "x": -1,
+              "y": -1,
+              "z": 0.6,
+              "isNumber": true
+            }
           ]
         }
       ],
@@ -518,17 +558,17 @@
         },
         {
           "type": "formula",
-          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x, z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
+          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x,z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
           "as": "pq2"
         },
         {
           "type": "formula",
-          "expr": "{x:(datum.pq2.x)*size/2, y:(datum.pq2.y)*size/2}",
+          "expr": "{x:(datum.pq2.x)*size/2*(1+perspective)/(1 - perspective*datum.pq2.z), y:(datum.pq2.y)*size/2*(1+perspective)/(1 - perspective*datum.pq2.z)}",
           "as": "p_root"
         },
         {
           "type": "formula",
-          "expr": "[{label:'x', x:range('x')[1],y:range('y')[0],z:scale('z',domain('z')[0]), 'isNumber':isNumber(domain('x')[0])},{label:'y', x:range('x')[0],y:range('y')[1],z:scale('z',domain('z')[0]), 'isNumber':isNumber(domain('y')[0])},{label:'z', x:range('x')[0],y:range('y')[0],z:scale('z',domain('z')[1]), 'isNumber':true}]",
+          "expr": "[{label:'x', x:scale('x',size_x-1),y:range('y')[0],z:scale('z',domain('z')[0]), 'isNumber':isNumber(domain('x')[0])},{label:'y', x:range('x')[0],y:scale('y',size_y-1),z:scale('z',domain('z')[0]), 'isNumber':isNumber(domain('y')[0])},{label:ticks?'z ['+format(domain('z')[0],'.1~f')+', '+format(domain('z')[1],'.1~f')+']':'z', x:range('x')[0],y:range('y')[0],z:scale('z',domain('z')[1]), 'isNumber':true}]",
           "as": "axis"
         },
         {"type": "flatten", "fields": ["axis"]},
@@ -539,13 +579,113 @@
         },
         {
           "type": "formula",
-          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x, z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
+          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x,z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
           "as": "pq2"
         },
         {
           "type": "formula",
-          "expr": "{x:(datum.pq2.x)*size/2, y:(datum.pq2.y)*size/2}",
+          "expr": "{x:(datum.pq2.x)*size/2*(1+perspective)/(1 - perspective*datum.pq2.z), y:(datum.pq2.y)*size/2*(1+perspective)/(1 - perspective*datum.pq2.z)}",
           "as": "p_axis"
+        }
+      ]
+    },
+    {
+      "name": "x_ticks",
+      "values": [{"x_tick": [0, 20, 40]}],
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "sequence(0,(size_x+size_x/(ticks_count+1)), size_x/(ticks_count+1))",
+          "as": "x_tick"
+        },
+        {"type": "flatten", "fields": ["x_tick"]},
+        {
+          "type": "formula",
+          "expr": "round(max(0,datum.x_tick-1))",
+          "as": "x_tick"
+        },
+        {
+          "type": "formula",
+          "expr": "domain('dx')[datum.x_tick]",
+          "as": "label"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:scale('x',datum.x_tick),y:1.2*scale('y',size_y-1),z:scale('z',domain('z')[0]), label:isNumber(datum.label)?format(datum.label,'.1~f'):datum.label}",
+          "as": "point"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:q.w * datum.point.x + q.y*datum.point.z- q.z * datum.point.y, y:q.w * datum.point.y - q.x * datum.point.z  + q.z*datum.point.x, z:q.w * datum.point.z  + q.x*datum.point.y - q.y * datum.point.x, w: -q.x * datum.point.x - q.y * datum.point.y - q.z * datum.point.z}",
+          "as": "q1"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x, z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
+          "as": "q2"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:datum.q2.x*size/2*(1+perspective)/(1 - perspective*datum.q2.z), y:datum.q2.y*size/2*(1+perspective)/(1 - perspective*datum.q2.z)}",
+          "as": "projection"
+        },
+        {
+          "type": "project",
+          "fields": [
+            "point.label",
+            "projection.x",
+            "projection.y",
+            "projection.x2",
+            "projection.y2"
+          ],
+          "as": ["label", "x", "y", "x2", "y2"]
+        }
+      ]
+    },
+    {
+      "name": "y_ticks",
+      "values": [{"y_tick": [0, 20, 40]}],
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "sequence(0,(size_y+size_y/(ticks_count+1)), size_y/(ticks_count+1))",
+          "as": "y_tick"
+        },
+        {"type": "flatten", "fields": ["y_tick"]},
+        {
+          "type": "formula",
+          "expr": "round(max(0,datum.y_tick-1))",
+          "as": "y_tick"
+        },
+        {
+          "type": "formula",
+          "expr": "domain('dy')[datum.y_tick]",
+          "as": "label"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:1.2*scale('x',size_x-1),y:scale('y',datum.y_tick),z:scale('z',domain('z')[0]), label:isNumber(datum.label)?format(datum.label,'.1~f'):datum.label}",
+          "as": "point"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:q.w * datum.point.x + q.y*datum.point.z- q.z * datum.point.y, y:q.w * datum.point.y - q.x * datum.point.z  + q.z*datum.point.x, z:q.w * datum.point.z  + q.x*datum.point.y - q.y * datum.point.x, w: -q.x * datum.point.x - q.y * datum.point.y - q.z * datum.point.z}",
+          "as": "q1"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:datum.q1.w * q_1.x + datum.q1.x * q_1.w + datum.q1.y * q_1.z - datum.q1.z * q_1.y, y:datum.q1.w * q_1.y - datum.q1.x * q_1.z + datum.q1.y * q_1.w + datum.q1.z * q_1.x, z:datum.q1.w * q_1.z + datum.q1.x * q_1.y - datum.q1.y * q_1.x + datum.q1.z * q_1.w}",
+          "as": "q2"
+        },
+        {
+          "type": "formula",
+          "expr": "{x:datum.q2.x*size/2*(1+perspective)/(1 - perspective*datum.q2.z), y:datum.q2.y*size/2*(1+perspective)/(1 - perspective*datum.q2.z)}",
+          "as": "projection"
+        },
+        {
+          "type": "project",
+          "fields": ["point.label", "projection.x", "projection.y"],
+          "as": ["label", "x", "y"]
         }
       ]
     }
@@ -587,11 +727,13 @@
     },
     {
       "type": "text",
+      "interactive": false,
       "from": {"data": "axes_m"},
       "encode": {
         "enter": {
           "text": {"field": "datum.axis.label"},
-          "align": {"value": "center"}
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"}
         },
         "update": {
           "opacity": {"signal": "axes?1:0"},
@@ -600,10 +742,7 @@
             {"value": "black"}
           ],
           "xc": {"field": "x2"},
-          "yc": {"field": "y2", "offset": -5},
-          "tooltip": {
-            "signal": "{'min':datum.datum.axis.isNumber?format(domain('d'+datum.datum.axis.label)[0],'.2~f'):domain('d'+datum.datum.axis.label)[0],'max':datum.datum.axis.isNumber?format(domain('d'+datum.datum.axis.label)[length(domain('d'+datum.datum.axis.label))-1],'.2~f'):domain('d'+datum.datum.axis.label)[length(domain('d'+datum.datum.axis.label))-1]}"
-          }
+          "yc": {"field": "y2", "offset": -5}
         }
       }
     },
@@ -618,7 +757,11 @@
             {"value": "pointer"}
           ],
           "fill": [
-            {"test": "!grid", "field": "avg_z", "scale": "color"},
+            {
+              "test": "!is_dragging && (matrix_values.id === datum.id)",
+              "signal": "contrast<1.45?'#2a9df4':'#ffeb3b'"
+            },
+            {"test": "fill", "field": "avg_z", "scale": "color"},
             {"value": "transparent"}
           ],
           "stroke": [
@@ -643,18 +786,21 @@
       "type": "text",
       "interactive": false,
       "encode": {
-        "enter": {"align": {"value": "center"}},
+        "enter": {
+          "align": {"value": "center"},
+          "baseline": {"value": "middle"}
+        },
         "update": {
           "fill": [
             {"test": "theme === 'dark'", "value": "lightgrey"},
             {"value": "black"}
           ],
           "xc": {"signal": "width/2"},
-          "yc": {"signal": "height*0.9"},
+          "yc": {"signal": "height*0.95"},
           "text": {
             "signal": "'id: '+ matrix_values.id+', x: '+matrix_values.x+', y: '+matrix_values.y+', z: '+matrix_values.z"
           },
-          "opacity": {"signal": "isValid(matrix_values.x)?1:0"}
+          "opacity": {"signal": "!is_dragging && isValid(matrix_values.x)?1:0"}
         }
       }
     },
@@ -672,6 +818,50 @@
           "text": {
             "signal": "'Matrix size: '+size_x+'X'+size_y+'('+size_x*size_y+')'"
           }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "x_ticks"},
+      "encode": {
+        "enter": {"align": {"value": "center"}},
+        "update": {
+          "baseline": {"signal": "phi>90?'bottom':'top'"},
+          "text": {"field": "label"},
+          "opacity": [
+            {"test": "ticks && (phi<=75 || phi>=115)", "value": 1},
+            {"value": 0}
+          ],
+          "x": {"field": "x", "offset": {"signal": "center.x"}},
+          "y": {"field": "y", "offset": {"signal": "center.y"}},
+          "fill": [
+            {"test": "theme === 'dark'", "value": "lightgrey"},
+            {"value": "black"}
+          ]
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "from": {"data": "y_ticks"},
+      "encode": {
+        "enter": {"align": {"value": "center"}},
+        "update": {
+          "text": {"field": "label"},
+          "baseline": {"signal": "phi>90?'bottom':'top'"},
+          "opacity": [
+            {"test": "ticks &&(phi<=75 || phi>=115)", "value": 1},
+            {"value": 0}
+          ],
+          "x": {"field": "x", "offset": {"signal": "center.x"}},
+          "y": {"field": "y", "offset": {"signal": "center.y"}},
+          "fill": [
+            {"test": "theme === 'dark'", "value": "lightgrey"},
+            {"value": "black"}
+          ]
         }
       }
     }
