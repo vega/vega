@@ -44,6 +44,7 @@ export default function($, bitmaps, anchors, offsets, infPadding) {
 
       if (infPadding) {
         _x1 = _x1 < 0 ? 0 : _x1;
+        _x1 = _x1 >= $.width ? ($.width - 1) : _x1;
         _y1 = _y1 < 0 ? 0 : _y1;
         _y2 = _y2 >= $.height ? ($.height - 1) : _y2;
       }
