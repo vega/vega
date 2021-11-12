@@ -13,8 +13,8 @@ import { Changeset, Transform } from './dataflow';
 import { Renderers } from './renderer';
 import { Scene } from './scene';
 
-// TODO
-export type Runtime = any;
+export { Runtime } from './runtime';
+import { Runtime } from './runtime';
 
 export const version: string;
 

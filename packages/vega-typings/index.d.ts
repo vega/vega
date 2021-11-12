@@ -1,3 +1,3 @@
-// TypeScript Version: 3.4
+// TypeScript Version: 4.1
 
 export * from './types';

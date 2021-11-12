@@ -31,7 +31,7 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: Run tests
-        run: yarn lerna run test
+        run: yarn test:no-lint
 
       - name: Lint
         run: yarn lint
