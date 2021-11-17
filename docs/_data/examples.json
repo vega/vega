@@ -104,6 +104,6 @@
         {"name": "pi-monte-carlo"},
         {"name": "perspective-r"},
         {"name": "pacman"},
-        {"name": "platformer"}        
+        {"name": "platformer"}
     ]
 }
