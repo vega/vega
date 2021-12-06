@@ -145,11 +145,13 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   var df = new vega.Dataflow(),
       an = df.add('left'),
       c0 = df.add(Collect),
+      avoidBaseMark = df.add(true),
       lb = df.add(Label, {
         size: [50, 30],
         anchor: [an],
         offset: [2],
-        pulse: c0
+        pulse: c0,
+        avoidBaseMark
       });
 
   df.update(an, 'left')
@@ -239,6 +241,26 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   closeTo(t, out[0].y, 17 + 2 * Math.SQRT1_2);
   t.equal(out[0].align, 'left');
   t.equal(out[0].baseline, 'top');
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
+  df.update(an, 'middle')
+    .update(avoidBaseMark, true)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out[0].opacity, 0);
+  t.equal(out[1].opacity, 0);
+
+  df.update(an, 'middle')
+    .update(avoidBaseMark, false)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  closeTo(t, out[0].x, 21);
+  closeTo(t, out[0].y, 16);
+  t.equal(out[0].align, 'center');
+  t.equal(out[0].baseline, 'middle');
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 

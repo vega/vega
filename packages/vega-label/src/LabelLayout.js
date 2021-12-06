@@ -77,13 +77,11 @@ export default function(texts, size, compare, offset, anchor,
 
     // extract data information from base mark when base mark is to be avoided
     // base mark is implicitly avoided if it is a group area
-    if (marktype && (avoidBaseMark || isGroupArea)) {
-      avoidMarks = [texts.map(d => d.datum)].concat(avoidMarks);
-    }
+    const baseMark = ((marktype && avoidBaseMark) || isGroupArea) && texts.map(d => d.datum);
 
     // generate bitmaps for layout calculation
-    bitmaps = avoidMarks.length
-      ? markBitmaps($, avoidMarks, labelInside, isGroupArea)
+    bitmaps = avoidMarks.length || baseMark
+      ? markBitmaps($, baseMark || [], avoidMarks, labelInside, isGroupArea)
       : baseBitmaps($, avoidBaseMark && data);
   }
 
