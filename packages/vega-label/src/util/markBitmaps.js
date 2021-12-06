@@ -5,10 +5,6 @@ import {Marks} from 'vega-scenegraph';
 // bit mask for getting first 2 bytes of alpha value
 const ALPHA_MASK = 0xff000000;
 
-// alpha value equivalent to opacity 0.0625
-const INSIDE_OPACITY_IN_ALPHA = 0x10000000;
-const INSIDE_OPACITY = 0.0625;
-
 export function baseBitmaps($, data) {
   const bitmap = $.bitmap();
   // when there is no base mark but data points are to be avoided
@@ -16,36 +12,51 @@ export function baseBitmaps($, data) {
   return [bitmap, undefined];
 }
 
-export function markBitmaps($, avoidMarks, labelInside, isGroupArea) {
+export function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
   // create canvas
   const width = $.width,
         height = $.height,
         border = labelInside || isGroupArea,
-        context = canvas(width, height).getContext('2d');
+        context = canvas(width, height).getContext('2d'),
+        baseMarkContext = canvas(width, height).getContext('2d'),
+        strokeContext = border && canvas(width, height).getContext('2d');
 
   // render all marks to be avoided into canvas
-  avoidMarks.forEach(items => draw(context, items, border));
+  avoidMarks.forEach(items => draw(context, items, false));
+  draw(baseMarkContext, baseMark, false);
+  if (border) {
+    draw(strokeContext, baseMark, true);
+  }
 
   // get canvas buffer, create bitmaps
-  const buffer = new Uint32Array(context.getImageData(0, 0, width, height).data.buffer),
+  const buffer = getBuffer(context, width, height),
+        baseMarkBuffer = getBuffer(baseMarkContext, width, height),
+        strokeBuffer = border && getBuffer(strokeContext, width, height),
         layer1 = $.bitmap(),
         layer2 = border && $.bitmap();
 
   // populate bitmap layers
-  let x, y, u, v, alpha;
+  let x, y, u, v, alpha, strokeAlpha, baseMarkAlpha;
   for (y=0; y < height; ++y) {
     for (x=0; x < width; ++x) {
       alpha = buffer[y * width + x] & ALPHA_MASK;
-      if (alpha) {
+      baseMarkAlpha = baseMarkBuffer[y * width + x] & ALPHA_MASK;
+      strokeAlpha = border && (strokeBuffer[y * width + x] & ALPHA_MASK);
+
+      if (alpha || strokeAlpha || baseMarkAlpha) {
         u = $(x);
         v = $(y);
-        if (!isGroupArea) layer1.set(u, v); // update interior bitmap
-        if (border && alpha ^ INSIDE_OPACITY_IN_ALPHA) layer2.set(u, v); // update border bitmap
+        if (!isGroupArea && (alpha || baseMarkAlpha)) layer1.set(u, v); // update interior bitmap
+        if (border && (alpha || strokeAlpha)) layer2.set(u, v); // update border bitmap
       }
     }
   }
 
   return [layer1, layer2];
+}
+
+function getBuffer(context, width, height) {
+  return new Uint32Array(context.getImageData(0, 0, width, height).data.buffer);
 }
 
 function draw(context, items, interior) {
@@ -69,15 +80,16 @@ function draw(context, items, interior) {
 function prepare(source) {
   const item = rederive(source, {});
 
-  if (item.stroke) {
-    item.strokeOpacity = 1;
-  }
-
-  if (item.fill) {
-    item.fillOpacity = INSIDE_OPACITY;
-    item.stroke = '#000';
-    item.strokeOpacity = 1;
-    item.strokeWidth = 2;
+  if (
+    (item.stroke && item.strokeOpacity !== 0) ||
+    (item.fill && item.fillOpacity !== 0)
+  ) {
+    return {
+      ...item,
+      strokeOpacity: 1,
+      stroke: '#000',
+      fillOpacity: 0
+    };
   }
 
   return item;
