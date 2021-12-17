@@ -36,12 +36,14 @@ export function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
         layer2 = border && $.bitmap();
 
   // populate bitmap layers
-  let x, y, u, v, alpha, strokeAlpha, baseMarkAlpha;
+  let x, y, u, v, index, alpha, strokeAlpha, baseMarkAlpha;
   for (y=0; y < height; ++y) {
     for (x=0; x < width; ++x) {
-      alpha = buffer[y * width + x] & ALPHA_MASK;
-      baseMarkAlpha = baseMarkBuffer[y * width + x] & ALPHA_MASK;
-      strokeAlpha = border && (strokeBuffer[y * width + x] & ALPHA_MASK);
+      index = y * width + x;
+
+      alpha = buffer[index] & ALPHA_MASK;
+      baseMarkAlpha = baseMarkBuffer[index] & ALPHA_MASK;
+      strokeAlpha = border && (strokeBuffer[index] & ALPHA_MASK);
 
       if (alpha || strokeAlpha || baseMarkAlpha) {
         u = $(x);
