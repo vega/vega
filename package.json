@@ -41,7 +41,7 @@
     "rollup": "^2.56.3",
     "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-terser": "^7.0.2",
-    "serve": "^12.0.1",
+    "serve": "^13.0.2",
     "tape": "^5.3.1",
     "terser": "^5.9.0",
     "typescript": "~4.4.3",
