@@ -24,7 +24,7 @@
   "dependencies": {
     "d3-array": "^2.7.1",
     "d3-color": "^2.0.0",
-    "d3-geo": "^2.0.1",
+    "d3-geo": "^3.0.1",
     "vega-canvas": "^1.2.5",
     "vega-dataflow": "^5.7.3",
     "vega-projection": "^1.4.5",

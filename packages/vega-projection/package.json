@@ -21,7 +21,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-geo": "^2.0.1",
+    "d3-geo": "^3.0.1",
     "d3-geo-projection": "^3.0.0"
   }
 }
