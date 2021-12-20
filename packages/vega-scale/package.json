@@ -24,7 +24,7 @@
   "dependencies": {
     "d3-array": "^2.7.1",
     "d3-interpolate": "^2.0.1",
-    "d3-scale": "^3.2.2",
+    "d3-scale": "^4.0.2",
     "vega-time": "^2.0.4",
     "vega-util": "^1.15.2"
   }
