@@ -32,7 +32,7 @@
     "ajv-formats": "^2.1.1",
     "canvas": "^2.8.0",
     "dtslint": "^4.1.6",
-    "eslint": "^7.32.0",
+    "eslint": "^8.5.0",
     "jsdom": "^17.0.0",
     "lerna": "^4.0.0",
     "pixelmatch": "^5.2.1",
