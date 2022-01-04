@@ -177,7 +177,7 @@ nav a {
 nav a:last-child {
   padding-right: 0px;
 }
-nav a.active {
+nav a[aria-current] {
   font-weight: bold;
   color: #fff;
 }
@@ -222,7 +222,7 @@ nav a:hover {
   padding: 0.25em 0;
   color: #666;
 }
-.sidebar-nav-item a.active {
+.sidebar-nav-item a[aria-current] {
   font-weight: bold;
 }
 .sidebar-nav-item a:hover {
