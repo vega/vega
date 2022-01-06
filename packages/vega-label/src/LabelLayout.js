@@ -1,3 +1,4 @@
+import {textMetrics} from 'vega-scenegraph';
 import {baseBitmaps, markBitmaps} from './util/markBitmaps';
 import scaler from './util/scaler';
 import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive';
@@ -46,19 +47,33 @@ export default function(texts, size, compare, offset, anchor,
         isGroupArea = grouptype === 'area',
         boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
         infPadding = padding === null || padding === Infinity,
-        $ = scaler(size[0], size[1], infPadding ? 0 : padding),
         isNaiveGroupArea = isGroupArea && method === 'naive';
 
+  let maxTextWidth = -1,
+      maxTextHeight = -1;
+
   // prepare text mark data for placing
-  const data = texts.map(d => ({
-    datum: d,
-    opacity: 0,
-    x: undefined,
-    y: undefined,
-    align: undefined,
-    baseline: undefined,
-    boundary: boundary(d)
-  }));
+  const data = texts.map(d => {
+    const textWidth = infPadding ? textMetrics.width(d, d.text) : undefined;
+    maxTextWidth = Math.max(maxTextWidth, textWidth);
+    maxTextHeight = Math.max(maxTextHeight, d.fontSize);
+
+    return {
+      datum: d,
+      opacity: 0,
+      x: undefined,
+      y: undefined,
+      align: undefined,
+      baseline: undefined,
+      boundary: boundary(d),
+      textWidth
+    };
+  });
+
+  padding = (padding === null || padding === Infinity)
+    ? Math.max(maxTextWidth, maxTextHeight) + Math.max(...offset)
+    : padding;
+  const $ = scaler(size[0], size[1], padding);
 
   let bitmaps;
   if (!isNaiveGroupArea) {
@@ -87,8 +102,8 @@ export default function(texts, size, compare, offset, anchor,
 
   // generate label placement function
   const place = isGroupArea
-    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex, infPadding)
-    : placeMarkLabel($, bitmaps, anchors, offsets, infPadding);
+    ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex)
+    : placeMarkLabel($, bitmaps, anchors, offsets);
 
   // place all labels
   data.forEach(d => d.opacity = +place(d));

@@ -3,7 +3,7 @@ import {textMetrics} from 'vega-scenegraph';
 const Aligns = ['right', 'center', 'left'],
       Baselines = ['bottom', 'middle', 'top'];
 
-export default function($, bitmaps, anchors, offsets, infPadding) {
+export default function($, bitmaps, anchors, offsets) {
   const width = $.width,
         height = $.height,
         bm0 = bitmaps[0],
@@ -15,11 +15,11 @@ export default function($, bitmaps, anchors, offsets, infPadding) {
           textHeight = d.datum.fontSize;
 
     // can not be placed if the mark is not visible in the graph bound
-    if (!infPadding && (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height)) {
+    if (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height) {
       return false;
     }
 
-    let textWidth = 0,
+    let textWidth = d.textWidth ?? 0,
         dx, dy, isInside, sizeFactor, insideFactor,
         x1, x2, y1, y2, xc, yc,
         _x1, _x2, _y1, _y2;
@@ -42,13 +42,6 @@ export default function($, bitmaps, anchors, offsets, infPadding) {
       _y1 = $(y1);
       _y2 = $(y2);
 
-      if (infPadding) {
-        _x1 = _x1 < 0 ? 0 : _x1;
-        _x1 = _x1 >= $.width ? ($.width - 1) : _x1;
-        _y1 = _y1 < 0 ? 0 : _y1;
-        _y2 = _y2 >= $.height ? ($.height - 1) : _y2;
-      }
-
       if (!textWidth) {
         // to avoid finding width of text label,
         if (!test(_x1, _x1, _y1, _y2, bm0, bm1, x1, x1, y1, y2, boundary, isInside)) {
@@ -66,11 +59,6 @@ export default function($, bitmaps, anchors, offsets, infPadding) {
 
       _x1 = $(x1);
       _x2 = $(x2);
-
-      if (infPadding) {
-        _x1 = _x1 < 0 ? 0 : _x1;
-        _x2 = _x2 >= $.width ? ($.width - 1) : _x2;
-      }
 
       if (test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
         // place label if the position is placeable
