@@ -505,7 +505,7 @@ export type LabelAnchor =
   | 'bottom-left'
   | 'bottom-right'
   | 'middle';
-export type LineLabelAnchor = 'begin' | 'end';
+export type LineLabelAnchor = 'start' | 'end';
 export type AreaLabelMethod = 'naive' | 'reduced-search' | 'floodfill';
 
 export interface LabelTransform {
