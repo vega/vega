@@ -120,7 +120,7 @@ function markType(item) {
  * Factory function for function for getting base mark boundary, depending
  * on mark and group type. When mark type is undefined, line or area: boundary
  * is the coordinate of each data point. When base mark is grouped line,
- * boundary is either at the beginning or end of the line depending on the
+ * boundary is either at the start or end of the line depending on the
  * value of lineAnchor. Otherwise, use bounds of base mark.
  */
 function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
