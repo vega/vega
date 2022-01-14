@@ -152,6 +152,12 @@ import {
 } from './functions/sequence';
 
 import {
+  invertLasso,
+  lassoAppend,
+  lassoPath
+} from './functions/lasso';
+
+import {
   bandspace,
   bandwidth,
   copy,
@@ -288,7 +294,10 @@ export const functionContext = {
   zoomPow,
   zoomSymlog,
   encode,
-  modify
+  modify,
+  lassoAppend,
+  lassoPath,
+  invertLasso
 };
 
 const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
