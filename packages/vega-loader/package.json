@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "d3-dsv": "^2.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "topojson-client": "^3.1.0",
     "vega-format": "^1.0.4",
     "vega-util": "^1.16.0"
