@@ -924,6 +924,42 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
+"@definitelytyped/dts-critic@^0.0.103":
+  version "0.0.103"
+  resolved "https://registry.yarnpkg.com/@definitelytyped/dts-critic/-/dts-critic-0.0.103.tgz#a22a7efb13af94d6b4ec9f9980f14f07e3f2d3e5"
+  integrity sha512-QI0/MIf8RcZbxBJCykiq48tH+QDo722ks3I8lst6A7hVa2+7m3dx7LqCCh0Bs6h2moewgvIaX++qebokZitKfQ==
+  dependencies:
+    "@definitelytyped/header-parser" latest
+    command-exists "^1.2.8"
+    rimraf "^3.0.2"
+    semver "^6.2.0"
+    tmp "^0.2.1"
+    yargs "^15.3.1"
+
+"@definitelytyped/dtslint@^0.0.103":
+  version "0.0.103"
+  resolved "https://registry.yarnpkg.com/@definitelytyped/dtslint/-/dtslint-0.0.103.tgz#036d63819831f6cc2f7c90d316550195b78132cc"
+  integrity sha512-BjRioCLzf77VRNCgl97uirKYvhirlh4wPIL28BS+pYdy5UxFALlZBDVY91h/KXZRXySp6QsxO0XF6jbWeqhJqA==
+  dependencies:
+    "@definitelytyped/dts-critic" "^0.0.103"
+    "@definitelytyped/header-parser" "0.0.93"
+    "@definitelytyped/typescript-versions" "0.0.93"
+    "@definitelytyped/utils" "0.0.93"
+    fs-extra "^6.0.1"
+    json-stable-stringify "^1.0.1"
+    strip-json-comments "^2.0.1"
+    tslint "5.14.0"
+    yargs "^15.1.0"
+
+"@definitelytyped/header-parser@0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@definitelytyped/header-parser/-/header-parser-0.0.93.tgz#a971517d89cf659e69e83acebecb7f401e514976"
+  integrity sha512-ywrpndOfwQ1CLG6n9DVQYICDW1CPglb/XxzhKMOonYrw2qifuWMeLioszsQsOYpg5jnwCwa8V7moK2TfkI5ztQ==
+  dependencies:
+    "@definitelytyped/typescript-versions" "^0.0.93"
+    "@types/parsimmon" "^1.10.1"
+    parsimmon "^1.13.0"
+
 "@definitelytyped/header-parser@latest":
   version "0.0.100"
   resolved "https://registry.yarnpkg.com/@definitelytyped/header-parser/-/header-parser-0.0.100.tgz#5995264b0e3470c6df320fe1b006d5e37c94a585"
@@ -933,17 +969,22 @@
     "@types/parsimmon" "^1.10.1"
     parsimmon "^1.13.0"
 
-"@definitelytyped/typescript-versions@^0.0.100", "@definitelytyped/typescript-versions@latest":
+"@definitelytyped/typescript-versions@0.0.93", "@definitelytyped/typescript-versions@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@definitelytyped/typescript-versions/-/typescript-versions-0.0.93.tgz#8de68a79f82db49fd23749d595260df87b7e9858"
+  integrity sha512-ymWcBsmZykBMOXy4fF4WsBnJp7qCM3rropPXDfH5V8n2Ie2cK3Ths1kAxD1k80IWCish7EdznWPP4ZRxurycBw==
+
+"@definitelytyped/typescript-versions@^0.0.100":
   version "0.0.100"
   resolved "https://registry.yarnpkg.com/@definitelytyped/typescript-versions/-/typescript-versions-0.0.100.tgz#fca914757b7aa496fb4f4a53f47459a777834e53"
   integrity sha512-Ec4h0+9sbgAt6cLy5mIsKmrUGS0PYUgLnelpklYIOgRg2PZzBSGIISqb7L6TuQd7tBz6YWXAjv9xPKbiYOENtQ==
 
-"@definitelytyped/utils@latest":
-  version "0.0.100"
-  resolved "https://registry.yarnpkg.com/@definitelytyped/utils/-/utils-0.0.100.tgz#d6a9439172d5f43b9e53b6a7a3704ada1d388389"
-  integrity sha512-fzpMROyXiI6zIUCjZAhBjXM2R1e72fNfi0A86cyS8/OYrBgIaEDBBvsH27P42H4jClTvc7X/xn5HJ+EZT+/IxQ==
+"@definitelytyped/utils@0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@definitelytyped/utils/-/utils-0.0.93.tgz#6d4778ed1f6c8ddb4d9470990d42f3637c5acc96"
+  integrity sha512-FBZhEoSxWtUTbwfwpehTssTyzgiEraAv4PBKjRr2sVVU1H3lIFTG/DlZO2ymfs3EbPr1zS5S0yt05RQFZlFjAQ==
   dependencies:
-    "@definitelytyped/typescript-versions" "^0.0.100"
+    "@definitelytyped/typescript-versions" "^0.0.93"
     "@qiwi/npm-registry-client" "^8.9.1"
     "@types/node" "^14.14.35"
     charm "^1.0.2"
@@ -3304,34 +3345,6 @@ dotignore@^0.1.2:
   integrity sha512-UGGGWfSauusaVJC+8fgV+NVvBXkCTmVv7sk6nojDZZvuOUNGUy0Zk4UpHQD6EDjS0jpBwcACvH4eofvyzBcRDw==
   dependencies:
     minimatch "^3.0.4"
-
-dts-critic@latest:
-  version "3.3.11"
-  resolved "https://registry.yarnpkg.com/dts-critic/-/dts-critic-3.3.11.tgz#93b7c1ba8017b310623b7cfb72548e0e138b68c8"
-  integrity sha512-HMO2f9AO7ge44YO8OK18f+cxm/IaE1CFuyNFbfJRCEbyazWj5X5wWDF6W4CGdo5Ax0ILYVfJ7L/rOwuUN1fzWw==
-  dependencies:
-    "@definitelytyped/header-parser" latest
-    command-exists "^1.2.8"
-    rimraf "^3.0.2"
-    semver "^6.2.0"
-    tmp "^0.2.1"
-    yargs "^15.3.1"
-
-dtslint@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/dtslint/-/dtslint-4.2.1.tgz#c416db9bb7ce3face599b7097b9cd0e7f478fdf7"
-  integrity sha512-57mWY9osUEfS6k62ATS9RSgug1dZcuN4O31hO76u+iEexa6VUEbKoPGaA2mNtc0FQDcdTl0zEUtti79UQKSQyQ==
-  dependencies:
-    "@definitelytyped/header-parser" latest
-    "@definitelytyped/typescript-versions" latest
-    "@definitelytyped/utils" latest
-    dts-critic latest
-    fs-extra "^6.0.1"
-    json-stable-stringify "^1.0.1"
-    strip-json-comments "^2.0.1"
-    tslint "5.14.0"
-    tsutils "^2.29.0"
-    yargs "^15.1.0"
 
 duplexer@^0.1.1:
   version "0.1.2"
