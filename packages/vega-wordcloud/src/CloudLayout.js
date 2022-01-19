@@ -96,7 +96,7 @@ export default function() {
 
   function getContext(canvas) {
     canvas.width = canvas.height = 1;
-    var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2);
+    var ratio = Math.sqrt(canvas.getContext('2d', {willReadFrequently: true}).getImageData(0, 0, 1, 1).data.length >> 2);
     canvas.width = (cw << 5) / ratio;
     canvas.height = ch / ratio;
 
