@@ -1,9 +1,8 @@
 import {bisector} from 'd3-array';
-import {Intersect} from './constants';
+import {$selectionId, Intersect} from './constants';
 import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
 
-const SELECTION_ID = '_vgsid_',
-    TYPE_ENUM = 'E',
+const TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
@@ -105,8 +104,7 @@ export function selectionTest(name, datum, op) {
   return n && intersect;
 }
 
-const selectionId = field(SELECTION_ID),
-  bisect = bisector(selectionId),
+const bisect = bisector($selectionId),
   bisectLeft = bisect.left,
   bisectRight = bisect.right;
 
@@ -115,11 +113,11 @@ export function selectionIdTest(name, datum, op) {
       entries = data ? data.values.value : [],
       unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       intersect = op === Intersect,
-      value = selectionId(datum),
+      value = $selectionId(datum),
       index = bisectLeft(entries, value);
 
   if (index === entries.length) return false;
-  if (selectionId(entries[index]) !== value) return false;
+  if ($selectionId(entries[index]) !== value) return false;
 
   if (unitIdx && intersect) {
     if (unitIdx.size === 1) return true;
