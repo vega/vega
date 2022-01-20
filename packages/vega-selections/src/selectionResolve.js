@@ -1,5 +1,6 @@
-import {And, Or, Union, VlMulti, VlPoint} from './constants';
+import {intersection, union} from 'd3-array';
 import {array, toNumber} from 'vega-util';
+import {$selectionId, And, Or, SelectionId, Union, VlMulti, VlPoint} from './constants';
 
 /**
  * Resolves selection for use as a scale domain or reads via the API.
@@ -18,7 +19,7 @@ export function selectionResolve(name, op, isMulti, vl5) {
   var data = this.context.data[name],
     entries = data ? data.values.value : [],
     resolved = {}, multiRes = {}, types = {},
-    entry, fields, values, unit, field, res, resUnit, type, union,
+    entry, fields, values, unit, field, value, res, resUnit, type, union,
     n = entries.length, i = 0, j, m;
 
   // First union all entries within the same unit.
@@ -28,34 +29,51 @@ export function selectionResolve(name, op, isMulti, vl5) {
     fields = entry.fields;
     values = entry.values;
 
-    for (j = 0, m = fields.length; j < m; ++j) {
-      field = fields[j];
-      res = resolved[field.field] || (resolved[field.field] = {});
-      resUnit = res[unit] || (res[unit] = []);
-      types[field.field] = type = field.type.charAt(0);
-      union = ops[type + '_union'];
-      res[unit] = union(resUnit, array(values[j]));
-    }
+    if (fields && values) { // Intentional selection stores
+      for (j = 0, m = fields.length; j < m; ++j) {
+        field = fields[j];
+        res = resolved[field.field] || (resolved[field.field] = {});
+        resUnit = res[unit] || (res[unit] = []);
+        types[field.field] = type = field.type.charAt(0);
+        union = ops[`${type}_union`];
+        res[unit] = union(resUnit, array(values[j]));
+      }
 
-    // If the same multi-selection is repeated over views and projected over
-    // an encoding, it may operate over different fields making it especially
-    // tricky to reliably resolve it. At best, we can de-dupe identical entries
-    // but doing so may be more computationally expensive than it is worth.
-    // Instead, for now, we simply transform our store representation into
-    // a more human-friendly one.
-    if (isMulti) {
-      resUnit = multiRes[unit] || (multiRes[unit] = []);
-      resUnit.push(array(values).reduce((obj, curr, j) => (obj[fields[j].field] = curr, obj), {}));
+      // If the same multi-selection is repeated over views and projected over
+      // an encoding, it may operate over different fields making it especially
+      // tricky to reliably resolve it. At best, we can de-dupe identical entries
+      // but doing so may be more computationally expensive than it is worth.
+      // Instead, for now, we simply transform our store representation into
+      // a more human-friendly one.
+      if (isMulti) {
+        resUnit = multiRes[unit] || (multiRes[unit] = []);
+        resUnit.push(array(values).reduce((obj, curr, j) => (obj[fields[j].field] = curr, obj), {}));
+      }
+    } else {  // Short circuit extensional selectionId stores which hold sorted IDs unique to each unit.
+      field = SelectionId;
+      value = $selectionId(entry);
+      res = resolved[field] || (resolved[field] = {});
+      resUnit = res[unit] || (res[unit] = []);
+      resUnit.push(value);
+
+      if (isMulti) {
+        resUnit = multiRes[unit] || (multiRes[unit] = []);
+        resUnit.push({[SelectionId]: value});
+      }
     }
   }
 
   // Then resolve fields across units as per the op.
   op = op || Union;
-  Object.keys(resolved).forEach(field => {
-    resolved[field] = Object.keys(resolved[field])
-      .map(unit => resolved[field][unit])
-      .reduce((acc, curr) => acc === undefined ? curr : ops[types[field] + '_' + op](acc, curr));
-  });
+  if (resolved[SelectionId]) {
+    resolved[SelectionId] = ops[`${SelectionId}_${op}`](...Object.values(resolved[SelectionId]));
+  } else {
+    Object.keys(resolved).forEach(field => {
+      resolved[field] = Object.keys(resolved[field])
+        .map(unit => resolved[field][unit])
+        .reduce((acc, curr) => acc === undefined ? curr : ops[`${types[field]}_${op}`](acc, curr));
+    });
+  }
 
   entries = Object.keys(multiRes);
   if (isMulti && entries.length) {
@@ -69,6 +87,9 @@ export function selectionResolve(name, op, isMulti, vl5) {
 }
 
 var ops = {
+  [`${SelectionId}_union`]: union,
+  [`${SelectionId}_intersect`]: intersection,
+
   E_union: function(base, value) {
     if (!base.length) return value;
 
