@@ -3,7 +3,6 @@ import { field } from 'vega-util';
 import intersect from './intersect';
 
 
-const SELECTION_ID = '_vgsid_';
 
 
 /**
