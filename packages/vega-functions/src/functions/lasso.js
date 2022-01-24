@@ -1,8 +1,4 @@
-import { getScale } from '../scales';
-import { field } from 'vega-util';
 import intersect from './intersect';
-
-
 
 
 /**
@@ -15,16 +11,16 @@ import intersect from './intersect';
  * @returns a new array containing the lasso with the new point
  */
 export function lassoAppend(lasso, x, y, minDist = 5) {
-    const last = lasso[lasso.length - 1];
+  const last = lasso[lasso.length - 1];
 
-    // Add point to lasso if distance to last point exceed minDist or its the first point
-    if (last === undefined || Math.sqrt(((last[0] - x) ** 2) + ((last[1] - y) ** 2)) > minDist) {
-        lasso.push([x, y]);
+  // Add point to lasso if distance to last point exceed minDist or its the first point
+  if (last === undefined || Math.sqrt(((last[0] - x) ** 2) + ((last[1] - y) ** 2)) > minDist) {
+    lasso.push([x, y]);
 
-        return [...lasso];
-    }
+    return [...lasso];
+  }
 
-    return lasso;
+  return lasso;
 }
 
 
@@ -35,75 +31,58 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
  * @returns the svg path command that draws the lasso
  */
 export function lassoPath(lasso) {
-    let svg = '';
-    for (const [i, [x, y]] of lasso.entries()) {
-        svg += i === 0 
-          ? `M ${x},${y} `
-          : i === lasso.length -1
-          ? ' Z'
-          : `L ${x},${y} `;
-    }
+  let svg = '';
+  for (const [i, [x, y]] of lasso.entries()) {
+    svg += i === 0
+      ? `M ${x},${y} `
+      : i === lasso.length - 1
+        ? ' Z'
+        : `L ${x},${y} `;
+  }
 
-    return svg;
+  return svg;
 }
 
 
 
 /**
- * Inverts the lasso from pixel space to an array of vega ids
+ * Inverts the lasso from pixel space to an array of vega scenegraph tuples
  * 
  * @param {*} data the dataset
  * @param {*} pixelLasso the lasso in pixel space, [[x,y], [x,y], ...]
- * @param {*} xScaleName the name of the x scale
- * @param {*} xFieldName the name of the x field
- * @param {*} yScaleName the name of the y scale
- * @param {*} yFieldName the name of the y field
- * @returns an array of vega ids
+ * 
+ * @returns an array of vega scenegraph tuples
  */
-export function invertLasso(markname, pixelLasso, xScaleName, xFieldName, yScaleName, yFieldName) {
-    const ids = [];
+export function intersectLasso(markname, pixelLasso) {
+  const tuples = [];
 
-    const xScale = getScale(xScaleName, this.context);
-    const yScale = getScale(yScaleName, this.context);
+  const bounds = {
+    left: Number.MAX_SAFE_INTEGER,
+    right: Number.MIN_SAFE_INTEGER,
+    top: Number.MAX_SAFE_INTEGER,
+    bottom: Number.MIN_SAFE_INTEGER
+  };
 
-    const dataLasso = [];
+  // Get bounding box around lasso
+  for (const [px, py] of pixelLasso) {
+    if (px < bounds.left) bounds.left = px;
+    if (px > bounds.right) bounds.right = px;
+    if (py < bounds.top) bounds.top = py;
+    if (py > bounds.bottom) bounds.bottom = py;
+  }
 
-    const bounds = {
-        left: Number.MAX_SAFE_INTEGER,
-        right: Number.MIN_SAFE_INTEGER,
-        top: Number.MAX_SAFE_INTEGER,
-        bottom: Number.MIN_SAFE_INTEGER
-    };
+  const intersection = intersect([[bounds.left, bounds.top], [bounds.right, bounds.bottom]],
+    { markname },
+    this.context.dataflow.scenegraph().root);
 
-    // Get bounding box around lasso
-    for (const [px, py] of pixelLasso) {
-        const dataPoint = [xScale.invert(px), yScale.invert(py)];
-        dataLasso.push(dataPoint);
-
-        if (px < bounds.left) bounds.left = px;
-        if (px > bounds.right) bounds.right = px;
-        if (py < bounds.top) bounds.top = py;
-        if (py > bounds.bottom) bounds.bottom = py;
+  // Check every point against the lasso
+  for (const tuple of intersection) {
+    if (pointInPolygon([tuple.x, tuple.y], pixelLasso)) {
+      tuples.push(tuple);
     }
+  }
 
-    const intersection = intersect([[bounds.left, bounds.top], [bounds.right, bounds.bottom]],
-        { markname },
-        this.context.dataflow.scenegraph().root);
-
-    // Check every point against the lasso
-    for (const tuple of intersection) {
-        const datum = tuple.datum;
-
-        // TODO: check if x,y is in the datum
-        const x = field(xFieldName)(datum);
-        const y = field(yFieldName)(datum);
-
-        if (pointInPolygon([x, y], dataLasso)) {
-            ids.push(datum[SELECTION_ID]);
-        }
-    }
-
-    return ids;
+  return tuples;
 }
 
 
@@ -119,19 +98,19 @@ export function invertLasso(markname, pixelLasso, xScaleName, xFieldName, yScale
  * @returns true if the point lies inside the polygon, false otherwise
  */
 function pointInPolygon(test, polygon) {
-    const [testx, testy] = test;
-    var intersections = 0;
+  const [testx, testy] = test;
+  var intersections = 0;
 
-    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const [prevX, prevY] = polygon[j];
-        const [x, y] = polygon[i];
+  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [prevX, prevY] = polygon[j];
+    const [x, y] = polygon[i];
 
-        // count intersections
-        if (((y > testy) != (prevY > testy)) && (testx < (prevX - x) * (testy - y) / (prevY - y) + x)) {
-            intersections++;
-        }
+    // count intersections
+    if (((y > testy) != (prevY > testy)) && (testx < (prevX - x) * (testy - y) / (prevY - y) + x)) {
+      intersections++;
     }
+  }
 
-    // point is in polygon if intersection count is odd
-    return intersections & 1;
+  // point is in polygon if intersection count is odd
+  return intersections & 1;
 }

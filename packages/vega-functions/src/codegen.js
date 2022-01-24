@@ -152,7 +152,7 @@ import {
 } from './functions/sequence';
 
 import {
-  invertLasso,
+  intersectLasso,
   lassoAppend,
   lassoPath
 } from './functions/lasso';
@@ -297,7 +297,7 @@ export const functionContext = {
   modify,
   lassoAppend,
   lassoPath,
-  invertLasso
+  intersectLasso
 };
 
 const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
