@@ -19,7 +19,7 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
     const last = lasso[lasso.length - 1];
 
     // Add point to lasso if distance to last point exceed minDist or its the first point
-    if (last === undefined || Math.sqrt(Math.pow((last[0] - x), 2) + Math.pow((last[1] - y), 2)) > minDist) {
+    if (last === undefined || Math.sqrt(((last[0] - x) ** 2) + ((last[1] - y) ** 2)) > minDist) {
         lasso.push([x, y]);
 
         return [...lasso];
