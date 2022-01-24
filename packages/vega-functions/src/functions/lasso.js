@@ -37,18 +37,12 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
  */
 export function lassoPath(lasso) {
     let svg = '';
-    let i = 0;
-
-    for (const [x, y] of lasso) {
-        if (i === 0) {
-            svg = svg + `M ${x},${y} `;
-        } else if (i === lasso.length - 1) {
-            svg = svg + ' Z';
-        } else {
-            svg = svg + `L ${x},${y} `;
-        }
-
-        i = i + 1;
+    for (const [i, [x, y]] of lasso.entries()) {
+        svg += i === 0 
+          ? `M ${x},${y} `
+          : i === lasso.length -1
+          ? ' Z'
+          : `L ${x},${y} `;
     }
 
     return svg;
