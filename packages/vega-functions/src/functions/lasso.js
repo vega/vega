@@ -75,13 +75,7 @@ export function intersectLasso(markname, pixelLasso) {
     this.context.dataflow.scenegraph().root);
 
   // Check every point against the lasso
-  for (const tuple of intersection) {
-    if (pointInPolygon([tuple.x, tuple.y], pixelLasso)) {
-      tuples.push(tuple);
-    }
-  }
-
-  return tuples;
+  return intersection.filter(tuple => pointInPolygon(tuple.x, tuple.y, pixelLasso));
 }
 
 
