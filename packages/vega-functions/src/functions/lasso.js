@@ -91,7 +91,7 @@ export function intersectLasso(markname, pixelLasso) {
  * @returns true if the point lies inside the polygon, false otherwise
  */
 function pointInPolygon(testx, testy, polygon) {
-  var intersections = 0;
+  let intersections = 0;
 
   for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const [prevX, prevY] = polygon[j];
