@@ -90,7 +90,7 @@ export function intersectLasso(markname, pixelLasso) {
 function pointInPolygon(testx, testy, polygon) {
   let intersections = 0;
 
-  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+  let (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const [prevX, prevY] = polygon[j];
     const [x, y] = polygon[i];
 
