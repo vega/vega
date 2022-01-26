@@ -54,7 +54,6 @@ export function lassoPath(lasso) {
  * @returns an array of vega scenegraph tuples
  */
 export function intersectLasso(markname, pixelLasso) {
-  const tuples = [];
 
   const bounds = {
     left: Number.MAX_SAFE_INTEGER,
