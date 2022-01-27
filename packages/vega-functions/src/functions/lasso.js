@@ -31,8 +31,8 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
  * @returns the svg path command that draws the lasso
  */
 export function lassoPath(lasso) {
-  return lasso.entries().reduce((svg, [i, [x, y]]) => {
-    return svg += i === 0
+  return (lasso ?? []).reduce((svg, [x, y], i) => {
+    return svg += i == 0
       ? `M ${x},${y} `
       : i === lasso.length - 1
         ? ' Z'
