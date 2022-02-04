@@ -1,5 +1,5 @@
 import intersect from './intersect';
-
+import { Bounds } from 'vega-scenegraph';
 
 /**
  * Appends a new point to the lasso
@@ -11,16 +11,16 @@ import intersect from './intersect';
  * @returns a new array containing the lasso with the new point
  */
 export function lassoAppend(lasso, x, y, minDist = 5) {
-  const last = lasso[lasso.length - 1];
+    const last = lasso[lasso.length - 1];
 
-  // Add point to lasso if distance to last point exceed minDist or its the first point
-  if (last === undefined || Math.sqrt(((last[0] - x) ** 2) + ((last[1] - y) ** 2)) > minDist) {
-    lasso.push([x, y]);
+    // Add point to lasso if distance to last point exceed minDist or its the first point
+    if (last === undefined || Math.sqrt(((last[0] - x) ** 2) + ((last[1] - y) ** 2)) > minDist) {
+        lasso.push([x, y]);
 
-    return [...lasso];
-  }
+        return [...lasso];
+    }
 
-  return lasso;
+    return lasso;
 }
 
 
@@ -31,13 +31,13 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
  * @returns the svg path command that draws the lasso
  */
 export function lassoPath(lasso) {
-  return (lasso ?? []).reduce((svg, [x, y], i) => {
-    return svg += i == 0
-      ? `M ${x},${y} `
-      : i === lasso.length - 1
-        ? ' Z'
-        : `L ${x},${y} `;
-  }, '');
+    return (lasso ?? []).reduce((svg, [x, y], i) => {
+        return svg += i == 0
+            ? `M ${x},${y} `
+            : i === lasso.length - 1
+                ? ' Z'
+                : `L ${x},${y} `;
+    }, '');
 }
 
 
@@ -47,32 +47,37 @@ export function lassoPath(lasso) {
  * 
  * @param {*} data the dataset
  * @param {*} pixelLasso the lasso in pixel space, [[x,y], [x,y], ...]
+ * @param {*} unit the unit where the lasso is defined
  * 
  * @returns an array of vega scenegraph tuples
  */
-export function intersectLasso(markname, pixelLasso) {
+export function intersectLasso(markname, pixelLasso, unit) {
+    const { x, y, mark } = unit;
 
-  const bounds = {
-    left: Number.MAX_SAFE_INTEGER,
-    right: Number.MIN_SAFE_INTEGER,
-    top: Number.MAX_SAFE_INTEGER,
-    bottom: Number.MIN_SAFE_INTEGER
-  };
+    const bb = new Bounds().set(
+        Number.MAX_SAFE_INTEGER,
+        Number.MAX_SAFE_INTEGER,
+        Number.MIN_SAFE_INTEGER,
+        Number.MIN_SAFE_INTEGER
+    );
 
-  // Get bounding box around lasso
-  for (const [px, py] of pixelLasso) {
-    if (px < bounds.left) bounds.left = px;
-    if (px > bounds.right) bounds.right = px;
-    if (py < bounds.top) bounds.top = py;
-    if (py > bounds.bottom) bounds.bottom = py;
-  }
+    // Get bounding box around lasso
+    for (const [px, py] of pixelLasso) {
+        if (px < bb.x1) bb.x1 = px;
+        if (px > bb.x2) bb.x2 = px;
+        if (py < bb.y1) bb.y1 = py;
+        if (py > bb.y2) bb.y2 = py;
+    }
 
-  const intersection = intersect([[bounds.left, bounds.top], [bounds.right, bounds.bottom]],
-    { markname },
-    this.context.dataflow.scenegraph().root);
+    // Translate bb against unit coordinates
+    bb.translate(x, y);
 
-  // Check every point against the lasso
-  return intersection.filter(tuple => pointInPolygon(tuple.x, tuple.y, pixelLasso));
+    const intersection = intersect([[bb.x1, bb.y1], [bb.x2, bb.y2]],
+        markname,
+        mark);
+
+    // Check every point against the lasso
+    return intersection.filter(tuple => pointInPolygon(tuple.x, tuple.y, pixelLasso));
 }
 
 
@@ -88,18 +93,18 @@ export function intersectLasso(markname, pixelLasso) {
  * @returns true if the point lies inside the polygon, false otherwise
  */
 function pointInPolygon(testx, testy, polygon) {
-  let intersections = 0;
+    let intersections = 0;
 
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [prevX, prevY] = polygon[j];
-    const [x, y] = polygon[i];
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const [prevX, prevY] = polygon[j];
+        const [x, y] = polygon[i];
 
-    // count intersections
-    if (((y > testy) != (prevY > testy)) && (testx < (prevX - x) * (testy - y) / (prevY - y) + x)) {
-      intersections++;
+        // count intersections
+        if (((y > testy) != (prevY > testy)) && (testx < (prevX - x) * (testy - y) / (prevY - y) + x)) {
+            intersections++;
+        }
     }
-  }
 
-  // point is in polygon if intersection count is odd
-  return intersections & 1;
+    // point is in polygon if intersection count is odd
+    return intersections & 1;
 }
