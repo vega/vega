@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "d3-array": "^2.7.1",
-    "d3-timer": "^2.0.0",
+    "d3-timer": "^3.0.1",
     "vega-dataflow": "^5.7.3",
     "vega-format": "^1.0.4",
     "vega-functions": "^5.10.0",
