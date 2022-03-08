@@ -16,7 +16,7 @@
     "format-dataflow-tests": "prettier --write --ignore-path none tests/dataflow/*.ts",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
-    "test": "yarn format && dtslint ."
+    "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib"
   },
   "dependencies": {
     "vega-event-selector": "^3.0.0",
