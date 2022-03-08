@@ -22,7 +22,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "d3-geo-projection": "^3.0.0",
+    "d3-geo-projection": "^4.0.0",
     "vega-projection": "^1.4.5"
   }
 }
