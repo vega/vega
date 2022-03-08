@@ -219,7 +219,7 @@ export const functionContext = {
   isTuple,
   isValid(_) { return _ != null && _ === _; },
   toBoolean,
-  toDate,
+  toDate(_) { return toDate(_); }, // suppress extra arguments
   toNumber,
   toString,
   indexof,
@@ -267,7 +267,7 @@ export const functionContext = {
   warn,
   info,
   debug,
-  extent,
+  extent(_) { return extent(_); }, // suppress extra arguments
   inScope,
   intersect,
   clampRange,
