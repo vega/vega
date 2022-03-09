@@ -78,7 +78,8 @@
         {"name": "parallel-coordinates"},
         {"name": "word-cloud"},
         {"name": "beeswarm-plot"},
-        {"name": "calendar-view"}
+        {"name": "calendar-view"},
+        {"name": "packed-bubble-chart"}
     ],
     "Custom Designs": [
         {"name": "budget-forecasts"},
