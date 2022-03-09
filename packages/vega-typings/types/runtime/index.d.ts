@@ -203,7 +203,7 @@ export function inferTypes(
   fields: readonly string[],
 ): { [field: string]: TypeInference };
 
-export type EventListenerHandler = (event: ScenegraphEvent, item?: Item) => void;
+export type EventListenerHandler = (event: ScenegraphEvent, item?: Item | null) => void;
 export type SignalListenerHandler = (name: string, value: SignalValue) => void;
 export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
