@@ -18,6 +18,7 @@
     "format": "yarn lint --fix",
     "postinstall": "yarn data"
   },
+  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.5",
@@ -49,6 +50,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "dependencies": {}
+  ]
 }
