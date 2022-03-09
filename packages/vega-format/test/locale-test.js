@@ -1,6 +1,4 @@
 var tape = require('tape'),
-    d3f = require('d3-format'),
-    d3t = require('d3-time-format'),
     vega = require('../'),
     {deDE} = require('./util');
 
@@ -61,10 +59,6 @@ tape('defaultLocale sets the default locale', t => {
   // methods from original default should be unchanged
   t.equal(init.format(',.2f')(1234.1), '1,234.10');
   t.equal(init.timeFormat('%d %B %Y')(d), '01 March 2000');
-
-  // d3 methods should be unchanged
-  t.equal(d3f.format(',.2f')(1234.1), '1,234.10');
-  t.equal(d3t.timeFormat('%d %B %Y')(d), '01 March 2000');
 
   // reset to current d3 default locales
   const reset = vega.resetDefaultLocale();

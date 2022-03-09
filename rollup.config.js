@@ -8,7 +8,7 @@ import { terser } from 'rollup-plugin-terser';
 
 const pkg = require('./package.json');
 
-const d3CoreDeps = [
+const d3Deps = [
   'd3-array',
   'd3-color',
   'd3-dispatch',
@@ -24,7 +24,16 @@ const d3CoreDeps = [
   'd3-time',
   'd3-time-format',
   'd3-timer',
-  'd3-delaunay',
+  'd3-delaunay'
+];
+
+const esmDeps = [
+  ...d3Deps,
+  'd3-geo-projection'
+];
+
+const d3CoreDeps = [
+  ...d3Deps,
   'topojson-client'
 ];
 
@@ -107,7 +116,7 @@ export default function(commandLineArgs) {
 
   const outputs = [{
     input: './index.js',
-    external: dependencies,
+    external: dependencies.filter(dep => esmDeps.indexOf(dep) < 0),
     onwarn,
     output: {
       file: pkg.main,

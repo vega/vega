@@ -1,6 +1,6 @@
 {
   "name": "vega-transforms",
-  "version": "4.9.4",
+  "version": "4.10.0",
   "description": "Data processing transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -28,10 +28,10 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1",
+    "d3-array": "^3.1.1",
     "vega-dataflow": "^5.7.4",
-    "vega-statistics": "^1.7.9",
-    "vega-time": "^2.0.4",
+    "vega-statistics": "^1.8.0",
+    "vega-time": "^2.1.0",
     "vega-util": "^1.16.1"
   }
 }

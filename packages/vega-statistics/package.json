@@ -1,6 +1,6 @@
 {
   "name": "vega-statistics",
-  "version": "1.7.10",
+  "version": "1.8.0",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
     "vega",
@@ -22,6 +22,6 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1"
+    "d3-array": "^3.1.1"
   }
 }

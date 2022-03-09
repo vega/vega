@@ -59,6 +59,9 @@ export {
   pickVisit as scenePickVisit
 } from './src/util/visit';
 
+// for testing purposes
+export {path} from 'd3-path';
+
 // deprecated, remove in next major version
 export {resetSVGClipId} from './src/util/svg/clip';
 

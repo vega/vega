@@ -1,6 +1,6 @@
 {
   "name": "vega-loader",
-  "version": "4.4.1",
+  "version": "4.5.0",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",
@@ -35,10 +35,10 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-dsv": "^2.0.0",
-    "node-fetch": "^2.6.1",
+    "d3-dsv": "^3.0.1",
+    "node-fetch": "^2.6.7",
     "topojson-client": "^3.1.0",
-    "vega-format": "^1.0.4",
+    "vega-format": "^1.1.0",
     "vega-util": "^1.16.0"
   }
 }
