@@ -48,7 +48,11 @@ inherits(TimeUnit, Transform, {
         max = floor.stop || -Infinity,
         flag = pulse.ADD;
 
-    if (_.modified() || pulse.modified(accessorFields(field))) {
+    if (
+      _.modified() ||
+      pulse.changed(pulse.REM) ||
+      pulse.modified(accessorFields(field))
+    ) {
       pulse = pulse.reflow(true);
       flag = pulse.SOURCE;
       min = Infinity;
