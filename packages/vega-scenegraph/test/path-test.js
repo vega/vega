@@ -1,6 +1,6 @@
 var tape = require('tape'),
-    context = require('d3-path').path,
     vega = require('../'),
+    context = vega.path,
     Bounds = vega.Bounds,
     pathParse = vega.pathParse,
     pathRender = vega.pathRender;

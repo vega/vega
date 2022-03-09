@@ -1,5 +1,4 @@
 var tape = require('tape'),
-    d3 = require('d3-array'),
     stats = require('../'),
     gaussian = stats.randomNormal();
 
@@ -27,34 +26,34 @@ function samples(dist, n) {
 }
 
 tape('kde generates samples', t => {
-  let kde = stats.randomKDE(d3.range(0, 1000)
-    .map(gaussian.sample));
+  let kde = stats.randomKDE(samples(gaussian, 1000));
   check(t, 0, 1, samples(kde, 1000));
 
-  kde = stats.randomKDE(d3.range(0, 1000)
-    .map(() => 5 * gaussian.sample()));
+  kde = stats.randomKDE(samples(stats.randomNormal(0, 5), 1000));
   check(t, 0, 5, samples(kde, 1000));
 
   t.end();
 });
 
 tape('kde approximates the pdf', t => {
-  var data = d3.range(0, 1000).map(gaussian.sample),
+  var data = samples(gaussian, 1000),
       kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(x => Math.abs(kde.pdf(x) - gaussian.pdf(x)));
+      domain = Array.from({ length: 20 }, (_, i) => -5 + 0.5 * i),
+      error = domain.map(x => Math.abs(kde.pdf(x) - gaussian.pdf(x))),
+      sum_err = error.reduce((a, b) => a + b, 0);
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
+  t.ok((sum_err / domain.length) < 0.01);
   t.end();
 });
 
 tape('kde approximates the cdf', t => {
-  var data = d3.range(0, 1000).map(gaussian.sample),
+  var data = samples(gaussian, 1000),
       kde = stats.randomKDE(data),
-      domain = d3.range(-5, 5.1, 0.5),
-      error = domain.map(x => Math.abs(kde.cdf(x) - gaussian.cdf(x)));
+      domain = Array.from({ length: 20 }, (_, i) => -5 + 0.5 * i),
+      error = domain.map(x => Math.abs(kde.cdf(x) - gaussian.cdf(x))),
+      sum_err = error.reduce((a, b) => a + b, 0);
 
-  t.ok((d3.sum(error) / domain.length) < 0.01);
+  t.ok((sum_err / domain.length) < 0.01);
   t.end();
 });
 

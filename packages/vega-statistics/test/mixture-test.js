@@ -1,5 +1,4 @@
 var tape = require('tape'),
-    d3 = require('d3-array'),
     stats = require('../'),
     gaussian = stats.randomNormal();
 
@@ -48,7 +47,7 @@ tape('mixture generates samples', t => {
 
 tape('mixture evaluates the pdf', t => {
   var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
-      domain = d3.range(-5, 5.1, 0.5),
+      domain = Array.from({ length: 20 }, (_, i) => -5 + 0.5 * i),
       error = domain.reduce((sum, x) => sum + Math.abs(mix.pdf(x) - gaussian.pdf(x)), 0);
 
   t.ok((error / domain.length) < 0.01);
@@ -57,7 +56,7 @@ tape('mixture evaluates the pdf', t => {
 
 tape('mixture approximates the cdf', t => {
   var mix = stats.randomMixture([stats.randomNormal(), stats.randomNormal()]),
-      domain = d3.range(-5, 5.1, 0.5),
+      domain = Array.from({ length: 20 }, (_, i) => -5 + 0.5 * i),
       error = domain.reduce((sum, x) => sum + Math.abs(mix.cdf(x) - gaussian.cdf(x)), 0);
 
   t.ok((error / domain.length) < 0.01);
