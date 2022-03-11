@@ -8,7 +8,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {rootAttributes, styles} from './util/svg/styles';
+import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles';
 import {inherits, isArray} from 'vega-util';
 
 const RootIndex = 0,
@@ -332,11 +332,11 @@ inherits(SVGRenderer, Renderer, {
   style(el, item) {
     if (item == null) return;
 
-    for (const prop in styles) {
+    for (const prop in stylesAttr) {
       let value = prop === 'font' ? fontFamily(item) : item[prop];
       if (value === values[prop]) continue;
 
-      const name = styles[prop];
+      const name = stylesAttr[prop];
       if (value == null) {
         el.removeAttribute(name);
       } else {
@@ -347,6 +347,10 @@ inherits(SVGRenderer, Renderer, {
       }
 
       values[prop] = value;
+    }
+
+    for (const prop in stylesCss) {
+      setStyle(el, stylesCss[prop], item[prop]);
     }
   },
 
