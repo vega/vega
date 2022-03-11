@@ -8,7 +8,7 @@ import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/tex
 import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
-import {rootAttributes, styles} from './util/svg/styles';
+import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles';
 import {extend, inherits, isArray} from 'vega-util';
 
 export default function SVGStringRenderer(loader) {
@@ -313,6 +313,7 @@ inherits(SVGStringRenderer, Renderer, {
 
 // Helper function for attr for style presentation attributes
 function style(s, item, scene, tag, defs) {
+  let styleList;
   if (item == null) return s;
 
   if (tag === 'bgrect' && scene.interactive === false) {
@@ -328,7 +329,10 @@ function style(s, item, scene, tag, defs) {
   }
 
   if (tag === 'image' && item.smooth === false) {
-    s.style = 'image-rendering: optimizeSpeed; image-rendering: pixelated;';
+    styleList = [
+      'image-rendering: optimizeSpeed;',
+      'image-rendering: pixelated;'
+    ];
   }
 
   if (tag === 'text') {
@@ -339,9 +343,9 @@ function style(s, item, scene, tag, defs) {
     s['font-weight'] = item.fontWeight;
   }
 
-  for (const prop in styles) {
+  for (const prop in stylesAttr) {
     let value = item[prop];
-    const name = styles[prop];
+    const name = stylesAttr[prop];
 
     if (value === 'transparent' && (name === 'fill' || name === 'stroke')) {
       // transparent is not a legal SVG value
@@ -352,6 +356,17 @@ function style(s, item, scene, tag, defs) {
       }
       s[name] = value;
     }
+  }
+
+  for (const prop in stylesCss) {
+    const value = item[prop];
+    if (value != null) {
+      styleList = styleList || [];
+      styleList.push(`${stylesCss[prop]}: ${value};`);
+    }
+  }
+  if (styleList) {
+    s.style = styleList.join(' ');
   }
 
   return s;
