@@ -16638,7 +16638,8 @@
 
   function parse$3(path) {
     const commands = [];
-    path.match(commandPattern).forEach(str => {
+    const matches = path.match(commandPattern) || [];
+    matches.forEach(str => {
       let cmd = str[0];
       const type = cmd.toLowerCase(); // parse parameters
 
@@ -36559,7 +36560,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.22.0";
+  var version = "5.22.1";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
