@@ -6,8 +6,9 @@ const flagPattern = /^[01]/;
 
 export default function parse(path) {
   const commands = [];
+  const matches = path.match(commandPattern) || [];
 
-  path.match(commandPattern).forEach(str => {
+  matches.forEach(str => {
     let cmd = str[0];
     const type = cmd.toLowerCase();
 
