@@ -111,6 +111,13 @@ tape('pathParse should parse svg path', t => {
   t.end();
 });
 
+tape('pathParse should handle an empty string', t => {
+  const s = '';
+  const p = [];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
 tape('pathParse should handle repeated arguments', t => {
   const s = 'M 1 1 L 1 2 3 4';
   const p = [['M',1,1], ['L',1,2], ['L',3,4]];
