@@ -89,12 +89,12 @@ export type SceneGroup = SceneItem & {
 
 export type SceneSymbol = SceneItem & {
   fill: string;
-  fillOpacity: number;
+  fillOpacity?: number;
   shape: string;
   size: number;
-  stroke: string;
-  strokeWidth: number;
-  strokeOpacity: number;
+  stroke?: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
 };
 
 export type SceneTextBaseline = 'top' | 'middle' | 'bottom';
