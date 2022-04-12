@@ -50,6 +50,7 @@ export interface SceneItem {
   };
   x: number;
   y: number;
+  opacity?: number;
 }
 
 export type SceneAxis = SceneItem & {
@@ -58,12 +59,16 @@ export type SceneAxis = SceneItem & {
 
 export type SceneRect = SceneItem & {
   fill: string;
+  fillOpacity?: number;
+  stroke?: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
   height: number;
   width: number;
+  cornerRadius?: number;
 };
 
 export type SceneLine = SceneItem & {
-  opacity: number;
   stroke: string;
   strokeWidth: number;
   x2: number;
@@ -84,9 +89,12 @@ export type SceneGroup = SceneItem & {
 
 export type SceneSymbol = SceneItem & {
   fill: string;
+  fillOpacity?: number;
   shape: string;
   size: number;
-  strokeWidth: number;
+  stroke?: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
 };
 
 export type SceneTextBaseline = 'top' | 'middle' | 'bottom';
