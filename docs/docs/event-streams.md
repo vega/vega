@@ -175,7 +175,7 @@ The _source_ property supports the following options:
 
 - If undefined, uses the default _source_ property (either `view` or `scope`) as described in the [_source_ property documentation](#event-stream-objects).
 - A valid [mark type](../marks). For example, `arc`, `image`, or `rect`.
-- A mark name preprended by `@`. For example, `@cell`. Matching items must have the _name_ property specified in their [mark definition](../marks).
+- A mark name prepended by `@`. For example, `@cell`. Matching items must have the _name_ property specified in their [mark definition](../marks).
 - The string `*`, indicating any mark type, but excluding the view component itself.
 - The string `view` or `scope`, indicating event scopes as described in the [_source_ property documentation](#event-stream-objects).
 - The string `window`, indicating the [browser window object](https://developer.mozilla.org/en-US/docs/Web/API/Window).
