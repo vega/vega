@@ -198,7 +198,7 @@ Methods for invoking dataflow evaluation and view rendering.
 view.<b>runAsync</b>([<i>encode</i>, <i>prerun</i>, <i>postrun</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source")
 
-Evaluates the underlying dataflow graph and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves upon completion of dataflow processing and scengraph rendering. The optional *encode* argument is a String value indicating the name of a custom `"encode"` set to run in addition to the standard `"update"` encoder. Any scenegraph elements modified during dataflow evaluation will automatically be re-rendered in the view.
+Evaluates the underlying dataflow graph and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves upon completion of dataflow processing and scenegraph rendering. The optional *encode* argument is a String value indicating the name of a custom `"encode"` set to run in addition to the standard `"update"` encoder. Any scenegraph elements modified during dataflow evaluation will automatically be re-rendered in the view.
 
 Internally, this method invokes evaluation by the [Dataflow](https://github.com/vega/vega/blob/master/packages/vega-dataflow/src/dataflow/Dataflow.js) parent class, and then additionally performs rendering. The returned [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) will resolve after rendering operations are complete. This method should not be invoked repeatedly until a prior call resolves: callers should `await` the result of runAsync (or use `.then(...)` chaining) before re-invoking the method.
 
