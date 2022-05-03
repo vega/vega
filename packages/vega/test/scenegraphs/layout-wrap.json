@@ -4690,7 +4690,7 @@
                               "x": 0,
                               "y": 0,
                               "width": 48,
-                              "height": 12.5,
+                              "height": 11.75,
                               "opacity": 1
                             },
                             {
@@ -4737,9 +4737,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 16,
+                              "y": 14,
                               "width": 48,
-                              "height": 12.5,
+                              "height": 11.75,
                               "opacity": 1
                             }
                           ],
@@ -4780,7 +4780,7 @@
               "x": 910,
               "y": 0,
               "width": 56,
-              "height": 53,
+              "height": 50,
               "orient": "right"
             }
           ],
