@@ -45,7 +45,7 @@ The _units_ transform parameter accepts an array to indicate desired intervals o
 This example discretizes values in the _date_ field by year and Sunday-based week number (_units_), using two week intervals (_step_).
 
 ```json
-{"type": "timeunit", "field": "amount", "units": ["year", "week"], "step": 2}
+{"type": "timeunit", "field": "date", "units": ["year", "week"], "step": 2}
 ```
 
 Given the input data
@@ -77,7 +77,7 @@ Alternatively, a grouping by year and month is specified using `"units": ["year"
 This example discretizes values in the _date_ field by month, regardless of the year.
 
 ```json
-{"type": "timeunit", "field": "amount", "units": ["month"]}
+{"type": "timeunit", "field": "date", "units": ["month"]}
 ```
 
 Given the input data
