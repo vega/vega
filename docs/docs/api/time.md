@@ -39,7 +39,7 @@ Returns a standardized and sorted specifier for the given _units_, which must be
 
 <a name="timeUnitSpecifier" href="#timeUnitSpecifier">#</a>
 vega.<b>timeUnitSpecifier</b>(<i>units</i>[, <i>specifiers</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/units.js "Source")
 
 Returns a time format specifier string for the given time _units_. The optional _specifiers_ object provides a set of desired specifier sub-strings for customizing the resulting time formats. The _specifiers_ object may contain keys for both single time units (`"year"`) and time unit sequences (`"year-month-date"`). This method will first standardize the input time units using the [timeUnits](#timeUnits) method. It will then search, starting from the beginning of the units array, for the largest matching sequence defined in the specifiers object. Matching entries are then concatenated together, and the resulting string is whitespace-trimmed and returned.
 
@@ -81,7 +81,7 @@ The supported options properties are:
 
 <a name="timeFormat" href="#timeFormat">#</a>
 vega.<b>timeFormat</b>([<i>specifier</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-format/src/time.js "Source")
 
 Returns a function that takes a date or timestamp as input and returns a formatted string in the local timezone. If a string-valued format _specifier_ is provided, it must follow the [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) syntax. In this case, this method is equivalent to d3-time-format's [timeFormat](https://github.com/d3/d3-time-format/#timeFormat) method.
 
@@ -144,7 +144,7 @@ Returns the week number of the year for the given _date_, which should be either
 
 <a name="utcFormat" href="#utcFormat">#</a>
 vega.<b>utcFormat</b>([<i>specifier</i>])
-[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/format.js "Source")
+[<>](https://github.com/vega/vega/blob/master/packages/vega-format/src/time.js "Source")
 
 Returns a function that takes a date or timestamp as input and returns a formatted string in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC). If a string-valued format _specifier_ is provided, it must follow the [d3-time-format](https://github.com/d3/d3-time-format/#locale_format) syntax. In this case, this method is equivalent to d3-time-format's [utcFormat](https://github.com/d3/d3-time-format/#utcFormat) method.
 
