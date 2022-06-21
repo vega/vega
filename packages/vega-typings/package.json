@@ -19,6 +19,7 @@
     "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib"
   },
   "dependencies": {
+    "@types/geojson": "^7946.0.8",
     "vega-event-selector": "^3.0.0",
     "vega-expression": "^5.0.0",
     "vega-util": "^1.15.2"
