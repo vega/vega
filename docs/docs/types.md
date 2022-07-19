@@ -55,13 +55,13 @@ Accepts boolean values. For example: `true`, `false`.
 Accepts a valid CSS color string. For example: `#f304d3`, `#ccc`, `rgb(253, 12, 134)`, `steelblue`. Can also accept a color object to use various color spaces. For example:
 
 ```json
-"fill": {
-						"color": {
-							"h": { "value": 255 },
-							"s": { "value": 1 },
-							"l": { "value": 0.5 }
-						}
-				}
+"fill":  {
+    "color": {
+    "h": { "value": 255 },
+    "s": { "value": 1 },
+    "l": { "value": 0.5 }
+    }
+  }
 ```
 
 <br/><a name="Date" href="#Date">#</a>
