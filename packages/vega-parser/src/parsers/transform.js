@@ -11,8 +11,8 @@ export default function(spec, scope) {
   const def = definition(spec.type);
   if (!def) error('Unrecognized transform type: ' + stringValue(spec.type));
 
-  const t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope));
-  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t));
+  const t = entry(def.type.toLowerCase(), null, parseParameters(def, spec, scope), undefined, spec);
+  if (spec.signal) scope.addSignal(spec.signal, scope.proxy(t, spec), spec);
   t.metadata = def.metadata || {};
 
   return t;
@@ -54,29 +54,29 @@ function parseParameter(def, spec, scope) {
   }
 
   return def.array && !isSignal(value)
-    ? value.map(v => parameterValue(def, v, scope))
-    : parameterValue(def, value, scope);
+    ? value.map(v => parameterValue(def, v, scope, spec))
+    : parameterValue(def, value, scope, spec);
 }
 
 /**
  * Parse a single parameter value.
  */
-function parameterValue(def, value, scope) {
+function parameterValue(def, value, scope, src) {
   const type = def.type;
 
   if (isSignal(value)) {
     return isExpr(type) ? error('Expression references can not be signals.')
-         : isField(type) ? scope.fieldRef(value)
-         : isCompare(type) ? scope.compareRef(value)
+         : isField(type) ? scope.fieldRef(value, undefined, src)
+         : isCompare(type) ? scope.compareRef(value, src)
          : scope.signalRef(value.signal);
   } else {
     const expr = def.expr || isField(type);
-    return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as)
+    return expr && outerExpr(value) ? scope.exprRef(value.expr, value.as, src)
          : expr && outerField(value) ? fieldRef(value.field, value.as)
          : isExpr(type) ? parseExpression(value, scope)
          : isData(type) ? ref(scope.getData(value).values)
          : isField(type) ? fieldRef(value)
-         : isCompare(type) ? scope.compareRef(value)
+         : isCompare(type) ? scope.compareRef(value, src)
          : value;
   }
 }
@@ -101,16 +101,16 @@ function parseSubParameters(def, spec, scope) {
     if (!isArray(value)) { // signals not allowed!
       error('Expected an array of sub-parameters. Instead: ' + stringValue(value));
     }
-    return value.map(v => parseSubParameter(def, v, scope));
+    return value.map(v => parseSubParameter(def, v, scope, spec));
   } else {
-    return parseSubParameter(def, value, scope);
+    return parseSubParameter(def, value, scope, spec);
   }
 }
 
 /**
  * Parse a sub-parameter object.
  */
-function parseSubParameter(def, value, scope) {
+function parseSubParameter(def, value, scope, src) {
   const n =def.params.length;
   let pdef;
 
@@ -127,7 +127,7 @@ function parseSubParameter(def, value, scope) {
 
   // parse params, create Params transform, return ref
   const params = extend(parseParameters(pdef, value, scope), pdef.key);
-  return ref(scope.add(Params(params)));
+  return ref(scope.add(Params(params, undefined, undefined, src)));
 }
 
 // -- Utilities -----

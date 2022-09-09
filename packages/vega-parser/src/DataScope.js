@@ -43,7 +43,7 @@ function fieldKey(field) {
   return isString(field) ? field : null;
 }
 
-function addSortField(scope, p, sort) {
+function addSortField(scope, p, sort, src) {
   const as = aggrField(sort.op, sort.field);
   let s;
 
@@ -58,12 +58,12 @@ function addSortField(scope, p, sort) {
   }
   if (sort.op) {
     p.ops.push((s=sort.op.signal) ? scope.signalRef(s) : sort.op);
-    p.fields.push(scope.fieldRef(sort.field));
+    p.fields.push(scope.fieldRef(sort.field, undefined, src));
     p.as.push(as);
   }
 }
 
-function cache(scope, ds, name, optype, field, counts, index) {
+function cache(scope, ds, name, optype, field, counts, index, src) {
   const cache = ds[name] || (ds[name] = {}),
         sort = sortKey(counts);
 
@@ -78,10 +78,10 @@ function cache(scope, ds, name, optype, field, counts, index) {
 
   if (!v) {
     const params = counts
-      ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts)}
-      : {field: scope.fieldRef(field), pulse: ref(ds.output)};
-    if (sort) params.sort = scope.sortRef(counts);
-    op = scope.add(entry(optype, undefined, params));
+      ? {field: keyFieldRef, pulse: ds.countsRef(scope, field, counts, src)}
+      : {field: scope.fieldRef(field, undefined, src), pulse: ref(ds.output)};
+    if (sort) params.sort = scope.sortRef(counts, src);
+    op = scope.add(entry(optype, undefined, params, undefined, src));
     if (index) ds.index[field] = op;
     v = ref(op);
     if (k != null) cache[k] = v;
@@ -90,7 +90,7 @@ function cache(scope, ds, name, optype, field, counts, index) {
 }
 
 DataScope.prototype = {
-  countsRef(scope, field, sort) {
+  countsRef(scope, field, sort, src) {
     const ds = this,
           cache = ds.counts || (ds.counts = {}),
           k = fieldKey(field);
@@ -104,16 +104,16 @@ DataScope.prototype = {
 
     if (!v) {
       p = {
-        groupby: scope.fieldRef(field, 'key'),
+        groupby: scope.fieldRef(field, 'key', src),
         pulse: ref(ds.output)
       };
-      if (sort && sort.field) addSortField(scope, p, sort);
-      a = scope.add(Aggregate(p));
-      v = scope.add(Collect({pulse: ref(a)}));
+      if (sort && sort.field) addSortField(scope, p, sort, src);
+      a = scope.add(Aggregate(p, undefined, undefined, src));
+      v = scope.add(Collect({pulse: ref(a)}, undefined, undefined, src));
       v = {agg: a, ref: ref(v)};
       if (k != null) cache[k] = v;
     } else if (sort && sort.field) {
-      addSortField(scope, v.agg.params, sort);
+      addSortField(scope, v.agg.params, sort, src);
     }
 
     return v.ref;
@@ -123,16 +123,16 @@ DataScope.prototype = {
     return ref(this.values);
   },
 
-  extentRef(scope, field) {
-    return cache(scope, this, 'extent', 'extent', field, false);
+  extentRef(scope, field, src) {
+    return cache(scope, this, 'extent', 'extent', field, false, undefined, src);
   },
 
-  domainRef(scope, field) {
-    return cache(scope, this, 'domain', 'values', field, false);
+  domainRef(scope, field, src) {
+    return cache(scope, this, 'domain', 'values', field, false, undefined, src);
   },
 
-  valuesRef(scope, field, sort) {
-    return cache(scope, this, 'vals', 'values', field, sort || true);
+  valuesRef(scope, field, sort, src) {
+    return cache(scope, this, 'vals', 'values', field, sort || true, undefined, src);
   },
 
   lookupRef(scope, field) {

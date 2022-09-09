@@ -19,7 +19,7 @@ export default function(signal, scope) {
     });
   } else {
     // define a new signal in the current scope
-    const op = scope.addSignal(name, signal.value);
+    const op = scope.addSignal(name, signal.value, signal);
     if (signal.react === false) op.react = false;
     if (signal.bind) scope.addBinding(name, signal.bind);
   }

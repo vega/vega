@@ -15,7 +15,7 @@ import {fieldRef, isSignal, ref} from '../util';
 import {error} from 'vega-util';
 import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
 
-export default function(spec, scope) {
+export default function(spec, scope, src) {
   const role = getRole(spec),
         group = spec.type === GroupMark,
         facet = spec.from && spec.from.facet,
@@ -27,18 +27,18 @@ export default function(spec, scope) {
   const nested = role === MarkRole || layout || facet;
 
   // resolve input data
-  const input = parseData(spec.from, group, scope);
+  const input = parseData(spec.from, group, scope, src);
 
   // data join to map tuples to visual items
   op = scope.add(DataJoin({
     key:   input.key || (spec.key ? fieldRef(spec.key) : undefined),
     pulse: input.pulse,
     clean: !group
-  }));
+  }, undefined, undefined, src));
   const joinRef = ref(op);
 
   // collect visual items
-  op = store = scope.add(Collect({pulse: joinRef}));
+  op = store = scope.add(Collect({pulse: joinRef}, undefined, undefined, src));
 
   // connect visual items to scenegraph
   op = scope.add(Mark({
@@ -50,14 +50,14 @@ export default function(spec, scope) {
     parent:      scope.signals.parent ? scope.signalRef('parent') : null,
     index:       scope.markpath(),
     pulse:       ref(op)
-  }));
+  }, undefined, undefined, src));
   const markRef = ref(op);
 
   // add visual encoders
   op = enc = scope.add(Encode(parseEncode(
     spec.encode, spec.type, role, spec.style, scope,
     {mod: false, pulse: markRef}
-  )));
+  ), undefined, undefined, src));
 
   // monitor parent marks to propagate changes
   op.params.parent = scope.encode();
@@ -79,9 +79,9 @@ export default function(spec, scope) {
   // if item sort specified, perform post-encoding
   if (spec.sort) {
     op = scope.add(SortItems({
-      sort:  scope.compareRef(spec.sort),
+      sort:  scope.compareRef(spec.sort, src),
       pulse: ref(op)
-    }));
+    }, undefined, undefined, src));
   }
 
   const encodeRef = ref(op);
@@ -93,12 +93,12 @@ export default function(spec, scope) {
       legends:  scope.legends,
       mark:     markRef,
       pulse:    encodeRef
-    }));
+    }, undefined, undefined, src));
     layoutRef = ref(layout);
   }
 
   // compute bounding boxes
-  const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}));
+  const bound = scope.add(Bound({mark: markRef, pulse: layoutRef || encodeRef}, undefined, undefined, src));
   boundRef = ref(bound);
 
   // if group mark, recurse to parse nested content
@@ -106,7 +106,7 @@ export default function(spec, scope) {
     // juggle layout & bounds to ensure they run *after* any faceting transforms
     if (nested) { ops = scope.operators; ops.pop(); if (layout) ops.pop(); }
 
-    scope.pushState(encodeRef, layoutRef || boundRef, joinRef);
+    scope.pushState(encodeRef, layoutRef || boundRef, joinRef, src);
     facet ? parseFacet(spec, scope, input)          // explicit facet
         : nested ? parseSubflow(spec, scope, input) // standard mark group
         : scope.parse(spec); // guide group, we can avoid nested scopes
@@ -117,12 +117,12 @@ export default function(spec, scope) {
 
   // if requested, add overlap removal transform
   if (overlap) {
-    boundRef = parseOverlap(overlap, boundRef, scope);
+    boundRef = parseOverlap(overlap, boundRef, scope, src);
   }
 
   // render / sieve items
-  const render = scope.add(Render({pulse: boundRef})),
-        sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent()));
+  const render = scope.add(Render({pulse: boundRef}, undefined, undefined, src)),
+        sieve = scope.add(Sieve({pulse: ref(render)}, undefined, scope.parent(), src));
 
   // if mark is named, make accessible as reactive geometry
   // add trigger updates if defined
@@ -138,7 +138,7 @@ export default function(spec, scope) {
   }
 }
 
-function parseOverlap(overlap, source, scope) {
+function parseOverlap(overlap, source, scope, src) {
   const method = overlap.method,
         bound = overlap.bound,
         sep = overlap.separation;
@@ -150,7 +150,7 @@ function parseOverlap(overlap, source, scope) {
   };
 
   if (overlap.order) {
-    params.sort = scope.compareRef({field: overlap.order});
+    params.sort = scope.compareRef({field: overlap.order}, src);
   }
 
   if (bound) {
@@ -160,5 +160,5 @@ function parseOverlap(overlap, source, scope) {
     params.boundOrient = bound.orient;
   }
 
-  return ref(scope.add(Overlap(params)));
+  return ref(scope.add(Overlap(params, undefined, undefined, src)));
 }

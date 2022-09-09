@@ -87,7 +87,7 @@ function analyze(data, scope, ops) {
     output[0] = Relay({
       derive: modify,
       pulse: n ? upstream : upstream[0]
-    });
+    }, undefined, undefined, data);
     if (modify || n) {
       // collect derived and multi-pulse tuples
       output.splice(1, 0, collect());
@@ -95,7 +95,7 @@ function analyze(data, scope, ops) {
   }
 
   if (!source) output.push(collect());
-  output.push(Sieve({}));
+  output.push(Sieve({}, undefined, undefined, data));
   return output;
 }
 
@@ -111,5 +111,5 @@ function load(scope, data) {
     async:  data.async ? scope.property(data.async) : undefined,
     values: data.values ? scope.property(data.values) : undefined,
     format: scope.objectProperty(data.format)
-  });
+  }, undefined, undefined, data);
 }

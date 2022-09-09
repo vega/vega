@@ -63,7 +63,7 @@ export default function(spec, scope) {
     minstep: scope.property(spec.tickMinStep),
     formatType: scope.property(spec.formatType),
     formatSpecifier: scope.property(spec.format)
-  })));
+  }, undefined, undefined, spec)));
 
   // continuous gradient legend
   if (type === Gradient) {
@@ -127,7 +127,8 @@ export default function(spec, scope) {
       interactive,
       style
     }),
-    scope
+    scope,
+    spec
   );
 }
 
