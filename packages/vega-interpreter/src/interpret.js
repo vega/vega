@@ -4,6 +4,14 @@ import Unary from './ops-unary';
 import Functions from './functions';
 
 const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
+const DisallowedMethods = new Set([
+  Function,
+  eval,
+  setTimeout,
+  setInterval
+]);
+
+if (typeof setImmediate === 'function') DisallowedMethods.add(setImmediate);
 
 const Visitors = {
   Literal: ($, n) => n.value,
@@ -23,6 +31,11 @@ const Visitors = {
     if (d) $.memberDepth += 1;
     const p = $(n.property);
     if (d) $.memberDepth -= 1;
+    if (DisallowedMethods.has(o[p])) {
+      // eslint-disable-next-line no-console
+      console.error(`Prevented interpretation of member "${p}" which could lead to insecure code execution`);
+      return;
+    }
     return o[p];
   },
 
@@ -60,7 +73,12 @@ const Visitors = {
     $.memberDepth += 1;
     const k = $(p.key);
     $.memberDepth -= 1;
-    o[k] = $(p.value);
+    if (DisallowedMethods.has($(p.value))) {
+      // eslint-disable-next-line no-console
+      console.error(`Prevented interpretation of property "${k}" which could lead to insecure code execution`);
+    } else {
+      o[k] = $(p.value);
+    }
     return o;
   }, {})
 };
