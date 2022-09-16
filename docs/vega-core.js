@@ -4164,7 +4164,7 @@
   }
 
   function quartiles(array, f) {
-    return quantiles(array, [0.25, 0.50, 0.75, 0.95, 0.99], f);
+    return quantiles(array, [0.25, 0.50, 0.75], f);
   } // Theory, Practice, and Visualization. Wiley.
 
 
@@ -5811,14 +5811,6 @@
 
   prototype$1.q3 = function (get) {
     return this.quartile(get)[2];
-  };
-
-  prototype$1.p95 = function (get) {
-    return this.quartile(get)[3];
-  };
-
-  prototype$1.p99 = function (get) {
-    return this.quartile(get)[4];
   };
 
   prototype$1.ci = function (get) {
@@ -25870,7 +25862,7 @@
   }
   /**
    * Appends a new point to the lasso
-   * 
+   *
    * @param {*} lasso the lasso in pixel space
    * @param {*} x the x coordinate in pixel space
    * @param {*} y the y coordinate in pixel space
@@ -25892,7 +25884,7 @@
   }
   /**
    * Generates a svg path command which draws a lasso
-   * 
+   *
    * @param {*} lasso the lasso in pixel space in the form [[x,y], [x,y], ...]
    * @returns the svg path command that draws the lasso
    */
@@ -25906,11 +25898,11 @@
   }
   /**
    * Inverts the lasso from pixel space to an array of vega scenegraph tuples
-   * 
+   *
    * @param {*} data the dataset
    * @param {*} pixelLasso the lasso in pixel space, [[x,y], [x,y], ...]
    * @param {*} unit the unit where the lasso is defined
-   * 
+   *
    * @returns an array of vega scenegraph tuples
    */
 
@@ -25939,9 +25931,9 @@
   /**
    * Performs a test if a point is inside a polygon based on the idea from
    * https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-   * 
+   *
    * This method will not need the same start/end point since it wraps around the edges of the array
-   * 
+   *
    * @param {*} test a point to test against
    * @param {*} polygon a polygon in the form [[x,y], [x,y], ...]
    * @returns true if the point lies inside the polygon, false otherwise
