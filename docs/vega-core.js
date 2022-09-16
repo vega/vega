@@ -5539,6 +5539,16 @@
       req: ['values'],
       idx: 3
     },
+    p95: {
+      value: m => m.cell.data.p95(m.get),
+      req: ['values'],
+      idx: 3
+    },
+    p99: {
+      value: m => m.cell.data.p99(m.get),
+      req: ['values'],
+      idx: 3
+    },
     min: {
       init: m => m.min = undefined,
       value: m => m.min = Number.isNaN(m.min) ? m.cell.data.min(m.get) : m.min,
@@ -25852,7 +25862,7 @@
   }
   /**
    * Appends a new point to the lasso
-   * 
+   *
    * @param {*} lasso the lasso in pixel space
    * @param {*} x the x coordinate in pixel space
    * @param {*} y the y coordinate in pixel space
@@ -25874,7 +25884,7 @@
   }
   /**
    * Generates a svg path command which draws a lasso
-   * 
+   *
    * @param {*} lasso the lasso in pixel space in the form [[x,y], [x,y], ...]
    * @returns the svg path command that draws the lasso
    */
@@ -25888,11 +25898,11 @@
   }
   /**
    * Inverts the lasso from pixel space to an array of vega scenegraph tuples
-   * 
+   *
    * @param {*} data the dataset
    * @param {*} pixelLasso the lasso in pixel space, [[x,y], [x,y], ...]
    * @param {*} unit the unit where the lasso is defined
-   * 
+   *
    * @returns an array of vega scenegraph tuples
    */
 
@@ -25921,9 +25931,9 @@
   /**
    * Performs a test if a point is inside a polygon based on the idea from
    * https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-   * 
+   *
    * This method will not need the same start/end point since it wraps around the edges of the array
-   * 
+   *
    * @param {*} test a point to test against
    * @param {*} polygon a polygon in the form [[x,y], [x,y], ...]
    * @returns true if the point lies inside the polygon, false otherwise
