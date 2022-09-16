@@ -6547,7 +6547,7 @@
   }
 
   function quartiles(array, f) {
-    return quantiles(array, [0.25, 0.50, 0.75], f);
+    return quantiles(array, [0.25, 0.50, 0.75, 0.95, 0.99], f);
   } // Theory, Practice, and Visualization. Wiley.
 
 
@@ -7922,6 +7922,16 @@
       req: ['values'],
       idx: 3
     },
+    p95: {
+      value: m => m.cell.data.p95(m.get),
+      req: ['values'],
+      idx: 3
+    },
+    p99: {
+      value: m => m.cell.data.p99(m.get),
+      req: ['values'],
+      idx: 3
+    },
     min: {
       init: m => m.min = undefined,
       value: m => m.min = Number.isNaN(m.min) ? m.cell.data.min(m.get) : m.min,
@@ -8184,6 +8194,14 @@
 
   prototype$1.q3 = function (get) {
     return this.quartile(get)[2];
+  };
+
+  prototype$1.p95 = function (get) {
+    return this.quartile(get)[3];
+  };
+
+  prototype$1.p99 = function (get) {
+    return this.quartile(get)[4];
   };
 
   prototype$1.ci = function (get) {
