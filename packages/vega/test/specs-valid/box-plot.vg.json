@@ -79,7 +79,7 @@
             {
               "type": "aggregate",
               "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
-              "ops": ["min", "q1", "median", "p95", "p99"],
+              "ops": ["min", "q1", "median", "q3", "max"],
               "as": ["min", "q1", "median", "q3", "max"]
             }
           ]
