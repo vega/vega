@@ -226,7 +226,9 @@ function range(bind, el, param, value) {
 
   const max = param.max != null ? param.max : Math.max(100, +value) || 100,
         min = param.min || Math.min(0, max, +value) || 0,
-        step = param.step || tickStep(min, max, 100);
+        step = param.step || tickStep(min, max, 100),
+        showMax = param.showMax != null? param.showMax: false,
+        showMin = param.showMin != null? param.showMin: false;
 
   const node = element('input', {
     type:  'range',
@@ -243,7 +245,7 @@ function range(bind, el, param, value) {
   el.appendChild(span);
 
   const update = () => {
-    span.textContent = node.value;
+    span.textContent = node.value + (showMax === true ? '/' + param.max: showMin === true ? '/' + param.min: '');
     bind.update(+node.value);
   };
 
@@ -254,7 +256,7 @@ function range(bind, el, param, value) {
   bind.elements = [node];
   bind.set = value => {
     node.value = value;
-    span.textContent = value;
+    span.textContent = value + (showMax === true ? '/' + param.max: showMin === true ? '/' + param.min: '');
   };
 }
 

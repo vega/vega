@@ -40811,7 +40811,9 @@
     value = value !== undefined ? value : (+param.max + +param.min) / 2;
     const max = param.max != null ? param.max : Math.max(100, +value) || 100,
           min = param.min || Math.min(0, max, +value) || 0,
-          step = param.step || tickStep(min, max, 100);
+          step = param.step || tickStep(min, max, 100),
+          showMax = param.showMax != null ? param.showMax : false,
+          showMin = param.showMin != null ? param.showMin : false;
     const node = element('input', {
       type: 'range',
       name: param.signal,
@@ -40825,7 +40827,7 @@
     el.appendChild(span);
 
     const update = () => {
-      span.textContent = node.value;
+      span.textContent = node.value + (showMax === true ? '/' + param.max : showMin === true ? '/' + param.min : '');
       bind.update(+node.value);
     }; // subscribe to both input and change
 
@@ -40836,7 +40838,7 @@
 
     bind.set = value => {
       node.value = value;
-      span.textContent = value;
+      span.textContent = value + (showMax === true ? '/' + param.max : showMin === true ? '/' + param.min : '');
     };
   }
 
