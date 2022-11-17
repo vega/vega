@@ -18,4 +18,4 @@ To get started with Vega, take a look at the [tutorials](tutorials), [example ga
 
 To rapidly create common statistical graphics, check out [Vega-Lite](https://vega.github.io/vega-lite), a higher-level language built on top of Vega. Not that into JavaScript? Take a look at the [Altair Python API](https://altair-viz.github.io/) for Vega-Lite.
 
-Need help or want to share examples? Join the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or the [Vega Slack organization](http://bit.ly/vega-slack)!
+Need help or want to share examples? Join the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or the [Vega Slack organization](https://bit.ly/join-vega-slack-2022)!
