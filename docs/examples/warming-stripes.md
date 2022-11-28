@@ -15,4 +15,7 @@ Originaly designed by [Wikipedia: Ed Hawkins (climatologist)](https://en.wikiped
 
 This Vega example made by Andrzej Leszkiewicz [@avatorl](https://github.com/avatorl)
 
+This implementation of the warming stripes chart has a legend. And the chart is interactive: hover over a color stripe to highlight the stripe.
+The tick on the left side of the legend shows temperature for the selected stripe (year) or 0°C if cursor is not on the stipres.
+
 {% include example spec=page.spec %}
