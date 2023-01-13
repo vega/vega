@@ -645,7 +645,7 @@ export interface TimeUnitTransform {
   type: 'timeunit';
   field: FieldRef;
   interval?: boolean | SignalRef;
-  units?: (TimeUnit | SignalRef)[] | SignalRef;
+  units?: (TimeUnit | 'auto' | SignalRef)[] | SignalRef;
   step?: number | SignalRef;
   timezone?: TimeZone | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;
