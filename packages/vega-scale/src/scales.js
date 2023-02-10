@@ -51,6 +51,22 @@ function create(type, constructor, metadata) {
   return ctr;
 }
 
+/**
+ * Registry function for adding and accessing scale constructor functions.
+ * The *type* argument is a String indicating the name of the scale type.
+ *
+ * If the *scale* argument is not specified, this method returns the matching scale constructor in the registry, or `null` if not found.
+ * If the *scale* argument is provided, it must be a scale constructor function to add to the registry under the given *type* name.
+ * The *metadata* argument provides additional information to guide appropriate use of scales within Vega.
+ *
+ *  *metadata* can be either a string or string array. The valid string values are:
+ * - `"continuous"` - the scale is defined over a continuous-valued domain.
+ * - `"discrete"` - the scale is defined over a discrete domain and range.
+ * - `"discretizing"` - the scale discretizes a continuous domain to a discrete range.
+ * - `"interpolating"` - the scale range is defined using a color interpolator.
+ * - `"log"` - the scale performs a logarithmic transform of the continuous domain.
+ * - `"temporal"` - the scale domain is defined over date-time values.
+ */
 export function scale(type, scale, metadata) {
   if (arguments.length > 1) {
     scales[type] = create(type, scale, metadata);
