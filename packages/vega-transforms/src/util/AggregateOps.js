@@ -130,7 +130,7 @@ export const AggregateOps = {
   }
 };
 
-export const ValidAggregateOps = Object.keys(AggregateOps);
+export const ValidAggregateOps = Object.keys(AggregateOps).filter(d => d !== '__count__');
 
 function measure(key, value) {
   return out => extend({
@@ -139,7 +139,7 @@ function measure(key, value) {
   }, base_op, value);
 }
 
-ValidAggregateOps.forEach(key => {
+[...ValidAggregateOps, '__count__'].forEach(key => {
   AggregateOps[key] = measure(key, AggregateOps[key]);
 });
 
