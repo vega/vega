@@ -26,8 +26,8 @@ import {
 
 import * as $ from 'd3-scale';
 
-// scale registry
-const scales = {};
+/** Private scale registry: should not be exported */
+const scales = new Map();
 
 /**
  * Augment scales with their type and needed inverse methods.
@@ -69,10 +69,10 @@ function create(type, constructor, metadata) {
  */
 export function scale(type, scale, metadata) {
   if (arguments.length > 1) {
-    scales[type] = create(type, scale, metadata);
+    scales.set(type, create(type, scale, metadata));
     return this;
   } else {
-    return isValidScaleType(type) ? scales[type] : undefined;
+    return isValidScaleType(type) ? scales.get(type) : undefined;
   }
 }
 
@@ -119,7 +119,7 @@ export function isValidScaleType(type) {
 }
 
 function hasType(key, type) {
-  const s = scales[key];
+  const s = scales.get(key);
   return s && s.metadata[type];
 }
 
