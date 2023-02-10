@@ -169,7 +169,6 @@ export type OrArray<T> = T | T[];
 export type AggregateOps =
   | 'values'
   | 'count'
-  | '__count__'
   | 'missing'
   | 'valid'
   | 'sum'
