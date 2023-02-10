@@ -2,12 +2,21 @@ import {ScalePrefix} from './constants';
 import {scaleVisitor} from './visitors';
 import {Literal} from 'vega-expression';
 import {isFunction, isString, stringValue} from 'vega-util';
+import {isRegisteredScale} from 'vega-scale';
 
-export function getScale(name, ctx) {
-  let s;
-  return isFunction(name) ? name
-    : isString(name) ? (s = ctx.scales[name]) && s.value
-    : undefined;
+export function getScale(nameOrFunction, ctx) {
+
+  if (isFunction(nameOrFunction)) {
+    return nameOrFunction;
+  }
+
+  if (isString(nameOrFunction)) {
+    const maybeScale = ctx.scales[nameOrFunction];
+    return (maybeScale && isRegisteredScale(maybeScale.value)) ? maybeScale.value : undefined;
+
+  }
+
+  return undefined;
 }
 
 export function internalScaleFunctions(codegen, fnctx, visitors) {

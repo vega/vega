@@ -125,7 +125,7 @@ scale(Band, scaleBand, D);
 scale(Point, scalePoint, D);
 
 export function isValidScaleType(type) {
-  return hasOwnProperty(scales, type);
+  return scales.has(type);
 }
 
 function hasType(key, type) {

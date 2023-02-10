@@ -9867,11 +9867,22 @@
 
     return scale;
   }
+  /** Private scale registry: should not be exported */
 
-  const scales = {};
+
+  const scales = new Map();
+  const REGISTERED_SCALE_IDENTIFIER = Symbol('registered-scale-marker');
+  /**
+   * Return true if object was created by a constructor from the vega-scale `scale` function.
+   */
+
+  function isRegisteredScale(maybeScale) {
+    return maybeScale && maybeScale[REGISTERED_SCALE_IDENTIFIER] === true;
+  }
   /**
    * Augment scales with their type and needed inverse methods.
    */
+
 
   function create$2(type, constructor, metadata) {
     const ctr = function scale() {
@@ -9881,6 +9892,7 @@
         s.invertRange = s.invert ? invertRange(s) : s.invertExtent ? invertRangeExtent(s) : undefined;
       }
 
+      s[REGISTERED_SCALE_IDENTIFIER] = true;
       s.type = type;
       return s;
     };
@@ -9888,13 +9900,30 @@
     ctr.metadata = toSet(array$2(metadata));
     return ctr;
   }
+  /**
+   * Registry function for adding and accessing scale constructor functions.
+   * The *type* argument is a String indicating the name of the scale type.
+   *
+   * If the *scale* argument is not specified, this method returns the matching scale constructor in the registry, or `null` if not found.
+   * If the *scale* argument is provided, it must be a scale constructor function to add to the registry under the given *type* name.
+   * The *metadata* argument provides additional information to guide appropriate use of scales within Vega.
+   *
+   *  *metadata* can be either a string or string array. The valid string values are:
+   * - `"continuous"` - the scale is defined over a continuous-valued domain.
+   * - `"discrete"` - the scale is defined over a discrete domain and range.
+   * - `"discretizing"` - the scale discretizes a continuous domain to a discrete range.
+   * - `"interpolating"` - the scale range is defined using a color interpolator.
+   * - `"log"` - the scale performs a logarithmic transform of the continuous domain.
+   * - `"temporal"` - the scale domain is defined over date-time values.
+   */
+
 
   function scale$4(type, scale, metadata) {
     if (arguments.length > 1) {
-      scales[type] = create$2(type, scale, metadata);
+      scales.set(type, create$2(type, scale, metadata));
       return this;
     } else {
-      return isValidScaleType(type) ? scales[type] : undefined;
+      return isValidScaleType(type) ? scales.get(type) : undefined;
     }
   } // identity scale
 
@@ -9937,7 +9966,7 @@
   }
 
   function hasType(key, type) {
-    const s = scales[key];
+    const s = scales.get(key);
     return s && s.metadata[type];
   }
 
@@ -25464,9 +25493,17 @@
     }
   }
 
-  function getScale(name, ctx) {
-    let s;
-    return isFunction(name) ? name : isString(name) ? (s = ctx.scales[name]) && s.value : undefined;
+  function getScale(nameOrFunction, ctx) {
+    if (isFunction(nameOrFunction)) {
+      return nameOrFunction;
+    }
+
+    if (isString(nameOrFunction)) {
+      const maybeScale = ctx.scales[nameOrFunction];
+      return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
+    }
+
+    return undefined;
   }
 
   function internalScaleFunctions(codegen, fnctx, visitors) {
