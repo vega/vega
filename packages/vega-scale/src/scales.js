@@ -1,4 +1,4 @@
-import {array, hasOwnProperty, toSet} from 'vega-util';
+import { array, hasOwnProperty, toSet } from 'vega-util';
 import invertRange from './scales/invertRange';
 import invertRangeExtent from './scales/invertRangeExtent';
 
@@ -29,6 +29,15 @@ import * as $ from 'd3-scale';
 /** Private scale registry: should not be exported */
 const scales = new Map();
 
+const REGISTERED_SCALE_IDENTIFIER = Symbol('registered-scale-marker');
+
+/**
+ * Return true if object was created by a constructor from the vega-scale `scale` function.
+ */
+export function isRegisteredScale(maybeScale) {
+  return maybeScale && maybeScale[REGISTERED_SCALE_IDENTIFIER] === true;
+}
+
 /**
  * Augment scales with their type and needed inverse methods.
  */
@@ -42,6 +51,7 @@ function create(type, constructor, metadata) {
         : undefined;
     }
 
+    s[REGISTERED_SCALE_IDENTIFIER] = true;
     s.type = type;
     return s;
   };
