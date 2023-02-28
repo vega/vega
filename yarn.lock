@@ -7445,6 +7445,11 @@ through@2, "through@>=2.2.7 <3", through@^2.3.4, through@^2.3.6, through@^2.3.8,
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
+time-grain-detector@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/time-grain-detector/-/time-grain-detector-1.1.0.tgz#48246d45aa81eae2551b8db7f77a80df8298fef4"
+  integrity sha512-RiRuAjLNOr7rpwNaVIuJlqSCSRIPirf/ZzG73aYDJ6PwZgtvn6RJ8NrKBWSDYS+zKyCsk/gOafF4jER2eBNjew==
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"

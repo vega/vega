@@ -29,7 +29,8 @@ const d3Deps = [
 
 const esmDeps = [
   ...d3Deps,
-  'd3-geo-projection'
+  'd3-geo-projection',
+  'time-grain-detector'
 ];
 
 const d3CoreDeps = [

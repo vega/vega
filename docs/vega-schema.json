@@ -15569,7 +15569,8 @@
                       "hours",
                       "minutes",
                       "seconds",
-                      "milliseconds"
+                      "milliseconds",
+                      "auto"
                     ]
                   },
                   {
