@@ -14,7 +14,7 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-node",
+    "build": "rollup -c rollup.config.mjs --config-node",
     "postbuild": "node schema > build/vega-schema.json",
     "test": "yarn build",
     "prepublishOnly": "yarn test"

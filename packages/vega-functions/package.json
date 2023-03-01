@@ -15,15 +15,15 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.1.1",
-    "d3-color": "^3.0.1",
-    "d3-geo": "^3.0.1",
+    "d3-array": "^3.2.2",
+    "d3-color": "^3.1.0",
+    "d3-geo": "^3.1.0",
     "vega-dataflow": "^5.7.3",
     "vega-expression": "^5.0.0",
     "vega-scale": "^7.2.0",

@@ -15,13 +15,14 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-geo": "^3.0.1",
-    "d3-geo-projection": "^4.0.0"
+    "d3-geo": "^3.1.0",
+    "d3-geo-projection": "^4.0.0",
+    "vega-scale": "^7.3.0"
   }
 }

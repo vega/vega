@@ -11,7 +11,7 @@
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "postbuild": "yarn schema",
     "pretest": "yarn build --config-test",
     "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
@@ -19,8 +19,8 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-path": "^3.0.1",
-    "d3-shape": "^3.1.0",
+    "d3-path": "^3.1.0",
+    "d3-shape": "^3.2.0",
     "vega-canvas": "^1.2.5",
     "vega-loader": "^4.4.0",
     "vega-scale": "^7.2.0",
