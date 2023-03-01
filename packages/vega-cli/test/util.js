@@ -25,7 +25,7 @@ module.exports = function test(t, cmd, file, png=false) {
       } else {
         t.ok(expectImg.equals(actualImg));
       }
-      rimraf(output, error => error ? t.fail(error) : null);
+      rimraf(output).catch(error => t.fail(error));
     }
 
     t.end();

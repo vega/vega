@@ -16,7 +16,7 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

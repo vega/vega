@@ -17,13 +17,13 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
     "vega-util": "^1.16.0",
-    "@types/estree": "^0.0.51"
+    "@types/estree": "^1.0.0"
   }
 }
