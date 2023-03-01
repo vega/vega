@@ -1,6 +1,6 @@
 {
   "name": "vega-hierarchy",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Hierarchical layout transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -26,8 +26,8 @@
   },
   "dependencies": {
     "d3-hierarchy": "^3.1.2",
-    "vega-dataflow": "^5.7.3",
-    "vega-util": "^1.15.2"
+    "vega-dataflow": "^5.7.5",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-transforms": "*"
