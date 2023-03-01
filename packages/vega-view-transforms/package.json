@@ -1,6 +1,6 @@
 {
   "name": "vega-view-transforms",
-  "version": "4.5.8",
+  "version": "4.5.9",
   "description": "View-specific transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -21,9 +21,9 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.7.3",
-    "vega-scenegraph": "^4.9.2",
-    "vega-util": "^1.15.2"
+    "vega-dataflow": "^5.7.5",
+    "vega-scenegraph": "^4.10.2",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-transforms": "*"

@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "4.10.1",
+  "version": "4.10.2",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
@@ -21,9 +21,9 @@
   "dependencies": {
     "d3-path": "^3.1.0",
     "d3-shape": "^3.2.0",
-    "vega-canvas": "^1.2.5",
-    "vega-loader": "^4.4.0",
-    "vega-scale": "^7.2.0",
-    "vega-util": "^1.15.2"
+    "vega-canvas": "^1.2.7",
+    "vega-loader": "^4.5.1",
+    "vega-scale": "^7.3.0",
+    "vega-util": "^1.17.1"
   }
 }
