@@ -13486,7 +13486,6 @@
                     "enum": [
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
@@ -14772,7 +14771,6 @@
                     "enum": [
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
@@ -15194,7 +15192,6 @@
               "enum": [
                 "values",
                 "count",
-                "__count__",
                 "missing",
                 "valid",
                 "sum",
@@ -15732,7 +15729,6 @@
                       "next_value",
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
