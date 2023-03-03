@@ -67,7 +67,7 @@ Force.Definition = {
           'key': {'force': 'nbody'},
           'params': [
             { 'name': 'strength', 'type': 'number', 'default': -30, 'expr': true },
-            { 'name': 'theta', 'type': 'number', 'default': 0.9, 'expr': true },
+            { 'name': 'theta', 'type': 'number', 'default': 0.9 },
             { 'name': 'distanceMin', 'type': 'number', 'default': 1 },
             { 'name': 'distanceMax', 'type': 'number' }
           ]
