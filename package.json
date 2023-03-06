@@ -33,7 +33,7 @@
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "canvas": "^2.11.0",
-    "@definitelytyped/dtslint": "0.0.111",
+    "@definitelytyped/dtslint": "0.0.151",
     "eslint": "^8.35.0",
     "jsdom": "^21.1.0",
     "lerna": "^6.5.1",
