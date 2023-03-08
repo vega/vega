@@ -11166,6 +11166,12 @@
                       },
                       {
                         "$ref": "#/definitions/signalRef"
+                      },
+                      {
+                        "$ref": "#/definitions/expr"
+                      },
+                      {
+                        "$ref": "#/definitions/paramField"
                       }
                     ],
                     "default": -30
