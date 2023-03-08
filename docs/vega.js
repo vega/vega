@@ -1191,7 +1191,7 @@
   function number$6(x) {
     return x === null ? NaN : +x;
   }
-  function* numbers$3(values, valueof) {
+  function* numbers$2(values, valueof) {
     if (valueof === undefined) {
       for (let value of values) {
         if (value != null && (value = +value) >= value) {
@@ -1530,7 +1530,7 @@
   }
 
   function quantile$1(values, p, valueof) {
-    values = Float64Array.from(numbers$3(values, valueof));
+    values = Float64Array.from(numbers$2(values, valueof));
     if (!(n = values.length) || isNaN(p = +p)) return;
     if (p <= 0 || n < 2) return min$2(values);
     if (p >= 1) return max$2(values);
@@ -1791,14 +1791,14 @@
     return x;
   }
 
-  var map$2 = Array.prototype.map,
+  var map$1 = Array.prototype.map,
     prefixes = ["y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
   function formatLocale$1 (locale) {
-    var group = locale.grouping === undefined || locale.thousands === undefined ? identity$4 : formatGroup(map$2.call(locale.grouping, Number), locale.thousands + ""),
+    var group = locale.grouping === undefined || locale.thousands === undefined ? identity$4 : formatGroup(map$1.call(locale.grouping, Number), locale.thousands + ""),
       currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
       currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
       decimal = locale.decimal === undefined ? "." : locale.decimal + "",
-      numerals = locale.numerals === undefined ? identity$4 : formatNumerals(map$2.call(locale.numerals, String)),
+      numerals = locale.numerals === undefined ? identity$4 : formatNumerals(map$1.call(locale.numerals, String)),
       percent = locale.percent === undefined ? "%" : locale.percent + "",
       minus = locale.minus === undefined ? "−" : locale.minus + "",
       nan = locale.nan === undefined ? "NaN" : locale.nan + "";
@@ -5762,7 +5762,7 @@
     return has$1(transforms, type) ? transforms[type] : null;
   }
 
-  function* numbers$2(values, valueof) {
+  function* numbers$1(values, valueof) {
     if (valueof == null) {
       for (let value of values) {
         if (value != null && value !== '' && (value = +value) >= value) {
@@ -5780,7 +5780,7 @@
     }
   }
   function quantiles(array, p, f) {
-    const values = Float64Array.from(numbers$2(array, f));
+    const values = Float64Array.from(numbers$1(array, f));
 
     // don't depend on return value from typed array sort call
     // protects against undefined sort results in Safari (vega/vega-lite#4964)
@@ -5863,7 +5863,7 @@
   }
   function bootstrapCI(array, samples, alpha, f) {
     if (!array.length) return [undefined, undefined];
-    const values = Float64Array.from(numbers$2(array, f)),
+    const values = Float64Array.from(numbers$1(array, f)),
       n = values.length,
       m = samples;
     let a, i, j, mu;
@@ -9713,10 +9713,10 @@
    *   1 (exclusive) will be sampled. This parameter is only used if the
    *   *quantiles* parameter is not provided.
    */
-  function Quantile$2(params) {
+  function Quantile$1(params) {
     Transform.call(this, null, params);
   }
-  Quantile$2.Definition = {
+  Quantile$1.Definition = {
     'type': 'Quantile',
     'metadata': {
       'generates': true,
@@ -9746,7 +9746,7 @@
     }]
   };
   const EPSILON$2 = 1e-14;
-  inherits(Quantile$2, Transform, {
+  inherits(Quantile$1, Transform, {
     transform(_, pulse) {
       const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
         as = _.as || ['prob', 'value'];
@@ -10611,7 +10611,7 @@
     prefacet: PreFacet$1,
     project: Project,
     proxy: Proxy$1,
-    quantile: Quantile$2,
+    quantile: Quantile$1,
     relay: Relay$1,
     sample: Sample,
     sequence: Sequence,
@@ -11057,10 +11057,10 @@
     : Array.from(x); // Map, Set, iterable, string, or anything else
   }
 
-  function Linear$2(context) {
+  function Linear$1(context) {
     this._context = context;
   }
-  Linear$2.prototype = {
+  Linear$1.prototype = {
     areaStart: function () {
       this._line = 0;
     },
@@ -11091,7 +11091,7 @@
     }
   };
   function curveLinear (context) {
-    return new Linear$2(context);
+    return new Linear$1(context);
   }
 
   function x$3(p) {
@@ -11261,7 +11261,7 @@
 
   function noop$3 () {}
 
-  function point$6(that, x, y) {
+  function point$5(that, x, y) {
     that._context.bezierCurveTo((2 * that._x0 + that._x1) / 3, (2 * that._y0 + that._y1) / 3, (that._x0 + 2 * that._x1) / 3, (that._y0 + 2 * that._y1) / 3, (that._x0 + 4 * that._x1 + x) / 6, (that._y0 + 4 * that._y1 + y) / 6);
   }
   function Basis(context) {
@@ -11281,7 +11281,7 @@
     lineEnd: function () {
       switch (this._point) {
         case 3:
-          point$6(this, this._x1, this._y1);
+          point$5(this, this._x1, this._y1);
         // falls through
         case 2:
           this._context.lineTo(this._x1, this._y1);
@@ -11305,7 +11305,7 @@
           this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
         // falls through
         default:
-          point$6(this, x, y);
+          point$5(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = x;
@@ -11367,7 +11367,7 @@
           this._context.moveTo((this._x0 + 4 * this._x1 + x) / 6, (this._y0 + 4 * this._y1 + y) / 6);
           break;
         default:
-          point$6(this, x, y);
+          point$5(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = x;
@@ -11415,7 +11415,7 @@
           this._point = 4;
         // falls through
         default:
-          point$6(this, x, y);
+          point$5(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = x;
@@ -11470,7 +11470,7 @@
     return bundle;
   })(0.85);
 
-  function point$5(that, x, y) {
+  function point$4(that, x, y) {
     that._context.bezierCurveTo(that._x1 + that._k * (that._x2 - that._x0), that._y1 + that._k * (that._y2 - that._y0), that._x2 + that._k * (that._x1 - x), that._y2 + that._k * (that._y1 - y), that._x2, that._y2);
   }
   function Cardinal(context, tension) {
@@ -11494,7 +11494,7 @@
           this._context.lineTo(this._x2, this._y2);
           break;
         case 3:
-          point$5(this, this._x1, this._y1);
+          point$4(this, this._x1, this._y1);
           break;
       }
       if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
@@ -11515,7 +11515,7 @@
           this._point = 3;
         // falls through
         default:
-          point$5(this, x, y);
+          point$4(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
@@ -11582,7 +11582,7 @@
           this._x5 = x, this._y5 = y;
           break;
         default:
-          point$5(this, x, y);
+          point$4(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
@@ -11635,7 +11635,7 @@
           this._point = 4;
         // falls through
         default:
-          point$5(this, x, y);
+          point$4(this, x, y);
           break;
       }
       this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
@@ -11652,7 +11652,7 @@
     return cardinal;
   })(0);
 
-  function point$4(that, x, y) {
+  function point$3(that, x, y) {
     var x1 = that._x1,
       y1 = that._y1,
       x2 = that._x2,
@@ -11717,7 +11717,7 @@
           this._point = 3;
         // falls through
         default:
-          point$4(this, x, y);
+          point$3(this, x, y);
           break;
       }
       this._l01_a = this._l12_a, this._l12_a = this._l23_a;
@@ -11791,7 +11791,7 @@
           this._x5 = x, this._y5 = y;
           break;
         default:
-          point$4(this, x, y);
+          point$3(this, x, y);
           break;
       }
       this._l01_a = this._l12_a, this._l12_a = this._l23_a;
@@ -11851,7 +11851,7 @@
           this._point = 4;
         // falls through
         default:
-          point$4(this, x, y);
+          point$3(this, x, y);
           break;
       }
       this._l01_a = this._l12_a, this._l12_a = this._l23_a;
@@ -11917,7 +11917,7 @@
   // According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
   // "you can express cubic Hermite interpolation in terms of cubic Bézier curves
   // with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
-  function point$3(that, t0, t1) {
+  function point$2(that, t0, t1) {
     var x0 = that._x0,
       y0 = that._y0,
       x1 = that._x1,
@@ -11945,7 +11945,7 @@
           this._context.lineTo(this._x1, this._y1);
           break;
         case 3:
-          point$3(this, this._t0, slope2(this, this._t0));
+          point$2(this, this._t0, slope2(this, this._t0));
           break;
       }
       if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
@@ -11965,10 +11965,10 @@
           break;
         case 2:
           this._point = 3;
-          point$3(this, slope2(this, t1 = slope3(this, x, y)), t1);
+          point$2(this, slope2(this, t1 = slope3(this, x, y)), t1);
           break;
         default:
-          point$3(this, this._t0, t1 = slope3(this, x, y));
+          point$2(this, this._t0, t1 = slope3(this, x, y));
           break;
       }
       this._x0 = this._x1, this._x1 = x;
@@ -12840,7 +12840,7 @@
       x = new Array(na),
       c = new Array(nb),
       i;
-    for (i = 0; i < na; ++i) x[i] = interpolate$1$1(a[i], b[i]);
+    for (i = 0; i < na; ++i) x[i] = interpolate$1(a[i], b[i]);
     for (; i < nb; ++i) c[i] = b[i];
     return function (t) {
       for (i = 0; i < na; ++i) c[i] = x[i](t);
@@ -12869,7 +12869,7 @@
     if (b === null || typeof b !== "object") b = {};
     for (k in b) {
       if (k in a) {
-        i[k] = interpolate$1$1(a[k], b[k]);
+        i[k] = interpolate$1(a[k], b[k]);
       } else {
         c[k] = b[k];
       }
@@ -12948,13 +12948,13 @@
     });
   }
 
-  function interpolate$1$1 (a, b) {
+  function interpolate$1 (a, b) {
     var t = typeof b,
       c;
     return b == null || t === "boolean" ? constant$2(b) : (t === "number" ? interpolateNumber : t === "string" ? (c = color$2(b)) ? (b = c, rgb) : string : b instanceof color$2 ? rgb : b instanceof Date ? date$1 : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : interpolateNumber)(a, b);
   }
 
-  function discrete$2 (range) {
+  function discrete$1 (range) {
     var n = range.length;
     return function (t) {
       return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
@@ -13226,7 +13226,7 @@
   var cubehelixLong = cubehelix(nogamma);
 
   function piecewise(interpolate, values) {
-    if (values === undefined) values = interpolate, interpolate = interpolate$1$1;
+    if (values === undefined) values = interpolate, interpolate = interpolate$1;
     var i = 0,
       n = values.length - 1,
       v = values[0],
@@ -13246,14 +13246,14 @@
 
   var $$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    interpolate: interpolate$1$1,
+    interpolate: interpolate$1,
     interpolateArray: array$3,
     interpolateBasis: basis$1,
     interpolateBasisClosed: basisClosed,
     interpolateCubehelix: cubehelix$1,
     interpolateCubehelixLong: cubehelixLong,
     interpolateDate: date$1,
-    interpolateDiscrete: discrete$2,
+    interpolateDiscrete: discrete$1,
     interpolateHcl: hcl$1,
     interpolateHclLong: hclLong,
     interpolateHsl: hsl$1,
@@ -13340,7 +13340,7 @@
   function transformer$3() {
     var domain = unit,
       range = unit,
-      interpolate = interpolate$1$1,
+      interpolate = interpolate$1,
       transform,
       untransform,
       unknown,
@@ -13384,7 +13384,7 @@
       return rescale();
     };
   }
-  function continuous$2() {
+  function continuous$1() {
     return transformer$3()(identity$2, identity$2);
   }
 
@@ -13464,7 +13464,7 @@
     return scale;
   }
   function linear() {
-    var scale = continuous$2();
+    var scale = continuous$1();
     scale.copy = function () {
       return copy$2(scale, linear());
     };
@@ -13791,7 +13791,7 @@
     return t instanceof Date ? +t : +new Date(+t);
   }
   function calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format) {
-    var scale = continuous$2(),
+    var scale = continuous$1(),
       invert = scale.invert,
       domain = scale.domain;
     var formatMillisecond = format(".%L"),
@@ -13864,7 +13864,7 @@
         return arguments.length ? ([r0, r1] = _, interpolator = interpolate(r0, r1), scale) : [interpolator(0), interpolator(1)];
       };
     }
-    scale.range = range(interpolate$1$1);
+    scale.range = range(interpolate$1);
     scale.rangeRound = range(interpolateRound);
     scale.unknown = function (_) {
       return arguments.length ? (unknown = _, scale) : unknown;
@@ -13941,7 +13941,7 @@
         return arguments.length ? ([r0, r1, r2] = _, interpolator = piecewise(interpolate, [r0, r1, r2]), scale) : [interpolator(0), interpolator(0.5), interpolator(1)];
       };
     }
-    scale.range = range(interpolate$1$1);
+    scale.range = range(interpolate$1);
     scale.rangeRound = range(interpolateRound);
     scale.unknown = function (_) {
       return arguments.length ? (unknown = _, scale) : unknown;
@@ -13983,35 +13983,35 @@
     return divergingPow.apply(null, arguments).exponent(0.5);
   }
 
-  function bandSpace$1(count, paddingInner, paddingOuter) {
+  function bandSpace(count, paddingInner, paddingOuter) {
     const space = count - paddingInner + paddingOuter * 2;
     return count ? space > 0 ? space : 1 : 0;
   }
-  const Identity$1 = 'identity';
-  const Linear$1 = 'linear';
-  const Log$1 = 'log';
-  const Pow$1 = 'pow';
-  const Sqrt$1 = 'sqrt';
-  const Symlog$1 = 'symlog';
-  const Time$1 = 'time';
-  const UTC$1 = 'utc';
-  const Sequential$1 = 'sequential';
-  const Diverging$1 = 'diverging';
-  const Quantile$1 = 'quantile';
-  const Quantize$1 = 'quantize';
-  const Threshold$1 = 'threshold';
-  const Ordinal$1 = 'ordinal';
-  const Point$1 = 'point';
-  const Band$1 = 'band';
-  const BinOrdinal$1 = 'bin-ordinal';
+  const Identity = 'identity';
+  const Linear = 'linear';
+  const Log = 'log';
+  const Pow = 'pow';
+  const Sqrt = 'sqrt';
+  const Symlog = 'symlog';
+  const Time = 'time';
+  const UTC = 'utc';
+  const Sequential = 'sequential';
+  const Diverging = 'diverging';
+  const Quantile = 'quantile';
+  const Quantize = 'quantize';
+  const Threshold = 'threshold';
+  const Ordinal = 'ordinal';
+  const Point = 'point';
+  const Band = 'band';
+  const BinOrdinal = 'bin-ordinal';
 
   // categories
-  const Continuous$1 = 'continuous';
-  const Discrete$2 = 'discrete';
-  const Discretizing$1 = 'discretizing';
-  const Interpolating$1 = 'interpolating';
-  const Temporal$1 = 'temporal';
-  function invertRange$1(scale) {
+  const Continuous = 'continuous';
+  const Discrete$1 = 'discrete';
+  const Discretizing = 'discretizing';
+  const Interpolating = 'interpolating';
+  const Temporal = 'temporal';
+  function invertRange(scale) {
     return function (_) {
       let lo = _[0],
         hi = _[1],
@@ -14024,7 +14024,7 @@
       return [scale.invert(lo), scale.invert(hi)];
     };
   }
-  function invertRangeExtent$1(scale) {
+  function invertRangeExtent(scale) {
     return function (_) {
       const range = scale.range();
       let lo = _[0],
@@ -14051,7 +14051,7 @@
       return [lo[0] === undefined ? lo[1] : lo[0], hi[1] === undefined ? hi[0] : hi[1]];
     };
   }
-  function band$1() {
+  function band() {
     const scale = ordinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range;
@@ -14067,7 +14067,7 @@
       const n = domain().length,
         reverse = range$1[1] < range$1[0],
         stop = range$1[1 - reverse],
-        space = bandSpace$1(n, paddingInner, paddingOuter);
+        space = bandSpace(n, paddingInner, paddingOuter);
       let start = range$1[reverse - 0];
       step = (stop - start) / (space || 1);
       if (round) {
@@ -14192,28 +14192,28 @@
       return value ? value[0] : value;
     };
     scale.copy = function () {
-      return band$1().domain(domain()).range(range$1).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
+      return band().domain(domain()).range(range$1).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
     };
     return rescale();
   }
-  function pointish$1(scale) {
+  function pointish(scale) {
     const copy = scale.copy;
     scale.padding = scale.paddingOuter;
     delete scale.paddingInner;
     scale.copy = function () {
-      return pointish$1(copy());
+      return pointish(copy());
     };
     return scale;
   }
-  function point$2() {
-    return pointish$1(band$1().paddingInner(1));
+  function point$1() {
+    return pointish(band().paddingInner(1));
   }
-  var map$1 = Array.prototype.map;
-  function numbers$1(_) {
-    return map$1.call(_, toNumber);
+  var map = Array.prototype.map;
+  function numbers(_) {
+    return map.call(_, toNumber);
   }
-  const slice$2 = Array.prototype.slice;
-  function scaleBinOrdinal$1() {
+  const slice$1 = Array.prototype.slice;
+  function scaleBinOrdinal() {
     let domain = [],
       range = [];
     function scale(x) {
@@ -14221,7 +14221,7 @@
     }
     scale.domain = function (_) {
       if (arguments.length) {
-        domain = numbers$1(_);
+        domain = numbers(_);
         return scale;
       } else {
         return domain.slice();
@@ -14229,7 +14229,7 @@
     };
     scale.range = function (_) {
       if (arguments.length) {
-        range = slice$2.call(_);
+        range = slice$1.call(_);
         return scale;
       } else {
         return range.slice();
@@ -14239,13 +14239,13 @@
       return tickFormat$1(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
     };
     scale.copy = function () {
-      return scaleBinOrdinal$1().domain(scale.domain()).range(scale.range());
+      return scaleBinOrdinal().domain(scale.domain()).range(scale.range());
     };
     return scale;
   }
 
   /** Private scale registry: should not be exported */
-  const scales$1 = new Map();
+  const scales = new Map();
   const VEGA_SCALE = Symbol('vega_scale');
   function registerScale(scale) {
     scale[VEGA_SCALE] = true;
@@ -14262,11 +14262,11 @@
   /**
    * Augment scales with their type and needed inverse methods.
    */
-  function create$3(type, constructor, metadata) {
+  function create$2(type, constructor, metadata) {
     const ctr = function scale() {
       const s = constructor();
       if (!s.invertRange) {
-        s.invertRange = s.invert ? invertRange$1(s) : s.invertExtent ? invertRangeExtent$1(s) : undefined;
+        s.invertRange = s.invert ? invertRange(s) : s.invertExtent ? invertRangeExtent(s) : undefined;
       }
       s.type = type;
       return registerScale(s);
@@ -14291,92 +14291,92 @@
    * - `"log"` - the scale performs a logarithmic transform of the continuous domain.
    * - `"temporal"` - the scale domain is defined over date-time values.
    */
-  function scale$5(type, scale, metadata) {
+  function scale$4(type, scale, metadata) {
     if (arguments.length > 1) {
-      scales$1.set(type, create$3(type, scale, metadata));
+      scales.set(type, create$2(type, scale, metadata));
       return this;
     } else {
-      return isValidScaleType$1(type) ? scales$1.get(type) : undefined;
+      return isValidScaleType(type) ? scales.get(type) : undefined;
     }
   }
 
   // identity scale
-  scale$5(Identity$1, identity$1);
+  scale$4(Identity, identity$1);
 
   // continuous scales
-  scale$5(Linear$1, linear, Continuous$1);
-  scale$5(Log$1, log$2, [Continuous$1, Log$1]);
-  scale$5(Pow$1, pow$2, Continuous$1);
-  scale$5(Sqrt$1, sqrt$2, Continuous$1);
-  scale$5(Symlog$1, symlog, Continuous$1);
-  scale$5(Time$1, time$1, [Continuous$1, Temporal$1]);
-  scale$5(UTC$1, utcTime, [Continuous$1, Temporal$1]);
+  scale$4(Linear, linear, Continuous);
+  scale$4(Log, log$2, [Continuous, Log]);
+  scale$4(Pow, pow$2, Continuous);
+  scale$4(Sqrt, sqrt$2, Continuous);
+  scale$4(Symlog, symlog, Continuous);
+  scale$4(Time, time$1, [Continuous, Temporal]);
+  scale$4(UTC, utcTime, [Continuous, Temporal]);
 
   // sequential scales
-  scale$5(Sequential$1, sequential, [Continuous$1, Interpolating$1]); // backwards compat
-  scale$5(`${Sequential$1}-${Linear$1}`, sequential, [Continuous$1, Interpolating$1]);
-  scale$5(`${Sequential$1}-${Log$1}`, sequentialLog, [Continuous$1, Interpolating$1, Log$1]);
-  scale$5(`${Sequential$1}-${Pow$1}`, sequentialPow, [Continuous$1, Interpolating$1]);
-  scale$5(`${Sequential$1}-${Sqrt$1}`, sequentialSqrt, [Continuous$1, Interpolating$1]);
-  scale$5(`${Sequential$1}-${Symlog$1}`, sequentialSymlog, [Continuous$1, Interpolating$1]);
+  scale$4(Sequential, sequential, [Continuous, Interpolating]); // backwards compat
+  scale$4(`${Sequential}-${Linear}`, sequential, [Continuous, Interpolating]);
+  scale$4(`${Sequential}-${Log}`, sequentialLog, [Continuous, Interpolating, Log]);
+  scale$4(`${Sequential}-${Pow}`, sequentialPow, [Continuous, Interpolating]);
+  scale$4(`${Sequential}-${Sqrt}`, sequentialSqrt, [Continuous, Interpolating]);
+  scale$4(`${Sequential}-${Symlog}`, sequentialSymlog, [Continuous, Interpolating]);
 
   // diverging scales
-  scale$5(`${Diverging$1}-${Linear$1}`, diverging, [Continuous$1, Interpolating$1]);
-  scale$5(`${Diverging$1}-${Log$1}`, divergingLog, [Continuous$1, Interpolating$1, Log$1]);
-  scale$5(`${Diverging$1}-${Pow$1}`, divergingPow, [Continuous$1, Interpolating$1]);
-  scale$5(`${Diverging$1}-${Sqrt$1}`, divergingSqrt, [Continuous$1, Interpolating$1]);
-  scale$5(`${Diverging$1}-${Symlog$1}`, divergingSymlog, [Continuous$1, Interpolating$1]);
+  scale$4(`${Diverging}-${Linear}`, diverging, [Continuous, Interpolating]);
+  scale$4(`${Diverging}-${Log}`, divergingLog, [Continuous, Interpolating, Log]);
+  scale$4(`${Diverging}-${Pow}`, divergingPow, [Continuous, Interpolating]);
+  scale$4(`${Diverging}-${Sqrt}`, divergingSqrt, [Continuous, Interpolating]);
+  scale$4(`${Diverging}-${Symlog}`, divergingSymlog, [Continuous, Interpolating]);
 
   // discretizing scales
-  scale$5(Quantile$1, quantile, [Discretizing$1, Quantile$1]);
-  scale$5(Quantize$1, quantize$1, Discretizing$1);
-  scale$5(Threshold$1, threshold, Discretizing$1);
+  scale$4(Quantile, quantile, [Discretizing, Quantile]);
+  scale$4(Quantize, quantize$1, Discretizing);
+  scale$4(Threshold, threshold, Discretizing);
 
   // discrete scales
-  scale$5(BinOrdinal$1, scaleBinOrdinal$1, [Discrete$2, Discretizing$1]);
-  scale$5(Ordinal$1, ordinal, Discrete$2);
-  scale$5(Band$1, band$1, Discrete$2);
-  scale$5(Point$1, point$2, Discrete$2);
-  function isValidScaleType$1(type) {
-    return scales$1.has(type);
+  scale$4(BinOrdinal, scaleBinOrdinal, [Discrete$1, Discretizing]);
+  scale$4(Ordinal, ordinal, Discrete$1);
+  scale$4(Band, band, Discrete$1);
+  scale$4(Point, point$1, Discrete$1);
+  function isValidScaleType(type) {
+    return scales.has(type);
   }
   function hasType(key, type) {
-    const s = scales$1.get(key);
+    const s = scales.get(key);
     return s && s.metadata[type];
   }
   function isContinuous(key) {
-    return hasType(key, Continuous$1);
+    return hasType(key, Continuous);
   }
   function isDiscrete(key) {
-    return hasType(key, Discrete$2);
+    return hasType(key, Discrete$1);
   }
   function isDiscretizing(key) {
-    return hasType(key, Discretizing$1);
+    return hasType(key, Discretizing);
   }
   function isLogarithmic(key) {
-    return hasType(key, Log$1);
+    return hasType(key, Log);
   }
   function isTemporal(key) {
-    return hasType(key, Temporal$1);
+    return hasType(key, Temporal);
   }
   function isInterpolating(key) {
-    return hasType(key, Interpolating$1);
+    return hasType(key, Interpolating);
   }
   function isQuantile(key) {
-    return hasType(key, Quantile$1);
+    return hasType(key, Quantile);
   }
   const scaleProps = ['clamp', 'base', 'constant', 'exponent'];
-  function interpolateRange$1(interpolator, range) {
+  function interpolateRange(interpolator, range) {
     const start = range[0],
       span = peek$1(range) - start;
     return function (i) {
       return interpolator(start + i * span);
     };
   }
-  function interpolateColors$1(colors, type, gamma) {
-    return piecewise(interpolate$1(type || 'rgb', gamma), colors);
+  function interpolateColors(colors, type, gamma) {
+    return piecewise(interpolate(type || 'rgb', gamma), colors);
   }
-  function quantizeInterpolator$1(interpolator, count) {
+  function quantizeInterpolator(interpolator, count) {
     const samples = new Array(count),
       n = count + 1;
     for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
@@ -14390,19 +14390,19 @@
     } else {
       i = (t = scale$1.type).indexOf('-');
       t = i < 0 ? t : t.slice(i + 1);
-      s = scale$5(t)().domain([min, max]).range([0, 1]);
+      s = scale$4(t)().domain([min, max]).range([0, 1]);
       scaleProps.forEach(m => scale$1[m] ? s[m](scale$1[m]()) : 0);
       return s;
     }
   }
-  function interpolate$1(type, gamma) {
-    const interp = $$1[method$1(type)];
+  function interpolate(type, gamma) {
+    const interp = $$1[method(type)];
     return gamma != null && interp && interp.gamma ? interp.gamma(gamma) : interp;
   }
-  function method$1(type) {
+  function method(type) {
     return 'interpolate' + type.toLowerCase().split('-').map(s => s[0].toUpperCase() + s.slice(1)).join('');
   }
-  const continuous$1 = {
+  const continuous = {
     blues: 'cfe1f2bed8eca8cee58fc1de74b2d75ba3cf4592c63181bd206fb2125ca40a4a90',
     greens: 'd3eecdc0e6baabdda594d3917bc77d60ba6c46ab5e329a512089430e7735036429',
     greys: 'e2e2e2d4d4d4c4c4c4b1b1b19d9d9d8888887575756262624d4d4d3535351e1e1e',
@@ -14457,7 +14457,7 @@
     darkMulti: '3737371f5287197d8c29a86995ce3fffe800ffffff',
     darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
   };
-  const discrete$1 = {
+  const discrete = {
     category10: '1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf',
     category20: '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5',
     category20b: '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6',
@@ -14473,7 +14473,7 @@
     set2: '66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3',
     set3: '8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f'
   };
-  function colors$1(palette) {
+  function colors(palette) {
     const n = palette.length / 6 | 0,
       c = new Array(n);
     for (let i = 0; i < n;) {
@@ -14481,19 +14481,19 @@
     }
     return c;
   }
-  function apply$1(_, f) {
-    for (const k in _) scheme$1(k, f(_[k]));
+  function apply(_, f) {
+    for (const k in _) scheme(k, f(_[k]));
   }
-  const schemes$1 = {};
-  apply$1(discrete$1, colors$1);
-  apply$1(continuous$1, _ => interpolateColors$1(colors$1(_)));
-  function scheme$1(name, scheme) {
+  const schemes = {};
+  apply(discrete, colors);
+  apply(continuous, _ => interpolateColors(colors(_)));
+  function scheme(name, scheme) {
     name = name && name.toLowerCase();
     if (arguments.length > 1) {
-      schemes$1[name] = scheme;
+      schemes[name] = scheme;
       return this;
     } else {
-      return schemes$1[name];
+      return schemes[name];
     }
   }
   const SymbolLegend = 'symbol';
@@ -14525,7 +14525,7 @@
       count = count.interval;
     }
     if (isString(count)) {
-      count = scale.type === Time$1 ? timeInterval(count) : scale.type == UTC$1 ? utcInterval(count) : error('Only time and utc scales accept interval strings.');
+      count = scale.type === Time ? timeInterval(count) : scale.type == UTC ? utcInterval(count) : error('Only time and utc scales accept interval strings.');
       if (step) count = count.every(step);
     }
     return count;
@@ -14599,9 +14599,9 @@
   function tickFormat(locale, scale, count, specifier, formatType, noSkip) {
     const type = scale.type;
     let format = defaultFormatter;
-    if (type === Time$1 || formatType === Time$1) {
+    if (type === Time || formatType === Time) {
       format = locale.timeFormat(specifier);
-    } else if (type === UTC$1 || formatType === UTC$1) {
+    } else if (type === UTC || formatType === UTC) {
       format = locale.utcFormat(specifier);
     } else if (isLogarithmic(type)) {
       const varfmt = locale.formatFloat(specifier);
@@ -14635,16 +14635,16 @@
     return values ? ticks.filter(test) : test;
   }
   const symbols$1 = {
-    [Quantile$1]: 'quantiles',
-    [Quantize$1]: 'thresholds',
-    [Threshold$1]: 'domain'
+    [Quantile]: 'quantiles',
+    [Quantize]: 'thresholds',
+    [Threshold]: 'domain'
   };
   const formats = {
-    [Quantile$1]: 'quantiles',
-    [Quantize$1]: 'domain'
+    [Quantile]: 'quantiles',
+    [Quantize]: 'domain'
   };
   function labelValues(scale, count) {
-    return scale.bins ? binValues(scale.bins) : scale.type === Log$1 ? tickLog(scale, count, true) : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]()) : tickValues(scale, count);
+    return scale.bins ? binValues(scale.bins) : scale.type === Log ? tickLog(scale, count, true) : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]()) : tickValues(scale, count);
   }
   function thresholdFormat(locale, scale, specifier) {
     const _ = scale[formats[scale.type]](),
@@ -14670,7 +14670,7 @@
   }
   const isDiscreteRange = scale => symbols$1[scale.type] || scale.bins;
   function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
-    const format = formats[scale.type] && formatType !== Time$1 && formatType !== UTC$1 ? thresholdFormat(locale, scale, specifier) : tickFormat(locale, scale, count, specifier, formatType, noSkip);
+    const format = formats[scale.type] && formatType !== Time && formatType !== UTC ? thresholdFormat(locale, scale, specifier) : tickFormat(locale, scale, count, specifier, formatType, noSkip);
     return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format) : type === DiscreteLegend ? formatDiscrete(format) : formatPoint(format);
   }
   const formatRange = format => (value, index, array) => {
@@ -14689,7 +14689,7 @@
     let lo = +domain[0],
       hi = +peek$1(domain),
       span = hi - lo;
-    if (scale.type === Threshold$1) {
+    if (scale.type === Threshold) {
       const adjust = count ? span / count : 0.1;
       lo -= adjust;
       hi += adjust;
@@ -14704,7 +14704,7 @@
     if (isString(specifier) && isTemporal(type)) {
       specifier = specifier.replace(/%a/g, '%A').replace(/%b/g, '%B');
     }
-    return !specifier && type === Time$1 ? locale.timeFormat('%A, %d %B %Y, %X') : !specifier && type === UTC$1 ? locale.utcFormat('%A, %d %B %Y, %X UTC') : labelFormat(locale, scale, 5, null, specifier, formatType, true);
+    return !specifier && type === Time ? locale.timeFormat('%A, %d %B %Y, %X') : !specifier && type === UTC ? locale.utcFormat('%A, %d %B %Y, %X UTC') : labelFormat(locale, scale, 5, null, specifier, formatType, true);
   }
   function domainCaption(locale, scale, opt) {
     opt = opt || {};
@@ -16388,7 +16388,7 @@
   function rotate(a) {
     return 'rotate(' + a + ')';
   }
-  function scale$4(scaleX, scaleY) {
+  function scale$3(scaleX, scaleY) {
     return 'scale(' + scaleX + ',' + scaleY + ')';
   }
   function translateItem(item) {
@@ -16398,7 +16398,7 @@
     return translate$1(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '');
   }
   function transformItem(item) {
-    return translate$1(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '') + (item.scaleX || item.scaleY ? ' ' + scale$4(item.scaleX || 1, item.scaleY || 1) : '');
+    return translate$1(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '') + (item.scaleX || item.scaleY ? ' ' + scale$3(item.scaleX || 1, item.scaleY || 1) : '');
   }
   function markItemPath(type, shape, isect) {
     function attr(emit, item) {
@@ -17385,7 +17385,7 @@
   function cssClass(mark) {
     return 'mark-' + mark.marktype + (mark.role ? ' role-' + mark.role : '') + (mark.name ? ' ' + mark.name : '');
   }
-  function point$1(event, el) {
+  function point(event, el) {
     const rect = el.getBoundingClientRect();
     return [event.clientX - rect.left - (el.clientLeft || 0), event.clientY - rect.top - (el.clientTop || 0)];
   }
@@ -17394,7 +17394,7 @@
       mdef,
       p;
     if (mark && (mdef = Marks[mark.marktype]).tip) {
-      p = point$1(event, el);
+      p = point(event, el);
       p[0] -= origin[0];
       p[1] -= origin[1];
       while (item = item.mark.group) {
@@ -17930,7 +17930,7 @@
       return this;
     },
     pickEvent(evt) {
-      const p = point$1(evt, this._canvas),
+      const p = point(evt, this._canvas),
         o = this._origin;
       return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
     },
@@ -21240,10 +21240,10 @@
   const DEFAULT_COUNT = 5;
   function includeZero(scale) {
     const type = scale.type;
-    return !scale.bins && (type === Linear$1 || type === Pow$1 || type === Sqrt$1);
+    return !scale.bins && (type === Linear || type === Pow || type === Sqrt);
   }
   function includePad(type) {
-    return isContinuous(type) && type !== Sequential$1;
+    return isContinuous(type) && type !== Sequential;
   }
   const SKIP$1 = toSet(['set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount', 'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'domainImplicit', 'nice', 'zero', 'bins', 'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma']);
 
@@ -21263,7 +21263,7 @@
         scale$1 = this.value,
         key = scaleKey(_);
       if (!scale$1 || key !== scale$1.type) {
-        this.value = scale$1 = scale$5(key)();
+        this.value = scale$1 = scale$4(key)();
       }
       for (key in _) if (!SKIP$1[key]) {
         // padding is a scale property for band/point but not others
@@ -21281,16 +21281,16 @@
       n;
 
     // backwards compatibility pre Vega 5.
-    if (t === Sequential$1) return Sequential$1 + '-' + Linear$1;
+    if (t === Sequential) return Sequential + '-' + Linear;
     if (isContinuousColor(_)) {
       n = _.rawDomain ? _.rawDomain.length : _.domain ? _.domain.length + +(_.domainMid != null) : 0;
-      d = n === 2 ? Sequential$1 + '-' : n === 3 ? Diverging$1 + '-' : '';
+      d = n === 2 ? Sequential + '-' : n === 3 ? Diverging + '-' : '';
     }
-    return (d + t || Linear$1).toLowerCase();
+    return (d + t || Linear).toLowerCase();
   }
   function isContinuousColor(_) {
     const t = _.type;
-    return isContinuous(t) && t !== Time$1 && t !== UTC$1 && (_.scheme || _.range && _.range.length && _.range.every(isString));
+    return isContinuous(t) && t !== Time && t !== UTC && (_.scheme || _.range && _.range.length && _.range.every(isString));
   }
   function configureDomain(scale, _, df) {
     // check raw domain, if provided use that and exit early
@@ -21330,7 +21330,7 @@
 
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
-    if (type === Ordinal$1) {
+    if (type === Ordinal) {
       scale.unknown(_.domainImplicit ? implicit : undefined);
     }
 
@@ -21353,7 +21353,7 @@
   function padDomain(type, domain, range, pad, exponent, constant) {
     var span = Math.abs(peek$1(range) - range[0]),
       frac = span / (span - 2 * pad),
-      d = type === Log$1 ? zoomLog(domain, null, frac) : type === Sqrt$1 ? zoomPow(domain, null, frac, 0.5) : type === Pow$1 ? zoomPow(domain, null, frac, exponent || 1) : type === Symlog$1 ? zoomSymlog(domain, null, frac, constant || 1) : zoomLinear(domain, null, frac);
+      d = type === Log ? zoomLog(domain, null, frac) : type === Sqrt ? zoomPow(domain, null, frac, 0.5) : type === Pow ? zoomPow(domain, null, frac, exponent || 1) : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1) : zoomLinear(domain, null, frac);
     domain = domain.slice();
     domain[0] = d[0];
     domain[domain.length - 1] = d[1];
@@ -21394,7 +21394,7 @@
     }
 
     // special handling for bin-ordinal scales
-    if (scale.type === BinOrdinal$1) {
+    if (scale.type === BinOrdinal) {
       if (!bins) {
         // the domain specifies the bins
         scale.bins = scale.domain();
@@ -21432,49 +21432,49 @@
 
     // given a range array for an interpolating scale, convert to interpolator
     if (range && isInterpolating(type)) {
-      return scale.interpolator(interpolateColors$1(flip(range, _.reverse), _.interpolate, _.interpolateGamma));
+      return scale.interpolator(interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma));
     }
 
     // configure rounding / interpolation
     if (range && _.interpolate && scale.interpolate) {
-      scale.interpolate(interpolate$1(_.interpolate, _.interpolateGamma));
+      scale.interpolate(interpolate(_.interpolate, _.interpolateGamma));
     } else if (isFunction(scale.round)) {
       scale.round(round);
     } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? interpolateRound : interpolate$1$1);
+      scale.interpolate(round ? interpolateRound : interpolate$1);
     }
     if (range) scale.range(flip(range, _.reverse));
   }
   function configureRangeStep(type, _, count) {
-    if (type !== Band$1 && type !== Point$1) {
+    if (type !== Band && type !== Point) {
       error('Only band and point scales support rangeStep.');
     }
 
     // calculate full range based on requested step size and padding
     var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-      inner = type === Point$1 ? 1 : (_.paddingInner != null ? _.paddingInner : _.padding) || 0;
-    return [0, _.rangeStep * bandSpace$1(count, inner, outer)];
+      inner = type === Point ? 1 : (_.paddingInner != null ? _.paddingInner : _.padding) || 0;
+    return [0, _.rangeStep * bandSpace(count, inner, outer)];
   }
   function configureScheme(type, _, count) {
     var extent = _.schemeExtent,
       name,
-      scheme$1$1;
+      scheme$1;
     if (isArray(_.scheme)) {
-      scheme$1$1 = interpolateColors$1(_.scheme, _.interpolate, _.interpolateGamma);
+      scheme$1 = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
     } else {
       name = _.scheme.toLowerCase();
-      scheme$1$1 = scheme$1(name);
-      if (!scheme$1$1) error(`Unrecognized scheme name: ${_.scheme}`);
+      scheme$1 = scheme(name);
+      if (!scheme$1) error(`Unrecognized scheme name: ${_.scheme}`);
     }
 
     // determine size for potential discrete range
-    count = type === Threshold$1 ? count + 1 : type === BinOrdinal$1 ? count - 1 : type === Quantile$1 || type === Quantize$1 ? +_.schemeCount || DEFAULT_COUNT : count;
+    count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
 
     // adjust and/or quantize scheme as appropriate
-    return isInterpolating(type) ? adjustScheme(scheme$1$1, extent, _.reverse) : isFunction(scheme$1$1) ? quantizeInterpolator$1(adjustScheme(scheme$1$1, extent), count) : type === Ordinal$1 ? scheme$1$1 : scheme$1$1.slice(0, count);
+    return isInterpolating(type) ? adjustScheme(scheme$1, extent, _.reverse) : isFunction(scheme$1) ? quantizeInterpolator(adjustScheme(scheme$1, extent), count) : type === Ordinal ? scheme$1 : scheme$1.slice(0, count);
   }
   function adjustScheme(scheme, extent, reverse) {
-    return isFunction(scheme) && (extent || reverse) ? interpolateRange$1(scheme, flip(extent || [0, 1], reverse)) : scheme;
+    return isFunction(scheme) && (extent || reverse) ? interpolateRange(scheme, flip(extent || [0, 1], reverse)) : scheme;
   }
   function flip(array, reverse) {
     return reverse ? array.slice().reverse() : array;
@@ -24345,7 +24345,7 @@
   /**
    * Augment projections with their type and a copy method.
    */
-  function create$2(type, constructor) {
+  function create$1(type, constructor) {
     return function projection() {
       const p = constructor();
       p.type = type;
@@ -24367,7 +24367,7 @@
     }
     type = type.toLowerCase();
     if (arguments.length > 1) {
-      projections[type] = create$2(type, proj);
+      projections[type] = create$1(type, proj);
       return this;
     } else {
       return projections[type] || null;
@@ -25667,7 +25667,7 @@
     transform(_, pulse) {
       let proj = this.value;
       if (!proj || _.modified('type')) {
-        this.value = proj = create$1(_.type);
+        this.value = proj = create(_.type);
         projectionProperties.forEach(prop => {
           if (_[prop] != null) set$1(proj, prop, _[prop]);
         });
@@ -25685,7 +25685,7 @@
     const data = collectGeoJSON(_.fit);
     _.extent ? proj.fitExtent(_.extent, data) : _.size ? proj.fitSize(_.size, data) : 0;
   }
-  function create$1(type) {
+  function create(type) {
     const constructor = projection((type || 'mercator').toLowerCase());
     if (!constructor) error('Unrecognized projection type: ' + type);
     return constructor();
@@ -26969,7 +26969,8 @@
         'params': [{
           'name': 'strength',
           'type': 'number',
-          'default': -30
+          'default': -30,
+          'expr': true
         }, {
           'name': 'theta',
           'type': 'number',
@@ -32089,7 +32090,7 @@
       // create font size scaling function as needed
       if (range) {
         const fsize = fontSize,
-          sizeScale = scale$5('sqrt')().domain(extent(data, fsize)).range(range);
+          sizeScale = scale$4('sqrt')().domain(extent(data, fsize)).range(range);
         fontSize = x => sizeScale(fsize(x));
       }
       data.forEach(t => {
@@ -32798,441 +32799,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.23.0";
-
-  function bandSpace(count, paddingInner, paddingOuter) {
-    const space = count - paddingInner + paddingOuter * 2;
-    return count ? space > 0 ? space : 1 : 0;
-  }
-  const Identity = 'identity';
-  const Linear = 'linear';
-  const Log = 'log';
-  const Pow = 'pow';
-  const Sqrt = 'sqrt';
-  const Symlog = 'symlog';
-  const Time = 'time';
-  const UTC = 'utc';
-  const Sequential = 'sequential';
-  const Diverging = 'diverging';
-  const Quantile = 'quantile';
-  const Quantize = 'quantize';
-  const Threshold = 'threshold';
-  const Ordinal = 'ordinal';
-  const Point = 'point';
-  const Band = 'band';
-  const BinOrdinal = 'bin-ordinal'; // categories
-
-  const Continuous = 'continuous';
-  const Discrete$1 = 'discrete';
-  const Discretizing = 'discretizing';
-  const Interpolating = 'interpolating';
-  const Temporal = 'temporal';
-  function invertRange(scale) {
-    return function (_) {
-      let lo = _[0],
-        hi = _[1],
-        t;
-      if (hi < lo) {
-        t = lo;
-        lo = hi;
-        hi = t;
-      }
-      return [scale.invert(lo), scale.invert(hi)];
-    };
-  }
-  function invertRangeExtent(scale) {
-    return function (_) {
-      const range = scale.range();
-      let lo = _[0],
-        hi = _[1],
-        min = -1,
-        max,
-        t,
-        i,
-        n;
-      if (hi < lo) {
-        t = lo;
-        lo = hi;
-        hi = t;
-      }
-      for (i = 0, n = range.length; i < n; ++i) {
-        if (range[i] >= lo && range[i] <= hi) {
-          if (min < 0) min = i;
-          max = i;
-        }
-      }
-      if (min < 0) return undefined;
-      lo = scale.invertExtent(range[min]);
-      hi = scale.invertExtent(range[max]);
-      return [lo[0] === undefined ? lo[1] : lo[0], hi[1] === undefined ? hi[0] : hi[1]];
-    };
-  }
-  function band() {
-    const scale = ordinal().unknown(undefined),
-      domain = scale.domain,
-      ordinalRange = scale.range;
-    let range$1 = [0, 1],
-      step,
-      bandwidth,
-      round = false,
-      paddingInner = 0,
-      paddingOuter = 0,
-      align = 0.5;
-    delete scale.unknown;
-    function rescale() {
-      const n = domain().length,
-        reverse = range$1[1] < range$1[0],
-        stop = range$1[1 - reverse],
-        space = bandSpace(n, paddingInner, paddingOuter);
-      let start = range$1[reverse - 0];
-      step = (stop - start) / (space || 1);
-      if (round) {
-        step = Math.floor(step);
-      }
-      start += (stop - start - step * (n - paddingInner)) * align;
-      bandwidth = step * (1 - paddingInner);
-      if (round) {
-        start = Math.round(start);
-        bandwidth = Math.round(bandwidth);
-      }
-      const values = range$3(n).map(i => start + step * i);
-      return ordinalRange(reverse ? values.reverse() : values);
-    }
-    scale.domain = function (_) {
-      if (arguments.length) {
-        domain(_);
-        return rescale();
-      } else {
-        return domain();
-      }
-    };
-    scale.range = function (_) {
-      if (arguments.length) {
-        range$1 = [+_[0], +_[1]];
-        return rescale();
-      } else {
-        return range$1.slice();
-      }
-    };
-    scale.rangeRound = function (_) {
-      range$1 = [+_[0], +_[1]];
-      round = true;
-      return rescale();
-    };
-    scale.bandwidth = function () {
-      return bandwidth;
-    };
-    scale.step = function () {
-      return step;
-    };
-    scale.round = function (_) {
-      if (arguments.length) {
-        round = !!_;
-        return rescale();
-      } else {
-        return round;
-      }
-    };
-    scale.padding = function (_) {
-      if (arguments.length) {
-        paddingOuter = Math.max(0, Math.min(1, _));
-        paddingInner = paddingOuter;
-        return rescale();
-      } else {
-        return paddingInner;
-      }
-    };
-    scale.paddingInner = function (_) {
-      if (arguments.length) {
-        paddingInner = Math.max(0, Math.min(1, _));
-        return rescale();
-      } else {
-        return paddingInner;
-      }
-    };
-    scale.paddingOuter = function (_) {
-      if (arguments.length) {
-        paddingOuter = Math.max(0, Math.min(1, _));
-        return rescale();
-      } else {
-        return paddingOuter;
-      }
-    };
-    scale.align = function (_) {
-      if (arguments.length) {
-        align = Math.max(0, Math.min(1, _));
-        return rescale();
-      } else {
-        return align;
-      }
-    };
-    scale.invertRange = function (_) {
-      // bail if range has null or undefined values
-      if (_[0] == null || _[1] == null) return;
-      const reverse = range$1[1] < range$1[0],
-        values = reverse ? ordinalRange().reverse() : ordinalRange(),
-        n = values.length - 1;
-      let lo = +_[0],
-        hi = +_[1],
-        a,
-        b,
-        t; // bail if either range endpoint is invalid
-
-      if (lo !== lo || hi !== hi) return; // order range inputs, bail if outside of scale range
-
-      if (hi < lo) {
-        t = lo;
-        lo = hi;
-        hi = t;
-      }
-      if (hi < values[0] || lo > range$1[1 - reverse]) return; // binary search to index into scale range
-
-      a = Math.max(0, bisectRight$1(values, lo) - 1);
-      b = lo === hi ? a : bisectRight$1(values, hi) - 1; // increment index a if lo is within padding gap
-
-      if (lo - values[a] > bandwidth + 1e-10) ++a;
-      if (reverse) {
-        // map + swap
-        t = a;
-        a = n - b;
-        b = n - t;
-      }
-      return a > b ? undefined : domain().slice(a, b + 1);
-    };
-    scale.invert = function (_) {
-      const value = scale.invertRange([_, _]);
-      return value ? value[0] : value;
-    };
-    scale.copy = function () {
-      return band().domain(domain()).range(range$1).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
-    };
-    return rescale();
-  }
-  function pointish(scale) {
-    const copy = scale.copy;
-    scale.padding = scale.paddingOuter;
-    delete scale.paddingInner;
-    scale.copy = function () {
-      return pointish(copy());
-    };
-    return scale;
-  }
-  function point() {
-    return pointish(band().paddingInner(1));
-  }
-  var map = Array.prototype.map;
-  function numbers(_) {
-    return map.call(_, toNumber);
-  }
-  const slice$1 = Array.prototype.slice;
-  function scaleBinOrdinal() {
-    let domain = [],
-      range = [];
-    function scale(x) {
-      return x == null || x !== x ? undefined : range[(bisect$1(domain, x) - 1) % range.length];
-    }
-    scale.domain = function (_) {
-      if (arguments.length) {
-        domain = numbers(_);
-        return scale;
-      } else {
-        return domain.slice();
-      }
-    };
-    scale.range = function (_) {
-      if (arguments.length) {
-        range = slice$1.call(_);
-        return scale;
-      } else {
-        return range.slice();
-      }
-    };
-    scale.tickFormat = function (count, specifier) {
-      return tickFormat$1(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
-    };
-    scale.copy = function () {
-      return scaleBinOrdinal().domain(scale.domain()).range(scale.range());
-    };
-    return scale;
-  }
-  const scales = {};
-  /**
-   * Augment scales with their type and needed inverse methods.
-   */
-
-  function create(type, constructor, metadata) {
-    const ctr = function scale() {
-      const s = constructor();
-      if (!s.invertRange) {
-        s.invertRange = s.invert ? invertRange(s) : s.invertExtent ? invertRangeExtent(s) : undefined;
-      }
-      s.type = type;
-      return s;
-    };
-    ctr.metadata = toSet(array$5(metadata));
-    return ctr;
-  }
-  function scale$3(type, scale, metadata) {
-    if (arguments.length > 1) {
-      scales[type] = create(type, scale, metadata);
-      return this;
-    } else {
-      return isValidScaleType(type) ? scales[type] : undefined;
-    }
-  } // identity scale
-
-  scale$3(Identity, identity$1); // continuous scales
-
-  scale$3(Linear, linear, Continuous);
-  scale$3(Log, log$2, [Continuous, Log]);
-  scale$3(Pow, pow$2, Continuous);
-  scale$3(Sqrt, sqrt$2, Continuous);
-  scale$3(Symlog, symlog, Continuous);
-  scale$3(Time, time$1, [Continuous, Temporal]);
-  scale$3(UTC, utcTime, [Continuous, Temporal]); // sequential scales
-
-  scale$3(Sequential, sequential, [Continuous, Interpolating]); // backwards compat
-
-  scale$3("".concat(Sequential, "-").concat(Linear), sequential, [Continuous, Interpolating]);
-  scale$3("".concat(Sequential, "-").concat(Log), sequentialLog, [Continuous, Interpolating, Log]);
-  scale$3("".concat(Sequential, "-").concat(Pow), sequentialPow, [Continuous, Interpolating]);
-  scale$3("".concat(Sequential, "-").concat(Sqrt), sequentialSqrt, [Continuous, Interpolating]);
-  scale$3("".concat(Sequential, "-").concat(Symlog), sequentialSymlog, [Continuous, Interpolating]); // diverging scales
-
-  scale$3("".concat(Diverging, "-").concat(Linear), diverging, [Continuous, Interpolating]);
-  scale$3("".concat(Diverging, "-").concat(Log), divergingLog, [Continuous, Interpolating, Log]);
-  scale$3("".concat(Diverging, "-").concat(Pow), divergingPow, [Continuous, Interpolating]);
-  scale$3("".concat(Diverging, "-").concat(Sqrt), divergingSqrt, [Continuous, Interpolating]);
-  scale$3("".concat(Diverging, "-").concat(Symlog), divergingSymlog, [Continuous, Interpolating]); // discretizing scales
-
-  scale$3(Quantile, quantile, [Discretizing, Quantile]);
-  scale$3(Quantize, quantize$1, Discretizing);
-  scale$3(Threshold, threshold, Discretizing); // discrete scales
-
-  scale$3(BinOrdinal, scaleBinOrdinal, [Discrete$1, Discretizing]);
-  scale$3(Ordinal, ordinal, Discrete$1);
-  scale$3(Band, band, Discrete$1);
-  scale$3(Point, point, Discrete$1);
-  function isValidScaleType(type) {
-    return has$1(scales, type);
-  }
-  function interpolateRange(interpolator, range) {
-    const start = range[0],
-      span = peek$1(range) - start;
-    return function (i) {
-      return interpolator(start + i * span);
-    };
-  }
-  function interpolateColors(colors, type, gamma) {
-    return piecewise(interpolate(type || 'rgb', gamma), colors);
-  }
-  function quantizeInterpolator(interpolator, count) {
-    const samples = new Array(count),
-      n = count + 1;
-    for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
-    return samples;
-  }
-  function interpolate(type, gamma) {
-    const interp = $$1[method(type)];
-    return gamma != null && interp && interp.gamma ? interp.gamma(gamma) : interp;
-  }
-  function method(type) {
-    return 'interpolate' + type.toLowerCase().split('-').map(s => s[0].toUpperCase() + s.slice(1)).join('');
-  }
-  const continuous = {
-    blues: 'cfe1f2bed8eca8cee58fc1de74b2d75ba3cf4592c63181bd206fb2125ca40a4a90',
-    greens: 'd3eecdc0e6baabdda594d3917bc77d60ba6c46ab5e329a512089430e7735036429',
-    greys: 'e2e2e2d4d4d4c4c4c4b1b1b19d9d9d8888887575756262624d4d4d3535351e1e1e',
-    oranges: 'fdd8b3fdc998fdb87bfda55efc9244f87f2cf06b18e4580bd14904b93d029f3303',
-    purples: 'e2e1efd4d4e8c4c5e0b4b3d6a3a0cc928ec3827cb97566ae684ea25c3696501f8c',
-    reds: 'fdc9b4fcb49afc9e80fc8767fa7051f6573fec3f2fdc2a25c81b1db21218970b13',
-    blueGreen: 'd5efedc1e8e0a7ddd18bd2be70c6a958ba9144ad77319c5d2089460e7736036429',
-    bluePurple: 'ccddecbad0e4a8c2dd9ab0d4919cc98d85be8b6db28a55a6873c99822287730f71',
-    greenBlue: 'd3eecec5e8c3b1e1bb9bd8bb82cec269c2ca51b2cd3c9fc7288abd1675b10b60a1',
-    orangeRed: 'fddcaffdcf9bfdc18afdad77fb9562f67d53ee6545e24932d32d1ebf130da70403',
-    purpleBlue: 'dbdaebc8cee4b1c3de97b7d87bacd15b9fc93a90c01e7fb70b70ab056199045281',
-    purpleBlueGreen: 'dbd8eac8cee4b0c3de93b7d872acd1549fc83892bb1c88a3097f8702736b016353',
-    purpleRed: 'dcc9e2d3b3d7ce9eccd186c0da6bb2e14da0e23189d91e6fc61159ab07498f023a',
-    redPurple: 'fccfccfcbec0faa9b8f98faff571a5ec539ddb3695c41b8aa908808d0179700174',
-    yellowGreen: 'e4f4acd1eca0b9e2949ed68880c97c62bb6e47aa5e3297502083440e723b036034',
-    yellowOrangeBrown: 'feeaa1fedd84fecc63feb746fca031f68921eb7215db5e0bc54c05ab3d038f3204',
-    yellowOrangeRed: 'fee087fed16ffebd59fea849fd903efc7335f9522bee3423de1b20ca0b22af0225',
-    blueOrange: '134b852f78b35da2cb9dcae1d2e5eff2f0ebfce0bafbbf74e8932fc5690d994a07',
-    brownBlueGreen: '704108a0651ac79548e3c78af3e6c6eef1eac9e9e48ed1c74da79e187a72025147',
-    purpleGreen: '5b1667834792a67fb6c9aed3e6d6e8eff0efd9efd5aedda971bb75368e490e5e29',
-    purpleOrange: '4114696647968f83b7b9b4d6dadbebf3eeeafce0bafbbf74e8932fc5690d994a07',
-    redBlue: '8c0d25bf363adf745ef4ae91fbdbc9f2efeed2e5ef9dcae15da2cb2f78b3134b85',
-    redGrey: '8c0d25bf363adf745ef4ae91fcdccbfaf4f1e2e2e2c0c0c0969696646464343434',
-    yellowGreenBlue: 'eff9bddbf1b4bde5b594d5b969c5be45b4c22c9ec02182b82163aa23479c1c3185',
-    redYellowBlue: 'a50026d4322cf16e43fcac64fedd90faf8c1dcf1ecabd6e875abd04a74b4313695',
-    redYellowGreen: 'a50026d4322cf16e43fcac63fedd8df9f7aed7ee8ea4d86e64bc6122964f006837',
-    pinkYellowGreen: '8e0152c0267edd72adf0b3d6faddedf5f3efe1f2cab6de8780bb474f9125276419',
-    spectral: '9e0142d13c4bf0704afcac63fedd8dfbf8b0e0f3a1a9dda269bda94288b55e4fa2',
-    viridis: '440154470e61481a6c482575472f7d443a834144873d4e8a39568c35608d31688e2d708e2a788e27818e23888e21918d1f988b1fa08822a8842ab07f35b77943bf7154c56866cc5d7ad1518fd744a5db36bcdf27d2e21be9e51afde725',
-    magma: '0000040404130b0924150e3720114b2c11603b0f704a107957157e651a80721f817f24828c29819a2e80a8327db6377ac43c75d1426fde4968e95462f1605df76f5cfa7f5efc8f65fe9f6dfeaf78febf84fece91fddea0fcedaffcfdbf',
-    inferno: '0000040403130c0826170c3b240c4f330a5f420a68500d6c5d126e6b176e781c6d86216b932667a12b62ae305cbb3755c73e4cd24644dd513ae65c30ed6925f3771af8850ffb9506fca50afcb519fac62df6d645f2e661f3f484fcffa4',
-    plasma: '0d088723069033059742039d5002a25d01a66a00a87801a88405a7900da49c179ea72198b12a90ba3488c33d80cb4779d35171da5a69e16462e76e5bed7953f2834cf68f44fa9a3dfca636fdb32ffec029fcce25f9dc24f5ea27f0f921',
-    cividis: '00205100235800265d002961012b65042e670831690d346b11366c16396d1c3c6e213f6e26426e2c456e31476e374a6e3c4d6e42506e47536d4c566d51586e555b6e5a5e6e5e616e62646f66676f6a6a706e6d717270717573727976737c79747f7c75827f758682768985778c8877908b78938e789691789a94789e9778a19b78a59e77a9a177aea575b2a874b6ab73bbaf71c0b26fc5b66dc9b96acebd68d3c065d8c462ddc85fe2cb5ce7cf58ebd355f0d652f3da4ff7de4cfae249fce647',
-    rainbow: '6e40aa883eb1a43db3bf3cafd83fa4ee4395fe4b83ff576eff6659ff7847ff8c38f3a130e2b72fcfcc36bee044aff05b8ff4576ff65b52f6673af27828ea8d1ddfa319d0b81cbecb23abd82f96e03d82e14c6edb5a5dd0664dbf6e40aa',
-    sinebow: 'ff4040fc582af47218e78d0bd5a703bfbf00a7d5038de70b72f41858fc2a40ff402afc5818f4720be78d03d5a700bfbf03a7d50b8de71872f42a58fc4040ff582afc7218f48d0be7a703d5bf00bfd503a7e70b8df41872fc2a58ff4040',
-    turbo: '23171b32204a3e2a71453493493eae4b49c54a53d7485ee44569ee4074f53c7ff8378af93295f72e9ff42ba9ef28b3e926bce125c5d925cdcf27d5c629dcbc2de3b232e9a738ee9d3ff39347f68950f9805afc7765fd6e70fe667cfd5e88fc5795fb51a1f84badf545b9f140c5ec3cd0e637dae034e4d931ecd12ef4c92bfac029ffb626ffad24ffa223ff9821ff8d1fff821dff771cfd6c1af76118f05616e84b14df4111d5380fcb2f0dc0260ab61f07ac1805a313029b0f00950c00910b00',
-    browns: 'eedbbdecca96e9b97ae4a865dc9856d18954c7784cc0673fb85536ad44339f3632',
-    tealBlues: 'bce4d89dd3d181c3cb65b3c245a2b9368fae347da0306a932c5985',
-    teals: 'bbdfdfa2d4d58ac9c975bcbb61b0af4da5a43799982b8b8c1e7f7f127273006667',
-    warmGreys: 'dcd4d0cec5c1c0b8b4b3aaa7a59c9998908c8b827f7e7673726866665c5a59504e',
-    goldGreen: 'f4d166d5ca60b6c35c98bb597cb25760a6564b9c533f8f4f33834a257740146c36',
-    goldOrange: 'f4d166f8be5cf8aa4cf5983bf3852aef701be2621fd65322c54923b142239e3a26',
-    goldRed: 'f4d166f6be59f9aa51fc964ef6834bee734ae56249db5247cf4244c43141b71d3e',
-    lightGreyRed: 'efe9e6e1dad7d5cbc8c8bdb9bbaea9cd967ddc7b43e15f19df4011dc000b',
-    lightGreyTeal: 'e4eaead6dcddc8ced2b7c2c7a6b4bc64b0bf22a6c32295c11f85be1876bc',
-    lightMulti: 'e0f1f2c4e9d0b0de9fd0e181f6e072f6c053f3993ef77440ef4a3c',
-    lightOrange: 'f2e7daf7d5baf9c499fab184fa9c73f68967ef7860e8645bde515bd43d5b',
-    lightTealBlue: 'e3e9e0c0dccf9aceca7abfc859afc0389fb9328dad2f7ca0276b95255988',
-    darkBlue: '3232322d46681a5c930074af008cbf05a7ce25c0dd38daed50f3faffffff',
-    darkGold: '3c3c3c584b37725e348c7631ae8b2bcfa424ecc31ef9de30fff184ffffff',
-    darkGreen: '3a3a3a215748006f4d048942489e4276b340a6c63dd2d836ffeb2cffffaa',
-    darkMulti: '3737371f5287197d8c29a86995ce3fffe800ffffff',
-    darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
-  };
-  const discrete = {
-    category10: '1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf',
-    category20: '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5',
-    category20b: '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6',
-    category20c: '3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9',
-    tableau10: '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac',
-    tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5',
-    accent: '7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666',
-    dark2: '1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666',
-    paired: 'a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928',
-    pastel1: 'fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2',
-    pastel2: 'b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc',
-    set1: 'e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999',
-    set2: '66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3',
-    set3: '8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f'
-  };
-  function colors(palette) {
-    const n = palette.length / 6 | 0,
-      c = new Array(n);
-    for (let i = 0; i < n;) {
-      c[i] = '#' + palette.slice(i * 6, ++i * 6);
-    }
-    return c;
-  }
-  function apply(_, f) {
-    for (const k in _) scheme(k, f(_[k]));
-  }
-  const schemes = {};
-  apply(discrete, colors);
-  apply(continuous, _ => interpolateColors(colors(_)));
-  function scheme(name, scheme) {
-    name = name && name.toLowerCase();
-    if (arguments.length > 1) {
-      schemes[name] = scheme;
-      return this;
-    } else {
-      return schemes[name];
-    }
-  }
+  var version = "5.24.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -35438,7 +35005,7 @@
     return array(seq).slice().reverse();
   }
   function bandspace(count, paddingInner, paddingOuter) {
-    return bandSpace$1(count || 0, paddingInner || 0, paddingOuter || 0);
+    return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
   }
   function bandwidth(name, group) {
     const s = getScale(name, (group || this).context);
@@ -35473,7 +35040,7 @@
       fraction = identity$6;
     if (!(max - min)) {
       // expand scale if domain has zero span, fix #1479
-      scale = (scale.interpolator ? scale$5('sequential')().interpolator(scale.interpolator()) : scale$5('linear')().interpolate(scale.interpolate()).range(scale.range())).domain([min = 0, max = 1]);
+      scale = (scale.interpolator ? scale$4('sequential')().interpolator(scale.interpolator()) : scale$4('linear')().interpolate(scale.interpolate()).range(scale.range())).domain([min = 0, max = 1]);
     } else {
       fraction = scaleFraction(scale, min, max);
     }
@@ -36592,7 +36159,7 @@
     if (el) {
       translate = offset(view);
       e = event.changedTouches ? event.changedTouches[0] : event;
-      p = point$1(e, el);
+      p = point(e, el);
       p[0] -= translate[0];
       p[1] -= translate[1];
     }
@@ -38448,7 +38015,7 @@
   };
   function initScale(spec, scope) {
     const type = spec.type || 'linear';
-    if (!isValidScaleType$1(type)) {
+    if (!isValidScaleType(type)) {
       error('Unrecognized scale type: ' + $(type));
     }
     scope.addScale(spec.name, {
@@ -41745,7 +41312,7 @@
   exports.pathSymbols = symbols;
   exports.pathTrail = vg_trail;
   exports.peek = peek$1;
-  exports.point = point$1;
+  exports.point = point;
   exports.projection = projection;
   exports.quantileLogNormal = quantileLogNormal;
   exports.quantileNormal = quantileNormal;
@@ -41780,7 +41347,7 @@
   exports.sampleLogNormal = sampleLogNormal;
   exports.sampleNormal = sampleNormal;
   exports.sampleUniform = sampleUniform;
-  exports.scale = scale$3;
+  exports.scale = scale$4;
   exports.sceneEqual = sceneEqual;
   exports.sceneFromJSON = sceneFromJSON;
   exports.scenePickVisit = pickVisit;
