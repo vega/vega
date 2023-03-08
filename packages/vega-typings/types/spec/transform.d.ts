@@ -330,7 +330,7 @@ export interface ForceLink {
 }
 export interface ForceNBody {
   force: 'nbody';
-  strength?: number | SignalRef;
+  strength?: number | SignalRef | ExprRef;
   theta?: number | SignalRef;
   distanceMin?: number | SignalRef;
   distanceMax?: number | SignalRef;
