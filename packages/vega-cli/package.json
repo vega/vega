@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "5.23.0",
+  "version": "5.24.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "canvas": "^2.11.0",
-    "vega": "5.23.0",
+    "vega": "5.24.0",
     "yargs": "17"
   }
 }
