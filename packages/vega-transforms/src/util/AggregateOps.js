@@ -133,8 +133,9 @@ export const AggregateOps = {
 export const ValidAggregateOps = Object.keys(AggregateOps).filter(d => d !== '__count__');
 
 function measure(key, value) {
-  return out => extend({
+  return (out, aggregate_param) => extend({
     name: key,
+    aggregate_param: aggregate_param,
     out: out || key
   }, base_op, value);
 }
@@ -143,8 +144,8 @@ function measure(key, value) {
   AggregateOps[key] = measure(key, AggregateOps[key]);
 });
 
-export function createMeasure(op, name) {
-  return AggregateOps[op](name);
+export function createMeasure(op, param, name) {
+  return AggregateOps[op](name, param);
 }
 
 function compareIndex(a, b) {
@@ -169,7 +170,7 @@ function resolve(agg) {
 function init() {
   this.valid = 0;
   this.missing = 0;
-  this._ops.forEach(op => op.init(this));
+  this._ops.forEach(op => (op.aggregate_param == null) ? op.init(this) : op.init(this, op.aggregate_param));
 }
 
 function add(v, t) {
