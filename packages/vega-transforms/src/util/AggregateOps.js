@@ -127,6 +127,16 @@ export const AggregateOps = {
     add:  (m, v, t) => { if (v > m.max) m.argmax = t; },
     rem:  (m, v) => { if (v >= m.max) m.argmax = undefined; },
     req:  ['max', 'values'], idx: 3
+  },
+  exponential: {
+    init: (m, r) => { m.exp = 0; m.exp_r = r; },
+    value: m => m.valid ? (m.exp * (1 - m.exp_r) / (1 - m.exp_r ** m.valid)) : undefined,
+    add:  (m, v) => m.exp = m.exp_r * m.exp + v,
+    rem:  (m, v) => m.exp = (m.exp - v / m.exp_r ** (m.valid - 1)) / m.exp_r
+  },
+  exponentialb: {
+    value: m => m.valid ? (m.exp * (1 - m.exp_r)) : undefined,
+    req:  ['exponential'], idx: 1
   }
 };
 

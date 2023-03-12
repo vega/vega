@@ -18,8 +18,9 @@ tape('Aggregate aggregates tuples', t => {
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
-        fields: [val, val, val, val, val],
-        ops: ['count', 'sum', 'min', 'max', 'product'],
+        fields: [val, val, val, val, val, val],
+        ops: ['exponential', 'count', 'sum', 'min', 'max', 'product'],
+        aggregate_params: [0.5],
         pulse: col
       }),
       out = df.add(Collect, {pulse: agg});
@@ -34,12 +35,14 @@ tape('Aggregate aggregates tuples', t => {
   t.equal(d[0].min_v, 1);
   t.equal(d[0].max_v, 2);
   t.equal(d[0].product_v, 2);
+  t.equal(d[0].exponential_v, 1.6666666666666667);
   t.equal(d[1].k, 'b');
   t.equal(d[1].count_v, 2);
   t.equal(d[1].sum_v, 7);
   t.equal(d[1].min_v, 3);
   t.equal(d[1].max_v, 4);
   t.equal(d[1].product_v, 12);
+  t.equal(d[1].exponential_v, 3.6666666666666665);
 
   // -- test rems
   df.pulse(col, changeset().remove(data.slice(0, 2))).run();
@@ -323,7 +326,9 @@ tape('Aggregate handles empty/invalid data', t => {
     'stdev',
     'min',
     'max',
-    'median'
+    'median',
+    'exponential',
+    'exponentialb'
   ];
   const res = [4, 3, 0, 0]; // higher indices 'undefined'
 
