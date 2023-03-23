@@ -4,10 +4,9 @@ import {
   RuleEncodeEntry,
   SignalRef,
   TextEncodeEntry,
-  TimeInterval,
+  TimeUnit
 } from '.';
 import { Text } from './encode';
-import { TimeIntervalStep } from './scale';
 import {
   AlignValue,
   AnchorValue,
@@ -26,9 +25,14 @@ export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 
 export type LabelOverlap = boolean | 'parity' | 'greedy';
 
-export type TickCount = number | TimeInterval | TimeIntervalStep | SignalRef;
+export type TickCount = number | TimeUnit | TickCountIntervalStep | SignalRef;
 
 export type FormatType = 'number' | 'time' | 'utc';
+
+export type TickCountIntervalStep = {
+  interval: TimeUnit;
+  step: number;
+}
 
 export interface TimeFormatSpecifier {
   year?: string;
