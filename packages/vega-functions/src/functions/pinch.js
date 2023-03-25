@@ -2,7 +2,7 @@ export function pinchDistance(event) {
   const t = event.touches,
         dx = t[0].clientX - t[1].clientX,
         dy = t[0].clientY - t[1].clientY;
-  return Math.sqrt(dx * dx + dy * dy);
+  return Math.hypot(dx, dy);
 }
 
 export function pinchAngle(event) {
