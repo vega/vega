@@ -34,6 +34,7 @@ export default function(codegen) {
     cos:      'Math.cos',
     exp:      'Math.exp',
     floor:    'Math.floor',
+    hypot:    'Math.hypot',
     log:      'Math.log',
     max:      'Math.max',
     min:      'Math.min',

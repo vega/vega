@@ -237,6 +237,10 @@ Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's
 <b>floor</b>(<i>value</i>)<br/>
 Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's [`Math.floor`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
+<a name="hypot" href="#hypot">#</a>
+<b>hypot</b>(<i>value</i>)<br/>
+Returns the square root of the sum of squares of its arguments. Same as JavaScript's [`Math.hypot`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot).
+
 <a name="log" href="#log">#</a>
 <b>log</b>(<i>value</i>)<br/>
 Returns the natural logarithm of _value_. Same as JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
