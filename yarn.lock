@@ -6546,9 +6546,9 @@ rollup-plugin-bundle-size@^1.0.3:
     maxmin "^2.1.0"
 
 rollup@^3.18.0:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.18.0.tgz#2354ba63ba66d6a09c652c3ea0dbcd9dad72bbde"
-  integrity sha512-J8C6VfEBjkvYPESMQYxKHxNOh4A5a3FlP+0BETGo34HEcE4eTlgCrO2+eWzlu2a/sHs2QUkZco+wscH7jhhgWg==
+  version "3.20.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.20.2.tgz#f798c600317f216de2e4ad9f4d9ab30a89b690ff"
+  integrity sha512-3zwkBQl7Ai7MFYQE0y1MeQ15+9jsi7XxfrqwTb/9EK8D9C9+//EBR4M+CuA1KODRaNbFez/lWxA5vhEGZp4MUg==
   optionalDependencies:
     fsevents "~2.3.2"
 
