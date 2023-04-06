@@ -11,9 +11,9 @@ tape('regressionConstant fits a constant regression model', t => {
   var data = [NaN, 0, 1, 2].map(v => [v, 2 - v]),
       fit = vega.regressionConstant(data, x, y);
 
-  closeTo(t, fit.coef[0], 0.75);
+  closeTo(t, fit.coef[0], 1);
   closeTo(t, fit.rSquared, 0);
-  data.filter(d => d === d).forEach(d => closeTo(t, fit.predict(x(d)), 0.75));
+  data.filter(d => d === d).forEach(d => closeTo(t, fit.predict(x(d)), 1));
 
   t.end();
 });

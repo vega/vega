@@ -1,14 +1,19 @@
-import { sum } from 'd3-array';
 import rSquared from './r-squared';
 
 export default function (data, x, y) {
-  const validData = data.filter(d => x(d) != null && y(d) != null),
-    meanY = sum(validData.map(y)) / validData.length,
-    predict = () => meanY;
+  let mean = 0, n = 0;
+  for (const d of data) {
+    const val = y(d)
+    if (x(d) == null || val == null || isNaN(val)) continue;
+
+    n++;
+    mean += (val - mean) / n;
+  }
+  const predict = () => mean;
 
   return {
-    coef: [meanY],
+    coef: [mean],
     predict: predict,
-    rSquared: rSquared(data, x, y, meanY, predict)
+    rSquared: rSquared(data, x, y, mean, predict)
   };
 }
