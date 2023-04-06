@@ -30,6 +30,7 @@ export {
   cumulativeUniform,
   quantileUniform
 } from './src/uniform';
+export {default as regressionConstant} from './src/regression/constant';
 export {default as regressionLinear} from './src/regression/linear';
 export {default as regressionLog} from './src/regression/log';
 export {default as regressionExp} from './src/regression/exp';
