@@ -5,9 +5,7 @@ export default function (data, x, y) {
   for (const d of data) {
     const val = y(d)
     if (x(d) == null || val == null || isNaN(val)) continue;
-
-    n++;
-    mean += (val - mean) / n;
+    mean += (val - mean) / ++n;
   }
   const predict = () => mean;
 
