@@ -1,5 +1,3 @@
-import rSquared from './r-squared';
-
 export default function (data, x, y) {
   let mean = 0, n = 0;
   for (const d of data) {
@@ -12,6 +10,6 @@ export default function (data, x, y) {
   return {
     coef: [mean],
     predict: predict,
-    rSquared: rSquared(data, x, y, mean, predict)
+    rSquared: 0
   };
 }
