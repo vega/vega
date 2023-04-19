@@ -28,7 +28,7 @@ If you would like to install the Vega command line utilities (`vg2pdf`, `vg2png`
 
 ## Contributions, Development, and Support
 
-Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](CODE_OF_CONDUCT.md).
+Interested in contributing to Vega? Please see our [contribution and development guidelines](../../CONTRIBUTING.md), subject to our [code of conduct](https://vega.github.io/vega/about/code-of-conduct/).
 
 Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack-2020)!
 
