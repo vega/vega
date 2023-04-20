@@ -19,8 +19,8 @@ For a basic setup allowing you to build Vega and run examples:
 
 This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `yarn docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
 
-## ES5 Support
-For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) ES5-compatible version of the code in `packages/vega/build-es5` directory. Older browser would also require several polyfill libraries:
+## Internet Explorer Support
+For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) IE-compatible version of the code in the `packages/vega/build-es5` directory. Older browser would also require several polyfill libraries:
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.4/polyfill.min.js"></script>
