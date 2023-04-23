@@ -63,5 +63,5 @@ module.exports = function(type, callback, opt) {
   // read input from file or stdin
   read(arg._[0] || null)
     .then(text => render(JSON.parse(text)))
-    .catch(err => console.error(err)); // eslint-disable-line no-console
+    .catch(err => { process.exitCode = 1; console.error(err); }); // eslint-disable-line no-console
 };
