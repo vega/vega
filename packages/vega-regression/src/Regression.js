@@ -57,7 +57,7 @@ inherits(Regression, Transform, {
             groups = partition(source, _.groupby),
             names = (_.groupby || []).map(accessorName),
             method = _.method || 'linear',
-            order = _.order ?? 3,
+            order = _.order == null ? 3 : _.order,
             dof = degreesOfFreedom(method, order),
             as = _.as || [accessorName(_.x), accessorName(_.y)],
             fit = Methods[method],
