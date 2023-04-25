@@ -91,7 +91,8 @@
         {"name": "timelines"},
         {"name": "u-district-cuisine"},
         {"name": "clock"},
-        {"name": "watch"}
+        {"name": "watch"},
+        {"name": "warming-stripes"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
