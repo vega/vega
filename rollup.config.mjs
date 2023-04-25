@@ -135,7 +135,7 @@ export default function(commandLineArgs) {
       format: 'esm',
       sourcemap: false
     },
-    plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+    plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
   }];
 
   if (browser) {
@@ -188,7 +188,7 @@ export default function(commandLineArgs) {
         globals,
         name
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
     });
 
     if (ie) {
@@ -203,7 +203,7 @@ export default function(commandLineArgs) {
           globals,
           name
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults')]
+        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
       });
     }
   }
@@ -221,7 +221,7 @@ export default function(commandLineArgs) {
         globals,
         name
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
     });
 
     if (ie) {
@@ -238,7 +238,7 @@ export default function(commandLineArgs) {
           globals,
           name
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults')]
+        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
       });
     }
   }
