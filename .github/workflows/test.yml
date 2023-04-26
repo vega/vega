@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [16, 18, 19]
+        node: [16, 18, 20]
 
     name: Node ${{ matrix.node }}
 
