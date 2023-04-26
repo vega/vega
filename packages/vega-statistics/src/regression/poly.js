@@ -1,3 +1,4 @@
+import constant from './constant';
 import linear from './linear';
 import {points} from './points';
 import quad from './quad';
@@ -10,6 +11,7 @@ import rSquared from './r-squared';
 // License: https://github.com/Tom-Alexander/regression-js/blob/master/LICENSE
 export default function(data, x, y, order) {
   // use more efficient methods for lower orders
+  if (order === 0) return constant(data, x, y);
   if (order === 1) return linear(data, x, y);
   if (order === 2) return quad(data, x, y);
 

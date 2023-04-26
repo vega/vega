@@ -1,18 +1,19 @@
 import partition from './partition';
 import {Transform, ingest} from 'vega-dataflow';
 import {
-  regressionExp, regressionLinear, regressionLog,
+  regressionConstant, regressionExp, regressionLinear, regressionLog,
   regressionPoly, regressionPow, regressionQuad, sampleCurve
 } from 'vega-statistics';
 import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
 
 const Methods = {
-  linear: regressionLinear,
-  log:    regressionLog,
-  exp:    regressionExp,
-  pow:    regressionPow,
-  quad:   regressionQuad,
-  poly:   regressionPoly
+  constant: regressionConstant,
+  linear:   regressionLinear,
+  log:      regressionLog,
+  exp:      regressionExp,
+  pow:      regressionPow,
+  quad:     regressionQuad,
+  poly:     regressionPoly
 };
 
 const degreesOfFreedom = (method, order) =>
@@ -106,8 +107,8 @@ inherits(Regression, Transform, {
                 values.push(ingest(t));
               };
 
-        if (method === 'linear') {
-          // for linear regression we only need the end points
+        if (method === 'linear' || method === 'constant') {
+          // for linear or constant regression we only need the end points
           dom.forEach(x => add([x, model.predict(x)]));
         } else {
           // otherwise return trend line sample points
