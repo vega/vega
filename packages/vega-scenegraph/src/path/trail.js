@@ -18,7 +18,7 @@ export default function() {
 
       if (ux || uy) {
         // get normal vector
-        var ud = Math.sqrt(ux * ux + uy * uy),
+        var ud = Math.hypot(ux, uy),
             rx = (ux /= ud) * r1,
             ry = (uy /= ud) * r1,
             t = Math.atan2(uy, ux);

@@ -2,7 +2,7 @@ const {exec} = require('child_process'),
       PNG = require('pngjs').PNG,
       pixelmatch = require('pixelmatch'),
       {readFileSync} = require('fs'),
-      rimraf = require('rimraf'),
+      {rimraf} = require('rimraf'),
       res = 'test/resources/';
 
 const GENERATE = false;

@@ -179,7 +179,7 @@ export const spec: Spec = {
       "value": 0,
       "on":[{
         "events": "mousemove, touchmove",
-        "update": "isActive ? sqrt(pow(x()-tX, 2) + pow(y()-tY, 2)) : thisDist"
+        "update": "isActive ? hypot(x()-tX, y()-tY) : thisDist"
       }]
     },
     {
@@ -187,7 +187,7 @@ export const spec: Spec = {
       "value": 0,
       "on":[{
         "events": "mousemove, touchmove",
-        "update": "isActive ? sqrt(pow(x()-pX, 2) + pow(y()-pY, 2)): prevDist"
+        "update": "isActive ? hypot(x()-pX, y()-pY): prevDist"
       }]
     },
     {
@@ -195,7 +195,7 @@ export const spec: Spec = {
       "value": 0,
       "on":[{
         "events": "mousemove, touchmove",
-        "update": "isActive ? sqrt(pow(x()-nX, 2) + pow(y()-nY, 2)) : nextDist"
+        "update": "isActive ? hypot(x()-nX, y()-nY) : nextDist"
       }]
     },
     {
@@ -219,7 +219,7 @@ export const spec: Spec = {
       "value": 1980,
       "on": [{
         "events": "mousemove, touchmove",
-        "update": "isActive ? (min(maxYear, currentYear+5, max(minYear, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/sqrt(pow(pX-tX, 2) + pow(pY-tY, 2))) : (currentYear + 2.5*nextScore/sqrt(pow(nX-tX, 2) + pow(nY-tY, 2)))))) : interYear"
+        "update": "isActive ? (min(maxYear, currentYear+5, max(minYear, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/hypot(pX-tX, pY-tY)) : (currentYear + 2.5*nextScore/hypot(nX-tX, nY-tY))))) : interYear"
       }]
     },
     {

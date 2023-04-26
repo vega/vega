@@ -63,7 +63,7 @@ inherits(Aggregate, Transform, {
 
     if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
       aggr._prev = aggr.value;
-      aggr.value = mod ? aggr.init(_) : {};
+      aggr.value = mod ? aggr.init(_) : Object.create(null);
       pulse.visit(pulse.SOURCE, t => aggr.add(t));
     } else {
       aggr.value = aggr.value || aggr.init(_);
@@ -200,7 +200,7 @@ inherits(Aggregate, Transform, {
 
     this._measures = this._measures.map(m => compileMeasures(m, m.field));
 
-    return {}; // aggregation cells (this.value)
+    return Object.create(null); // aggregation cells (this.value)
   },
 
   // -- Cell Management -----

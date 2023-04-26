@@ -71,8 +71,7 @@
     for (i = j = 0; j < n; ++j) {
       c = p[j];
       if (c === '\\') {
-        s += p.substring(i, j);
-        s += p.substring(++j, ++j);
+        s += p.substring(i, j++);
         i = j;
       } else if (c === q) {
         push();
@@ -336,7 +335,7 @@
       return c * orders[i];
     };
   };
-  function constant(_) {
+  function constant$1(_) {
     return isFunction(_) ? _ : () => _;
   }
   function debounce(delay, handler) {
@@ -872,7 +871,7 @@
       };
     const t = new Date(),
       u = toSet(units),
-      y = u[YEAR] ? _(YEAR) : constant(2012),
+      y = u[YEAR] ? _(YEAR) : constant$1(2012),
       m = u[MONTH] ? _(MONTH) : u[QUARTER] ? _(QUARTER) : zero$1,
       d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$1,
       H = u[HOURS] ? _(HOURS) : zero$1,
@@ -1702,7 +1701,7 @@
       modify(t, field, value) {
         const m = {
           field: field,
-          value: constant(value)
+          value: constant$1(value)
         };
         if (isFunction(t)) {
           m.filter = t;
@@ -2457,7 +2456,7 @@
   function onStream(df, stream, target, update, params, options) {
     const opt = extend({}, options, SKIP$2);
     let func, op;
-    if (!isFunction(target)) target = constant(target);
+    if (!isFunction(target)) target = constant$1(target);
     if (update === undefined) {
       func = e => df.touch(target(e));
     } else if (isFunction(update)) {
@@ -2493,7 +2492,7 @@
   }
 
   function updater(target, update) {
-    update = isFunction(update) ? update : constant(update);
+    update = isFunction(update) ? update : constant$1(update);
     return target ? function (_, pulse) {
       const value = update(_, pulse);
       if (!target.skip()) {
@@ -4237,6 +4236,20 @@
     }
     return dist.min(min).max(max);
   }
+  function constant(data, x, y) {
+    let mean = 0,
+      n = 0;
+    for (const d of data) {
+      const val = y(d);
+      if (x(d) == null || val == null || isNaN(val)) continue;
+      mean += (val - mean) / ++n;
+    }
+    return {
+      coef: [mean],
+      predict: () => mean,
+      rSquared: 0
+    };
+  }
 
   // Ordinary Least Squares
   function ols(uX, uY, uXY, uX2) {
@@ -4459,6 +4472,7 @@
   // License: https://github.com/Tom-Alexander/regression-js/blob/master/LICENSE
   function poly(data, x, y, order) {
     // use more efficient methods for lower orders
+    if (order === 0) return constant(data, x, y);
     if (order === 1) return linear(data, x, y);
     if (order === 2) return quad(data, x, y);
     const [xv, yv, ux, uy] = points(data, x, y),
@@ -5171,7 +5185,7 @@
       aggr.stamp = out.stamp;
       if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
         aggr._prev = aggr.value;
-        aggr.value = mod ? aggr.init(_) : {};
+        aggr.value = mod ? aggr.init(_) : Object.create(null);
         pulse.visit(pulse.SOURCE, t => aggr.add(t));
       } else {
         aggr.value = aggr.value || aggr.init(_);
@@ -5293,7 +5307,7 @@
         m.push(createMeasure(op, outname));
       }
       this._measures = this._measures.map(m => compileMeasures(m, m.field));
-      return {}; // aggregation cells (this.value)
+      return Object.create(null); // aggregation cells (this.value)
     },
 
     // -- Cell Management -----
@@ -8399,7 +8413,7 @@
         p1: 0,
         index: 0,
         data: data,
-        compare: sort || constant(-1)
+        compare: sort || constant$1(-1)
       };
     state.init();
     for (let i = 0; i < n; ++i) {
@@ -8887,7 +8901,7 @@
     const delta = max - min;
     let i, t, s;
     if (!delta || !Number.isFinite(delta)) {
-      return constant(0.5);
+      return constant$1(0.5);
     } else {
       i = (t = scale$1.type).indexOf('-');
       t = i < 0 ? t : t.slice(i + 1);
@@ -10083,7 +10097,7 @@
           uy = x2 - x1;
         if (ux || uy) {
           // get normal vector
-          var ud = Math.sqrt(ux * ux + uy * uy),
+          var ud = Math.hypot(ux, uy),
             rx = (ux /= ud) * r1,
             ry = (uy /= ud) * r1,
             t = Math.atan2(uy, ux);
@@ -15487,7 +15501,7 @@
           // compute size offset for legend entries
           offset = items.reduce((max, value) => Math.max(max, size(value, _)), 0);
         } else {
-          size = constant(offset = size || 8);
+          size = constant$1(offset = size || 8);
         }
         items = items.map((value, index) => ingest$1({
           index: index,
@@ -15614,7 +15628,7 @@
   const arc = (sx, sy, tx, ty) => {
     var dx = tx - sx,
       dy = ty - sy,
-      rr = Math.sqrt(dx * dx + dy * dy) / 2,
+      rr = Math.hypot(dx, dy) / 2,
       ra = 180 * Math.atan2(dy, dx) / Math.PI;
     return 'M' + sx + ',' + sy + 'A' + rr + ',' + rr + ' ' + ra + ' 0 1' + ' ' + tx + ',' + ty;
   };
@@ -16639,7 +16653,7 @@
     return Math.round((Math.sqrt(4 * v * v + 1) - 1) / 2);
   }
   function number$2(_) {
-    return isFunction(_) ? _ : constant(+_);
+    return isFunction(_) ? _ : constant$1(+_);
   }
 
   // Implementation adapted from d3/d3-contour. Thanks!
@@ -17447,7 +17461,7 @@
 
         // generate canvas image
         // optimize color/opacity if not pixel-dependent
-        t[as] = toCanvas(v, o, color.dep ? color : constant(color(o)), opacity.dep ? opacity : constant(opacity(o)));
+        t[as] = toCanvas(v, o, color.dep ? color : constant$1(color(o)), opacity.dep ? opacity : constant$1(opacity(o)));
       });
       return pulse.reflow(true).modifies(as);
     }
@@ -17461,7 +17475,7 @@
       f.dep = dependency(color);
     } else {
       // default to mid-grey
-      f = constant(d3Color.rgb(color || '#888'));
+      f = constant$1(d3Color.rgb(color || '#888'));
     }
     return f;
   }
@@ -17473,7 +17487,7 @@
       f = obj => opacity(obj, _);
       f.dep = dependency(opacity);
     } else if (opacity) {
-      f = constant(opacity);
+      f = constant$1(opacity);
     } else {
       // default to [0, max] opacity gradient
       f = obj => obj.$value / obj.$max || 0;
@@ -19404,6 +19418,7 @@
     }
   });
   const Methods = {
+    constant: constant,
     linear: linear,
     log: log$1,
     exp: exp,
@@ -19476,7 +19491,7 @@
           groups = partition(source, _.groupby),
           names = (_.groupby || []).map(accessorName),
           method = _.method || 'linear',
-          order = _.order || 3,
+          order = _.order == null ? 3 : _.order,
           dof = degreesOfFreedom(method, order),
           as = _.as || [accessorName(_.x), accessorName(_.y)],
           fit = Methods[method],
@@ -19517,8 +19532,8 @@
               t[as[1]] = p[1];
               values.push(ingest$1(t));
             };
-          if (method === 'linear') {
-            // for linear regression we only need the end points
+          if (method === 'linear' || method === 'constant') {
+            // for linear or constant regression we only need the end points
             dom.forEach(x => add([x, model.predict(x)]));
           } else {
             // otherwise return trend line sample points
@@ -19723,7 +19738,7 @@
     function place(board, tag, bounds) {
       var startX = tag.x,
         startY = tag.y,
-        maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
+        maxDelta = Math.hypot(size[0], size[1]),
         s = spiral(size),
         dt = random() < .5 ? 1 : -1,
         t = -dt,
@@ -20108,7 +20123,7 @@
         as = _.as || Output;
       let fontSize = _.fontSize || 14,
         range;
-      isFunction(fontSize) ? range = _.fontSizeRange : fontSize = constant(fontSize);
+      isFunction(fontSize) ? range = _.fontSizeRange : fontSize = constant$1(fontSize);
 
       // create font size scaling function as needed
       if (range) {
@@ -20822,7 +20837,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.24.0";
+  var version = "5.25.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22254,6 +22269,7 @@
       cos: 'Math.cos',
       exp: 'Math.exp',
       floor: 'Math.floor',
+      hypot: 'Math.hypot',
       log: 'Math.log',
       max: 'Math.max',
       min: 'Math.min',
@@ -22977,7 +22993,7 @@
     const t = event.touches,
       dx = t[0].clientX - t[1].clientX,
       dy = t[0].clientY - t[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
+    return Math.hypot(dx, dy);
   }
   function pinchAngle(event) {
     const t = event.touches;
@@ -23148,7 +23164,7 @@
     const last = lasso[lasso.length - 1];
 
     // Add point to lasso if its the first point or distance to last point exceed minDist
-    return last === undefined || Math.sqrt((last[0] - x) ** 2 + (last[1] - y) ** 2) > minDist ? [...lasso, [x, y]] : lasso;
+    return last === undefined || Math.hypot(last[0] - x, last[1] - y) > minDist ? [...lasso, [x, y]] : lasso;
   }
 
   /**
@@ -24216,8 +24232,8 @@
       return p;
     }
     return {
-      view: constant(view),
-      item: constant(item || {}),
+      view: constant$1(view),
+      item: constant$1(item || {}),
       group: group,
       xy: xy,
       x: item => xy(item)[0],
@@ -29253,7 +29269,7 @@
   exports.clampRange = clampRange;
   exports.codegenExpression = codegen;
   exports.compare = compare$1;
-  exports.constant = constant;
+  exports.constant = constant$1;
   exports.cumulativeLogNormal = cumulativeLogNormal;
   exports.cumulativeNormal = cumulativeNormal;
   exports.cumulativeUniform = cumulativeUniform;
@@ -29355,6 +29371,7 @@
   exports.randomNormal = gaussian;
   exports.randomUniform = uniform;
   exports.read = read;
+  exports.regressionConstant = constant;
   exports.regressionExp = exp;
   exports.regressionLinear = linear;
   exports.regressionLoess = loess;
