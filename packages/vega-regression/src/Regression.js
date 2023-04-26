@@ -107,8 +107,8 @@ inherits(Regression, Transform, {
                 values.push(ingest(t));
               };
 
-        if (method === 'linear') {
-          // for linear regression we only need the end points
+        if (method === 'linear' || method === 'constant') {
+          // for linear or constant regression we only need the end points
           dom.forEach(x => add([x, model.predict(x)]));
         } else {
           // otherwise return trend line sample points
