@@ -16,12 +16,15 @@
     "format-dataflow-tests": "prettier --write --ignore-path none tests/dataflow/*.ts",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
-    "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib"
+    "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
-    "@types/geojson": "^7946.0.10",
+    "@types/geojson": "7946.0.4",
     "vega-event-selector": "^3.0.1",
     "vega-expression": "^5.0.1",
     "vega-util": "^1.17.1"
+  },
+  "devDependencies": {
+    "ts-json-schema-generator": "^1.2.0"
   }
 }
