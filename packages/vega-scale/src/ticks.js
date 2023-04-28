@@ -27,7 +27,7 @@ export function tickCount(scale, count, minStep) {
     if (minStep != null) {
       count = Math.min(
         count,
-        Math.floor((span(scale.domain()) / minStep) || 1)
+        Math.floor((span(scale.domain()) / minStep) || 1) + 1
       );
     }
   }
