@@ -84,7 +84,7 @@ export function clampRange(range: readonly number[], min: number, max: number): 
 export function extent(array: readonly number[], accessor?: AccessorFn): number[];
 export function extentIndex(array: readonly number[], accessor?: AccessorFn): number[];
 
-export function flush<T extends any>(range: readonly number[], value: number, threshold: number, left: T, right: T, center: T): T;
+export function flush<T>(range: readonly number[], value: number, threshold: number, left: T, right: T, center: T): T;
 
 export function inrange(value: number, range: readonly number[], left: boolean, right: boolean): boolean;
 

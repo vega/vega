@@ -1,4 +1,4 @@
-import { SequenceExpression, Expression } from "estree";
+import { Expression, SequenceExpression } from 'estree';
 
 /** Parse a JavaScript *expression* string and return the resulting abstract syntax tree in the ESTree format */
 export function parseExpression(expression: string): Expression | SequenceExpression;

@@ -4,7 +4,7 @@ import {
   RectEncodeEntry,
   SignalRef,
   SymbolEncodeEntry,
-  TextEncodeEntry,
+  TextEncodeEntry
 } from '.';
 import { FormatType, LabelOverlap, TickCount, TimeFormatSpecifier } from './axis';
 import { Text } from './encode';
@@ -12,7 +12,6 @@ import { LayoutAlign } from './layout';
 import {
   AlignValue,
   AnchorValue,
-  BooleanValue,
   ColorValue,
   DashArrayValue,
   FontStyleValue,
@@ -21,7 +20,7 @@ import {
   OrientValue,
   StringValue,
   SymbolShapeValue,
-  TextBaselineValue,
+  TextBaselineValue
 } from './values';
 
 export interface GuideEncodeEntry<T> {

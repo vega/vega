@@ -1,144 +1,142 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 900,
-  "height": 560,
-  "padding": 10,
-  "autosize": "none",
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 900,
+  height: 560,
+  padding: 10,
+  autosize: 'none',
 
-  "signals": [
+  signals: [
     {
-      "name": "count", "value": 10,
-      "bind": {"input": "select", "options": [1, 5, 10, 20]}
+      name: 'count',
+      value: 10,
+      bind: { input: 'select', options: [1, 5, 10, 20] }
     }
   ],
 
-  "title": {
-    "text": "Density of U.S. Airports, 2008",
-    "offset": -15
+  title: {
+    text: 'Density of U.S. Airports, 2008',
+    offset: -15
   },
 
-  "data": [
+  data: [
     {
-      "name": "states",
-      "url": "data/us-10m.json",
-      "format": {"type": "topojson", "feature": "states"},
-      "transform": [
+      name: 'states',
+      url: 'data/us-10m.json',
+      format: { type: 'topojson', feature: 'states' },
+      transform: [
         {
-          "type": "geopath",
-          "projection": "projection"
+          type: 'geopath',
+          projection: 'projection'
         }
       ]
     },
     {
-      "name": "airports",
-      "url": "data/airports.csv",
-      "format": {"type": "csv","parse": "auto"
-      },
-      "transform": [
+      name: 'airports',
+      url: 'data/airports.csv',
+      format: { type: 'csv', parse: 'auto' },
+      transform: [
         {
-          "type": "geopoint",
-          "projection": "projection",
-          "fields": ["longitude", "latitude"]
+          type: 'geopoint',
+          projection: 'projection',
+          fields: ['longitude', 'latitude']
         },
         {
-          "type": "filter",
-          "expr": "datum.x != null && datum.y != null"
+          type: 'filter',
+          expr: 'datum.x != null && datum.y != null'
         }
       ]
     }
   ],
 
-  "projections": [
+  projections: [
     {
-      "name": "projection",
-      "type": "albers",
-      "scale": 1150,
-      "translate": [{"signal": "width / 2"}, {"signal": "height / 2"}]
+      name: 'projection',
+      type: 'albers',
+      scale: 1150,
+      translate: [{ signal: 'width / 2' }, { signal: 'height / 2' }]
     }
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "path",
-      "clip": true,
-      "from": {"data": "states"},
-      "encode": {
-        "enter": {
-          "fill": {"value": "#dedede"},
-          "stroke": {"value": "white"}
+      type: 'path',
+      clip: true,
+      from: { data: 'states' },
+      encode: {
+        enter: {
+          fill: { value: '#dedede' },
+          stroke: { value: 'white' }
         },
-        "update": {
-          "path": {"field": "path"}
+        update: {
+          path: { field: 'path' }
         }
       }
     },
     {
-      "type": "symbol",
-      "clip": true,
-      "from": {"data": "airports"},
-      "encode": {
-        "enter": {
-          "size": {"value": 10},
-          "fill": {"value": "steelblue"},
-          "fillOpacity": {"value": 0.8},
-          "stroke": {"value": "white"},
-          "strokeWidth": {"value": 0.5}
+      type: 'symbol',
+      clip: true,
+      from: { data: 'airports' },
+      encode: {
+        enter: {
+          size: { value: 10 },
+          fill: { value: 'steelblue' },
+          fillOpacity: { value: 0.8 },
+          stroke: { value: 'white' },
+          strokeWidth: { value: 0.5 }
         },
-        "update": {
-          "x": {"field": "x"},
-          "y": {"field": "y"}
+        update: {
+          x: { field: 'x' },
+          y: { field: 'y' }
         }
       }
     },
     {
-      "type": "group",
-      "clip": true,
-      "data": [
+      type: 'group',
+      clip: true,
+      data: [
         {
-          "name": "contours",
-          "source": "airports",
-          "transform": [
+          name: 'contours',
+          source: 'airports',
+          transform: [
             {
-              "type": "contour",
-              "x": "x",
-              "y": "y",
-              "size": [{"signal": "width"}, {"signal": "height"}],
-              "count": {"signal": "count"},
-              "bandwidth": 20
+              type: 'contour',
+              x: 'x',
+              y: 'y',
+              size: [{ signal: 'width' }, { signal: 'height' }],
+              count: { signal: 'count' },
+              bandwidth: 20
             }
           ]
         }
       ],
-      "scales": [
+      scales: [
         {
-          "name": "color",
-          "type": "linear",
-          "domain": {"data": "contours", "field": "value"},
-          "range": {"scheme": "viridis"}
+          name: 'color',
+          type: 'linear',
+          domain: { data: 'contours', field: 'value' },
+          range: { scheme: 'viridis' }
         }
       ],
-      "marks": [
+      marks: [
         {
-          "type": "shape",
-          "from": {"data": "contours"},
-          "encode": {
-            "enter": {
-              "stroke": {"value": "firebrick"},
-              "fill": {"scale": "color", "field": "value"},
-              "fillOpacity": {"value": 0.3}
+          type: 'shape',
+          from: { data: 'contours' },
+          encode: {
+            enter: {
+              stroke: { value: 'firebrick' },
+              fill: { scale: 'color', field: 'value' },
+              fillOpacity: { value: 0.3 }
             },
-            "update": {
-              "strokeWidth": {"value": 1}
+            update: {
+              strokeWidth: { value: 1 }
             },
-            "hover": {
-              "strokeWidth": {"value": 3}
+            hover: {
+              strokeWidth: { value: 3 }
             }
           },
-          "transform": [
-            { "type": "geoshape", "field": "datum" }
-          ]
+          transform: [{ type: 'geoshape', field: 'datum' }]
         }
       ]
     }
