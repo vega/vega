@@ -2,3 +2,5 @@ docs
 **/build
 **/build-es5
 **/node_modules
+packages/vega-typings/tests/dataflow/
+packages/vega-typings/tests/spec/
