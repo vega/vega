@@ -193,14 +193,14 @@ export function loader(opt?: LoaderOptions): Loader;
 export function read(
   data: string,
   schema: Format,
-  dateParse?: (dateString: string) => Date,
+  dateParse?: (dateString: string) => Date
 ): object[];
 
 export type TypeInference = DataType | 'integer';
 export function inferType(values: readonly any[], field?: string): TypeInference;
 export function inferTypes(
   values: readonly any[],
-  fields: readonly string[],
+  fields: readonly string[]
 ): { [field: string]: TypeInference };
 
 export type EventListenerHandler = (event: ScenegraphEvent, item?: Item | null) => void;

@@ -129,5 +129,5 @@ export interface SceneLegendItem {
 
 export function sceneVisit(
   scene: Scene | SceneGroup,
-  itemCallback: (item: Scene | SceneGroup | SceneItem) => void,
+  itemCallback: (item: Scene | SceneGroup | SceneItem) => void
 ): void;
