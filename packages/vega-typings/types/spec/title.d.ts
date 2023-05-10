@@ -3,13 +3,12 @@ import { Encode, Text } from './encode';
 import {
   AlignValue,
   AnchorValue,
-  BooleanValue,
   ColorValue,
   FontStyleValue,
   FontWeightValue,
   NumberValue,
   StringValue,
-  TextBaselineValue,
+  TextBaselineValue
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';

@@ -8,7 +8,7 @@ import {
   Vector4,
   Vector5,
   Vector6,
-  Vector7,
+  Vector7
 } from '.';
 
 export type DataName = string;

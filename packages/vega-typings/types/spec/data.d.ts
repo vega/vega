@@ -1,4 +1,4 @@
-import { OnTrigger, Transforms, SignalRef } from '.';
+import { OnTrigger, SignalRef, Transforms } from '.';
 
 export type DataType = 'boolean' | 'number' | 'date' | 'string';
 export type Parse =

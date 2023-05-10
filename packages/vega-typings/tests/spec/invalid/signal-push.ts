@@ -4,7 +4,7 @@ import { Spec } from 'vega'
 
 // let spec: Spec
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -23,7 +23,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -42,7 +42,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -61,7 +61,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}

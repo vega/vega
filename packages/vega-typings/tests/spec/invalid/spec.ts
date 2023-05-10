@@ -2,56 +2,56 @@ import { Spec } from 'vega'
 
 let spec: Spec
 
-// $ExpectError
+// @ts-expect-error
 spec = {"background": null}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"background": false}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"background": 100}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"width": null}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"width": true}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"width": "foo"}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"width": {}}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"height": null}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"height": true}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"height": "foo"}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"height": {}}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"$schema": null}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"$schema": false}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"$schema": 100}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"$schema": {}}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"description": null}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"description": false}
 
-// $ExpectError
+// @ts-expect-error
 spec = {"description": 100}
