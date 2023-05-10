@@ -8,7 +8,7 @@ import {
   FontWeightValue,
   NumberValue,
   StringValue,
-  TextBaselineValue,
+  TextBaselineValue
 } from './values';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';

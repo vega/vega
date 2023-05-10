@@ -7,7 +7,7 @@ import {
   Format,
   Padding,
   SignalValue,
-  Spec,
+  Spec
 } from '../spec';
 import { Changeset, Transform } from './dataflow';
 import { Renderers } from './renderer';
