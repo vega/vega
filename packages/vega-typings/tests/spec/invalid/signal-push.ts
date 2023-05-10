@@ -1,4 +1,4 @@
-import { Spec } from 'vega'
+import { Spec } from 'vega';
 
 // FIXME commented-out cases are due to https://github.com/Microsoft/TypeScript/issues/20863
 

@@ -1,110 +1,111 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 700,
-  "height": 400,
-  "padding": 10,
-  "autosize": {"type": "fit", "contains": "padding"},
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 700,
+  height: 400,
+  padding: 10,
+  autosize: { type: 'fit', contains: 'padding' },
 
-  "title": {
-    "text": "Unemployment",
-    "anchor": "start"
+  title: {
+    text: 'Unemployment',
+    anchor: 'start'
   },
 
-  "signals": [
+  signals: [
     {
-      "name": "type",
-      "value": "mercator",
-      "bind": {
-        "input": "select",
-        "options": [
-          "albers",
-          "albersUsa",
-          "azimuthalEqualArea",
-          "azimuthalEquidistant",
-          "conicConformal",
-          "conicEqualArea",
-          "conicEquidistant",
-          "equalEarth",
-          "equirectangular",
-          "gnomonic",
-          "mercator",
-          "orthographic",
-          "stereographic",
-          "transverseMercator"
+      name: 'type',
+      value: 'mercator',
+      bind: {
+        input: 'select',
+        options: [
+          'albers',
+          'albersUsa',
+          'azimuthalEqualArea',
+          'azimuthalEquidistant',
+          'conicConformal',
+          'conicEqualArea',
+          'conicEquidistant',
+          'equalEarth',
+          'equirectangular',
+          'gnomonic',
+          'mercator',
+          'orthographic',
+          'stereographic',
+          'transverseMercator'
         ]
       }
     },
     {
-      "name": "angle",
-      "value": 90,
-      "bind": {"input": "range", "min": -180, "max": 180, "step": 1}
+      name: 'angle',
+      value: 90,
+      bind: { input: 'range', min: -180, max: 180, step: 1 }
     }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "unemp",
-      "url": "data/unemployment.tsv",
-      "format": {"type": "tsv", "parse": "auto"}
+      name: 'unemp',
+      url: 'data/unemployment.tsv',
+      format: { type: 'tsv', parse: 'auto' }
     },
     {
-      "name": "counties",
-      "url": "data/us-10m.json",
-      "format": {"type": "topojson", "feature": "counties"},
-      "transform": [
+      name: 'counties',
+      url: 'data/us-10m.json',
+      format: { type: 'topojson', feature: 'counties' },
+      transform: [
         {
-          "type": "lookup",
-          "from": "unemp", "key": "id", "values": ["rate"],
-          "fields": ["id"], "as": ["unemp"]
+          type: 'lookup',
+          from: 'unemp',
+          key: 'id',
+          values: ['rate'],
+          fields: ['id'],
+          as: ['unemp']
         },
-        { "type": "filter", "expr": "datum.unemp != null" }
+        { type: 'filter', expr: 'datum.unemp != null' }
       ]
     }
   ],
 
-  "projections": [
+  projections: [
     {
-      "name": "projection",
-      "type": {"signal": "type"},
-      "rotate": [{"signal": "angle"}, 0, 0],
-      "fit": {"signal": "data('counties')"},
-      "size": {"signal": "[width, height]"}
+      name: 'projection',
+      type: { signal: 'type' },
+      rotate: [{ signal: 'angle' }, 0, 0],
+      fit: { signal: "data('counties')" },
+      size: { signal: '[width, height]' }
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "color",
-      "type": "quantize",
-      "domain": [0, 0.15],
-      "range": {"scheme": "blues", "count": 9}
+      name: 'color',
+      type: 'quantize',
+      domain: [0, 0.15],
+      range: { scheme: 'blues', count: 9 }
     }
   ],
 
-  "legends": [
+  legends: [
     {
-      "fill": "color",
-      "type": "gradient",
-      "orient": "left",
-      "direction": "vertical",
-      "gradientLength": {"signal": "height"},
-      "format": "0.1%"
+      fill: 'color',
+      type: 'gradient',
+      orient: 'left',
+      direction: 'vertical',
+      gradientLength: { signal: 'height' },
+      format: '0.1%'
     }
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "shape",
-      "from": {"data": "counties"},
-      "encode": {
-        "update": { "fill": {"scale": "color", "field": "unemp"} },
-        "hover": { "fill": {"value": "red"} }
+      type: 'shape',
+      from: { data: 'counties' },
+      encode: {
+        update: { fill: { scale: 'color', field: 'unemp' } },
+        hover: { fill: { value: 'red' } }
       },
-      "transform": [
-        { "type": "geoshape", "projection": "projection" }
-      ]
+      transform: [{ type: 'geoshape', projection: 'projection' }]
     }
   ]
 };

@@ -1,175 +1,175 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "A violin plot example showing distributions for pengiun body mass.",
-  "width": 500,
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  description: 'A violin plot example showing distributions for pengiun body mass.',
+  width: 500,
+  padding: 5,
 
-  "config": {
-    "axisBand": {
-      "bandPosition": 1,
-      "tickExtra": true,
-      "tickOffset": 0
+  config: {
+    axisBand: {
+      bandPosition: 1,
+      tickExtra: true,
+      tickOffset: 0
     }
   },
 
-  "signals": [
-    { "name": "plotWidth", "value": 60 },
-    { "name": "height", "update": "(plotWidth + 10) * 3"},
-    { "name": "trim", "value": true,
-      "bind": {"input": "checkbox"} },
-    { "name": "bandwidth", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 200, "step": 1} }
+  signals: [
+    { name: 'plotWidth', value: 60 },
+    { name: 'height', update: '(plotWidth + 10) * 3' },
+    { name: 'trim', value: true, bind: { input: 'checkbox' } },
+    { name: 'bandwidth', value: 0, bind: { input: 'range', min: 0, max: 200, step: 1 } }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "penguins",
-      "url": "data/penguins.json",
-      "transform": [
+      name: 'penguins',
+      url: 'data/penguins.json',
+      transform: [
         {
-          "type": "filter",
-          "expr": "datum.Species != null && datum['Body Mass (g)'] != null"
+          type: 'filter',
+          expr: "datum.Species != null && datum['Body Mass (g)'] != null"
         }
       ]
     },
     {
-      "name": "density",
-      "source": "penguins",
-      "transform": [
+      name: 'density',
+      source: 'penguins',
+      transform: [
         {
-          "type": "kde",
-          "field": "Body Mass (g)",
-          "groupby": ["Species"],
-          "bandwidth": {"signal": "bandwidth"},
-          "extent": {"signal": "trim ? null : [2000, 6500]"}
+          type: 'kde',
+          field: 'Body Mass (g)',
+          groupby: ['Species'],
+          bandwidth: { signal: 'bandwidth' },
+          extent: { signal: 'trim ? null : [2000, 6500]' }
         }
       ]
     },
     {
-      "name": "stats",
-      "source": "penguins",
-      "transform": [
+      name: 'stats',
+      source: 'penguins',
+      transform: [
         {
-          "type": "aggregate",
-          "groupby": ["Species"],
-          "fields": ["Body Mass (g)", "Body Mass (g)", "Body Mass (g)"],
-          "ops": ["q1", "median", "q3"],
-          "as": ["q1", "median", "q3"]
+          type: 'aggregate',
+          groupby: ['Species'],
+          fields: ['Body Mass (g)', 'Body Mass (g)', 'Body Mass (g)'],
+          ops: ['q1', 'median', 'q3'],
+          as: ['q1', 'median', 'q3']
         }
       ]
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "layout",
-      "type": "band",
-      "range": "height",
-      "domain": {"data": "penguins", "field": "Species"}
+      name: 'layout',
+      type: 'band',
+      range: 'height',
+      domain: { data: 'penguins', field: 'Species' }
     },
     {
-      "name": "xscale",
-      "type": "linear",
-      "range": "width", "round": true,
-      "domain": {"data": "penguins", "field": "Body Mass (g)"},
-      "domainMin": 2000,
-      "zero": false, "nice": true
+      name: 'xscale',
+      type: 'linear',
+      range: 'width',
+      round: true,
+      domain: { data: 'penguins', field: 'Body Mass (g)' },
+      domainMin: 2000,
+      zero: false,
+      nice: true
     },
     {
-      "name": "hscale",
-      "type": "linear",
-      "range": [0, {"signal": "plotWidth"}],
-      "domain": {"data": "density", "field": "density"}
+      name: 'hscale',
+      type: 'linear',
+      range: [0, { signal: 'plotWidth' }],
+      domain: { data: 'density', field: 'density' }
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "domain": {"data": "penguins", "field": "Species"},
-      "range": "category"
+      name: 'color',
+      type: 'ordinal',
+      domain: { data: 'penguins', field: 'Species' },
+      range: 'category'
     }
   ],
 
-  "axes": [
-    {"orient": "bottom", "scale": "xscale", "zindex": 1},
-    {"orient": "left", "scale": "layout", "tickCount": 5, "zindex": 1}
+  axes: [
+    { orient: 'bottom', scale: 'xscale', zindex: 1 },
+    { orient: 'left', scale: 'layout', tickCount: 5, zindex: 1 }
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "group",
-      "from": {
-        "facet": {
-          "data": "density",
-          "name": "violin",
-          "groupby": "Species"
+      type: 'group',
+      from: {
+        facet: {
+          data: 'density',
+          name: 'violin',
+          groupby: 'Species'
         }
       },
 
-      "encode": {
-        "enter": {
-          "yc": {"scale": "layout", "field": "Species", "band": 0.5},
-          "height": {"signal": "plotWidth"},
-          "width": {"signal": "width"}
+      encode: {
+        enter: {
+          yc: { scale: 'layout', field: 'Species', band: 0.5 },
+          height: { signal: 'plotWidth' },
+          width: { signal: 'width' }
         }
       },
 
-      "data": [
+      data: [
         {
-          "name": "summary",
-          "source": "stats",
-          "transform": [
+          name: 'summary',
+          source: 'stats',
+          transform: [
             {
-              "type": "filter",
-              "expr": "datum.Species === parent.Species"
+              type: 'filter',
+              expr: 'datum.Species === parent.Species'
             }
           ]
         }
       ],
 
-      "marks": [
+      marks: [
         {
-          "type": "area",
-          "from": {"data": "violin"},
-          "encode": {
-            "enter": {
-              "fill": {"scale": "color", "field": {"parent": "Species"}}
+          type: 'area',
+          from: { data: 'violin' },
+          encode: {
+            enter: {
+              fill: { scale: 'color', field: { parent: 'Species' } }
             },
-            "update": {
-              "x": {"scale": "xscale", "field": "value"},
-              "yc": {"signal": "plotWidth / 2"},
-              "height": {"scale": "hscale", "field": "density"}
+            update: {
+              x: { scale: 'xscale', field: 'value' },
+              yc: { signal: 'plotWidth / 2' },
+              height: { scale: 'hscale', field: 'density' }
             }
           }
         },
         {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "black"},
-              "height": {"value": 2}
+          type: 'rect',
+          from: { data: 'summary' },
+          encode: {
+            enter: {
+              fill: { value: 'black' },
+              height: { value: 2 }
             },
-            "update": {
-              "x": {"scale": "xscale", "field": "q1"},
-              "x2": {"scale": "xscale", "field": "q3"},
-              "yc": {"signal": "plotWidth / 2"}
+            update: {
+              x: { scale: 'xscale', field: 'q1' },
+              x2: { scale: 'xscale', field: 'q3' },
+              yc: { signal: 'plotWidth / 2' }
             }
           }
         },
         {
-          "type": "rect",
-          "from": {"data": "summary"},
-          "encode": {
-            "enter": {
-              "fill": {"value": "black"},
-              "width": {"value": 2},
-              "height": {"value": 8}
+          type: 'rect',
+          from: { data: 'summary' },
+          encode: {
+            enter: {
+              fill: { value: 'black' },
+              width: { value: 2 },
+              height: { value: 8 }
             },
-            "update": {
-              "x": {"scale": "xscale", "field": "median"},
-              "yc": {"signal": "plotWidth / 2"}
+            update: {
+              x: { scale: 'xscale', field: 'median' },
+              yc: { signal: 'plotWidth / 2' }
             }
           }
         }

@@ -1,23 +1,23 @@
-import { Spec, Expr } from 'vega'
+import { Spec } from 'vega';
 
 // FIXME commented-out cases are due to https://github.com/Microsoft/TypeScript/issues/20863
 
-let spec: Spec
+let spec: Spec;
 
 // @ts-expect-error
-spec = {"signals": null}
+spec = { signals: null };
 
 // @ts-expect-error
-spec = {"signals": "foo"}
+spec = { signals: 'foo' };
 
 // @ts-expect-error
-spec = {"signals": [{"value": 1}]}
+spec = { signals: [{ value: 1 }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": true, "value": 1}]}
+spec = { signals: [{ name: true, value: 1 }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "value": 1, "extra": 5}]}
+spec = { signals: [{ name: 'foo', value: 1, extra: 5 }] };
 
 // // @ts-expect-error
 // spec = {"signals": [{"name": "foo", "update": null}]}
@@ -44,82 +44,82 @@ spec = {"signals": [{"name": "foo", "value": 1, "extra": 5}]}
 // spec = {"signals": [{"name": "foo", "react": {}}]}
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": null}]}
+spec = { signals: [{ name: 'foo', on: null }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": false}]}
+spec = { signals: [{ name: 'foo', on: false }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": 1}]}
+spec = { signals: [{ name: 'foo', on: 1 }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": "string"}]}
+spec = { signals: [{ name: 'foo', on: 'string' }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": {}}]}
+spec = { signals: [{ name: 'foo', on: {} }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown' }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": null, "update": "1"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: null, update: '1' }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": false, "update": "1"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: false, update: '1' }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": 1, "update": "1"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 1, update: '1' }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": {}, "update": "1"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: {}, update: '1' }] }] };
 
 // // @ts-expect-error
 // spec = {"signals": [{"name": "foo", "on": [{"events": [], "update": "1"}]}]}
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "encode": null}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', encode: null }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "encode": false}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', encode: false }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "encode": 1}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', encode: 1 }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "encode": []}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', encode: [] }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "encode": {}}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', encode: {} }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": null}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: null }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": false}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: false }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": 1}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: 1 }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": []}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: [] }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": {}}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: {} }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": "1", "force": null}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: '1', force: null }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": "1", "force": 1}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: '1', force: 1 }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": "1", "force": "string"}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: '1', force: 'string' }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": "1", "force": {}}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: '1', force: {} }] }] };
 
 // @ts-expect-error
-spec = {"signals": [{"name": "foo", "on": [{"events": "mousedown", "update": "1", "force": []}]}]}
+spec = { signals: [{ name: 'foo', on: [{ events: 'mousedown', update: '1', force: [] }] }] };
 
 // // @ts-expect-error
 // spec = {"signals": [{"name": "foo", "bind": null}]}

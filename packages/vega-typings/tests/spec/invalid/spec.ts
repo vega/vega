@@ -1,57 +1,57 @@
-import { Spec } from 'vega'
+import { Spec } from 'vega';
 
-let spec: Spec
-
-// @ts-expect-error
-spec = {"background": null}
+let spec: Spec;
 
 // @ts-expect-error
-spec = {"background": false}
+spec = { background: null };
 
 // @ts-expect-error
-spec = {"background": 100}
+spec = { background: false };
 
 // @ts-expect-error
-spec = {"width": null}
+spec = { background: 100 };
 
 // @ts-expect-error
-spec = {"width": true}
+spec = { width: null };
 
 // @ts-expect-error
-spec = {"width": "foo"}
+spec = { width: true };
 
 // @ts-expect-error
-spec = {"width": {}}
+spec = { width: 'foo' };
 
 // @ts-expect-error
-spec = {"height": null}
+spec = { width: {} };
 
 // @ts-expect-error
-spec = {"height": true}
+spec = { height: null };
 
 // @ts-expect-error
-spec = {"height": "foo"}
+spec = { height: true };
 
 // @ts-expect-error
-spec = {"height": {}}
+spec = { height: 'foo' };
 
 // @ts-expect-error
-spec = {"$schema": null}
+spec = { height: {} };
 
 // @ts-expect-error
-spec = {"$schema": false}
+spec = { $schema: null };
 
 // @ts-expect-error
-spec = {"$schema": 100}
+spec = { $schema: false };
 
 // @ts-expect-error
-spec = {"$schema": {}}
+spec = { $schema: 100 };
 
 // @ts-expect-error
-spec = {"description": null}
+spec = { $schema: {} };
 
 // @ts-expect-error
-spec = {"description": false}
+spec = { description: null };
 
 // @ts-expect-error
-spec = {"description": 100}
+spec = { description: false };
+
+// @ts-expect-error
+spec = { description: 100 };
