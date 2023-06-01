@@ -21,7 +21,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "3.2.2",
+    "d3-array": "3.2.4",
     "vega-expression": "^5.0.1",
     "vega-util": "^1.17.1"
   }
