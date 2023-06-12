@@ -1,5 +1,4 @@
 [
-  "geoscale-test",
   "airports",
   "arc",
   "arc-diagram",
@@ -12,6 +11,7 @@
   "bar-rangestep",
   "bar-time",
   "barley",
+  "basemap",
   "box-plot",
   "budget-forecasts",
   "calendar",
