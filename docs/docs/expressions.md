@@ -841,6 +841,10 @@ Returns the projected planar bounding box (typically in pixels) for the specifie
 <b>geoCentroid</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
 Returns the projected planar centroid (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. If the _projection_ argument is `null`, computes the spherical centroid using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoCentroid](https://github.com/d3/d3-geo#geoCentroid) and [path.centroid](https://github.com/d3/d3-geo#path_centroid) methods.
 
+<a name="geoScale" href="#geoScale">#</a>
+<b>geoScale</b>(<i>projection</i>[, <i>group</i>])<br/>
+Returns the scale value for the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection.
+
 [Back to Top](#reference)
 
 

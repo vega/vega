@@ -22870,6 +22870,10 @@
   const geoArea = geoMethod('area', d3Geo.geoArea);
   const geoBounds = geoMethod('bounds', d3Geo.geoBounds);
   const geoCentroid = geoMethod('centroid', d3Geo.geoCentroid);
+  function geoScale(projection, group) {
+    const p = getScale(projection, (group || this).context);
+    return p && p.scale();
+  }
   function inScope(item) {
     const group = this.context.group;
     let value = false;
@@ -23415,6 +23419,7 @@
   expressionFunction('geoBounds', geoBounds, scaleVisitor);
   expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
   expressionFunction('geoShape', geoShape, scaleVisitor);
+  expressionFunction('geoScale', geoScale, scaleVisitor);
   expressionFunction('indata', indata, indataVisitor);
   expressionFunction('data', data$1, dataVisitor);
   expressionFunction('treePath', treePath, dataVisitor);
