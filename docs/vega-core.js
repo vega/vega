@@ -12285,10 +12285,15 @@
   const DragLeaveEvent = 'dragleave';
   const DragOverEvent = 'dragover';
   const MouseDownEvent = 'mousedown';
+  const PointerDownEvent = 'pointerdown';
   const MouseUpEvent = 'mouseup';
+  const PointerUpEvent = 'pointerup';
   const MouseMoveEvent = 'mousemove';
+  const PointerMoveEvent = 'pointermove';
   const MouseOutEvent = 'mouseout';
+  const PointerOutEvent = 'pointerout';
   const MouseOverEvent = 'mouseover';
+  const PointerOverEvent = 'pointerover';
   const ClickEvent = 'click';
   const DoubleClickEvent = 'dblclick';
   const WheelEvent = 'wheel';
@@ -12296,9 +12301,9 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
-  const TooltipShowEvent = MouseMoveEvent;
-  const TooltipHideEvent = MouseOutEvent;
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, PointerDownEvent, MouseUpEvent, PointerUpEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const TooltipShowEvent = PointerMoveEvent;
+  const TooltipHideEvent = PointerOutEvent;
   const HrefEvent = ClickEvent;
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -12352,7 +12357,7 @@
       this._canvas = el && domFind(el, 'canvas');
 
       // add minimal events required for proper state management
-      [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
       return Handler.prototype.initialize.call(this, el, origin, obj);
     },
     // return the backing canvas instance
@@ -12369,13 +12374,13 @@
     DOMMouseScroll(evt) {
       this.fire(MouseWheelEvent, evt);
     },
-    mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
+    mousemove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
     dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
-    mouseout: inactive(MouseOutEvent),
+    mouseout: inactive(PointerOutEvent),
     dragleave: inactive(DragLeaveEvent),
     mousedown(evt) {
       this._down = this._active;
-      this.fire(MouseDownEvent, evt);
+      this.fire(PointerDownEvent, evt);
     },
     click(evt) {
       if (this._down === this._active) {
@@ -24079,8 +24084,8 @@
       item: null
     }));
 
-    // evaluate cursor on each mousemove event
-    view.on(view.events('view', 'mousemove'), cursor, (_, event) => {
+    // evaluate cursor on each pointermove event
+    view.on(view.events('view', 'pointermove'), cursor, (_, event) => {
       const value = cursor.value,
         user = value ? isString(value) ? value : value.user : Default,
         item = event.item && event.item.cursor || null;
@@ -24352,11 +24357,11 @@
     hoverSet = [hoverSet || 'hover'];
     leaveSet = [leaveSet || 'update', hoverSet[0]];
 
-    // invoke hover set upon mouseover
-    this.on(this.events('view', 'mouseover', itemFilter), markTarget, invoke(hoverSet));
+    // invoke hover set upon pointerover
+    this.on(this.events('view', 'pointerover', itemFilter), markTarget, invoke(hoverSet));
 
-    // invoke leave set upon mouseout
-    this.on(this.events('view', 'mouseout', itemFilter), markTarget, invoke(leaveSet));
+    // invoke leave set upon pointerout
+    this.on(this.events('view', 'pointerout', itemFilter), markTarget, invoke(leaveSet));
     return this;
   }
 
