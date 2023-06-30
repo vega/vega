@@ -1,6 +1,6 @@
 import {bisector} from 'd3-array';
-import {$selectionId, Intersect} from './constants';
-import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
+import {inrange, isArray, isDate, toNumber} from 'vega-util';
+import {$selectionId, Intersect, getter} from './util';
 
 const TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
@@ -18,8 +18,7 @@ function testPoint(datum, entry) {
 
   for (; i<n; ++i) {
     f = fields[i];
-    f.getter = field.getter || field(f.field);
-    dval = f.getter(datum);
+    dval = getter(f)(datum);
 
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
