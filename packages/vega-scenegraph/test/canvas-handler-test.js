@@ -40,7 +40,7 @@ function renderAsync(scene, w, h, callback) {
 }
 
 function event(name, x, y) {
-  const evt = new win.MouseEvent(name, {clientX: x, clientY: y});
+  const evt = new win.PointerEvent(name, {clientX: x, clientY: y});
   evt.changedTouches = [{
     clientX: x || 0,
     clientY: y || 0

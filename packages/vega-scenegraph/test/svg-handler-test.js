@@ -55,7 +55,7 @@ function render(scene, w, h) {
 }
 
 function event(name, x, y) {
-  const evt = doc.createEvent('MouseEvents');
+  const evt = doc.createEvent('PointerEvents');
   evt.initEvent(name, false, true);
   evt.clientX = x || 0;
   evt.clientY = y || 0;
@@ -70,7 +70,7 @@ tape('SVGHandler should add/remove event callbacks', t => {
       f = function() {},
       atype = 'click',
       btype = 'click.foo',
-      ctype = 'mouseover';
+      ctype = 'pointerover';
 
   // add event callbacks
   handler.on(atype, f);
