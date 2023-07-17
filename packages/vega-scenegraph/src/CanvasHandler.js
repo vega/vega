@@ -2,9 +2,9 @@ import Handler from './Handler';
 import Marks from './marks/index';
 import {
   ClickEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, Events,
-  HrefEvent, MouseDownEvent, PointerDownEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent,
-  MouseWheelEvent, TooltipHideEvent, TooltipShowEvent,
-  TouchEndEvent, TouchMoveEvent, TouchStartEvent,
+  HrefEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+  PointerOverEvent, TooltipHideEvent, TooltipShowEvent,
+  TouchEndEvent, TouchMoveEvent, TouchStartEvent
 } from './util/events';
 import point from './util/point';
 import {domFind} from './util/dom';
@@ -76,7 +76,7 @@ inherits(CanvasHandler, Handler, {
     this._canvas = el && domFind(el, 'canvas');
 
     // add minimal events required for proper state management
-    [ClickEvent, MouseDownEvent, PointerDownEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, DragLeaveEvent]
+    [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent]
       .forEach(type => eventListenerCheck(this, type));
 
     return Handler.prototype.initialize.call(this, el, origin, obj);
@@ -108,7 +108,6 @@ inherits(CanvasHandler, Handler, {
 
   mousedown(evt) {
     this._down = this._active;
-    this.fire(MouseDownEvent, evt);
     this.fire(PointerDownEvent, evt);
   },
 

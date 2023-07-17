@@ -24,7 +24,7 @@ export const spec: Spec = {
       value: [0, 0],
       on: [
         {
-          events: 'mousedown',
+          events: 'pointerdown',
           update: '[rotateX, centerY]'
         }
       ]
@@ -34,7 +34,7 @@ export const spec: Spec = {
       value: null,
       on: [
         {
-          events: 'mousedown',
+          events: 'pointerdown',
           update: "copy('projection')"
         }
       ]
@@ -44,7 +44,7 @@ export const spec: Spec = {
       value: null,
       on: [
         {
-          events: 'mousedown',
+          events: 'pointerdown',
           update: 'invert(cloned, xy())'
         }
       ]
@@ -54,7 +54,7 @@ export const spec: Spec = {
       value: null,
       on: [
         {
-          events: '[mousedown, window:mouseup] > window:mousemove',
+          events: '[pointerdown, window:pointerup] > window:pointermove',
           update: 'invert(cloned, xy())'
         }
       ]
