@@ -117,8 +117,8 @@
       "name": "active",
       "value": {},
       "on": [
-        {"events": "@point:mousedown, @point:touchstart", "update": "datum"},
-        {"events": "window:mouseup, window:touchend", "update": "{}"}
+        {"events": "@point:pointerdown, @point:touchstart", "update": "datum"},
+        {"events": "window:pointerup, window:touchend", "update": "{}"}
       ]
     },
     { "name": "isActive", "update": "active.country" },
@@ -126,50 +126,50 @@
       "name": "timeline",
       "value": {},
       "on": [
-        {"events": "@point:mouseover", "update": "isActive ? active : datum"},
-        {"events": "@point:mouseout", "update": "active"},
+        {"events": "@point:pointerover", "update": "isActive ? active : datum"},
+        {"events": "@point:pointerout", "update": "active"},
         {"events": {"signal": "active"}, "update": "active"}
       ]
     },
     {
       "name": "tX",
       "on": [{
-        "events": "mousemove!, touchmove!",
+        "events": "pointermove!, touchmove!",
         "update": "isActive ? scale('x', active.this.fertility) : tX"
       }]
     },
     {
       "name": "tY",
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? scale('y', active.this.life_expect) : tY"
       }]
     },
     {
       "name": "pX",
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? scale('x', active.prev.fertility) : pX"
       }]
     },
     {
       "name": "pY",
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? scale('y', active.prev.life_expect) : pY"
       }]
     },
     {
       "name": "nX",
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? scale('x', active.next.fertility) : nX"
       }]
     },
     {
       "name": "nY",
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? scale('y', active.next.life_expect) : nY"
       }]
     },
@@ -177,7 +177,7 @@
       "name": "thisDist",
       "value": 0,
       "on":[{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? hypot(x()-tX, y()-tY) : thisDist"
       }]
     },
@@ -185,7 +185,7 @@
       "name": "prevDist",
       "value": 0,
       "on":[{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? hypot(x()-pX, y()-pY): prevDist"
       }]
     },
@@ -193,7 +193,7 @@
       "name": "nextDist",
       "value": 0,
       "on":[{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? hypot(x()-nX, y()-nY) : nextDist"
       }]
     },
@@ -201,7 +201,7 @@
       "name": "prevScore",
       "value": 0,
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? ((pX-tX) * (x()-tX) + (pY-tY) * (y()-tY))/prevDist || -999999 : prevScore"
       }]
     },
@@ -209,7 +209,7 @@
       "name": "nextScore",
       "value": 0,
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? ((nX-tX) * (x()-tX) + (nY-tY) * (y()-tY))/nextDist || -999999 : nextScore"
       }]
     },
@@ -217,7 +217,7 @@
       "name": "interYear",
       "value": 1980,
       "on": [{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? (min(maxYear, currentYear+5, max(minYear, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/hypot(pX-tX, pY-tY)) : (currentYear + 2.5*nextScore/hypot(nX-tX, nY-tY))))) : interYear"
       }]
     },
@@ -225,7 +225,7 @@
       "name": "currentYear",
       "value": 1980,
       "on":[{
-        "events": "mousemove, touchmove",
+        "events": "pointermove, touchmove",
         "update": "isActive ? (min(maxYear, max(minYear, prevScore > nextScore ? (thisDist < prevDist ? currentYear : currentYear-5) : (thisDist < nextDist ? currentYear : currentYear+5)))) : currentYear"
       }]
     }

@@ -17784,10 +17784,15 @@
   const DragLeaveEvent = 'dragleave';
   const DragOverEvent = 'dragover';
   const MouseDownEvent = 'mousedown';
+  const PointerDownEvent = 'pointerdown';
   const MouseUpEvent = 'mouseup';
+  const PointerUpEvent = 'pointerup';
   const MouseMoveEvent = 'mousemove';
+  const PointerMoveEvent = 'pointermove';
   const MouseOutEvent = 'mouseout';
+  const PointerOutEvent = 'pointerout';
   const MouseOverEvent = 'mouseover';
+  const PointerOverEvent = 'pointerover';
   const ClickEvent = 'click';
   const DoubleClickEvent = 'dblclick';
   const WheelEvent = 'wheel';
@@ -17795,9 +17800,9 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
-  const TooltipShowEvent = MouseMoveEvent;
-  const TooltipHideEvent = MouseOutEvent;
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, PointerDownEvent, MouseUpEvent, PointerUpEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const TooltipShowEvent = MouseMoveEvent || PointerMoveEvent;
+  const TooltipHideEvent = MouseOutEvent || PointerOutEvent;
   const HrefEvent = ClickEvent;
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -17851,7 +17856,7 @@
       this._canvas = el && domFind(el, 'canvas');
 
       // add minimal events required for proper state management
-      [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      [ClickEvent, MouseDownEvent, PointerDownEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
       return Handler.prototype.initialize.call(this, el, origin, obj);
     },
     // return the backing canvas instance
@@ -17868,13 +17873,14 @@
     DOMMouseScroll(evt) {
       this.fire(MouseWheelEvent, evt);
     },
-    mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
+    mousemove: move(MouseMoveEvent, PointerMoveEvent, MouseOverEvent, PointerOverEvent, MouseOutEvent, PointerOutEvent),
     dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
-    mouseout: inactive(MouseOutEvent),
+    mouseout: inactive(MouseOutEvent, PointerOutEvent),
     dragleave: inactive(DragLeaveEvent),
     mousedown(evt) {
       this._down = this._active;
       this.fire(MouseDownEvent, evt);
+      this.fire(PointerDownEvent);
     },
     click(evt) {
       if (this._down === this._active) {

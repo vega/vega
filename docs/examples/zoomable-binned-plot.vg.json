@@ -19,10 +19,10 @@
     {
       "name": "hover",
       "on": [
-        {"events": "*:mouseover", "encode": "hover"},
-        {"events": "*:mouseout", "encode": "leave"},
-        {"events": "*:mousedown", "encode": "select"},
-        {"events": "*:mouseup", "encode": "release"}
+        {"events": "*:pointerover", "encode": "hover"},
+        {"events": "*:pointerout", "encode": "leave"},
+        {"events": "*:pointerdown", "encode": "select"},
+        {"events": "*:pointerup", "encode": "release"}
       ]
     },
     {"name": "xoffset", "update": "-(height + padding.bottom)"},
@@ -34,21 +34,21 @@
       "value": null,
       "on": [
         {"events": "touchend", "update": "null"},
-        {"events": "mousedown, touchstart", "update": "xy()"}
+        {"events": "pointerdown, touchstart", "update": "xy()"}
       ]
     },
     {
       "name": "xcur",
       "value": null,
       "on": [
-        {"events": "mousedown, touchstart, touchend", "update": "slice(xdom)"}
+        {"events": "pointerdown, touchstart, touchend", "update": "slice(xdom)"}
       ]
     },
     {
       "name": "ycur",
       "value": null,
       "on": [
-        {"events": "mousedown, touchstart, touchend", "update": "slice(ydom)"}
+        {"events": "pointerdown, touchstart, touchend", "update": "slice(ydom)"}
       ]
     },
     {
@@ -59,11 +59,11 @@
           "events": [
             {
               "source": "window",
-              "type": "mousemove",
+              "type": "pointermove",
               "consume": true,
               "between": [
-                {"type": "mousedown"},
-                {"source": "window", "type": "mouseup"}
+                {"type": "pointerdown"},
+                {"source": "window", "type": "pointerup"}
               ]
             },
             {
