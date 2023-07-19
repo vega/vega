@@ -15,7 +15,7 @@
   function accessorFields(fn) {
     return fn == null ? null : fn.fields;
   }
-  function getter$1(path) {
+  function getter(path) {
     return path.length === 1 ? get1(path[0]) : getN(path);
   }
   const get1 = field => function (obj) {
@@ -92,11 +92,11 @@
   function field$1(field, name, opt) {
     const path = splitAccessPath(field);
     field = path.length === 1 ? path[0] : field;
-    return accessor((opt && opt.get || getter$1)(path), [field], name || field);
+    return accessor((opt && opt.get || getter)(path), [field], name || field);
   }
   const id = field$1('id');
   const identity$6 = accessor(_ => _, [], 'identity');
-  const zero$4 = accessor(() => 0, [], 'zero');
+  const zero$3 = accessor(() => 0, [], 'zero');
   const one$2 = accessor(() => 1, [], 'one');
   const truthy = accessor(() => true, [], 'true');
   const falsy = accessor(() => false, [], 'false');
@@ -297,10 +297,10 @@
     });
     return get.length === 0 ? null : accessor(gen(get, ord), Object.keys(fmap));
   }
-  const ascending$3 = (u, v) => (u < v || u == null) && v != null ? -1 : (u > v || v == null) && u != null ? 1 : (v = v instanceof Date ? +v : v, u = u instanceof Date ? +u : u) !== u && v === v ? -1 : v !== v && u === u ? 1 : 0;
+  const ascending$2 = (u, v) => (u < v || u == null) && v != null ? -1 : (u > v || v == null) && u != null ? 1 : (v = v instanceof Date ? +v : v, u = u instanceof Date ? +u : u) !== u && v === v ? -1 : v !== v && u === u ? 1 : 0;
   const comparator = (fields, orders) => fields.length === 1 ? compare1(fields[0], orders[0]) : compareN(fields, orders, fields.length);
   const compare1 = (field, order) => function (a, b) {
-    return ascending$3(field(a), field(b)) * order;
+    return ascending$2(field(a), field(b)) * order;
   };
   const compareN = (fields, orders, n) => {
     orders.push(0); // pad zero for convenient lookup
@@ -310,7 +310,7 @@
         i = -1;
       while (c === 0 && ++i < n) {
         f = fields[i];
-        c = ascending$3(f(a), f(b));
+        c = ascending$2(f(a), f(b));
       }
       return c * orders[i];
     };
@@ -575,7 +575,7 @@
       fields = flat ? array$5(fields).map(f => f.replace(/\\(.)/g, '$1')) : array$5(fields);
     }
     const len = fields && fields.length,
-      gen = opt && opt.get || getter$1,
+      gen = opt && opt.get || getter,
       map = f => gen(flat ? [f] : splitAccessPath(f));
     let fn;
     if (!len) {
@@ -1122,15 +1122,15 @@
     return arcs;
   }
 
-  function ascending$2(a, b) {
+  function ascending$1(a, b) {
     return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
   }
 
-  function descending$2(a, b) {
+  function descending$1(a, b) {
     return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
   }
 
-  function bisector$1(f) {
+  function bisector(f) {
     let compare1, compare2, delta;
 
     // If an accessor is specified, promote it to a comparator. In this case we
@@ -1139,11 +1139,11 @@
     // tell if the comparator is symmetric, and an asymmetric comparator can’t be
     // used to test whether a single value is comparable.
     if (f.length !== 2) {
-      compare1 = ascending$2;
-      compare2 = (d, x) => ascending$2(f(d), x);
+      compare1 = ascending$1;
+      compare2 = (d, x) => ascending$1(f(d), x);
       delta = (d, x) => f(d) - x;
     } else {
-      compare1 = f === ascending$2 || f === descending$2 ? f : zero$3;
+      compare1 = f === ascending$1 || f === descending$1 ? f : zero$2;
       compare2 = f;
       delta = f;
     }
@@ -1183,7 +1183,7 @@
       right
     };
   }
-  function zero$3() {
+  function zero$2() {
     return 0;
   }
 
@@ -1207,10 +1207,10 @@
     }
   }
 
-  const ascendingBisect = bisector$1(ascending$2);
+  const ascendingBisect = bisector(ascending$1);
   const bisectRight$1 = ascendingBisect.right;
   const bisectLeft$1 = ascendingBisect.left;
-  bisector$1(number$6).center;
+  bisector(number$6).center;
   var bisect$1 = bisectRight$1;
 
   function variance(values, valueof) {
@@ -1380,8 +1380,8 @@
   }
 
   function compareDefined() {
-    let compare = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ascending$2;
-    if (compare === ascending$2) return ascendingDefined;
+    let compare = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ascending$1;
+    if (compare === ascending$1) return ascendingDefined;
     if (typeof compare !== "function") throw new TypeError("compare is not a function");
     return (a, b) => {
       const x = compare(a, b);
@@ -1614,6 +1614,39 @@
       }
     }
     return sum;
+  }
+
+  function intersection(values) {
+    for (var _len = arguments.length, others = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      others[_key - 1] = arguments[_key];
+    }
+    values = new InternSet(values);
+    others = others.map(set$4);
+    out: for (const value of values) {
+      for (const other of others) {
+        if (!other.has(value)) {
+          values.delete(value);
+          continue out;
+        }
+      }
+    }
+    return values;
+  }
+  function set$4(values) {
+    return values instanceof InternSet ? values : new InternSet(values);
+  }
+
+  function union() {
+    const set = new InternSet();
+    for (var _len = arguments.length, others = new Array(_len), _key = 0; _key < _len; _key++) {
+      others[_key] = arguments[_key];
+    }
+    for (const other of others) {
+      for (const o of other) {
+        set.add(o);
+      }
+    }
+    return set;
   }
 
   function formatDecimal (x) {
@@ -2215,7 +2248,7 @@
     }
     function tickInterval(start, stop, count) {
       const target = Math.abs(stop - start) / count;
-      const i = bisector$1(_ref => {
+      const i = bisector(_ref => {
         let [,, step] = _ref;
         return step;
       }).right(tickIntervals, target);
@@ -2367,12 +2400,12 @@
     const t = new Date(),
       u = toSet(units),
       y = u[YEAR] ? _(YEAR) : constant$5(2012),
-      m = u[MONTH] ? _(MONTH) : u[QUARTER] ? _(QUARTER) : zero$4,
+      m = u[MONTH] ? _(MONTH) : u[QUARTER] ? _(QUARTER) : zero$3,
       d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$2,
-      H = u[HOURS] ? _(HOURS) : zero$4,
-      M = u[MINUTES] ? _(MINUTES) : zero$4,
-      S = u[SECONDS] ? _(SECONDS) : zero$4,
-      L = u[MILLISECONDS] ? _(MILLISECONDS) : zero$4;
+      H = u[HOURS] ? _(HOURS) : zero$3,
+      M = u[MINUTES] ? _(MINUTES) : zero$3,
+      S = u[SECONDS] ? _(SECONDS) : zero$3,
+      L = u[MILLISECONDS] ? _(MILLISECONDS) : zero$3;
     return function (v) {
       t.setTime(+v);
       const year = y(t);
@@ -2507,7 +2540,7 @@
     const ext = opt.extent,
       max = opt.maxbins || 40,
       target = Math.abs(span(ext)) / max;
-    let i = bisector$1(i => i[2]).right(intervals, target),
+    let i = bisector(i => i[2]).right(intervals, target),
       units,
       step;
     if (i === intervals.length) {
@@ -5750,7 +5783,7 @@
 
     // don't depend on return value from typed array sort call
     // protects against undefined sort results in Safari (vega/vega-lite#4964)
-    values.sort(ascending$2);
+    values.sort(ascending$1);
     return p.map(_ => quantileSorted(values, _));
   }
   function quartiles(array, f) {
@@ -5839,7 +5872,7 @@
       }
       mu[j] = a / n;
     }
-    mu.sort(ascending$2);
+    mu.sort(ascending$1);
     return [quantile$1(mu, alpha / 2), quantile$1(mu, 1 - alpha / 2)];
   }
 
@@ -7087,7 +7120,7 @@
     --this.valid;
     this._ops.forEach(op => op.rem(this, v, t));
   }
-  function set$4(t) {
+  function set$3(t) {
     this._out.forEach(op => t[op.out] = op.value(this));
     return t;
   }
@@ -7104,7 +7137,7 @@
     ctr.prototype.init = init;
     ctr.prototype.add = add$2;
     ctr.prototype.rem = rem;
-    ctr.prototype.set = set$4;
+    ctr.prototype.set = set$3;
     ctr.prototype.get = get;
     ctr.fields = agg.map(op => op.out);
     return ctr;
@@ -9542,7 +9575,7 @@
         list.push(k);
       }
     });
-    list.sort(ascending$3);
+    list.sort(ascending$2);
     return limit ? list.slice(0, limit) : list;
   }
 
@@ -10148,7 +10181,7 @@
   function WindowOp(op, field, param, as) {
     const fn = WindowOps[op](field, param);
     return {
-      init: fn.init || zero$4,
+      init: fn.init || zero$3,
       update: function (w, t) {
         t[as] = fn.next(w);
       }
@@ -10524,7 +10557,7 @@
       data = list.data(cmp),
       // use cmp for stable sort
       n = data.length,
-      b = range ? bisector$1(sort) : null,
+      b = range ? bisector(sort) : null,
       w = {
         i0: 0,
         i1: 0,
@@ -12863,7 +12896,7 @@
 
   var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
     reB = new RegExp(reA.source, "g");
-  function zero$2(b) {
+  function zero$1(b) {
     return function () {
       return b;
     };
@@ -12923,7 +12956,7 @@
 
     // Special optimization for only a single match.
     // Otherwise, interpolate each of the numbers and rejoin the string.
-    return s.length < 2 ? q[0] ? one$1(q[0].x) : zero$2(b) : (b = q.length, function (t) {
+    return s.length < 2 ? q[0] ? one$1(q[0].x) : zero$1(b) : (b = q.length, function (t) {
       for (var i = 0, o; i < b; ++i) s[(o = q[i]).i] = o.x(t);
       return s.join("");
     });
@@ -13682,7 +13715,7 @@
       if (!arguments.length) return domain.slice();
       domain = [];
       for (let d of _) if (d != null && !isNaN(d = +d)) domain.push(d);
-      domain.sort(ascending$2);
+      domain.sort(ascending$1);
       return rescale();
     };
     scale.range = function (_) {
@@ -14481,8 +14514,8 @@
   const DiscreteLegend = 'discrete';
   const GradientLegend = 'gradient';
   const defaultFormatter = value => isArray(value) ? value.map(v => String(v)) : String(value);
-  const ascending$1 = (a, b) => a[1] - b[1];
-  const descending$1 = (a, b) => b[1] - a[1];
+  const ascending = (a, b) => a[1] - b[1];
+  const descending = (a, b) => b[1] - a[1];
 
   /**
    * Determine the tick count or interval function.
@@ -14524,12 +14557,12 @@
     let range = scale.range(),
       lo = range[0],
       hi = peek$1(range),
-      cmp = ascending$1;
+      cmp = ascending;
     if (lo > hi) {
       range = hi;
       hi = lo;
       lo = range;
-      cmp = descending$1;
+      cmp = descending;
     }
     lo = Math.floor(lo);
     hi = Math.ceil(hi);
@@ -17751,15 +17784,10 @@
   const DragLeaveEvent = 'dragleave';
   const DragOverEvent = 'dragover';
   const MouseDownEvent = 'mousedown';
-  const PointerDownEvent = 'pointerdown';
   const MouseUpEvent = 'mouseup';
-  const PointerUpEvent = 'pointerup';
   const MouseMoveEvent = 'mousemove';
-  const PointerMoveEvent = 'pointermove';
-  const MouseOutEvent = 'out';
-  const PointerOutEvent = 'pointerout';
+  const MouseOutEvent = 'mouseout';
   const MouseOverEvent = 'mouseover';
-  const PointerOverEvent = 'pointerover';
   const ClickEvent = 'click';
   const DoubleClickEvent = 'dblclick';
   const WheelEvent = 'wheel';
@@ -17767,11 +17795,9 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
-
-  // const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, PointerDownEvent, MouseUpEvent, PointerUpEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
-  const TooltipShowEvent = PointerMoveEvent;
-  const TooltipHideEvent = PointerOutEvent;
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const TooltipShowEvent = MouseMoveEvent;
+  const TooltipHideEvent = MouseOutEvent;
   const HrefEvent = ClickEvent;
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -17825,7 +17851,7 @@
       this._canvas = el && domFind(el, 'canvas');
 
       // add minimal events required for proper state management
-      [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
       return Handler.prototype.initialize.call(this, el, origin, obj);
     },
     // return the backing canvas instance
@@ -17842,13 +17868,13 @@
     DOMMouseScroll(evt) {
       this.fire(MouseWheelEvent, evt);
     },
-    mousemove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
+    mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
     dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
-    mouseout: inactive(PointerOutEvent),
+    mouseout: inactive(MouseOutEvent),
     dragleave: inactive(DragLeaveEvent),
     mousedown(evt) {
       this._down = this._active;
-      this.fire(PointerDownEvent, evt);
+      this.fire(MouseDownEvent, evt);
     },
     click(evt) {
       if (this._down === this._active) {
@@ -17922,8 +17948,8 @@
         o = this._origin;
       return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
     },
-    // find the scenegraph item at the current pointer position
-    // x, y -- the absolute x, y pointer coordinates on the canvas element
+    // find the scenegraph item at the current mouse position
+    // x, y -- the absolute x, y mouse coordinates on the canvas element
     // gx, gy -- the relative coordinates within the current group
     pick(scene, x, y, gx, gy) {
       const g = this.context(),
@@ -19723,7 +19749,7 @@
     }
   });
   const tempBounds = new Bounds();
-  function set$3(item, property, value) {
+  function set$2(item, property, value) {
     return item[property] === value ? 0 : (item[property] = value, 1);
   }
   function isYAxis(mark) {
@@ -19801,7 +19827,7 @@
 
     // update bounds
     boundStroke(bounds.translate(x, y), item);
-    if (set$3(item, 'x', x + delta) | set$3(item, 'y', y + delta)) {
+    if (set$2(item, 'x', x + delta) | set$2(item, 'y', y + delta)) {
       item.bounds = tempBounds;
       view.dirty(item);
       item.bounds = bounds;
@@ -20476,7 +20502,7 @@
       }
       tempBounds.clear().union(subtitle.bounds);
       tempBounds.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
-      if (set$3(subtitle, 'x', sx) | set$3(subtitle, 'y', sy)) {
+      if (set$2(subtitle, 'x', sx) | set$2(subtitle, 'y', sy)) {
         view.dirty(subtitle);
         subtitle.bounds.clear().union(tempBounds);
         subtitle.mark.bounds.clear().union(tempBounds);
@@ -20510,7 +20536,7 @@
         x = group.x;
         y = group.y;
     }
-    if (set$3(group, 'x', x) | set$3(group, 'y', y)) {
+    if (set$2(group, 'x', x) | set$2(group, 'y', y)) {
       tempBounds.translate(x, y);
       view.dirty(group);
       group.bounds.clear().union(tempBounds);
@@ -25620,7 +25646,7 @@
       x2 = grid.x2 || n,
       y2 = grid.y2 || m,
       val = grid.values,
-      value = val ? i => val[i] : zero$4,
+      value = val ? i => val[i] : zero$3,
       can = domCanvas(x2 - x1, y2 - y1),
       ctx = can.getContext('2d'),
       img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
@@ -25657,11 +25683,11 @@
       if (!proj || _.modified('type')) {
         this.value = proj = create(_.type);
         projectionProperties.forEach(prop => {
-          if (_[prop] != null) set$2(proj, prop, _[prop]);
+          if (_[prop] != null) set$1(proj, prop, _[prop]);
         });
       } else {
         projectionProperties.forEach(prop => {
-          if (_.modified(prop)) set$2(proj, prop, _[prop]);
+          if (_.modified(prop)) set$1(proj, prop, _[prop]);
         });
       }
       if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
@@ -25678,7 +25704,7 @@
     if (!constructor) error('Unrecognized projection type: ' + type);
     return constructor();
   }
-  function set$2(proj, key, value) {
+  function set$1(proj, key, value) {
     if (isFunction(proj[key])) proj[key](value);
   }
   function collectGeoJSON(data) {
@@ -26385,7 +26411,7 @@
       // Otherwise, if a null callback was specified, remove callbacks of the given name.
       if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
       while (++i < n) {
-        if (t = (typename = T[i]).type) _[t] = set$1(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set$1(_[t], typename.name, null);
+        if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
       }
       return this;
     },
@@ -26412,7 +26438,7 @@
       }
     }
   }
-  function set$1(type, name, callback) {
+  function set(type, name, callback) {
     for (var i = 0, n = type.length; i < n; ++i) {
       if (type[i].name === name) {
         type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
@@ -31567,7 +31593,7 @@
       // map polygons to paths
       for (let i = 0, n = data.length; i < n; ++i) {
         const polygon = voronoi.cellPolygon(i);
-        data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
+        data[i][as] = polygon ? toPathString(polygon) : null;
       }
       return pulse.reflow(_.modified()).modifies(as);
     }
@@ -31580,9 +31606,6 @@
     let n = p.length - 1;
     for (; p[n][0] === x && p[n][1] === y; --n);
     return 'M' + p.slice(0, n + 1).join('L') + 'Z';
-  }
-  function isPoint(p) {
-    return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
   }
 
   var voronoi = /*#__PURE__*/Object.freeze({
@@ -34380,113 +34403,6 @@
     return codegen;
   }
 
-  function ascending(a, b) {
-    return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  function descending(a, b) {
-    return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-  }
-
-  function bisector(f) {
-    let compare1, compare2, delta;
-
-    // If an accessor is specified, promote it to a comparator. In this case we
-    // can test whether the search value is (self-) comparable. We can’t do this
-    // for a comparator (except for specific, known comparators) because we can’t
-    // tell if the comparator is symmetric, and an asymmetric comparator can’t be
-    // used to test whether a single value is comparable.
-    if (f.length !== 2) {
-      compare1 = ascending;
-      compare2 = (d, x) => ascending(f(d), x);
-      delta = (d, x) => f(d) - x;
-    } else {
-      compare1 = f === ascending || f === descending ? f : zero$1;
-      compare2 = f;
-      delta = f;
-    }
-    function left(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
-      if (lo < hi) {
-        if (compare1(x, x) !== 0) return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x) < 0) lo = mid + 1;else hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function right(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
-      if (lo < hi) {
-        if (compare1(x, x) !== 0) return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x) <= 0) lo = mid + 1;else hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function center(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
-      const i = left(a, x, lo, hi - 1);
-      return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
-    }
-    return {
-      left,
-      center,
-      right
-    };
-  }
-  function zero$1() {
-    return 0;
-  }
-
-  function intersection(values) {
-    for (var _len = arguments.length, others = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      others[_key - 1] = arguments[_key];
-    }
-    values = new InternSet(values);
-    others = others.map(set);
-    out: for (const value of values) {
-      for (const other of others) {
-        if (!other.has(value)) {
-          values.delete(value);
-          continue out;
-        }
-      }
-    }
-    return values;
-  }
-  function set(values) {
-    return values instanceof InternSet ? values : new InternSet(values);
-  }
-
-  function union() {
-    const set = new InternSet();
-    for (var _len = arguments.length, others = new Array(_len), _key = 0; _key < _len; _key++) {
-      others[_key] = arguments[_key];
-    }
-    for (const other of others) {
-      for (const o of other) {
-        set.add(o);
-      }
-    }
-    return set;
-  }
-
-  // Registers vega-util field accessors to protect against XSS attacks
-  const SELECTION_GETTER = Symbol('vega_selection_getter');
-  function getter(f) {
-    if (!f.getter || !f.getter[SELECTION_GETTER]) {
-      f.getter = field$1(f.field);
-      f.getter[SELECTION_GETTER] = true;
-    }
-    return f.getter;
-  }
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
@@ -34512,7 +34428,8 @@
       f;
     for (; i < n; ++i) {
       f = fields[i];
-      dval = getter(f)(datum);
+      f.getter = field$1.getter || field$1(f.field);
+      dval = f.getter(datum);
       if (isDate$1(dval)) dval = toNumber(dval);
       if (isDate$1(values[i])) values[i] = toNumber(values[i]);
       if (isDate$1(values[i][0])) values[i] = values[i].map(toNumber);
@@ -34623,7 +34540,7 @@
    */
   function selectionTuples(array, base) {
     return array.map(x => extend$1(base.fields ? {
-      values: base.fields.map(f => getter(f)(x.datum))
+      values: base.fields.map(f => (f.getter || (f.getter = field$1(f.field)))(x.datum))
     } : {
       [SelectionId]: $selectionId(x.datum)
     }, base));
@@ -36147,8 +36064,8 @@
       item: null
     }));
 
-    // evaluate cursor on each pointermove event
-    view.on(view.events('view', 'pointermove'), cursor, (_, event) => {
+    // evaluate cursor on each mousemove event
+    view.on(view.events('view', 'mousemove'), cursor, (_, event) => {
       const value = cursor.value,
         user = value ? isString(value) ? value : value.user : Default,
         item = event.item && event.item.cursor || null;
@@ -36420,11 +36337,11 @@
     hoverSet = [hoverSet || 'hover'];
     leaveSet = [leaveSet || 'update', hoverSet[0]];
 
-    // invoke hover set upon pointerover
-    this.on(this.events('view', 'pointerover', itemFilter), markTarget, invoke(hoverSet));
+    // invoke hover set upon mouseover
+    this.on(this.events('view', 'mouseover', itemFilter), markTarget, invoke(hoverSet));
 
-    // invoke leave set upon pointerout
-    this.on(this.events('view', 'pointerout', itemFilter), markTarget, invoke(leaveSet));
+    // invoke leave set upon mouseout
+    this.on(this.events('view', 'mouseout', itemFilter), markTarget, invoke(leaveSet));
     return this;
   }
 
@@ -41320,7 +41237,7 @@
   exports.accessorFields = accessorFields;
   exports.accessorName = accessorName;
   exports.array = array$5;
-  exports.ascending = ascending$3;
+  exports.ascending = ascending$2;
   exports.bandwidthNRD = estimateBandwidth;
   exports.bin = bin;
   exports.bootstrapCI = bootstrapCI;
@@ -41499,7 +41416,7 @@
   exports.visitArray = visitArray;
   exports.week = week;
   exports.writeConfig = writeConfig;
-  exports.zero = zero$4;
+  exports.zero = zero$3;
   exports.zoomLinear = zoomLinear;
   exports.zoomLog = zoomLog;
   exports.zoomPow = zoomPow;
