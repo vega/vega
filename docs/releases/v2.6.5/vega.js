@@ -7137,10 +7137,10 @@ module.exports = (function() {
         peg$c44 = { type: "literal", value: "text", description: "\"text\"" },
         peg$c45 = "group",
         peg$c46 = { type: "literal", value: "group", description: "\"group\"" },
-        peg$c47 = "mousedown",
-        peg$c48 = { type: "literal", value: "mousedown", description: "\"mousedown\"" },
-        peg$c49 = "mouseup",
-        peg$c50 = { type: "literal", value: "mouseup", description: "\"mouseup\"" },
+        peg$c47 = "pointerdown",
+        peg$c48 = { type: "literal", value: "pointerdown", description: "\"pointerdown\"" },
+        peg$c49 = "pointerup",
+        peg$c50 = { type: "literal", value: "pointerup", description: "\"pointerup\"" },
         peg$c51 = "click",
         peg$c52 = { type: "literal", value: "click", description: "\"click\"" },
         peg$c53 = "dblclick",
@@ -7155,12 +7155,12 @@ module.exports = (function() {
         peg$c62 = { type: "literal", value: "keyup", description: "\"keyup\"" },
         peg$c63 = "mousewheel",
         peg$c64 = { type: "literal", value: "mousewheel", description: "\"mousewheel\"" },
-        peg$c65 = "mousemove",
-        peg$c66 = { type: "literal", value: "mousemove", description: "\"mousemove\"" },
-        peg$c67 = "mouseout",
-        peg$c68 = { type: "literal", value: "mouseout", description: "\"mouseout\"" },
-        peg$c69 = "mouseover",
-        peg$c70 = { type: "literal", value: "mouseover", description: "\"mouseover\"" },
+        peg$c65 = "pointermove",
+        peg$c66 = { type: "literal", value: "pointermove", description: "\"pointermove\"" },
+        peg$c67 = "pointerout",
+        peg$c68 = { type: "literal", value: "pointerout", description: "\"pointerout\"" },
+        peg$c69 = "pointerover",
+        peg$c70 = { type: "literal", value: "pointerover", description: "\"pointerover\"" },
         peg$c71 = "mouseenter",
         peg$c72 = { type: "literal", value: "mouseenter", description: "\"mouseenter\"" },
         peg$c73 = "touchstart",
@@ -11507,11 +11507,11 @@ prototype.events = [
   'dragenter',
   'dragleave',
   'dragover',
-  'mousedown',
-  'mouseup',
-  'mousemove',
-  'mouseout',
-  'mouseover',
+  'pointerdown',
+  'pointerup',
+  'pointermove',
+  'pointerout',
+  'pointerover',
   'click',
   'dblclick',
   'wheel',
@@ -11551,15 +11551,15 @@ function inactive(type) {
   };
 }
 
-prototype.mousemove = move('mousemove', 'mouseover', 'mouseout');
+prototype.pointermove = move('pointermove', 'pointerover', 'pointerout');
 prototype.dragover  = move('dragover', 'dragenter', 'dragleave');
 
-prototype.mouseout  = inactive('mouseout');
+prototype.pointerout  = inactive('pointerout');
 prototype.dragleave = inactive('dragleave');
 
-prototype.mousedown = function(evt) {
+prototype.pointerdown = function(evt) {
   this._down = this._active;
-  this.fire('mousedown', evt);
+  this.fire('pointerdown', evt);
 };
 
 prototype.click = function(evt) {
@@ -15071,12 +15071,12 @@ View.factory = function(model) {
     // Register handlers for the hover propset and cursors.
     if (opt.el) {
       if (opt.hover !== false) {
-        v.on('mouseover', function(evt, item) {
+        v.on('pointerover', function(evt, item) {
           if (item && item.hasPropertySet('hover')) {
             this.update({props:'hover', items:item});
           }
         })
-        .on('mouseout', function(evt, item) {
+        .on('pointerout', function(evt, item) {
           if (item && item.hasPropertySet('hover')) {
             this.update({props:'update', items:item});
           }
@@ -16684,7 +16684,7 @@ var dl  = require('datalib'),
     // Add a stream def at the head, so that custom defs can override it.
     def.init = def.init || {};
     def.streams.unshift({
-      type: 'mousemove',
+      type: 'pointermove',
       expr: 'eventItem().cursor === cursor.default ? cursor : {default: eventItem().cursor}'
     });
   }

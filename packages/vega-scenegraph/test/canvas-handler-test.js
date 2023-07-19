@@ -40,7 +40,7 @@ function renderAsync(scene, w, h, callback) {
 }
 
 function event(name, x, y) {
-  const evt = new win.PointerEvent(name, {clientX: x, clientY: y});
+  const evt = new win.MouseEvent(name, {clientX: x, clientY: y});
   evt.changedTouches = [{
     clientX: x || 0,
     clientY: y || 0
@@ -98,7 +98,7 @@ tape('CanvasHandler should add/remove event callbacks', t => {
   t.end();
 });
 
-tape('CanvasHandler should handle input events', t => {
+tape('CanvasHandler should handle input events ', t => {
   const scene = loadScene('scenegraph-rect.json');
   const handler = new Handler()
     .initialize(render(scene, 400, 200))

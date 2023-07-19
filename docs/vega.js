@@ -15,7 +15,7 @@
   function accessorFields(fn) {
     return fn == null ? null : fn.fields;
   }
-  function getter(path) {
+  function getter$1(path) {
     return path.length === 1 ? get1(path[0]) : getN(path);
   }
   const get1 = field => function (obj) {
@@ -92,7 +92,7 @@
   function field$1(field, name, opt) {
     const path = splitAccessPath(field);
     field = path.length === 1 ? path[0] : field;
-    return accessor((opt && opt.get || getter)(path), [field], name || field);
+    return accessor((opt && opt.get || getter$1)(path), [field], name || field);
   }
   const id = field$1('id');
   const identity$6 = accessor(_ => _, [], 'identity');
@@ -575,7 +575,7 @@
       fields = flat ? array$5(fields).map(f => f.replace(/\\(.)/g, '$1')) : array$5(fields);
     }
     const len = fields && fields.length,
-      gen = opt && opt.get || getter,
+      gen = opt && opt.get || getter$1,
       map = f => gen(flat ? [f] : splitAccessPath(f));
     let fn;
     if (!len) {
@@ -17756,7 +17756,7 @@
   const PointerUpEvent = 'pointerup';
   const MouseMoveEvent = 'mousemove';
   const PointerMoveEvent = 'pointermove';
-  const MouseOutEvent = 'mouseout';
+  const MouseOutEvent = 'out';
   const PointerOutEvent = 'pointerout';
   const MouseOverEvent = 'mouseover';
   const PointerOverEvent = 'pointerover';
@@ -17767,7 +17767,9 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, PointerDownEvent, MouseUpEvent, PointerUpEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+
+  // const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, PointerDownEvent, MouseUpEvent, PointerUpEvent, MouseMoveEvent, PointerMoveEvent, MouseOutEvent, PointerOutEvent, MouseOverEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
   const TooltipHideEvent = PointerOutEvent;
   const HrefEvent = ClickEvent;
@@ -17920,8 +17922,8 @@
         o = this._origin;
       return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
     },
-    // find the scenegraph item at the current mouse position
-    // x, y -- the absolute x, y mouse coordinates on the canvas element
+    // find the scenegraph item at the current pointer position
+    // x, y -- the absolute x, y pointer coordinates on the canvas element
     // gx, gy -- the relative coordinates within the current group
     pick(scene, x, y, gx, gy) {
       const g = this.context(),
@@ -31565,7 +31567,7 @@
       // map polygons to paths
       for (let i = 0, n = data.length; i < n; ++i) {
         const polygon = voronoi.cellPolygon(i);
-        data[i][as] = polygon ? toPathString(polygon) : null;
+        data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
       }
       return pulse.reflow(_.modified()).modifies(as);
     }
@@ -31578,6 +31580,9 @@
     let n = p.length - 1;
     for (; p[n][0] === x && p[n][1] === y; --n);
     return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+  }
+  function isPoint(p) {
+    return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
   }
 
   var voronoi = /*#__PURE__*/Object.freeze({
@@ -34473,6 +34478,15 @@
     return set;
   }
 
+  // Registers vega-util field accessors to protect against XSS attacks
+  const SELECTION_GETTER = Symbol('vega_selection_getter');
+  function getter(f) {
+    if (!f.getter || !f.getter[SELECTION_GETTER]) {
+      f.getter = field$1(f.field);
+      f.getter[SELECTION_GETTER] = true;
+    }
+    return f.getter;
+  }
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
@@ -34498,8 +34512,7 @@
       f;
     for (; i < n; ++i) {
       f = fields[i];
-      f.getter = field$1.getter || field$1(f.field);
-      dval = f.getter(datum);
+      dval = getter(f)(datum);
       if (isDate$1(dval)) dval = toNumber(dval);
       if (isDate$1(values[i])) values[i] = toNumber(values[i]);
       if (isDate$1(values[i][0])) values[i] = values[i].map(toNumber);
@@ -34610,7 +34623,7 @@
    */
   function selectionTuples(array, base) {
     return array.map(x => extend$1(base.fields ? {
-      values: base.fields.map(f => (f.getter || (f.getter = field$1(f.field)))(x.datum))
+      values: base.fields.map(f => getter(f)(x.datum))
     } : {
       [SelectionId]: $selectionId(x.datum)
     }, base));

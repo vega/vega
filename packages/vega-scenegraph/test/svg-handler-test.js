@@ -55,7 +55,7 @@ function render(scene, w, h) {
 }
 
 function event(name, x, y) {
-  const evt = doc.createEvent('PointerEvents');
+  const evt = doc.createEvent('MouseEvents');
   evt.initEvent(name, false, true);
   evt.clientX = x || 0;
   evt.clientY = y || 0;

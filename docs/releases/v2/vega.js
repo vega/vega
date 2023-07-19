@@ -11507,7 +11507,7 @@ prototype.events = [
   'dragenter',
   'dragleave',
   'dragover',
-  'mousedown',
+  'pointerdown',
   'mouseup',
   'mousemove',
   'mouseout',
