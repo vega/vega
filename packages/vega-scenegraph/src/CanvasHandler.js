@@ -100,13 +100,13 @@ inherits(CanvasHandler, Handler, {
     this.fire(MouseWheelEvent, evt);
   },
 
-  mousemove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
+  pointermove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
   dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
 
-  mouseout: inactive(PointerOutEvent),
+  pointerout: inactive(PointerOutEvent),
   dragleave: inactive(DragLeaveEvent),
 
-  mousedown(evt) {
+  pointerdown(evt) {
     this._down = this._active;
     this.fire(PointerDownEvent, evt);
   },

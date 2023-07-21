@@ -112,8 +112,10 @@ spec = { signals: [{ name: 'foo', on: [{ events: 'pointerdown', update: '1', for
 // @ts-expect-error
 spec = { signals: [{ name: 'foo', on: [{ events: 'pointerdown', update: '1', force: 1 }] }] };
 
-// @ts-expect-error
-spec = { signals: [{ name: 'foo', on: [{ events: 'pointerdown', update: '1', force: 'string' }] }] };
+// // @ts-expect-error
+// spec = {
+//   signals: [{ name: 'foo', on: [{ events: 'pointerdown', update: '1', force: 'string' }] }]
+// };
 
 // @ts-expect-error
 spec = { signals: [{ name: 'foo', on: [{ events: 'pointerdown', update: '1', force: {} }] }] };

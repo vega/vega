@@ -27,11 +27,11 @@ export const spec: Spec = {
       value: null,
       on: [
         {
-          events: { marktype: 'rect', type: 'mouseover' },
+          events: { marktype: 'rect', type: 'pointerover' },
           update: 'datum'
         },
         {
-          events: { marktype: 'rect', type: 'mouseout' },
+          events: { marktype: 'rect', type: 'pointerout' },
           update: 'null'
         }
       ]

@@ -15,8 +15,8 @@ export const spec: Spec = {
       name: 'label',
       update: 'blank',
       on: [
-        { events: 'rect:mouseover', update: 'datum' },
-        { events: 'rect:mouseout', update: 'blank' }
+        { events: 'rect:pointerover', update: 'datum' },
+        { events: 'rect:pointerout', update: 'blank' }
       ]
     }
   ],

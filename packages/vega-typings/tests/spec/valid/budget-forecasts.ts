@@ -20,8 +20,8 @@ export const spec: Spec = {
       name: 'dragging',
       value: false,
       on: [
-        { events: '@handle:mousedown', update: 'true' },
-        { events: 'window:mouseup', update: 'false' }
+        { events: '@handle:pointerdown', update: 'true' },
+        { events: 'window:pointerup', update: 'false' }
       ]
     },
     {
@@ -29,7 +29,7 @@ export const spec: Spec = {
       value: 2010,
       on: [
         {
-          events: '[@handle:mousedown, window:mouseup] > window:mousemove!',
+          events: '[@handle:pointerdown, window:pointerup] > window:pointermove!',
           update: "invert('x', clamp(x(), 0, width))"
         }
       ]
@@ -42,7 +42,7 @@ export const spec: Spec = {
       name: 'tipYear',
       on: [
         {
-          events: 'mousemove',
+          events: 'pointermove',
           update: "dragging ? tipYear : invert('x', x())"
         }
       ]
@@ -51,7 +51,7 @@ export const spec: Spec = {
       name: 'tipValue',
       on: [
         {
-          events: 'mousemove',
+          events: 'pointermove',
           update: "dragging ? tipValue : invert('y', y())"
         }
       ]

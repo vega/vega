@@ -10,7 +10,7 @@ export const MouseUpEvent = 'mouseup';
 export const PointerUpEvent = 'pointerup';
 export const MouseMoveEvent = 'mousemove';
 export const PointerMoveEvent = 'pointermove';
-export const MouseOutEvent = 'out';
+export const MouseOutEvent = 'mouseout';
 export const PointerOutEvent = 'pointerout';
 export const MouseOverEvent = 'mouseover';
 export const PointerOverEvent = 'pointerover';
@@ -29,15 +29,10 @@ export const Events = [
   DragEnterEvent,
   DragLeaveEvent,
   DragOverEvent,
-  MouseDownEvent,
   PointerDownEvent,
-  MouseUpEvent,
   PointerUpEvent,
-  MouseMoveEvent,
   PointerMoveEvent,
-  MouseOutEvent,
   PointerOutEvent,
-  MouseOverEvent,
   PointerOverEvent,
   ClickEvent,
   DoubleClickEvent,
