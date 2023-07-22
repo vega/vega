@@ -1,0 +1,2150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vega scenegraph",
+  "description": "Vega scenegraph model.",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/mark"
+    }
+  ],
+  "definitions": {
+    "mark": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/mark-group"
+        },
+        {
+          "$ref": "#/definitions/mark-arc"
+        },
+        {
+          "$ref": "#/definitions/mark-area"
+        },
+        {
+          "$ref": "#/definitions/mark-image"
+        },
+        {
+          "$ref": "#/definitions/mark-line"
+        },
+        {
+          "$ref": "#/definitions/mark-path"
+        },
+        {
+          "$ref": "#/definitions/mark-rect"
+        },
+        {
+          "$ref": "#/definitions/mark-rule"
+        },
+        {
+          "$ref": "#/definitions/mark-symbol"
+        },
+        {
+          "$ref": "#/definitions/mark-text"
+        },
+        {
+          "$ref": "#/definitions/mark-trail"
+        }
+      ]
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^[ \t\r\f]*([Mm][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*[ \t\r\f]*(([Zz]|[LlTt][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[HhVv][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Cc][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2}(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2})*|[QqSs][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Aa][ \t\r\f]*[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*)(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??([Zz]|[LlTt][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[HhVv][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Cc][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2}(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2})*|[QqSs][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Aa][ \t\r\f]*[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*))*)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[Mm][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*[ \t\r\f]*(([Zz]|[LlTt][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[HhVv][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Cc][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2}(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2})*|[QqSs][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Aa][ \t\r\f]*[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*)(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??([Zz]|[LlTt][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[HhVv][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Cc][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2}(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?){2})*|[QqSs][ \t\r\f]*[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*|[Aa][ \t\r\f]*[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?(([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)?[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[01]([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?([ \t\r\f]+,?[ \t\r\f]*|,[ \t\r\f]*)??[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)*))*)?)*)?[ \t\r\f]*$"
+    },
+    "paint": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/color"
+        },
+        {
+          "$ref": "#/definitions/linearGradient"
+        },
+        {
+          "$ref": "#/definitions/radialGradient"
+        }
+      ]
+    },
+    "color": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+        },
+        {
+          "type": "string",
+          "pattern": "^rgb\\([ \t\f]*([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(,[ \t\f]*([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){2}[ \t\f]*\\)$"
+        },
+        {
+          "type": "string",
+          "pattern": "^rgb\\([ \t\f]*([0-9]|[1-9][0-9]|100)%(,[ \t\f]*([0-9]|[1-9][0-9]|100)%){2}[ \t\f]*\\)$"
+        },
+        {
+          "type": "string",
+          "pattern": "^hsl\\([ \t\f]*([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-9][0-9]|3[0-5][0-9]|360)(,[ \t\f]*([0-9]|[1-9][0-9]|100)%){2}[ \t\f]*\\)$"
+        },
+        {
+          "type": "string",
+          "pattern": "^([Aa][Ll][Ii][Cc][Ee][Bb][Ll][Uu][Ee]|[Aa][Nn][Tt][Ii][Qq][Uu][Ee][Ww][Hh][Ii][Tt][Ee]|[Aa][Qq][Uu][Aa]|[Aa][Qq][Uu][Aa][Mm][Aa][Rr][Ii][Nn][Ee]|[Aa][Zz][Uu][Rr][Ee]|[Bb][Ee][Ii][Gg][Ee]|[Bb][Ii][Ss][Qq][Uu][Ee]|[Bb][Ll][Aa][Cc][Kk]|[Bb][Ll][Aa][Nn][Cc][Hh][Ee][Dd][Aa][Ll][Mm][Oo][Nn][Dd]|[Bb][Ll][Uu][Ee]|[Bb][Ll][Uu][Ee][Vv][Ii][Oo][Ll][Ee][Tt]|[Bb][Rr][Oo][Ww][Nn]|[Bb][Uu][Rr][Ll][Yy][Ww][Oo][Oo][Dd]|[Cc][Aa][Dd][Ee][Tt][Bb][Ll][Uu][Ee]|[Cc][Hh][Aa][Rr][Tt][Rr][Ee][Uu][Ss][Ee]|[Cc][Hh][Oo][Cc][Oo][Ll][Aa][Tt][Ee]|[Cc][Oo][Rr][Aa][Ll]|[Cc][Oo][Rr][Nn][Ff][Ll][Oo][Ww][Ee][Rr][Bb][Ll][Uu][Ee]|[Cc][Oo][Rr][Nn][Ss][Ii][Ll][Kk]|[Cc][Rr][Ii][Mm][Ss][Oo][Nn]|[Cc][Yy][Aa][Nn]|[Dd][Aa][Rr][Kk][Bb][Ll][Uu][Ee]|[Dd][Aa][Rr][Kk][Cc][Yy][Aa][Nn]|[Dd][Aa][Rr][Kk][Gg][Oo][Ll][Dd][Ee][Nn][Rr][Oo][Dd]|[Dd][Aa][Rr][Kk][Gg][Rr][Aa][Yy]|[Dd][Aa][Rr][Kk][Gg][Rr][Ee][Ee][Nn]|[Dd][Aa][Rr][Kk][Kk][Hh][Aa][Kk][Ii]|[Dd][Aa][Rr][Kk][Mm][Aa][Gg][Ee][Nn][Tt][Aa]|[Dd][Aa][Rr][Kk][Oo][Ll][Ii][Vv][Ee][Gg][Rr][Ee][Ee][Nn]|[Dd][Aa][Rr][Kk][Oo][Rr][Aa][Nn][Gg][Ee]|[Dd][Aa][Rr][Kk][Oo][Rr][Cc][Hh][Ii][Dd]|[Dd][Aa][Rr][Kk][Rr][Ee][Dd]|[Dd][Aa][Rr][Kk][Ss][Aa][Ll][Mm][Oo][Nn]|[Dd][Aa][Rr][Kk][Ss][Ee][Aa][Gg][Rr][Ee][Ee][Nn]|[Dd][Aa][Rr][Kk][Ss][Ll][Aa][Tt][Ee][Bb][Ll][Uu][Ee]|[Dd][Aa][Rr][Kk][Ss][Ll][Aa][Tt][Ee][Gg][Rr][Aa][Yy]|[Dd][Aa][Rr][Kk][Tt][Uu][Rr][Qq][Uu][Oo][Ii][Ss][Ee]|[Dd][Aa][Rr][Kk][Vv][Ii][Oo][Ll][Ee][Tt]|[Dd][Ee][Ee][Pp][Pp][Ii][Nn][Kk]|[Dd][Ee][Ee][Pp][Ss][Kk][Yy][Bb][Ll][Uu][Ee]|[Dd][Ii][Mm][Gg][Rr][Aa][Yy]|[Dd][Oo][Dd][Gg][Ee][Rr][Bb][Ll][Uu][Ee]|[Ff][Ii][Rr][Ee][Bb][Rr][Ii][Cc][Kk]|[Ff][Ll][Oo][Rr][Aa][Ll][Ww][Hh][Ii][Tt][Ee]|[Ff][Oo][Rr][Ee][Ss][Tt][Gg][Rr][Ee][Ee][Nn]|[Ff][Uu][Cc][Hh][Ss][Ii][Aa]|[Gg][Aa][Ii][Nn][Ss][Bb][Oo][Rr][Oo]|[Gg][Hh][Oo][Ss][Tt][Ww][Hh][Ii][Tt][Ee]|[Gg][Oo][Ll][Dd]|[Gg][Oo][Ll][Dd][Ee][Nn][Rr][Oo][Dd]|[Gg][Rr][Aa][Yy]|[Gg][Rr][Ee][Ee][Nn]|[Gg][Rr][Ee][Ee][Nn][Yy][Ee][Ll][Ll][Oo][Ww]|[Hh][Oo][Nn][Ee][Yy][Dd][Ee][Ww]|[Hh][Oo][Tt][Pp][Ii][Nn][Kk]|[Ii][Nn][Dd][Ii][Aa][Nn][Rr][Ee][Dd]|[Ii][Nn][Dd][Ii][Gg][Oo]|[Ii][Vv][Oo][Rr][Yy]|[Kk][Hh][Aa][Kk][Ii]|[Ll][Aa][Vv][Ee][Nn][Dd][Ee][Rr]|[Ll][Aa][Vv][Ee][Nn][Dd][Ee][Rr][Bb][Ll][Uu][Ss][Hh]|[Ll][Aa][Ww][Nn][Gg][Rr][Ee][Ee][Nn]|[Ll][Ee][Mm][Oo][Nn][Cc][Hh][Ii][Ff][Ff][Oo][Nn]|[Ll][Ii][Gg][Hh][Tt][Bb][Ll][Uu][Ee]|[Ll][Ii][Gg][Hh][Tt][Cc][Oo][Rr][Aa][Ll]|[Ll][Ii][Gg][Hh][Tt][Cc][Yy][Aa][Nn]|[Ll][Ii][Gg][Hh][Tt][Gg][Oo][Ll][Dd][Ee][Nn][Rr][Oo][Dd][Yy][Ee][Ll][Ll][Oo][Ww]|[Ll][Ii][Gg][Hh][Tt][Gg][Rr][Aa][Yy]|[Ll][Ii][Gg][Hh][Tt][Gg][Rr][Ee][Ee][Nn]|[Ll][Ii][Gg][Hh][Tt][Pp][Ii][Nn][Kk]|[Ll][Ii][Gg][Hh][Tt][Ss][Aa][Ll][Mm][Oo][Nn]|[Ll][Ii][Gg][Hh][Tt][Ss][Ee][Aa][Gg][Rr][Ee][Ee][Nn]|[Ll][Ii][Gg][Hh][Tt][Ss][Kk][Yy][Bb][Ll][Uu][Ee]|[Ll][Ii][Gg][Hh][Tt][Ss][Ll][Aa][Tt][Ee][Gg][Rr][Aa][Yy]|[Ll][Ii][Gg][Hh][Tt][Ss][Tt][Ee][Ee][Ll][Bb][Ll][Uu][Ee]|[Ll][Ii][Gg][Hh][Tt][Yy][Ee][Ll][Ll][Oo][Ww]|[Ll][Ii][Mm][Ee]|[Ll][Ii][Mm][Ee][Gg][Rr][Ee][Ee][Nn]|[Ll][Ii][Nn][Ee][Nn]|[Mm][Aa][Gg][Ee][Nn][Tt][Aa]|[Mm][Aa][Rr][Oo][Oo][Nn]|[Mm][Ee][Dd][Ii][Uu][Mm][Aa][Qq][Uu][Aa][Mm][Aa][Rr][Ii][Nn][Ee]|[Mm][Ee][Dd][Ii][Uu][Mm][Bb][Ll][Uu][Ee]|[Mm][Ee][Dd][Ii][Uu][Mm][Oo][Rr][Cc][Hh][Ii][Dd]|[Mm][Ee][Dd][Ii][Uu][Mm][Pp][Uu][Rr][Pp][Ll][Ee]|[Mm][Ee][Dd][Ii][Uu][Mm][Ss][Ee][Aa][Gg][Rr][Ee][Ee][Nn]|[Mm][Ee][Dd][Ii][Uu][Mm][Ss][Ll][Aa][Tt][Ee][Bb][Ll][Uu][Ee]|[Mm][Ee][Dd][Ii][Uu][Mm][Ss][Pp][Rr][Ii][Nn][Gg][Gg][Rr][Ee][Ee][Nn]|[Mm][Ee][Dd][Ii][Uu][Mm][Tt][Uu][Rr][Qq][Uu][Oo][Ii][Ss][Ee]|[Mm][Ee][Dd][Ii][Uu][Mm][Vv][Ii][Oo][Ll][Ee][Tt][Rr][Ee][Dd]|[Mm][Ii][Dd][Nn][Ii][Gg][Hh][Tt][Bb][Ll][Uu][Ee]|[Mm][Ii][Nn][Tt][Cc][Rr][Ee][Aa][Mm]|[Mm][Ii][Ss][Tt][Yy][Rr][Oo][Ss][Ee]|[Mm][Oo][Cc][Cc][Aa][Ss][Ii][Nn]|[Nn][Aa][Vv][Aa][Jj][Oo][Ww][Hh][Ii][Tt][Ee]|[Nn][Aa][Vv][Yy]|[Oo][Ll][Dd][Ll][Aa][Cc][Ee]|[Oo][Ll][Ii][Vv][Ee]|[Oo][Ll][Ii][Vv][Ee][Dd][Rr][Aa][Bb]|[Oo][Rr][Aa][Nn][Gg][Ee]|[Oo][Rr][Aa][Nn][Gg][Ee][Rr][Ee][Dd]|[Oo][Rr][Cc][Hh][Ii][Dd]|[Pp][Aa][Ll][Ee][Gg][Oo][Ll][Dd][Ee][Nn][Rr][Oo][Dd]|[Pp][Aa][Ll][Ee][Gg][Rr][Ee][Ee][Nn]|[Pp][Aa][Ll][Ee][Tt][Uu][Rr][Qq][Uu][Oo][Ii][Ss][Ee]|[Pp][Aa][Ll][Ee][Vv][Ii][Oo][Ll][Ee][Tt][Rr][Ee][Dd]|[Pp][Aa][Pp][Aa][Yy][Aa][Ww][Hh][Ii][Pp]|[Pp][Ee][Aa][Cc][Hh][Pp][Uu][Ff][Ff]|[Pp][Ee][Rr][Uu]|[Pp][Ii][Nn][Kk]|[Pp][Ll][Uu][Mm]|[Pp][Oo][Ww][Dd][Ee][Rr][Bb][Ll][Uu][Ee]|[Pp][Uu][Rr][Pp][Ll][Ee]|[Rr][Ee][Bb][Ee][Cc][Cc][Aa][Pp][Uu][Rr][Pp][Ll][Ee]|[Rr][Ee][Dd]|[Rr][Oo][Ss][Yy][Bb][Rr][Oo][Ww][Nn]|[Rr][Oo][Yy][Aa][Ll][Bb][Ll][Uu][Ee]|[Ss][Aa][Dd][Dd][Ll][Ee][Bb][Rr][Oo][Ww][Nn]|[Ss][Aa][Ll][Mm][Oo][Nn]|[Ss][Aa][Nn][Dd][Yy][Bb][Rr][Oo][Ww][Nn]|[Ss][Ee][Aa][Gg][Rr][Ee][Ee][Nn]|[Ss][Ee][Aa][Ss][Hh][Ee][Ll][Ll]|[Ss][Ii][Ee][Nn][Nn][Aa]|[Ss][Ii][Ll][Vv][Ee][Rr]|[Ss][Kk][Yy][Bb][Ll][Uu][Ee]|[Ss][Ll][Aa][Tt][Ee][Bb][Ll][Uu][Ee]|[Ss][Ll][Aa][Tt][Ee][Gg][Rr][Aa][Yy]|[Ss][Nn][Oo][Ww]|[Ss][Pp][Rr][Ii][Nn][Gg][Gg][Rr][Ee][Ee][Nn]|[Ss][Tt][Ee][Ee][Ll][Bb][Ll][Uu][Ee]|[Tt][Aa][Nn]|[Tt][Ee][Aa][Ll]|[Tt][Hh][Ii][Ss][Tt][Ll][Ee]|[Tt][Oo][Mm][Aa][Tt][Oo]|[Tt][Uu][Rr][Qq][Uu][Oo][Ii][Ss][Ee]|[Vv][Ii][Oo][Ll][Ee][Tt]|[Ww][Hh][Ee][Aa][Tt]|[Ww][Hh][Ii][Tt][Ee]|[Ww][Hh][Ii][Tt][Ee][Ss][Mm][Oo][Kk][Ee]|[Yy][Ee][Ll][Ll][Oo][Ww]|[Yy][Ee][Ll][Ll][Oo][Ww][Gg][Rr][Ee][Ee][Nn])$"
+        }
+      ]
+    },
+    "gradientStop": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "number"
+        },
+        "color": {
+          "$ref": "#/definitions/color"
+        }
+      },
+      "required": [
+        "offset",
+        "color"
+      ]
+    },
+    "linearGradient": {
+      "type": "object",
+      "properties": {
+        "gradient": {
+          "enum": [
+            "linear"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "x1": {
+          "type": "number"
+        },
+        "y1": {
+          "type": "number"
+        },
+        "x2": {
+          "type": "number"
+        },
+        "y2": {
+          "type": "number"
+        },
+        "stops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gradientStop"
+          }
+        }
+      },
+      "required": [
+        "gradient",
+        "stops"
+      ],
+      "additionalProperties": false
+    },
+    "radialGradient": {
+      "type": "object",
+      "properties": {
+        "gradient": {
+          "enum": [
+            "radial"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "x1": {
+          "type": "number"
+        },
+        "y1": {
+          "type": "number"
+        },
+        "r1": {
+          "type": "number"
+        },
+        "x2": {
+          "type": "number"
+        },
+        "y2": {
+          "type": "number"
+        },
+        "r2": {
+          "type": "number"
+        },
+        "stops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/gradientStop"
+          }
+        }
+      },
+      "required": [
+        "gradient",
+        "stops"
+      ],
+      "additionalProperties": false
+    },
+    "mark-group": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "group"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-group"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-group": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "clip": {
+          "type": "boolean"
+        },
+        "cornerRadius": {
+          "type": "number"
+        },
+        "cornerRadiusTopLeft": {
+          "type": "number"
+        },
+        "cornerRadiusTopRight": {
+          "type": "number"
+        },
+        "cornerRadiusBottomRight": {
+          "type": "number"
+        },
+        "cornerRadiusBottomLeft": {
+          "type": "number"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/mark"
+          }
+        },
+        "strokeForeground": {
+          "type": "boolean"
+        },
+        "strokeOffset": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-arc": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "arc"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-arc"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-arc": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "startAngle": {
+          "type": "number"
+        },
+        "endAngle": {
+          "type": "number"
+        },
+        "padAngle": {
+          "type": "number"
+        },
+        "innerRadius": {
+          "type": "number"
+        },
+        "outerRadius": {
+          "type": "number"
+        },
+        "cornerRadius": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-area": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "area"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-area"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-area": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "defined": {
+          "type": "boolean"
+        },
+        "interpolate": {
+          "enum": [
+            "basis",
+            "cardinal",
+            "catmull-rom",
+            "linear",
+            "monotone",
+            "natural",
+            "step",
+            "step-after",
+            "step-before"
+          ]
+        },
+        "tension": {
+          "type": "number"
+        },
+        "orient": {
+          "enum": [
+            "horizontal",
+            "vertical"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-image": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "image"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-image"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-image": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "aspect": {
+          "type": "boolean",
+          "default": true
+        },
+        "smooth": {
+          "type": "boolean",
+          "default": true
+        },
+        "align": {
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left"
+        },
+        "baseline": {
+          "enum": [
+            "top",
+            "middle",
+            "bottom"
+          ],
+          "default": "top"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-line": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "line"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-line"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-line": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "defined": {
+          "type": "boolean"
+        },
+        "interpolate": {
+          "enum": [
+            "basis",
+            "basis-closed",
+            "basis-open",
+            "bundle",
+            "cardinal",
+            "cardinal-closed",
+            "cardinal-open",
+            "catmull-rom",
+            "catmull-rom-closed",
+            "catmull-rom-open",
+            "linear",
+            "linear-closed",
+            "monotone",
+            "natural",
+            "step",
+            "step-after",
+            "step-before"
+          ]
+        },
+        "tension": {
+          "type": "number"
+        },
+        "orient": {
+          "enum": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "size": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-path": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "path"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-path"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-path": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "angle": {
+          "type": "number"
+        },
+        "path": {
+          "$ref": "#/definitions/path"
+        },
+        "scaleX": {
+          "type": "number"
+        },
+        "scaleY": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-rect": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "rect"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-rect"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-rect": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "cornerRadius": {
+          "type": "number"
+        },
+        "cornerRadiusTopLeft": {
+          "type": "number"
+        },
+        "cornerRadiusTopRight": {
+          "type": "number"
+        },
+        "cornerRadiusBottomRight": {
+          "type": "number"
+        },
+        "cornerRadiusBottomLeft": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-rule": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "rule"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-rule"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-rule": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "x2": {
+          "type": "number"
+        },
+        "y2": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-symbol": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "symbol"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-symbol"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-symbol": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "angle": {
+          "type": "number",
+          "default": 0
+        },
+        "size": {
+          "type": "number",
+          "default": 100
+        },
+        "shape": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-text": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "text"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-text"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-text": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "text": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "limit": {
+          "type": "number",
+          "default": 0
+        },
+        "lineHeight": {
+          "type": "number"
+        },
+        "dir": {
+          "type": "string",
+          "default": "ltr"
+        },
+        "ellipsis": {
+          "type": "string",
+          "default": "…"
+        },
+        "align": {
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left"
+        },
+        "baseline": {
+          "enum": [
+            "alphabetic",
+            "top",
+            "middle",
+            "bottom",
+            "line-top",
+            "line-bottom"
+          ],
+          "default": "alphabetic"
+        },
+        "angle": {
+          "type": "number",
+          "default": 0
+        },
+        "theta": {
+          "type": "number",
+          "default": 0
+        },
+        "radius": {
+          "type": "number",
+          "default": 0
+        },
+        "dx": {
+          "type": "number",
+          "default": 0
+        },
+        "dy": {
+          "type": "number",
+          "default": 0
+        },
+        "font": {
+          "type": "string",
+          "default": "sans-serif"
+        },
+        "fontSize": {
+          "type": "number"
+        },
+        "fontStyle": {
+          "enum": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "default": "normal"
+        },
+        "fontWeight": {
+          "enum": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            100,
+            200,
+            300,
+            400,
+            500,
+            600,
+            700,
+            800,
+            900
+          ],
+          "default": "normal"
+        },
+        "fontVariant": {
+          "enum": [
+            "normal",
+            "small-caps"
+          ],
+          "default": "normal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark-trail": {
+      "type": "object",
+      "properties": {
+        "marktype": {
+          "enum": [
+            "trail"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "interactive": {
+          "type": "boolean",
+          "default": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/item-trail"
+          }
+        },
+        "zindex": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marktype"
+      ],
+      "additionalProperties": false
+    },
+    "item-trail": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "blend": {
+          "enum": [
+            null,
+            "multiply",
+            "screen",
+            "overlay",
+            "darken",
+            "lighten",
+            "color-dodge",
+            "color-burn",
+            "hard-light",
+            "soft-light",
+            "difference",
+            "exclusion",
+            "hue",
+            "saturation",
+            "color",
+            "luminosity"
+          ],
+          "default": null
+        },
+        "opacity": {
+          "type": "number",
+          "default": 1
+        },
+        "fill": {
+          "$ref": "#/definitions/paint"
+        },
+        "fillOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "stroke": {
+          "$ref": "#/definitions/paint"
+        },
+        "strokeOpacity": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeWidth": {
+          "type": "number",
+          "default": 1
+        },
+        "strokeCap": {
+          "enum": [
+            "butt",
+            "cap",
+            "round"
+          ],
+          "default": "butt"
+        },
+        "strokeJoin": {
+          "enum": [
+            "miter",
+            "round",
+            "bevel"
+          ],
+          "default": "miter"
+        },
+        "strokeMiterLimit": {
+          "type": "number"
+        },
+        "strokeDash": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "strokeDashOffset": {
+          "type": "number",
+          "default": 0
+        },
+        "zindex": {
+          "type": "number"
+        },
+        "cursor": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tooltip": {},
+        "description": {
+          "type": "string"
+        },
+        "aria": {
+          "type": "boolean"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
+        "defined": {
+          "type": "boolean"
+        },
+        "size": {
+          "type": "number",
+          "default": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
