@@ -51,7 +51,7 @@
     "vega-statistics": "~1.9.0",
     "vega-time": "~2.1.1",
     "vega-transforms": "~4.10.2",
-    "vega-typings": "~0.24.0",
+    "vega-typings": "~1.0.0",
     "vega-util": "~1.17.2",
     "vega-view": "~5.11.1",
     "vega-view-transforms": "~4.5.9",
