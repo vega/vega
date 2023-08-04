@@ -56,7 +56,7 @@ tape('CanvasHandler should add/remove event callbacks', t => {
       f = function() {},
       atype = 'click',
       btype = 'click.foo',
-      ctype = 'mouseover';
+      ctype = 'pointerover';
 
   // add event callbacks
   handler.on(atype, f);
@@ -98,7 +98,7 @@ tape('CanvasHandler should add/remove event callbacks', t => {
   t.end();
 });
 
-tape('CanvasHandler should handle input events', t => {
+tape('CanvasHandler should handle input events ', t => {
   const scene = loadScene('scenegraph-rect.json');
   const handler = new Handler()
     .initialize(render(scene, 400, 200))
@@ -120,23 +120,23 @@ tape('CanvasHandler should handle input events', t => {
   });
 
   handler.DOMMouseScroll(event('mousewheel'));
-  canvas.dispatchEvent(event('mousemove', 0, 0));
-  canvas.dispatchEvent(event('mousemove', 50, 150));
-  canvas.dispatchEvent(event('mousedown', 50, 150));
-  canvas.dispatchEvent(event('mouseup', 50, 150));
+  canvas.dispatchEvent(event('pointermove', 0, 0));
+  canvas.dispatchEvent(event('pointermove', 50, 150));
+  canvas.dispatchEvent(event('pointerdown', 50, 150));
+  canvas.dispatchEvent(event('pointerup', 50, 150));
   canvas.dispatchEvent(event('click', 50, 150));
-  canvas.dispatchEvent(event('mousemove', 50, 151));
-  canvas.dispatchEvent(event('mousemove', 50, 1));
-  canvas.dispatchEvent(event('mouseout', 1, 1));
+  canvas.dispatchEvent(event('pointermove', 50, 151));
+  canvas.dispatchEvent(event('pointermove', 50, 1));
+  canvas.dispatchEvent(event('pointerout', 1, 1));
   canvas.dispatchEvent(event('dragover', 50, 151));
   canvas.dispatchEvent(event('dragover', 50, 1));
   canvas.dispatchEvent(event('dragleave', 1, 1));
 
   // 12 events above + 8 triggered:
-  //   2*(mouseover, mouseout) + 2*(dragenter, dragleave)
+  //   2*(pointerover, pointerout) + 2*(dragenter, dragleave)
   t.equal(count, handler.events.length + 20);
 
-  handler.off('mousemove', {});
+  handler.off('pointermove', {});
   t.equal(handler.handlers().length, handler.events.length);
 
   handler.off('nonevent');

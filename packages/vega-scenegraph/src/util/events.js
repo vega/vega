@@ -5,10 +5,15 @@ export const DragEnterEvent = 'dragenter';
 export const DragLeaveEvent = 'dragleave';
 export const DragOverEvent = 'dragover';
 export const MouseDownEvent = 'mousedown';
+export const PointerDownEvent = 'pointerdown';
 export const MouseUpEvent = 'mouseup';
+export const PointerUpEvent = 'pointerup';
 export const MouseMoveEvent = 'mousemove';
+export const PointerMoveEvent = 'pointermove';
 export const MouseOutEvent = 'mouseout';
+export const PointerOutEvent = 'pointerout';
 export const MouseOverEvent = 'mouseover';
+export const PointerOverEvent = 'pointerover';
 export const ClickEvent = 'click';
 export const DoubleClickEvent = 'dblclick';
 export const WheelEvent = 'wheel';
@@ -24,11 +29,11 @@ export const Events = [
   DragEnterEvent,
   DragLeaveEvent,
   DragOverEvent,
-  MouseDownEvent,
-  MouseUpEvent,
-  MouseMoveEvent,
-  MouseOutEvent,
-  MouseOverEvent,
+  PointerDownEvent,
+  PointerUpEvent,
+  PointerMoveEvent,
+  PointerOutEvent,
+  PointerOverEvent,
   ClickEvent,
   DoubleClickEvent,
   WheelEvent,
@@ -38,8 +43,8 @@ export const Events = [
   TouchEndEvent
 ];
 
-export const TooltipShowEvent = MouseMoveEvent;
+export const TooltipShowEvent = PointerMoveEvent;
 
-export const TooltipHideEvent = MouseOutEvent;
+export const TooltipHideEvent = PointerOutEvent;
 
 export const HrefEvent = ClickEvent;

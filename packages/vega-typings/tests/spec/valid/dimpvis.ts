@@ -114,8 +114,8 @@ export const spec: Spec = {
       name: 'active',
       value: {},
       on: [
-        { events: '@point:mousedown, @point:touchstart', update: 'datum' },
-        { events: 'window:mouseup, window:touchend', update: '{}' }
+        { events: '@point:pointerdown, @point:touchstart', update: 'datum' },
+        { events: 'window:pointerup, window:touchend', update: '{}' }
       ]
     },
     { name: 'isActive', update: 'active.country' },
@@ -123,8 +123,8 @@ export const spec: Spec = {
       name: 'timeline',
       value: {},
       on: [
-        { events: '@point:mouseover', update: 'isActive ? active : datum' },
-        { events: '@point:mouseout', update: 'active' },
+        { events: '@point:pointerover', update: 'isActive ? active : datum' },
+        { events: '@point:pointerout', update: 'active' },
         { events: { signal: 'active' }, update: 'active' }
       ]
     },
@@ -132,7 +132,7 @@ export const spec: Spec = {
       name: 'tX',
       on: [
         {
-          events: 'mousemove!, touchmove!',
+          events: 'pointermove!, touchmove!',
           update: "isActive ? scale('x', active.this.fertility) : tX"
         }
       ]
@@ -141,7 +141,7 @@ export const spec: Spec = {
       name: 'tY',
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: "isActive ? scale('y', active.this.life_expect) : tY"
         }
       ]
@@ -150,7 +150,7 @@ export const spec: Spec = {
       name: 'pX',
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: "isActive ? scale('x', active.prev.fertility) : pX"
         }
       ]
@@ -159,7 +159,7 @@ export const spec: Spec = {
       name: 'pY',
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: "isActive ? scale('y', active.prev.life_expect) : pY"
         }
       ]
@@ -168,7 +168,7 @@ export const spec: Spec = {
       name: 'nX',
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: "isActive ? scale('x', active.next.fertility) : nX"
         }
       ]
@@ -177,7 +177,7 @@ export const spec: Spec = {
       name: 'nY',
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: "isActive ? scale('y', active.next.life_expect) : nY"
         }
       ]
@@ -187,7 +187,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: 'isActive ? hypot(x()-tX, y()-tY) : thisDist'
         }
       ]
@@ -197,7 +197,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: 'isActive ? hypot(x()-pX, y()-pY): prevDist'
         }
       ]
@@ -207,7 +207,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update: 'isActive ? hypot(x()-nX, y()-nY) : nextDist'
         }
       ]
@@ -217,7 +217,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update:
             'isActive ? ((pX-tX) * (x()-tX) + (pY-tY) * (y()-tY))/prevDist || -999999 : prevScore'
         }
@@ -228,7 +228,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update:
             'isActive ? ((nX-tX) * (x()-tX) + (nY-tY) * (y()-tY))/nextDist || -999999 : nextScore'
         }
@@ -239,7 +239,7 @@ export const spec: Spec = {
       value: 1980,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update:
             'isActive ? (min(maxYear, currentYear+5, max(minYear, currentYear-5, prevScore > nextScore ? (currentYear - 2.5*prevScore/hypot(pX-tX, pY-tY)) : (currentYear + 2.5*nextScore/hypot(nX-tX, nY-tY))))) : interYear'
         }
@@ -250,7 +250,7 @@ export const spec: Spec = {
       value: 1980,
       on: [
         {
-          events: 'mousemove, touchmove',
+          events: 'pointermove, touchmove',
           update:
             'isActive ? (min(maxYear, max(minYear, prevScore > nextScore ? (thisDist < prevDist ? currentYear : currentYear-5) : (thisDist < nextDist ? currentYear : currentYear+5)))) : currentYear'
         }

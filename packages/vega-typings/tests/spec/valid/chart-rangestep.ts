@@ -15,15 +15,15 @@ export const spec: Spec = {
       value: 'default',
       on: [
         {
-          events: { marktype: 'rect', type: 'mousedown' },
+          events: { marktype: 'rect', type: 'pointerdown' },
           update: { value: 'default' }
         },
         {
-          events: { marktype: 'rect', type: 'mouseover' },
+          events: { marktype: 'rect', type: 'pointerover' },
           update: { value: 'ew-resize' }
         },
         {
-          events: { marktype: 'rect', type: 'mouseout' },
+          events: { marktype: 'rect', type: 'pointerout' },
           update: { value: 'default' }
         }
       ]

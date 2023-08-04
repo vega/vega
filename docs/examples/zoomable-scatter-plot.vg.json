@@ -28,10 +28,10 @@
     {
       "name": "hover",
       "on": [
-        {"events": "*:mouseover", "encode": "hover"},
-        {"events": "*:mouseout",  "encode": "leave"},
-        {"events": "*:mousedown", "encode": "select"},
-        {"events": "*:mouseup",   "encode": "release"}
+        {"events": "*:pointerover", "encode": "hover"},
+        {"events": "*:pointerout",  "encode": "leave"},
+        {"events": "*:pointerdown", "encode": "select"},
+        {"events": "*:pointerup",   "encode": "release"}
       ]
     },
     {
@@ -49,14 +49,14 @@
       "name": "down", "value": null,
       "on": [
         {"events": "touchend", "update": "null"},
-        {"events": "mousedown, touchstart", "update": "xy()"}
+        {"events": "pointerdown, touchstart", "update": "xy()"}
       ]
     },
     {
       "name": "xcur", "value": null,
       "on": [
         {
-          "events": "mousedown, touchstart, touchend",
+          "events": "pointerdown, touchstart, touchend",
           "update": "slice(xdom)"
         }
       ]
@@ -65,7 +65,7 @@
       "name": "ycur", "value": null,
       "on": [
         {
-          "events": "mousedown, touchstart, touchend",
+          "events": "pointerdown, touchstart, touchend",
           "update": "slice(ydom)"
         }
       ]
@@ -76,8 +76,8 @@
         {
           "events": [
             {
-              "source": "window", "type": "mousemove", "consume": true,
-              "between": [{"type": "mousedown"}, {"source": "window", "type": "mouseup"}]
+              "source": "window", "type": "pointermove", "consume": true,
+              "between": [{"type": "pointerdown"}, {"source": "window", "type": "pointerup"}]
             },
             {
               "type": "touchmove", "consume": true,
