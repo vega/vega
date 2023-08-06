@@ -17,9 +17,9 @@ export function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
   const width = $.width,
         height = $.height,
         border = labelInside || isGroupArea,
-        context = canvas(width, height).getContext('2d'),
-        baseMarkContext = canvas(width, height).getContext('2d'),
-        strokeContext = border && canvas(width, height).getContext('2d');
+        context = canvas(width, height).getContext('2d', {willReadFrequently: true}),
+        baseMarkContext = canvas(width, height).getContext('2d', {willReadFrequently: true}),
+        strokeContext = border && canvas(width, height).getContext('2d', {willReadFrequently: true});
 
   // render all marks to be avoided into canvas
   avoidMarks.forEach(items => draw(context, items, false));

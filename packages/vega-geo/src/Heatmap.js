@@ -126,7 +126,7 @@ function toCanvas(grid, obj, color, opacity) {
         val = grid.values,
         value = val ? i => val[i] : zero,
         can = canvas(x2 - x1, y2 - y1),
-        ctx = can.getContext('2d'),
+        ctx = can.getContext('2d', {willReadFrequently: true}),
         img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
         pix = img.data;
 
