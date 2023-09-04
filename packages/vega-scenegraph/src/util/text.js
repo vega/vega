@@ -79,10 +79,13 @@ function widthGetter(item) {
     // we are using canvas
     const currentFont = font(item);
     return text => _measureWidth(text, currentFont);
-  } else {
+  } else if (textMetrics.width === estimateWidth) {
     // we are relying on estimates
     const currentFontHeight = fontSize(item);
     return text => _estimateWidth(text, currentFontHeight);
+  } else {
+    // User defined textMetrics.width function in use (e.g. vl-convert)
+    return text => textMetrics.width(item, text);
   }
 }
 
