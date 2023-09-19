@@ -9,7 +9,7 @@ base: /
     <ul class="sidebar-nav">{% for entry in layout.sidebar %}
       {% assign link = layout.base | append:entry.page | downcase | replace:' ','-' | append:'/' | replace:'//','/' %}
       <li class="sidebar-nav-item">
-        <a {% if link == url %}aria-current="page"{% endif %} href="{{ site.baseurl }}{{ link }}">{% if entry.text %}{{ entry.text }}{% else %}{{ entry.page }}{% endif %}</a>
+        <a {% if link == url %}aria-current="page"{% endif %} href="{% if entry.link %}{{entry.link}}{% else %}{{ site.baseurl }}{{ link }}{% endif %}">{% if entry.text %}{{ entry.text }}{% else %}{{ entry.page }}{% endif %}</a>
       </li>
       {% if layout.parent == entry.page %}
       <ul class="sub-menu-nav">{% for sub in layout.submenu %}
