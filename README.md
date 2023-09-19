@@ -30,7 +30,7 @@ For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) 
 
 ## Contributions, Development, and Support
 
-Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](https://vega.github.io/vega/about/code-of-conduct/).
+Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](https://github.com/vega/.github/blob/master/CODE_OF_CONDUCT.md).
 
 Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack-2020)! We also have examples available as [Observable notebooks](https://observablehq.com/@vega).
 
