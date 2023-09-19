@@ -127,14 +127,25 @@ export const AggregateOps = {
     add:  (m, v, t) => { if (v > m.max) m.argmax = t; },
     rem:  (m, v) => { if (v >= m.max) m.argmax = undefined; },
     req:  ['max', 'values'], idx: 3
+  },
+  exponential: {
+    init: (m, r) => { m.exp = 0; m.exp_r = r; },
+    value: m => m.valid ? (m.exp * (1 - m.exp_r) / (1 - m.exp_r ** m.valid)) : undefined,
+    add:  (m, v) => m.exp = m.exp_r * m.exp + v,
+    rem:  (m, v) => m.exp = (m.exp - v / m.exp_r ** (m.valid - 1)) / m.exp_r
+  },
+  exponentialb: {
+    value: m => m.valid ? (m.exp * (1 - m.exp_r)) : undefined,
+    req:  ['exponential'], idx: 1
   }
 };
 
 export const ValidAggregateOps = Object.keys(AggregateOps).filter(d => d !== '__count__');
 
 function measure(key, value) {
-  return out => extend({
+  return (out, aggregate_param) => extend({
     name: key,
+    aggregate_param: aggregate_param,
     out: out || key
   }, base_op, value);
 }
@@ -143,8 +154,8 @@ function measure(key, value) {
   AggregateOps[key] = measure(key, AggregateOps[key]);
 });
 
-export function createMeasure(op, name) {
-  return AggregateOps[op](name);
+export function createMeasure(op, param, name) {
+  return AggregateOps[op](name, param);
 }
 
 function compareIndex(a, b) {
@@ -169,7 +180,7 @@ function resolve(agg) {
 function init() {
   this.valid = 0;
   this.missing = 0;
-  this._ops.forEach(op => op.init(this));
+  this._ops.forEach(op => (op.aggregate_param == null) ? op.init(this) : op.init(this, op.aggregate_param));
 }
 
 function add(v, t) {
