@@ -26,8 +26,8 @@
       "name": "tooltip",
       "value": {},
       "on": [
-        {"events": "rect:pointerover", "update": "datum"},
-        {"events": "rect:pointerout",  "update": "{}"}
+        {"events": "rect:mouseover", "update": "datum"},
+        {"events": "rect:mouseout",  "update": "{}"}
       ]
     }
   ],
