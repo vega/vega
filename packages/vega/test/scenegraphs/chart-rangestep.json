@@ -442,11 +442,11 @@
                       "x": 35,
                       "y": 100,
                       "align": "center",
-                      "baseline": "bottom",
+                      "baseline": "top",
                       "fill": "#000",
                       "opacity": 1,
                       "text": "Right Title",
-                      "angle": 90,
+                      "angle": -90,
                       "font": "sans-serif",
                       "fontSize": 11,
                       "fontWeight": "bold"
