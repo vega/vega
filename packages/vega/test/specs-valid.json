@@ -74,6 +74,7 @@
   "nested-plot",
   "nulls-histogram",
   "nulls-scatter-plot",
+  "nulls-selection",
   "overview-detail",
   "overview-detail-bins",
   "panzoom",
