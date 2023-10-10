@@ -36,7 +36,6 @@
       <select id="render">
         <option value="svg" selected>svg</option>
         <option value="canvas">canvas</option>
-        <option value="hybrid">hybrid</option>
       </select> &nbsp;
       Log Level:
       <select id="level">
@@ -56,8 +55,6 @@ const options = {
   logLevel:  vega.Warn,
   hover:     true
 };
-
-vega.renderModule('hybrid', { handler: vega.SVGHandler, renderer: vega.SVGRenderer });
 
 const select = document.querySelector('#specs');
 select.addEventListener('change', function() {
