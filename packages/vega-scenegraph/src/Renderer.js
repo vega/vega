@@ -90,16 +90,14 @@ Renderer.prototype = {
    * after this method returns. To receive notification when rendering is
    * complete, use the renderAsync method instead.
    * @param {object} scene - The root mark of a scenegraph to render.
-   * @param {Array} markTypes - Array of the mark types to render.
-   *                            If undefined, render all mark types
    * @return {Renderer} - This renderer instance.
    */
-  render(scene, markTypes) {
+  render(scene) {
     const r = this;
 
     // bind arguments into a render call, and cache it
     // this function may be subsequently called for async redraw
-    r._call = function() { r._render(scene, markTypes); };
+    r._call = function() { r._render(scene); };
 
     // invoke the renderer
     r._call();
@@ -115,10 +113,8 @@ Renderer.prototype = {
    * Internal rendering method. Renderer subclasses should override this
    * method to actually perform rendering.
    * @param {object} scene - The root mark of a scenegraph to render.
-   * @param {Array} markTypes - Array of the mark types to render.
-   *                            If undefined, render all mark types
    */
-  _render(/*scene, markTypes*/) {
+  _render(/*scene*/) {
     // subclasses to override
   },
 
@@ -128,12 +124,10 @@ Renderer.prototype = {
    * perform image loading to get a complete rendering. The returned
    * Promise will not resolve until this process completes.
    * @param {object} scene - The root mark of a scenegraph to render.
-   * @param {Array} markTypes - Array of the mark types to render.
-   *                            If undefined, render all mark types
    * @return {Promise} - A Promise that resolves when rendering is complete.
    */
-  renderAsync(scene, markTypes) {
-    const r = this.render(scene, markTypes);
+  renderAsync(scene) {
+    const r = this.render(scene);
     return this._ready
       ? this._ready.then(() => r)
       : Promise.resolve(r);

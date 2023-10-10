@@ -75,7 +75,7 @@ const hitBackground = hitPath(rectanglePath);
 const hitForeground = hitPath(rectanglePath, false);
 const hitCorner = hitPath(rectanglePath, true);
 
-function draw(context, scene, bounds, markTypes) {
+function draw(context, scene, bounds) {
   visit(scene, group => {
     const gx = group.x || 0,
           gy = group.y || 0,
@@ -102,9 +102,7 @@ function draw(context, scene, bounds, markTypes) {
 
     // draw group contents
     visit(group, item => {
-      if (item.marktype === 'group' || markTypes == null || markTypes.includes(item.marktype)) {
-        this.draw(context, item, bounds, markTypes);
-      }
+      this.draw(context, item, bounds);
     });
 
     // restore graphics context

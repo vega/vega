@@ -140,14 +140,12 @@ inherits(SVGRenderer, Renderer, {
   /**
    * Internal rendering method.
    * @param {object} scene - The root mark of a scenegraph to render.
-   * @param {Array} markTypes - Array of the mark types to render.
-   *                            If undefined, render all mark types
    */
-  _render(scene, markTypes) {
+  _render(scene) {
     // perform spot updates and re-render markup
     if (this._dirtyCheck()) {
       if (this._dirtyAll) this._clearDefs();
-      this.mark(this._root, scene, undefined, markTypes);
+      this.mark(this._root, scene);
       domClear(this._root, 1);
     }
 
@@ -249,26 +247,18 @@ inherits(SVGRenderer, Renderer, {
    * @param {SVGElement} el - The parent element in the SVG tree.
    * @param {object} scene - The mark parent to render.
    * @param {SVGElement} prev - The previous sibling in the SVG tree.
-   * @param {Array} markTypes - Array of the mark types to render.
-   *                            If undefined, render all mark types
    */
-  mark(el, scene, prev, markTypes) {
+  mark(el, scene, prev) {
     if (!this.isDirty(scene)) {
       return scene._svg;
     }
 
     const svg = this._svg,
-          markType = scene.marktype,
-          mdef = marks[markType],
+          mdef = marks[scene.marktype],
           events = scene.interactive === false ? 'none' : null,
           isGroup = mdef.tag === 'g';
 
     const parent = bind(scene, el, prev, 'g', svg);
-    if (markType !== 'group' && markTypes != null && !markTypes.includes(markType)) {
-      domClear(parent, 0);
-      return scene._svg;
-    }
-
     parent.setAttribute('class', cssClass(scene));
 
     // apply aria attributes to parent container element
@@ -290,7 +280,7 @@ inherits(SVGRenderer, Renderer, {
 
       if (dirty) {
         this._update(mdef, node, item);
-        if (isGroup) recurse(this, node, item, markTypes);
+        if (isGroup) recurse(this, node, item);
       }
 
       sibling = node;
@@ -490,14 +480,14 @@ function updateClipping(el, clip, index) {
 }
 
 // Recursively process group contents.
-function recurse(renderer, el, group, markTypes) {
+function recurse(renderer, el, group) {
   // child 'g' element is second to last among children (path, g, path)
   // other children here are foreground and background path elements
   el = el.lastChild.previousSibling;
   let prev, idx = 0;
 
   visit(group, item => {
-    prev = renderer.mark(el, item, prev, markTypes);
+    prev = renderer.mark(el, item, prev);
     ++idx;
   });
 
