@@ -99,7 +99,7 @@ inherits(CanvasRenderer, Renderer, {
     this._dirty.union(b);
   },
 
-  _render(scene) {
+  _render(scene, markTypes) {
     const g = this.context(),
           o = this._origin,
           w = this._width,
@@ -116,7 +116,7 @@ inherits(CanvasRenderer, Renderer, {
     this.clear(-o[0], -o[1], w, h);
 
     // render
-    this.draw(g, scene, b);
+    this.draw(g, scene, b, markTypes);
 
     // takedown
     g.restore();
@@ -125,10 +125,14 @@ inherits(CanvasRenderer, Renderer, {
     return this;
   },
 
-  draw(ctx, scene, bounds) {
+  draw(ctx, scene, bounds, markTypes) {
+    if (scene.marktype !== 'group' && markTypes != null && !markTypes.includes(scene.marktype)) {
+      return;
+    }
+
     const mark = marks[scene.marktype];
     if (scene.clip) clip(ctx, scene);
-    mark.draw.call(this, ctx, scene, bounds);
+    mark.draw.call(this, ctx, scene, bounds, markTypes);
     if (scene.clip) ctx.restore();
   },
 
