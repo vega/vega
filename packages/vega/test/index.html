@@ -57,7 +57,7 @@ const options = {
   hover:     true
 };
 
-vega.renderModule('hybrid', { handler: vega.SVGHandler, renderer: vega.SVGRenderer });
+vega.setHybridRendererOptions(["text"]);
 
 const select = document.querySelector('#specs');
 select.addEventListener('change', function() {
