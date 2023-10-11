@@ -99,5 +99,11 @@ inherits(HybridRenderer, Renderer, {
     this._svgRenderer.resize(width, height, origin, scaleFactor);
     this._canvasRenderer.resize(width, height, origin, scaleFactor);
     return this;
-  }
+  },
+
+  background(bgcolor) {
+    // Propagate background color to lower canvas renderer
+    this._canvasRenderer.background(bgcolor);
+    return this;
+  },
 });
