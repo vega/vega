@@ -32,13 +32,20 @@ inherits(HybridRenderer, Renderer, {
    * @return {HybridRenderer} - This renderer instance.
    */
   initialize(el, width, height, origin, scaleFactor) {
-    this._canvasEl = domChild(el, 0, 'div');
-    this._svgEl = domChild(el, 1, 'div');
+    this._root_el = domChild(el, 0, 'div');
+    this._canvasEl = domChild(this._root_el, 0, 'div');
+    this._svgEl = domChild(this._root_el, 1, 'div');
+
+    this._root_el.style.position = 'relative';
 
     // Set position absolute to overlay svg on top of canvas
     if (!OPTS.debug) {
-      this._canvasEl.style.position = 'absolute';
+      this._canvasEl.style.height = '100%';
       this._svgEl.style.position = 'absolute';
+      this._svgEl.style.top = '0';
+      this._svgEl.style.left = '0';
+      this._svgEl.style.height = '100%';
+      this._svgEl.style.width = '100%';
     }
 
     // pointer-events to none on SVG layer so that canvas gets all events

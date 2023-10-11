@@ -8,7 +8,7 @@ export default function HybridHandler(loader, tooltip) {
 
 inherits(HybridHandler, CanvasHandler, {
   initialize(el, origin, obj) {
-    const canvas = domChild(el, 0, 'div');
+    const canvas = domChild(domChild(el, 0, 'div'), 0, 'div');
     return CanvasHandler.prototype.initialize.call(this, canvas, origin, obj);
   }
 });
