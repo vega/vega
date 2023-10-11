@@ -57,7 +57,7 @@ const options = {
   hover:     true
 };
 
-vega.setHybridRendererOptions(["text"]);
+vega.setHybridRendererOptions({svgMarkTypes: ["text"], svgOnTop: true, debug: false});
 
 const select = document.querySelector('#specs');
 select.addEventListener('change', function() {
