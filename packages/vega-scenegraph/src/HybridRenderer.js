@@ -4,11 +4,34 @@ import CanvasRenderer from './CanvasRenderer';
 import {inherits} from 'vega-util';
 import {domChild} from './util/dom';
 
-const OPTS = {svgMarkTypes: ['text']};
+/**
+ * @typedef {Object} HybridRendererOptions
+ *
+ * @property {string[]} [svgMarkTypes=['text']] - An array of SVG mark types to render
+ *                                                in the SVG layer. All other mark types
+ *                                                will be rendered in the Canvas layer.
+ * @property {boolean} [svgOnTop=true] - Flag to determine if SVG should be rendered on top.
+ * @property {boolean} [debug=false] - Flag to enable or disable debugging mode. When true,
+ *                                     the top layer will be stacked below the bottom layer
+ *                                     rather than overlaid on top.
+ */
 
-export function setHybridRendererOptions(svgMarkTypes, debug) {
-  OPTS['svgMarkTypes'] = svgMarkTypes;
-  OPTS['debug'] = debug ?? false;
+/** @type {HybridRendererOptions} */
+export const OPTS = {
+  svgMarkTypes: ['text'],
+  svgOnTop: true,
+  debug: false
+};
+
+/**
+ * Configure the HybridRenderer
+ *
+ * @param {HybridRendererOptions} options - HybridRenderer configuration options.
+ */
+export function setHybridRendererOptions(options) {
+  OPTS['svgMarkTypes'] = options.svgMarkTypes ?? ['text'];
+  OPTS['svgOnTop'] = options.svgOnTop ?? true;
+  OPTS['debug'] = options.debug ?? false;
 }
 
 export default function HybridRenderer(loader) {
@@ -33,20 +56,24 @@ inherits(HybridRenderer, Renderer, {
    */
   initialize(el, width, height, origin, scaleFactor) {
     this._root_el = domChild(el, 0, 'div');
-    this._canvasEl = domChild(this._root_el, 0, 'div');
-    this._svgEl = domChild(this._root_el, 1, 'div');
+
+    const bottomEl = domChild(this._root_el, 0, 'div');
+    const topEl = domChild(this._root_el, 1, 'div');
 
     this._root_el.style.position = 'relative';
 
     // Set position absolute to overlay svg on top of canvas
     if (!OPTS.debug) {
-      this._canvasEl.style.height = '100%';
-      this._svgEl.style.position = 'absolute';
-      this._svgEl.style.top = '0';
-      this._svgEl.style.left = '0';
-      this._svgEl.style.height = '100%';
-      this._svgEl.style.width = '100%';
+      bottomEl.style.height = '100%';
+      topEl.style.position = 'absolute';
+      topEl.style.top = '0';
+      topEl.style.left = '0';
+      topEl.style.height = '100%';
+      topEl.style.width = '100%';
     }
+
+    this._svgEl = OPTS.svgOnTop? topEl: bottomEl;
+    this._canvasEl = OPTS.svgOnTop? bottomEl: topEl;
 
     // pointer-events to none on SVG layer so that canvas gets all events
     this._svgEl.style.pointerEvents = 'none';
@@ -103,7 +130,11 @@ inherits(HybridRenderer, Renderer, {
 
   background(bgcolor) {
     // Propagate background color to lower canvas renderer
-    this._canvasRenderer.background(bgcolor);
+    if (OPTS.svgOnTop) {
+      this._canvasRenderer.background(bgcolor);
+    } else {
+      this._svgRenderer.background(bgcolor);
+    }
     return this;
-  },
+  }
 });
