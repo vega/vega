@@ -46,7 +46,7 @@
     "rollup-plugin-bundle-size": "^1.0.3",
     "serve": "^14.2.0",
     "tape": "^5.6.3",
-    "typescript": "~5.0.4",
+    "typescript": "~5.1.6",
     "vega-datasets": "^2.7.0"
   },
   "workspaces": [
