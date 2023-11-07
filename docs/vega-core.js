@@ -35,7 +35,7 @@
   function accessorFields(fn) {
     return fn == null ? null : fn.fields;
   }
-  function getter(path) {
+  function getter$1(path) {
     return path.length === 1 ? get1(path[0]) : getN(path);
   }
   const get1 = field => function (obj) {
@@ -112,7 +112,7 @@
   function field$1(field, name, opt) {
     const path = splitAccessPath(field);
     field = path.length === 1 ? path[0] : field;
-    return accessor((opt && opt.get || getter)(path), [field], name || field);
+    return accessor((opt && opt.get || getter$1)(path), [field], name || field);
   }
   const id = field$1('id');
   const identity = accessor(_ => _, [], 'identity');
@@ -595,7 +595,7 @@
       fields = flat ? array$2(fields).map(f => f.replace(/\\(.)/g, '$1')) : array$2(fields);
     }
     const len = fields && fields.length,
-      gen = opt && opt.get || getter,
+      gen = opt && opt.get || getter$1,
       map = f => gen(flat ? [f] : splitAccessPath(f));
     let fn;
     if (!len) {
@@ -4915,20 +4915,35 @@
       },
       req: ['max', 'values'],
       idx: 3
+    },
+    exponential: {
+      init: (m, r) => {
+        m.exp = 0;
+        m.exp_r = r;
+      },
+      value: m => m.valid ? m.exp * (1 - m.exp_r) / (1 - m.exp_r ** m.valid) : undefined,
+      add: (m, v) => m.exp = m.exp_r * m.exp + v,
+      rem: (m, v) => m.exp = (m.exp - v / m.exp_r ** (m.valid - 1)) / m.exp_r
+    },
+    exponentialb: {
+      value: m => m.valid ? m.exp * (1 - m.exp_r) : undefined,
+      req: ['exponential'],
+      idx: 1
     }
   };
   const ValidAggregateOps = Object.keys(AggregateOps).filter(d => d !== '__count__');
   function measure(key, value) {
-    return out => extend({
+    return (out, aggregate_param) => extend({
       name: key,
+      aggregate_param: aggregate_param,
       out: out || key
     }, base_op, value);
   }
   [...ValidAggregateOps, '__count__'].forEach(key => {
     AggregateOps[key] = measure(key, AggregateOps[key]);
   });
-  function createMeasure(op, name) {
-    return AggregateOps[op](name);
+  function createMeasure(op, param, name) {
+    return AggregateOps[op](name, param);
   }
   function compareIndex(a, b) {
     return a.idx - b.idx;
@@ -4948,7 +4963,7 @@
   function init() {
     this.valid = 0;
     this.missing = 0;
-    this._ops.forEach(op => op.init(this));
+    this._ops.forEach(op => op.aggregate_param == null ? op.init(this) : op.init(this, op.aggregate_param));
   }
   function add$1(v, t) {
     if (v == null || v === '') {
@@ -5112,6 +5127,7 @@
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
    * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
+   * @param {Array<object>} [params.aggregate_params=[null]] - An optional array of parameters for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
    * @param {boolean} [params.cross=false] - A flag indicating that the full
    *   cross-product of groupby values should be generated, including empty cells.
@@ -5154,6 +5170,12 @@
       'type': 'enum',
       'array': true,
       'values': ValidAggregateOps
+    }, {
+      'name': 'aggregate_params',
+      'type': 'field',
+      'null': true,
+      'array': true,
+      'default': [null]
     }, {
       'name': 'fields',
       'type': 'field',
@@ -5276,16 +5298,18 @@
       this._measures = [];
       const fields = _.fields || [null],
         ops = _.ops || ['count'],
+        aggregate_params = _.aggregate_params || [null],
         as = _.as || [],
         n = fields.length,
         map = {};
-      let field, op, m, mname, outname, i;
+      let field, op, aggregate_param, m, mname, outname, i;
       if (n !== ops.length) {
         error('Unmatched number of fields and aggregate ops.');
       }
       for (i = 0; i < n; ++i) {
         field = fields[i];
         op = ops[i];
+        aggregate_param = aggregate_params[i] || null;
         if (field == null && op !== 'count') {
           error('Null aggregate field specified.');
         }
@@ -5304,7 +5328,7 @@
           this._measures.push(m);
         }
         if (op !== 'count') this._countOnly = false;
-        m.push(createMeasure(op, outname));
+        m.push(createMeasure(op, aggregate_param, outname));
       }
       this._measures = this._measures.map(m => compileMeasures(m, m.field));
       return Object.create(null); // aggregation cells (this.value)
@@ -8169,6 +8193,7 @@
     const ops = array$2(_.ops),
       fields = array$2(_.fields),
       params = array$2(_.params),
+      aggregate_params = array$2(_.aggregate_params),
       as = array$2(_.as),
       outputs = this.outputs = [],
       windows = this.windows = [],
@@ -8183,6 +8208,8 @@
     visitInputs(_.sort);
     ops.forEach((op, i) => {
       const field = fields[i],
+        param = params[i],
+        aggregate_param = aggregate_params[i] || null,
         mname = accessorName(field),
         name = measureName(op, mname, as[i]);
       visitInputs(field);
@@ -8190,7 +8217,7 @@
 
       // Window operation
       if (has$1(WindowOps, op)) {
-        windows.push(WindowOp(op, fields[i], params[i], name));
+        windows.push(WindowOp(op, field, param, name));
       }
 
       // Aggregate operation
@@ -8209,7 +8236,7 @@
           m.field = field;
           measures.push(m);
         }
-        m.push(createMeasure(op, name));
+        m.push(createMeasure(op, aggregate_param, name));
       }
     });
     if (counts.length || measures.length) {
@@ -8296,6 +8323,7 @@
    * @param {Array<function(object): *>} [params.fields] - An array of accessors
    *   for data fields to use as inputs to window operations.
    * @param {Array<*>} [params.params] - An array of parameter values for window operations.
+   * @param {Array<object>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for window operations.
    * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
    * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
@@ -8329,6 +8357,12 @@
       'type': 'number',
       'null': true,
       'array': true
+    }, {
+      'name': 'aggregate_params',
+      'type': 'field',
+      'null': true,
+      'array': true,
+      'default': [null]
     }, {
       'name': 'fields',
       'type': 'field',
@@ -9032,7 +9066,7 @@
         count = Math.max(count, scale.bins.length);
       }
       if (minStep != null) {
-        count = Math.min(count, Math.floor(span(scale.domain()) / minStep || 1));
+        count = Math.min(count, Math.floor(span(scale.domain()) / minStep || 1) + 1);
       }
     }
     if (isObject(count)) {
@@ -11103,7 +11137,7 @@
   const hitBackground = hitPath(rectanglePath);
   const hitForeground = hitPath(rectanglePath, false);
   const hitCorner = hitPath(rectanglePath, true);
-  function draw$4(context, scene, bounds) {
+  function draw$4(context, scene, bounds, markTypes) {
     visit(scene, group => {
       const gx = group.x || 0,
         gy = group.y || 0,
@@ -11130,7 +11164,9 @@
 
       // draw group contents
       visit(group, item => {
-        this.draw(context, item, bounds);
+        if (item.marktype === 'group' || markTypes == null || markTypes.includes(item.marktype)) {
+          this.draw(context, item, bounds, markTypes);
+        }
       });
 
       // restore graphics context
@@ -11499,10 +11535,13 @@
       // we are using canvas
       const currentFont = font(item);
       return text => _measureWidth(text, currentFont);
-    } else {
+    } else if (textMetrics.width === estimateWidth) {
       // we are relying on estimates
       const currentFontHeight = fontSize(item);
       return text => _estimateWidth(text, currentFontHeight);
+    } else {
+      // User defined textMetrics.width function in use (e.g. vl-convert)
+      return text => textMetrics.width(item, text);
     }
   }
   function truncate(item, text) {
@@ -12196,15 +12235,17 @@
      * after this method returns. To receive notification when rendering is
      * complete, use the renderAsync method instead.
      * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
      * @return {Renderer} - This renderer instance.
      */
-    render(scene) {
+    render(scene, markTypes) {
       const r = this;
 
       // bind arguments into a render call, and cache it
       // this function may be subsequently called for async redraw
       r._call = function () {
-        r._render(scene);
+        r._render(scene, markTypes);
       };
 
       // invoke the renderer
@@ -12219,8 +12260,10 @@
      * Internal rendering method. Renderer subclasses should override this
      * method to actually perform rendering.
      * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
      */
-    _render( /*scene*/
+    _render( /*scene, markTypes*/
     ) {
       // subclasses to override
     },
@@ -12230,10 +12273,12 @@
      * perform image loading to get a complete rendering. The returned
      * Promise will not resolve until this process completes.
      * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
      * @return {Promise} - A Promise that resolves when rendering is complete.
      */
-    renderAsync(scene) {
-      const r = this.render(scene);
+    renderAsync(scene, markTypes) {
+      const r = this.render(scene, markTypes);
       return this._ready ? this._ready.then(() => r) : Promise.resolve(r);
     },
     /**
@@ -12284,11 +12329,11 @@
   const DragEnterEvent = 'dragenter';
   const DragLeaveEvent = 'dragleave';
   const DragOverEvent = 'dragover';
-  const MouseDownEvent = 'mousedown';
-  const MouseUpEvent = 'mouseup';
-  const MouseMoveEvent = 'mousemove';
-  const MouseOutEvent = 'mouseout';
-  const MouseOverEvent = 'mouseover';
+  const PointerDownEvent = 'pointerdown';
+  const PointerUpEvent = 'pointerup';
+  const PointerMoveEvent = 'pointermove';
+  const PointerOutEvent = 'pointerout';
+  const PointerOverEvent = 'pointerover';
   const ClickEvent = 'click';
   const DoubleClickEvent = 'dblclick';
   const WheelEvent = 'wheel';
@@ -12296,9 +12341,9 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
-  const TooltipShowEvent = MouseMoveEvent;
-  const TooltipHideEvent = MouseOutEvent;
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const TooltipShowEvent = PointerMoveEvent;
+  const TooltipHideEvent = PointerOutEvent;
   const HrefEvent = ClickEvent;
   function CanvasHandler(loader, tooltip) {
     Handler.call(this, loader, tooltip);
@@ -12352,7 +12397,7 @@
       this._canvas = el && domFind(el, 'canvas');
 
       // add minimal events required for proper state management
-      [ClickEvent, MouseDownEvent, MouseMoveEvent, MouseOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
       return Handler.prototype.initialize.call(this, el, origin, obj);
     },
     // return the backing canvas instance
@@ -12369,13 +12414,13 @@
     DOMMouseScroll(evt) {
       this.fire(MouseWheelEvent, evt);
     },
-    mousemove: move(MouseMoveEvent, MouseOverEvent, MouseOutEvent),
+    pointermove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
     dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
-    mouseout: inactive(MouseOutEvent),
+    pointerout: inactive(PointerOutEvent),
     dragleave: inactive(DragLeaveEvent),
-    mousedown(evt) {
+    pointerdown(evt) {
       this._down = this._active;
-      this.fire(MouseDownEvent, evt);
+      this.fire(PointerDownEvent, evt);
     },
     click(evt) {
       if (this._down === this._active) {
@@ -12449,8 +12494,8 @@
         o = this._origin;
       return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
     },
-    // find the scenegraph item at the current mouse position
-    // x, y -- the absolute x, y mouse coordinates on the canvas element
+    // find the scenegraph item at the current pointer position
+    // x, y -- the absolute x, y pointer coordinates on the canvas element
     // gx, gy -- the relative coordinates within the current group
     pick(scene, x, y, gx, gy) {
       const g = this.context(),
@@ -12486,7 +12531,7 @@
     this._dirty = new Bounds();
     this._tempb = new Bounds();
   }
-  const base$1 = Renderer.prototype;
+  const base$2 = Renderer.prototype;
   const viewBounds = (origin, width, height) => new Bounds().set(0, 0, width, height).translate(-origin[0], -origin[1]);
   function clipToBounds(g, b, origin) {
     // expand bounds by 1 pixel, then round to pixel boundaries
@@ -12517,10 +12562,10 @@
       }
 
       // this method will invoke resize to size the canvas appropriately
-      return base$1.initialize.call(this, el, width, height, origin, scaleFactor);
+      return base$2.initialize.call(this, el, width, height, origin, scaleFactor);
     },
     resize(width, height, origin, scaleFactor) {
-      base$1.resize.call(this, width, height, origin, scaleFactor);
+      base$2.resize.call(this, width, height, origin, scaleFactor);
       if (this._canvas) {
         // configure canvas size and transform
         resize(this._canvas, this._width, this._height, this._origin, this._scale, this._options.context);
@@ -12549,7 +12594,7 @@
       }
       this._dirty.union(b);
     },
-    _render(scene) {
+    _render(scene, markTypes) {
       const g = this.context(),
         o = this._origin,
         w = this._width,
@@ -12563,17 +12608,20 @@
       this.clear(-o[0], -o[1], w, h);
 
       // render
-      this.draw(g, scene, b);
+      this.draw(g, scene, b, markTypes);
 
       // takedown
       g.restore();
       db.clear();
       return this;
     },
-    draw(ctx, scene, bounds) {
+    draw(ctx, scene, bounds, markTypes) {
+      if (scene.marktype !== 'group' && markTypes != null && !markTypes.includes(scene.marktype)) {
+        return;
+      }
       const mark = Marks[scene.marktype];
       if (scene.clip) clip$2(ctx, scene);
-      mark.draw.call(this, ctx, scene, bounds);
+      mark.draw.call(this, ctx, scene, bounds, markTypes);
       if (scene.clip) ctx.restore();
     },
     clear(x, y, w, h) {
@@ -12872,7 +12920,7 @@
     this._root = null;
     this._defs = null;
   }
-  const base = Renderer.prototype;
+  const base$1 = Renderer.prototype;
   inherits(SVGRenderer, Renderer, {
     /**
      * Initialize a new SVGRenderer instance.
@@ -12907,7 +12955,7 @@
 
       // set background color if defined
       this.background(this._bgcolor);
-      return base.initialize.call(this, el, width, height, origin, scaleFactor);
+      return base$1.initialize.call(this, el, width, height, origin, scaleFactor);
     },
     /**
      * Get / set the background color.
@@ -12916,7 +12964,7 @@
       if (arguments.length && this._svg) {
         this._svg.style.setProperty('background-color', bgcolor);
       }
-      return base.background.apply(this, arguments);
+      return base$1.background.apply(this, arguments);
     },
     /**
      * Resize the display.
@@ -12929,7 +12977,7 @@
      * @return {SVGRenderer} - This renderer instance;
      */
     resize(width, height, origin, scaleFactor) {
-      base.resize.call(this, width, height, origin, scaleFactor);
+      base$1.resize.call(this, width, height, origin, scaleFactor);
       if (this._svg) {
         setAttributes(this._svg, {
           width: this._width * this._scale,
@@ -12976,12 +13024,14 @@
     /**
      * Internal rendering method.
      * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
      */
-    _render(scene) {
+    _render(scene, markTypes) {
       // perform spot updates and re-render markup
       if (this._dirtyCheck()) {
         if (this._dirtyAll) this._clearDefs();
-        this.mark(this._root, scene);
+        this.mark(this._root, scene, undefined, markTypes);
         domClear(this._root, 1);
       }
       this.defs();
@@ -13071,16 +13121,23 @@
      * @param {SVGElement} el - The parent element in the SVG tree.
      * @param {object} scene - The mark parent to render.
      * @param {SVGElement} prev - The previous sibling in the SVG tree.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
      */
-    mark(el, scene, prev) {
+    mark(el, scene, prev, markTypes) {
       if (!this.isDirty(scene)) {
         return scene._svg;
       }
       const svg = this._svg,
-        mdef = Marks[scene.marktype],
+        markType = scene.marktype,
+        mdef = Marks[markType],
         events = scene.interactive === false ? 'none' : null,
         isGroup = mdef.tag === 'g';
       const parent = bind$1(scene, el, prev, 'g', svg);
+      if (markType !== 'group' && markTypes != null && !markTypes.includes(markType)) {
+        domClear(parent, 0);
+        return scene._svg;
+      }
       parent.setAttribute('class', cssClass(scene));
 
       // apply aria attributes to parent container element
@@ -13097,7 +13154,7 @@
           node = bind$1(item, parent, sibling, mdef.tag, svg);
         if (dirty) {
           this._update(mdef, node, item);
-          if (isGroup) recurse(this, node, item);
+          if (isGroup) recurse(this, node, item, markTypes);
         }
         sibling = node;
         ++i;
@@ -13278,14 +13335,14 @@
   }
 
   // Recursively process group contents.
-  function recurse(renderer, el, group) {
+  function recurse(renderer, el, group, markTypes) {
     // child 'g' element is second to last among children (path, g, path)
     // other children here are foreground and background path elements
     el = el.lastChild.previousSibling;
     let prev,
       idx = 0;
     visit(group, item => {
-      prev = renderer.mark(el, item, prev);
+      prev = renderer.mark(el, item, prev, markTypes);
       ++idx;
     });
 
@@ -13789,7 +13846,139 @@
     }
     return s;
   }
+
+  /**
+   * @typedef {Object} HybridRendererOptions
+   *
+   * @property {string[]} [svgMarkTypes=['text']] - An array of SVG mark types to render
+   *                                                in the SVG layer. All other mark types
+   *                                                will be rendered in the Canvas layer.
+   * @property {boolean} [svgOnTop=true] - Flag to determine if SVG should be rendered on top.
+   * @property {boolean} [debug=false] - Flag to enable or disable debugging mode. When true,
+   *                                     the top layer will be stacked below the bottom layer
+   *                                     rather than overlaid on top.
+   */
+
+  /** @type {HybridRendererOptions} */
+  const OPTS = {
+    svgMarkTypes: ['text'],
+    svgOnTop: true,
+    debug: false
+  };
+
+  /**
+   * Configure the HybridRenderer
+   *
+   * @param {HybridRendererOptions} options - HybridRenderer configuration options.
+   */
+  function setHybridRendererOptions(options) {
+    OPTS['svgMarkTypes'] = options.svgMarkTypes ?? ['text'];
+    OPTS['svgOnTop'] = options.svgOnTop ?? true;
+    OPTS['debug'] = options.debug ?? false;
+  }
+  function HybridRenderer(loader) {
+    Renderer.call(this, loader);
+    this._svgRenderer = new SVGRenderer(loader);
+    this._canvasRenderer = new CanvasRenderer(loader);
+  }
+  const base = Renderer.prototype;
+  inherits(HybridRenderer, Renderer, {
+    /**
+     * Initialize a new HybridRenderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {HybridRenderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      this._root_el = domChild(el, 0, 'div');
+      const bottomEl = domChild(this._root_el, 0, 'div');
+      const topEl = domChild(this._root_el, 1, 'div');
+      this._root_el.style.position = 'relative';
+
+      // Set position absolute to overlay svg on top of canvas
+      if (!OPTS.debug) {
+        bottomEl.style.height = '100%';
+        topEl.style.position = 'absolute';
+        topEl.style.top = '0';
+        topEl.style.left = '0';
+        topEl.style.height = '100%';
+        topEl.style.width = '100%';
+      }
+      this._svgEl = OPTS.svgOnTop ? topEl : bottomEl;
+      this._canvasEl = OPTS.svgOnTop ? bottomEl : topEl;
+
+      // pointer-events to none on SVG layer so that canvas gets all events
+      this._svgEl.style.pointerEvents = 'none';
+      this._canvasRenderer.initialize(this._canvasEl, width, height, origin, scaleFactor);
+      this._svgRenderer.initialize(this._svgEl, width, height, origin, scaleFactor);
+      return base.initialize.call(this, el, width, height, origin, scaleFactor);
+    },
+    /**
+     * Flag a mark item as dirty.
+     * @param {Item} item - The mark item.
+     */
+    dirty(item) {
+      if (OPTS.svgMarkTypes.includes(item.mark.marktype)) {
+        this._svgRenderer.dirty(item);
+      } else {
+        this._canvasRenderer.dirty(item);
+      }
+      return this;
+    },
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     */
+    _render(scene, markTypes) {
+      const allMarkTypes = markTypes ?? ['arc', 'area', 'image', 'line', 'path', 'rect', 'rule', 'shape', 'symbol', 'text', 'trail'];
+      const canvasMarkTypes = allMarkTypes.filter(m => !OPTS.svgMarkTypes.includes(m));
+      this._svgRenderer.render(scene, OPTS.svgMarkTypes);
+      this._canvasRenderer.render(scene, canvasMarkTypes);
+    },
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      base.resize.call(this, width, height, origin, scaleFactor);
+      this._svgRenderer.resize(width, height, origin, scaleFactor);
+      this._canvasRenderer.resize(width, height, origin, scaleFactor);
+      return this;
+    },
+    background(bgcolor) {
+      // Propagate background color to lower canvas renderer
+      if (OPTS.svgOnTop) {
+        this._canvasRenderer.background(bgcolor);
+      } else {
+        this._svgRenderer.background(bgcolor);
+      }
+      return this;
+    }
+  });
+  function HybridHandler(loader, tooltip) {
+    CanvasHandler.call(this, loader, tooltip);
+  }
+  inherits(HybridHandler, CanvasHandler, {
+    initialize(el, origin, obj) {
+      const canvas = domChild(domChild(el, 0, 'div'), OPTS.svgOnTop ? 0 : 1, 'div');
+      return CanvasHandler.prototype.initialize.call(this, canvas, origin, obj);
+    }
+  });
   const Canvas = 'canvas';
+  const Hybrid = 'hybrid';
   const PNG = 'png';
   const SVG = 'svg';
   const None$1 = 'none';
@@ -13797,6 +13986,7 @@
     Canvas: Canvas,
     PNG: PNG,
     SVG: SVG,
+    Hybrid: Hybrid,
     None: None$1
   };
   const modules = {};
@@ -13809,6 +13999,11 @@
     renderer: SVGRenderer,
     headless: SVGStringRenderer,
     handler: SVGHandler
+  };
+  modules[Hybrid] = {
+    renderer: HybridRenderer,
+    headless: HybridRenderer,
+    handler: HybridHandler
   };
   modules[None$1] = {};
   function renderModule(name, _) {
@@ -19608,7 +19803,7 @@
       // map polygons to paths
       for (let i = 0, n = data.length; i < n; ++i) {
         const polygon = voronoi.cellPolygon(i);
-        data[i][as] = polygon ? toPathString(polygon) : null;
+        data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
       }
       return pulse.reflow(_.modified()).modifies(as);
     }
@@ -19621,6 +19816,9 @@
     let n = p.length - 1;
     for (; p[n][0] === x && p[n][1] === y; --n);
     return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+  }
+  function isPoint(p) {
+    return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
   }
 
   var voronoi = /*#__PURE__*/Object.freeze({
@@ -20837,7 +21035,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.25.0";
+  var version = "5.26.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22418,6 +22616,15 @@
     return codegen;
   }
 
+  // Registers vega-util field accessors to protect against XSS attacks
+  const SELECTION_GETTER = Symbol('vega_selection_getter');
+  function getter(f) {
+    if (!f.getter || !f.getter[SELECTION_GETTER]) {
+      f.getter = field$1(f.field);
+      f.getter[SELECTION_GETTER] = true;
+    }
+    return f.getter;
+  }
   const Intersect = 'intersect';
   const Union = 'union';
   const VlMulti = 'vlMulti';
@@ -22443,11 +22650,10 @@
       f;
     for (; i < n; ++i) {
       f = fields[i];
-      f.getter = field$1.getter || field$1(f.field);
-      dval = f.getter(datum);
+      dval = getter(f)(datum);
       if (isDate$1(dval)) dval = toNumber(dval);
       if (isDate$1(values[i])) values[i] = toNumber(values[i]);
-      if (isDate$1(values[i][0])) values[i] = values[i].map(toNumber);
+      if (isArray(values[i]) && isDate$1(values[i][0])) values[i] = values[i].map(toNumber);
       if (f.type === TYPE_ENUM) {
         // Enumerated fields can either specify individual values (single/multi selections)
         // or an array of values (interval selections).
@@ -22555,7 +22761,7 @@
    */
   function selectionTuples(array, base) {
     return array.map(x => extend(base.fields ? {
-      values: base.fields.map(f => (f.getter || (f.getter = field$1(f.field)))(x.datum))
+      values: base.fields.map(f => getter(f)(x.datum))
     } : {
       [SelectionId]: $selectionId(x.datum)
     }, base));
@@ -22870,6 +23076,10 @@
   const geoArea = geoMethod('area', d3Geo.geoArea);
   const geoBounds = geoMethod('bounds', d3Geo.geoBounds);
   const geoCentroid = geoMethod('centroid', d3Geo.geoCentroid);
+  function geoScale(projection, group) {
+    const p = getScale(projection, (group || this).context);
+    return p && p.scale();
+  }
   function inScope(item) {
     const group = this.context.group;
     let value = false;
@@ -23415,6 +23625,7 @@
   expressionFunction('geoBounds', geoBounds, scaleVisitor);
   expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
   expressionFunction('geoShape', geoShape, scaleVisitor);
+  expressionFunction('geoScale', geoScale, scaleVisitor);
   expressionFunction('indata', indata, indataVisitor);
   expressionFunction('data', data$1, dataVisitor);
   expressionFunction('treePath', treePath, dataVisitor);
@@ -24079,8 +24290,8 @@
       item: null
     }));
 
-    // evaluate cursor on each mousemove event
-    view.on(view.events('view', 'mousemove'), cursor, (_, event) => {
+    // evaluate cursor on each pointermove event
+    view.on(view.events('view', 'pointermove'), cursor, (_, event) => {
       const value = cursor.value,
         user = value ? isString(value) ? value : value.user : Default,
         item = event.item && event.item.cursor || null;
@@ -24352,11 +24563,11 @@
     hoverSet = [hoverSet || 'hover'];
     leaveSet = [leaveSet || 'update', hoverSet[0]];
 
-    // invoke hover set upon mouseover
-    this.on(this.events('view', 'mouseover', itemFilter), markTarget, invoke(hoverSet));
+    // invoke hover set upon pointerover
+    this.on(this.events('view', 'pointerover', itemFilter), markTarget, invoke(hoverSet));
 
-    // invoke leave set upon mouseout
-    this.on(this.events('view', 'mouseout', itemFilter), markTarget, invoke(leaveSet));
+    // invoke leave set upon pointerout
+    this.on(this.events('view', 'pointerout', itemFilter), markTarget, invoke(leaveSet));
     return this;
   }
 
@@ -29206,6 +29417,7 @@
   }
 
   // -- Transforms -----
+
   extend(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
 
   Object.defineProperty(exports, 'path', {
@@ -29226,6 +29438,8 @@
   exports.GroupItem = GroupItem;
   exports.HOURS = HOURS;
   exports.Handler = Handler;
+  exports.HybridHandler = HybridHandler;
+  exports.HybridRenderer = HybridRenderer;
   exports.Info = Info;
   exports.Item = Item;
   exports.MILLISECONDS = MILLISECONDS;
@@ -29399,6 +29613,7 @@
   exports.sceneZOrder = zorder;
   exports.scheme = scheme;
   exports.serializeXML = serializeXML;
+  exports.setHybridRendererOptions = setHybridRendererOptions;
   exports.setRandom = setRandom;
   exports.span = span;
   exports.splitAccessPath = splitAccessPath;

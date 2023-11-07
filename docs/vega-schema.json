@@ -13512,7 +13512,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -13524,6 +13526,35 @@
             {
               "$ref": "#/definitions/signalRef"
             }
+          ]
+        },
+        "aggregate_params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/scaleField"
+                  },
+                  {
+                    "$ref": "#/definitions/paramField"
+                  },
+                  {
+                    "$ref": "#/definitions/expr"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ],
+          "default": [
+            null
           ]
         },
         "fields": {
@@ -14797,7 +14828,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15218,7 +15251,9 @@
                 "min",
                 "max",
                 "argmin",
-                "argmax"
+                "argmax",
+                "exponential",
+                "exponentialb"
               ]
             },
             {
@@ -15755,7 +15790,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15790,6 +15827,35 @@
             {
               "$ref": "#/definitions/signalRef"
             }
+          ]
+        },
+        "aggregate_params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/scaleField"
+                  },
+                  {
+                    "$ref": "#/definitions/paramField"
+                  },
+                  {
+                    "$ref": "#/definitions/expr"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ],
+          "default": [
+            null
           ]
         },
         "fields": {
