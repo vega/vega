@@ -86,6 +86,7 @@ export interface AggregateTransform {
   groupby?: FieldRef[] | SignalRef;
   fields?: (FieldRef | null)[] | SignalRef;
   ops?: (AggregateOp | SignalRef)[] | SignalRef;
+  aggregate_params?: object[];
   as?: (string | SignalRef | null)[] | SignalRef;
   drop?: boolean | SignalRef;
   cross?: boolean | SignalRef;
@@ -114,7 +115,9 @@ export type AggregateOp =
   | 'valid'
   | 'values'
   | 'variance'
-  | 'variancep';
+  | 'variancep'
+  | 'exponential'
+  | 'exponentialb';
 
 export interface BinTransform extends BaseBin {
   type: 'bin';
