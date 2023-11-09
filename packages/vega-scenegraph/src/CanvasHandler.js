@@ -64,7 +64,7 @@ function move(moveEvents, overEvents, outEvents) {
         // suppress if active item was removed from scene
         fireAll(this, outEvents, evt);
       }
-      this._active = p;          // set new active item
+      this._active = p; // set new active item
       fireAll(this, overEvents, evt); // fire over for new active item
       fireAll(this, moveEvents, evt); // fire move for new active item
     }
@@ -84,7 +84,7 @@ inherits(CanvasHandler, Handler, {
 
     // add minimal events required for proper state management
     [
-      ClickEvent,
+      ClickEvent, MouseDownEvent,
       PointerDownEvent, PointerMoveEvent, PointerOutEvent,
       DragLeaveEvent
     ].forEach(type => eventListenerCheck(this, type));
@@ -117,13 +117,16 @@ inherits(CanvasHandler, Handler, {
   ),
   dragover: move([DragOverEvent], [DragEnterEvent], [DragLeaveEvent]),
 
-  // mouseout: inactive(MouseOutEvent),
   pointerout: inactive([PointerOutEvent, MouseOutEvent]),
   dragleave: inactive([DragLeaveEvent]),
 
   pointerdown(evt) {
     this._down = this._active;
     this.fire(PointerDownEvent, evt);
+  },
+
+  mousedown(evt) {
+    this._down = this._active;
     this.fire(MouseDownEvent, evt);
   },
 
