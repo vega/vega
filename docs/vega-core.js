@@ -12334,6 +12334,11 @@
   const PointerMoveEvent = 'pointermove';
   const PointerOutEvent = 'pointerout';
   const PointerOverEvent = 'pointerover';
+  const MouseDownEvent = 'mousedown';
+  const MouseUpEvent = 'mouseup';
+  const MouseMoveEvent = 'mousemove';
+  const MouseOutEvent = 'mouseout';
+  const MouseOverEvent = 'mouseover';
   const ClickEvent = 'click';
   const DoubleClickEvent = 'dblclick';
   const WheelEvent = 'wheel';
@@ -12341,7 +12346,7 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
   const TooltipHideEvent = PointerOutEvent;
   const HrefEvent = ClickEvent;
@@ -12365,30 +12370,33 @@
       canvas.addEventListener(type, handler[type] ? evt => handler[type](evt) : evt => handler.fire(type, evt));
     }
   }
-  function move(moveEvent, overEvent, outEvent) {
+  function fireAll(handler, types, event) {
+    types.forEach(type => handler.fire(type, event));
+  }
+  function move(moveEvents, overEvents, outEvents) {
     return function (evt) {
       const a = this._active,
         p = this.pickEvent(evt);
       if (p === a) {
         // active item and picked item are the same
-        this.fire(moveEvent, evt); // fire move
+        fireAll(this, moveEvents, evt); // fire move
       } else {
         // active item and picked item are different
         if (!a || !a.exit) {
           // fire out for prior active item
           // suppress if active item was removed from scene
-          this.fire(outEvent, evt);
+          fireAll(this, outEvents, evt);
         }
         this._active = p; // set new active item
-        this.fire(overEvent, evt); // fire over for new active item
-        this.fire(moveEvent, evt); // fire move for new active item
+        fireAll(this, overEvents, evt); // fire over for new active item
+        fireAll(this, moveEvents, evt); // fire move for new active item
       }
     };
   }
 
-  function inactive(type) {
+  function inactive(types) {
     return function (evt) {
-      this.fire(type, evt);
+      fireAll(this, types, evt);
       this._active = null;
     };
   }
@@ -12397,7 +12405,7 @@
       this._canvas = el && domFind(el, 'canvas');
 
       // add minimal events required for proper state management
-      [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      [ClickEvent, MouseDownEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
       return Handler.prototype.initialize.call(this, el, origin, obj);
     },
     // return the backing canvas instance
@@ -12414,13 +12422,17 @@
     DOMMouseScroll(evt) {
       this.fire(MouseWheelEvent, evt);
     },
-    pointermove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
-    dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
-    pointerout: inactive(PointerOutEvent),
-    dragleave: inactive(DragLeaveEvent),
+    pointermove: move([PointerMoveEvent, MouseMoveEvent], [PointerOverEvent, MouseOverEvent], [PointerOutEvent, MouseOutEvent]),
+    dragover: move([DragOverEvent], [DragEnterEvent], [DragLeaveEvent]),
+    pointerout: inactive([PointerOutEvent, MouseOutEvent]),
+    dragleave: inactive([DragLeaveEvent]),
     pointerdown(evt) {
       this._down = this._active;
       this.fire(PointerDownEvent, evt);
+    },
+    mousedown(evt) {
+      this._down = this._active;
+      this.fire(MouseDownEvent, evt);
     },
     click(evt) {
       if (this._down === this._active) {
@@ -21035,7 +21047,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.26.0";
+  var version = "5.26.1";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
