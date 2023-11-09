@@ -1,9 +1,12 @@
 import Handler from './Handler';
 import Marks from './marks/index';
 import {
-  ClickEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, Events,
-  HrefEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent,
-  PointerOverEvent, TooltipHideEvent, TooltipShowEvent,
+  ClickEvent,
+  DragEnterEvent, DragLeaveEvent, DragOverEvent, Events, HrefEvent,
+  MouseDownEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent,
+  MouseWheelEvent,
+  PointerDownEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent,
+  TooltipHideEvent, TooltipShowEvent,
   TouchEndEvent, TouchMoveEvent, TouchStartEvent
 } from './util/events';
 import point from './util/point';
@@ -42,31 +45,35 @@ function addEventListener(handler, type) {
   }
 }
 
-function move(moveEvent, overEvent, outEvent) {
+function fireAll(handler, types, event) {
+  types.forEach(type => handler.fire(type, event));
+}
+
+function move(moveEvents, overEvents, outEvents) {
   return function(evt) {
     const a = this._active,
           p = this.pickEvent(evt);
 
     if (p === a) {
       // active item and picked item are the same
-      this.fire(moveEvent, evt); // fire move
+      fireAll(this, moveEvents, evt); // fire move
     } else {
       // active item and picked item are different
       if (!a || !a.exit) {
         // fire out for prior active item
         // suppress if active item was removed from scene
-        this.fire(outEvent, evt);
+        fireAll(this, outEvents, evt);
       }
-      this._active = p;          // set new active item
-      this.fire(overEvent, evt); // fire over for new active item
-      this.fire(moveEvent, evt); // fire move for new active item
+      this._active = p; // set new active item
+      fireAll(this, overEvents, evt); // fire over for new active item
+      fireAll(this, moveEvents, evt); // fire move for new active item
     }
   };
 }
 
-function inactive(type) {
+function inactive(types) {
   return function(evt) {
-    this.fire(type, evt);
+    fireAll(this, types, evt);
     this._active = null;
   };
 }
@@ -76,8 +83,11 @@ inherits(CanvasHandler, Handler, {
     this._canvas = el && domFind(el, 'canvas');
 
     // add minimal events required for proper state management
-    [ClickEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent]
-      .forEach(type => eventListenerCheck(this, type));
+    [
+      ClickEvent, MouseDownEvent,
+      PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+      DragLeaveEvent
+    ].forEach(type => eventListenerCheck(this, type));
 
     return Handler.prototype.initialize.call(this, el, origin, obj);
   },
@@ -100,15 +110,24 @@ inherits(CanvasHandler, Handler, {
     this.fire(MouseWheelEvent, evt);
   },
 
-  pointermove: move(PointerMoveEvent, PointerOverEvent, PointerOutEvent),
-  dragover: move(DragOverEvent, DragEnterEvent, DragLeaveEvent),
+  pointermove: move(
+    [PointerMoveEvent, MouseMoveEvent],
+    [PointerOverEvent, MouseOverEvent],
+    [PointerOutEvent, MouseOutEvent]
+  ),
+  dragover: move([DragOverEvent], [DragEnterEvent], [DragLeaveEvent]),
 
-  pointerout: inactive(PointerOutEvent),
-  dragleave: inactive(DragLeaveEvent),
+  pointerout: inactive([PointerOutEvent, MouseOutEvent]),
+  dragleave: inactive([DragLeaveEvent]),
 
   pointerdown(evt) {
     this._down = this._active;
     this.fire(PointerDownEvent, evt);
+  },
+
+  mousedown(evt) {
+    this._down = this._active;
+    this.fire(MouseDownEvent, evt);
   },
 
   click(evt) {
