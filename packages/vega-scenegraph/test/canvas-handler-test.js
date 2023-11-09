@@ -132,9 +132,10 @@ tape('CanvasHandler should handle input events ', t => {
   canvas.dispatchEvent(event('dragover', 50, 1));
   canvas.dispatchEvent(event('dragleave', 1, 1));
 
-  // 12 events above + 8 triggered:
+  // 12 events above + 8 triggered + 13 derived mouse events:
   //   2*(pointerover, pointerout) + 2*(dragenter, dragleave)
-  t.equal(count, handler.events.length + 20);
+  //   + 7 above + 2*(mouseover, mouseout)
+  t.equal(count, handler.events.length + 33);
 
   handler.off('pointermove', {});
   t.equal(handler.handlers().length, handler.events.length);

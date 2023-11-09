@@ -4,16 +4,16 @@ export const KeyUpEvent = 'keyup';
 export const DragEnterEvent = 'dragenter';
 export const DragLeaveEvent = 'dragleave';
 export const DragOverEvent = 'dragover';
-export const MouseDownEvent = 'mousedown';
 export const PointerDownEvent = 'pointerdown';
-export const MouseUpEvent = 'mouseup';
 export const PointerUpEvent = 'pointerup';
-export const MouseMoveEvent = 'mousemove';
 export const PointerMoveEvent = 'pointermove';
-export const MouseOutEvent = 'mouseout';
 export const PointerOutEvent = 'pointerout';
-export const MouseOverEvent = 'mouseover';
 export const PointerOverEvent = 'pointerover';
+export const MouseDownEvent = 'mousedown';
+export const MouseUpEvent = 'mouseup';
+export const MouseMoveEvent = 'mousemove';
+export const MouseOutEvent = 'mouseout';
+export const MouseOverEvent = 'mouseover';
 export const ClickEvent = 'click';
 export const DoubleClickEvent = 'dblclick';
 export const WheelEvent = 'wheel';
@@ -34,6 +34,11 @@ export const Events = [
   PointerMoveEvent,
   PointerOutEvent,
   PointerOverEvent,
+  MouseDownEvent,
+  MouseUpEvent,
+  MouseMoveEvent,
+  MouseOutEvent,
+  MouseOverEvent,
   ClickEvent,
   DoubleClickEvent,
   WheelEvent,
