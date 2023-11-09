@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
