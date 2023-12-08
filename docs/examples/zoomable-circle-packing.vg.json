@@ -29,7 +29,7 @@
     },
     {
       "name": "root",
-      "update": "{'id': data('tree')[0]['id'], 'x': data('tree')[0]['x'], 'y': data('tree')[0]['y'], 'y0': data('tree')[0]['y0'], 'r': data('tree')[0]['r'], 'k': 1, 'children': data('tree')[0]['children']}",
+      "update": "{'id': data('tree')[0]['id'], 'x': data('tree')[0]['x'], 'y': data('tree')[0]['y'], 'r': data('tree')[0]['r'], 'k': 1, 'children': data('tree')[0]['children']}",
       "description": "The root node in the hierarchy"
     },
     {
@@ -64,7 +64,7 @@
         {
           "events": {
             "type": "click",
-            "marknames": ["circles", "packedCirclesLabels", "background"]
+            "marknames": ["circles", "background"]
           },
           "update": "{'start': timer, 'end': timer+duration}"
         }
