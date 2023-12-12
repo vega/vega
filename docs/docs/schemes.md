@@ -169,6 +169,22 @@ Categorical color schemes can be used to encode discrete data values, each repre
 </div>
 
 <div class="scheme">
+<a name="observable10" href="#observable10">#</a><strong>observable10</strong>
+<div class="swatch">
+  <div fill="#496BC9" style="background: rgb(73, 107, 201)"></div>
+  <div fill="#E6B242" style="background: rgb(230, 178, 66)"></div>
+  <div fill="#EE7A64" style="background: rgb(238, 122, 100)"></div>
+  <div fill="#81C2B1" style="background: rgb(129, 194, 177)"></div>
+  <div fill="#9A6AEA" style="background: rgb(154, 106, 234)"></div>
+  <div fill="#F091B6" style="background: rgb(240, 145, 182)"></div>
+  <div fill="#956D53" style="background: rgb(149, 109, 83)"></div>
+  <div fill="#9DBBF0" style="background: rgb(157, 187, 240)"></div>
+  <div fill="#5CA65B" style="background: rgb(92, 166, 91)"></div>
+  <div fill="#95989F" style="background: rgb(149, 152, 159)"></div>
+</div>
+</div>
+
+<div class="scheme">
 <a name="dark2" href="#dark2">#</a> <strong>dark2</strong>
 <div class="swatch">
   <div title="#1b9e77" style="background: rgb(27, 158, 119);"></div>
