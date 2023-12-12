@@ -171,16 +171,16 @@ Categorical color schemes can be used to encode discrete data values, each repre
 <div class="scheme">
 <a name="observable10" href="#observable10">#</a><strong>observable10</strong>
 <div class="swatch">
-  <div fill="#496BC9" style="background: rgb(73, 107, 201)"></div>
-  <div fill="#E6B242" style="background: rgb(230, 178, 66)"></div>
-  <div fill="#EE7A64" style="background: rgb(238, 122, 100)"></div>
-  <div fill="#81C2B1" style="background: rgb(129, 194, 177)"></div>
-  <div fill="#9A6AEA" style="background: rgb(154, 106, 234)"></div>
-  <div fill="#F091B6" style="background: rgb(240, 145, 182)"></div>
-  <div fill="#956D53" style="background: rgb(149, 109, 83)"></div>
-  <div fill="#9DBBF0" style="background: rgb(157, 187, 240)"></div>
-  <div fill="#5CA65B" style="background: rgb(92, 166, 91)"></div>
-  <div fill="#95989F" style="background: rgb(149, 152, 159)"></div>
+  <div title="#4269d0" style="background: rgb(66, 105, 208)">
+  <div title="#efb118" style="background: rgb(239, 177, 24)">
+  <div title="#ff725c" style="background: rgb(255, 114, 92)">
+  <div title="#6cc5b0" style="background: rgb(108, 197, 176)">
+  <div title="#a463f2" style="background: rgb(164, 99, 242)">
+  <div title="#ff8ab7" style="background: rgb(255, 138, 183)">
+  <div title="#9c6b4e" style="background: rgb(156, 107, 78)">
+  <div title="#97bbf5" style="background: rgb(151, 187, 245)">
+  <div title="#3ca951" style="background: rgb(60, 169, 81)">
+  <div title="#9498a0" style="background: rgb(148, 152, 160)">
 </div>
 </div>
 
