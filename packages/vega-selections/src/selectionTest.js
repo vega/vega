@@ -27,7 +27,7 @@ function testPoint(datum, entry) {
     if (f.type === TYPE_ENUM) {
       // Enumerated fields can either specify individual values (single/multi selections)
       // or an array of values (interval selections).
-      if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+      if(isArray(values[i]) ? !values[i].includes(dval) : dval !== values[i]) {
         return false;
       }
     } else {

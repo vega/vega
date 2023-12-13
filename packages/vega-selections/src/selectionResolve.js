@@ -94,13 +94,13 @@ var ops = {
     if (!base.length) return value;
 
     var i = 0, n = value.length;
-    for (; i<n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+    for (; i<n; ++i) if (!base.includes(value[i])) base.push(value[i]);
     return base;
   },
 
   E_intersect: function(base, value) {
     return !base.length ? value :
-      base.filter(v => value.indexOf(v) >= 0);
+      base.filter(v => value.includes(v));
   },
 
   R_union: function(base, value) {

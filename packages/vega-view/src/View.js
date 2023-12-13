@@ -305,7 +305,7 @@ inherits(View, Dataflow, {
 
   addResizeListener(handler) {
     const l = this._resizeListeners;
-    if (l.indexOf(handler) < 0) {
+    if (!l.includes(handler)) {
       // add handler if it isn't already registered
       // note: error trapping handled elsewhere, so
       // no need to wrap handlers here
