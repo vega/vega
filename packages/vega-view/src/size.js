@@ -81,7 +81,7 @@ export function resizeView(viewWidth, viewHeight, width, height, origin, auto) {
       view._viewWidth = viewWidth;
     }
 
-    if (view._renderer.context().pixelRatio !== window.devicePixelRatio) {
+    if (view._renderer?.context()?.pixelRatio !== window.devicePixelRatio) {
       view._resize = 1;
     }
 
