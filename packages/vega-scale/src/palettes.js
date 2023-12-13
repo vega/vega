@@ -1,3 +1,7 @@
+import {schemeCategory10} from 'd3-scale-chromatic';
+
+console.log(schemeCategory10);
+
 export const continuous = {
   blues: 'cfe1f2bed8eca8cee58fc1de74b2d75ba3cf4592c63181bd206fb2125ca40a4a90',
   greens: 'd3eecdc0e6baabdda594d3917bc77d60ba6c46ab5e329a512089430e7735036429',
