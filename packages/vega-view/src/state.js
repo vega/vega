@@ -28,7 +28,7 @@ export function getState(options) {
 function dataTest(name, data) {
   return data.modified
       && isArray(data.input.value)
-      && name.indexOf('_:vega:_');
+      && !name.startsWith('_:vega:_');
 }
 
 function signalTest(name, op) {

@@ -116,7 +116,7 @@ export default function(commandLineArgs) {
 
   const outputs = [{
     input: './index.js',
-    external: dependencies.filter(dep => esmDeps.indexOf(dep) < 0),
+    external: dependencies.filter(dep => !esmDeps.includes(dep)),
     onwarn,
     output: {
       file: pkg.main,
