@@ -1,3 +1,15 @@
+import {
+  schemeAccent,
+  schemeCategory10,
+  schemeDark2,
+  schemePaired,
+  schemePastel1,
+  schemePastel2,
+  schemeSet1,
+  schemeSet2,
+  schemeSet3
+} from 'd3-scale-chromatic';
+
 export const continuous = {
   blues: 'cfe1f2bed8eca8cee58fc1de74b2d75ba3cf4592c63181bd206fb2125ca40a4a90',
   greens: 'd3eecdc0e6baabdda594d3917bc77d60ba6c46ab5e329a512089430e7735036429',
@@ -62,20 +74,22 @@ export const continuous = {
   darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
 };
 
+const toStream = (scheme) => scheme.map((x) => x.slice(1).toLowerCase()).join('');
 export const discrete = {
-  category10: '1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf',
+  accent: toStream(schemeAccent),
+  category10: toStream(schemeCategory10),
   category20: '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5',
   category20b: '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6',
   category20c: '3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9',
+  dark2: toStream(schemeDark2),
+  observable10: '4269d0efb118ff725c6cc5b03ca951ff8ab7a463f297bbf59c6b4e9498a0',
+  paired: toStream(schemePaired),
+  pastel1: toStream(schemePastel1),
+  pastel2: toStream(schemePastel2),
+  set1: toStream(schemeSet1),
+  set2: toStream(schemeSet2),
+  set3: toStream(schemeSet3),
   tableau10: '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac',
   tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5',
-  accent: '7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666',
-  dark2: '1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666',
-  paired: 'a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928',
-  pastel1: 'fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2',
-  pastel2: 'b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc',
-  set1: 'e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999',
-  set2: '66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3',
-  set3: '8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f',
-  observable10: '4269d0efb118ff725c6cc5b0a463f2ff8ab79c6b4e97bbf53ca9519498a0'
 };
+
