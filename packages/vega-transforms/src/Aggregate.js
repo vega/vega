@@ -11,7 +11,7 @@ import {accessorFields, accessorName, array, error, inherits} from 'vega-util';
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
  * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
  * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
- * @param {Array<object>} [params.aggregate_params=[null]] - An optional array of parameters for aggregation operations.
+ * @param {Array<number>} [params.aggregate_params] - An optional array of parameters for aggregation operations.
  * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
  * @param {boolean} [params.cross=false] - A flag indicating that the full
  *   cross-product of groupby values should be generated, including empty cells.
@@ -46,7 +46,7 @@ Aggregate.Definition = {
   'params': [
     { 'name': 'groupby', 'type': 'field', 'array': true },
     { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
-    { 'name': 'aggregate_params', 'type': 'field', 'null': true, 'array': true, 'default': [null] },
+    { 'name': 'aggregate_params', 'type': 'number', 'null': true, 'array': true },
     { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
     { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
     { 'name': 'drop', 'type': 'boolean', 'default': true },

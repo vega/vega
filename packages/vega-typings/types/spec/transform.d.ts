@@ -86,7 +86,7 @@ export interface AggregateTransform {
   groupby?: FieldRef[] | SignalRef;
   fields?: (FieldRef | null)[] | SignalRef;
   ops?: (AggregateOp | SignalRef)[] | SignalRef;
-  aggregate_params?: object[];
+  aggregate_params?: number[];
   as?: (string | SignalRef | null)[] | SignalRef;
   drop?: boolean | SignalRef;
   cross?: boolean | SignalRef;
