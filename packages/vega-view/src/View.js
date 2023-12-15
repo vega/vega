@@ -120,8 +120,7 @@ export default function View(spec, options) {
     if (remove != null) {
       remove();
     }
-    const mqString = `(resolution: ${window.devicePixelRatio}dppx)`;
-    const media = matchMedia(mqString);
+    const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
     media.addEventListener('change', updatePixelRatio);
     remove = () => {
       media.removeEventListener('change', updatePixelRatio);
