@@ -114,7 +114,19 @@ export default function View(spec, options) {
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
   
-  window.onresize = () => {
+  // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
+  let remove = null;
+  const updatePixelRatio = () => {
+    if (remove != null) {
+      remove();
+    }
+    const mqString = `(resolution: ${window.devicePixelRatio}dppx)`;
+    const media = matchMedia(mqString);
+    media.addEventListener('change', updatePixelRatio);
+    remove = () => {
+      media.removeEventListener('change', updatePixelRatio);
+    };
+
     if (view.renderer() === 'canvas') {
       view._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
       view._renderer._scale = window.devicePixelRatio || 1;
@@ -123,6 +135,8 @@ export default function View(spec, options) {
       view.resize().runAsync();
     }
   };
+
+  updatePixelRatio();
 }
 
 function lookupSignal(view, name) {
