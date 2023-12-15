@@ -115,27 +115,26 @@ export default function View(spec, options) {
   if (options.container) view.initialize(options.container, options.bind);
   
   // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
-  let remove = null;
-  const updatePixelRatio = () => {
-    if (remove != null) {
-      remove();
-    }
-    const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-    media.addEventListener('change', updatePixelRatio);
-    remove = () => {
-      media.removeEventListener('change', updatePixelRatio);
-    };
+  if (view.renderer() === 'canvas' && view._renderer._canvas) {
+    let remove = null;
+    const updatePixelRatio = () => {
+      if (remove != null) {
+        remove();
+      }
+      const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+      media.addEventListener('change', updatePixelRatio);
+      remove = () => {
+        media.removeEventListener('change', updatePixelRatio);
+      };
 
-    if (view.renderer() === 'canvas') {
       view._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
       view._renderer._scale = window.devicePixelRatio || 1;
       view._redraw = true;
       view._resize = 1;
       view.resize().runAsync();
-    }
-  };
-
-  updatePixelRatio();
+    };
+    updatePixelRatio();
+  }
 }
 
 function lookupSignal(view, name) {
