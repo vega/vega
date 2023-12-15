@@ -128,10 +128,8 @@ export default function View(spec, options) {
       };
 
       view._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
-      view._renderer._scale = window.devicePixelRatio || 1;
       view._redraw = true;
       view._resize = 1;
-      view.resize().runAsync();
     };
     updatePixelRatio();
   }
