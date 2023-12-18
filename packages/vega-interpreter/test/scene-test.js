@@ -3,7 +3,8 @@ const OUTPUT_FAILURES = false, // flag to write scenes upon test failure
       testdir = process.cwd() + '/../vega/test/scenegraphs/',
       fs = require('fs'),
       tape = require('tape'),
-      vega = require('vega'),
+      jsdom = require('jsdom'),
+      win = (new jsdom.JSDOM()).window,      vega = require('vega'),
       interp = require('../'),
       loader = vega.loader({baseURL: '../vega/test/'}),
       specs = require('../../vega/test/specs-valid.json').filter(spec => {
@@ -19,6 +20,17 @@ vega.textMetrics.canvas(false);
 
 tape('Vega generates scenegraphs for specifications', t => {
   let count = specs.length;
+
+
+  global.matchMedia = global.matchMedia || function() {
+    return {
+        matches : false,
+        addEventListener : function() {},
+        removeEventListener: function() {}
+    };
+  };
+  global.document = win.document;
+  global.window = win;
 
   specs.forEach(async function(name, index) {
     try {
