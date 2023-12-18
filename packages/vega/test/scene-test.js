@@ -3,8 +3,6 @@ const GENERATE_SCENES = false, // flag to generate test scenes
       specdir = process.cwd() + '/test/specs-valid/',
       testdir = process.cwd() + '/test/scenegraphs/',
       fs = require('fs'),
-      jsdom = require('jsdom'),
-      win = (new jsdom.JSDOM()).window,
       tape = require('tape'),
       vega = require('../'),
       loader = vega.loader({baseURL: 'test/'}),
@@ -20,15 +18,6 @@ vega.textMetrics.canvas(false);
 tape('Vega generates scenegraphs for specifications', t => {
   let count = specs.length;
 
-  global.matchMedia = global.matchMedia || function() {
-    return {
-        matches : false,
-        addEventListener : function() {},
-        removeEventListener: function() {}
-    };
-  };
-  global.document = win.document;
-  global.window = win;
   specs.forEach(async function(name, index) {
     try {
       const path = testdir + name + '.json',

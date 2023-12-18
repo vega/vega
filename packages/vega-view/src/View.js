@@ -18,6 +18,7 @@ import {getState, setState} from './state';
 import timer from './timer';
 import defaultTooltip from './tooltip';
 import trap from './trap';
+import watchPixelRatio from './watchPixelRatio';
 
 import {Dataflow, asyncCallback} from 'vega-dataflow';
 import {locale} from 'vega-format';
@@ -115,25 +116,7 @@ export default function View(spec, options) {
   if (options.container) view.initialize(options.container, options.bind);
   
   // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
-  if (view.renderer() === 'canvas' && view._renderer._canvas) {
-    let remove = null;
-    const updatePixelRatio = () => {
-      if (remove != null) {
-        remove();
-      }
-      const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-      media.addEventListener('change', updatePixelRatio);
-      remove = () => {
-        media.removeEventListener('change', updatePixelRatio);
-      };
-
-      view._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
-      view._redraw = true;
-      view._resize = 1;
-      view.resize().runAsync();
-    };
-    updatePixelRatio();
-  }
+  if (options.watchPixelRatio) view.watchPixelRatio();
 }
 
 function lookupSignal(view, name) {
@@ -406,5 +389,8 @@ inherits(View, Dataflow, {
 
   // -- SAVE / RESTORE STATE ----
   getState,
-  setState
+  setState,
+
+  // RESIZE HANDLER
+  watchPixelRatio
 });
