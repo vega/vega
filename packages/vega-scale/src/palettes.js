@@ -74,7 +74,7 @@ export const continuous = {
   darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
 };
 
-const toStream = (scheme) => scheme.map((x) => x.slice(1).toLowerCase()).join('');
+const toStream = (scheme) => scheme.toLowerCase().map((x) => x.slice(1)).join('');
 export const discrete = {
   accent: toStream(schemeAccent),
   category10: toStream(schemeCategory10),
@@ -92,4 +92,3 @@ export const discrete = {
   tableau10: '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac',
   tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5'
 };
-
