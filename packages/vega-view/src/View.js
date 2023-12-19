@@ -115,7 +115,6 @@ export default function View(spec, options) {
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
   
-  // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
   if (options.watchPixelRatio) view.watchPixelRatio();
 }
 
