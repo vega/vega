@@ -37,6 +37,7 @@ Constructor that creates a new View instance for the provided [Vega dataflow *ru
 - *tooltip*: Handler function invoked to support tooltip display. See the [tooltip](#view_tooltip) method.
 - *locale*: Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../locale). If unspecified, the current default locale at the time of instantiation will be used for the View instance. <small>{% include tag ver="5.12" %}</small>
 - *expr*: Alternate evaluator for Vega expressions. See the [interpreter](../../../usage/interpreter) usage documentation. <small>{% include tag ver="5.13" %}</small>
+- *watchPixelRatio*: Boolean flag allowing an event listener to trigger a re-render when the pixel ratio of the page changes (such as via zooming or changing monitors).
 
 The View constructor call is typically followed by a chain of method calls to setup the desired view configuration. After this chain, the [runAsync](#view_runAsync) method evaluates the underlying dataflow graph to update and render the visualization.
 
