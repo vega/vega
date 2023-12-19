@@ -390,6 +390,6 @@ inherits(View, Dataflow, {
   getState,
   setState,
 
-  // RESIZE HANDLER
+  // RE-RENDER ON ZOOM
   _watchPixelRatio: watchPixelRatio
 });
