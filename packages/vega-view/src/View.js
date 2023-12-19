@@ -18,6 +18,7 @@ import {getState, setState} from './state';
 import timer from './timer';
 import defaultTooltip from './tooltip';
 import trap from './trap';
+import watchPixelRatio from './watchPixelRatio';
 
 import {Dataflow, asyncCallback} from 'vega-dataflow';
 import {locale} from 'vega-format';
@@ -113,6 +114,8 @@ export default function View(spec, options) {
 
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
+  
+  if (options.watchPixelRatio) view._watchPixelRatio();
 }
 
 function lookupSignal(view, name) {
@@ -385,5 +388,8 @@ inherits(View, Dataflow, {
 
   // -- SAVE / RESTORE STATE ----
   getState,
-  setState
+  setState,
+
+  // RE-RENDER ON ZOOM
+  _watchPixelRatio: watchPixelRatio
 });

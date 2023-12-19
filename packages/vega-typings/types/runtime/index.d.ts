@@ -65,6 +65,7 @@ export interface ViewOptions {
   tooltip?: TooltipHandler;
   locale?: LocaleFormatters;
   expr?: any;
+  watchPixelRatio?: boolean;
 }
 
 export class View {
