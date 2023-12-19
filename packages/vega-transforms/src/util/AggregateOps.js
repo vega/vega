@@ -33,7 +33,7 @@ export const AggregateOps = {
   },
   sum: {
     init:  m => m.sum = 0,
-    value: m => m.sum,
+    value: m => m.valid ? m.sum : undefined,
     add:  (m, v) => m.sum += +v,
     rem:  (m, v) => m.sum -= v
   },
