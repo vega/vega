@@ -74,7 +74,7 @@ export const continuous = {
   darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
 };
 
-const toStream = (scheme) => scheme.toLowerCase().map((x) => x.slice(1)).join('');
+const toStream = (scheme) => scheme.map((x) => x.slice(1)).join('').toLowerCase();
 export const discrete = {
   accent: toStream(schemeAccent),
   category10: toStream(schemeCategory10),
