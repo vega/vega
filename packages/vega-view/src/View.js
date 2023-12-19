@@ -115,7 +115,7 @@ export default function View(spec, options) {
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
   
-  if (options.watchPixelRatio) view.watchPixelRatio();
+  if (options.watchPixelRatio) view._watchPixelRatio();
 }
 
 function lookupSignal(view, name) {
@@ -391,5 +391,5 @@ inherits(View, Dataflow, {
   setState,
 
   // RESIZE HANDLER
-  watchPixelRatio
+  _watchPixelRatio: watchPixelRatio
 });
