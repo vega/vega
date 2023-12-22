@@ -330,7 +330,7 @@ tape('Aggregate handles empty/invalid data', t => {
     'exponential',
     'exponentialb'
   ];
-  const res = [4, 3, 0, 0]; // higher indices 'undefined'
+  const res = [4, 3, 0]; // higher indices 'undefined'
 
   var v = util.field('v'),
       df = new vega.Dataflow(),
