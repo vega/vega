@@ -105,6 +105,7 @@
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
         {"name": "zoomable-circle-packing"},
+        {"name": "table-scrollbar"},
         {"name": "pacman"},
         {"name": "platformer"}
     ]
