@@ -2,7 +2,7 @@
 layout: example
 title: Table with a Scrollbar
 permalink: /examples/column-line-dynamical/index.html
-spec: table-scrollbar
+spec: column-line-dynamical
 image: /examples/img/column-line-dynamical.png
 ---
 
