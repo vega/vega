@@ -1,6 +1,6 @@
 ---
 layout: example
-title: Table with a Scrollbar
+title: Column and Line chart
 permalink: /examples/column-line-dynamical/index.html
 spec: column-line-dynamical
 image: /examples/img/column-line-dynamical.png
