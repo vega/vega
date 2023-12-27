@@ -106,6 +106,7 @@
         {"name": "pi-monte-carlo"},
         {"name": "zoomable-circle-packing"},
         {"name": "table-scrollbar"},
+        {"name": "column-line-dynamical"},
         {"name": "pacman"},
         {"name": "platformer"}
     ]
