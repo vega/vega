@@ -52,12 +52,16 @@
     },
     {
       "name": "scrollPosition",
-      "description": "Scrollbar Position: The scrollbar responds to dragging the scrollbar with a mouse, mouse wheel scrolling, and the Page Up, Page Down, Arrow Up, and Arrow Down buttons",
+      "description": "Scrollbar Position: The scrollbar responds to dragging the scrollbar with a mouse, mouse wheel scrolling, and the Home, End, Page Up, Page Down, Arrow Up, and Arrow Down buttons",
       "value": 1,
       "on": [
         {
           "events": {"type": "wheel", "consume": true},
           "update": "clamp(round(scrollPosition+event.deltaY/abs(event.deltaY)*pow(1.0001, event.deltaY*pow(16, event.deltaMode)),0),1,scrollPositionMax)"
+        },
+        {
+          "events": "window:keydown",
+          "update": "event.code=='Home'?1:event.code=='End'?scrollPositionMax:scrollPosition"
         },
         {
           "events": "window:keydown",
