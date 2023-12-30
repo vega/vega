@@ -23,8 +23,8 @@
       "value": 25,
       "bind": {"input": "range", "min": 25, "max": 200, "step": 5}
     },
-    {"name": "colorColumn", "value": "#AAAAFF"},
-    {"name": "colorLine", "value": "#8888FF"},
+    {"name": "colorColumn", "value": "#4682b4"},
+    {"name": "colorLine", "value": "#4682b4"},
     {"name": "colorText", "value": "#000000"},
     {"name": "interpolation", "value": "basis"}
   ],
