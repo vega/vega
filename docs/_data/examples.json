@@ -93,6 +93,7 @@
         {"name": "clock"},
         {"name": "watch"},
         {"name": "warming-stripes"},
+        {"name": "table-matrix"},        
         {"name": "earthquakes-globe"}
     ],
     "Interaction Techniques": [
