@@ -13533,15 +13533,12 @@
             {
               "type": "array",
               "items": {
-                "oneOf": [
+                "anyOf": [
                   {
-                    "$ref": "#/definitions/scaleField"
+                    "type": "number"
                   },
                   {
-                    "$ref": "#/definitions/paramField"
-                  },
-                  {
-                    "$ref": "#/definitions/expr"
+                    "$ref": "#/definitions/signalRef"
                   },
                   {
                     "type": "null"
@@ -13552,9 +13549,6 @@
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "default": [
-            null
           ]
         },
         "fields": {
@@ -15834,15 +15828,12 @@
             {
               "type": "array",
               "items": {
-                "oneOf": [
+                "anyOf": [
                   {
-                    "$ref": "#/definitions/scaleField"
+                    "type": "number"
                   },
                   {
-                    "$ref": "#/definitions/paramField"
-                  },
-                  {
-                    "$ref": "#/definitions/expr"
+                    "$ref": "#/definitions/signalRef"
                   },
                   {
                     "type": "null"
@@ -15853,9 +15844,6 @@
             {
               "$ref": "#/definitions/signalRef"
             }
-          ],
-          "default": [
-            null
           ]
         },
         "fields": {
