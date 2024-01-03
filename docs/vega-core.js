@@ -5127,7 +5127,7 @@
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
    * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
-   * @param {Array<object>} [params.aggregate_params=[null]] - An optional array of parameters for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameters for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
    * @param {boolean} [params.cross=false] - A flag indicating that the full
    *   cross-product of groupby values should be generated, including empty cells.
@@ -5172,10 +5172,9 @@
       'values': ValidAggregateOps
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -8323,7 +8322,7 @@
    * @param {Array<function(object): *>} [params.fields] - An array of accessors
    *   for data fields to use as inputs to window operations.
    * @param {Array<*>} [params.params] - An array of parameter values for window operations.
-   * @param {Array<object>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for window operations.
    * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
    * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
@@ -8359,10 +8358,9 @@
       'array': true
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -24301,8 +24299,8 @@
       item: null
     }));
 
-    // evaluate cursor on each pointermove event
-    view.on(view.events('view', 'pointermove'), cursor, (_, event) => {
+    // evaluate cursor on each mousemove event
+    view.on(view.events('view', 'mousemove'), cursor, (_, event) => {
       const value = cursor.value,
         user = value ? isString(value) ? value : value.user : Default,
         item = event.item && event.item.cursor || null;
@@ -24574,11 +24572,11 @@
     hoverSet = [hoverSet || 'hover'];
     leaveSet = [leaveSet || 'update', hoverSet[0]];
 
-    // invoke hover set upon pointerover
-    this.on(this.events('view', 'pointerover', itemFilter), markTarget, invoke(hoverSet));
+    // invoke hover set upon mouseover
+    this.on(this.events('view', 'mouseover', itemFilter), markTarget, invoke(hoverSet));
 
-    // invoke leave set upon pointerout
-    this.on(this.events('view', 'pointerout', itemFilter), markTarget, invoke(leaveSet));
+    // invoke leave set upon mouseout
+    this.on(this.events('view', 'mouseout', itemFilter), markTarget, invoke(leaveSet));
     return this;
   }
 
@@ -25149,7 +25147,7 @@
     });
   }
   function dataTest(name, data) {
-    return data.modified && isArray(data.input.value) && !name.startsWith('_:vega:_');
+    return data.modified && isArray(data.input.value) && name.indexOf('_:vega:_');
   }
   function signalTest(name, op) {
     return !(name === 'parent' || op instanceof transforms.proxy);
@@ -25197,27 +25195,6 @@
   }
   function formatValue(value) {
     return isArray(value) ? '[\u2026]' : isObject(value) && !isDate$1(value) ? '{\u2026}' : value;
-  }
-  function watchPixelRatio() {
-    // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
-    if (this.renderer() === 'canvas' && this._renderer._canvas) {
-      let remove = null;
-      const updatePixelRatio = () => {
-        if (remove != null) {
-          remove();
-        }
-        const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
-        media.addEventListener('change', updatePixelRatio);
-        remove = () => {
-          media.removeEventListener('change', updatePixelRatio);
-        };
-        this._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
-        this._redraw = true;
-        this._resize = 1;
-        this.resize().runAsync();
-      };
-      updatePixelRatio();
-    }
   }
 
   /**
@@ -25299,7 +25276,6 @@
 
     // initialize DOM container(s) and renderer
     if (options.container) view.initialize(options.container, options.bind);
-    if (options.watchPixelRatio) view._watchPixelRatio();
   }
   function lookupSignal(view, name) {
     return has$1(view._signals, name) ? view._signals[name] : error('Unrecognized signal name: ' + $(name));
@@ -25461,7 +25437,7 @@
     },
     addResizeListener(handler) {
       const l = this._resizeListeners;
-      if (!l.includes(handler)) {
+      if (l.indexOf(handler) < 0) {
         // add handler if it isn't already registered
         // note: error trapping handled elsewhere, so
         // no need to wrap handlers here
@@ -25529,9 +25505,7 @@
     toSVG: renderToSVG,
     // -- SAVE / RESTORE STATE ----
     getState,
-    setState,
-    // RE-RENDER ON ZOOM
-    _watchPixelRatio: watchPixelRatio
+    setState
   });
 
   const VIEW = 'view',
