@@ -17,7 +17,7 @@ import {bisector} from 'd3-array';
  * @param {Array<function(object): *>} [params.fields] - An array of accessors
  *   for data fields to use as inputs to window operations.
  * @param {Array<*>} [params.params] - An array of parameter values for window operations.
- * @param {Array<object>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
+ * @param {Array<number>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
  * @param {Array<string>} [params.as] - An array of output field names for window operations.
  * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
  * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
@@ -38,7 +38,7 @@ Window.Definition = {
     { 'name': 'groupby', 'type': 'field', 'array': true },
     { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidWindowOps.concat(ValidAggregateOps) },
     { 'name': 'params', 'type': 'number', 'null': true, 'array': true },
-    { 'name': 'aggregate_params', 'type': 'field', 'null': true, 'array': true, 'default': [null] },
+    { 'name': 'aggregate_params', 'type': 'number', 'null': true, 'array': true},
     { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
     { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
     { 'name': 'frame', 'type': 'number', 'null': true, 'array': true, 'length': 2, 'default': [null, 0] },
