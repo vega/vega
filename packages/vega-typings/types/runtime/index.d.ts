@@ -28,7 +28,7 @@ export function parse(spec: Spec, config?: Config, opt?: { ast?: boolean }): Run
 export interface Loader {
   load: (uri: string, options?: any) => Promise<string>;
   sanitize: (uri: string, options: any) => Promise<{ href: string }>;
-  http: (uri: string, options: any) => Promise<string>;
+  http: (uri: string, options: RequestInit) => Promise<string>;
   file: (filename: string) => Promise<string>;
 }
 
