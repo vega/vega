@@ -92,7 +92,8 @@
         {"name": "u-district-cuisine"},
         {"name": "clock"},
         {"name": "watch"},
-        {"name": "warming-stripes"}
+        {"name": "warming-stripes"},
+        {"name": "serpentine-timeline"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
