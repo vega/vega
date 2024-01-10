@@ -41,7 +41,7 @@
   "data": [
     {
       "name": "dataset",
-      "url": "https://vega.github.io/vega/data/global-temp.csv",
+      "url": "data/global-temp.csv",
       "format": {"type": "csv", "parse": "auto", "delimiter": ","}
     }
   ],
