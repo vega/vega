@@ -94,7 +94,8 @@
         {"name": "watch"},
         {"name": "warming-stripes"},
         {"name": "table-matrix"},        
-        {"name": "earthquakes-globe"}
+        {"name": "earthquakes-globe"},
+        {"name": "serpentine-timeline"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},

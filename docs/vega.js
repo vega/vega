@@ -1211,7 +1211,6 @@
   const bisectRight$1 = ascendingBisect.right;
   const bisectLeft$1 = ascendingBisect.left;
   bisector(number$6).center;
-  var bisect$1 = bisectRight$1;
 
   function variance(values, valueof) {
     let count = 0;
@@ -6941,7 +6940,7 @@
     },
     sum: {
       init: m => m.sum = 0,
-      value: m => m.sum,
+      value: m => m.valid ? m.sum : undefined,
       add: (m, v) => m.sum += +v,
       rem: (m, v) => m.sum -= v
     },
@@ -7279,7 +7278,7 @@
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
    * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
-   * @param {Array<object>} [params.aggregate_params=[null]] - An optional array of parameters for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameters for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
    * @param {boolean} [params.cross=false] - A flag indicating that the full
    *   cross-product of groupby values should be generated, including empty cells.
@@ -7324,10 +7323,9 @@
       'values': ValidAggregateOps
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -10475,7 +10473,7 @@
    * @param {Array<function(object): *>} [params.fields] - An array of accessors
    *   for data fields to use as inputs to window operations.
    * @param {Array<*>} [params.params] - An array of parameter values for window operations.
-   * @param {Array<object>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for window operations.
    * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
    * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
@@ -10511,10 +10509,9 @@
       'array': true
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -13378,7 +13375,7 @@
       r[i] = interpolate(range[i], range[i + 1]);
     }
     return function (x) {
-      var i = bisect$1(domain, x, 1, j) - 1;
+      var i = bisectRight$1(domain, x, 1, j) - 1;
       return r[i](d[i](x));
     };
   }
@@ -13739,7 +13736,7 @@
       return scale;
     }
     function scale(x) {
-      return x == null || isNaN(x = +x) ? unknown : range[bisect$1(thresholds, x)];
+      return x == null || isNaN(x = +x) ? unknown : range[bisectRight$1(thresholds, x)];
     }
     scale.invertExtent = function (y) {
       var i = range.indexOf(y);
@@ -13775,7 +13772,7 @@
       range = [0, 1],
       unknown;
     function scale(x) {
-      return x != null && x <= x ? range[bisect$1(domain, x, 0, n)] : unknown;
+      return x != null && x <= x ? range[bisectRight$1(domain, x, 0, n)] : unknown;
     }
     function rescale() {
       var i = -1;
@@ -13811,7 +13808,7 @@
       unknown,
       n = 1;
     function scale(x) {
-      return x != null && x <= x ? range[bisect$1(domain, x, 0, n)] : unknown;
+      return x != null && x <= x ? range[bisectRight$1(domain, x, 0, n)] : unknown;
     }
     scale.domain = function (_) {
       return arguments.length ? (domain = Array.from(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
@@ -14265,7 +14262,7 @@
     let domain = [],
       range = [];
     function scale(x) {
-      return x == null || x !== x ? undefined : range[(bisect$1(domain, x) - 1) % range.length];
+      return x == null || x !== x ? undefined : range[(bisectRight$1(domain, x) - 1) % range.length];
     }
     scale.domain = function (_) {
       if (arguments.length) {
@@ -18017,11 +18014,10 @@
   function devicePixelRatio() {
     return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   }
-  var pixelRatio = devicePixelRatio();
   function resize(canvas, width, height, origin, scaleFactor, opt) {
     const inDOM = typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement && canvas.parentNode != null,
       context = canvas.getContext('2d'),
-      ratio = inDOM ? pixelRatio : scaleFactor;
+      ratio = inDOM ? devicePixelRatio() : scaleFactor;
     canvas.width = width * ratio;
     canvas.height = height * ratio;
     for (const key in opt) {
@@ -22101,22 +22097,22 @@
     p0,
     // previous 3D point
     deltaSum, ranges, range$2;
-  var boundsStream$2 = {
+  var boundsStream$1 = {
     point: boundsPoint$1,
     lineStart: boundsLineStart,
     lineEnd: boundsLineEnd,
     polygonStart: function () {
-      boundsStream$2.point = boundsRingPoint;
-      boundsStream$2.lineStart = boundsRingStart;
-      boundsStream$2.lineEnd = boundsRingEnd;
+      boundsStream$1.point = boundsRingPoint;
+      boundsStream$1.lineStart = boundsRingStart;
+      boundsStream$1.lineEnd = boundsRingEnd;
       deltaSum = new Adder();
       areaStream$1.polygonStart();
     },
     polygonEnd: function () {
       areaStream$1.polygonEnd();
-      boundsStream$2.point = boundsPoint$1;
-      boundsStream$2.lineStart = boundsLineStart;
-      boundsStream$2.lineEnd = boundsLineEnd;
+      boundsStream$1.point = boundsPoint$1;
+      boundsStream$1.lineStart = boundsLineStart;
+      boundsStream$1.lineEnd = boundsLineEnd;
       if (areaRingSum$1 < 0) lambda0 = -(lambda1 = 180), phi0 = -(phi1 = 90);else if (deltaSum > epsilon$3) phi1 = 90;else if (deltaSum < -epsilon$3) phi0 = -90;
       range$2[0] = lambda0, range$2[1] = lambda1;
     },
@@ -22178,11 +22174,11 @@
     p0 = p, lambda2 = lambda;
   }
   function boundsLineStart() {
-    boundsStream$2.point = linePoint;
+    boundsStream$1.point = linePoint;
   }
   function boundsLineEnd() {
     range$2[0] = lambda0, range$2[1] = lambda1;
-    boundsStream$2.point = boundsPoint$1;
+    boundsStream$1.point = boundsPoint$1;
     p0 = null;
   }
   function boundsRingPoint(lambda, phi) {
@@ -22222,7 +22218,7 @@
     var i, n, a, b, merged, deltaMax, delta;
     phi1 = lambda1 = -(lambda0 = phi0 = Infinity);
     ranges = [];
-    geoStream(feature, boundsStream$2);
+    geoStream(feature, boundsStream$1);
 
     // First, sort ranges by their minimum longitudes.
     if (n = ranges.length) {
@@ -23365,7 +23361,6 @@
   function areaRingEnd() {
     areaPoint(x00$2, y00$2);
   }
-  var pathArea = areaStream;
 
   var x0$2 = Infinity,
     y0$2 = x0$2,
@@ -23389,7 +23384,6 @@
     if (y < y0$2) y0$2 = y;
     if (y > y1) y1 = y;
   }
-  var boundsStream$1 = boundsStream;
 
   // TODO Enforce positive area for exterior, negative area for interior?
 
@@ -23472,7 +23466,6 @@
     Z2 += z * 3;
     centroidPoint(x0$1 = x, y0$1 = y);
   }
-  var pathCentroid = centroidStream;
 
   function PathContext(context) {
     this._context = context;
@@ -23555,7 +23548,6 @@
     lengthSum.add(sqrt$1(x0 * x0 + y0 * y0));
     x0 = x, y0 = y;
   }
-  var pathMeasure = lengthStream;
 
   // Simple caching for constant-radius points.
   let cacheDigits, cacheAppend, cacheRadius, cacheCircle;
@@ -23657,20 +23649,20 @@
       return contextStream.result();
     }
     path.area = function (object) {
-      geoStream(object, projectionStream(pathArea));
-      return pathArea.result();
+      geoStream(object, projectionStream(areaStream));
+      return areaStream.result();
     };
     path.measure = function (object) {
-      geoStream(object, projectionStream(pathMeasure));
-      return pathMeasure.result();
+      geoStream(object, projectionStream(lengthStream));
+      return lengthStream.result();
     };
     path.bounds = function (object) {
-      geoStream(object, projectionStream(boundsStream$1));
-      return boundsStream$1.result();
+      geoStream(object, projectionStream(boundsStream));
+      return boundsStream.result();
     };
     path.centroid = function (object) {
-      geoStream(object, projectionStream(pathCentroid));
-      return pathCentroid.result();
+      geoStream(object, projectionStream(centroidStream));
+      return centroidStream.result();
     };
     path.projection = function (_) {
       if (!arguments.length) return projection;
@@ -23736,8 +23728,8 @@
     var clip = projection.clipExtent && projection.clipExtent();
     projection.scale(150).translate([0, 0]);
     if (clip != null) projection.clipExtent(null);
-    geoStream(object, projection.stream(boundsStream$1));
-    fitBounds(boundsStream$1.result());
+    geoStream(object, projection.stream(boundsStream));
+    fitBounds(boundsStream.result());
     if (clip != null) projection.clipExtent(clip);
     return projection;
   }
@@ -33032,7 +33024,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.26.1";
+  var version = "5.27.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -33185,16 +33177,16 @@
   }
 
   function isHexDigit(ch) {
-    return '0123456789abcdefABCDEF'.indexOf(ch) >= 0;
+    return '0123456789abcdefABCDEF'.includes(ch);
   }
   function isOctalDigit(ch) {
-    return '01234567'.indexOf(ch) >= 0;
+    return '01234567'.includes(ch);
   }
 
   // 7.2 White Space
 
   function isWhiteSpace(ch) {
-    return ch === 0x20 || ch === 0x09 || ch === 0x0B || ch === 0x0C || ch === 0xA0 || ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].indexOf(ch) >= 0;
+    return ch === 0x20 || ch === 0x09 || ch === 0x0B || ch === 0x0C || ch === 0xA0 || ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].includes(ch);
   }
 
   // 7.3 Line Terminators
@@ -33521,7 +33513,7 @@
 
     // Other 2-character punctuators: ++ -- << >> && ||
     ch2 = ch3.substr(0, 2);
-    if (ch1 === ch2[1] && '+-<>&|'.indexOf(ch1) >= 0 || ch2 === '=>') {
+    if (ch1 === ch2[1] && '+-<>&|'.includes(ch1) || ch2 === '=>') {
       index += 2;
       return {
         type: TokenPunctuator,
@@ -33536,7 +33528,7 @@
 
     // 1-character punctuators: < > = ! + - * % & | ^ /
 
-    if ('<>=!+-*%&|^/'.indexOf(ch1) >= 0) {
+    if ('<>=!+-*%&|^/'.includes(ch1)) {
       ++index;
       return {
         type: TokenPunctuator,
@@ -33716,7 +33708,7 @@
 
                   // 3 digits are only allowed when string starts
                   // with 0, 1, 2, 3
-                  if ('0123'.indexOf(ch) >= 0 && index < length && isOctalDigit(source[index])) {
+                  if ('0123'.includes(ch) && index < length && isOctalDigit(source[index])) {
                     code = code * 8 + '01234567'.indexOf(source[index++]);
                   }
                 }
@@ -33750,7 +33742,7 @@
   }
   function testRegExp(pattern, flags) {
     let tmp = pattern;
-    if (flags.indexOf('u') >= 0) {
+    if (flags.includes('u')) {
       // Replace each astral symbol and every Unicode code point
       // escape sequence with a single ASCII symbol to avoid throwing on
       // regular expressions that are only valid in combination with the
@@ -34654,7 +34646,7 @@
       if (f.type === TYPE_ENUM) {
         // Enumerated fields can either specify individual values (single/multi selections)
         // or an array of values (interval selections).
-        if (isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+        if (isArray(values[i]) ? !values[i].includes(dval) : dval !== values[i]) {
           return false;
         }
       } else {
@@ -34870,11 +34862,11 @@
       if (!base.length) return value;
       var i = 0,
         n = value.length;
-      for (; i < n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+      for (; i < n; ++i) if (!base.includes(value[i])) base.push(value[i]);
       return base;
     },
     E_intersect: function (base, value) {
-      return !base.length ? value : base.filter(v => value.indexOf(v) >= 0);
+      return !base.length ? value : base.filter(v => value.includes(v));
     },
     R_union: function (base, value) {
       var lo = toNumber(value[0]),
@@ -37135,7 +37127,7 @@
     });
   }
   function dataTest(name, data) {
-    return data.modified && isArray(data.input.value) && name.indexOf('_:vega:_');
+    return data.modified && isArray(data.input.value) && !name.startsWith('_:vega:_');
   }
   function signalTest(name, op) {
     return !(name === 'parent' || op instanceof transforms.proxy);
@@ -37183,6 +37175,27 @@
   }
   function formatValue(value) {
     return isArray(value) ? '[\u2026]' : isObject(value) && !isDate$1(value) ? '{\u2026}' : value;
+  }
+  function watchPixelRatio() {
+    // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
+    if (this.renderer() === 'canvas' && this._renderer._canvas) {
+      let remove = null;
+      const updatePixelRatio = () => {
+        if (remove != null) {
+          remove();
+        }
+        const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+        media.addEventListener('change', updatePixelRatio);
+        remove = () => {
+          media.removeEventListener('change', updatePixelRatio);
+        };
+        this._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
+        this._redraw = true;
+        this._resize = 1;
+        this.resize().runAsync();
+      };
+      updatePixelRatio();
+    }
   }
 
   /**
@@ -37264,6 +37277,7 @@
 
     // initialize DOM container(s) and renderer
     if (options.container) view.initialize(options.container, options.bind);
+    if (options.watchPixelRatio) view._watchPixelRatio();
   }
   function lookupSignal(view, name) {
     return has$1(view._signals, name) ? view._signals[name] : error('Unrecognized signal name: ' + $(name));
@@ -37425,7 +37439,7 @@
     },
     addResizeListener(handler) {
       const l = this._resizeListeners;
-      if (l.indexOf(handler) < 0) {
+      if (!l.includes(handler)) {
         // add handler if it isn't already registered
         // note: error trapping handled elsewhere, so
         // no need to wrap handlers here
@@ -37493,7 +37507,9 @@
     toSVG: renderToSVG,
     // -- SAVE / RESTORE STATE ----
     getState,
-    setState
+    setState,
+    // RE-RENDER ON ZOOM
+    _watchPixelRatio: watchPixelRatio
   });
 
   const VIEW = 'view',
@@ -37541,7 +37557,7 @@
       c;
     for (; i < n; ++i) {
       c = s[i];
-      if (!count && c === endChar) return i;else if (popChar && popChar.indexOf(c) >= 0) --count;else if (pushChar && pushChar.indexOf(c) >= 0) ++count;
+      if (!count && c === endChar) return i;else if (popChar && popChar.includes(c)) --count;else if (pushChar && pushChar.includes(c)) ++count;
     }
     return i;
   }
@@ -39114,7 +39130,7 @@
   }
   function getRole(spec) {
     const role = spec.role || '';
-    return !role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title') ? role : spec.type === GroupMark ? ScopeRole : role || MarkRole;
+    return role.startsWith('axis') || role.startsWith('legend') || role.startsWith('title') ? role : spec.type === GroupMark ? ScopeRole : role || MarkRole;
   }
   function definition(spec) {
     return {

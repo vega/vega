@@ -4789,7 +4789,7 @@
     },
     sum: {
       init: m => m.sum = 0,
-      value: m => m.sum,
+      value: m => m.valid ? m.sum : undefined,
       add: (m, v) => m.sum += +v,
       rem: (m, v) => m.sum -= v
     },
@@ -5127,7 +5127,7 @@
    * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
    * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
    * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
-   * @param {Array<object>} [params.aggregate_params=[null]] - An optional array of parameters for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameters for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
    * @param {boolean} [params.cross=false] - A flag indicating that the full
    *   cross-product of groupby values should be generated, including empty cells.
@@ -5172,10 +5172,9 @@
       'values': ValidAggregateOps
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -8323,7 +8322,7 @@
    * @param {Array<function(object): *>} [params.fields] - An array of accessors
    *   for data fields to use as inputs to window operations.
    * @param {Array<*>} [params.params] - An array of parameter values for window operations.
-   * @param {Array<object>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
+   * @param {Array<number>} [params.aggregate_params] - An optional array of parameter values for aggregation operations.
    * @param {Array<string>} [params.as] - An array of output field names for window operations.
    * @param {Array<number>} [params.frame] - Window frame definition as two-element array.
    * @param {boolean} [params.ignorePeers=false] - If true, base window frame boundaries on row
@@ -8359,10 +8358,9 @@
       'array': true
     }, {
       'name': 'aggregate_params',
-      'type': 'field',
+      'type': 'number',
       'null': true,
-      'array': true,
-      'default': [null]
+      'array': true
     }, {
       'name': 'fields',
       'type': 'field',
@@ -12518,11 +12516,10 @@
   function devicePixelRatio() {
     return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   }
-  var pixelRatio = devicePixelRatio();
   function resize(canvas, width, height, origin, scaleFactor, opt) {
     const inDOM = typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement && canvas.parentNode != null,
       context = canvas.getContext('2d'),
-      ratio = inDOM ? pixelRatio : scaleFactor;
+      ratio = inDOM ? devicePixelRatio() : scaleFactor;
     canvas.width = width * ratio;
     canvas.height = height * ratio;
     for (const key in opt) {
@@ -21047,7 +21044,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.26.1";
+  var version = "5.27.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -21200,16 +21197,16 @@
   }
 
   function isHexDigit(ch) {
-    return '0123456789abcdefABCDEF'.indexOf(ch) >= 0;
+    return '0123456789abcdefABCDEF'.includes(ch);
   }
   function isOctalDigit(ch) {
-    return '01234567'.indexOf(ch) >= 0;
+    return '01234567'.includes(ch);
   }
 
   // 7.2 White Space
 
   function isWhiteSpace(ch) {
-    return ch === 0x20 || ch === 0x09 || ch === 0x0B || ch === 0x0C || ch === 0xA0 || ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].indexOf(ch) >= 0;
+    return ch === 0x20 || ch === 0x09 || ch === 0x0B || ch === 0x0C || ch === 0xA0 || ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].includes(ch);
   }
 
   // 7.3 Line Terminators
@@ -21536,7 +21533,7 @@
 
     // Other 2-character punctuators: ++ -- << >> && ||
     ch2 = ch3.substr(0, 2);
-    if (ch1 === ch2[1] && '+-<>&|'.indexOf(ch1) >= 0 || ch2 === '=>') {
+    if (ch1 === ch2[1] && '+-<>&|'.includes(ch1) || ch2 === '=>') {
       index += 2;
       return {
         type: TokenPunctuator,
@@ -21551,7 +21548,7 @@
 
     // 1-character punctuators: < > = ! + - * % & | ^ /
 
-    if ('<>=!+-*%&|^/'.indexOf(ch1) >= 0) {
+    if ('<>=!+-*%&|^/'.includes(ch1)) {
       ++index;
       return {
         type: TokenPunctuator,
@@ -21731,7 +21728,7 @@
 
                   // 3 digits are only allowed when string starts
                   // with 0, 1, 2, 3
-                  if ('0123'.indexOf(ch) >= 0 && index < length && isOctalDigit(source[index])) {
+                  if ('0123'.includes(ch) && index < length && isOctalDigit(source[index])) {
                     code = code * 8 + '01234567'.indexOf(source[index++]);
                   }
                 }
@@ -21765,7 +21762,7 @@
   }
   function testRegExp(pattern, flags) {
     let tmp = pattern;
-    if (flags.indexOf('u') >= 0) {
+    if (flags.includes('u')) {
       // Replace each astral symbol and every Unicode code point
       // escape sequence with a single ASCII symbol to avoid throwing on
       // regular expressions that are only valid in combination with the
@@ -22669,7 +22666,7 @@
       if (f.type === TYPE_ENUM) {
         // Enumerated fields can either specify individual values (single/multi selections)
         // or an array of values (interval selections).
-        if (isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+        if (isArray(values[i]) ? !values[i].includes(dval) : dval !== values[i]) {
           return false;
         }
       } else {
@@ -22885,11 +22882,11 @@
       if (!base.length) return value;
       var i = 0,
         n = value.length;
-      for (; i < n; ++i) if (base.indexOf(value[i]) < 0) base.push(value[i]);
+      for (; i < n; ++i) if (!base.includes(value[i])) base.push(value[i]);
       return base;
     },
     E_intersect: function (base, value) {
-      return !base.length ? value : base.filter(v => value.indexOf(v) >= 0);
+      return !base.length ? value : base.filter(v => value.includes(v));
     },
     R_union: function (base, value) {
       var lo = toNumber(value[0]),
@@ -25150,7 +25147,7 @@
     });
   }
   function dataTest(name, data) {
-    return data.modified && isArray(data.input.value) && name.indexOf('_:vega:_');
+    return data.modified && isArray(data.input.value) && !name.startsWith('_:vega:_');
   }
   function signalTest(name, op) {
     return !(name === 'parent' || op instanceof transforms.proxy);
@@ -25198,6 +25195,27 @@
   }
   function formatValue(value) {
     return isArray(value) ? '[\u2026]' : isObject(value) && !isDate$1(value) ? '{\u2026}' : value;
+  }
+  function watchPixelRatio() {
+    // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
+    if (this.renderer() === 'canvas' && this._renderer._canvas) {
+      let remove = null;
+      const updatePixelRatio = () => {
+        if (remove != null) {
+          remove();
+        }
+        const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+        media.addEventListener('change', updatePixelRatio);
+        remove = () => {
+          media.removeEventListener('change', updatePixelRatio);
+        };
+        this._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
+        this._redraw = true;
+        this._resize = 1;
+        this.resize().runAsync();
+      };
+      updatePixelRatio();
+    }
   }
 
   /**
@@ -25279,6 +25297,7 @@
 
     // initialize DOM container(s) and renderer
     if (options.container) view.initialize(options.container, options.bind);
+    if (options.watchPixelRatio) view._watchPixelRatio();
   }
   function lookupSignal(view, name) {
     return has$1(view._signals, name) ? view._signals[name] : error('Unrecognized signal name: ' + $(name));
@@ -25440,7 +25459,7 @@
     },
     addResizeListener(handler) {
       const l = this._resizeListeners;
-      if (l.indexOf(handler) < 0) {
+      if (!l.includes(handler)) {
         // add handler if it isn't already registered
         // note: error trapping handled elsewhere, so
         // no need to wrap handlers here
@@ -25508,7 +25527,9 @@
     toSVG: renderToSVG,
     // -- SAVE / RESTORE STATE ----
     getState,
-    setState
+    setState,
+    // RE-RENDER ON ZOOM
+    _watchPixelRatio: watchPixelRatio
   });
 
   const VIEW = 'view',
@@ -25556,7 +25577,7 @@
       c;
     for (; i < n; ++i) {
       c = s[i];
-      if (!count && c === endChar) return i;else if (popChar && popChar.indexOf(c) >= 0) --count;else if (pushChar && pushChar.indexOf(c) >= 0) ++count;
+      if (!count && c === endChar) return i;else if (popChar && popChar.includes(c)) --count;else if (pushChar && pushChar.includes(c)) ++count;
     }
     return i;
   }
@@ -27129,7 +27150,7 @@
   }
   function getRole(spec) {
     const role = spec.role || '';
-    return !role.indexOf('axis') || !role.indexOf('legend') || !role.indexOf('title') ? role : spec.type === GroupMark ? ScopeRole : role || MarkRole;
+    return role.startsWith('axis') || role.startsWith('legend') || role.startsWith('title') ? role : spec.type === GroupMark ? ScopeRole : role || MarkRole;
   }
   function definition(spec) {
     return {
@@ -29432,7 +29453,7 @@
 
   extend(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
 
-  Object.defineProperty(exports, 'path', {
+  Object.defineProperty(exports, "path", {
     enumerable: true,
     get: function () { return d3Path.path; }
   });
