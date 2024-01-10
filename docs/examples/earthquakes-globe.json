@@ -40,7 +40,7 @@
     {"name": "data-sphere", "values": [{"type": "Sphere"}]},
     {
       "name": "data-json-world-map",
-      "url": "https://vega.github.io/vega/data/world-110m.json",
+      "url": "data/world-110m.json",
       "format": {"type": "topojson", "feature": "countries"}
     },
     {
