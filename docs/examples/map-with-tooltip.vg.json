@@ -100,12 +100,12 @@
   "data": [
     {
       "name": "unemp",
-      "url": "https://vega.github.io/vega/data/unemployment.tsv",
+      "url": "data/unemployment.tsv",
       "format": {"type": "tsv", "parse": "auto", "delimiter": "\t"}
     },
     {
       "name": "counties-json",
-      "url": "https://vega.github.io/vega/data/us-10m.json",
+      "url": "data/us-10m.json",
       "format": {"type": "topojson", "feature": "counties"}
     },
     {
