@@ -121,7 +121,6 @@
       "titleFontWeight": "lighter",
       "titleAlign": "center",
       "titleOrient": "top",
-      "titlePadding": -10,
       "labelColor": {"signal": "'#DDDDDD'"},
       "labelAlign": "right",
       "labelFontSize": 13,
@@ -130,7 +129,7 @@
         "symbols": {
           "update": {
             "size": {
-              "signal": "datum.value<2?0:3.14*scale('scaleSize', exp(datum.value))*scale('scaleSize', exp(datum.value))"
+              "signal": "datum.value<1?0:3.14*scale('scaleSize', exp(datum.value))*scale('scaleSize', exp(datum.value))"
             },
             "strokeOpacity": {"value": 1},
             "fillOpacity": {"value": 0},
@@ -142,7 +141,7 @@
         },
         "labels": {
           "update": {
-            "text": {"signal": "datum.value<2?'':datum.label"},
+            "text": {"signal": "datum.value<1?'':datum.label"},
             "dx": {"value": 25}
           }
         }
