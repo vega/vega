@@ -6,10 +6,9 @@ spec: earthquakes-globe
 image: /examples/img/earthquakes-globe.png
 ---
 
-A globe visualization of magnitude 2.5+ earthquakes reported by United States Geological Survey during last 30 days (live feed). Enhanced and animated version of [Earthquakes Example](https://vega.github.io/vega/examples/earthquakes/) example.
+A globe visualization of earthquakes. Enhanced and animated version of [Earthquakes Example](https://vega.github.io/vega/examples/earthquakes/) example.
 
-Data: JSON - shapes of continents and countries, CSV - list of earthquakes.
-Background: randomly generated white circles ("stars").
+Background: randomly generated "stars".
 
 This Vega example made by Andrzej Leszkiewicz [@avatorl](https://github.com/avatorl)
 
