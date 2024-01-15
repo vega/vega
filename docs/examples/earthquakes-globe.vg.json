@@ -8,6 +8,11 @@
   "background": "#000000",
   "signals": [
     {"name": "scale", "description": "globe scale", "value": 225},
+    {
+      "name": "circleSize",
+      "description": "Earthquaqe circle size",
+      "value": 1.8
+    },
     {"name": "textColorMain", "value": "#dddddd"},
     {"name": "textColorSubtitle", "value": "#888888"},
     {"name": "backSideColor", "value": "#aaaaaa"},
@@ -84,7 +89,7 @@
       "name": "scaleSize",
       "type": "sqrt",
       "domain": [0, 100],
-      "range": [0, {"signal": "2"}]
+      "range": [0, {"signal": "circleSize"}]
     }
   ],
   "title": {
@@ -129,7 +134,9 @@
             },
             "strokeOpacity": {"value": 1},
             "fillOpacity": {"value": 0},
-            "strokeWidth": {"value": 1.5},
+            "strokeWidth": {
+              "signal": "1+scale('scaleSize', exp(datum.value))*0.15"
+            },
             "stroke": {"signal": "scale('scaleColor', datum.value)"}
           }
         },
@@ -211,7 +218,9 @@
         "update": {
           "strokeOpacity": {"value": 1},
           "fillOpacity": {"value": 0},
-          "strokeWidth": {"value": 1.5},
+          "strokeWidth": {
+            "signal": "1+scale('scaleSize', exp(datum.properties.mag))*0.15"
+          },
           "stroke": {"signal": "scale('scaleColor', datum.properties.mag)"},
           "fill": {"signal": "scale('scaleColor', datum.properties.mag)"}
         }
