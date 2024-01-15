@@ -6,7 +6,7 @@ spec: earthquakes-globe
 image: /examples/img/earthquakes-globe.png
 ---
 
-A globe visualization of earthquakes. Enhanced and animated version of [Earthquakes Example](https://vega.github.io/vega/examples/earthquakes/) example.
+A globe visualization of earthquakes. Enhanced and animated version of [Earthquakes](https://vega.github.io/vega/examples/earthquakes/) example.
 
 Background: randomly generated "stars".
 
