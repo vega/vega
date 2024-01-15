@@ -38,17 +38,8 @@
     },
     {
       "name": "data-earthquakes",
-      "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.csv",
-      "format": {"type": "csv", "parse": "auto", "delimiter": ","},
-      "transform": [
-        {
-          "type": "geopoint",
-          "projection": "projection",
-          "fields": ["longitude", "latitude"],
-          "as": ["x", "y"]
-        },
-        {"type": "collect", "sort": {"field": ["mag"], "order": ["ascending"]}}
-      ]
+      "url": "data/earthquakes.json",
+      "format": {"type": "json", "property": "features"}
     },
     {
       "name": "stars",
@@ -91,10 +82,9 @@
     },
     {
       "name": "scaleSize",
-      "type": "pow",
-      "domain": [0, 1.9, 9.9],
-      "range": [0, 10, 2000],
-      "exponent": 10
+      "type": "sqrt",
+      "domain": [0, 100],
+      "range": [0, {"signal": "2"}]
     }
   ],
   "title": {
@@ -133,7 +123,15 @@
       "format": ".4",
       "encode": {
         "symbols": {
-          "update": {"size": {"scale": "scaleSize", "signal": "datum.value"}}
+          "update": {
+            "size": {
+              "signal": "datum.value<2?0:3.14*scale('scaleSize', exp(datum.value))*scale('scaleSize', exp(datum.value))"
+            },
+            "strokeOpacity": {"value": 1},
+            "fillOpacity": {"value": 0},
+            "strokeWidth": {"value": 1.5},
+            "stroke": {"signal": "scale('scaleColor', datum.value)"}
+          }
         },
         "labels": {
           "update": {
@@ -205,27 +203,28 @@
       "transform": [{"type": "geoshape", "projection": "projection"}]
     },
     {
-      "name": "symbol-circle-earthquakes",
-      "type": "symbol",
-      "shape": "circle",
+      "name": "shape-circle-earthquakes",
+      "type": "shape",
       "from": {"data": "data-earthquakes"},
       "index": 3,
       "encode": {
-        "enter": {
-          "fillOpacity": {"value": 1},
-          "tooltip": {"signal": "datum.mag +' - ' + datum.place"}
-        },
         "update": {
-          "xc": {"signal": "datum.x"},
-          "yc": {"signal": "datum.y"},
-          "fill": {
-            "signal": "(abs(globeRotationAngle)<=90?datum.longitude>=(globeRotationAngle-90)&&datum.longitude<=(globeRotationAngle+90)?1:0:globeRotationAngle<-90?datum.longitude>(globeRotationAngle-90+360)||datum.longitude<(globeRotationAngle+90)?1:0:globeRotationAngle>90?datum.longitude>(globeRotationAngle-90)||datum.longitude<(globeRotationAngle-180-90)?1:0:0)==1?scale('scaleColor',datum.mag):backSideColor"
-          },
-          "size": {
-            "signal": "(abs(globeRotationAngle)<=90?datum.longitude>=(globeRotationAngle-90)&&datum.longitude<=(globeRotationAngle+90)?1:0:globeRotationAngle<-90?datum.longitude>(globeRotationAngle-90+360)||datum.longitude<(globeRotationAngle+90)?1:0:globeRotationAngle>90?datum.longitude>(globeRotationAngle-90)||datum.longitude<(globeRotationAngle-180-90)?1:0:0)*scale('scaleSize',datum.mag)"
+          "strokeOpacity": {"value": 1},
+          "fillOpacity": {"value": 0},
+          "strokeWidth": {"value": 1.5},
+          "stroke": {"signal": "scale('scaleColor', datum.properties.mag)"},
+          "fill": {"signal": "scale('scaleColor', datum.properties.mag)"}
+        }
+      },
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "projection",
+          "pointRadius": {
+            "expr": "scale('scaleSize', exp(datum.properties.mag))"
           }
         }
-      }
+      ]
     }
   ]
 }
