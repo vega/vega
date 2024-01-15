@@ -137,7 +137,7 @@
     },
     {
       "name": "data-flags",
-      "url": "https://vega.github.io/vega/data/table-matrix-flags.csv",
+      "url": "data/table-matrix-flags.csv",
       "format": {"type": "csv", "parse": "auto", "delimiter": ","}
     }
   ],
