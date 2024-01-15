@@ -114,7 +114,7 @@
   "data": [
     {
       "name": "dataset-csv",
-      "url": "https://vega.github.io/vega/data/table-matrix-trade.csv",
+      "url": "data/table-matrix-trade.csv",
       "format": {"type": "csv", "parse": "auto", "delimiter": ","},
       "transform": [{"type": "filter", "expr": "datum.Year>=firstYear"}]
     },
