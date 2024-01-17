@@ -7918,63 +7918,6 @@ vega-datasets@^2.7.0:
   resolved "https://registry.npmjs.org/vega-datasets/-/vega-datasets-2.7.0.tgz"
   integrity sha512-dvHJFK9ousiblywNcRcJbedwbcAfVY/RH1UAqEWfvu4GZrXFibPlO+u8nP/onxDETcaHFDOGFs/+SK1P/sjjOQ==
 
-vega-typings@~1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-1.0.1.tgz#748facd9e1f5a1d8c0e9ee148d3210286058b5d2"
-  integrity sha512-VYsezOoYU8lDWGX6m5g6+m48Icq5RhZ51ek4Gc2UJkz8WJpYlVeN81Ko/smQMLblcU5NTD4Ffu+Mb3EcnXpMZw==
-  dependencies:
-    "@types/geojson" "7946.0.4"
-    vega-event-selector "^3.0.1"
-    vega-expression "^5.1.0"
-    vega-util "^1.17.2"
-
-vega-view@~5.11.1:
-  version "5.11.1"
-  resolved "https://registry.yarnpkg.com/vega-view/-/vega-view-5.11.1.tgz#a703d7d6344489c6a6e9e9d9c7a732519bf4432c"
-  integrity sha512-RoWxuoEMI7xVQJhPqNeLEHCezudsf3QkVMhH5tCovBqwBADQGqq9iWyax3ZzdyX1+P3eBgm7cnLvpqtN2hU8kA==
-  dependencies:
-    d3-array "^3.2.2"
-    d3-timer "^3.0.1"
-    vega-dataflow "^5.7.5"
-    vega-format "^1.1.1"
-    vega-functions "^5.13.1"
-    vega-runtime "^6.1.4"
-    vega-scenegraph "^4.10.2"
-    vega-util "^1.17.1"
-
-vega@5.26.1:
-  version "5.26.1"
-  resolved "https://registry.yarnpkg.com/vega/-/vega-5.26.1.tgz#8d7882eae9579207ec2fff8bd6a6125cdac2c4b4"
-  integrity sha512-1IguabCfv5jGUwMg4d8V9Lf/yBxaUc1EXmRwHzV8pMSy6KUB0h7rh9gYU0ja+vOB7b5qygRwppqeL0cATrzLUw==
-  dependencies:
-    vega-crossfilter "~4.1.1"
-    vega-dataflow "~5.7.5"
-    vega-encode "~4.9.2"
-    vega-event-selector "~3.0.1"
-    vega-expression "~5.1.0"
-    vega-force "~4.2.0"
-    vega-format "~1.1.1"
-    vega-functions "~5.14.0"
-    vega-geo "~4.4.1"
-    vega-hierarchy "~4.1.1"
-    vega-label "~1.2.1"
-    vega-loader "~4.5.1"
-    vega-parser "~6.2.1"
-    vega-projection "~1.6.0"
-    vega-regression "~1.2.0"
-    vega-runtime "~6.1.4"
-    vega-scale "~7.3.1"
-    vega-scenegraph "~4.11.1"
-    vega-statistics "~1.9.0"
-    vega-time "~2.1.1"
-    vega-transforms "~4.11.0"
-    vega-typings "~1.0.1"
-    vega-util "~1.17.2"
-    vega-view "~5.11.1"
-    vega-view-transforms "~4.5.9"
-    vega-voronoi "~4.2.2"
-    vega-wordcloud "~4.1.4"
-
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.npmjs.org/verror/-/verror-1.10.0.tgz"
