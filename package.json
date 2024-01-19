@@ -47,7 +47,7 @@
     "serve": "^14.2.1",
     "tape": "^5.7.2",
     "typescript": "~5.1.6",
-    "vega-datasets": "^2.7.0"
+    "vega-datasets": "^2.8.0"
   },
   "workspaces": [
     "packages/*"

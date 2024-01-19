@@ -7913,10 +7913,10 @@ vary@~1.1.2:
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vega-datasets@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.npmjs.org/vega-datasets/-/vega-datasets-2.7.0.tgz"
-  integrity sha512-dvHJFK9ousiblywNcRcJbedwbcAfVY/RH1UAqEWfvu4GZrXFibPlO+u8nP/onxDETcaHFDOGFs/+SK1P/sjjOQ==
+vega-datasets@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-2.8.0.tgz#9c7022be6fac8aa7ab9104befaf09bc6c6851d83"
+  integrity sha512-pIoP8Cqtq/3Y4rPgtuCle4QWrK2DidmqQzwoNjVVhnNO3H4OWki7vzvDD4/CzWg9wVjoDN98plb3EpJfLcQ5Tw==
 
 verror@1.10.0:
   version "1.10.0"
