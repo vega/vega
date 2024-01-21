@@ -149,6 +149,7 @@ inherits(CanvasHandler, Handler, {
   },
 
   touchmove(evt) {
+    this._touch = this.pickEvent(evt.changedTouches[0]);
     this.fire(TouchMoveEvent, evt, true);
   },
 
