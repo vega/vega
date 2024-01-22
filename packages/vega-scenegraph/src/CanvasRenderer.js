@@ -6,43 +6,17 @@ import {domClear} from './util/dom';
 import clip from './util/canvas/clip';
 import resize from './util/canvas/resize';
 import {canvas} from 'vega-canvas';
-import {error, inherits} from 'vega-util';
+import {error} from 'vega-util';
 
-export default function CanvasRenderer(loader) {
-  Renderer.call(this, loader);
-  this._options = {};
-  this._redraw = false;
-  this._dirty = new Bounds();
-  this._tempb = new Bounds();
-}
-
-const base = Renderer.prototype;
-
-const viewBounds = (origin, width, height) => new Bounds()
-  .set(0, 0, width, height)
-  .translate(-origin[0], -origin[1]);
-
-function clipToBounds(g, b, origin) {
-  // expand bounds by 1 pixel, then round to pixel boundaries
-  b.expand(1).round();
-
-  // align to base pixel grid in case of non-integer scaling (#2425)
-  if (g.pixelRatio % 1) {
-    b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+export default class CanvasRenderer extends Renderer {
+  constructor(loader) {
+    super(loader);
+    this._options = {};
+    this._redraw = false;
+    this._dirty = new Bounds();
+    this._tempb = new Bounds();
   }
 
-  // to avoid artifacts translate if origin has fractional pixels
-  b.translate(-(origin[0] % 1), -(origin[1] % 1));
-
-  // set clip path
-  g.beginPath();
-  g.rect(b.x1, b.y1, b.width(), b.height());
-  g.clip();
-
-  return b;
-}
-
-inherits(CanvasRenderer, Renderer, {
   initialize(el, width, height, origin, scaleFactor, options) {
     this._options = options || {};
 
@@ -56,11 +30,11 @@ inherits(CanvasRenderer, Renderer, {
     }
 
     // this method will invoke resize to size the canvas appropriately
-    return base.initialize.call(this, el, width, height, origin, scaleFactor);
-  },
+    return super.initialize(el, width, height, origin, scaleFactor);
+  }
 
   resize(width, height, origin, scaleFactor) {
-    base.resize.call(this, width, height, origin, scaleFactor);
+    super.resize(width, height, origin, scaleFactor);
 
     if (this._canvas) {
       // configure canvas size and transform
@@ -76,16 +50,16 @@ inherits(CanvasRenderer, Renderer, {
 
     this._redraw = true;
     return this;
-  },
+  }
 
   canvas() {
     return this._canvas;
-  },
+  }
 
   context() {
     return this._options.externalContext
       || (this._canvas ? this._canvas.getContext('2d') : null);
-  },
+  }
 
   dirty(item) {
     const b = this._tempb.clear().union(item.bounds);
@@ -97,7 +71,7 @@ inherits(CanvasRenderer, Renderer, {
     }
 
     this._dirty.union(b);
-  },
+  }
 
   _render(scene, markTypes) {
     const g = this.context(),
@@ -123,7 +97,7 @@ inherits(CanvasRenderer, Renderer, {
     db.clear();
 
     return this;
-  },
+  }
 
   draw(ctx, scene, bounds, markTypes) {
     if (scene.marktype !== 'group' && markTypes != null && !markTypes.includes(scene.marktype)) {
@@ -134,7 +108,7 @@ inherits(CanvasRenderer, Renderer, {
     if (scene.clip) clip(ctx, scene);
     mark.draw.call(this, ctx, scene, bounds, markTypes);
     if (scene.clip) ctx.restore();
-  },
+  }
 
   clear(x, y, w, h) {
     const opt = this._options,
@@ -151,4 +125,28 @@ inherits(CanvasRenderer, Renderer, {
       g.fillRect(x, y, w, h);
     }
   }
-});
+}
+
+const viewBounds = (origin, width, height) => new Bounds()
+  .set(0, 0, width, height)
+  .translate(-origin[0], -origin[1]);
+
+function clipToBounds(g, b, origin) {
+  // expand bounds by 1 pixel, then round to pixel boundaries
+  b.expand(1).round();
+
+  // align to base pixel grid in case of non-integer scaling (#2425)
+  if (g.pixelRatio % 1) {
+    b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+  }
+
+  // to avoid artifacts translate if origin has fractional pixels
+  b.translate(-(origin[0] % 1), -(origin[1] % 1));
+
+  // set clip path
+  g.beginPath();
+  g.rect(b.x1, b.y1, b.width(), b.height());
+  g.clip();
+
+  return b;
+}

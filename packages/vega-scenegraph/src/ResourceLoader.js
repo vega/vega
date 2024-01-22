@@ -2,29 +2,21 @@ import {image} from 'vega-canvas';
 import {loader} from 'vega-loader';
 import {hasOwnProperty} from 'vega-util';
 
-export default function ResourceLoader(customLoader) {
-  this._pending = 0;
-  this._loader = customLoader || loader();
-}
+export default class ResourceLoader {
+  constructor(customLoader) {
+    this._pending = 0;
+    this._loader = customLoader || loader();
+  }
 
-function increment(loader) {
-  loader._pending += 1;
-}
-
-function decrement(loader) {
-  loader._pending -= 1;
-}
-
-ResourceLoader.prototype = {
   pending() {
     return this._pending;
-  },
+  }
 
   sanitizeURL(uri) {
     const loader = this;
     increment(loader);
 
-    return loader._loader.sanitize(uri, {context:'href'})
+    return loader._loader.sanitize(uri, { context: 'href' })
       .then(opt => {
         decrement(loader);
         return opt;
@@ -33,18 +25,17 @@ ResourceLoader.prototype = {
         decrement(loader);
         return null;
       });
-  },
+  }
 
   loadImage(uri) {
-    const loader = this,
-          Image = image();
+    const loader = this, Image = image();
     increment(loader);
 
     return loader._loader
-      .sanitize(uri, {context: 'image'})
+      .sanitize(uri, { context: 'image' })
       .then(opt => {
         const url = opt.href;
-        if (!url || !Image) throw {url: url};
+        if (!url || !Image) throw { url: url };
 
         const img = new Image();
 
@@ -62,9 +53,9 @@ ResourceLoader.prototype = {
       })
       .catch(e => {
         decrement(loader);
-        return {complete: false, width: 0, height: 0, src: e && e.url || ''};
+        return { complete: false, width: 0, height: 0, src: e && e.url || '' };
       });
-  },
+  }
 
   ready() {
     const loader = this;
@@ -76,4 +67,13 @@ ResourceLoader.prototype = {
       poll(false);
     });
   }
-};
+}
+
+function increment(loader) {
+  loader._pending += 1;
+}
+
+function decrement(loader) {
+  loader._pending -= 1;
+}
+
