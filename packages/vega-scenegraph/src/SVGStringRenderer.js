@@ -9,25 +9,25 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles';
-import {extend, inherits, isArray} from 'vega-util';
+import {extend, isArray} from 'vega-util';
 
-export default function SVGStringRenderer(loader) {
-  Renderer.call(this, loader);
-  this._text = null;
-  this._defs = {
-    gradient: {},
-    clipping: {}
-  };
-}
+export default class SVGStringRenderer extends Renderer {
+  constructor(loader) {
+    super(loader);
+    this._text = null;
+    this._defs = {
+      gradient: {},
+      clipping: {}
+    };
+  }
 
-inherits(SVGStringRenderer, Renderer, {
   /**
    * Returns the rendered SVG text string,
    * or null if rendering has not yet occurred.
    */
   svg() {
     return this._text;
-  },
+  }
 
   /**
    * Internal rendering method.
@@ -68,7 +68,7 @@ inherits(SVGStringRenderer, Renderer, {
     this._text = m.close() + '';
 
     return this;
-  },
+  }
 
   /**
    * Render a set of mark items.
@@ -165,7 +165,7 @@ inherits(SVGStringRenderer, Renderer, {
 
     // render closing group tag
     return m.close(); // </g>
-  },
+  }
 
   /**
    * Get href attributes for a hyperlinked mark item.
@@ -188,7 +188,7 @@ inherits(SVGStringRenderer, Renderer, {
       }
     }
     return null;
-  },
+  }
 
   /**
    * Get an object of SVG attributes for a mark item.
@@ -216,7 +216,7 @@ inherits(SVGStringRenderer, Renderer, {
     }
 
     return object;
-  },
+  }
 
   /**
    * Render SVG defs, as needed.
@@ -309,7 +309,7 @@ inherits(SVGStringRenderer, Renderer, {
 
     m.close();
   }
-});
+}
 
 // Helper function for attr for style presentation attributes
 function style(s, item, scene, tag, defs) {

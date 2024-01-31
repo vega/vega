@@ -1,7 +1,6 @@
 import Renderer from './Renderer';
 import SVGRenderer from './SVGRenderer';
 import CanvasRenderer from './CanvasRenderer';
-import {inherits} from 'vega-util';
 import {domChild} from './util/dom';
 
 /**
@@ -34,15 +33,13 @@ export function setHybridRendererOptions(options) {
   OPTS['debug'] = options.debug ?? false;
 }
 
-export default function HybridRenderer(loader) {
-  Renderer.call(this, loader);
-  this._svgRenderer = new SVGRenderer(loader);
-  this._canvasRenderer = new CanvasRenderer(loader);
-}
+export default class HybridRenderer extends Renderer {
+  constructor(loader) {
+    super(loader);
+    this._svgRenderer = new SVGRenderer(loader);
+    this._canvasRenderer = new CanvasRenderer(loader);
+  }
 
-const base = Renderer.prototype;
-
-inherits(HybridRenderer, Renderer, {
   /**
    * Initialize a new HybridRenderer instance.
    * @param {DOMElement} el - The containing DOM element for the display.
@@ -80,8 +77,8 @@ inherits(HybridRenderer, Renderer, {
 
     this._canvasRenderer.initialize(this._canvasEl, width, height, origin, scaleFactor);
     this._svgRenderer.initialize(this._svgEl, width, height, origin, scaleFactor);
-    return base.initialize.call(this, el, width, height, origin, scaleFactor);
-  },
+    return super.initialize(el, width, height, origin, scaleFactor);
+  }
 
   /**
    * Flag a mark item as dirty.
@@ -94,7 +91,7 @@ inherits(HybridRenderer, Renderer, {
       this._canvasRenderer.dirty(item);
     }
     return this;
-  },
+  }
 
   /**
    * Internal rendering method.
@@ -109,7 +106,7 @@ inherits(HybridRenderer, Renderer, {
     const canvasMarkTypes = allMarkTypes.filter((m) => !OPTS.svgMarkTypes.includes(m));
     this._svgRenderer.render(scene, OPTS.svgMarkTypes);
     this._canvasRenderer.render(scene, canvasMarkTypes);
-  },
+  }
 
   /**
    * Resize the display.
@@ -122,11 +119,11 @@ inherits(HybridRenderer, Renderer, {
    * @return {SVGRenderer} - This renderer instance;
    */
   resize(width, height, origin, scaleFactor) {
-    base.resize.call(this, width, height, origin, scaleFactor);
+    super.resize(width, height, origin, scaleFactor);
     this._svgRenderer.resize(width, height, origin, scaleFactor);
     this._canvasRenderer.resize(width, height, origin, scaleFactor);
     return this;
-  },
+  }
 
   background(bgcolor) {
     // Propagate background color to lower canvas renderer
@@ -137,4 +134,4 @@ inherits(HybridRenderer, Renderer, {
     }
     return this;
   }
-});
+}

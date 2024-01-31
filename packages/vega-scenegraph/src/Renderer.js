@@ -1,19 +1,19 @@
 import ResourceLoader from './ResourceLoader';
 
-/**
- * Create a new Renderer instance.
- * @param {object} [loader] - Optional loader instance for
- *   image and href URL sanitization. If not specified, a
- *   standard loader instance will be generated.
- * @constructor
- */
-export default function Renderer(loader) {
-  this._el = null;
-  this._bgcolor = null;
-  this._loader = new ResourceLoader(loader);
-}
+export default class Renderer {
+  /**
+   * Create a new Renderer instance.
+   * @param {object} [loader] - Optional loader instance for
+   *   image and href URL sanitization. If not specified, a
+   *   standard loader instance will be generated.
+   * @constructor
+   */
+  constructor(loader) {
+    this._el = null;
+    this._bgcolor = null;
+    this._loader = new ResourceLoader(loader);
+  }
 
-Renderer.prototype = {
   /**
    * Initialize a new Renderer instance.
    * @param {DOMElement} el - The containing DOM element for the display.
@@ -28,7 +28,7 @@ Renderer.prototype = {
   initialize(el, width, height, origin, scaleFactor) {
     this._el = el;
     return this.resize(width, height, origin, scaleFactor);
-  },
+  }
 
   /**
    * Returns the parent container element for a visualization.
@@ -36,7 +36,7 @@ Renderer.prototype = {
    */
   element() {
     return this._el;
-  },
+  }
 
   /**
    * Returns the scene element (e.g., canvas or SVG) of the visualization
@@ -45,7 +45,7 @@ Renderer.prototype = {
    */
   canvas() {
     return this._el && this._el.firstChild;
-  },
+  }
 
   /**
    * Get / set the background color.
@@ -54,7 +54,7 @@ Renderer.prototype = {
     if (arguments.length === 0) return this._bgcolor;
     this._bgcolor = bgcolor;
     return this;
-  },
+  }
 
   /**
    * Resize the display.
@@ -72,7 +72,7 @@ Renderer.prototype = {
     this._origin = origin || [0, 0];
     this._scale = scaleFactor || 1;
     return this;
-  },
+  }
 
   /**
    * Report a dirty item whose bounds should be redrawn.
@@ -80,7 +80,7 @@ Renderer.prototype = {
    * incremental should implement this method.
    * @param {Item} item - The dirty item whose bounds should be redrawn.
    */
-  dirty(/*item*/) {},
+  dirty( /*item*/) { }
 
   /**
    * Render an input scenegraph, potentially with a set of dirty items.
@@ -99,7 +99,7 @@ Renderer.prototype = {
 
     // bind arguments into a render call, and cache it
     // this function may be subsequently called for async redraw
-    r._call = function() { r._render(scene, markTypes); };
+    r._call = function () { r._render(scene, markTypes); };
 
     // invoke the renderer
     r._call();
@@ -109,7 +109,7 @@ Renderer.prototype = {
     r._call = null;
 
     return r;
-  },
+  }
 
   /**
    * Internal rendering method. Renderer subclasses should override this
@@ -118,9 +118,9 @@ Renderer.prototype = {
    * @param {Array} markTypes - Array of the mark types to render.
    *                            If undefined, render all mark types
    */
-  _render(/*scene, markTypes*/) {
+  _render( /*scene, markTypes*/) {
     // subclasses to override
-  },
+  }
 
   /**
    * Asynchronous rendering method. Similar to render, but returns a Promise
@@ -137,7 +137,7 @@ Renderer.prototype = {
     return this._ready
       ? this._ready.then(() => r)
       : Promise.resolve(r);
-  },
+  }
 
   /**
    * Internal method for asynchronous resource loading.
@@ -148,8 +148,7 @@ Renderer.prototype = {
    * @return {Promise} - A Promise that resolves to the requested resource.
    */
   _load(method, uri) {
-    var r = this,
-        p = r._loader[method](uri);
+    var r = this, p = r._loader[method](uri);
 
     if (!r._ready) {
       // re-render the scene when loading completes
@@ -162,7 +161,7 @@ Renderer.prototype = {
     }
 
     return p;
-  },
+  }
 
   /**
    * Sanitize a URL to include as a hyperlink in the rendered scene.
@@ -173,7 +172,7 @@ Renderer.prototype = {
    */
   sanitizeURL(uri) {
     return this._load('sanitizeURL', uri);
-  },
+  }
 
   /**
    * Requests an image to include in the rendered scene.
@@ -185,4 +184,5 @@ Renderer.prototype = {
   loadImage(uri) {
     return this._load('loadImage', uri);
   }
-};
+}
+
