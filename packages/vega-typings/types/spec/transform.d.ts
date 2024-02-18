@@ -717,6 +717,7 @@ export interface WindowTransform {
   sort?: Compare;
   groupby?: FieldRef[] | SignalRef;
   ops?: (AggregateOp | WindowOnlyOp | SignalRef)[];
+  aggregate_params?: number[];
   params?: (number | SignalRef | null)[] | SignalRef;
   fields?: (FieldRef | null)[] | SignalRef;
   as?: (string | SignalRef | null)[] | SignalRef;
