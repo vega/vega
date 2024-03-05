@@ -42,7 +42,7 @@
     "vega-hierarchy": "~4.1.1",
     "vega-label": "~1.2.1",
     "vega-loader": "~4.5.1",
-    "vega-parser": "~6.2.1",
+    "vega-parser": "~6.3.0",
     "vega-projection": "~1.6.0",
     "vega-regression": "~1.2.0",
     "vega-runtime": "~6.1.4",
