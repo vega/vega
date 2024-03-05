@@ -125,14 +125,14 @@
     console[method].apply(console, args); // eslint-disable-line no-console
   }
 
-  const None$2 = 0;
+  const None$3 = 0;
   const Error$1 = 1;
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
   function logger(_, method) {
     let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
-    let level = _ || None$2;
+    let level = _ || None$3;
     return {
       level(_) {
         if (arguments.length) {
@@ -302,7 +302,7 @@
     return typeof _ === 'function';
   }
   const DESCENDING = 'descending';
-  function compare$1(fields, orders, opt) {
+  function compare$2(fields, orders, opt) {
     opt = opt || {};
     orders = array$2(orders) || [];
     const ord = [],
@@ -713,7 +713,7 @@
     for (let i = 0; i < n; ++i) s[_[i]] = true;
     return s;
   }
-  function truncate$1(str, length, align, ellipsis) {
+  function truncate$2(str, length, align, ellipsis) {
     const e = ellipsis != null ? ellipsis : '\u2026',
       s = str + '',
       n = s.length,
@@ -974,14 +974,14 @@
   function utcInterval(unit) {
     return utcIntervals[unit];
   }
-  function offset$3(ival, date, step) {
+  function offset$4(ival, date, step) {
     return ival ? ival.offset(date, step) : undefined;
   }
   function timeOffset(unit, date, step) {
-    return offset$3(timeInterval(unit), date, step);
+    return offset$4(timeInterval(unit), date, step);
   }
   function utcOffset(unit, date, step) {
-    return offset$3(utcInterval(unit), date, step);
+    return offset$4(utcInterval(unit), date, step);
   }
   function sequence$1(ival, start, stop, step) {
     return ival ? ival.range(start, stop, step) : undefined;
@@ -1492,11 +1492,11 @@
     const reader = formats$1(schema.type || 'json');
     if (!reader) error('Unknown data format type: ' + schema.type);
     data = reader(data, schema);
-    if (schema.parse) parse$6(data, schema.parse, timeParser, utcParser);
+    if (schema.parse) parse$7(data, schema.parse, timeParser, utcParser);
     if (has$1(data, 'columns')) delete data.columns;
     return data;
   }
-  function parse$6(data, types, timeParser, utcParser) {
+  function parse$7(data, types, timeParser, utcParser) {
     if (!data.length) return; // early exit for empty data
 
     const locale = timeFormatDefaultLocale();
@@ -2155,7 +2155,7 @@
    *   listen for changes to upstream operators included as parameters.
    * @return {Operator} - The added operator.
    */
-  function add$2(init, update, params, react) {
+  function add$3(init, update, params, react) {
     let shift = 1,
       op;
     if (init instanceof Operator) {
@@ -2341,7 +2341,7 @@
     }
     return s;
   }
-  function parse$5(data, format) {
+  function parse$6(data, format) {
     const locale = this.locale();
     return read(data, format, locale.timeParse, locale.utcParse);
   }
@@ -3514,7 +3514,7 @@
      */
     cleanThreshold: 1e4,
     // OPERATOR REGISTRATION
-    add: add$2,
+    add: add$3,
     connect,
     rank,
     rerank,
@@ -3525,7 +3525,7 @@
     changeset,
     // DATA LOADING
     ingest,
-    parse: parse$5,
+    parse: parse$6,
     preload,
     request,
     // EVENT HANDLING
@@ -4965,7 +4965,7 @@
     this.missing = 0;
     this._ops.forEach(op => op.aggregate_param == null ? op.init(this) : op.init(this, op.aggregate_param));
   }
-  function add$1(v, t) {
+  function add$2(v, t) {
     if (v == null || v === '') {
       ++this.missing;
       return;
@@ -4998,7 +4998,7 @@
       this.init();
     }
     ctr.prototype.init = init;
-    ctr.prototype.add = add$1;
+    ctr.prototype.add = add$2;
     ctr.prototype.rem = rem;
     ctr.prototype.set = set$2;
     ctr.prototype.get = get;
@@ -5675,7 +5675,7 @@
   }
   inherits(Compare$1, Operator);
   function update$5(_) {
-    return this.value && !_.modified() ? this.value : compare$1(_.fields, _.orders);
+    return this.value && !_.modified() ? this.value : compare$2(_.fields, _.orders);
   }
 
   /**
@@ -5890,7 +5890,7 @@
    *   source data for a Pulse object.
    * @return {object} - The output distribution object.
    */
-  function parse$4(def, data) {
+  function parse$5(def, data) {
     const func = def[FUNCTION];
     if (!has$1(Distributions, func)) {
       error('Unknown distribution function: ' + func);
@@ -5904,7 +5904,7 @@
 
       // if distribution mixture, recurse to parse each definition
       else if (name === DISTRIBUTIONS) {
-        d[name](def[name].map(_ => parse$4(_, data)));
+        d[name](def[name].map(_ => parse$5(_, data)));
       }
 
       // otherwise, simply set the parameter
@@ -6054,7 +6054,7 @@
     transform(_, pulse) {
       const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
       if (!this.value || pulse.changed() || _.modified()) {
-        const dist = parse$4(_.distribution, source$1(pulse)),
+        const dist = parse$5(_.distribution, source$1(pulse)),
           minsteps = _.steps || _.minsteps || 25,
           maxsteps = _.steps || _.maxsteps || 200;
         let method = _.method || 'pdf';
@@ -6765,7 +6765,7 @@
     min: d3Array.min,
     max: d3Array.max
   };
-  const Empty$1 = [];
+  const Empty$2 = [];
 
   /**
    * Impute missing values.
@@ -6902,7 +6902,7 @@
       t = data[i];
       k = key(t);
       j = kMap[k] || (kMap[k] = domain.push(k));
-      gKey = (gVals = groupby ? groupby.map(get) : Empty$1) + '';
+      gKey = (gVals = groupby ? groupby.map(get) : Empty$2) + '';
       if (!(group = gMap[gKey])) {
         group = gMap[gKey] = [];
         groups.push(group);
@@ -7423,7 +7423,7 @@
       key: _.key,
       groupby: _.groupby,
       ops: keys.map(() => op),
-      fields: keys.map(k => get$3(k, key, value, fields)),
+      fields: keys.map(k => get$4(k, key, value, fields)),
       as: keys.map(k => k + ''),
       modified: _.modified.bind(_)
     };
@@ -7431,7 +7431,7 @@
 
   // Generate aggregate field accessor.
   // Output NaN for non-existent values; aggregator will ignore!
-  function get$3(k, key, value, fields) {
+  function get$4(k, key, value, fields) {
     return accessor(d => key(d) === k ? value(d) : NaN, fields, k + '');
   }
 
@@ -8752,7 +8752,7 @@
     };
     return scale;
   }
-  function point$1() {
+  function point$2() {
     return pointish(band().paddingInner(1));
   }
   var map = Array.prototype.map;
@@ -8838,7 +8838,7 @@
    * - `"log"` - the scale performs a logarithmic transform of the continuous domain.
    * - `"temporal"` - the scale domain is defined over date-time values.
    */
-  function scale$4(type, scale, metadata) {
+  function scale$5(type, scale, metadata) {
     if (arguments.length > 1) {
       scales.set(type, create$2(type, scale, metadata));
       return this;
@@ -8848,42 +8848,42 @@
   }
 
   // identity scale
-  scale$4(Identity, $__namespace.scaleIdentity);
+  scale$5(Identity, $__namespace.scaleIdentity);
 
   // continuous scales
-  scale$4(Linear, $__namespace.scaleLinear, Continuous);
-  scale$4(Log, $__namespace.scaleLog, [Continuous, Log]);
-  scale$4(Pow, $__namespace.scalePow, Continuous);
-  scale$4(Sqrt, $__namespace.scaleSqrt, Continuous);
-  scale$4(Symlog, $__namespace.scaleSymlog, Continuous);
-  scale$4(Time, $__namespace.scaleTime, [Continuous, Temporal]);
-  scale$4(UTC, $__namespace.scaleUtc, [Continuous, Temporal]);
+  scale$5(Linear, $__namespace.scaleLinear, Continuous);
+  scale$5(Log, $__namespace.scaleLog, [Continuous, Log]);
+  scale$5(Pow, $__namespace.scalePow, Continuous);
+  scale$5(Sqrt, $__namespace.scaleSqrt, Continuous);
+  scale$5(Symlog, $__namespace.scaleSymlog, Continuous);
+  scale$5(Time, $__namespace.scaleTime, [Continuous, Temporal]);
+  scale$5(UTC, $__namespace.scaleUtc, [Continuous, Temporal]);
 
   // sequential scales
-  scale$4(Sequential, $__namespace.scaleSequential, [Continuous, Interpolating]); // backwards compat
-  scale$4(`${Sequential}-${Linear}`, $__namespace.scaleSequential, [Continuous, Interpolating]);
-  scale$4(`${Sequential}-${Log}`, $__namespace.scaleSequentialLog, [Continuous, Interpolating, Log]);
-  scale$4(`${Sequential}-${Pow}`, $__namespace.scaleSequentialPow, [Continuous, Interpolating]);
-  scale$4(`${Sequential}-${Sqrt}`, $__namespace.scaleSequentialSqrt, [Continuous, Interpolating]);
-  scale$4(`${Sequential}-${Symlog}`, $__namespace.scaleSequentialSymlog, [Continuous, Interpolating]);
+  scale$5(Sequential, $__namespace.scaleSequential, [Continuous, Interpolating]); // backwards compat
+  scale$5(`${Sequential}-${Linear}`, $__namespace.scaleSequential, [Continuous, Interpolating]);
+  scale$5(`${Sequential}-${Log}`, $__namespace.scaleSequentialLog, [Continuous, Interpolating, Log]);
+  scale$5(`${Sequential}-${Pow}`, $__namespace.scaleSequentialPow, [Continuous, Interpolating]);
+  scale$5(`${Sequential}-${Sqrt}`, $__namespace.scaleSequentialSqrt, [Continuous, Interpolating]);
+  scale$5(`${Sequential}-${Symlog}`, $__namespace.scaleSequentialSymlog, [Continuous, Interpolating]);
 
   // diverging scales
-  scale$4(`${Diverging}-${Linear}`, $__namespace.scaleDiverging, [Continuous, Interpolating]);
-  scale$4(`${Diverging}-${Log}`, $__namespace.scaleDivergingLog, [Continuous, Interpolating, Log]);
-  scale$4(`${Diverging}-${Pow}`, $__namespace.scaleDivergingPow, [Continuous, Interpolating]);
-  scale$4(`${Diverging}-${Sqrt}`, $__namespace.scaleDivergingSqrt, [Continuous, Interpolating]);
-  scale$4(`${Diverging}-${Symlog}`, $__namespace.scaleDivergingSymlog, [Continuous, Interpolating]);
+  scale$5(`${Diverging}-${Linear}`, $__namespace.scaleDiverging, [Continuous, Interpolating]);
+  scale$5(`${Diverging}-${Log}`, $__namespace.scaleDivergingLog, [Continuous, Interpolating, Log]);
+  scale$5(`${Diverging}-${Pow}`, $__namespace.scaleDivergingPow, [Continuous, Interpolating]);
+  scale$5(`${Diverging}-${Sqrt}`, $__namespace.scaleDivergingSqrt, [Continuous, Interpolating]);
+  scale$5(`${Diverging}-${Symlog}`, $__namespace.scaleDivergingSymlog, [Continuous, Interpolating]);
 
   // discretizing scales
-  scale$4(Quantile, $__namespace.scaleQuantile, [Discretizing, Quantile]);
-  scale$4(Quantize, $__namespace.scaleQuantize, Discretizing);
-  scale$4(Threshold, $__namespace.scaleThreshold, Discretizing);
+  scale$5(Quantile, $__namespace.scaleQuantile, [Discretizing, Quantile]);
+  scale$5(Quantize, $__namespace.scaleQuantize, Discretizing);
+  scale$5(Threshold, $__namespace.scaleThreshold, Discretizing);
 
   // discrete scales
-  scale$4(BinOrdinal, scaleBinOrdinal, [Discrete$1, Discretizing]);
-  scale$4(Ordinal, $__namespace.scaleOrdinal, Discrete$1);
-  scale$4(Band, band, Discrete$1);
-  scale$4(Point, point$1, Discrete$1);
+  scale$5(BinOrdinal, scaleBinOrdinal, [Discrete$1, Discretizing]);
+  scale$5(Ordinal, $__namespace.scaleOrdinal, Discrete$1);
+  scale$5(Band, band, Discrete$1);
+  scale$5(Point, point$2, Discrete$1);
   function isValidScaleType(type) {
     return scales.has(type);
   }
@@ -8937,7 +8937,7 @@
     } else {
       i = (t = scale$1.type).indexOf('-');
       t = i < 0 ? t : t.slice(i + 1);
-      s = scale$4(t)().domain([min, max]).range([0, 1]);
+      s = scale$5(t)().domain([min, max]).range([0, 1]);
       scaleProps.forEach(m => scale$1[m] ? s[m](scale$1[m]()) : 0);
       return s;
     }
@@ -9181,7 +9181,7 @@
     };
     return values ? ticks.filter(test) : test;
   }
-  const symbols$1 = {
+  const symbols$2 = {
     [Quantile]: 'quantiles',
     [Quantize]: 'thresholds',
     [Threshold]: 'domain'
@@ -9191,7 +9191,7 @@
     [Quantize]: 'domain'
   };
   function labelValues(scale, count) {
-    return scale.bins ? binValues(scale.bins) : scale.type === Log ? tickLog(scale, count, true) : symbols$1[scale.type] ? thresholdValues(scale[symbols$1[scale.type]]()) : tickValues(scale, count);
+    return scale.bins ? binValues(scale.bins) : scale.type === Log ? tickLog(scale, count, true) : symbols$2[scale.type] ? thresholdValues(scale[symbols$2[scale.type]]()) : tickValues(scale, count);
   }
   function thresholdFormat(locale, scale, specifier) {
     const _ = scale[formats[scale.type]](),
@@ -9215,18 +9215,18 @@
     values.max = peek$1(bins);
     return values;
   }
-  const isDiscreteRange = scale => symbols$1[scale.type] || scale.bins;
+  const isDiscreteRange = scale => symbols$2[scale.type] || scale.bins;
   function labelFormat(locale, scale, count, type, specifier, formatType, noSkip) {
     const format = formats[scale.type] && formatType !== Time && formatType !== UTC ? thresholdFormat(locale, scale, specifier) : tickFormat(locale, scale, count, specifier, formatType, noSkip);
     return type === SymbolLegend && isDiscreteRange(scale) ? formatRange(format) : type === DiscreteLegend ? formatDiscrete(format) : formatPoint(format);
   }
   const formatRange = format => (value, index, array) => {
-    const limit = get$2(array[index + 1], get$2(array.max, +Infinity)),
+    const limit = get$3(array[index + 1], get$3(array.max, +Infinity)),
       lo = formatValue$1(value, format),
       hi = formatValue$1(limit, format);
     return lo && hi ? lo + ' \u2013 ' + hi : hi ? '< ' + hi : '\u2265 ' + lo;
   };
-  const get$2 = (value, dflt) => value != null ? value : dflt;
+  const get$3 = (value, dflt) => value != null ? value : dflt;
   const formatDiscrete = format => (value, index) => index ? format(value) : null;
   const formatPoint = format => value => format(value);
   const formatValue$1 = (value, format) => Number.isFinite(value) ? format(value) : null;
@@ -9280,6 +9280,11777 @@
     }
   }
 
+  let gradient_id$1 = 0;
+  const patternPrefix$1 = 'p_';
+  function isGradient$1(value) {
+    return value && value.gradient;
+  }
+  function gradientRef$1(g, defs, base) {
+    const type = g.gradient;
+    let id = g.id,
+      prefix = type === 'radial' ? patternPrefix$1 : '';
+
+    // check id, assign default values as needed
+    if (!id) {
+      id = g.id = 'gradient_' + gradient_id$1++;
+      if (type === 'radial') {
+        g.x1 = get$2(g.x1, 0.5);
+        g.y1 = get$2(g.y1, 0.5);
+        g.r1 = get$2(g.r1, 0);
+        g.x2 = get$2(g.x2, 0.5);
+        g.y2 = get$2(g.y2, 0.5);
+        g.r2 = get$2(g.r2, 0.5);
+        prefix = patternPrefix$1;
+      } else {
+        g.x1 = get$2(g.x1, 0);
+        g.y1 = get$2(g.y1, 0);
+        g.x2 = get$2(g.x2, 1);
+        g.y2 = get$2(g.y2, 0);
+      }
+    }
+
+    // register definition
+    defs[id] = g;
+
+    // return url reference
+    return 'url(' + (base || '') + '#' + prefix + id + ')';
+  }
+  function get$2(val, def) {
+    return val != null ? val : def;
+  }
+  function Gradient$2(p0, p1) {
+    var stops = [],
+      gradient;
+    return gradient = {
+      gradient: 'linear',
+      x1: p0 ? p0[0] : 0,
+      y1: p0 ? p0[1] : 0,
+      x2: p1 ? p1[0] : 1,
+      y2: p1 ? p1[1] : 0,
+      stops: stops,
+      stop: function (offset, color) {
+        stops.push({
+          offset: offset,
+          color: color
+        });
+        return gradient;
+      }
+    };
+  }
+  const lookup$5 = {
+    'basis': {
+      curve: d3Shape.curveBasis
+    },
+    'basis-closed': {
+      curve: d3Shape.curveBasisClosed
+    },
+    'basis-open': {
+      curve: d3Shape.curveBasisOpen
+    },
+    'bundle': {
+      curve: d3Shape.curveBundle,
+      tension: 'beta',
+      value: 0.85
+    },
+    'cardinal': {
+      curve: d3Shape.curveCardinal,
+      tension: 'tension',
+      value: 0
+    },
+    'cardinal-open': {
+      curve: d3Shape.curveCardinalOpen,
+      tension: 'tension',
+      value: 0
+    },
+    'cardinal-closed': {
+      curve: d3Shape.curveCardinalClosed,
+      tension: 'tension',
+      value: 0
+    },
+    'catmull-rom': {
+      curve: d3Shape.curveCatmullRom,
+      tension: 'alpha',
+      value: 0.5
+    },
+    'catmull-rom-closed': {
+      curve: d3Shape.curveCatmullRomClosed,
+      tension: 'alpha',
+      value: 0.5
+    },
+    'catmull-rom-open': {
+      curve: d3Shape.curveCatmullRomOpen,
+      tension: 'alpha',
+      value: 0.5
+    },
+    'linear': {
+      curve: d3Shape.curveLinear
+    },
+    'linear-closed': {
+      curve: d3Shape.curveLinearClosed
+    },
+    'monotone': {
+      horizontal: d3Shape.curveMonotoneY,
+      vertical: d3Shape.curveMonotoneX
+    },
+    'natural': {
+      curve: d3Shape.curveNatural
+    },
+    'step': {
+      curve: d3Shape.curveStep
+    },
+    'step-after': {
+      curve: d3Shape.curveStepAfter
+    },
+    'step-before': {
+      curve: d3Shape.curveStepBefore
+    }
+  };
+  function curves$1(type, orientation, tension) {
+    var entry = has$1(lookup$5, type) && lookup$5[type],
+      curve = null;
+    if (entry) {
+      curve = entry.curve || entry[orientation || 'vertical'];
+      if (entry.tension && tension != null) {
+        curve = curve[entry.tension](tension);
+      }
+    }
+    return curve;
+  }
+  const paramCounts$1 = {
+    m: 2,
+    l: 2,
+    h: 1,
+    v: 1,
+    z: 0,
+    c: 6,
+    s: 4,
+    q: 4,
+    t: 2,
+    a: 7
+  };
+  const commandPattern$1 = /[mlhvzcsqta]([^mlhvzcsqta]+|$)/gi;
+  const numberPattern$1 = /^[+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)|([0-9]+))([eE][+-]?[0-9]+)?/;
+  const spacePattern$1 = /^((\s+,?\s*)|(,\s*))/;
+  const flagPattern$1 = /^[01]/;
+  function parse$4(path) {
+    const commands = [];
+    const matches = path.match(commandPattern$1) || [];
+    matches.forEach(str => {
+      let cmd = str[0];
+      const type = cmd.toLowerCase();
+
+      // parse parameters
+      const paramCount = paramCounts$1[type];
+      const params = parseParams$1(type, paramCount, str.slice(1).trim());
+      const count = params.length;
+
+      // error checking based on parameter count
+      if (count < paramCount || count && count % paramCount !== 0) {
+        throw Error('Invalid SVG path, incorrect parameter count');
+      }
+
+      // register the command
+      commands.push([cmd, ...params.slice(0, paramCount)]);
+
+      // exit now if we're done, also handles zero-param 'z'
+      if (count === paramCount) {
+        return;
+      }
+
+      // handle implicit line-to
+      if (type === 'm') {
+        cmd = cmd === 'M' ? 'L' : 'l';
+      }
+
+      // repeat command when given extended param list
+      for (let i = paramCount; i < count; i += paramCount) {
+        commands.push([cmd, ...params.slice(i, i + paramCount)]);
+      }
+    });
+    return commands;
+  }
+  function parseParams$1(type, paramCount, segment) {
+    const params = [];
+    for (let index = 0; paramCount && index < segment.length;) {
+      for (let i = 0; i < paramCount; ++i) {
+        const pattern = type === 'a' && (i === 3 || i === 4) ? flagPattern$1 : numberPattern$1;
+        const match = segment.slice(index).match(pattern);
+        if (match === null) {
+          throw Error('Invalid SVG path, incorrect parameter type');
+        }
+        index += match[0].length;
+        params.push(+match[0]);
+        const ws = segment.slice(index).match(spacePattern$1);
+        if (ws !== null) {
+          index += ws[0].length;
+        }
+      }
+    }
+    return params;
+  }
+  const DegToRad$1 = Math.PI / 180;
+  const Epsilon$1 = 1e-14;
+  const HalfPi$1 = Math.PI / 2;
+  const Tau$1 = Math.PI * 2;
+  const HalfSqrt3$1 = Math.sqrt(3) / 2;
+  var segmentCache$1 = {};
+  var bezierCache$1 = {};
+  var join$2 = [].join;
+
+  // Copied from Inkscape svgtopdf, thanks!
+  function segments$1(x, y, rx, ry, large, sweep, rotateX, ox, oy) {
+    const key = join$2.call(arguments);
+    if (segmentCache$1[key]) {
+      return segmentCache$1[key];
+    }
+    const th = rotateX * DegToRad$1;
+    const sin_th = Math.sin(th);
+    const cos_th = Math.cos(th);
+    rx = Math.abs(rx);
+    ry = Math.abs(ry);
+    const px = cos_th * (ox - x) * 0.5 + sin_th * (oy - y) * 0.5;
+    const py = cos_th * (oy - y) * 0.5 - sin_th * (ox - x) * 0.5;
+    let pl = px * px / (rx * rx) + py * py / (ry * ry);
+    if (pl > 1) {
+      pl = Math.sqrt(pl);
+      rx *= pl;
+      ry *= pl;
+    }
+    const a00 = cos_th / rx;
+    const a01 = sin_th / rx;
+    const a10 = -sin_th / ry;
+    const a11 = cos_th / ry;
+    const x0 = a00 * ox + a01 * oy;
+    const y0 = a10 * ox + a11 * oy;
+    const x1 = a00 * x + a01 * y;
+    const y1 = a10 * x + a11 * y;
+    const d = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
+    let sfactor_sq = 1 / d - 0.25;
+    if (sfactor_sq < 0) sfactor_sq = 0;
+    let sfactor = Math.sqrt(sfactor_sq);
+    if (sweep == large) sfactor = -sfactor;
+    const xc = 0.5 * (x0 + x1) - sfactor * (y1 - y0);
+    const yc = 0.5 * (y0 + y1) + sfactor * (x1 - x0);
+    const th0 = Math.atan2(y0 - yc, x0 - xc);
+    const th1 = Math.atan2(y1 - yc, x1 - xc);
+    let th_arc = th1 - th0;
+    if (th_arc < 0 && sweep === 1) {
+      th_arc += Tau$1;
+    } else if (th_arc > 0 && sweep === 0) {
+      th_arc -= Tau$1;
+    }
+    const segs = Math.ceil(Math.abs(th_arc / (HalfPi$1 + 0.001)));
+    const result = [];
+    for (let i = 0; i < segs; ++i) {
+      const th2 = th0 + i * th_arc / segs;
+      const th3 = th0 + (i + 1) * th_arc / segs;
+      result[i] = [xc, yc, th2, th3, rx, ry, sin_th, cos_th];
+    }
+    return segmentCache$1[key] = result;
+  }
+  function bezier$1(params) {
+    const key = join$2.call(params);
+    if (bezierCache$1[key]) {
+      return bezierCache$1[key];
+    }
+    var cx = params[0],
+      cy = params[1],
+      th0 = params[2],
+      th1 = params[3],
+      rx = params[4],
+      ry = params[5],
+      sin_th = params[6],
+      cos_th = params[7];
+    const a00 = cos_th * rx;
+    const a01 = -sin_th * ry;
+    const a10 = sin_th * rx;
+    const a11 = cos_th * ry;
+    const cos_th0 = Math.cos(th0);
+    const sin_th0 = Math.sin(th0);
+    const cos_th1 = Math.cos(th1);
+    const sin_th1 = Math.sin(th1);
+    const th_half = 0.5 * (th1 - th0);
+    const sin_th_h2 = Math.sin(th_half * 0.5);
+    const t = 8 / 3 * sin_th_h2 * sin_th_h2 / Math.sin(th_half);
+    const x1 = cx + cos_th0 - t * sin_th0;
+    const y1 = cy + sin_th0 + t * cos_th0;
+    const x3 = cx + cos_th1;
+    const y3 = cy + sin_th1;
+    const x2 = x3 + t * sin_th1;
+    const y2 = y3 - t * cos_th1;
+    return bezierCache$1[key] = [a00 * x1 + a01 * y1, a10 * x1 + a11 * y1, a00 * x2 + a01 * y2, a10 * x2 + a11 * y2, a00 * x3 + a01 * y3, a10 * x3 + a11 * y3];
+  }
+  const temp$1 = ['l', 0, 0, 0, 0, 0, 0, 0];
+  function scale$1$2(current, sX, sY) {
+    const c = temp$1[0] = current[0];
+    if (c === 'a' || c === 'A') {
+      temp$1[1] = sX * current[1];
+      temp$1[2] = sY * current[2];
+      temp$1[3] = current[3];
+      temp$1[4] = current[4];
+      temp$1[5] = current[5];
+      temp$1[6] = sX * current[6];
+      temp$1[7] = sY * current[7];
+    } else if (c === 'h' || c === 'H') {
+      temp$1[1] = sX * current[1];
+    } else if (c === 'v' || c === 'V') {
+      temp$1[1] = sY * current[1];
+    } else {
+      for (var i = 1, n = current.length; i < n; ++i) {
+        temp$1[i] = (i % 2 == 1 ? sX : sY) * current[i];
+      }
+    }
+    return temp$1;
+  }
+  function pathRender$1(context, path, l, t, sX, sY) {
+    var current,
+      // current instruction
+      previous = null,
+      x = 0,
+      // current x
+      y = 0,
+      // current y
+      controlX = 0,
+      // current control point x
+      controlY = 0,
+      // current control point y
+      tempX,
+      tempY,
+      tempControlX,
+      tempControlY,
+      anchorX = 0,
+      anchorY = 0;
+    if (l == null) l = 0;
+    if (t == null) t = 0;
+    if (sX == null) sX = 1;
+    if (sY == null) sY = sX;
+    if (context.beginPath) context.beginPath();
+    for (var i = 0, len = path.length; i < len; ++i) {
+      current = path[i];
+      if (sX !== 1 || sY !== 1) {
+        current = scale$1$2(current, sX, sY);
+      }
+      switch (current[0]) {
+        // first letter
+
+        case 'l':
+          // lineto, relative
+          x += current[1];
+          y += current[2];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'L':
+          // lineto, absolute
+          x = current[1];
+          y = current[2];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'h':
+          // horizontal lineto, relative
+          x += current[1];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'H':
+          // horizontal lineto, absolute
+          x = current[1];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'v':
+          // vertical lineto, relative
+          y += current[1];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'V':
+          // verical lineto, absolute
+          y = current[1];
+          context.lineTo(x + l, y + t);
+          break;
+        case 'm':
+          // moveTo, relative
+          x += current[1];
+          y += current[2];
+          anchorX = x;
+          anchorY = y;
+          context.moveTo(x + l, y + t);
+          break;
+        case 'M':
+          // moveTo, absolute
+          x = current[1];
+          y = current[2];
+          anchorX = x;
+          anchorY = y;
+          context.moveTo(x + l, y + t);
+          break;
+        case 'c':
+          // bezierCurveTo, relative
+          tempX = x + current[5];
+          tempY = y + current[6];
+          controlX = x + current[3];
+          controlY = y + current[4];
+          context.bezierCurveTo(x + current[1] + l,
+          // x1
+          y + current[2] + t,
+          // y1
+          controlX + l,
+          // x2
+          controlY + t,
+          // y2
+          tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          break;
+        case 'C':
+          // bezierCurveTo, absolute
+          x = current[5];
+          y = current[6];
+          controlX = current[3];
+          controlY = current[4];
+          context.bezierCurveTo(current[1] + l, current[2] + t, controlX + l, controlY + t, x + l, y + t);
+          break;
+        case 's':
+          // shorthand cubic bezierCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+          context.bezierCurveTo(controlX + l, controlY + t, x + current[1] + l, y + current[2] + t, tempX + l, tempY + t);
+
+          // set control point to 2nd one of this command
+          // the first control point is assumed to be the reflection of
+          // the second control point on the previous command relative
+          // to the current point.
+          controlX = x + current[1];
+          controlY = y + current[2];
+          x = tempX;
+          y = tempY;
+          break;
+        case 'S':
+          // shorthand cubic bezierCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+          context.bezierCurveTo(controlX + l, controlY + t, current[1] + l, current[2] + t, tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          // set control point to 2nd one of this command
+          // the first control point is assumed to be the reflection of
+          // the second control point on the previous command relative
+          // to the current point.
+          controlX = current[1];
+          controlY = current[2];
+          break;
+        case 'q':
+          // quadraticCurveTo, relative
+          // transform to absolute x,y
+          tempX = x + current[3];
+          tempY = y + current[4];
+          controlX = x + current[1];
+          controlY = y + current[2];
+          context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          break;
+        case 'Q':
+          // quadraticCurveTo, absolute
+          tempX = current[3];
+          tempY = current[4];
+          context.quadraticCurveTo(current[1] + l, current[2] + t, tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          controlX = current[1];
+          controlY = current[2];
+          break;
+        case 't':
+          // shorthand quadraticCurveTo, relative
+
+          // transform to absolute x,y
+          tempX = x + current[1];
+          tempY = y + current[2];
+          if (previous[0].match(/[QqTt]/) === null) {
+            // If there is no previous command or if the previous command was not a Q, q, T or t,
+            // assume the control point is coincident with the current point
+            controlX = x;
+            controlY = y;
+          } else if (previous[0] === 't') {
+            // calculate reflection of previous control points for t
+            controlX = 2 * x - tempControlX;
+            controlY = 2 * y - tempControlY;
+          } else if (previous[0] === 'q') {
+            // calculate reflection of previous control points for q
+            controlX = 2 * x - controlX;
+            controlY = 2 * y - controlY;
+          }
+          tempControlX = controlX;
+          tempControlY = controlY;
+          context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          controlX = x + current[1];
+          controlY = y + current[2];
+          break;
+        case 'T':
+          tempX = current[1];
+          tempY = current[2];
+
+          // calculate reflection of previous control points
+          controlX = 2 * x - controlX;
+          controlY = 2 * y - controlY;
+          context.quadraticCurveTo(controlX + l, controlY + t, tempX + l, tempY + t);
+          x = tempX;
+          y = tempY;
+          break;
+        case 'a':
+          drawArc$1(context, x + l, y + t, [current[1], current[2], current[3], current[4], current[5], current[6] + x + l, current[7] + y + t]);
+          x += current[6];
+          y += current[7];
+          break;
+        case 'A':
+          drawArc$1(context, x + l, y + t, [current[1], current[2], current[3], current[4], current[5], current[6] + l, current[7] + t]);
+          x = current[6];
+          y = current[7];
+          break;
+        case 'z':
+        case 'Z':
+          x = anchorX;
+          y = anchorY;
+          context.closePath();
+          break;
+      }
+      previous = current;
+    }
+  }
+  function drawArc$1(context, x, y, coords) {
+    const seg = segments$1(coords[5],
+    // end x
+    coords[6],
+    // end y
+    coords[0],
+    // radius x
+    coords[1],
+    // radius y
+    coords[3],
+    // large flag
+    coords[4],
+    // sweep flag
+    coords[2],
+    // rotation
+    x, y);
+    for (let i = 0; i < seg.length; ++i) {
+      const bez = bezier$1(seg[i]);
+      context.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5]);
+    }
+  }
+  const Tan30$1 = 0.5773502691896257;
+  const builtins$1 = {
+    'circle': {
+      draw: function (context, size) {
+        const r = Math.sqrt(size) / 2;
+        context.moveTo(r, 0);
+        context.arc(0, 0, r, 0, Tau$1);
+      }
+    },
+    'cross': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          s = r / 2.5;
+        context.moveTo(-r, -s);
+        context.lineTo(-r, s);
+        context.lineTo(-s, s);
+        context.lineTo(-s, r);
+        context.lineTo(s, r);
+        context.lineTo(s, s);
+        context.lineTo(r, s);
+        context.lineTo(r, -s);
+        context.lineTo(s, -s);
+        context.lineTo(s, -r);
+        context.lineTo(-s, -r);
+        context.lineTo(-s, -s);
+        context.closePath();
+      }
+    },
+    'diamond': {
+      draw: function (context, size) {
+        const r = Math.sqrt(size) / 2;
+        context.moveTo(-r, 0);
+        context.lineTo(0, -r);
+        context.lineTo(r, 0);
+        context.lineTo(0, r);
+        context.closePath();
+      }
+    },
+    'square': {
+      draw: function (context, size) {
+        var w = Math.sqrt(size),
+          x = -w / 2;
+        context.rect(x, x, w, w);
+      }
+    },
+    'arrow': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          s = r / 7,
+          t = r / 2.5,
+          v = r / 8;
+        context.moveTo(-s, r);
+        context.lineTo(s, r);
+        context.lineTo(s, -v);
+        context.lineTo(t, -v);
+        context.lineTo(0, -r);
+        context.lineTo(-t, -v);
+        context.lineTo(-s, -v);
+        context.closePath();
+      }
+    },
+    'wedge': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r,
+          o = h - r * Tan30$1,
+          b = r / 4;
+        context.moveTo(0, -h - o);
+        context.lineTo(-b, h - o);
+        context.lineTo(b, h - o);
+        context.closePath();
+      }
+    },
+    'triangle': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r,
+          o = h - r * Tan30$1;
+        context.moveTo(0, -h - o);
+        context.lineTo(-r, h - o);
+        context.lineTo(r, h - o);
+        context.closePath();
+      }
+    },
+    'triangle-up': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r;
+        context.moveTo(0, -h);
+        context.lineTo(-r, h);
+        context.lineTo(r, h);
+        context.closePath();
+      }
+    },
+    'triangle-down': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r;
+        context.moveTo(0, h);
+        context.lineTo(-r, -h);
+        context.lineTo(r, -h);
+        context.closePath();
+      }
+    },
+    'triangle-right': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r;
+        context.moveTo(h, 0);
+        context.lineTo(-h, -r);
+        context.lineTo(-h, r);
+        context.closePath();
+      }
+    },
+    'triangle-left': {
+      draw: function (context, size) {
+        var r = Math.sqrt(size) / 2,
+          h = HalfSqrt3$1 * r;
+        context.moveTo(-h, 0);
+        context.lineTo(h, -r);
+        context.lineTo(h, r);
+        context.closePath();
+      }
+    },
+    'stroke': {
+      draw: function (context, size) {
+        const r = Math.sqrt(size) / 2;
+        context.moveTo(-r, 0);
+        context.lineTo(r, 0);
+      }
+    }
+  };
+  function symbols$1(_) {
+    return has$1(builtins$1, _) ? builtins$1[_] : customSymbol$1(_);
+  }
+  var custom$1 = {};
+  function customSymbol$1(path) {
+    if (!has$1(custom$1, path)) {
+      const parsed = parse$4(path);
+      custom$1[path] = {
+        draw: function (context, size) {
+          pathRender$1(context, parsed, 0, 0, Math.sqrt(size) / 2);
+        }
+      };
+    }
+    return custom$1[path];
+  }
+
+  // See http://spencermortensen.com/articles/bezier-circle/
+  const C$1 = 0.448084975506; // C = 1 - c
+
+  function rectangleX$1(d) {
+    return d.x;
+  }
+  function rectangleY$1(d) {
+    return d.y;
+  }
+  function rectangleWidth$1(d) {
+    return d.width;
+  }
+  function rectangleHeight$1(d) {
+    return d.height;
+  }
+  function number$4(_) {
+    return typeof _ === 'function' ? _ : () => +_;
+  }
+  function clamp$1(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+  function vg_rect$1() {
+    var x = rectangleX$1,
+      y = rectangleY$1,
+      width = rectangleWidth$1,
+      height = rectangleHeight$1,
+      crTL = number$4(0),
+      crTR = crTL,
+      crBL = crTL,
+      crBR = crTL,
+      context = null;
+    function rectangle(_, x0, y0) {
+      var buffer,
+        x1 = x0 != null ? x0 : +x.call(this, _),
+        y1 = y0 != null ? y0 : +y.call(this, _),
+        w = +width.call(this, _),
+        h = +height.call(this, _),
+        s = Math.min(w, h) / 2,
+        tl = clamp$1(+crTL.call(this, _), 0, s),
+        tr = clamp$1(+crTR.call(this, _), 0, s),
+        bl = clamp$1(+crBL.call(this, _), 0, s),
+        br = clamp$1(+crBR.call(this, _), 0, s);
+      if (!context) context = buffer = d3Path.path();
+      if (tl <= 0 && tr <= 0 && bl <= 0 && br <= 0) {
+        context.rect(x1, y1, w, h);
+      } else {
+        var x2 = x1 + w,
+          y2 = y1 + h;
+        context.moveTo(x1 + tl, y1);
+        context.lineTo(x2 - tr, y1);
+        context.bezierCurveTo(x2 - C$1 * tr, y1, x2, y1 + C$1 * tr, x2, y1 + tr);
+        context.lineTo(x2, y2 - br);
+        context.bezierCurveTo(x2, y2 - C$1 * br, x2 - C$1 * br, y2, x2 - br, y2);
+        context.lineTo(x1 + bl, y2);
+        context.bezierCurveTo(x1 + C$1 * bl, y2, x1, y2 - C$1 * bl, x1, y2 - bl);
+        context.lineTo(x1, y1 + tl);
+        context.bezierCurveTo(x1, y1 + C$1 * tl, x1 + C$1 * tl, y1, x1 + tl, y1);
+        context.closePath();
+      }
+      if (buffer) {
+        context = null;
+        return buffer + '' || null;
+      }
+    }
+    rectangle.x = function (_) {
+      if (arguments.length) {
+        x = number$4(_);
+        return rectangle;
+      } else {
+        return x;
+      }
+    };
+    rectangle.y = function (_) {
+      if (arguments.length) {
+        y = number$4(_);
+        return rectangle;
+      } else {
+        return y;
+      }
+    };
+    rectangle.width = function (_) {
+      if (arguments.length) {
+        width = number$4(_);
+        return rectangle;
+      } else {
+        return width;
+      }
+    };
+    rectangle.height = function (_) {
+      if (arguments.length) {
+        height = number$4(_);
+        return rectangle;
+      } else {
+        return height;
+      }
+    };
+    rectangle.cornerRadius = function (tl, tr, br, bl) {
+      if (arguments.length) {
+        crTL = number$4(tl);
+        crTR = tr != null ? number$4(tr) : crTL;
+        crBR = br != null ? number$4(br) : crTL;
+        crBL = bl != null ? number$4(bl) : crTR;
+        return rectangle;
+      } else {
+        return crTL;
+      }
+    };
+    rectangle.context = function (_) {
+      if (arguments.length) {
+        context = _ == null ? null : _;
+        return rectangle;
+      } else {
+        return context;
+      }
+    };
+    return rectangle;
+  }
+  function vg_trail$1() {
+    var x,
+      y,
+      size,
+      defined,
+      context = null,
+      ready,
+      x1,
+      y1,
+      r1;
+    function point(x2, y2, w2) {
+      const r2 = w2 / 2;
+      if (ready) {
+        var ux = y1 - y2,
+          uy = x2 - x1;
+        if (ux || uy) {
+          // get normal vector
+          var ud = Math.hypot(ux, uy),
+            rx = (ux /= ud) * r1,
+            ry = (uy /= ud) * r1,
+            t = Math.atan2(uy, ux);
+
+          // draw segment
+          context.moveTo(x1 - rx, y1 - ry);
+          context.lineTo(x2 - ux * r2, y2 - uy * r2);
+          context.arc(x2, y2, r2, t - Math.PI, t);
+          context.lineTo(x1 + rx, y1 + ry);
+          context.arc(x1, y1, r1, t, t + Math.PI);
+        } else {
+          context.arc(x2, y2, r2, 0, Tau$1);
+        }
+        context.closePath();
+      } else {
+        ready = 1;
+      }
+      x1 = x2;
+      y1 = y2;
+      r1 = r2;
+    }
+    function trail(data) {
+      var i,
+        n = data.length,
+        d,
+        defined0 = false,
+        buffer;
+      if (context == null) context = buffer = d3Path.path();
+      for (i = 0; i <= n; ++i) {
+        if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+          if (defined0 = !defined0) ready = 0;
+        }
+        if (defined0) point(+x(d, i, data), +y(d, i, data), +size(d, i, data));
+      }
+      if (buffer) {
+        context = null;
+        return buffer + '' || null;
+      }
+    }
+    trail.x = function (_) {
+      if (arguments.length) {
+        x = _;
+        return trail;
+      } else {
+        return x;
+      }
+    };
+    trail.y = function (_) {
+      if (arguments.length) {
+        y = _;
+        return trail;
+      } else {
+        return y;
+      }
+    };
+    trail.size = function (_) {
+      if (arguments.length) {
+        size = _;
+        return trail;
+      } else {
+        return size;
+      }
+    };
+    trail.defined = function (_) {
+      if (arguments.length) {
+        defined = _;
+        return trail;
+      } else {
+        return defined;
+      }
+    };
+    trail.context = function (_) {
+      if (arguments.length) {
+        if (_ == null) {
+          context = null;
+        } else {
+          context = _;
+        }
+        return trail;
+      } else {
+        return context;
+      }
+    };
+    return trail;
+  }
+  function value$1$1(a, b) {
+    return a != null ? a : b;
+  }
+  const x$1 = item => item.x || 0,
+    y$1 = item => item.y || 0,
+    w$1 = item => item.width || 0,
+    h$1 = item => item.height || 0,
+    xw$1 = item => (item.x || 0) + (item.width || 0),
+    yh$1 = item => (item.y || 0) + (item.height || 0),
+    sa$1 = item => item.startAngle || 0,
+    ea$1 = item => item.endAngle || 0,
+    pa$1 = item => item.padAngle || 0,
+    ir$1 = item => item.innerRadius || 0,
+    or$1 = item => item.outerRadius || 0,
+    cr$1 = item => item.cornerRadius || 0,
+    tl$1 = item => value$1$1(item.cornerRadiusTopLeft, item.cornerRadius) || 0,
+    tr$1 = item => value$1$1(item.cornerRadiusTopRight, item.cornerRadius) || 0,
+    br$1 = item => value$1$1(item.cornerRadiusBottomRight, item.cornerRadius) || 0,
+    bl$1 = item => value$1$1(item.cornerRadiusBottomLeft, item.cornerRadius) || 0,
+    sz$1 = item => value$1$1(item.size, 64),
+    ts$1 = item => item.size || 1,
+    def$1 = item => !(item.defined === false),
+    type$1 = item => symbols$1(item.shape || 'circle');
+  const arcShape$1 = d3Shape.arc().startAngle(sa$1).endAngle(ea$1).padAngle(pa$1).innerRadius(ir$1).outerRadius(or$1).cornerRadius(cr$1),
+    areavShape$1 = d3Shape.area().x(x$1).y1(y$1).y0(yh$1).defined(def$1),
+    areahShape$1 = d3Shape.area().y(y$1).x1(x$1).x0(xw$1).defined(def$1),
+    lineShape$1 = d3Shape.line().x(x$1).y(y$1).defined(def$1),
+    rectShape$1 = vg_rect$1().x(x$1).y(y$1).width(w$1).height(h$1).cornerRadius(tl$1, tr$1, br$1, bl$1),
+    symbolShape$1 = d3Shape.symbol().type(type$1).size(sz$1),
+    trailShape$1 = vg_trail$1().x(x$1).y(y$1).defined(def$1).size(ts$1);
+  function hasCornerRadius$1(item) {
+    return item.cornerRadius || item.cornerRadiusTopLeft || item.cornerRadiusTopRight || item.cornerRadiusBottomRight || item.cornerRadiusBottomLeft;
+  }
+  function arc$1$1(context, item) {
+    return arcShape$1.context(context)(item);
+  }
+  function area$1$1(context, items) {
+    const item = items[0],
+      interp = item.interpolate || 'linear';
+    return (item.orient === 'horizontal' ? areahShape$1 : areavShape$1).curve(curves$1(interp, item.orient, item.tension)).context(context)(items);
+  }
+  function line$1$1(context, items) {
+    const item = items[0],
+      interp = item.interpolate || 'linear';
+    return lineShape$1.curve(curves$1(interp, item.orient, item.tension)).context(context)(items);
+  }
+  function rectangle$1(context, item, x, y) {
+    return rectShape$1.context(context)(item, x, y);
+  }
+  function shape$1$1(context, item) {
+    return (item.mark.shape || item.shape).context(context)(item);
+  }
+  function symbol$1$1(context, item) {
+    return symbolShape$1.context(context)(item);
+  }
+  function trail$1$1(context, items) {
+    return trailShape$1.context(context)(items);
+  }
+  var clip_id$1 = 1;
+  function clip$1$1(renderer, item, size) {
+    var clip = item.clip,
+      defs = renderer._defs,
+      id = item.clip_id || (item.clip_id = 'clip' + clip_id$1++),
+      c = defs.clipping[id] || (defs.clipping[id] = {
+        id: id
+      });
+    if (isFunction(clip)) {
+      c.path = clip(null);
+    } else if (hasCornerRadius$1(size)) {
+      c.path = rectangle$1(null, size, 0, 0);
+    } else {
+      c.width = size.width || 0;
+      c.height = size.height || 0;
+    }
+    return 'url(#' + id + ')';
+  }
+  function Bounds$1(b) {
+    this.clear();
+    if (b) this.union(b);
+  }
+  Bounds$1.prototype = {
+    clone() {
+      return new Bounds$1(this);
+    },
+    clear() {
+      this.x1 = +Number.MAX_VALUE;
+      this.y1 = +Number.MAX_VALUE;
+      this.x2 = -Number.MAX_VALUE;
+      this.y2 = -Number.MAX_VALUE;
+      return this;
+    },
+    empty() {
+      return this.x1 === +Number.MAX_VALUE && this.y1 === +Number.MAX_VALUE && this.x2 === -Number.MAX_VALUE && this.y2 === -Number.MAX_VALUE;
+    },
+    equals(b) {
+      return this.x1 === b.x1 && this.y1 === b.y1 && this.x2 === b.x2 && this.y2 === b.y2;
+    },
+    set(x1, y1, x2, y2) {
+      if (x2 < x1) {
+        this.x2 = x1;
+        this.x1 = x2;
+      } else {
+        this.x1 = x1;
+        this.x2 = x2;
+      }
+      if (y2 < y1) {
+        this.y2 = y1;
+        this.y1 = y2;
+      } else {
+        this.y1 = y1;
+        this.y2 = y2;
+      }
+      return this;
+    },
+    add(x, y) {
+      if (x < this.x1) this.x1 = x;
+      if (y < this.y1) this.y1 = y;
+      if (x > this.x2) this.x2 = x;
+      if (y > this.y2) this.y2 = y;
+      return this;
+    },
+    expand(d) {
+      this.x1 -= d;
+      this.y1 -= d;
+      this.x2 += d;
+      this.y2 += d;
+      return this;
+    },
+    round() {
+      this.x1 = Math.floor(this.x1);
+      this.y1 = Math.floor(this.y1);
+      this.x2 = Math.ceil(this.x2);
+      this.y2 = Math.ceil(this.y2);
+      return this;
+    },
+    scale(s) {
+      this.x1 *= s;
+      this.y1 *= s;
+      this.x2 *= s;
+      this.y2 *= s;
+      return this;
+    },
+    translate(dx, dy) {
+      this.x1 += dx;
+      this.x2 += dx;
+      this.y1 += dy;
+      this.y2 += dy;
+      return this;
+    },
+    rotate(angle, x, y) {
+      const p = this.rotatedPoints(angle, x, y);
+      return this.clear().add(p[0], p[1]).add(p[2], p[3]).add(p[4], p[5]).add(p[6], p[7]);
+    },
+    rotatedPoints(angle, x, y) {
+      var {
+          x1,
+          y1,
+          x2,
+          y2
+        } = this,
+        cos = Math.cos(angle),
+        sin = Math.sin(angle),
+        cx = x - x * cos + y * sin,
+        cy = y - x * sin - y * cos;
+      return [cos * x1 - sin * y1 + cx, sin * x1 + cos * y1 + cy, cos * x1 - sin * y2 + cx, sin * x1 + cos * y2 + cy, cos * x2 - sin * y1 + cx, sin * x2 + cos * y1 + cy, cos * x2 - sin * y2 + cx, sin * x2 + cos * y2 + cy];
+    },
+    union(b) {
+      if (b.x1 < this.x1) this.x1 = b.x1;
+      if (b.y1 < this.y1) this.y1 = b.y1;
+      if (b.x2 > this.x2) this.x2 = b.x2;
+      if (b.y2 > this.y2) this.y2 = b.y2;
+      return this;
+    },
+    intersect(b) {
+      if (b.x1 > this.x1) this.x1 = b.x1;
+      if (b.y1 > this.y1) this.y1 = b.y1;
+      if (b.x2 < this.x2) this.x2 = b.x2;
+      if (b.y2 < this.y2) this.y2 = b.y2;
+      return this;
+    },
+    encloses(b) {
+      return b && this.x1 <= b.x1 && this.x2 >= b.x2 && this.y1 <= b.y1 && this.y2 >= b.y2;
+    },
+    alignsWith(b) {
+      return b && (this.x1 == b.x1 || this.x2 == b.x2 || this.y1 == b.y1 || this.y2 == b.y2);
+    },
+    intersects(b) {
+      return b && !(this.x2 < b.x1 || this.x1 > b.x2 || this.y2 < b.y1 || this.y1 > b.y2);
+    },
+    contains(x, y) {
+      return !(x < this.x1 || x > this.x2 || y < this.y1 || y > this.y2);
+    },
+    width() {
+      return this.x2 - this.x1;
+    },
+    height() {
+      return this.y2 - this.y1;
+    }
+  };
+  function Item$1(mark) {
+    this.mark = mark;
+    this.bounds = this.bounds || new Bounds$1();
+  }
+  function GroupItem$1(mark) {
+    Item$1.call(this, mark);
+    this.items = this.items || [];
+  }
+  inherits(GroupItem$1, Item$1);
+  let ResourceLoader$1 = class ResourceLoader {
+    constructor(customLoader) {
+      this._pending = 0;
+      this._loader = customLoader || loader();
+    }
+    pending() {
+      return this._pending;
+    }
+    sanitizeURL(uri) {
+      const loader = this;
+      increment$1(loader);
+      return loader._loader.sanitize(uri, {
+        context: 'href'
+      }).then(opt => {
+        decrement$1(loader);
+        return opt;
+      }).catch(() => {
+        decrement$1(loader);
+        return null;
+      });
+    }
+    loadImage(uri) {
+      const loader = this,
+        Image = domImage();
+      increment$1(loader);
+      return loader._loader.sanitize(uri, {
+        context: 'image'
+      }).then(opt => {
+        const url = opt.href;
+        if (!url || !Image) throw {
+          url: url
+        };
+        const img = new Image();
+
+        // set crossOrigin only if cors is defined; empty string sets anonymous mode
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/crossOrigin
+        const cors = has$1(opt, 'crossOrigin') ? opt.crossOrigin : 'anonymous';
+        if (cors != null) img.crossOrigin = cors;
+
+        // attempt to load image resource
+        img.onload = () => decrement$1(loader);
+        img.onerror = () => decrement$1(loader);
+        img.src = url;
+        return img;
+      }).catch(e => {
+        decrement$1(loader);
+        return {
+          complete: false,
+          width: 0,
+          height: 0,
+          src: e && e.url || ''
+        };
+      });
+    }
+    ready() {
+      const loader = this;
+      return new Promise(accept => {
+        function poll(value) {
+          if (!loader.pending()) accept(value);else setTimeout(() => {
+            poll(true);
+          }, 10);
+        }
+        poll(false);
+      });
+    }
+  };
+  function increment$1(loader) {
+    loader._pending += 1;
+  }
+  function decrement$1(loader) {
+    loader._pending -= 1;
+  }
+  function boundStroke$1(bounds, item, miter) {
+    if (item.stroke && item.opacity !== 0 && item.strokeOpacity !== 0) {
+      const sw = item.strokeWidth != null ? +item.strokeWidth : 1;
+      bounds.expand(sw + (miter ? miterAdjustment$1(item, sw) : 0));
+    }
+    return bounds;
+  }
+  function miterAdjustment$1(item, strokeWidth) {
+    // TODO: more sophisticated adjustment? Or miter support in boundContext?
+    return item.strokeJoin && item.strokeJoin !== 'miter' ? 0 : strokeWidth;
+  }
+  const circleThreshold$1 = Tau$1 - 1e-8;
+  let bounds$1, lx$1, ly$1, rot$1, ma$1, mb$1, mc$1, md$1;
+  const add$1 = (x, y) => bounds$1.add(x, y);
+  const addL$1 = (x, y) => add$1(lx$1 = x, ly$1 = y);
+  const addX$1 = x => add$1(x, bounds$1.y1);
+  const addY$1 = y => add$1(bounds$1.x1, y);
+  const px$1 = (x, y) => ma$1 * x + mc$1 * y;
+  const py$1 = (x, y) => mb$1 * x + md$1 * y;
+  const addp$1 = (x, y) => add$1(px$1(x, y), py$1(x, y));
+  const addpL$1 = (x, y) => addL$1(px$1(x, y), py$1(x, y));
+  function boundContext$1(_, deg) {
+    bounds$1 = _;
+    if (deg) {
+      rot$1 = deg * DegToRad$1;
+      ma$1 = md$1 = Math.cos(rot$1);
+      mb$1 = Math.sin(rot$1);
+      mc$1 = -mb$1;
+    } else {
+      ma$1 = md$1 = 1;
+      rot$1 = mb$1 = mc$1 = 0;
+    }
+    return context$1$1;
+  }
+  const context$1$1 = {
+    beginPath() {},
+    closePath() {},
+    moveTo: addpL$1,
+    lineTo: addpL$1,
+    rect(x, y, w, h) {
+      if (rot$1) {
+        addp$1(x + w, y);
+        addp$1(x + w, y + h);
+        addp$1(x, y + h);
+        addpL$1(x, y);
+      } else {
+        add$1(x + w, y + h);
+        addL$1(x, y);
+      }
+    },
+    quadraticCurveTo(x1, y1, x2, y2) {
+      const px1 = px$1(x1, y1),
+        py1 = py$1(x1, y1),
+        px2 = px$1(x2, y2),
+        py2 = py$1(x2, y2);
+      quadExtrema$1(lx$1, px1, px2, addX$1);
+      quadExtrema$1(ly$1, py1, py2, addY$1);
+      addL$1(px2, py2);
+    },
+    bezierCurveTo(x1, y1, x2, y2, x3, y3) {
+      const px1 = px$1(x1, y1),
+        py1 = py$1(x1, y1),
+        px2 = px$1(x2, y2),
+        py2 = py$1(x2, y2),
+        px3 = px$1(x3, y3),
+        py3 = py$1(x3, y3);
+      cubicExtrema$1(lx$1, px1, px2, px3, addX$1);
+      cubicExtrema$1(ly$1, py1, py2, py3, addY$1);
+      addL$1(px3, py3);
+    },
+    arc(cx, cy, r, sa, ea, ccw) {
+      sa += rot$1;
+      ea += rot$1;
+
+      // store last point on path
+      lx$1 = r * Math.cos(ea) + cx;
+      ly$1 = r * Math.sin(ea) + cy;
+      if (Math.abs(ea - sa) > circleThreshold$1) {
+        // treat as full circle
+        add$1(cx - r, cy - r);
+        add$1(cx + r, cy + r);
+      } else {
+        const update = a => add$1(r * Math.cos(a) + cx, r * Math.sin(a) + cy);
+        let s, i;
+
+        // sample end points
+        update(sa);
+        update(ea);
+
+        // sample interior points aligned with 90 degrees
+        if (ea !== sa) {
+          sa = sa % Tau$1;
+          if (sa < 0) sa += Tau$1;
+          ea = ea % Tau$1;
+          if (ea < 0) ea += Tau$1;
+          if (ea < sa) {
+            ccw = !ccw; // flip direction
+            s = sa;
+            sa = ea;
+            ea = s; // swap end-points
+          }
+
+          if (ccw) {
+            ea -= Tau$1;
+            s = sa - sa % HalfPi$1;
+            for (i = 0; i < 4 && s > ea; ++i, s -= HalfPi$1) update(s);
+          } else {
+            s = sa - sa % HalfPi$1 + HalfPi$1;
+            for (i = 0; i < 4 && s < ea; ++i, s = s + HalfPi$1) update(s);
+          }
+        }
+      }
+    }
+  };
+  function quadExtrema$1(x0, x1, x2, cb) {
+    const t = (x0 - x1) / (x0 + x2 - 2 * x1);
+    if (0 < t && t < 1) cb(x0 + (x1 - x0) * t);
+  }
+  function cubicExtrema$1(x0, x1, x2, x3, cb) {
+    const a = x3 - x0 + 3 * x1 - 3 * x2,
+      b = x0 + x2 - 2 * x1,
+      c = x0 - x1;
+    let t0 = 0,
+      t1 = 0,
+      r;
+
+    // solve for parameter t
+    if (Math.abs(a) > Epsilon$1) {
+      // quadratic equation
+      r = b * b + c * a;
+      if (r >= 0) {
+        r = Math.sqrt(r);
+        t0 = (-b + r) / a;
+        t1 = (-b - r) / a;
+      }
+    } else {
+      // linear equation
+      t0 = 0.5 * c / b;
+    }
+
+    // calculate position
+    if (0 < t0 && t0 < 1) cb(cubic$1(t0, x0, x1, x2, x3));
+    if (0 < t1 && t1 < 1) cb(cubic$1(t1, x0, x1, x2, x3));
+  }
+  function cubic$1(t, x0, x1, x2, x3) {
+    const s = 1 - t,
+      s2 = s * s,
+      t2 = t * t;
+    return s2 * s * x0 + 3 * s2 * t * x1 + 3 * s * t2 * x2 + t2 * t * x3;
+  }
+  var context$3 = (context$3 = domCanvas(1, 1)) ? context$3.getContext('2d') : null;
+  const b$1 = new Bounds$1();
+  function intersectPath$1(draw) {
+    return function (item, brush) {
+      // rely on (inaccurate) bounds intersection if no context
+      if (!context$3) return true;
+
+      // add path to offscreen graphics context
+      draw(context$3, item);
+
+      // get bounds intersection region
+      b$1.clear().union(item.bounds).intersect(brush).round();
+      const {
+        x1,
+        y1,
+        x2,
+        y2
+      } = b$1;
+
+      // iterate over intersection region
+      // perform fine grained inclusion test
+      for (let y = y1; y <= y2; ++y) {
+        for (let x = x1; x <= x2; ++x) {
+          if (context$3.isPointInPath(x, y)) {
+            return true;
+          }
+        }
+      }
+
+      // false if no hits in intersection region
+      return false;
+    };
+  }
+  function intersectPoint$1(item, box) {
+    return box.contains(item.x || 0, item.y || 0);
+  }
+  function intersectRect$1(item, box) {
+    const x = item.x || 0,
+      y = item.y || 0,
+      w = item.width || 0,
+      h = item.height || 0;
+    return box.intersects(b$1.set(x, y, x + w, y + h));
+  }
+  function intersectRule$1(item, box) {
+    const x = item.x || 0,
+      y = item.y || 0,
+      x2 = item.x2 != null ? item.x2 : x,
+      y2 = item.y2 != null ? item.y2 : y;
+    return intersectBoxLine$1(box, x, y, x2, y2);
+  }
+  function intersectBoxLine$1(box, x, y, u, v) {
+    const {
+        x1,
+        y1,
+        x2,
+        y2
+      } = box,
+      dx = u - x,
+      dy = v - y;
+    let t0 = 0,
+      t1 = 1,
+      p,
+      q,
+      r,
+      e;
+    for (e = 0; e < 4; ++e) {
+      if (e === 0) {
+        p = -dx;
+        q = -(x1 - x);
+      }
+      if (e === 1) {
+        p = dx;
+        q = x2 - x;
+      }
+      if (e === 2) {
+        p = -dy;
+        q = -(y1 - y);
+      }
+      if (e === 3) {
+        p = dy;
+        q = y2 - y;
+      }
+      if (Math.abs(p) < 1e-10 && q < 0) return false;
+      r = q / p;
+      if (p < 0) {
+        if (r > t1) return false;else if (r > t0) t0 = r;
+      } else if (p > 0) {
+        if (r < t0) return false;else if (r < t1) t1 = r;
+      }
+    }
+    return true;
+  }
+  function blend$1(context, item) {
+    context.globalCompositeOperation = item.blend || 'source-over';
+  }
+  function value$3(value, dflt) {
+    return value == null ? dflt : value;
+  }
+  function addStops$1(gradient, stops) {
+    const n = stops.length;
+    for (let i = 0; i < n; ++i) {
+      gradient.addColorStop(stops[i].offset, stops[i].color);
+    }
+    return gradient;
+  }
+  function gradient$2(context, spec, bounds) {
+    const w = bounds.width(),
+      h = bounds.height();
+    let gradient;
+    if (spec.gradient === 'radial') {
+      gradient = context.createRadialGradient(bounds.x1 + value$3(spec.x1, 0.5) * w, bounds.y1 + value$3(spec.y1, 0.5) * h, Math.max(w, h) * value$3(spec.r1, 0), bounds.x1 + value$3(spec.x2, 0.5) * w, bounds.y1 + value$3(spec.y2, 0.5) * h, Math.max(w, h) * value$3(spec.r2, 0.5));
+    } else {
+      // linear gradient
+      const x1 = value$3(spec.x1, 0),
+        y1 = value$3(spec.y1, 0),
+        x2 = value$3(spec.x2, 1),
+        y2 = value$3(spec.y2, 0);
+      if (x1 === x2 || y1 === y2 || w === h) {
+        // axis aligned: use normal gradient
+        gradient = context.createLinearGradient(bounds.x1 + x1 * w, bounds.y1 + y1 * h, bounds.x1 + x2 * w, bounds.y1 + y2 * h);
+      } else {
+        // not axis aligned: render gradient into a pattern (#2365)
+        // this allows us to use normalized bounding box coordinates
+        const image = domCanvas(Math.ceil(w), Math.ceil(h)),
+          ictx = image.getContext('2d');
+        ictx.scale(w, h);
+        ictx.fillStyle = addStops$1(ictx.createLinearGradient(x1, y1, x2, y2), spec.stops);
+        ictx.fillRect(0, 0, w, h);
+        return context.createPattern(image, 'no-repeat');
+      }
+    }
+    return addStops$1(gradient, spec.stops);
+  }
+  function color$2(context, item, value) {
+    return isGradient$1(value) ? gradient$2(context, value, item.bounds) : value;
+  }
+  function fill$1(context, item, opacity) {
+    opacity *= item.fillOpacity == null ? 1 : item.fillOpacity;
+    if (opacity > 0) {
+      context.globalAlpha = opacity;
+      context.fillStyle = color$2(context, item, item.fill);
+      return true;
+    } else {
+      return false;
+    }
+  }
+  var Empty$1 = [];
+  function stroke$1(context, item, opacity) {
+    var lw = (lw = item.strokeWidth) != null ? lw : 1;
+    if (lw <= 0) return false;
+    opacity *= item.strokeOpacity == null ? 1 : item.strokeOpacity;
+    if (opacity > 0) {
+      context.globalAlpha = opacity;
+      context.strokeStyle = color$2(context, item, item.stroke);
+      context.lineWidth = lw;
+      context.lineCap = item.strokeCap || 'butt';
+      context.lineJoin = item.strokeJoin || 'miter';
+      context.miterLimit = item.strokeMiterLimit || 10;
+      if (context.setLineDash) {
+        context.setLineDash(item.strokeDash || Empty$1);
+        context.lineDashOffset = item.strokeDashOffset || 0;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+  function compare$1(a, b) {
+    return a.zindex - b.zindex || a.index - b.index;
+  }
+  function zorder$1(scene) {
+    if (!scene.zdirty) return scene.zitems;
+    var items = scene.items,
+      output = [],
+      item,
+      i,
+      n;
+    for (i = 0, n = items.length; i < n; ++i) {
+      item = items[i];
+      item.index = i;
+      if (item.zindex) output.push(item);
+    }
+    scene.zdirty = false;
+    return scene.zitems = output.sort(compare$1);
+  }
+  function visit$1(scene, visitor) {
+    var items = scene.items,
+      i,
+      n;
+    if (!items || !items.length) return;
+    const zitems = zorder$1(scene);
+    if (zitems && zitems.length) {
+      for (i = 0, n = items.length; i < n; ++i) {
+        if (!items[i].zindex) visitor(items[i]);
+      }
+      items = zitems;
+    }
+    for (i = 0, n = items.length; i < n; ++i) {
+      visitor(items[i]);
+    }
+  }
+  function pickVisit$1(scene, visitor) {
+    var items = scene.items,
+      hit,
+      i;
+    if (!items || !items.length) return null;
+    const zitems = zorder$1(scene);
+    if (zitems && zitems.length) items = zitems;
+    for (i = items.length; --i >= 0;) {
+      if (hit = visitor(items[i])) return hit;
+    }
+    if (items === zitems) {
+      for (items = scene.items, i = items.length; --i >= 0;) {
+        if (!items[i].zindex) {
+          if (hit = visitor(items[i])) return hit;
+        }
+      }
+    }
+    return null;
+  }
+  function drawAll$1(path) {
+    return function (context, scene, bounds) {
+      visit$1(scene, item => {
+        if (!bounds || bounds.intersects(item.bounds)) {
+          drawPath$1(path, context, item, item);
+        }
+      });
+    };
+  }
+  function drawOne$1(path) {
+    return function (context, scene, bounds) {
+      if (scene.items.length && (!bounds || bounds.intersects(scene.bounds))) {
+        drawPath$1(path, context, scene.items[0], scene.items);
+      }
+    };
+  }
+  function drawPath$1(path, context, item, items) {
+    var opacity = item.opacity == null ? 1 : item.opacity;
+    if (opacity === 0) return;
+    if (path(context, items)) return;
+    blend$1(context, item);
+    if (item.fill && fill$1(context, item, opacity)) {
+      context.fill();
+    }
+    if (item.stroke && stroke$1(context, item, opacity)) {
+      context.stroke();
+    }
+  }
+  function pick$1$1(test) {
+    test = test || truthy;
+    return function (context, scene, x, y, gx, gy) {
+      x *= context.pixelRatio;
+      y *= context.pixelRatio;
+      return pickVisit$1(scene, item => {
+        const b = item.bounds;
+        // first hit test against bounding box
+        if (b && !b.contains(gx, gy) || !b) return;
+        // if in bounding box, perform more careful test
+        if (test(context, item, x, y, gx, gy)) return item;
+      });
+    };
+  }
+  function hitPath$1(path, filled) {
+    return function (context, o, x, y) {
+      var item = Array.isArray(o) ? o[0] : o,
+        fill = filled == null ? item.fill : filled,
+        stroke = item.stroke && context.isPointInStroke,
+        lw,
+        lc;
+      if (stroke) {
+        lw = item.strokeWidth;
+        lc = item.strokeCap;
+        context.lineWidth = lw != null ? lw : 1;
+        context.lineCap = lc != null ? lc : 'butt';
+      }
+      return path(context, o) ? false : fill && context.isPointInPath(x, y) || stroke && context.isPointInStroke(x, y);
+    };
+  }
+  function pickPath$1(path) {
+    return pick$1$1(hitPath$1(path));
+  }
+  function translate$2(x, y) {
+    return 'translate(' + x + ',' + y + ')';
+  }
+  function rotate$1(a) {
+    return 'rotate(' + a + ')';
+  }
+  function scale$4(scaleX, scaleY) {
+    return 'scale(' + scaleX + ',' + scaleY + ')';
+  }
+  function translateItem$1(item) {
+    return translate$2(item.x || 0, item.y || 0);
+  }
+  function rotateItem$1(item) {
+    return translate$2(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate$1(item.angle) : '');
+  }
+  function transformItem$1(item) {
+    return translate$2(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate$1(item.angle) : '') + (item.scaleX || item.scaleY ? ' ' + scale$4(item.scaleX || 1, item.scaleY || 1) : '');
+  }
+  function markItemPath$1(type, shape, isect) {
+    function attr(emit, item) {
+      emit('transform', rotateItem$1(item));
+      emit('d', shape(null, item));
+    }
+    function bound(bounds, item) {
+      shape(boundContext$1(bounds, item.angle), item);
+      return boundStroke$1(bounds, item).translate(item.x || 0, item.y || 0);
+    }
+    function draw(context, item) {
+      var x = item.x || 0,
+        y = item.y || 0,
+        a = item.angle || 0;
+      context.translate(x, y);
+      if (a) context.rotate(a *= DegToRad$1);
+      context.beginPath();
+      shape(context, item);
+      if (a) context.rotate(-a);
+      context.translate(-x, -y);
+    }
+    return {
+      type: type,
+      tag: 'path',
+      nested: false,
+      attr: attr,
+      bound: bound,
+      draw: drawAll$1(draw),
+      pick: pickPath$1(draw),
+      isect: isect || intersectPath$1(draw)
+    };
+  }
+  var arc$3 = markItemPath$1('arc', arc$1$1);
+  function pickArea$1(a, p) {
+    var v = a[0].orient === 'horizontal' ? p[1] : p[0],
+      z = a[0].orient === 'horizontal' ? 'y' : 'x',
+      i = a.length,
+      min = +Infinity,
+      hit,
+      d;
+    while (--i >= 0) {
+      if (a[i].defined === false) continue;
+      d = Math.abs(a[i][z] - v);
+      if (d < min) {
+        min = d;
+        hit = a[i];
+      }
+    }
+    return hit;
+  }
+  function pickLine$1(a, p) {
+    var t = Math.pow(a[0].strokeWidth || 1, 2),
+      i = a.length,
+      dx,
+      dy,
+      dd;
+    while (--i >= 0) {
+      if (a[i].defined === false) continue;
+      dx = a[i].x - p[0];
+      dy = a[i].y - p[1];
+      dd = dx * dx + dy * dy;
+      if (dd < t) return a[i];
+    }
+    return null;
+  }
+  function pickTrail$1(a, p) {
+    var i = a.length,
+      dx,
+      dy,
+      dd;
+    while (--i >= 0) {
+      if (a[i].defined === false) continue;
+      dx = a[i].x - p[0];
+      dy = a[i].y - p[1];
+      dd = dx * dx + dy * dy;
+      dx = a[i].size || 1;
+      if (dd < dx * dx) return a[i];
+    }
+    return null;
+  }
+  function markMultiItemPath$1(type, shape, tip) {
+    function attr(emit, item) {
+      var items = item.mark.items;
+      if (items.length) emit('d', shape(null, items));
+    }
+    function bound(bounds, mark) {
+      var items = mark.items;
+      if (items.length === 0) {
+        return bounds;
+      } else {
+        shape(boundContext$1(bounds), items);
+        return boundStroke$1(bounds, items[0]);
+      }
+    }
+    function draw(context, items) {
+      context.beginPath();
+      shape(context, items);
+    }
+    const hit = hitPath$1(draw);
+    function pick(context, scene, x, y, gx, gy) {
+      var items = scene.items,
+        b = scene.bounds;
+      if (!items || !items.length || b && !b.contains(gx, gy)) {
+        return null;
+      }
+      x *= context.pixelRatio;
+      y *= context.pixelRatio;
+      return hit(context, items, x, y) ? items[0] : null;
+    }
+    return {
+      type: type,
+      tag: 'path',
+      nested: true,
+      attr: attr,
+      bound: bound,
+      draw: drawOne$1(draw),
+      pick: pick,
+      isect: intersectPoint$1,
+      tip: tip
+    };
+  }
+  var area$3 = markMultiItemPath$1('area', area$1$1, pickArea$1);
+  function clip$3(context, scene) {
+    var clip = scene.clip;
+    context.save();
+    if (isFunction(clip)) {
+      context.beginPath();
+      clip(context);
+      context.clip();
+    } else {
+      clipGroup$1(context, scene.group);
+    }
+  }
+  function clipGroup$1(context, group) {
+    context.beginPath();
+    hasCornerRadius$1(group) ? rectangle$1(context, group, 0, 0) : context.rect(0, 0, group.width || 0, group.height || 0);
+    context.clip();
+  }
+  function offset$1$1(item) {
+    const sw = value$3(item.strokeWidth, 1);
+    return item.strokeOffset != null ? item.strokeOffset : item.stroke && sw > 0.5 && sw < 1.5 ? 0.5 - Math.abs(sw - 1) : 0;
+  }
+  function attr$5$1(emit, item) {
+    emit('transform', translateItem$1(item));
+  }
+  function emitRectangle$1(emit, item) {
+    const off = offset$1$1(item);
+    emit('d', rectangle$1(null, item, off, off));
+  }
+  function background$2(emit, item) {
+    emit('class', 'background');
+    emit('aria-hidden', true);
+    emitRectangle$1(emit, item);
+  }
+  function foreground$1(emit, item) {
+    emit('class', 'foreground');
+    emit('aria-hidden', true);
+    if (item.strokeForeground) {
+      emitRectangle$1(emit, item);
+    } else {
+      emit('d', '');
+    }
+  }
+  function content$1(emit, item, renderer) {
+    const url = item.clip ? clip$1$1(renderer, item, item) : null;
+    emit('clip-path', url);
+  }
+  function bound$5$1(bounds, group) {
+    if (!group.clip && group.items) {
+      const items = group.items,
+        m = items.length;
+      for (let j = 0; j < m; ++j) {
+        bounds.union(items[j].bounds);
+      }
+    }
+    if ((group.clip || group.width || group.height) && !group.noBound) {
+      bounds.add(0, 0).add(group.width || 0, group.height || 0);
+    }
+    boundStroke$1(bounds, group);
+    return bounds.translate(group.x || 0, group.y || 0);
+  }
+  function rectanglePath$1(context, group, x, y) {
+    const off = offset$1$1(group);
+    context.beginPath();
+    rectangle$1(context, group, (x || 0) + off, (y || 0) + off);
+  }
+  const hitBackground$1 = hitPath$1(rectanglePath$1);
+  const hitForeground$1 = hitPath$1(rectanglePath$1, false);
+  const hitCorner$1 = hitPath$1(rectanglePath$1, true);
+  function draw$4$1(context, scene, bounds, markTypes) {
+    visit$1(scene, group => {
+      const gx = group.x || 0,
+        gy = group.y || 0,
+        fore = group.strokeForeground,
+        opacity = group.opacity == null ? 1 : group.opacity;
+
+      // draw group background
+      if ((group.stroke || group.fill) && opacity) {
+        rectanglePath$1(context, group, gx, gy);
+        blend$1(context, group);
+        if (group.fill && fill$1(context, group, opacity)) {
+          context.fill();
+        }
+        if (group.stroke && !fore && stroke$1(context, group, opacity)) {
+          context.stroke();
+        }
+      }
+
+      // setup graphics context, set clip and bounds
+      context.save();
+      context.translate(gx, gy);
+      if (group.clip) clipGroup$1(context, group);
+      if (bounds) bounds.translate(-gx, -gy);
+
+      // draw group contents
+      visit$1(group, item => {
+        if (item.marktype === 'group' || markTypes == null || markTypes.includes(item.marktype)) {
+          this.draw(context, item, bounds, markTypes);
+        }
+      });
+
+      // restore graphics context
+      if (bounds) bounds.translate(gx, gy);
+      context.restore();
+
+      // draw group foreground
+      if (fore && group.stroke && opacity) {
+        rectanglePath$1(context, group, gx, gy);
+        blend$1(context, group);
+        if (stroke$1(context, group, opacity)) {
+          context.stroke();
+        }
+      }
+    });
+  }
+  function pick$2(context, scene, x, y, gx, gy) {
+    if (scene.bounds && !scene.bounds.contains(gx, gy) || !scene.items) {
+      return null;
+    }
+    const cx = x * context.pixelRatio,
+      cy = y * context.pixelRatio;
+    return pickVisit$1(scene, group => {
+      let hit, dx, dy;
+
+      // first hit test bounding box
+      const b = group.bounds;
+      if (b && !b.contains(gx, gy)) return;
+
+      // passed bounds check, test rectangular clip
+      dx = group.x || 0;
+      dy = group.y || 0;
+      const dw = dx + (group.width || 0),
+        dh = dy + (group.height || 0),
+        c = group.clip;
+      if (c && (gx < dx || gx > dw || gy < dy || gy > dh)) return;
+
+      // adjust coordinate system
+      context.save();
+      context.translate(dx, dy);
+      dx = gx - dx;
+      dy = gy - dy;
+
+      // test background for rounded corner clip
+      if (c && hasCornerRadius$1(group) && !hitCorner$1(context, group, cx, cy)) {
+        context.restore();
+        return null;
+      }
+      const fore = group.strokeForeground,
+        ix = scene.interactive !== false;
+
+      // hit test against group foreground
+      if (ix && fore && group.stroke && hitForeground$1(context, group, cx, cy)) {
+        context.restore();
+        return group;
+      }
+
+      // hit test against contained marks
+      hit = pickVisit$1(group, mark => pickMark$1(mark, dx, dy) ? this.pick(mark, x, y, dx, dy) : null);
+
+      // hit test against group background
+      if (!hit && ix && (group.fill || !fore && group.stroke) && hitBackground$1(context, group, cx, cy)) {
+        hit = group;
+      }
+
+      // restore state and return
+      context.restore();
+      return hit || null;
+    });
+  }
+  function pickMark$1(mark, x, y) {
+    return (mark.interactive !== false || mark.marktype === 'group') && mark.bounds && mark.bounds.contains(x, y);
+  }
+  var group$1 = {
+    type: 'group',
+    tag: 'g',
+    nested: false,
+    attr: attr$5$1,
+    bound: bound$5$1,
+    draw: draw$4$1,
+    pick: pick$2,
+    isect: intersectRect$1,
+    content: content$1,
+    background: background$2,
+    foreground: foreground$1
+  };
+  var metadata$1 = {
+    'xmlns': 'http://www.w3.org/2000/svg',
+    'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+    'version': '1.1'
+  };
+  function getImage$1(item, renderer) {
+    var image = item.image;
+    if (!image || item.url && item.url !== image.url) {
+      image = {
+        complete: false,
+        width: 0,
+        height: 0
+      };
+      renderer.loadImage(item.url).then(image => {
+        item.image = image;
+        item.image.url = item.url;
+      });
+    }
+    return image;
+  }
+  function imageWidth$1(item, image) {
+    return item.width != null ? item.width : !image || !image.width ? 0 : item.aspect !== false && item.height ? item.height * image.width / image.height : image.width;
+  }
+  function imageHeight$1(item, image) {
+    return item.height != null ? item.height : !image || !image.height ? 0 : item.aspect !== false && item.width ? item.width * image.height / image.width : image.height;
+  }
+  function imageXOffset$1(align, w) {
+    return align === 'center' ? w / 2 : align === 'right' ? w : 0;
+  }
+  function imageYOffset$1(baseline, h) {
+    return baseline === 'middle' ? h / 2 : baseline === 'bottom' ? h : 0;
+  }
+  function attr$4$1(emit, item, renderer) {
+    const img = getImage$1(item, renderer),
+      w = imageWidth$1(item, img),
+      h = imageHeight$1(item, img),
+      x = (item.x || 0) - imageXOffset$1(item.align, w),
+      y = (item.y || 0) - imageYOffset$1(item.baseline, h),
+      i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
+    emit('href', i, metadata$1['xmlns:xlink'], 'xlink:href');
+    emit('transform', translate$2(x, y));
+    emit('width', w);
+    emit('height', h);
+    emit('preserveAspectRatio', item.aspect === false ? 'none' : 'xMidYMid');
+  }
+  function bound$4$1(bounds, item) {
+    const img = item.image,
+      w = imageWidth$1(item, img),
+      h = imageHeight$1(item, img),
+      x = (item.x || 0) - imageXOffset$1(item.align, w),
+      y = (item.y || 0) - imageYOffset$1(item.baseline, h);
+    return bounds.set(x, y, x + w, y + h);
+  }
+  function draw$3$1(context, scene, bounds) {
+    visit$1(scene, item => {
+      if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
+
+      const img = getImage$1(item, this);
+      let w = imageWidth$1(item, img);
+      let h = imageHeight$1(item, img);
+      if (w === 0 || h === 0) return; // early exit
+
+      let x = (item.x || 0) - imageXOffset$1(item.align, w),
+        y = (item.y || 0) - imageYOffset$1(item.baseline, h),
+        opacity,
+        ar0,
+        ar1,
+        t;
+      if (item.aspect !== false) {
+        ar0 = img.width / img.height;
+        ar1 = item.width / item.height;
+        if (ar0 === ar0 && ar1 === ar1 && ar0 !== ar1) {
+          if (ar1 < ar0) {
+            t = w / ar0;
+            y += (h - t) / 2;
+            h = t;
+          } else {
+            t = h * ar0;
+            x += (w - t) / 2;
+            w = t;
+          }
+        }
+      }
+      if (img.complete || img.toDataURL) {
+        blend$1(context, item);
+        context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
+        context.imageSmoothingEnabled = item.smooth !== false;
+        context.drawImage(img, x, y, w, h);
+      }
+    });
+  }
+  var image$1 = {
+    type: 'image',
+    tag: 'image',
+    nested: false,
+    attr: attr$4$1,
+    bound: bound$4$1,
+    draw: draw$3$1,
+    pick: pick$1$1(),
+    isect: truthy,
+    // bounds check is sufficient
+    get: getImage$1,
+    xOffset: imageXOffset$1,
+    yOffset: imageYOffset$1
+  };
+  var line$3 = markMultiItemPath$1('line', line$1$1, pickLine$1);
+  function attr$3$1(emit, item) {
+    var sx = item.scaleX || 1,
+      sy = item.scaleY || 1;
+    if (sx !== 1 || sy !== 1) {
+      emit('vector-effect', 'non-scaling-stroke');
+    }
+    emit('transform', transformItem$1(item));
+    emit('d', item.path);
+  }
+  function path$1$1(context, item) {
+    var path = item.path;
+    if (path == null) return true;
+    var x = item.x || 0,
+      y = item.y || 0,
+      sx = item.scaleX || 1,
+      sy = item.scaleY || 1,
+      a = (item.angle || 0) * DegToRad$1,
+      cache = item.pathCache;
+    if (!cache || cache.path !== path) {
+      (item.pathCache = cache = parse$4(path)).path = path;
+    }
+    if (a && context.rotate && context.translate) {
+      context.translate(x, y);
+      context.rotate(a);
+      pathRender$1(context, cache, 0, 0, sx, sy);
+      context.rotate(-a);
+      context.translate(-x, -y);
+    } else {
+      pathRender$1(context, cache, x, y, sx, sy);
+    }
+  }
+  function bound$3$1(bounds, item) {
+    return path$1$1(boundContext$1(bounds, item.angle), item) ? bounds.set(0, 0, 0, 0) : boundStroke$1(bounds, item, true);
+  }
+  var path$2$1 = {
+    type: 'path',
+    tag: 'path',
+    nested: false,
+    attr: attr$3$1,
+    bound: bound$3$1,
+    draw: drawAll$1(path$1$1),
+    pick: pickPath$1(path$1$1),
+    isect: intersectPath$1(path$1$1)
+  };
+  function attr$2$1(emit, item) {
+    emit('d', rectangle$1(null, item));
+  }
+  function bound$2$1(bounds, item) {
+    var x, y;
+    return boundStroke$1(bounds.set(x = item.x || 0, y = item.y || 0, x + item.width || 0, y + item.height || 0), item);
+  }
+  function draw$2$1(context, item) {
+    context.beginPath();
+    rectangle$1(context, item);
+  }
+  var rect$1 = {
+    type: 'rect',
+    tag: 'path',
+    nested: false,
+    attr: attr$2$1,
+    bound: bound$2$1,
+    draw: drawAll$1(draw$2$1),
+    pick: pickPath$1(draw$2$1),
+    isect: intersectRect$1
+  };
+  function attr$1$1(emit, item) {
+    emit('transform', translateItem$1(item));
+    emit('x2', item.x2 != null ? item.x2 - (item.x || 0) : 0);
+    emit('y2', item.y2 != null ? item.y2 - (item.y || 0) : 0);
+  }
+  function bound$1$1(bounds, item) {
+    var x1, y1;
+    return boundStroke$1(bounds.set(x1 = item.x || 0, y1 = item.y || 0, item.x2 != null ? item.x2 : x1, item.y2 != null ? item.y2 : y1), item);
+  }
+  function path$3(context, item, opacity) {
+    var x1, y1, x2, y2;
+    if (item.stroke && stroke$1(context, item, opacity)) {
+      x1 = item.x || 0;
+      y1 = item.y || 0;
+      x2 = item.x2 != null ? item.x2 : x1;
+      y2 = item.y2 != null ? item.y2 : y1;
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y2);
+      return true;
+    }
+    return false;
+  }
+  function draw$1$1(context, scene, bounds) {
+    visit$1(scene, item => {
+      if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
+      var opacity = item.opacity == null ? 1 : item.opacity;
+      if (opacity && path$3(context, item, opacity)) {
+        blend$1(context, item);
+        context.stroke();
+      }
+    });
+  }
+  function hit$1$1(context, item, x, y) {
+    if (!context.isPointInStroke) return false;
+    return path$3(context, item, 1) && context.isPointInStroke(x, y);
+  }
+  var rule$2 = {
+    type: 'rule',
+    tag: 'line',
+    nested: false,
+    attr: attr$1$1,
+    bound: bound$1$1,
+    draw: draw$1$1,
+    pick: pick$1$1(hit$1$1),
+    isect: intersectRule$1
+  };
+  var shape$2 = markItemPath$1('shape', shape$1$1);
+  var symbol$2 = markItemPath$1('symbol', symbol$1$1, intersectPoint$1);
+
+  // memoize text width measurement
+  const widthCache$1 = lruCache();
+  var textMetrics$1 = {
+    height: fontSize$1,
+    measureWidth: measureWidth$1,
+    estimateWidth: estimateWidth$1,
+    width: estimateWidth$1,
+    canvas: useCanvas$1
+  };
+  useCanvas$1(true);
+  function useCanvas$1(use) {
+    textMetrics$1.width = use && context$3 ? measureWidth$1 : estimateWidth$1;
+  }
+
+  // make simple estimate if no canvas is available
+  function estimateWidth$1(item, text) {
+    return _estimateWidth$1(textValue$1(item, text), fontSize$1(item));
+  }
+  function _estimateWidth$1(text, currentFontHeight) {
+    return ~~(0.8 * text.length * currentFontHeight);
+  }
+
+  // measure text width if canvas is available
+  function measureWidth$1(item, text) {
+    return fontSize$1(item) <= 0 || !(text = textValue$1(item, text)) ? 0 : _measureWidth$1(text, font$1(item));
+  }
+  function _measureWidth$1(text, currentFont) {
+    const key = `(${currentFont}) ${text}`;
+    let width = widthCache$1.get(key);
+    if (width === undefined) {
+      context$3.font = currentFont;
+      width = context$3.measureText(text).width;
+      widthCache$1.set(key, width);
+    }
+    return width;
+  }
+  function fontSize$1(item) {
+    return item.fontSize != null ? +item.fontSize || 0 : 11;
+  }
+  function lineHeight$1(item) {
+    return item.lineHeight != null ? item.lineHeight : fontSize$1(item) + 2;
+  }
+  function lineArray$1(_) {
+    return isArray(_) ? _.length > 1 ? _ : _[0] : _;
+  }
+  function textLines$1(item) {
+    return lineArray$1(item.lineBreak && item.text && !isArray(item.text) ? item.text.split(item.lineBreak) : item.text);
+  }
+  function multiLineOffset$1(item) {
+    const tl = textLines$1(item);
+    return (isArray(tl) ? tl.length - 1 : 0) * lineHeight$1(item);
+  }
+  function textValue$1(item, line) {
+    const text = line == null ? '' : (line + '').trim();
+    return item.limit > 0 && text.length ? truncate$1(item, text) : text;
+  }
+  function widthGetter$1(item) {
+    if (textMetrics$1.width === measureWidth$1) {
+      // we are using canvas
+      const currentFont = font$1(item);
+      return text => _measureWidth$1(text, currentFont);
+    } else if (textMetrics$1.width === estimateWidth$1) {
+      // we are relying on estimates
+      const currentFontHeight = fontSize$1(item);
+      return text => _estimateWidth$1(text, currentFontHeight);
+    } else {
+      // User defined textMetrics.width function in use (e.g. vl-convert)
+      return text => textMetrics$1.width(item, text);
+    }
+  }
+  function truncate$1(item, text) {
+    var limit = +item.limit,
+      width = widthGetter$1(item);
+    if (width(text) < limit) return text;
+    var ellipsis = item.ellipsis || '\u2026',
+      rtl = item.dir === 'rtl',
+      lo = 0,
+      hi = text.length,
+      mid;
+    limit -= width(ellipsis);
+    if (rtl) {
+      while (lo < hi) {
+        mid = lo + hi >>> 1;
+        if (width(text.slice(mid)) > limit) lo = mid + 1;else hi = mid;
+      }
+      return ellipsis + text.slice(lo);
+    } else {
+      while (lo < hi) {
+        mid = 1 + (lo + hi >>> 1);
+        if (width(text.slice(0, mid)) < limit) lo = mid;else hi = mid - 1;
+      }
+      return text.slice(0, lo) + ellipsis;
+    }
+  }
+  function fontFamily$1(item, quote) {
+    var font = item.font;
+    return (quote && font ? String(font).replace(/"/g, '\'') : font) || 'sans-serif';
+  }
+  function font$1(item, quote) {
+    return '' + (item.fontStyle ? item.fontStyle + ' ' : '') + (item.fontVariant ? item.fontVariant + ' ' : '') + (item.fontWeight ? item.fontWeight + ' ' : '') + fontSize$1(item) + 'px ' + fontFamily$1(item, quote);
+  }
+  function offset$3(item) {
+    // perform our own font baseline calculation
+    // why? not all browsers support SVG 1.1 'alignment-baseline' :(
+    // this also ensures consistent layout across renderers
+    var baseline = item.baseline,
+      h = fontSize$1(item);
+    return Math.round(baseline === 'top' ? 0.79 * h : baseline === 'middle' ? 0.30 * h : baseline === 'bottom' ? -0.21 * h : baseline === 'line-top' ? 0.29 * h + 0.5 * lineHeight$1(item) : baseline === 'line-bottom' ? 0.29 * h - 0.5 * lineHeight$1(item) : 0);
+  }
+  const textAlign$1 = {
+    'left': 'start',
+    'center': 'middle',
+    'right': 'end'
+  };
+  const tempBounds$2 = new Bounds$1();
+  function anchorPoint$1(item) {
+    var x = item.x || 0,
+      y = item.y || 0,
+      r = item.radius || 0,
+      t;
+    if (r) {
+      t = (item.theta || 0) - HalfPi$1;
+      x += r * Math.cos(t);
+      y += r * Math.sin(t);
+    }
+    tempBounds$2.x1 = x;
+    tempBounds$2.y1 = y;
+    return tempBounds$2;
+  }
+  function attr$6(emit, item) {
+    var dx = item.dx || 0,
+      dy = (item.dy || 0) + offset$3(item),
+      p = anchorPoint$1(item),
+      x = p.x1,
+      y = p.y1,
+      a = item.angle || 0,
+      t;
+    emit('text-anchor', textAlign$1[item.align] || 'start');
+    if (a) {
+      t = translate$2(x, y) + ' ' + rotate$1(a);
+      if (dx || dy) t += ' ' + translate$2(dx, dy);
+    } else {
+      t = translate$2(x + dx, y + dy);
+    }
+    emit('transform', t);
+  }
+  function bound$6(bounds, item, mode) {
+    var h = textMetrics$1.height(item),
+      a = item.align,
+      p = anchorPoint$1(item),
+      x = p.x1,
+      y = p.y1,
+      dx = item.dx || 0,
+      dy = (item.dy || 0) + offset$3(item) - Math.round(0.8 * h),
+      // use 4/5 offset
+      tl = textLines$1(item),
+      w;
+
+    // get dimensions
+    if (isArray(tl)) {
+      // multi-line text
+      h += lineHeight$1(item) * (tl.length - 1);
+      w = tl.reduce((w, t) => Math.max(w, textMetrics$1.width(item, t)), 0);
+    } else {
+      // single-line text
+      w = textMetrics$1.width(item, tl);
+    }
+
+    // horizontal alignment
+    if (a === 'center') {
+      dx -= w / 2;
+    } else if (a === 'right') {
+      dx -= w;
+    } else ;
+    bounds.set(dx += x, dy += y, dx + w, dy + h);
+    if (item.angle && !mode) {
+      bounds.rotate(item.angle * DegToRad$1, x, y);
+    } else if (mode === 2) {
+      return bounds.rotatedPoints(item.angle * DegToRad$1, x, y);
+    }
+    return bounds;
+  }
+  function draw$6(context, scene, bounds) {
+    visit$1(scene, item => {
+      var opacity = item.opacity == null ? 1 : item.opacity,
+        p,
+        x,
+        y,
+        i,
+        lh,
+        tl,
+        str;
+      if (bounds && !bounds.intersects(item.bounds) ||
+      // bounds check
+      opacity === 0 || item.fontSize <= 0 || item.text == null || item.text.length === 0) return;
+      context.font = font$1(item);
+      context.textAlign = item.align || 'left';
+      p = anchorPoint$1(item);
+      x = p.x1, y = p.y1;
+      if (item.angle) {
+        context.save();
+        context.translate(x, y);
+        context.rotate(item.angle * DegToRad$1);
+        x = y = 0; // reset x, y
+      }
+
+      x += item.dx || 0;
+      y += (item.dy || 0) + offset$3(item);
+      tl = textLines$1(item);
+      blend$1(context, item);
+      if (isArray(tl)) {
+        lh = lineHeight$1(item);
+        for (i = 0; i < tl.length; ++i) {
+          str = textValue$1(item, tl[i]);
+          if (item.fill && fill$1(context, item, opacity)) {
+            context.fillText(str, x, y);
+          }
+          if (item.stroke && stroke$1(context, item, opacity)) {
+            context.strokeText(str, x, y);
+          }
+          y += lh;
+        }
+      } else {
+        str = textValue$1(item, tl);
+        if (item.fill && fill$1(context, item, opacity)) {
+          context.fillText(str, x, y);
+        }
+        if (item.stroke && stroke$1(context, item, opacity)) {
+          context.strokeText(str, x, y);
+        }
+      }
+      if (item.angle) context.restore();
+    });
+  }
+  function hit$2(context, item, x, y, gx, gy) {
+    if (item.fontSize <= 0) return false;
+    if (!item.angle) return true; // bounds sufficient if no rotation
+
+    // project point into space of unrotated bounds
+    var p = anchorPoint$1(item),
+      ax = p.x1,
+      ay = p.y1,
+      b = bound$6(tempBounds$2, item, 1),
+      a = -item.angle * DegToRad$1,
+      cos = Math.cos(a),
+      sin = Math.sin(a),
+      px = cos * gx - sin * gy + (ax - cos * ax + sin * ay),
+      py = sin * gx + cos * gy + (ay - sin * ax - cos * ay);
+    return b.contains(px, py);
+  }
+  function intersectText$1(item, box) {
+    const p = bound$6(tempBounds$2, item, 2);
+    return intersectBoxLine$1(box, p[0], p[1], p[2], p[3]) || intersectBoxLine$1(box, p[0], p[1], p[4], p[5]) || intersectBoxLine$1(box, p[4], p[5], p[6], p[7]) || intersectBoxLine$1(box, p[2], p[3], p[6], p[7]);
+  }
+  var text$1 = {
+    type: 'text',
+    tag: 'text',
+    nested: false,
+    attr: attr$6,
+    bound: bound$6,
+    draw: draw$6,
+    pick: pick$1$1(hit$2),
+    isect: intersectText$1
+  };
+  var trail$2 = markMultiItemPath$1('trail', trail$1$1, pickTrail$1);
+  var Marks$1 = {
+    arc: arc$3,
+    area: area$3,
+    group: group$1,
+    image: image$1,
+    line: line$3,
+    path: path$2$1,
+    rect: rect$1,
+    rule: rule$2,
+    shape: shape$2,
+    symbol: symbol$2,
+    text: text$1,
+    trail: trail$2
+  };
+  function boundItem$2(item, func, opt) {
+    var type = Marks$1[item.mark.marktype],
+      bound = func || type.bound;
+    if (type.nested) item = item.mark;
+    return bound(item.bounds || (item.bounds = new Bounds$1()), item, opt);
+  }
+  var DUMMY$1 = {
+    mark: null
+  };
+  function boundMark$1(mark, bounds, opt) {
+    var type = Marks$1[mark.marktype],
+      bound = type.bound,
+      items = mark.items,
+      hasItems = items && items.length,
+      i,
+      n,
+      item,
+      b;
+    if (type.nested) {
+      if (hasItems) {
+        item = items[0];
+      } else {
+        // no items, fake it
+        DUMMY$1.mark = mark;
+        item = DUMMY$1;
+      }
+      b = boundItem$2(item, bound, opt);
+      bounds = bounds && bounds.union(b) || b;
+      return bounds;
+    }
+    bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds$1();
+    if (hasItems) {
+      for (i = 0, n = items.length; i < n; ++i) {
+        bounds.union(boundItem$2(items[i], bound, opt));
+      }
+    }
+    return mark.bounds = bounds;
+  }
+  const keys$2 = ['marktype', 'name', 'role', 'interactive', 'clip', 'items', 'zindex', 'x', 'y', 'width', 'height', 'align', 'baseline',
+  // layout
+  'fill', 'fillOpacity', 'opacity', 'blend',
+  // fill
+  'stroke', 'strokeOpacity', 'strokeWidth', 'strokeCap',
+  // stroke
+  'strokeDash', 'strokeDashOffset',
+  // stroke dash
+  'strokeForeground', 'strokeOffset',
+  // group
+  'startAngle', 'endAngle', 'innerRadius', 'outerRadius',
+  // arc
+  'cornerRadius', 'padAngle',
+  // arc, rect
+  'cornerRadiusTopLeft', 'cornerRadiusTopRight',
+  // rect, group
+  'cornerRadiusBottomLeft', 'cornerRadiusBottomRight', 'interpolate', 'tension', 'orient', 'defined',
+  // area, line
+  'url', 'aspect', 'smooth',
+  // image
+  'path', 'scaleX', 'scaleY',
+  // path
+  'x2', 'y2',
+  // rule
+  'size', 'shape',
+  // symbol
+  'text', 'angle', 'theta', 'radius', 'dir', 'dx', 'dy',
+  // text
+  'ellipsis', 'limit', 'lineBreak', 'lineHeight', 'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant',
+  // font
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription' // aria
+  ];
+
+  function sceneToJSON$1(scene, indent) {
+    return JSON.stringify(scene, keys$2, indent);
+  }
+  function sceneFromJSON$1(json) {
+    const scene = typeof json === 'string' ? JSON.parse(json) : json;
+    return initialize$2(scene);
+  }
+  function initialize$2(scene) {
+    var type = scene.marktype,
+      items = scene.items,
+      parent,
+      i,
+      n;
+    if (items) {
+      for (i = 0, n = items.length; i < n; ++i) {
+        parent = type ? 'mark' : 'group';
+        items[i][parent] = scene;
+        if (items[i].zindex) items[i][parent].zdirty = true;
+        if ('group' === (type || parent)) initialize$2(items[i]);
+      }
+    }
+    if (type) boundMark$1(scene);
+    return scene;
+  }
+  let Scenegraph$1 = class Scenegraph {
+    constructor(scene) {
+      if (arguments.length) {
+        this.root = sceneFromJSON$1(scene);
+      } else {
+        this.root = createMark$1({
+          marktype: 'group',
+          name: 'root',
+          role: 'frame'
+        });
+        this.root.items = [new GroupItem$1(this.root)];
+      }
+    }
+    toJSON(indent) {
+      return sceneToJSON$1(this.root, indent || 0);
+    }
+    mark(markdef, group, index) {
+      group = group || this.root.items[0];
+      const mark = createMark$1(markdef, group);
+      group.items[index] = mark;
+      if (mark.zindex) mark.group.zdirty = true;
+      return mark;
+    }
+  };
+  function createMark$1(def, group) {
+    const mark = {
+      bounds: new Bounds$1(),
+      clip: !!def.clip,
+      group: group,
+      interactive: def.interactive === false ? false : true,
+      items: [],
+      marktype: def.marktype,
+      name: def.name || undefined,
+      role: def.role || undefined,
+      zindex: def.zindex || 0
+    };
+
+    // add accessibility properties if defined
+    if (def.aria != null) {
+      mark.aria = def.aria;
+    }
+    if (def.description) {
+      mark.description = def.description;
+    }
+    return mark;
+  }
+
+  // create a new DOM element
+  function domCreate$1(doc, tag, ns) {
+    if (!doc && typeof document !== 'undefined' && document.createElement) {
+      doc = document;
+    }
+    return doc ? ns ? doc.createElementNS(ns, tag) : doc.createElement(tag) : null;
+  }
+
+  // find first child element with matching tag
+  function domFind$1(el, tag) {
+    tag = tag.toLowerCase();
+    var nodes = el.childNodes,
+      i = 0,
+      n = nodes.length;
+    for (; i < n; ++i) if (nodes[i].tagName.toLowerCase() === tag) {
+      return nodes[i];
+    }
+  }
+
+  // retrieve child element at given index
+  // create & insert if doesn't exist or if tags do not match
+  function domChild$1(el, index, tag, ns) {
+    var a = el.childNodes[index],
+      b;
+    if (!a || a.tagName.toLowerCase() !== tag.toLowerCase()) {
+      b = a || null;
+      a = domCreate$1(el.ownerDocument, tag, ns);
+      el.insertBefore(a, b);
+    }
+    return a;
+  }
+
+  // remove all child elements at or above the given index
+  function domClear$1(el, index) {
+    var nodes = el.childNodes,
+      curr = nodes.length;
+    while (curr > index) el.removeChild(nodes[--curr]);
+    return el;
+  }
+
+  // generate css class name for mark
+  function cssClass$1(mark) {
+    return 'mark-' + mark.marktype + (mark.role ? ' role-' + mark.role : '') + (mark.name ? ' ' + mark.name : '');
+  }
+  function point$1(event, el) {
+    const rect = el.getBoundingClientRect();
+    return [event.clientX - rect.left - (el.clientLeft || 0), event.clientY - rect.top - (el.clientTop || 0)];
+  }
+  function resolveItem$1(item, event, el, origin) {
+    var mark = item && item.mark,
+      mdef,
+      p;
+    if (mark && (mdef = Marks$1[mark.marktype]).tip) {
+      p = point$1(event, el);
+      p[0] -= origin[0];
+      p[1] -= origin[1];
+      while (item = item.mark.group) {
+        p[0] -= item.x || 0;
+        p[1] -= item.y || 0;
+      }
+      item = mdef.tip(mark.items, p);
+    }
+    return item;
+  }
+  let Handler$1 = class Handler {
+    /**
+     * Create a new Handler instance.
+     * @param {object} [customLoader] - Optional loader instance for
+     *   href URL sanitization. If not specified, a standard loader
+     *   instance will be generated.
+     * @param {function} [customTooltip] - Optional tooltip handler
+     *   function for custom tooltip display.
+     * @constructor
+     */
+    constructor(customLoader, customTooltip) {
+      this._active = null;
+      this._handlers = {};
+      this._loader = customLoader || loader();
+      this._tooltip = customTooltip || defaultTooltip$2;
+    }
+
+    /**
+     * Initialize a new Handler instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {object} [obj] - Optional context object that should serve as
+     *   the "this" context for event callbacks.
+     * @return {Handler} - This handler instance.
+     */
+    initialize(el, origin, obj) {
+      this._el = el;
+      this._obj = obj || null;
+      return this.origin(origin);
+    }
+
+    /**
+     * Returns the parent container element for a visualization.
+     * @return {DOMElement} - The containing DOM element.
+     */
+    element() {
+      return this._el;
+    }
+
+    /**
+     * Returns the scene element (e.g., canvas or SVG) of the visualization
+     * Subclasses must override if the first child is not the scene element.
+     * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
+     */
+    canvas() {
+      return this._el && this._el.firstChild;
+    }
+
+    /**
+     * Get / set the origin coordinates of the visualization.
+     */
+    origin(origin) {
+      if (arguments.length) {
+        this._origin = origin || [0, 0];
+        return this;
+      } else {
+        return this._origin.slice();
+      }
+    }
+
+    /**
+     * Get / set the scenegraph root.
+     */
+    scene(scene) {
+      if (!arguments.length) return this._scene;
+      this._scene = scene;
+      return this;
+    }
+
+    /**
+     * Add an event handler. Subclasses should override this method.
+     */
+    on( /*type, handler*/) {}
+
+    /**
+     * Remove an event handler. Subclasses should override this method.
+     */
+    off( /*type, handler*/) {}
+
+    /**
+     * Utility method for finding the array index of an event handler.
+     * @param {Array} h - An array of registered event handlers.
+     * @param {string} type - The event type.
+     * @param {function} handler - The event handler instance to find.
+     * @return {number} - The handler's array index or -1 if not registered.
+     */
+    _handlerIndex(h, type, handler) {
+      for (let i = h ? h.length : 0; --i >= 0;) {
+        if (h[i].type === type && (!handler || h[i].handler === handler)) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    /**
+     * Returns an array with registered event handlers.
+     * @param {string} [type] - The event type to query. Any annotations
+     *   are ignored; for example, for the argument "click.foo", ".foo" will
+     *   be ignored and the method returns all "click" handlers. If type is
+     *   null or unspecified, this method returns handlers for all types.
+     * @return {Array} - A new array containing all registered event handlers.
+     */
+    handlers(type) {
+      const h = this._handlers,
+        a = [];
+      if (type) {
+        a.push(...h[this.eventName(type)]);
+      } else {
+        for (const k in h) {
+          a.push(...h[k]);
+        }
+      }
+      return a;
+    }
+
+    /**
+     * Parses an event name string to return the specific event type.
+     * For example, given "click.foo" returns "click"
+     * @param {string} name - The input event type string.
+     * @return {string} - A string with the event type only.
+     */
+    eventName(name) {
+      const i = name.indexOf('.');
+      return i < 0 ? name : name.slice(0, i);
+    }
+
+    /**
+     * Handle hyperlink navigation in response to an item.href value.
+     * @param {Event} event - The event triggering hyperlink navigation.
+     * @param {Item} item - The scenegraph item.
+     * @param {string} href - The URL to navigate to.
+     */
+    handleHref(event, item, href) {
+      this._loader.sanitize(href, {
+        context: 'href'
+      }).then(opt => {
+        const e = new MouseEvent(event.type, event),
+          a = domCreate$1(null, 'a');
+        for (const name in opt) a.setAttribute(name, opt[name]);
+        a.dispatchEvent(e);
+      }).catch(() => {});
+    }
+
+    /**
+     * Handle tooltip display in response to an item.tooltip value.
+     * @param {Event} event - The event triggering tooltip display.
+     * @param {Item} item - The scenegraph item.
+     * @param {boolean} show - A boolean flag indicating whether
+     *   to show or hide a tooltip for the given item.
+     */
+    handleTooltip(event, item, show) {
+      if (item && item.tooltip != null) {
+        item = resolveItem$1(item, event, this.canvas(), this._origin);
+        const value = show && item && item.tooltip || null;
+        this._tooltip.call(this._obj, this, event, item, value);
+      }
+    }
+
+    /**
+     * Returns the size of a scenegraph item and its position relative
+     * to the viewport.
+     * @param {Item} item - The scenegraph item.
+     * @return {object} - A bounding box object (compatible with the
+     *   DOMRect type) consisting of x, y, width, heigh, top, left,
+     *   right, and bottom properties.
+     */
+    getItemBoundingClientRect(item) {
+      const el = this.canvas();
+      if (!el) return;
+      const rect = el.getBoundingClientRect(),
+        origin = this._origin,
+        bounds = item.bounds,
+        width = bounds.width(),
+        height = bounds.height();
+      let x = bounds.x1 + origin[0] + rect.left,
+        y = bounds.y1 + origin[1] + rect.top;
+
+      // translate coordinate for each parent group
+      while (item.mark && (item = item.mark.group)) {
+        x += item.x || 0;
+        y += item.y || 0;
+      }
+
+      // return DOMRect-compatible bounding box
+      return {
+        x,
+        y,
+        width,
+        height,
+        left: x,
+        top: y,
+        right: x + width,
+        bottom: y + height
+      };
+    }
+  };
+
+  // The default tooltip display handler.
+  // Sets the HTML title attribute on the visualization container.
+  function defaultTooltip$2(handler, event, item, value) {
+    handler.element().setAttribute('title', value || '');
+  }
+  let Renderer$1 = class Renderer {
+    /**
+     * Create a new Renderer instance.
+     * @param {object} [loader] - Optional loader instance for
+     *   image and href URL sanitization. If not specified, a
+     *   standard loader instance will be generated.
+     * @constructor
+     */
+    constructor(loader) {
+      this._el = null;
+      this._bgcolor = null;
+      this._loader = new ResourceLoader$1(loader);
+    }
+
+    /**
+     * Initialize a new Renderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {Renderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      this._el = el;
+      return this.resize(width, height, origin, scaleFactor);
+    }
+
+    /**
+     * Returns the parent container element for a visualization.
+     * @return {DOMElement} - The containing DOM element.
+     */
+    element() {
+      return this._el;
+    }
+
+    /**
+     * Returns the scene element (e.g., canvas or SVG) of the visualization
+     * Subclasses must override if the first child is not the scene element.
+     * @return {DOMElement} - The scene (e.g., canvas or SVG) element.
+     */
+    canvas() {
+      return this._el && this._el.firstChild;
+    }
+
+    /**
+     * Get / set the background color.
+     */
+    background(bgcolor) {
+      if (arguments.length === 0) return this._bgcolor;
+      this._bgcolor = bgcolor;
+      return this;
+    }
+
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {Renderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      this._width = width;
+      this._height = height;
+      this._origin = origin || [0, 0];
+      this._scale = scaleFactor || 1;
+      return this;
+    }
+
+    /**
+     * Report a dirty item whose bounds should be redrawn.
+     * This base class method does nothing. Subclasses that perform
+     * incremental should implement this method.
+     * @param {Item} item - The dirty item whose bounds should be redrawn.
+     */
+    dirty( /*item*/) {}
+
+    /**
+     * Render an input scenegraph, potentially with a set of dirty items.
+     * This method will perform an immediate rendering with available resources.
+     * The renderer may also need to perform image loading to perform a complete
+     * render. This process can lead to asynchronous re-rendering of the scene
+     * after this method returns. To receive notification when rendering is
+     * complete, use the renderAsync method instead.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     * @return {Renderer} - This renderer instance.
+     */
+    render(scene, markTypes) {
+      const r = this;
+
+      // bind arguments into a render call, and cache it
+      // this function may be subsequently called for async redraw
+      r._call = function () {
+        r._render(scene, markTypes);
+      };
+
+      // invoke the renderer
+      r._call();
+
+      // clear the cached call for garbage collection
+      // async redraws will stash their own copy
+      r._call = null;
+      return r;
+    }
+
+    /**
+     * Internal rendering method. Renderer subclasses should override this
+     * method to actually perform rendering.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     */
+    _render( /*scene, markTypes*/
+    ) {
+      // subclasses to override
+    }
+
+    /**
+     * Asynchronous rendering method. Similar to render, but returns a Promise
+     * that resolves when all rendering is completed. Sometimes a renderer must
+     * perform image loading to get a complete rendering. The returned
+     * Promise will not resolve until this process completes.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     * @return {Promise} - A Promise that resolves when rendering is complete.
+     */
+    renderAsync(scene, markTypes) {
+      const r = this.render(scene, markTypes);
+      return this._ready ? this._ready.then(() => r) : Promise.resolve(r);
+    }
+
+    /**
+     * Internal method for asynchronous resource loading.
+     * Proxies method calls to the ImageLoader, and tracks loading
+     * progress to invoke a re-render once complete.
+     * @param {string} method - The method name to invoke on the ImageLoader.
+     * @param {string} uri - The URI for the requested resource.
+     * @return {Promise} - A Promise that resolves to the requested resource.
+     */
+    _load(method, uri) {
+      var r = this,
+        p = r._loader[method](uri);
+      if (!r._ready) {
+        // re-render the scene when loading completes
+        const call = r._call;
+        r._ready = r._loader.ready().then(redraw => {
+          if (redraw) call();
+          r._ready = null;
+        });
+      }
+      return p;
+    }
+
+    /**
+     * Sanitize a URL to include as a hyperlink in the rendered scene.
+     * This method proxies a call to ImageLoader.sanitizeURL, but also tracks
+     * image loading progress and invokes a re-render once complete.
+     * @param {string} uri - The URI string to sanitize.
+     * @return {Promise} - A Promise that resolves to the sanitized URL.
+     */
+    sanitizeURL(uri) {
+      return this._load('sanitizeURL', uri);
+    }
+
+    /**
+     * Requests an image to include in the rendered scene.
+     * This method proxies a call to ImageLoader.loadImage, but also tracks
+     * image loading progress and invokes a re-render once complete.
+     * @param {string} uri - The URI string of the image.
+     * @return {Promise} - A Promise that resolves to the loaded Image.
+     */
+    loadImage(uri) {
+      return this._load('loadImage', uri);
+    }
+  };
+  const KeyDownEvent$1 = 'keydown';
+  const KeyPressEvent$1 = 'keypress';
+  const KeyUpEvent$1 = 'keyup';
+  const DragEnterEvent$1 = 'dragenter';
+  const DragLeaveEvent$1 = 'dragleave';
+  const DragOverEvent$1 = 'dragover';
+  const PointerDownEvent$1 = 'pointerdown';
+  const PointerUpEvent$1 = 'pointerup';
+  const PointerMoveEvent$1 = 'pointermove';
+  const PointerOutEvent$1 = 'pointerout';
+  const PointerOverEvent$1 = 'pointerover';
+  const MouseDownEvent$1 = 'mousedown';
+  const MouseUpEvent$1 = 'mouseup';
+  const MouseMoveEvent$1 = 'mousemove';
+  const MouseOutEvent$1 = 'mouseout';
+  const MouseOverEvent$1 = 'mouseover';
+  const ClickEvent$1 = 'click';
+  const DoubleClickEvent$1 = 'dblclick';
+  const WheelEvent$1 = 'wheel';
+  const MouseWheelEvent$1 = 'mousewheel';
+  const TouchStartEvent$1 = 'touchstart';
+  const TouchMoveEvent$1 = 'touchmove';
+  const TouchEndEvent$1 = 'touchend';
+  const Events$1 = [KeyDownEvent$1, KeyPressEvent$1, KeyUpEvent$1, DragEnterEvent$1, DragLeaveEvent$1, DragOverEvent$1, PointerDownEvent$1, PointerUpEvent$1, PointerMoveEvent$1, PointerOutEvent$1, PointerOverEvent$1, MouseDownEvent$1, MouseUpEvent$1, MouseMoveEvent$1, MouseOutEvent$1, MouseOverEvent$1, ClickEvent$1, DoubleClickEvent$1, WheelEvent$1, MouseWheelEvent$1, TouchStartEvent$1, TouchMoveEvent$1, TouchEndEvent$1];
+  const TooltipShowEvent$1 = PointerMoveEvent$1;
+  const TooltipHideEvent$1 = PointerOutEvent$1;
+  const HrefEvent$1 = ClickEvent$1;
+  let CanvasHandler$1 = class CanvasHandler extends Handler$1 {
+    constructor(loader, tooltip) {
+      super(loader, tooltip);
+      this._down = null;
+      this._touch = null;
+      this._first = true;
+      this._events = {};
+
+      // supported events
+      this.events = Events$1;
+      this.pointermove = move$1([PointerMoveEvent$1, MouseMoveEvent$1], [PointerOverEvent$1, MouseOverEvent$1], [PointerOutEvent$1, MouseOutEvent$1]);
+      this.dragover = move$1([DragOverEvent$1], [DragEnterEvent$1], [DragLeaveEvent$1]), this.pointerout = inactive$1([PointerOutEvent$1, MouseOutEvent$1]);
+      this.dragleave = inactive$1([DragLeaveEvent$1]);
+    }
+    initialize(el, origin, obj) {
+      this._canvas = el && domFind$1(el, 'canvas');
+
+      // add minimal events required for proper state management
+      [ClickEvent$1, MouseDownEvent$1, PointerDownEvent$1, PointerMoveEvent$1, PointerOutEvent$1, DragLeaveEvent$1].forEach(type => eventListenerCheck$1(this, type));
+      return super.initialize(el, origin, obj);
+    }
+
+    // return the backing canvas instance
+    canvas() {
+      return this._canvas;
+    }
+
+    // retrieve the current canvas context
+    context() {
+      return this._canvas.getContext('2d');
+    }
+
+    // to keep old versions of firefox happy
+    DOMMouseScroll(evt) {
+      this.fire(MouseWheelEvent$1, evt);
+    }
+    pointerdown(evt) {
+      this._down = this._active;
+      this.fire(PointerDownEvent$1, evt);
+    }
+    mousedown(evt) {
+      this._down = this._active;
+      this.fire(MouseDownEvent$1, evt);
+    }
+    click(evt) {
+      if (this._down === this._active) {
+        this.fire(ClickEvent$1, evt);
+        this._down = null;
+      }
+    }
+    touchstart(evt) {
+      this._touch = this.pickEvent(evt.changedTouches[0]);
+      if (this._first) {
+        this._active = this._touch;
+        this._first = false;
+      }
+      this.fire(TouchStartEvent$1, evt, true);
+    }
+    touchmove(evt) {
+      this.fire(TouchMoveEvent$1, evt, true);
+    }
+    touchend(evt) {
+      this.fire(TouchEndEvent$1, evt, true);
+      this._touch = null;
+    }
+
+    // fire an event
+    fire(type, evt, touch) {
+      const a = touch ? this._touch : this._active,
+        h = this._handlers[type];
+
+      // set event type relative to scenegraph items
+      evt.vegaType = type;
+
+      // handle hyperlinks and tooltips first
+      if (type === HrefEvent$1 && a && a.href) {
+        this.handleHref(evt, a, a.href);
+      } else if (type === TooltipShowEvent$1 || type === TooltipHideEvent$1) {
+        this.handleTooltip(evt, a, type !== TooltipHideEvent$1);
+      }
+
+      // invoke all registered handlers
+      if (h) {
+        for (let i = 0, len = h.length; i < len; ++i) {
+          h[i].handler.call(this._obj, evt, a);
+        }
+      }
+    }
+
+    // add an event handler
+    on(type, handler) {
+      const name = this.eventName(type),
+        h = this._handlers,
+        i = this._handlerIndex(h[name], type, handler);
+      if (i < 0) {
+        eventListenerCheck$1(this, type);
+        (h[name] || (h[name] = [])).push({
+          type: type,
+          handler: handler
+        });
+      }
+      return this;
+    }
+
+    // remove an event handler
+    off(type, handler) {
+      const name = this.eventName(type),
+        h = this._handlers[name],
+        i = this._handlerIndex(h, type, handler);
+      if (i >= 0) {
+        h.splice(i, 1);
+      }
+      return this;
+    }
+    pickEvent(evt) {
+      const p = point$1(evt, this._canvas),
+        o = this._origin;
+      return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
+    }
+
+    // find the scenegraph item at the current pointer position
+    // x, y -- the absolute x, y pointer coordinates on the canvas element
+    // gx, gy -- the relative coordinates within the current group
+    pick(scene, x, y, gx, gy) {
+      const g = this.context(),
+        mark = Marks$1[scene.marktype];
+      return mark.pick.call(this, g, scene, x, y, gx, gy);
+    }
+  };
+  const eventBundle$1 = type => type === TouchStartEvent$1 || type === TouchMoveEvent$1 || type === TouchEndEvent$1 ? [TouchStartEvent$1, TouchMoveEvent$1, TouchEndEvent$1] : [type];
+
+  // lazily add listeners to the canvas as needed
+  function eventListenerCheck$1(handler, type) {
+    eventBundle$1(type).forEach(_ => addEventListener$1(handler, _));
+  }
+  function addEventListener$1(handler, type) {
+    const canvas = handler.canvas();
+    if (canvas && !handler._events[type]) {
+      handler._events[type] = 1;
+      canvas.addEventListener(type, handler[type] ? evt => handler[type](evt) : evt => handler.fire(type, evt));
+    }
+  }
+  function fireAll$1(handler, types, event) {
+    types.forEach(type => handler.fire(type, event));
+  }
+  function move$1(moveEvents, overEvents, outEvents) {
+    return function (evt) {
+      const a = this._active,
+        p = this.pickEvent(evt);
+      if (p === a) {
+        // active item and picked item are the same
+        fireAll$1(this, moveEvents, evt); // fire move
+      } else {
+        // active item and picked item are different
+        if (!a || !a.exit) {
+          // fire out for prior active item
+          // suppress if active item was removed from scene
+          fireAll$1(this, outEvents, evt);
+        }
+        this._active = p; // set new active item
+        fireAll$1(this, overEvents, evt); // fire over for new active item
+        fireAll$1(this, moveEvents, evt); // fire move for new active item
+      }
+    };
+  }
+
+  function inactive$1(types) {
+    return function (evt) {
+      fireAll$1(this, types, evt);
+      this._active = null;
+    };
+  }
+  function devicePixelRatio$1() {
+    return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+  }
+  function resize$1(canvas, width, height, origin, scaleFactor, opt) {
+    const inDOM = typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement && canvas.parentNode != null,
+      context = canvas.getContext('2d'),
+      ratio = inDOM ? devicePixelRatio$1() : scaleFactor;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    for (const key in opt) {
+      context[key] = opt[key];
+    }
+    if (inDOM && ratio !== 1) {
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+    }
+    context.pixelRatio = ratio;
+    context.setTransform(ratio, 0, 0, ratio, ratio * origin[0], ratio * origin[1]);
+    return canvas;
+  }
+  let CanvasRenderer$1 = class CanvasRenderer extends Renderer$1 {
+    constructor(loader) {
+      super(loader);
+      this._options = {};
+      this._redraw = false;
+      this._dirty = new Bounds$1();
+      this._tempb = new Bounds$1();
+    }
+    initialize(el, width, height, origin, scaleFactor, options) {
+      this._options = options || {};
+      this._canvas = this._options.externalContext ? null : domCanvas(1, 1, this._options.type); // instantiate a small canvas
+
+      if (el && this._canvas) {
+        domClear$1(el, 0).appendChild(this._canvas);
+        this._canvas.setAttribute('class', 'marks');
+      }
+
+      // this method will invoke resize to size the canvas appropriately
+      return super.initialize(el, width, height, origin, scaleFactor);
+    }
+    resize(width, height, origin, scaleFactor) {
+      super.resize(width, height, origin, scaleFactor);
+      if (this._canvas) {
+        // configure canvas size and transform
+        resize$1(this._canvas, this._width, this._height, this._origin, this._scale, this._options.context);
+      } else {
+        // external context needs to be scaled and positioned to origin
+        const ctx = this._options.externalContext;
+        if (!ctx) error('CanvasRenderer is missing a valid canvas or context');
+        ctx.scale(this._scale, this._scale);
+        ctx.translate(this._origin[0], this._origin[1]);
+      }
+      this._redraw = true;
+      return this;
+    }
+    canvas() {
+      return this._canvas;
+    }
+    context() {
+      return this._options.externalContext || (this._canvas ? this._canvas.getContext('2d') : null);
+    }
+    dirty(item) {
+      const b = this._tempb.clear().union(item.bounds);
+      let g = item.mark.group;
+      while (g) {
+        b.translate(g.x || 0, g.y || 0);
+        g = g.mark.group;
+      }
+      this._dirty.union(b);
+    }
+    _render(scene, markTypes) {
+      const g = this.context(),
+        o = this._origin,
+        w = this._width,
+        h = this._height,
+        db = this._dirty,
+        vb = viewBounds$1(o, w, h);
+
+      // setup
+      g.save();
+      const b = this._redraw || db.empty() ? (this._redraw = false, vb.expand(1)) : clipToBounds$1(g, vb.intersect(db), o);
+      this.clear(-o[0], -o[1], w, h);
+
+      // render
+      this.draw(g, scene, b, markTypes);
+
+      // takedown
+      g.restore();
+      db.clear();
+      return this;
+    }
+    draw(ctx, scene, bounds, markTypes) {
+      if (scene.marktype !== 'group' && markTypes != null && !markTypes.includes(scene.marktype)) {
+        return;
+      }
+      const mark = Marks$1[scene.marktype];
+      if (scene.clip) clip$3(ctx, scene);
+      mark.draw.call(this, ctx, scene, bounds, markTypes);
+      if (scene.clip) ctx.restore();
+    }
+    clear(x, y, w, h) {
+      const opt = this._options,
+        g = this.context();
+      if (opt.type !== 'pdf' && !opt.externalContext) {
+        // calling clear rect voids vector output in pdf mode
+        // and could remove external context content (#2615)
+        g.clearRect(x, y, w, h);
+      }
+      if (this._bgcolor != null) {
+        g.fillStyle = this._bgcolor;
+        g.fillRect(x, y, w, h);
+      }
+    }
+  };
+  const viewBounds$1 = (origin, width, height) => new Bounds$1().set(0, 0, width, height).translate(-origin[0], -origin[1]);
+  function clipToBounds$1(g, b, origin) {
+    // expand bounds by 1 pixel, then round to pixel boundaries
+    b.expand(1).round();
+
+    // align to base pixel grid in case of non-integer scaling (#2425)
+    if (g.pixelRatio % 1) {
+      b.scale(g.pixelRatio).round().scale(1 / g.pixelRatio);
+    }
+
+    // to avoid artifacts translate if origin has fractional pixels
+    b.translate(-(origin[0] % 1), -(origin[1] % 1));
+
+    // set clip path
+    g.beginPath();
+    g.rect(b.x1, b.y1, b.width(), b.height());
+    g.clip();
+    return b;
+  }
+  let SVGHandler$1 = class SVGHandler extends Handler$1 {
+    constructor(loader, tooltip) {
+      super(loader, tooltip);
+      const h = this;
+      h._hrefHandler = listener$1(h, (evt, item) => {
+        if (item && item.href) h.handleHref(evt, item, item.href);
+      });
+      h._tooltipHandler = listener$1(h, (evt, item) => {
+        h.handleTooltip(evt, item, evt.type !== TooltipHideEvent$1);
+      });
+    }
+    initialize(el, origin, obj) {
+      let svg = this._svg;
+      if (svg) {
+        svg.removeEventListener(HrefEvent$1, this._hrefHandler);
+        svg.removeEventListener(TooltipShowEvent$1, this._tooltipHandler);
+        svg.removeEventListener(TooltipHideEvent$1, this._tooltipHandler);
+      }
+      this._svg = svg = el && domFind$1(el, 'svg');
+      if (svg) {
+        svg.addEventListener(HrefEvent$1, this._hrefHandler);
+        svg.addEventListener(TooltipShowEvent$1, this._tooltipHandler);
+        svg.addEventListener(TooltipHideEvent$1, this._tooltipHandler);
+      }
+      return super.initialize(el, origin, obj);
+    }
+    canvas() {
+      return this._svg;
+    }
+
+    // add an event handler
+    on(type, handler) {
+      const name = this.eventName(type),
+        h = this._handlers,
+        i = this._handlerIndex(h[name], type, handler);
+      if (i < 0) {
+        const x = {
+          type,
+          handler,
+          listener: listener$1(this, handler)
+        };
+        (h[name] || (h[name] = [])).push(x);
+        if (this._svg) {
+          this._svg.addEventListener(name, x.listener);
+        }
+      }
+      return this;
+    }
+
+    // remove an event handler
+    off(type, handler) {
+      const name = this.eventName(type),
+        h = this._handlers[name],
+        i = this._handlerIndex(h, type, handler);
+      if (i >= 0) {
+        if (this._svg) {
+          this._svg.removeEventListener(name, h[i].listener);
+        }
+        h.splice(i, 1);
+      }
+      return this;
+    }
+  };
+
+  // wrap an event listener for the SVG DOM
+  const listener$1 = (context, handler) => evt => {
+    let item = evt.target.__data__;
+    item = Array.isArray(item) ? item[0] : item;
+    evt.vegaType = evt.type;
+    handler.call(context._obj, evt, item);
+  };
+  const ARIA_HIDDEN$1 = 'aria-hidden';
+  const ARIA_LABEL$1 = 'aria-label';
+  const ARIA_ROLE$1 = 'role';
+  const ARIA_ROLEDESCRIPTION$1 = 'aria-roledescription';
+  const GRAPHICS_OBJECT$1 = 'graphics-object';
+  const GRAPHICS_SYMBOL$1 = 'graphics-symbol';
+  const bundle$1 = (role, roledesc, label) => ({
+    [ARIA_ROLE$1]: role,
+    [ARIA_ROLEDESCRIPTION$1]: roledesc,
+    [ARIA_LABEL$1]: label || undefined
+  });
+
+  // these roles are covered by related roles
+  // we can ignore them, no need to generate attributes
+  const AriaIgnore$1 = toSet(['axis-domain', 'axis-grid', 'axis-label', 'axis-tick', 'axis-title', 'legend-band', 'legend-entry', 'legend-gradient', 'legend-label', 'legend-title', 'legend-symbol', 'title']);
+
+  // aria attribute generators for guide roles
+  const AriaGuides$1 = {
+    'axis': {
+      desc: 'axis',
+      caption: axisCaption$1
+    },
+    'legend': {
+      desc: 'legend',
+      caption: legendCaption$1
+    },
+    'title-text': {
+      desc: 'title',
+      caption: item => `Title text '${titleCaption$1(item)}'`
+    },
+    'title-subtitle': {
+      desc: 'subtitle',
+      caption: item => `Subtitle text '${titleCaption$1(item)}'`
+    }
+  };
+
+  // aria properties generated for mark item encoding channels
+  const AriaEncode$1 = {
+    ariaRole: ARIA_ROLE$1,
+    ariaRoleDescription: ARIA_ROLEDESCRIPTION$1,
+    description: ARIA_LABEL$1
+  };
+  function ariaItemAttributes$1(emit, item) {
+    const hide = item.aria === false;
+    emit(ARIA_HIDDEN$1, hide || undefined);
+    if (hide || item.description == null) {
+      for (const prop in AriaEncode$1) {
+        emit(AriaEncode$1[prop], undefined);
+      }
+    } else {
+      const type = item.mark.marktype;
+      emit(ARIA_LABEL$1, item.description);
+      emit(ARIA_ROLE$1, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT$1 : GRAPHICS_SYMBOL$1));
+      emit(ARIA_ROLEDESCRIPTION$1, item.ariaRoleDescription || `${type} mark`);
+    }
+  }
+  function ariaMarkAttributes$1(mark) {
+    return mark.aria === false ? {
+      [ARIA_HIDDEN$1]: true
+    } : AriaIgnore$1[mark.role] ? null : AriaGuides$1[mark.role] ? ariaGuide$1(mark, AriaGuides$1[mark.role]) : ariaMark$1(mark);
+  }
+  function ariaMark$1(mark) {
+    const type = mark.marktype;
+    const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
+    return bundle$1(recurse ? GRAPHICS_OBJECT$1 : GRAPHICS_SYMBOL$1, `${type} mark container`, mark.description);
+  }
+  function ariaGuide$1(mark, opt) {
+    try {
+      const item = mark.items[0],
+        caption = opt.caption || (() => '');
+      return bundle$1(opt.role || GRAPHICS_SYMBOL$1, opt.desc, item.description || caption(item));
+    } catch (err) {
+      return null;
+    }
+  }
+  function titleCaption$1(item) {
+    return array$2(item.text).join(' ');
+  }
+  function axisCaption$1(item) {
+    const datum = item.datum,
+      orient = item.orient,
+      title = datum.title ? extractTitle$1(item) : null,
+      ctx = item.context,
+      scale = ctx.scales[datum.scale].value,
+      locale = ctx.dataflow.locale(),
+      type = scale.type,
+      xy = orient === 'left' || orient === 'right' ? 'Y' : 'X';
+    return `${xy}-axis` + (title ? ` titled '${title}'` : '') + ` for a ${isDiscrete(type) ? 'discrete' : type} scale` + ` with ${domainCaption(locale, scale, item)}`;
+  }
+  function legendCaption$1(item) {
+    const datum = item.datum,
+      title = datum.title ? extractTitle$1(item) : null,
+      type = `${datum.type || ''} legend`.trim(),
+      scales = datum.scales,
+      props = Object.keys(scales),
+      ctx = item.context,
+      scale = ctx.scales[scales[props[0]]].value,
+      locale = ctx.dataflow.locale();
+    return capitalize$1(type) + (title ? ` titled '${title}'` : '') + ` for ${channelCaption$1(props)}` + ` with ${domainCaption(locale, scale, item)}`;
+  }
+  function extractTitle$1(item) {
+    try {
+      return array$2(peek$1(item.items).items[0].text).join(' ');
+    } catch (err) {
+      return null;
+    }
+  }
+  function channelCaption$1(props) {
+    props = props.map(p => p + (p === 'fill' || p === 'stroke' ? ' color' : ''));
+    return props.length < 2 ? props[0] : props.slice(0, -1).join(', ') + ' and ' + peek$1(props);
+  }
+  function capitalize$1(s) {
+    return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+  }
+  const innerText$1 = val => (val + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const attrText$1 = val => innerText$1(val).replace(/"/g, '&quot;').replace(/\t/g, '&#x9;').replace(/\n/g, '&#xA;').replace(/\r/g, '&#xD;');
+  function markup$1() {
+    let buf = '',
+      outer = '',
+      inner = '';
+    const stack = [],
+      clear = () => outer = inner = '',
+      push = tag => {
+        if (outer) {
+          buf += `${outer}>${inner}`;
+          clear();
+        }
+        stack.push(tag);
+      },
+      attr = (name, value) => {
+        if (value != null) outer += ` ${name}="${attrText$1(value)}"`;
+        return m;
+      },
+      m = {
+        open(tag) {
+          push(tag);
+          outer = '<' + tag;
+          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            attrs[_key - 1] = arguments[_key];
+          }
+          for (const set of attrs) {
+            for (const key in set) attr(key, set[key]);
+          }
+          return m;
+        },
+        close() {
+          const tag = stack.pop();
+          if (outer) {
+            buf += outer + (inner ? `>${inner}</${tag}>` : '/>');
+          } else {
+            buf += `</${tag}>`;
+          }
+          clear();
+          return m;
+        },
+        attr,
+        text: t => (inner += innerText$1(t), m),
+        toString: () => buf
+      };
+    return m;
+  }
+  const serializeXML$1 = node => _serialize$1(markup$1(), node) + '';
+  function _serialize$1(m, node) {
+    m.open(node.tagName);
+    if (node.hasAttributes()) {
+      const attrs = node.attributes,
+        n = attrs.length;
+      for (let i = 0; i < n; ++i) {
+        m.attr(attrs[i].name, attrs[i].value);
+      }
+    }
+    if (node.hasChildNodes()) {
+      const children = node.childNodes;
+      for (const child of children) {
+        child.nodeType === 3 // text node
+        ? m.text(child.nodeValue) : _serialize$1(m, child);
+      }
+    }
+    return m.close();
+  }
+  const stylesAttr$1 = {
+    fill: 'fill',
+    fillOpacity: 'fill-opacity',
+    stroke: 'stroke',
+    strokeOpacity: 'stroke-opacity',
+    strokeWidth: 'stroke-width',
+    strokeCap: 'stroke-linecap',
+    strokeJoin: 'stroke-linejoin',
+    strokeDash: 'stroke-dasharray',
+    strokeDashOffset: 'stroke-dashoffset',
+    strokeMiterLimit: 'stroke-miterlimit',
+    opacity: 'opacity'
+  };
+  const stylesCss$1 = {
+    blend: 'mix-blend-mode'
+  };
+
+  // ensure miter limit default is consistent with canvas (#2498)
+  const rootAttributes$1 = {
+    'fill': 'none',
+    'stroke-miterlimit': 10
+  };
+  const RootIndex$1 = 0,
+    xmlns$1 = 'http://www.w3.org/2000/xmlns/',
+    svgns$1 = metadata$1.xmlns;
+  let SVGRenderer$1 = class SVGRenderer extends Renderer$1 {
+    constructor(loader) {
+      super(loader);
+      this._dirtyID = 0;
+      this._dirty = [];
+      this._svg = null;
+      this._root = null;
+      this._defs = null;
+    }
+
+    /**
+     * Initialize a new SVGRenderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      // create the svg definitions cache
+      this._defs = {};
+      this._clearDefs();
+      if (el) {
+        this._svg = domChild$1(el, 0, 'svg', svgns$1);
+        this._svg.setAttributeNS(xmlns$1, 'xmlns', svgns$1);
+        this._svg.setAttributeNS(xmlns$1, 'xmlns:xlink', metadata$1['xmlns:xlink']);
+        this._svg.setAttribute('version', metadata$1['version']);
+        this._svg.setAttribute('class', 'marks');
+        domClear$1(el, 1);
+
+        // set the svg root group
+        this._root = domChild$1(this._svg, RootIndex$1, 'g', svgns$1);
+        setAttributes$1(this._root, rootAttributes$1);
+
+        // ensure no additional child elements
+        domClear$1(this._svg, RootIndex$1 + 1);
+      }
+
+      // set background color if defined
+      this.background(this._bgcolor);
+      return super.initialize(el, width, height, origin, scaleFactor);
+    }
+
+    /**
+     * Get / set the background color.
+     */
+    background(bgcolor) {
+      if (arguments.length && this._svg) {
+        this._svg.style.setProperty('background-color', bgcolor);
+      }
+      return super.background(...arguments);
+    }
+
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      super.resize(width, height, origin, scaleFactor);
+      if (this._svg) {
+        setAttributes$1(this._svg, {
+          width: this._width * this._scale,
+          height: this._height * this._scale,
+          viewBox: `0 0 ${this._width} ${this._height}`
+        });
+        this._root.setAttribute('transform', `translate(${this._origin})`);
+      }
+      this._dirty = [];
+      return this;
+    }
+
+    /**
+     * Returns the SVG element of the visualization.
+     * @return {DOMElement} - The SVG element.
+     */
+    canvas() {
+      return this._svg;
+    }
+
+    /**
+     * Returns an SVG text string for the rendered content,
+     * or null if this renderer is currently headless.
+     */
+    svg() {
+      const svg = this._svg,
+        bg = this._bgcolor;
+      if (!svg) return null;
+      let node;
+      if (bg) {
+        svg.removeAttribute('style');
+        node = domChild$1(svg, RootIndex$1, 'rect', svgns$1);
+        setAttributes$1(node, {
+          width: this._width,
+          height: this._height,
+          fill: bg
+        });
+      }
+      const text = serializeXML$1(svg);
+      if (bg) {
+        svg.removeChild(node);
+        this._svg.style.setProperty('background-color', bg);
+      }
+      return text;
+    }
+
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     */
+    _render(scene, markTypes) {
+      // perform spot updates and re-render markup
+      if (this._dirtyCheck()) {
+        if (this._dirtyAll) this._clearDefs();
+        this.mark(this._root, scene, undefined, markTypes);
+        domClear$1(this._root, 1);
+      }
+      this.defs();
+      this._dirty = [];
+      ++this._dirtyID;
+      return this;
+    }
+
+    // -- Manage rendering of items marked as dirty --
+
+    /**
+     * Flag a mark item as dirty.
+     * @param {Item} item - The mark item.
+     */
+    dirty(item) {
+      if (item.dirty !== this._dirtyID) {
+        item.dirty = this._dirtyID;
+        this._dirty.push(item);
+      }
+    }
+
+    /**
+     * Check if a mark item is considered dirty.
+     * @param {Item} item - The mark item.
+     */
+    isDirty(item) {
+      return this._dirtyAll || !item._svg || !item._svg.ownerSVGElement || item.dirty === this._dirtyID;
+    }
+
+    /**
+     * Internal method to check dirty status and, if possible,
+     * make targetted updates without a full rendering pass.
+     */
+    _dirtyCheck() {
+      this._dirtyAll = true;
+      const items = this._dirty;
+      if (!items.length || !this._dirtyID) return true;
+      const id = ++this._dirtyID;
+      let item, mark, type, mdef, i, n, o;
+      for (i = 0, n = items.length; i < n; ++i) {
+        item = items[i];
+        mark = item.mark;
+        if (mark.marktype !== type) {
+          // memoize mark instance lookup
+          type = mark.marktype;
+          mdef = Marks$1[type];
+        }
+        if (mark.zdirty && mark.dirty !== id) {
+          this._dirtyAll = false;
+          dirtyParents$1(item, id);
+          mark.items.forEach(i => {
+            i.dirty = id;
+          });
+        }
+        if (mark.zdirty) continue; // handle in standard drawing pass
+
+        if (item.exit) {
+          // EXIT
+          if (mdef.nested && mark.items.length) {
+            // if nested mark with remaining points, update instead
+            o = mark.items[0];
+            if (o._svg) this._update(mdef, o._svg, o);
+          } else if (item._svg) {
+            // otherwise remove from DOM
+            o = item._svg.parentNode;
+            if (o) o.removeChild(item._svg);
+          }
+          item._svg = null;
+          continue;
+        }
+        item = mdef.nested ? mark.items[0] : item;
+        if (item._update === id) continue; // already visited
+
+        if (!item._svg || !item._svg.ownerSVGElement) {
+          // ENTER
+          this._dirtyAll = false;
+          dirtyParents$1(item, id);
+        } else {
+          // IN-PLACE UPDATE
+          this._update(mdef, item._svg, item);
+        }
+        item._update = id;
+      }
+      return !this._dirtyAll;
+    }
+
+    // -- Construct & maintain scenegraph to SVG mapping ---
+
+    /**
+     * Render a set of mark items.
+     * @param {SVGElement} el - The parent element in the SVG tree.
+     * @param {object} scene - The mark parent to render.
+     * @param {SVGElement} prev - The previous sibling in the SVG tree.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     */
+    mark(el, scene, prev, markTypes) {
+      if (!this.isDirty(scene)) {
+        return scene._svg;
+      }
+      const svg = this._svg,
+        markType = scene.marktype,
+        mdef = Marks$1[markType],
+        events = scene.interactive === false ? 'none' : null,
+        isGroup = mdef.tag === 'g';
+      const parent = bind$2(scene, el, prev, 'g', svg);
+      if (markType !== 'group' && markTypes != null && !markTypes.includes(markType)) {
+        domClear$1(parent, 0);
+        return scene._svg;
+      }
+      parent.setAttribute('class', cssClass$1(scene));
+
+      // apply aria attributes to parent container element
+      const aria = ariaMarkAttributes$1(scene);
+      for (const key in aria) setAttribute$1(parent, key, aria[key]);
+      if (!isGroup) {
+        setAttribute$1(parent, 'pointer-events', events);
+      }
+      setAttribute$1(parent, 'clip-path', scene.clip ? clip$1$1(this, scene, scene.group) : null);
+      let sibling = null,
+        i = 0;
+      const process = item => {
+        const dirty = this.isDirty(item),
+          node = bind$2(item, parent, sibling, mdef.tag, svg);
+        if (dirty) {
+          this._update(mdef, node, item);
+          if (isGroup) recurse$1(this, node, item, markTypes);
+        }
+        sibling = node;
+        ++i;
+      };
+      if (mdef.nested) {
+        if (scene.items.length) process(scene.items[0]);
+      } else {
+        visit$1(scene, process);
+      }
+      domClear$1(parent, i);
+      return parent;
+    }
+
+    /**
+     * Update the attributes of an SVG element for a mark item.
+     * @param {object} mdef - The mark definition object
+     * @param {SVGElement} el - The SVG element.
+     * @param {Item} item - The mark item.
+     */
+    _update(mdef, el, item) {
+      // set dom element and values cache
+      // provides access to emit method
+      element$2 = el;
+      values$1 = el.__values__;
+
+      // apply aria-specific properties
+      ariaItemAttributes$1(emit$1, item);
+
+      // apply svg attributes
+      mdef.attr(emit$1, item, this);
+
+      // some marks need special treatment
+      const extra = mark_extras$1[mdef.type];
+      if (extra) extra.call(this, mdef, el, item);
+
+      // apply svg style attributes
+      // note: element state may have been modified by 'extra' method
+      if (element$2) this.style(element$2, item);
+    }
+
+    /**
+     * Update the presentation attributes of an SVG element for a mark item.
+     * @param {SVGElement} el - The SVG element.
+     * @param {Item} item - The mark item.
+     */
+    style(el, item) {
+      if (item == null) return;
+      for (const prop in stylesAttr$1) {
+        let value = prop === 'font' ? fontFamily$1(item) : item[prop];
+        if (value === values$1[prop]) continue;
+        const name = stylesAttr$1[prop];
+        if (value == null) {
+          el.removeAttribute(name);
+        } else {
+          if (isGradient$1(value)) {
+            value = gradientRef$1(value, this._defs.gradient, href$1());
+          }
+          el.setAttribute(name, value + '');
+        }
+        values$1[prop] = value;
+      }
+      for (const prop in stylesCss$1) {
+        setStyle$1(el, stylesCss$1[prop], item[prop]);
+      }
+    }
+
+    /**
+     * Render SVG defs, as needed.
+     * Must be called *after* marks have been processed to ensure the
+     * collected state is current and accurate.
+     */
+    defs() {
+      const svg = this._svg,
+        defs = this._defs;
+      let el = defs.el,
+        index = 0;
+      for (const id in defs.gradient) {
+        if (!el) defs.el = el = domChild$1(svg, RootIndex$1 + 1, 'defs', svgns$1);
+        index = updateGradient$1(el, defs.gradient[id], index);
+      }
+      for (const id in defs.clipping) {
+        if (!el) defs.el = el = domChild$1(svg, RootIndex$1 + 1, 'defs', svgns$1);
+        index = updateClipping$1(el, defs.clipping[id], index);
+      }
+
+      // clean-up
+      if (el) {
+        index === 0 ? (svg.removeChild(el), defs.el = null) : domClear$1(el, index);
+      }
+    }
+
+    /**
+     * Clear defs caches.
+     */
+    _clearDefs() {
+      const def = this._defs;
+      def.gradient = {};
+      def.clipping = {};
+    }
+  };
+
+  // mark ancestor chain with a dirty id
+  function dirtyParents$1(item, id) {
+    for (; item && item.dirty !== id; item = item.mark.group) {
+      item.dirty = id;
+      if (item.mark && item.mark.dirty !== id) {
+        item.mark.dirty = id;
+      } else return;
+    }
+  }
+
+  // update gradient definitions
+  function updateGradient$1(el, grad, index) {
+    let i, n, stop;
+    if (grad.gradient === 'radial') {
+      // SVG radial gradients automatically transform to normalized bbox
+      // coordinates, in a way that is cumbersome to replicate in canvas.
+      // We wrap the radial gradient in a pattern element, allowing us to
+      // maintain a circular gradient that matches what canvas provides.
+      let pt = domChild$1(el, index++, 'pattern', svgns$1);
+      setAttributes$1(pt, {
+        id: patternPrefix$1 + grad.id,
+        viewBox: '0,0,1,1',
+        width: '100%',
+        height: '100%',
+        preserveAspectRatio: 'xMidYMid slice'
+      });
+      pt = domChild$1(pt, 0, 'rect', svgns$1);
+      setAttributes$1(pt, {
+        width: 1,
+        height: 1,
+        fill: `url(${href$1()}#${grad.id})`
+      });
+      el = domChild$1(el, index++, 'radialGradient', svgns$1);
+      setAttributes$1(el, {
+        id: grad.id,
+        fx: grad.x1,
+        fy: grad.y1,
+        fr: grad.r1,
+        cx: grad.x2,
+        cy: grad.y2,
+        r: grad.r2
+      });
+    } else {
+      el = domChild$1(el, index++, 'linearGradient', svgns$1);
+      setAttributes$1(el, {
+        id: grad.id,
+        x1: grad.x1,
+        x2: grad.x2,
+        y1: grad.y1,
+        y2: grad.y2
+      });
+    }
+    for (i = 0, n = grad.stops.length; i < n; ++i) {
+      stop = domChild$1(el, i, 'stop', svgns$1);
+      stop.setAttribute('offset', grad.stops[i].offset);
+      stop.setAttribute('stop-color', grad.stops[i].color);
+    }
+    domClear$1(el, i);
+    return index;
+  }
+
+  // update clipping path definitions
+  function updateClipping$1(el, clip, index) {
+    let mask;
+    el = domChild$1(el, index, 'clipPath', svgns$1);
+    el.setAttribute('id', clip.id);
+    if (clip.path) {
+      mask = domChild$1(el, 0, 'path', svgns$1);
+      mask.setAttribute('d', clip.path);
+    } else {
+      mask = domChild$1(el, 0, 'rect', svgns$1);
+      setAttributes$1(mask, {
+        x: 0,
+        y: 0,
+        width: clip.width,
+        height: clip.height
+      });
+    }
+    domClear$1(el, 1);
+    return index + 1;
+  }
+
+  // Recursively process group contents.
+  function recurse$1(renderer, el, group, markTypes) {
+    // child 'g' element is second to last among children (path, g, path)
+    // other children here are foreground and background path elements
+    el = el.lastChild.previousSibling;
+    let prev,
+      idx = 0;
+    visit$1(group, item => {
+      prev = renderer.mark(el, item, prev, markTypes);
+      ++idx;
+    });
+
+    // remove any extraneous DOM elements
+    domClear$1(el, 1 + idx);
+  }
+
+  // Bind a scenegraph item to an SVG DOM element.
+  // Create new SVG elements as needed.
+  function bind$2(item, el, sibling, tag, svg) {
+    let node = item._svg,
+      doc;
+
+    // create a new dom node if needed
+    if (!node) {
+      doc = el.ownerDocument;
+      node = domCreate$1(doc, tag, svgns$1);
+      item._svg = node;
+      if (item.mark) {
+        node.__data__ = item;
+        node.__values__ = {
+          fill: 'default'
+        };
+
+        // if group, create background, content, and foreground elements
+        if (tag === 'g') {
+          const bg = domCreate$1(doc, 'path', svgns$1);
+          node.appendChild(bg);
+          bg.__data__ = item;
+          const cg = domCreate$1(doc, 'g', svgns$1);
+          node.appendChild(cg);
+          cg.__data__ = item;
+          const fg = domCreate$1(doc, 'path', svgns$1);
+          node.appendChild(fg);
+          fg.__data__ = item;
+          fg.__values__ = {
+            fill: 'default'
+          };
+        }
+      }
+    }
+
+    // (re-)insert if (a) not contained in SVG or (b) sibling order has changed
+    if (node.ownerSVGElement !== svg || siblingCheck$1(node, sibling)) {
+      el.insertBefore(node, sibling ? sibling.nextSibling : el.firstChild);
+    }
+    return node;
+  }
+
+  // check if two nodes are ordered siblings
+  function siblingCheck$1(node, sibling) {
+    return node.parentNode && node.parentNode.childNodes.length > 1 && node.previousSibling != sibling; // treat null/undefined the same
+  }
+
+  // -- Set attributes & styles on SVG elements ---
+
+  let element$2 = null,
+    // temp var for current SVG element
+    values$1 = null; // temp var for current values hash
+
+  // Extra configuration for certain mark types
+  const mark_extras$1 = {
+    group(mdef, el, item) {
+      const fg = element$2 = el.childNodes[2];
+      values$1 = fg.__values__;
+      mdef.foreground(emit$1, item, this);
+      values$1 = el.__values__; // use parent's values hash
+      element$2 = el.childNodes[1];
+      mdef.content(emit$1, item, this);
+      const bg = element$2 = el.childNodes[0];
+      mdef.background(emit$1, item, this);
+      const value = item.mark.interactive === false ? 'none' : null;
+      if (value !== values$1.events) {
+        setAttribute$1(fg, 'pointer-events', value);
+        setAttribute$1(bg, 'pointer-events', value);
+        values$1.events = value;
+      }
+      if (item.strokeForeground && item.stroke) {
+        const fill = item.fill;
+        setAttribute$1(fg, 'display', null);
+
+        // set style of background
+        this.style(bg, item);
+        setAttribute$1(bg, 'stroke', null);
+
+        // set style of foreground
+        if (fill) item.fill = null;
+        values$1 = fg.__values__;
+        this.style(fg, item);
+        if (fill) item.fill = fill;
+
+        // leave element null to prevent downstream styling
+        element$2 = null;
+      } else {
+        // ensure foreground is ignored
+        setAttribute$1(fg, 'display', 'none');
+      }
+    },
+    image(mdef, el, item) {
+      if (item.smooth === false) {
+        setStyle$1(el, 'image-rendering', 'optimizeSpeed');
+        setStyle$1(el, 'image-rendering', 'pixelated');
+      } else {
+        setStyle$1(el, 'image-rendering', null);
+      }
+    },
+    text(mdef, el, item) {
+      const tl = textLines$1(item);
+      let key, value, doc, lh;
+      if (isArray(tl)) {
+        // multi-line text
+        value = tl.map(_ => textValue$1(item, _));
+        key = value.join('\n'); // content cache key
+
+        if (key !== values$1.text) {
+          domClear$1(el, 0);
+          doc = el.ownerDocument;
+          lh = lineHeight$1(item);
+          value.forEach((t, i) => {
+            const ts = domCreate$1(doc, 'tspan', svgns$1);
+            ts.__data__ = item; // data binding
+            ts.textContent = t;
+            if (i) {
+              ts.setAttribute('x', 0);
+              ts.setAttribute('dy', lh);
+            }
+            el.appendChild(ts);
+          });
+          values$1.text = key;
+        }
+      } else {
+        // single-line text
+        value = textValue$1(item, tl);
+        if (value !== values$1.text) {
+          el.textContent = value;
+          values$1.text = value;
+        }
+      }
+      setAttribute$1(el, 'font-family', fontFamily$1(item));
+      setAttribute$1(el, 'font-size', fontSize$1(item) + 'px');
+      setAttribute$1(el, 'font-style', item.fontStyle);
+      setAttribute$1(el, 'font-variant', item.fontVariant);
+      setAttribute$1(el, 'font-weight', item.fontWeight);
+    }
+  };
+  function emit$1(name, value, ns) {
+    // early exit if value is unchanged
+    if (value === values$1[name]) return;
+
+    // use appropriate method given namespace (ns)
+    if (ns) {
+      setAttributeNS$1(element$2, name, value, ns);
+    } else {
+      setAttribute$1(element$2, name, value);
+    }
+
+    // note current value for future comparison
+    values$1[name] = value;
+  }
+  function setStyle$1(el, name, value) {
+    if (value !== values$1[name]) {
+      if (value == null) {
+        el.style.removeProperty(name);
+      } else {
+        el.style.setProperty(name, value + '');
+      }
+      values$1[name] = value;
+    }
+  }
+  function setAttributes$1(el, attrs) {
+    for (const key in attrs) {
+      setAttribute$1(el, key, attrs[key]);
+    }
+  }
+  function setAttribute$1(el, name, value) {
+    if (value != null) {
+      // if value is provided, update DOM attribute
+      el.setAttribute(name, value);
+    } else {
+      // else remove DOM attribute
+      el.removeAttribute(name);
+    }
+  }
+  function setAttributeNS$1(el, name, value, ns) {
+    if (value != null) {
+      // if value is provided, update DOM attribute
+      el.setAttributeNS(ns, name, value);
+    } else {
+      // else remove DOM attribute
+      el.removeAttributeNS(ns, name);
+    }
+  }
+  function href$1() {
+    let loc;
+    return typeof window === 'undefined' ? '' : (loc = window.location).hash ? loc.href.slice(0, -loc.hash.length) : loc.href;
+  }
+  let SVGStringRenderer$1 = class SVGStringRenderer extends Renderer$1 {
+    constructor(loader) {
+      super(loader);
+      this._text = null;
+      this._defs = {
+        gradient: {},
+        clipping: {}
+      };
+    }
+
+    /**
+     * Returns the rendered SVG text string,
+     * or null if rendering has not yet occurred.
+     */
+    svg() {
+      return this._text;
+    }
+
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     */
+    _render(scene) {
+      const m = markup$1();
+
+      // svg tag
+      m.open('svg', extend({}, metadata$1, {
+        class: 'marks',
+        width: this._width * this._scale,
+        height: this._height * this._scale,
+        viewBox: `0 0 ${this._width} ${this._height}`
+      }));
+
+      // background, if defined
+      const bg = this._bgcolor;
+      if (bg && bg !== 'transparent' && bg !== 'none') {
+        m.open('rect', {
+          width: this._width,
+          height: this._height,
+          fill: bg
+        }).close();
+      }
+
+      // root content group
+      m.open('g', rootAttributes$1, {
+        transform: 'translate(' + this._origin + ')'
+      });
+      this.mark(m, scene);
+      m.close(); // </g>
+
+      // defs
+      this.defs(m);
+
+      // get SVG text string
+      this._text = m.close() + '';
+      return this;
+    }
+
+    /**
+     * Render a set of mark items.
+     * @param {object} m - The markup context.
+     * @param {object} scene - The mark parent to render.
+     */
+    mark(m, scene) {
+      const mdef = Marks$1[scene.marktype],
+        tag = mdef.tag,
+        attrList = [ariaItemAttributes$1, mdef.attr];
+
+      // render opening group tag
+      m.open('g', {
+        'class': cssClass$1(scene),
+        'clip-path': scene.clip ? clip$1$1(this, scene, scene.group) : null
+      }, ariaMarkAttributes$1(scene), {
+        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+      });
+
+      // render contained elements
+      const process = item => {
+        const href = this.href(item);
+        if (href) m.open('a', href);
+        m.open(tag, this.attr(scene, item, attrList, tag !== 'g' ? tag : null));
+        if (tag === 'text') {
+          const tl = textLines$1(item);
+          if (isArray(tl)) {
+            // multi-line text
+            const attrs = {
+              x: 0,
+              dy: lineHeight$1(item)
+            };
+            for (let i = 0; i < tl.length; ++i) {
+              m.open('tspan', i ? attrs : null).text(textValue$1(item, tl[i])).close();
+            }
+          } else {
+            // single-line text
+            m.text(textValue$1(item, tl));
+          }
+        } else if (tag === 'g') {
+          const fore = item.strokeForeground,
+            fill = item.fill,
+            stroke = item.stroke;
+          if (fore && stroke) {
+            item.stroke = null;
+          }
+          m.open('path', this.attr(scene, item, mdef.background, 'bgrect')).close();
+
+          // recurse for group content
+          m.open('g', this.attr(scene, item, mdef.content));
+          visit$1(item, scene => this.mark(m, scene));
+          m.close();
+          if (fore && stroke) {
+            if (fill) item.fill = null;
+            item.stroke = stroke;
+            m.open('path', this.attr(scene, item, mdef.foreground, 'bgrect')).close();
+            if (fill) item.fill = fill;
+          } else {
+            m.open('path', this.attr(scene, item, mdef.foreground, 'bgfore')).close();
+          }
+        }
+        m.close(); // </tag>
+        if (href) m.close(); // </a>
+      };
+
+      if (mdef.nested) {
+        if (scene.items && scene.items.length) process(scene.items[0]);
+      } else {
+        visit$1(scene, process);
+      }
+
+      // render closing group tag
+      return m.close(); // </g>
+    }
+
+    /**
+     * Get href attributes for a hyperlinked mark item.
+     * @param {Item} item - The mark item.
+     */
+    href(item) {
+      const href = item.href;
+      let attr;
+      if (href) {
+        if (attr = this._hrefs && this._hrefs[href]) {
+          return attr;
+        } else {
+          this.sanitizeURL(href).then(attr => {
+            // rewrite to use xlink namespace
+            attr['xlink:href'] = attr.href;
+            attr.href = null;
+            (this._hrefs || (this._hrefs = {}))[href] = attr;
+          });
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Get an object of SVG attributes for a mark item.
+     * @param {object} scene - The mark parent.
+     * @param {Item} item - The mark item.
+     * @param {array|function} attrs - One or more attribute emitters.
+     * @param {string} tag - The tag being rendered.
+     */
+    attr(scene, item, attrs, tag) {
+      const object = {},
+        emit = (name, value, ns, prefixed) => {
+          object[prefixed || name] = value;
+        };
+
+      // apply mark specific attributes
+      if (Array.isArray(attrs)) {
+        attrs.forEach(fn => fn(emit, item, this));
+      } else {
+        attrs(emit, item, this);
+      }
+
+      // apply style attributes
+      if (tag) {
+        style$1(object, item, scene, tag, this._defs);
+      }
+      return object;
+    }
+
+    /**
+     * Render SVG defs, as needed.
+     * Must be called *after* marks have been processed to ensure the
+     * collected state is current and accurate.
+     * @param {object} m - The markup context.
+     */
+    defs(m) {
+      const gradient = this._defs.gradient,
+        clipping = this._defs.clipping,
+        count = Object.keys(gradient).length + Object.keys(clipping).length;
+      if (count === 0) return; // nothing to do
+
+      m.open('defs');
+      for (const id in gradient) {
+        const def = gradient[id],
+          stops = def.stops;
+        if (def.gradient === 'radial') {
+          // SVG radial gradients automatically transform to normalized bbox
+          // coordinates, in a way that is cumbersome to replicate in canvas.
+          // We wrap the radial gradient in a pattern element, allowing us to
+          // maintain a circular gradient that matches what canvas provides.
+
+          m.open('pattern', {
+            id: patternPrefix$1 + id,
+            viewBox: '0,0,1,1',
+            width: '100%',
+            height: '100%',
+            preserveAspectRatio: 'xMidYMid slice'
+          });
+          m.open('rect', {
+            width: '1',
+            height: '1',
+            fill: 'url(#' + id + ')'
+          }).close();
+          m.close(); // </pattern>
+
+          m.open('radialGradient', {
+            id: id,
+            fx: def.x1,
+            fy: def.y1,
+            fr: def.r1,
+            cx: def.x2,
+            cy: def.y2,
+            r: def.r2
+          });
+        } else {
+          m.open('linearGradient', {
+            id: id,
+            x1: def.x1,
+            x2: def.x2,
+            y1: def.y1,
+            y2: def.y2
+          });
+        }
+        for (let i = 0; i < stops.length; ++i) {
+          m.open('stop', {
+            offset: stops[i].offset,
+            'stop-color': stops[i].color
+          }).close();
+        }
+        m.close();
+      }
+      for (const id in clipping) {
+        const def = clipping[id];
+        m.open('clipPath', {
+          id: id
+        });
+        if (def.path) {
+          m.open('path', {
+            d: def.path
+          }).close();
+        } else {
+          m.open('rect', {
+            x: 0,
+            y: 0,
+            width: def.width,
+            height: def.height
+          }).close();
+        }
+        m.close();
+      }
+      m.close();
+    }
+  };
+
+  // Helper function for attr for style presentation attributes
+  function style$1(s, item, scene, tag, defs) {
+    let styleList;
+    if (item == null) return s;
+    if (tag === 'bgrect' && scene.interactive === false) {
+      s['pointer-events'] = 'none';
+    }
+    if (tag === 'bgfore') {
+      if (scene.interactive === false) {
+        s['pointer-events'] = 'none';
+      }
+      s.display = 'none';
+      if (item.fill !== null) return s;
+    }
+    if (tag === 'image' && item.smooth === false) {
+      styleList = ['image-rendering: optimizeSpeed;', 'image-rendering: pixelated;'];
+    }
+    if (tag === 'text') {
+      s['font-family'] = fontFamily$1(item);
+      s['font-size'] = fontSize$1(item) + 'px';
+      s['font-style'] = item.fontStyle;
+      s['font-variant'] = item.fontVariant;
+      s['font-weight'] = item.fontWeight;
+    }
+    for (const prop in stylesAttr$1) {
+      let value = item[prop];
+      const name = stylesAttr$1[prop];
+      if (value === 'transparent' && (name === 'fill' || name === 'stroke')) ;else if (value != null) {
+        if (isGradient$1(value)) {
+          value = gradientRef$1(value, defs.gradient, '');
+        }
+        s[name] = value;
+      }
+    }
+    for (const prop in stylesCss$1) {
+      const value = item[prop];
+      if (value != null) {
+        styleList = styleList || [];
+        styleList.push(`${stylesCss$1[prop]}: ${value};`);
+      }
+    }
+    if (styleList) {
+      s.style = styleList.join(' ');
+    }
+    return s;
+  }
+
+  /**
+   * @typedef {Object} HybridRendererOptions
+   *
+   * @property {string[]} [svgMarkTypes=['text']] - An array of SVG mark types to render
+   *                                                in the SVG layer. All other mark types
+   *                                                will be rendered in the Canvas layer.
+   * @property {boolean} [svgOnTop=true] - Flag to determine if SVG should be rendered on top.
+   * @property {boolean} [debug=false] - Flag to enable or disable debugging mode. When true,
+   *                                     the top layer will be stacked below the bottom layer
+   *                                     rather than overlaid on top.
+   */
+
+  /** @type {HybridRendererOptions} */
+  const OPTS$1 = {
+    svgMarkTypes: ['text'],
+    svgOnTop: true,
+    debug: false
+  };
+  let HybridRenderer$1 = class HybridRenderer extends Renderer$1 {
+    constructor(loader) {
+      super(loader);
+      this._svgRenderer = new SVGRenderer$1(loader);
+      this._canvasRenderer = new CanvasRenderer$1(loader);
+    }
+
+    /**
+     * Initialize a new HybridRenderer instance.
+     * @param {DOMElement} el - The containing DOM element for the display.
+     * @param {number} width - The coordinate width of the display, in pixels.
+     * @param {number} height - The coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {HybridRenderer} - This renderer instance.
+     */
+    initialize(el, width, height, origin, scaleFactor) {
+      this._root_el = domChild$1(el, 0, 'div');
+      const bottomEl = domChild$1(this._root_el, 0, 'div');
+      const topEl = domChild$1(this._root_el, 1, 'div');
+      this._root_el.style.position = 'relative';
+
+      // Set position absolute to overlay svg on top of canvas
+      {
+        bottomEl.style.height = '100%';
+        topEl.style.position = 'absolute';
+        topEl.style.top = '0';
+        topEl.style.left = '0';
+        topEl.style.height = '100%';
+        topEl.style.width = '100%';
+      }
+      this._svgEl = topEl ;
+      this._canvasEl = bottomEl ;
+
+      // pointer-events to none on SVG layer so that canvas gets all events
+      this._svgEl.style.pointerEvents = 'none';
+      this._canvasRenderer.initialize(this._canvasEl, width, height, origin, scaleFactor);
+      this._svgRenderer.initialize(this._svgEl, width, height, origin, scaleFactor);
+      return super.initialize(el, width, height, origin, scaleFactor);
+    }
+
+    /**
+     * Flag a mark item as dirty.
+     * @param {Item} item - The mark item.
+     */
+    dirty(item) {
+      if (OPTS$1.svgMarkTypes.includes(item.mark.marktype)) {
+        this._svgRenderer.dirty(item);
+      } else {
+        this._canvasRenderer.dirty(item);
+      }
+      return this;
+    }
+
+    /**
+     * Internal rendering method.
+     * @param {object} scene - The root mark of a scenegraph to render.
+     * @param {Array} markTypes - Array of the mark types to render.
+     *                            If undefined, render all mark types
+     */
+    _render(scene, markTypes) {
+      const allMarkTypes = markTypes ?? ['arc', 'area', 'image', 'line', 'path', 'rect', 'rule', 'shape', 'symbol', 'text', 'trail'];
+      const canvasMarkTypes = allMarkTypes.filter(m => !OPTS$1.svgMarkTypes.includes(m));
+      this._svgRenderer.render(scene, OPTS$1.svgMarkTypes);
+      this._canvasRenderer.render(scene, canvasMarkTypes);
+    }
+
+    /**
+     * Resize the display.
+     * @param {number} width - The new coordinate width of the display, in pixels.
+     * @param {number} height - The new coordinate height of the display, in pixels.
+     * @param {Array<number>} origin - The new origin of the display, in pixels.
+     *   The coordinate system will be translated to this point.
+     * @param {number} [scaleFactor=1] - Optional scaleFactor by which to multiply
+     *   the width and height to determine the final pixel size.
+     * @return {SVGRenderer} - This renderer instance;
+     */
+    resize(width, height, origin, scaleFactor) {
+      super.resize(width, height, origin, scaleFactor);
+      this._svgRenderer.resize(width, height, origin, scaleFactor);
+      this._canvasRenderer.resize(width, height, origin, scaleFactor);
+      return this;
+    }
+    background(bgcolor) {
+      // Propagate background color to lower canvas renderer
+      {
+        this._canvasRenderer.background(bgcolor);
+      }
+      return this;
+    }
+  };
+  let HybridHandler$1 = class HybridHandler extends CanvasHandler$1 {
+    constructor(loader, tooltip) {
+      super(loader, tooltip);
+    }
+    initialize(el, origin, obj) {
+      const canvas = domChild$1(domChild$1(el, 0, 'div'), 0 , 'div');
+      return super.initialize(canvas, origin, obj);
+    }
+  };
+  const Canvas$1 = 'canvas';
+  const Hybrid$1 = 'hybrid';
+  const PNG$1 = 'png';
+  const SVG$1 = 'svg';
+  const None$2 = 'none';
+  const RenderType$1 = {
+    Canvas: Canvas$1,
+    PNG: PNG$1,
+    SVG: SVG$1,
+    Hybrid: Hybrid$1,
+    None: None$2
+  };
+  const modules$1 = {};
+  modules$1[Canvas$1] = modules$1[PNG$1] = {
+    renderer: CanvasRenderer$1,
+    headless: CanvasRenderer$1,
+    handler: CanvasHandler$1
+  };
+  modules$1[SVG$1] = {
+    renderer: SVGRenderer$1,
+    headless: SVGStringRenderer$1,
+    handler: SVGHandler$1
+  };
+  modules$1[Hybrid$1] = {
+    renderer: HybridRenderer$1,
+    headless: HybridRenderer$1,
+    handler: HybridHandler$1
+  };
+  modules$1[None$2] = {};
+  function renderModule$1(name, _) {
+    name = String(name || '').toLowerCase();
+    if (arguments.length > 1) {
+      modules$1[name] = _;
+      return this;
+    } else {
+      return modules$1[name];
+    }
+  }
+  function intersect$3(scene, bounds, filter) {
+    const hits = [],
+      // intersection results
+      box = new Bounds$1().union(bounds),
+      // defensive copy
+      type = scene.marktype;
+    return type ? intersectMark$1(scene, box, filter, hits) : type === 'group' ? intersectGroup$1(scene, box, filter, hits) : error('Intersect scene must be mark node or group item.');
+  }
+  function intersectMark$1(mark, box, filter, hits) {
+    if (visitMark$1(mark, box, filter)) {
+      const items = mark.items,
+        type = mark.marktype,
+        n = items.length;
+      let i = 0;
+      if (type === 'group') {
+        for (; i < n; ++i) {
+          intersectGroup$1(items[i], box, filter, hits);
+        }
+      } else {
+        for (const test = Marks$1[type].isect; i < n; ++i) {
+          const item = items[i];
+          if (intersectItem$1(item, box, test)) hits.push(item);
+        }
+      }
+    }
+    return hits;
+  }
+  function visitMark$1(mark, box, filter) {
+    // process if bounds intersect and if
+    // (1) mark is a group mark (so we must recurse), or
+    // (2) mark is interactive and passes filter
+    return mark.bounds && box.intersects(mark.bounds) && (mark.marktype === 'group' || mark.interactive !== false && (!filter || filter(mark)));
+  }
+  function intersectGroup$1(group, box, filter, hits) {
+    // test intersect against group
+    // skip groups by default unless filter says otherwise
+    if (filter && filter(group.mark) && intersectItem$1(group, box, Marks$1.group.isect)) {
+      hits.push(group);
+    }
+
+    // recursively test children marks
+    // translate box to group coordinate space
+    const marks = group.items,
+      n = marks && marks.length;
+    if (n) {
+      const x = group.x || 0,
+        y = group.y || 0;
+      box.translate(-x, -y);
+      for (let i = 0; i < n; ++i) {
+        intersectMark$1(marks[i], box, filter, hits);
+      }
+      box.translate(x, y);
+    }
+    return hits;
+  }
+  function intersectItem$1(item, box, test) {
+    // test bounds enclosure, bounds intersection, then detailed test
+    const bounds = item.bounds;
+    return box.encloses(bounds) || box.intersects(bounds) && test(item, box);
+  }
+  const clipBounds$1 = new Bounds$1();
+  function boundClip$1(mark) {
+    const clip = mark.clip;
+    if (isFunction(clip)) {
+      clip(boundContext$1(clipBounds$1.clear()));
+    } else if (clip) {
+      clipBounds$1.set(0, 0, mark.group.width, mark.group.height);
+    } else return;
+    mark.bounds.intersect(clipBounds$1);
+  }
+
+  const Top$1 = 'top';
+  const Left$1 = 'left';
+  const Right$1 = 'right';
+  const Bottom$1 = 'bottom';
+  const TopLeft = 'top-left';
+  const TopRight = 'top-right';
+  const BottomLeft = 'bottom-left';
+  const BottomRight = 'bottom-right';
+  const Start$1 = 'start';
+  const Middle$1 = 'middle';
+  const End$1 = 'end';
+  const X = 'x';
+  const Y = 'y';
+  const Group = 'group';
+  const AxisRole$1 = 'axis';
+  const TitleRole$1 = 'title';
+  const FrameRole$1 = 'frame';
+  const ScopeRole$1 = 'scope';
+  const LegendRole$1 = 'legend';
+  const RowHeader = 'row-header';
+  const RowFooter = 'row-footer';
+  const RowTitle = 'row-title';
+  const ColHeader = 'column-header';
+  const ColFooter = 'column-footer';
+  const ColTitle = 'column-title';
+  const Padding$1 = 'padding';
+  const Symbols$1 = 'symbol';
+  const Fit = 'fit';
+  const FitX = 'fit-x';
+  const FitY = 'fit-y';
+  const Pad = 'pad';
+  const None$1 = 'none';
+  const All = 'all';
+  const Each = 'each';
+  const Flush = 'flush';
+  const Column = 'column';
+  const Row = 'row';
+
+  /**
+   * Calculate bounding boxes for scenegraph items.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.mark - The scenegraph mark instance to bound.
+   */
+  function Bound$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(Bound$1, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow,
+        mark = _.mark,
+        type = mark.marktype,
+        entry = Marks$1[type],
+        bound = entry.bound;
+      let markBounds = mark.bounds,
+        rebound;
+      if (entry.nested) {
+        // multi-item marks have a single bounds instance
+        if (mark.items.length) view.dirty(mark.items[0]);
+        markBounds = boundItem$1(mark, bound);
+        mark.items.forEach(item => {
+          item.bounds.clear().union(markBounds);
+        });
+      } else if (type === Group || _.modified()) {
+        // operator parameters modified -> re-bound all items
+        // updates group bounds in response to modified group content
+        pulse.visit(pulse.MOD, item => view.dirty(item));
+        markBounds.clear();
+        mark.items.forEach(item => markBounds.union(boundItem$1(item, bound)));
+
+        // force reflow for axes/legends/titles to propagate any layout changes
+        switch (mark.role) {
+          case AxisRole$1:
+          case LegendRole$1:
+          case TitleRole$1:
+            pulse.reflow();
+        }
+      } else {
+        // incrementally update bounds, re-bound mark as needed
+        rebound = pulse.changed(pulse.REM);
+        pulse.visit(pulse.ADD, item => {
+          markBounds.union(boundItem$1(item, bound));
+        });
+        pulse.visit(pulse.MOD, item => {
+          rebound = rebound || markBounds.alignsWith(item.bounds);
+          view.dirty(item);
+          markBounds.union(boundItem$1(item, bound));
+        });
+        if (rebound) {
+          markBounds.clear();
+          mark.items.forEach(item => markBounds.union(item.bounds));
+        }
+      }
+
+      // ensure mark bounds do not exceed any clipping region
+      boundClip$1(mark);
+      return pulse.modifies('bounds');
+    }
+  });
+  function boundItem$1(item, bound, opt) {
+    return bound(item.bounds.clear(), item, opt);
+  }
+  const COUNTER_NAME = ':vega_identifier:';
+
+  /**
+   * Adds a unique identifier to all added tuples.
+   * This transform creates a new signal that serves as an id counter.
+   * As a result, the id counter is shared across all instances of this
+   * transform, generating unique ids across multiple data streams. In
+   * addition, this signal value can be included in a snapshot of the
+   * dataflow state, enabling correct resumption of id allocation.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {string} params.as - The field name for the generated identifier.
+   */
+  function Identifier$1(params) {
+    Transform.call(this, 0, params);
+  }
+  Identifier$1.Definition = {
+    'type': 'Identifier',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'as',
+      'type': 'string',
+      'required': true
+    }]
+  };
+  inherits(Identifier$1, Transform, {
+    transform(_, pulse) {
+      const counter = getCounter(pulse.dataflow),
+        as = _.as;
+      let id = counter.value;
+      pulse.visit(pulse.ADD, t => t[as] = t[as] || ++id);
+      counter.set(this.value = id);
+      return pulse;
+    }
+  });
+  function getCounter(view) {
+    return view._signals[COUNTER_NAME] || (view._signals[COUNTER_NAME] = view.add(0));
+  }
+
+  /**
+   * Bind scenegraph items to a scenegraph mark instance.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.markdef - The mark definition for creating the mark.
+   *   This is an object of legal scenegraph mark properties which *must* include
+   *   the 'marktype' property.
+   */
+  function Mark$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(Mark$1, Transform, {
+    transform(_, pulse) {
+      let mark = this.value;
+
+      // acquire mark on first invocation, bind context and group
+      if (!mark) {
+        mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1$1(_), _.index);
+        mark.group.context = _.context;
+        if (!_.context.group) _.context.group = mark.group;
+        mark.source = this.source; // point to upstream collector
+        mark.clip = _.clip;
+        mark.interactive = _.interactive;
+        this.value = mark;
+      }
+
+      // initialize entering items
+      const Init = mark.marktype === Group ? GroupItem$1 : Item$1;
+      pulse.visit(pulse.ADD, item => Init.call(item, mark));
+
+      // update clipping and/or interactive status
+      if (_.modified('clip') || _.modified('interactive')) {
+        mark.clip = _.clip;
+        mark.interactive = !!_.interactive;
+        mark.zdirty = true; // force scenegraph re-eval
+        pulse.reflow();
+      }
+
+      // bind items array to scenegraph mark
+      mark.items = pulse.source;
+      return pulse;
+    }
+  });
+  function lookup$1$1(_) {
+    const g = _.groups,
+      p = _.parent;
+    return g && g.size === 1 ? g.get(Object.keys(g.object)[0]) : g && p ? g.lookup(p) : null;
+  }
+
+  /**
+   * Analyze items for overlap, changing opacity to hide items with
+   * overlapping bounding boxes. This transform will preserve at least
+   * two items (e.g., first and last) even if overlap persists.
+   * @param {object} params - The parameters for this operator.
+   * @param {function(*,*): number} [params.sort] - A comparator
+   *   function for sorting items.
+   * @param {object} [params.method] - The overlap removal method to apply.
+   *   One of 'parity' (default, hide every other item until there is no
+   *   more overlap) or 'greedy' (sequentially scan and hide and items that
+   *   overlap with the last visible item).
+   * @param {object} [params.boundScale] - A scale whose range should be used
+   *   to bound the items. Items exceeding the bounds of the scale range
+   *   will be treated as overlapping. If null or undefined, no bounds check
+   *   will be applied.
+   * @param {object} [params.boundOrient] - The orientation of the scale
+   *   (top, bottom, left, or right) used to bound items. This parameter is
+   *   ignored if boundScale is null or undefined.
+   * @param {object} [params.boundTolerance] - The tolerance in pixels for
+   *   bound inclusion testing (default 1). This specifies by how many pixels
+   *   an item's bounds may exceed the scale range bounds and not be culled.
+   * @constructor
+   */
+  function Overlap$1(params) {
+    Transform.call(this, null, params);
+  }
+  const methods = {
+    parity: items => items.filter((item, i) => i % 2 ? item.opacity = 0 : 1),
+    greedy: (items, sep) => {
+      let a;
+      return items.filter((b, i) => !i || !intersect$2(a.bounds, b.bounds, sep) ? (a = b, 1) : b.opacity = 0);
+    }
+  };
+
+  // compute bounding box intersection
+  // including padding pixels of separation
+  const intersect$2 = (a, b, sep) => sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+  const hasOverlap = (items, pad) => {
+    for (var i = 1, n = items.length, a = items[0].bounds, b; i < n; a = b, ++i) {
+      if (intersect$2(a, b = items[i].bounds, pad)) return true;
+    }
+  };
+  const hasBounds = item => {
+    const b = item.bounds;
+    return b.width() > 1 && b.height() > 1;
+  };
+  const boundTest = (scale, orient, tolerance) => {
+    var range = scale.range(),
+      b = new Bounds$1();
+    if (orient === Top$1 || orient === Bottom$1) {
+      b.set(range[0], -Infinity, range[1], +Infinity);
+    } else {
+      b.set(-Infinity, range[0], +Infinity, range[1]);
+    }
+    b.expand(tolerance || 1);
+    return item => b.encloses(item.bounds);
+  };
+
+  // reset all items to be fully opaque
+  const reset = source => {
+    source.forEach(item => item.opacity = 1);
+    return source;
+  };
+
+  // add all tuples to mod, fork pulse if parameters were modified
+  // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
+  const reflow = (pulse, _) => pulse.reflow(_.modified()).modifies('opacity');
+  inherits(Overlap$1, Transform, {
+    transform(_, pulse) {
+      const reduce = methods[_.method] || methods.parity,
+        sep = _.separation || 0;
+      let source = pulse.materialize(pulse.SOURCE).source,
+        items,
+        test;
+      if (!source || !source.length) return;
+      if (!_.method) {
+        // early exit if method is falsy
+        if (_.modified('method')) {
+          reset(source);
+          pulse = reflow(pulse, _);
+        }
+        return pulse;
+      }
+
+      // skip labels with no content
+      source = source.filter(hasBounds);
+
+      // early exit, nothing to do
+      if (!source.length) return;
+      if (_.sort) {
+        source = source.slice().sort(_.sort);
+      }
+      items = reset(source);
+      pulse = reflow(pulse, _);
+      if (items.length >= 3 && hasOverlap(items, sep)) {
+        do {
+          items = reduce(items, sep);
+        } while (items.length >= 3 && hasOverlap(items, sep));
+        if (items.length < 3 && !peek$1(source).opacity) {
+          if (items.length > 1) peek$1(items).opacity = 0;
+          peek$1(source).opacity = 1;
+        }
+      }
+      if (_.boundScale && _.boundTolerance >= 0) {
+        test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
+        source.forEach(item => {
+          if (!test(item)) item.opacity = 0;
+        });
+      }
+
+      // re-calculate mark bounds
+      const bounds = items[0].mark.bounds.clear();
+      source.forEach(item => {
+        if (item.opacity) bounds.union(item.bounds);
+      });
+      return pulse;
+    }
+  });
+
+  /**
+   * Queue modified scenegraph items for rendering.
+   * @constructor
+   */
+  function Render$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(Render$1, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow;
+      pulse.visit(pulse.ALL, item => view.dirty(item));
+
+      // set z-index dirty flag as needed
+      if (pulse.fields && pulse.fields['zindex']) {
+        const item = pulse.source && pulse.source[0];
+        if (item) item.mark.zdirty = true;
+      }
+    }
+  });
+  const tempBounds$1 = new Bounds$1();
+  function set$1(item, property, value) {
+    return item[property] === value ? 0 : (item[property] = value, 1);
+  }
+  function isYAxis(mark) {
+    var orient = mark.items[0].orient;
+    return orient === Left$1 || orient === Right$1;
+  }
+  function axisIndices(datum) {
+    let index = +datum.grid;
+    return [datum.ticks ? index++ : -1,
+    // ticks index
+    datum.labels ? index++ : -1,
+    // labels index
+    index + +datum.domain // title index
+    ];
+  }
+
+  function axisLayout(view, axis, width, height) {
+    var item = axis.items[0],
+      datum = item.datum,
+      delta = item.translate != null ? item.translate : 0.5,
+      orient = item.orient,
+      indices = axisIndices(datum),
+      range = item.range,
+      offset = item.offset,
+      position = item.position,
+      minExtent = item.minExtent,
+      maxExtent = item.maxExtent,
+      title = datum.title && item.items[indices[2]].items[0],
+      titlePadding = item.titlePadding,
+      bounds = item.bounds,
+      dl = title && multiLineOffset$1(title),
+      x = 0,
+      y = 0,
+      i,
+      s;
+    tempBounds$1.clear().union(bounds);
+    bounds.clear();
+    if ((i = indices[0]) > -1) bounds.union(item.items[i].bounds);
+    if ((i = indices[1]) > -1) bounds.union(item.items[i].bounds);
+
+    // position axis group and title
+    switch (orient) {
+      case Top$1:
+        x = position || 0;
+        y = -offset;
+        s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
+        bounds.add(0, -s).add(range, 0);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
+        break;
+      case Left$1:
+        x = -offset;
+        y = position || 0;
+        s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
+        bounds.add(-s, 0).add(0, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
+        break;
+      case Right$1:
+        x = width + offset;
+        y = position || 0;
+        s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
+        bounds.add(0, 0).add(s, range);
+        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
+        break;
+      case Bottom$1:
+        x = position || 0;
+        y = height + offset;
+        s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
+        bounds.add(0, 0).add(range, s);
+        if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
+        break;
+      default:
+        x = item.x;
+        y = item.y;
+    }
+
+    // update bounds
+    boundStroke$1(bounds.translate(x, y), item);
+    if (set$1(item, 'x', x + delta) | set$1(item, 'y', y + delta)) {
+      item.bounds = tempBounds$1;
+      view.dirty(item);
+      item.bounds = bounds;
+      view.dirty(item);
+    }
+    return item.mark.bounds.clear().union(bounds);
+  }
+  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
+    const b = title.bounds;
+    if (title.auto) {
+      const v = sign * (offset + dl + pad);
+      let dx = 0,
+        dy = 0;
+      view.dirty(title);
+      isYAxis ? dx = (title.x || 0) - (title.x = v) : dy = (title.y || 0) - (title.y = v);
+      title.mark.bounds.clear().union(b.translate(-dx, -dy));
+      view.dirty(title);
+    }
+    bounds.union(b);
+  }
+
+  // aggregation functions for grid margin determination
+  const min = (a, b) => Math.floor(Math.min(a, b));
+  const max = (a, b) => Math.ceil(Math.max(a, b));
+  function gridLayoutGroups(group) {
+    var groups = group.items,
+      n = groups.length,
+      i = 0,
+      mark,
+      items;
+    const views = {
+      marks: [],
+      rowheaders: [],
+      rowfooters: [],
+      colheaders: [],
+      colfooters: [],
+      rowtitle: null,
+      coltitle: null
+    };
+
+    // layout axes, gather legends, collect bounds
+    for (; i < n; ++i) {
+      mark = groups[i];
+      items = mark.items;
+      if (mark.marktype === Group) {
+        switch (mark.role) {
+          case AxisRole$1:
+          case LegendRole$1:
+          case TitleRole$1:
+            break;
+          case RowHeader:
+            views.rowheaders.push(...items);
+            break;
+          case RowFooter:
+            views.rowfooters.push(...items);
+            break;
+          case ColHeader:
+            views.colheaders.push(...items);
+            break;
+          case ColFooter:
+            views.colfooters.push(...items);
+            break;
+          case RowTitle:
+            views.rowtitle = items[0];
+            break;
+          case ColTitle:
+            views.coltitle = items[0];
+            break;
+          default:
+            views.marks.push(...items);
+        }
+      }
+    }
+    return views;
+  }
+  function bboxFlush(item) {
+    return new Bounds$1().set(0, 0, item.width || 0, item.height || 0);
+  }
+  function bboxFull(item) {
+    const b = item.bounds.clone();
+    return b.empty() ? b.set(0, 0, 0, 0) : b.translate(-(item.x || 0), -(item.y || 0));
+  }
+  function get$1(opt, key, d) {
+    const v = isObject(opt) ? opt[key] : opt;
+    return v != null ? v : d !== undefined ? d : 0;
+  }
+  function offsetValue$1(v) {
+    return v < 0 ? Math.ceil(-v) : 0;
+  }
+  function gridLayout(view, groups, opt) {
+    var dirty = !opt.nodirty,
+      bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
+      bounds = tempBounds$1.set(0, 0, 0, 0),
+      alignCol = get$1(opt.align, Column),
+      alignRow = get$1(opt.align, Row),
+      padCol = get$1(opt.padding, Column),
+      padRow = get$1(opt.padding, Row),
+      ncols = opt.columns || groups.length,
+      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
+      n = groups.length,
+      xOffset = Array(n),
+      xExtent = Array(ncols),
+      xMax = 0,
+      yOffset = Array(n),
+      yExtent = Array(nrows),
+      yMax = 0,
+      dx = Array(n),
+      dy = Array(n),
+      boxes = Array(n),
+      m,
+      i,
+      c,
+      r,
+      b,
+      g,
+      px,
+      py,
+      x,
+      y,
+      offset;
+    for (i = 0; i < ncols; ++i) xExtent[i] = 0;
+    for (i = 0; i < nrows; ++i) yExtent[i] = 0;
+
+    // determine offsets for each group
+    for (i = 0; i < n; ++i) {
+      g = groups[i];
+      b = boxes[i] = bbox(g);
+      g.x = g.x || 0;
+      dx[i] = 0;
+      g.y = g.y || 0;
+      dy[i] = 0;
+      c = i % ncols;
+      r = ~~(i / ncols);
+      xMax = Math.max(xMax, px = Math.ceil(b.x2));
+      yMax = Math.max(yMax, py = Math.ceil(b.y2));
+      xExtent[c] = Math.max(xExtent[c], px);
+      yExtent[r] = Math.max(yExtent[r], py);
+      xOffset[i] = padCol + offsetValue$1(b.x1);
+      yOffset[i] = padRow + offsetValue$1(b.y1);
+      if (dirty) view.dirty(groups[i]);
+    }
+
+    // set initial alignment offsets
+    for (i = 0; i < n; ++i) {
+      if (i % ncols === 0) xOffset[i] = 0;
+      if (i < ncols) yOffset[i] = 0;
+    }
+
+    // enforce column alignment constraints
+    if (alignCol === Each) {
+      for (c = 1; c < ncols; ++c) {
+        for (offset = 0, i = c; i < n; i += ncols) {
+          if (offset < xOffset[i]) offset = xOffset[i];
+        }
+        for (i = c; i < n; i += ncols) {
+          xOffset[i] = offset + xExtent[c - 1];
+        }
+      }
+    } else if (alignCol === All) {
+      for (offset = 0, i = 0; i < n; ++i) {
+        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
+      }
+      for (i = 0; i < n; ++i) {
+        if (i % ncols) xOffset[i] = offset + xMax;
+      }
+    } else {
+      for (alignCol = false, c = 1; c < ncols; ++c) {
+        for (i = c; i < n; i += ncols) {
+          xOffset[i] += xExtent[c - 1];
+        }
+      }
+    }
+
+    // enforce row alignment constraints
+    if (alignRow === Each) {
+      for (r = 1; r < nrows; ++r) {
+        for (offset = 0, i = r * ncols, m = i + ncols; i < m; ++i) {
+          if (offset < yOffset[i]) offset = yOffset[i];
+        }
+        for (i = r * ncols; i < m; ++i) {
+          yOffset[i] = offset + yExtent[r - 1];
+        }
+      }
+    } else if (alignRow === All) {
+      for (offset = 0, i = ncols; i < n; ++i) {
+        if (offset < yOffset[i]) offset = yOffset[i];
+      }
+      for (i = ncols; i < n; ++i) {
+        yOffset[i] = offset + yMax;
+      }
+    } else {
+      for (alignRow = false, r = 1; r < nrows; ++r) {
+        for (i = r * ncols, m = i + ncols; i < m; ++i) {
+          yOffset[i] += yExtent[r - 1];
+        }
+      }
+    }
+
+    // perform horizontal grid layout
+    for (x = 0, i = 0; i < n; ++i) {
+      x = xOffset[i] + (i % ncols ? x : 0);
+      dx[i] += x - groups[i].x;
+    }
+
+    // perform vertical grid layout
+    for (c = 0; c < ncols; ++c) {
+      for (y = 0, i = c; i < n; i += ncols) {
+        y += yOffset[i];
+        dy[i] += y - groups[i].y;
+      }
+    }
+
+    // perform horizontal centering
+    if (alignCol && get$1(opt.center, Column) && nrows > 1) {
+      for (i = 0; i < n; ++i) {
+        b = alignCol === All ? xMax : xExtent[i % ncols];
+        x = b - boxes[i].x2 - groups[i].x - dx[i];
+        if (x > 0) dx[i] += x / 2;
+      }
+    }
+
+    // perform vertical centering
+    if (alignRow && get$1(opt.center, Row) && ncols !== 1) {
+      for (i = 0; i < n; ++i) {
+        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
+        y = b - boxes[i].y2 - groups[i].y - dy[i];
+        if (y > 0) dy[i] += y / 2;
+      }
+    }
+
+    // position grid relative to anchor
+    for (i = 0; i < n; ++i) {
+      bounds.union(boxes[i].translate(dx[i], dy[i]));
+    }
+    x = get$1(opt.anchor, X);
+    y = get$1(opt.anchor, Y);
+    switch (get$1(opt.anchor, Column)) {
+      case End$1:
+        x -= bounds.width();
+        break;
+      case Middle$1:
+        x -= bounds.width() / 2;
+    }
+    switch (get$1(opt.anchor, Row)) {
+      case End$1:
+        y -= bounds.height();
+        break;
+      case Middle$1:
+        y -= bounds.height() / 2;
+    }
+    x = Math.round(x);
+    y = Math.round(y);
+
+    // update mark positions, bounds, dirty
+    bounds.clear();
+    for (i = 0; i < n; ++i) {
+      groups[i].mark.bounds.clear();
+    }
+    for (i = 0; i < n; ++i) {
+      g = groups[i];
+      g.x += dx[i] += x;
+      g.y += dy[i] += y;
+      bounds.union(g.mark.bounds.union(g.bounds.translate(dx[i], dy[i])));
+      if (dirty) view.dirty(g);
+    }
+    return bounds;
+  }
+  function trellisLayout(view, group, opt) {
+    var views = gridLayoutGroups(group),
+      groups = views.marks,
+      bbox = opt.bounds === Flush ? boundFlush : boundFull,
+      off = opt.offset,
+      ncols = opt.columns || groups.length,
+      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
+      cells = nrows * ncols,
+      x,
+      y,
+      x2,
+      y2,
+      anchor,
+      band,
+      offset;
+
+    // -- initial grid layout
+    const bounds = gridLayout(view, groups, opt);
+    if (bounds.empty()) bounds.set(0, 0, 0, 0); // empty grid
+
+    // -- layout grid headers and footers --
+
+    // perform row header layout
+    if (views.rowheaders) {
+      band = get$1(opt.headerBand, Row, null);
+      x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get$1(off, 'rowHeader'), min, 0, bbox, 'x1', 0, ncols, 1, band);
+    }
+
+    // perform column header layout
+    if (views.colheaders) {
+      band = get$1(opt.headerBand, Column, null);
+      y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get$1(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
+    }
+
+    // perform row footer layout
+    if (views.rowfooters) {
+      band = get$1(opt.footerBand, Row, null);
+      x2 = layoutHeaders(view, views.rowfooters, groups, ncols, nrows, get$1(off, 'rowFooter'), max, 0, bbox, 'x2', ncols - 1, ncols, 1, band);
+    }
+
+    // perform column footer layout
+    if (views.colfooters) {
+      band = get$1(opt.footerBand, Column, null);
+      y2 = layoutHeaders(view, views.colfooters, groups, ncols, ncols, get$1(off, 'columnFooter'), max, 1, bbox, 'y2', cells - ncols, 1, ncols, band);
+    }
+
+    // perform row title layout
+    if (views.rowtitle) {
+      anchor = get$1(opt.titleAnchor, Row);
+      offset = get$1(off, 'rowTitle');
+      offset = anchor === End$1 ? x2 + offset : x - offset;
+      band = get$1(opt.titleBand, Row, 0.5);
+      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
+    }
+
+    // perform column title layout
+    if (views.coltitle) {
+      anchor = get$1(opt.titleAnchor, Column);
+      offset = get$1(off, 'columnTitle');
+      offset = anchor === End$1 ? y2 + offset : y - offset;
+      band = get$1(opt.titleBand, Column, 0.5);
+      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
+    }
+  }
+  function boundFlush(item, field) {
+    return field === 'x1' ? item.x || 0 : field === 'y1' ? item.y || 0 : field === 'x2' ? (item.x || 0) + (item.width || 0) : field === 'y2' ? (item.y || 0) + (item.height || 0) : undefined;
+  }
+  function boundFull(item, field) {
+    return item.bounds[field];
+  }
+  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
+    var n = groups.length,
+      init = 0,
+      edge = 0,
+      i,
+      j,
+      k,
+      m,
+      b,
+      h,
+      g,
+      x,
+      y;
+
+    // if no groups, early exit and return 0
+    if (!n) return init;
+
+    // compute margin
+    for (i = start; i < n; i += stride) {
+      if (groups[i]) init = agg(init, bound(groups[i], bf));
+    }
+
+    // if no headers, return margin calculation
+    if (!headers.length) return init;
+
+    // check if number of headers exceeds number of rows or columns
+    if (headers.length > limit) {
+      view.warn('Grid headers exceed limit: ' + limit);
+      headers = headers.slice(0, limit);
+    }
+
+    // apply offset
+    init += offset;
+
+    // clear mark bounds for all headers
+    for (j = 0, m = headers.length; j < m; ++j) {
+      view.dirty(headers[j]);
+      headers[j].mark.bounds.clear();
+    }
+
+    // layout each header
+    for (i = start, j = 0, m = headers.length; j < m; ++j, i += stride) {
+      h = headers[j];
+      b = h.mark.bounds;
+
+      // search for nearest group to align to
+      // necessary if table has empty cells
+      for (k = i; k >= 0 && (g = groups[k]) == null; k -= back);
+
+      // assign coordinates and update bounds
+      if (isX) {
+        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
+        y = init;
+      } else {
+        x = init;
+        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
+      }
+      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
+      h.x = x;
+      h.y = y;
+      view.dirty(h);
+
+      // update current edge of layout bounds
+      edge = agg(edge, b[bf]);
+    }
+    return edge;
+  }
+  function layoutTitle(view, g, offset, isX, bounds, band) {
+    if (!g) return;
+    view.dirty(g);
+
+    // compute title coordinates
+    var x = offset,
+      y = offset;
+    isX ? x = Math.round(bounds.x1 + band * bounds.width()) : y = Math.round(bounds.y1 + band * bounds.height());
+
+    // assign coordinates and update bounds
+    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
+    g.mark.bounds.clear().union(g.bounds);
+    g.x = x;
+    g.y = y;
+
+    // queue title for redraw
+    view.dirty(g);
+  }
+
+  // utility for looking up legend layout configuration
+  function lookup$4(config, orient) {
+    const opt = config[orient] || {};
+    return (key, d) => opt[key] != null ? opt[key] : config[key] != null ? config[key] : d;
+  }
+
+  // if legends specify offset directly, use the maximum specified value
+  function offsets(legends, value) {
+    let max = -Infinity;
+    legends.forEach(item => {
+      if (item.offset != null) max = Math.max(max, item.offset);
+    });
+    return max > -Infinity ? max : value;
+  }
+  function legendParams(g, orient, config, xb, yb, w, h) {
+    const _ = lookup$4(config, orient),
+      offset = offsets(g, _('offset', 0)),
+      anchor = _('anchor', Start$1),
+      mult = anchor === End$1 ? 1 : anchor === Middle$1 ? 0.5 : 0;
+    const p = {
+      align: Each,
+      bounds: _('bounds', Flush),
+      columns: _('direction') === 'vertical' ? 1 : g.length,
+      padding: _('margin', 8),
+      center: _('center'),
+      nodirty: true
+    };
+    switch (orient) {
+      case Left$1:
+        p.anchor = {
+          x: Math.floor(xb.x1) - offset,
+          column: End$1,
+          y: mult * (h || xb.height() + 2 * xb.y1),
+          row: anchor
+        };
+        break;
+      case Right$1:
+        p.anchor = {
+          x: Math.ceil(xb.x2) + offset,
+          y: mult * (h || xb.height() + 2 * xb.y1),
+          row: anchor
+        };
+        break;
+      case Top$1:
+        p.anchor = {
+          y: Math.floor(yb.y1) - offset,
+          row: End$1,
+          x: mult * (w || yb.width() + 2 * yb.x1),
+          column: anchor
+        };
+        break;
+      case Bottom$1:
+        p.anchor = {
+          y: Math.ceil(yb.y2) + offset,
+          x: mult * (w || yb.width() + 2 * yb.x1),
+          column: anchor
+        };
+        break;
+      case TopLeft:
+        p.anchor = {
+          x: offset,
+          y: offset
+        };
+        break;
+      case TopRight:
+        p.anchor = {
+          x: w - offset,
+          y: offset,
+          column: End$1
+        };
+        break;
+      case BottomLeft:
+        p.anchor = {
+          x: offset,
+          y: h - offset,
+          row: End$1
+        };
+        break;
+      case BottomRight:
+        p.anchor = {
+          x: w - offset,
+          y: h - offset,
+          column: End$1,
+          row: End$1
+        };
+        break;
+    }
+    return p;
+  }
+  function legendLayout(view, legend) {
+    var item = legend.items[0],
+      datum = item.datum,
+      orient = item.orient,
+      bounds = item.bounds,
+      x = item.x,
+      y = item.y,
+      w,
+      h;
+
+    // cache current bounds for later comparison
+    item._bounds ? item._bounds.clear().union(bounds) : item._bounds = bounds.clone();
+    bounds.clear();
+
+    // adjust legend to accommodate padding and title
+    legendGroupLayout(view, item, item.items[0].items[0]);
+
+    // aggregate bounds to determine size, and include origin
+    bounds = legendBounds(item, bounds);
+    w = 2 * item.padding;
+    h = 2 * item.padding;
+    if (!bounds.empty()) {
+      w = Math.ceil(bounds.width() + w);
+      h = Math.ceil(bounds.height() + h);
+    }
+    if (datum.type === Symbols$1) {
+      legendEntryLayout(item.items[0].items[0].items[0].items);
+    }
+    if (orient !== None$1) {
+      item.x = x = 0;
+      item.y = y = 0;
+    }
+    item.width = w;
+    item.height = h;
+    boundStroke$1(bounds.set(x, y, x + w, y + h), item);
+    item.mark.bounds.clear().union(bounds);
+    return item;
+  }
+  function legendBounds(item, b) {
+    // aggregate item bounds
+    item.items.forEach(_ => b.union(_.bounds));
+
+    // anchor to legend origin
+    b.x1 = item.padding;
+    b.y1 = item.padding;
+    return b;
+  }
+  function legendGroupLayout(view, item, entry) {
+    var pad = item.padding,
+      ex = pad - entry.x,
+      ey = pad - entry.y;
+    if (!item.datum.title) {
+      if (ex || ey) translate$1(view, entry, ex, ey);
+    } else {
+      var title = item.items[1].items[0],
+        anchor = title.anchor,
+        tpad = item.titlePadding || 0,
+        tx = pad - title.x,
+        ty = pad - title.y;
+      switch (title.orient) {
+        case Left$1:
+          ex += Math.ceil(title.bounds.width()) + tpad;
+          break;
+        case Right$1:
+        case Bottom$1:
+          break;
+        default:
+          ey += title.bounds.height() + tpad;
+      }
+      if (ex || ey) translate$1(view, entry, ex, ey);
+      switch (title.orient) {
+        case Left$1:
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
+          break;
+        case Right$1:
+          tx += legendTitleOffset(item, entry, title, End$1, 0, 0) + tpad;
+          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
+          break;
+        case Bottom$1:
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+          ty += legendTitleOffset(item, entry, title, End$1, -1, 0, 1) + tpad;
+          break;
+        default:
+          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
+      }
+      if (tx || ty) translate$1(view, title, tx, ty);
+
+      // translate legend if title pushes into negative coordinates
+      if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
+        translate$1(view, entry, -tx, 0);
+        translate$1(view, title, -tx, 0);
+      }
+    }
+  }
+  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
+    const grad = item.datum.type !== 'symbol',
+      vgrad = title.datum.vgrad,
+      e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
+      s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
+      u = vgrad && lr ? s : 0,
+      v = vgrad && lr ? 0 : s,
+      o = y <= 0 ? 0 : multiLineOffset$1(title);
+    return Math.round(anchor === Start$1 ? u : anchor === End$1 ? v - o : 0.5 * (s - o));
+  }
+  function translate$1(view, item, dx, dy) {
+    item.x += dx;
+    item.y += dy;
+    item.bounds.translate(dx, dy);
+    item.mark.bounds.translate(dx, dy);
+    view.dirty(item);
+  }
+  function legendEntryLayout(entries) {
+    // get max widths for each column
+    const widths = entries.reduce((w, g) => {
+      w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
+      return w;
+    }, {});
+
+    // set dimensions of legend entry groups
+    entries.forEach(g => {
+      g.width = widths[g.column];
+      g.height = g.bounds.y2 - g.y;
+    });
+  }
+  function titleLayout(view, mark, width, height, viewBounds) {
+    var group = mark.items[0],
+      frame = group.frame,
+      orient = group.orient,
+      anchor = group.anchor,
+      offset = group.offset,
+      padding = group.padding,
+      title = group.items[0].items[0],
+      subtitle = group.items[1] && group.items[1].items[0],
+      end = orient === Left$1 || orient === Right$1 ? height : width,
+      start = 0,
+      x = 0,
+      y = 0,
+      sx = 0,
+      sy = 0,
+      pos;
+    if (frame !== Group) {
+      orient === Left$1 ? (start = viewBounds.y2, end = viewBounds.y1) : orient === Right$1 ? (start = viewBounds.y1, end = viewBounds.y2) : (start = viewBounds.x1, end = viewBounds.x2);
+    } else if (orient === Left$1) {
+      start = height, end = 0;
+    }
+    pos = anchor === Start$1 ? start : anchor === End$1 ? end : (start + end) / 2;
+    if (subtitle && subtitle.text) {
+      // position subtitle
+      switch (orient) {
+        case Top$1:
+        case Bottom$1:
+          sy = title.bounds.height() + padding;
+          break;
+        case Left$1:
+          sx = title.bounds.width() + padding;
+          break;
+        case Right$1:
+          sx = -title.bounds.width() - padding;
+          break;
+      }
+      tempBounds$1.clear().union(subtitle.bounds);
+      tempBounds$1.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
+      if (set$1(subtitle, 'x', sx) | set$1(subtitle, 'y', sy)) {
+        view.dirty(subtitle);
+        subtitle.bounds.clear().union(tempBounds$1);
+        subtitle.mark.bounds.clear().union(tempBounds$1);
+        view.dirty(subtitle);
+      }
+      tempBounds$1.clear().union(subtitle.bounds);
+    } else {
+      tempBounds$1.clear();
+    }
+    tempBounds$1.union(title.bounds);
+
+    // position title group
+    switch (orient) {
+      case Top$1:
+        x = pos;
+        y = viewBounds.y1 - tempBounds$1.height() - offset;
+        break;
+      case Left$1:
+        x = viewBounds.x1 - tempBounds$1.width() - offset;
+        y = pos;
+        break;
+      case Right$1:
+        x = viewBounds.x2 + tempBounds$1.width() + offset;
+        y = pos;
+        break;
+      case Bottom$1:
+        x = pos;
+        y = viewBounds.y2 + offset;
+        break;
+      default:
+        x = group.x;
+        y = group.y;
+    }
+    if (set$1(group, 'x', x) | set$1(group, 'y', y)) {
+      tempBounds$1.translate(x, y);
+      view.dirty(group);
+      group.bounds.clear().union(tempBounds$1);
+      mark.bounds.clear().union(tempBounds$1);
+      view.dirty(group);
+    }
+    return group.bounds;
+  }
+
+  /**
+   * Layout view elements such as axes and legends.
+   * Also performs size adjustments.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.mark - Scenegraph mark of groups to layout.
+   */
+  function ViewLayout$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(ViewLayout$1, Transform, {
+    transform(_, pulse) {
+      const view = pulse.dataflow;
+      _.mark.items.forEach(group => {
+        if (_.layout) trellisLayout(view, group, _.layout);
+        layoutGroup(view, group, _);
+      });
+      return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
+    }
+  });
+  function shouldReflow(group) {
+    // We typically should reflow if layout is invoked (#2568), as child items
+    // may have resized and reflow ensures group bounds are re-calculated.
+    // However, legend entries have a special exception to avoid instability.
+    // For example, if a selected legend symbol gains a stroke on hover,
+    // we don't want to re-position subsequent elements in the legend.
+    return group && group.mark.role !== 'legend-entry';
+  }
+  function layoutGroup(view, group, _) {
+    var items = group.items,
+      width = Math.max(0, group.width || 0),
+      height = Math.max(0, group.height || 0),
+      viewBounds = new Bounds$1().set(0, 0, width, height),
+      xBounds = viewBounds.clone(),
+      yBounds = viewBounds.clone(),
+      legends = [],
+      title,
+      mark,
+      orient,
+      b,
+      i,
+      n;
+
+    // layout axes, gather legends, collect bounds
+    for (i = 0, n = items.length; i < n; ++i) {
+      mark = items[i];
+      switch (mark.role) {
+        case AxisRole$1:
+          b = isYAxis(mark) ? xBounds : yBounds;
+          b.union(axisLayout(view, mark, width, height));
+          break;
+        case TitleRole$1:
+          title = mark;
+          break;
+        case LegendRole$1:
+          legends.push(legendLayout(view, mark));
+          break;
+        case FrameRole$1:
+        case ScopeRole$1:
+        case RowHeader:
+        case RowFooter:
+        case RowTitle:
+        case ColHeader:
+        case ColFooter:
+        case ColTitle:
+          xBounds.union(mark.bounds);
+          yBounds.union(mark.bounds);
+          break;
+        default:
+          viewBounds.union(mark.bounds);
+      }
+    }
+
+    // layout legends, adjust viewBounds
+    if (legends.length) {
+      // group legends by orient
+      const l = {};
+      legends.forEach(item => {
+        orient = item.orient || Right$1;
+        if (orient !== None$1) (l[orient] || (l[orient] = [])).push(item);
+      });
+
+      // perform grid layout for each orient group
+      for (const orient in l) {
+        const g = l[orient];
+        gridLayout(view, g, legendParams(g, orient, _.legends, xBounds, yBounds, width, height));
+      }
+
+      // update view bounds
+      legends.forEach(item => {
+        const b = item.bounds;
+        if (!b.equals(item._bounds)) {
+          item.bounds = item._bounds;
+          view.dirty(item); // dirty previous location
+          item.bounds = b;
+          view.dirty(item);
+        }
+        if (_.autosize && (_.autosize.type === Fit || _.autosize.type === FitX || _.autosize.type === FitY)) {
+          // For autosize fit, incorporate the orthogonal dimension only.
+          // Legends that overrun the chart area will then be clipped;
+          // otherwise the chart area gets reduced to nothing!
+          switch (item.orient) {
+            case Left$1:
+            case Right$1:
+              viewBounds.add(b.x1, 0).add(b.x2, 0);
+              break;
+            case Top$1:
+            case Bottom$1:
+              viewBounds.add(0, b.y1).add(0, b.y2);
+          }
+        } else {
+          viewBounds.union(b);
+        }
+      });
+    }
+
+    // combine bounding boxes
+    viewBounds.union(xBounds).union(yBounds);
+
+    // layout title, adjust bounds
+    if (title) {
+      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
+    }
+
+    // override aggregated view bounds if content is clipped
+    if (group.clip) {
+      viewBounds.set(0, 0, group.width || 0, group.height || 0);
+    }
+
+    // perform size adjustment
+    viewSizeLayout(view, group, viewBounds, _);
+  }
+  function viewSizeLayout(view, group, viewBounds, _) {
+    const auto = _.autosize || {},
+      type = auto.type;
+    if (view._autosize < 1 || !type) return;
+    let viewWidth = view._width,
+      viewHeight = view._height,
+      width = Math.max(0, group.width || 0),
+      left = Math.max(0, Math.ceil(-viewBounds.x1)),
+      height = Math.max(0, group.height || 0),
+      top = Math.max(0, Math.ceil(-viewBounds.y1));
+    const right = Math.max(0, Math.ceil(viewBounds.x2 - width)),
+      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
+    if (auto.contains === Padding$1) {
+      const padding = view.padding();
+      viewWidth -= padding.left + padding.right;
+      viewHeight -= padding.top + padding.bottom;
+    }
+    if (type === None$1) {
+      left = 0;
+      top = 0;
+      width = viewWidth;
+      height = viewHeight;
+    } else if (type === Fit) {
+      width = Math.max(0, viewWidth - left - right);
+      height = Math.max(0, viewHeight - top - bottom);
+    } else if (type === FitX) {
+      width = Math.max(0, viewWidth - left - right);
+      viewHeight = height + top + bottom;
+    } else if (type === FitY) {
+      viewWidth = width + left + right;
+      height = Math.max(0, viewHeight - top - bottom);
+    } else if (type === Pad) {
+      viewWidth = width + left + right;
+      viewHeight = height + top + bottom;
+    }
+    view._resizeView(viewWidth, viewHeight, width, height, [left, top], auto.resize);
+  }
+
+  var vtx = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    bound: Bound$1,
+    identifier: Identifier$1,
+    mark: Mark$1,
+    overlap: Overlap$1,
+    render: Render$1,
+    viewlayout: ViewLayout$1
+  });
+
+  /**
+   * Generates axis ticks for visualizing a spatial scale.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Scale} params.scale - The scale to generate ticks for.
+   * @param {*} [params.count=10] - The approximate number of ticks, or
+   *   desired tick interval, to use.
+   * @param {Array<*>} [params.values] - The exact tick values to use.
+   *   These must be legal domain values for the provided scale.
+   *   If provided, the count argument is ignored.
+   * @param {function(*):string} [params.formatSpecifier] - A format specifier
+   *   to use in conjunction with scale.tickFormat. Legal values are
+   *   any valid d3 4.0 format specifier.
+   * @param {function(*):string} [params.format] - The format function to use.
+   *   If provided, the formatSpecifier argument is ignored.
+   */
+  function AxisTicks$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(AxisTicks$1, Transform, {
+    transform(_, pulse) {
+      if (this.value && !_.modified()) {
+        return pulse.StopPropagation;
+      }
+      var locale = pulse.dataflow.locale(),
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        ticks = this.value,
+        scale = _.scale,
+        tally = _.count == null ? _.values ? _.values.length : 10 : _.count,
+        count = tickCount(scale, tally, _.minstep),
+        format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
+        values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
+      if (ticks) out.rem = ticks;
+      ticks = values.map((value, i) => ingest$1({
+        index: i / (values.length - 1 || 1),
+        value: value,
+        label: format(value)
+      }));
+      if (_.extra && ticks.length) {
+        // add an extra tick pegged to the initial domain value
+        // this is used to generate axes with 'binned' domains
+        ticks.push(ingest$1({
+          index: -1,
+          extra: {
+            value: ticks[0].value
+          },
+          label: ''
+        }));
+      }
+      out.source = ticks;
+      out.add = ticks;
+      this.value = ticks;
+      return out;
+    }
+  });
+
+  /**
+   * Joins a set of data elements against a set of visual items.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): object} [params.item] - An item generator function.
+   * @param {function(object): *} [params.key] - The key field associating data and visual items.
+   */
+  function DataJoin$1(params) {
+    Transform.call(this, null, params);
+  }
+  function defaultItemCreate() {
+    return ingest$1({});
+  }
+  function newMap(key) {
+    const map = fastmap().test(t => t.exit);
+    map.lookup = t => map.get(key(t));
+    return map;
+  }
+  inherits(DataJoin$1, Transform, {
+    transform(_, pulse) {
+      var df = pulse.dataflow,
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        item = _.item || defaultItemCreate,
+        key = _.key || tupleid,
+        map = this.value;
+
+      // prevent transient (e.g., hover) requests from
+      // cascading across marks derived from marks
+      if (isArray(out.encode)) {
+        out.encode = null;
+      }
+      if (map && (_.modified('key') || pulse.modified(key))) {
+        error('DataJoin does not support modified key function or fields.');
+      }
+      if (!map) {
+        pulse = pulse.addAll();
+        this.value = map = newMap(key);
+      }
+      pulse.visit(pulse.ADD, t => {
+        const k = key(t);
+        let x = map.get(k);
+        if (x) {
+          if (x.exit) {
+            map.empty--;
+            out.add.push(x);
+          } else {
+            out.mod.push(x);
+          }
+        } else {
+          x = item(t);
+          map.set(k, x);
+          out.add.push(x);
+        }
+        x.datum = t;
+        x.exit = false;
+      });
+      pulse.visit(pulse.MOD, t => {
+        const k = key(t),
+          x = map.get(k);
+        if (x) {
+          x.datum = t;
+          out.mod.push(x);
+        }
+      });
+      pulse.visit(pulse.REM, t => {
+        const k = key(t),
+          x = map.get(k);
+        if (t === x.datum && !x.exit) {
+          out.rem.push(x);
+          x.exit = true;
+          ++map.empty;
+        }
+      });
+      if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
+      if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
+        df.runAfter(map.clean);
+      }
+      return out;
+    }
+  });
+
+  /**
+   * Invokes encoding functions for visual items.
+   * @constructor
+   * @param {object} params - The parameters to the encoding functions. This
+   *   parameter object will be passed through to all invoked encoding functions.
+   * @param {object} [params.mod=false] - Flag indicating if tuples in the input
+   *   mod set that are unmodified by encoders should be included in the output.
+   * @param {object} param.encoders - The encoding functions
+   * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
+   * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
+   * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
+   */
+  function Encode$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(Encode$1, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ADD_REM),
+        fmod = _.mod || false,
+        encoders = _.encoders,
+        encode = pulse.encode;
+
+      // if an array, the encode directive includes additional sets
+      // that must be defined in order for the primary set to be invoked
+      // e.g., only run the update set if the hover set is defined
+      if (isArray(encode)) {
+        if (out.changed() || encode.every(e => encoders[e])) {
+          encode = encode[0];
+          out.encode = null; // consume targeted encode directive
+        } else {
+          return pulse.StopPropagation;
+        }
+      }
+
+      // marshall encoder functions
+      var reenter = encode === 'enter',
+        update = encoders.update || falsy,
+        enter = encoders.enter || falsy,
+        exit = encoders.exit || falsy,
+        set = (encode && !reenter ? encoders[encode] : update) || falsy;
+      if (pulse.changed(pulse.ADD)) {
+        pulse.visit(pulse.ADD, t => {
+          enter(t, _);
+          update(t, _);
+        });
+        out.modifies(enter.output);
+        out.modifies(update.output);
+        if (set !== falsy && set !== update) {
+          pulse.visit(pulse.ADD, t => {
+            set(t, _);
+          });
+          out.modifies(set.output);
+        }
+      }
+      if (pulse.changed(pulse.REM) && exit !== falsy) {
+        pulse.visit(pulse.REM, t => {
+          exit(t, _);
+        });
+        out.modifies(exit.output);
+      }
+      if (reenter || set !== falsy) {
+        const flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
+        if (reenter) {
+          pulse.visit(flag, t => {
+            const mod = enter(t, _) || fmod;
+            if (set(t, _) || mod) out.mod.push(t);
+          });
+          if (out.mod.length) out.modifies(enter.output);
+        } else {
+          pulse.visit(flag, t => {
+            if (set(t, _) || fmod) out.mod.push(t);
+          });
+        }
+        if (out.mod.length) out.modifies(set.output);
+      }
+      return out.changed() ? out : pulse.StopPropagation;
+    }
+  });
+
+  /**
+   * Generates legend entries for visualizing a scale.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Scale} params.scale - The scale to generate items for.
+   * @param {*} [params.count=5] - The approximate number of items, or
+   *   desired tick interval, to use.
+   * @param {*} [params.limit] - The maximum number of entries to
+   *   include in a symbol legend.
+   * @param {Array<*>} [params.values] - The exact tick values to use.
+   *   These must be legal domain values for the provided scale.
+   *   If provided, the count argument is ignored.
+   * @param {string} [params.formatSpecifier] - A format specifier
+   *   to use in conjunction with scale.tickFormat. Legal values are
+   *   any valid D3 format specifier string.
+   * @param {function(*):string} [params.format] - The format function to use.
+   *   If provided, the formatSpecifier argument is ignored.
+   */
+  function LegendEntries$1(params) {
+    Transform.call(this, [], params);
+  }
+  inherits(LegendEntries$1, Transform, {
+    transform(_, pulse) {
+      if (this.value != null && !_.modified()) {
+        return pulse.StopPropagation;
+      }
+      var locale = pulse.dataflow.locale(),
+        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        items = this.value,
+        type = _.type || SymbolLegend,
+        scale = _.scale,
+        limit = +_.limit,
+        count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
+        lskip = !!_.values || type === SymbolLegend,
+        format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
+        values = _.values || labelValues(scale, count),
+        domain,
+        fraction,
+        size,
+        offset,
+        ellipsis;
+      if (items) out.rem = items;
+      if (type === SymbolLegend) {
+        if (limit && values.length > limit) {
+          pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
+          items = values.slice(0, limit - 1);
+          ellipsis = true;
+        } else {
+          items = values;
+        }
+        if (isFunction(size = _.size)) {
+          // if first value maps to size zero, remove from list (vega#717)
+          if (!_.values && scale(items[0]) === 0) {
+            items = items.slice(1);
+          }
+          // compute size offset for legend entries
+          offset = items.reduce((max, value) => Math.max(max, size(value, _)), 0);
+        } else {
+          size = constant$1(offset = size || 8);
+        }
+        items = items.map((value, index) => ingest$1({
+          index: index,
+          label: format(value, index, items),
+          value: value,
+          offset: offset,
+          size: size(value, _)
+        }));
+        if (ellipsis) {
+          ellipsis = values[items.length];
+          items.push(ingest$1({
+            index: items.length,
+            label: `\u2026${values.length - items.length} entries`,
+            value: ellipsis,
+            offset: offset,
+            size: size(ellipsis, _)
+          }));
+        }
+      } else if (type === GradientLegend) {
+        domain = scale.domain(), fraction = scaleFraction(scale, domain[0], peek$1(domain));
+
+        // if automatic label generation produces 2 or fewer values,
+        // use the domain end points instead (fixes vega/vega#1364)
+        if (values.length < 3 && !_.values && domain[0] !== peek$1(domain)) {
+          values = [domain[0], peek$1(domain)];
+        }
+        items = values.map((value, index) => ingest$1({
+          index: index,
+          label: format(value, index, values),
+          value: value,
+          perc: fraction(value)
+        }));
+      } else {
+        size = values.length - 1;
+        fraction = labelFraction(scale);
+        items = values.map((value, index) => ingest$1({
+          index: index,
+          label: format(value, index, values),
+          value: value,
+          perc: index ? fraction(value) : 0,
+          perc2: index === size ? 1 : fraction(values[index + 1])
+        }));
+      }
+      out.source = items;
+      out.add = items;
+      this.value = items;
+      return out;
+    }
+  });
+  const sourceX = t => t.source.x;
+  const sourceY = t => t.source.y;
+  const targetX = t => t.target.x;
+  const targetY = t => t.target.y;
+
+  /**
+   * Layout paths linking source and target elements.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function LinkPath(params) {
+    Transform.call(this, {}, params);
+  }
+  LinkPath.Definition = {
+    'type': 'LinkPath',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'sourceX',
+      'type': 'field',
+      'default': 'source.x'
+    }, {
+      'name': 'sourceY',
+      'type': 'field',
+      'default': 'source.y'
+    }, {
+      'name': 'targetX',
+      'type': 'field',
+      'default': 'target.x'
+    }, {
+      'name': 'targetY',
+      'type': 'field',
+      'default': 'target.y'
+    }, {
+      'name': 'orient',
+      'type': 'enum',
+      'default': 'vertical',
+      'values': ['horizontal', 'vertical', 'radial']
+    }, {
+      'name': 'shape',
+      'type': 'enum',
+      'default': 'line',
+      'values': ['line', 'arc', 'curve', 'diagonal', 'orthogonal']
+    }, {
+      'name': 'require',
+      'type': 'signal'
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'path'
+    }]
+  };
+  inherits(LinkPath, Transform, {
+    transform(_, pulse) {
+      var sx = _.sourceX || sourceX,
+        sy = _.sourceY || sourceY,
+        tx = _.targetX || targetX,
+        ty = _.targetY || targetY,
+        as = _.as || 'path',
+        orient = _.orient || 'vertical',
+        shape = _.shape || 'line',
+        path = Paths.get(shape + '-' + orient) || Paths.get(shape);
+      if (!path) {
+        error('LinkPath unsupported type: ' + _.shape + (_.orient ? '-' + _.orient : ''));
+      }
+      pulse.visit(pulse.SOURCE, t => {
+        t[as] = path(sx(t), sy(t), tx(t), ty(t));
+      });
+      return pulse.reflow(_.modified()).modifies(as);
+    }
+  });
+  const line$2 = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'L' + tx + ',' + ty;
+  const lineR = (sa, sr, ta, tr) => line$2(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
+  const arc$2 = (sx, sy, tx, ty) => {
+    var dx = tx - sx,
+      dy = ty - sy,
+      rr = Math.hypot(dx, dy) / 2,
+      ra = 180 * Math.atan2(dy, dx) / Math.PI;
+    return 'M' + sx + ',' + sy + 'A' + rr + ',' + rr + ' ' + ra + ' 0 1' + ' ' + tx + ',' + ty;
+  };
+  const arcR = (sa, sr, ta, tr) => arc$2(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
+  const curve = (sx, sy, tx, ty) => {
+    const dx = tx - sx,
+      dy = ty - sy,
+      ix = 0.2 * (dx + dy),
+      iy = 0.2 * (dy - dx);
+    return 'M' + sx + ',' + sy + 'C' + (sx + ix) + ',' + (sy + iy) + ' ' + (tx + iy) + ',' + (ty - ix) + ' ' + tx + ',' + ty;
+  };
+  const curveR = (sa, sr, ta, tr) => curve(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
+  const orthoX = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'V' + ty + 'H' + tx;
+  const orthoY = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'H' + tx + 'V' + ty;
+  const orthoR = (sa, sr, ta, tr) => {
+    const sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
+    return 'M' + sr * sc + ',' + sr * ss + 'A' + sr + ',' + sr + ' 0 0,' + (sf ? 1 : 0) + ' ' + sr * tc + ',' + sr * ts + 'L' + tr * tc + ',' + tr * ts;
+  };
+  const diagonalX = (sx, sy, tx, ty) => {
+    const m = (sx + tx) / 2;
+    return 'M' + sx + ',' + sy + 'C' + m + ',' + sy + ' ' + m + ',' + ty + ' ' + tx + ',' + ty;
+  };
+  const diagonalY = (sx, sy, tx, ty) => {
+    const m = (sy + ty) / 2;
+    return 'M' + sx + ',' + sy + 'C' + sx + ',' + m + ' ' + tx + ',' + m + ' ' + tx + ',' + ty;
+  };
+  const diagonalR = (sa, sr, ta, tr) => {
+    const sc = Math.cos(sa),
+      ss = Math.sin(sa),
+      tc = Math.cos(ta),
+      ts = Math.sin(ta),
+      mr = (sr + tr) / 2;
+    return 'M' + sr * sc + ',' + sr * ss + 'C' + mr * sc + ',' + mr * ss + ' ' + mr * tc + ',' + mr * ts + ' ' + tr * tc + ',' + tr * ts;
+  };
+  const Paths = fastmap({
+    'line': line$2,
+    'line-radial': lineR,
+    'arc': arc$2,
+    'arc-radial': arcR,
+    'curve': curve,
+    'curve-radial': curveR,
+    'orthogonal-horizontal': orthoX,
+    'orthogonal-vertical': orthoY,
+    'orthogonal-radial': orthoR,
+    'diagonal-horizontal': diagonalX,
+    'diagonal-vertical': diagonalY,
+    'diagonal-radial': diagonalR
+  });
+
+  /**
+   * Pie and donut chart layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to size pie segments.
+   * @param {number} [params.startAngle=0] - The start angle (in radians) of the layout.
+   * @param {number} [params.endAngle=2π] - The end angle (in radians) of the layout.
+   * @param {boolean} [params.sort] - Boolean flag for sorting sectors by value.
+   */
+  function Pie(params) {
+    Transform.call(this, null, params);
+  }
+  Pie.Definition = {
+    'type': 'Pie',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'startAngle',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'endAngle',
+      'type': 'number',
+      'default': 6.283185307179586
+    }, {
+      'name': 'sort',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': 2,
+      'default': ['startAngle', 'endAngle']
+    }]
+  };
+  inherits(Pie, Transform, {
+    transform(_, pulse) {
+      var as = _.as || ['startAngle', 'endAngle'],
+        startAngle = as[0],
+        endAngle = as[1],
+        field = _.field || one$1,
+        start = _.startAngle || 0,
+        stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
+        data = pulse.source,
+        values = data.map(field),
+        n = values.length,
+        a = start,
+        k = (stop - start) / d3Array.sum(values),
+        index = d3Array.range(n),
+        i,
+        t,
+        v;
+      if (_.sort) {
+        index.sort((a, b) => values[a] - values[b]);
+      }
+      for (i = 0; i < n; ++i) {
+        v = values[index[i]];
+        t = data[index[i]];
+        t[startAngle] = a;
+        t[endAngle] = a += v * k;
+      }
+      this.value = values;
+      return pulse.reflow(_.modified()).modifies(as);
+    }
+  });
+  const DEFAULT_COUNT = 5;
+  function includeZero(scale) {
+    const type = scale.type;
+    return !scale.bins && (type === Linear || type === Pow || type === Sqrt);
+  }
+  function includePad(type) {
+    return isContinuous(type) && type !== Sequential;
+  }
+  const SKIP$1 = toSet(['set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount', 'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'domainImplicit', 'nice', 'zero', 'bins', 'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma']);
+
+  /**
+   * Maintains a scale function mapping data values to visual channels.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function Scale$1(params) {
+    Transform.call(this, null, params);
+    this.modified(true); // always treat as modified
+  }
+
+  inherits(Scale$1, Transform, {
+    transform(_, pulse) {
+      var df = pulse.dataflow,
+        scale$1 = this.value,
+        key = scaleKey(_);
+      if (!scale$1 || key !== scale$1.type) {
+        this.value = scale$1 = scale$5(key)();
+      }
+      for (key in _) if (!SKIP$1[key]) {
+        // padding is a scale property for band/point but not others
+        if (key === 'padding' && includePad(scale$1.type)) continue;
+        // invoke scale property setter, raise warning if not found
+        isFunction(scale$1[key]) ? scale$1[key](_[key]) : df.warn('Unsupported scale property: ' + key);
+      }
+      configureRange(scale$1, _, configureBins(scale$1, _, configureDomain(scale$1, _, df)));
+      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    }
+  });
+  function scaleKey(_) {
+    var t = _.type,
+      d = '',
+      n;
+
+    // backwards compatibility pre Vega 5.
+    if (t === Sequential) return Sequential + '-' + Linear;
+    if (isContinuousColor(_)) {
+      n = _.rawDomain ? _.rawDomain.length : _.domain ? _.domain.length + +(_.domainMid != null) : 0;
+      d = n === 2 ? Sequential + '-' : n === 3 ? Diverging + '-' : '';
+    }
+    return (d + t || Linear).toLowerCase();
+  }
+  function isContinuousColor(_) {
+    const t = _.type;
+    return isContinuous(t) && t !== Time && t !== UTC && (_.scheme || _.range && _.range.length && _.range.every(isString));
+  }
+  function configureDomain(scale, _, df) {
+    // check raw domain, if provided use that and exit early
+    const raw = rawDomain(scale, _.domainRaw, df);
+    if (raw > -1) return raw;
+    var domain = _.domain,
+      type = scale.type,
+      zero = _.zero || _.zero === undefined && includeZero(scale),
+      n,
+      mid;
+    if (!domain) return 0;
+
+    // adjust continuous domain for minimum pixel padding
+    if (includePad(type) && _.padding && domain[0] !== peek$1(domain)) {
+      domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
+    }
+
+    // adjust domain based on zero, min, max settings
+    if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
+      n = (domain = domain.slice()).length - 1 || 1;
+      if (zero) {
+        if (domain[0] > 0) domain[0] = 0;
+        if (domain[n] < 0) domain[n] = 0;
+      }
+      if (_.domainMin != null) domain[0] = _.domainMin;
+      if (_.domainMax != null) domain[n] = _.domainMax;
+      if (_.domainMid != null) {
+        mid = _.domainMid;
+        const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
+        if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+        domain.splice(i, 0, mid);
+      }
+    }
+
+    // set the scale domain
+    scale.domain(domainCheck(type, domain, df));
+
+    // if ordinal scale domain is defined, prevent implicit
+    // domain construction as side-effect of scale lookup
+    if (type === Ordinal) {
+      scale.unknown(_.domainImplicit ? $$1.scaleImplicit : undefined);
+    }
+
+    // perform 'nice' adjustment as requested
+    if (_.nice && scale.nice) {
+      scale.nice(_.nice !== true && tickCount(scale, _.nice) || null);
+    }
+
+    // return the cardinality of the domain
+    return domain.length;
+  }
+  function rawDomain(scale, raw, df) {
+    if (raw) {
+      scale.domain(domainCheck(scale.type, raw, df));
+      return raw.length;
+    } else {
+      return -1;
+    }
+  }
+  function padDomain(type, domain, range, pad, exponent, constant) {
+    var span = Math.abs(peek$1(range) - range[0]),
+      frac = span / (span - 2 * pad),
+      d = type === Log ? zoomLog(domain, null, frac) : type === Sqrt ? zoomPow(domain, null, frac, 0.5) : type === Pow ? zoomPow(domain, null, frac, exponent || 1) : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1) : zoomLinear(domain, null, frac);
+    domain = domain.slice();
+    domain[0] = d[0];
+    domain[domain.length - 1] = d[1];
+    return domain;
+  }
+  function domainCheck(type, domain, df) {
+    if (isLogarithmic(type)) {
+      // sum signs of domain values
+      // if all pos or all neg, abs(sum) === domain.length
+      var s = Math.abs(domain.reduce((s, v) => s + (v < 0 ? -1 : v > 0 ? 1 : 0), 0));
+      if (s !== domain.length) {
+        df.warn('Log scale domain includes zero: ' + $(domain));
+      }
+    }
+    return domain;
+  }
+  function configureBins(scale, _, count) {
+    let bins = _.bins;
+    if (bins && !isArray(bins)) {
+      // generate bin boundary array
+      const domain = scale.domain(),
+        lo = domain[0],
+        hi = peek$1(domain),
+        step = bins.step;
+      let start = bins.start == null ? lo : bins.start,
+        stop = bins.stop == null ? hi : bins.stop;
+      if (!step) error('Scale bins parameter missing step property.');
+      if (start < lo) start = step * Math.ceil(lo / step);
+      if (stop > hi) stop = step * Math.floor(hi / step);
+      bins = d3Array.range(start, stop + step / 2, step);
+    }
+    if (bins) {
+      // assign bin boundaries to scale instance
+      scale.bins = bins;
+    } else if (scale.bins) {
+      // no current bins, remove bins if previously set
+      delete scale.bins;
+    }
+
+    // special handling for bin-ordinal scales
+    if (scale.type === BinOrdinal) {
+      if (!bins) {
+        // the domain specifies the bins
+        scale.bins = scale.domain();
+      } else if (!_.domain && !_.domainRaw) {
+        // the bins specify the domain
+        scale.domain(bins);
+        count = bins.length;
+      }
+    }
+
+    // return domain cardinality
+    return count;
+  }
+  function configureRange(scale, _, count) {
+    var type = scale.type,
+      round = _.round || false,
+      range = _.range;
+
+    // if range step specified, calculate full range extent
+    if (_.rangeStep != null) {
+      range = configureRangeStep(type, _, count);
+    }
+
+    // else if a range scheme is defined, use that
+    else if (_.scheme) {
+      range = configureScheme(type, _, count);
+      if (isFunction(range)) {
+        if (scale.interpolator) {
+          return scale.interpolator(range);
+        } else {
+          error(`Scale type ${type} does not support interpolating color schemes.`);
+        }
+      }
+    }
+
+    // given a range array for an interpolating scale, convert to interpolator
+    if (range && isInterpolating(type)) {
+      return scale.interpolator(interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma));
+    }
+
+    // configure rounding / interpolation
+    if (range && _.interpolate && scale.interpolate) {
+      scale.interpolate(interpolate(_.interpolate, _.interpolateGamma));
+    } else if (isFunction(scale.round)) {
+      scale.round(round);
+    } else if (isFunction(scale.rangeRound)) {
+      scale.interpolate(round ? $$1$1.interpolateRound : $$1$1.interpolate);
+    }
+    if (range) scale.range(flip(range, _.reverse));
+  }
+  function configureRangeStep(type, _, count) {
+    if (type !== Band && type !== Point) {
+      error('Only band and point scales support rangeStep.');
+    }
+
+    // calculate full range based on requested step size and padding
+    var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
+      inner = type === Point ? 1 : (_.paddingInner != null ? _.paddingInner : _.padding) || 0;
+    return [0, _.rangeStep * bandSpace(count, inner, outer)];
+  }
+  function configureScheme(type, _, count) {
+    var extent = _.schemeExtent,
+      name,
+      scheme$1;
+    if (isArray(_.scheme)) {
+      scheme$1 = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
+    } else {
+      name = _.scheme.toLowerCase();
+      scheme$1 = scheme(name);
+      if (!scheme$1) error(`Unrecognized scheme name: ${_.scheme}`);
+    }
+
+    // determine size for potential discrete range
+    count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
+
+    // adjust and/or quantize scheme as appropriate
+    return isInterpolating(type) ? adjustScheme(scheme$1, extent, _.reverse) : isFunction(scheme$1) ? quantizeInterpolator(adjustScheme(scheme$1, extent), count) : type === Ordinal ? scheme$1 : scheme$1.slice(0, count);
+  }
+  function adjustScheme(scheme, extent, reverse) {
+    return isFunction(scheme) && (extent || reverse) ? interpolateRange(scheme, flip(extent || [0, 1], reverse)) : scheme;
+  }
+  function flip(array, reverse) {
+    return reverse ? array.slice().reverse() : array;
+  }
+
+  /**
+   * Sorts scenegraph items in the pulse source array.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(*,*): number} [params.sort] - A comparator
+   *   function for sorting tuples.
+   */
+  function SortItems$1(params) {
+    Transform.call(this, null, params);
+  }
+  inherits(SortItems$1, Transform, {
+    transform(_, pulse) {
+      const mod = _.modified('sort') || pulse.changed(pulse.ADD) || pulse.modified(_.sort.fields) || pulse.modified('datum');
+      if (mod) pulse.source.sort(stableCompare(_.sort));
+      this.modified(mod);
+      return pulse;
+    }
+  });
+  const Zero = 'zero',
+    Center$1 = 'center',
+    Normalize = 'normalize',
+    DefOutput = ['y0', 'y1'];
+
+  /**
+   * Stack layout for visualization elements.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to stack.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+   * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
+   * @param {string} [offset='zero'] - Stack baseline offset. One of 'zero', 'center', 'normalize'.
+   */
+  function Stack(params) {
+    Transform.call(this, null, params);
+  }
+  Stack.Definition = {
+    'type': 'Stack',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'groupby',
+      'type': 'field',
+      'array': true
+    }, {
+      'name': 'sort',
+      'type': 'compare'
+    }, {
+      'name': 'offset',
+      'type': 'enum',
+      'default': Zero,
+      'values': [Zero, Center$1, Normalize]
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': 2,
+      'default': DefOutput
+    }]
+  };
+  inherits(Stack, Transform, {
+    transform(_, pulse) {
+      var as = _.as || DefOutput,
+        y0 = as[0],
+        y1 = as[1],
+        sort = stableCompare(_.sort),
+        field = _.field || one$1,
+        stack = _.offset === Center$1 ? stackCenter : _.offset === Normalize ? stackNormalize : stackZero,
+        groups,
+        i,
+        n,
+        max;
+
+      // partition, sum, and sort the stack groups
+      groups = partition$2(pulse.source, _.groupby, sort, field);
+
+      // compute stack layouts per group
+      for (i = 0, n = groups.length, max = groups.max; i < n; ++i) {
+        stack(groups[i], max, field, y0, y1);
+      }
+      return pulse.reflow(_.modified()).modifies(as);
+    }
+  });
+  function stackCenter(group, max, field, y0, y1) {
+    var last = (max - group.sum) / 2,
+      m = group.length,
+      j = 0,
+      t;
+    for (; j < m; ++j) {
+      t = group[j];
+      t[y0] = last;
+      t[y1] = last += Math.abs(field(t));
+    }
+  }
+  function stackNormalize(group, max, field, y0, y1) {
+    var scale = 1 / group.sum,
+      last = 0,
+      m = group.length,
+      j = 0,
+      v = 0,
+      t;
+    for (; j < m; ++j) {
+      t = group[j];
+      t[y0] = last;
+      t[y1] = last = scale * (v += Math.abs(field(t)));
+    }
+  }
+  function stackZero(group, max, field, y0, y1) {
+    var lastPos = 0,
+      lastNeg = 0,
+      m = group.length,
+      j = 0,
+      v,
+      t;
+    for (; j < m; ++j) {
+      t = group[j];
+      v = +field(t);
+      if (v < 0) {
+        t[y0] = lastNeg;
+        t[y1] = lastNeg += v;
+      } else {
+        t[y0] = lastPos;
+        t[y1] = lastPos += v;
+      }
+    }
+  }
+  function partition$2(data, groupby, sort, field) {
+    var groups = [],
+      get = f => f(t),
+      map,
+      i,
+      n,
+      m,
+      t,
+      k,
+      g,
+      s,
+      max;
+
+    // partition data points into stack groups
+    if (groupby == null) {
+      groups.push(data.slice());
+    } else {
+      for (map = {}, i = 0, n = data.length; i < n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = g = [];
+          groups.push(g);
+        }
+        g.push(t);
+      }
+    }
+
+    // compute sums of groups, sort groups as needed
+    for (k = 0, max = 0, m = groups.length; k < m; ++k) {
+      g = groups[k];
+      for (i = 0, s = 0, n = g.length; i < n; ++i) {
+        s += Math.abs(field(g[i]));
+      }
+      g.sum = s;
+      if (s > max) max = s;
+      if (sort) g.sort(sort);
+    }
+    groups.max = max;
+    return groups;
+  }
+
+  var encode$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    axisticks: AxisTicks$1,
+    datajoin: DataJoin$1,
+    encode: Encode$1,
+    legendentries: LegendEntries$1,
+    linkpath: LinkPath,
+    pie: Pie,
+    scale: Scale$1,
+    sortitems: SortItems$1,
+    stack: Stack
+  });
+
+  var abs = Math.abs;
+  var cos = Math.cos;
+  var sin = Math.sin;
+  var epsilon = 1e-6;
+  var pi = Math.PI;
+  var halfPi = pi / 2;
+  var sqrt2 = sqrt(2);
+  function asin(x) {
+    return x > 1 ? halfPi : x < -1 ? -halfPi : Math.asin(x);
+  }
+  function sqrt(x) {
+    return x > 0 ? Math.sqrt(x) : 0;
+  }
+
+  function mollweideBromleyTheta(cp, phi) {
+    var cpsinPhi = cp * sin(phi),
+      i = 30,
+      delta;
+    do phi -= delta = (phi + sin(phi) - cpsinPhi) / (1 + cos(phi)); while (abs(delta) > epsilon && --i > 0);
+    return phi / 2;
+  }
+  function mollweideBromleyRaw(cx, cy, cp) {
+    function forward(lambda, phi) {
+      return [cx * lambda * cos(phi = mollweideBromleyTheta(cp, phi)), cy * sin(phi)];
+    }
+    forward.invert = function (x, y) {
+      return y = asin(y / cy), [x / (cx * cos(y)), asin((2 * y + sin(2 * y)) / cp)];
+    };
+    return forward;
+  }
+  var mollweideRaw = mollweideBromleyRaw(sqrt2 / halfPi, sqrt2, pi);
+  function geoMollweide () {
+    return d3Geo.geoProjection(mollweideRaw).scale(169.529);
+  }
+
+  const defaultPath = d3Geo.geoPath();
+  const projectionProperties = [
+  // standard properties in d3-geo
+  'clipAngle', 'clipExtent', 'scale', 'translate', 'center', 'rotate', 'parallels', 'precision', 'reflectX', 'reflectY',
+  // extended properties in d3-geo-projections
+  'coefficient', 'distance', 'fraction', 'lobes', 'parallel', 'radius', 'ratio', 'spacing', 'tilt'];
+
+  /**
+   * Augment projections with their type and a copy method.
+   */
+  function create$1(type, constructor) {
+    return function projection() {
+      const p = constructor();
+      p.type = type;
+      p.path = d3Geo.geoPath().projection(p);
+      p.copy = p.copy || function () {
+        const c = projection();
+        projectionProperties.forEach(prop => {
+          if (p[prop]) c[prop](p[prop]());
+        });
+        c.path.pointRadius(p.path.pointRadius());
+        return c;
+      };
+      return registerScale(p);
+    };
+  }
+  function projection(type, proj) {
+    if (!type || typeof type !== 'string') {
+      throw new Error('Projection type must be a name string.');
+    }
+    type = type.toLowerCase();
+    if (arguments.length > 1) {
+      projections[type] = create$1(type, proj);
+      return this;
+    } else {
+      return projections[type] || null;
+    }
+  }
+  function getProjectionPath(proj) {
+    return proj && proj.path || defaultPath;
+  }
+  const projections = {
+    // base d3-geo projection types
+    albers: d3Geo.geoAlbers,
+    albersusa: d3Geo.geoAlbersUsa,
+    azimuthalequalarea: d3Geo.geoAzimuthalEqualArea,
+    azimuthalequidistant: d3Geo.geoAzimuthalEquidistant,
+    conicconformal: d3Geo.geoConicConformal,
+    conicequalarea: d3Geo.geoConicEqualArea,
+    conicequidistant: d3Geo.geoConicEquidistant,
+    equalEarth: d3Geo.geoEqualEarth,
+    equirectangular: d3Geo.geoEquirectangular,
+    gnomonic: d3Geo.geoGnomonic,
+    identity: d3Geo.geoIdentity,
+    mercator: d3Geo.geoMercator,
+    mollweide: geoMollweide,
+    naturalEarth1: d3Geo.geoNaturalEarth1,
+    orthographic: d3Geo.geoOrthographic,
+    stereographic: d3Geo.geoStereographic,
+    transversemercator: d3Geo.geoTransverseMercator
+  };
+  for (const key in projections) {
+    projection(key, projections[key]);
+  }
+
+  function noop() {}
+  const cases = [[], [[[1.0, 1.5], [0.5, 1.0]]], [[[1.5, 1.0], [1.0, 1.5]]], [[[1.5, 1.0], [0.5, 1.0]]], [[[1.0, 0.5], [1.5, 1.0]]], [[[1.0, 1.5], [0.5, 1.0]], [[1.0, 0.5], [1.5, 1.0]]], [[[1.0, 0.5], [1.0, 1.5]]], [[[1.0, 0.5], [0.5, 1.0]]], [[[0.5, 1.0], [1.0, 0.5]]], [[[1.0, 1.5], [1.0, 0.5]]], [[[0.5, 1.0], [1.0, 0.5]], [[1.5, 1.0], [1.0, 1.5]]], [[[1.5, 1.0], [1.0, 0.5]]], [[[0.5, 1.0], [1.5, 1.0]]], [[[1.0, 1.5], [1.5, 1.0]]], [[[0.5, 1.0], [1.0, 1.5]]], []];
+
+  // Implementation adapted from d3/d3-contour. Thanks!
+  function contours() {
+    var dx = 1,
+      dy = 1,
+      smooth = smoothLinear;
+    function contours(values, tz) {
+      return tz.map(value => contour(values, value));
+    }
+
+    // Accumulate, smooth contour rings, assign holes to exterior rings.
+    // Based on https://github.com/mbostock/shapefile/blob/v0.6.2/shp/polygon.js
+    function contour(values, value) {
+      var polygons = [],
+        holes = [];
+      isorings(values, value, ring => {
+        smooth(ring, values, value);
+        if (area$2(ring) > 0) polygons.push([ring]);else holes.push(ring);
+      });
+      holes.forEach(hole => {
+        for (var i = 0, n = polygons.length, polygon; i < n; ++i) {
+          if (contains((polygon = polygons[i])[0], hole) !== -1) {
+            polygon.push(hole);
+            return;
+          }
+        }
+      });
+      return {
+        type: 'MultiPolygon',
+        value: value,
+        coordinates: polygons
+      };
+    }
+
+    // Marching squares with isolines stitched into rings.
+    // Based on https://github.com/topojson/topojson-client/blob/v3.0.0/src/stitch.js
+    function isorings(values, value, callback) {
+      var fragmentByStart = new Array(),
+        fragmentByEnd = new Array(),
+        x,
+        y,
+        t0,
+        t1,
+        t2,
+        t3;
+
+      // Special case for the first row (y = -1, t2 = t3 = 0).
+      x = y = -1;
+      t1 = values[0] >= value;
+      cases[t1 << 1].forEach(stitch);
+      while (++x < dx - 1) {
+        t0 = t1, t1 = values[x + 1] >= value;
+        cases[t0 | t1 << 1].forEach(stitch);
+      }
+      cases[t1 << 0].forEach(stitch);
+
+      // General case for the intermediate rows.
+      while (++y < dy - 1) {
+        x = -1;
+        t1 = values[y * dx + dx] >= value;
+        t2 = values[y * dx] >= value;
+        cases[t1 << 1 | t2 << 2].forEach(stitch);
+        while (++x < dx - 1) {
+          t0 = t1, t1 = values[y * dx + dx + x + 1] >= value;
+          t3 = t2, t2 = values[y * dx + x + 1] >= value;
+          cases[t0 | t1 << 1 | t2 << 2 | t3 << 3].forEach(stitch);
+        }
+        cases[t1 | t2 << 3].forEach(stitch);
+      }
+
+      // Special case for the last row (y = dy - 1, t0 = t1 = 0).
+      x = -1;
+      t2 = values[y * dx] >= value;
+      cases[t2 << 2].forEach(stitch);
+      while (++x < dx - 1) {
+        t3 = t2, t2 = values[y * dx + x + 1] >= value;
+        cases[t2 << 2 | t3 << 3].forEach(stitch);
+      }
+      cases[t2 << 3].forEach(stitch);
+      function stitch(line) {
+        var start = [line[0][0] + x, line[0][1] + y],
+          end = [line[1][0] + x, line[1][1] + y],
+          startIndex = index(start),
+          endIndex = index(end),
+          f,
+          g;
+        if (f = fragmentByEnd[startIndex]) {
+          if (g = fragmentByStart[endIndex]) {
+            delete fragmentByEnd[f.end];
+            delete fragmentByStart[g.start];
+            if (f === g) {
+              f.ring.push(end);
+              callback(f.ring);
+            } else {
+              fragmentByStart[f.start] = fragmentByEnd[g.end] = {
+                start: f.start,
+                end: g.end,
+                ring: f.ring.concat(g.ring)
+              };
+            }
+          } else {
+            delete fragmentByEnd[f.end];
+            f.ring.push(end);
+            fragmentByEnd[f.end = endIndex] = f;
+          }
+        } else if (f = fragmentByStart[endIndex]) {
+          if (g = fragmentByEnd[startIndex]) {
+            delete fragmentByStart[f.start];
+            delete fragmentByEnd[g.end];
+            if (f === g) {
+              f.ring.push(end);
+              callback(f.ring);
+            } else {
+              fragmentByStart[g.start] = fragmentByEnd[f.end] = {
+                start: g.start,
+                end: f.end,
+                ring: g.ring.concat(f.ring)
+              };
+            }
+          } else {
+            delete fragmentByStart[f.start];
+            f.ring.unshift(start);
+            fragmentByStart[f.start = startIndex] = f;
+          }
+        } else {
+          fragmentByStart[startIndex] = fragmentByEnd[endIndex] = {
+            start: startIndex,
+            end: endIndex,
+            ring: [start, end]
+          };
+        }
+      }
+    }
+    function index(point) {
+      return point[0] * 2 + point[1] * (dx + 1) * 4;
+    }
+    function smoothLinear(ring, values, value) {
+      ring.forEach(point => {
+        var x = point[0],
+          y = point[1],
+          xt = x | 0,
+          yt = y | 0,
+          v0,
+          v1 = values[yt * dx + xt];
+        if (x > 0 && x < dx && xt === x) {
+          v0 = values[yt * dx + xt - 1];
+          point[0] = x + (value - v0) / (v1 - v0) - 0.5;
+        }
+        if (y > 0 && y < dy && yt === y) {
+          v0 = values[(yt - 1) * dx + xt];
+          point[1] = y + (value - v0) / (v1 - v0) - 0.5;
+        }
+      });
+    }
+    contours.contour = contour;
+    contours.size = function (_) {
+      if (!arguments.length) return [dx, dy];
+      var _0 = Math.floor(_[0]),
+        _1 = Math.floor(_[1]);
+      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
+      return dx = _0, dy = _1, contours;
+    };
+    contours.smooth = function (_) {
+      return arguments.length ? (smooth = _ ? smoothLinear : noop, contours) : smooth === smoothLinear;
+    };
+    return contours;
+  }
+  function area$2(ring) {
+    var i = 0,
+      n = ring.length,
+      area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
+    while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
+    return area;
+  }
+  function contains(ring, hole) {
+    var i = -1,
+      n = hole.length,
+      c;
+    while (++i < n) if (c = ringContains(ring, hole[i])) return c;
+    return 0;
+  }
+  function ringContains(ring, point) {
+    var x = point[0],
+      y = point[1],
+      contains = -1;
+    for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
+      var pi = ring[i],
+        xi = pi[0],
+        yi = pi[1],
+        pj = ring[j],
+        xj = pj[0],
+        yj = pj[1];
+      if (segmentContains(pi, pj, point)) return 0;
+      if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) contains = -contains;
+    }
+    return contains;
+  }
+  function segmentContains(a, b, c) {
+    var i;
+    return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
+  }
+  function collinear(a, b, c) {
+    return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
+  }
+  function within(p, q, r) {
+    return p <= q && q <= r || r <= q && q <= p;
+  }
+  function quantize(k, nice, zero) {
+    return function (values) {
+      var ex = extent(values),
+        start = zero ? Math.min(ex[0], 0) : ex[0],
+        stop = ex[1],
+        span = stop - start,
+        step = nice ? d3Array.tickStep(start, stop, k) : span / (k + 1);
+      return d3Array.range(start + step, stop, step);
+    };
+  }
+
+  /**
+   * Generate isocontours (level sets) based on input raster grid data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} [params.field] - The field with raster grid
+   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
+   * @param {Array<number>} [params.thresholds] - Contour threshold array. If
+   *   specified, the levels, nice, resolve, and zero parameters are ignored.
+   * @param {number} [params.levels] - The desired number of contour levels.
+   * @param {boolean} [params.nice] - Boolean flag indicating if the contour
+   *   threshold values should be automatically aligned to "nice"
+   *   human-friendly values. Setting this flag may cause the number of
+   *   thresholds to deviate from the specified levels.
+   * @param {string} [params.resolve] - The method for resolving thresholds
+   *   across multiple input grids. If 'independent' (the default), threshold
+   *   calculation will be performed separately for each grid. If 'shared', a
+   *   single set of threshold values will be used for all input grids.
+   * @param {boolean} [params.zero] - Boolean flag indicating if the contour
+   *   threshold values should include zero.
+   * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
+   *   polygons should be smoothed using linear interpolation. The default is
+   *   true. The parameter is ignored when using density estimation.
+   * @param {boolean} [params.scale] - Optional numerical value by which to
+   *   scale the output isocontour coordinates. This parameter can be useful
+   *   to scale the contours to match a desired output resolution.
+   * @param {string} [params.as='contour'] - The output field in which to store
+   *   the generated isocontour data (default 'contour').
+   */
+  function Isocontour(params) {
+    Transform.call(this, null, params);
+  }
+  Isocontour.Definition = {
+    'type': 'Isocontour',
+    'metadata': {
+      'generates': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'thresholds',
+      'type': 'number',
+      'array': true
+    }, {
+      'name': 'levels',
+      'type': 'number'
+    }, {
+      'name': 'nice',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'resolve',
+      'type': 'enum',
+      'values': ['shared', 'independent'],
+      'default': 'independent'
+    }, {
+      'name': 'zero',
+      'type': 'boolean',
+      'default': true
+    }, {
+      'name': 'smooth',
+      'type': 'boolean',
+      'default': true
+    }, {
+      'name': 'scale',
+      'type': 'number',
+      'expr': true
+    }, {
+      'name': 'translate',
+      'type': 'number',
+      'array': true,
+      'expr': true
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'null': true,
+      'default': 'contour'
+    }]
+  };
+  inherits(Isocontour, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        field = _.field || identity,
+        contour = contours().smooth(_.smooth !== false),
+        tz = _.thresholds || levels(source, field, _),
+        as = _.as === null ? null : _.as || 'contour',
+        values = [];
+      source.forEach(t => {
+        const grid = field(t);
+
+        // generate contour paths in GeoJSON format
+        const paths = contour.size([grid.width, grid.height])(grid.values, isArray(tz) ? tz : tz(grid.values));
+
+        // adjust contour path coordinates as needed
+        transformPaths(paths, grid, t, _);
+
+        // ingest; copy source data properties to output
+        paths.forEach(p => {
+          values.push(rederive(t, ingest$1(as != null ? {
+            [as]: p
+          } : p)));
+        });
+      });
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = values;
+      return out;
+    }
+  });
+  function levels(values, f, _) {
+    const q = quantize(_.levels || 10, _.nice, _.zero !== false);
+    return _.resolve !== 'shared' ? q : q(values.map(t => d3Array.max(f(t).values)));
+  }
+  function transformPaths(paths, grid, datum, _) {
+    let s = _.scale || grid.scale,
+      t = _.translate || grid.translate;
+    if (isFunction(s)) s = s(datum, _);
+    if (isFunction(t)) t = t(datum, _);
+    if ((s === 1 || s == null) && !t) return;
+    const sx = (isNumber$1(s) ? s : s[0]) || 1,
+      sy = (isNumber$1(s) ? s : s[1]) || 1,
+      tx = t && t[0] || 0,
+      ty = t && t[1] || 0;
+    paths.forEach(transform$1(grid, sx, sy, tx, ty));
+  }
+  function transform$1(grid, sx, sy, tx, ty) {
+    const x1 = grid.x1 || 0,
+      y1 = grid.y1 || 0,
+      flip = sx * sy < 0;
+    function transformPolygon(coordinates) {
+      coordinates.forEach(transformRing);
+    }
+    function transformRing(coordinates) {
+      if (flip) coordinates.reverse(); // maintain winding order
+      coordinates.forEach(transformPoint);
+    }
+    function transformPoint(coordinates) {
+      coordinates[0] = (coordinates[0] - x1) * sx + tx;
+      coordinates[1] = (coordinates[1] - y1) * sy + ty;
+    }
+    return function (geometry) {
+      geometry.coordinates.forEach(transformPolygon);
+      return geometry;
+    };
+  }
+  function radius(bw, data, f) {
+    const v = bw >= 0 ? bw : estimateBandwidth(data, f);
+    return Math.round((Math.sqrt(4 * v * v + 1) - 1) / 2);
+  }
+  function number$3(_) {
+    return isFunction(_) ? _ : constant$1(+_);
+  }
+
+  // Implementation adapted from d3/d3-contour. Thanks!
+  function density2D() {
+    var x = d => d[0],
+      y = d => d[1],
+      weight = one$1,
+      bandwidth = [-1, -1],
+      dx = 960,
+      dy = 500,
+      k = 2; // log2(cellSize)
+
+    function density(data, counts) {
+      const rx = radius(bandwidth[0], data, x) >> k,
+        // blur x-radius
+        ry = radius(bandwidth[1], data, y) >> k,
+        // blur y-radius
+        ox = rx ? rx + 2 : 0,
+        // x-offset padding for blur
+        oy = ry ? ry + 2 : 0,
+        // y-offset padding for blur
+        n = 2 * ox + (dx >> k),
+        // grid width
+        m = 2 * oy + (dy >> k),
+        // grid height
+        values0 = new Float32Array(n * m),
+        values1 = new Float32Array(n * m);
+      let values = values0;
+      data.forEach(d => {
+        const xi = ox + (+x(d) >> k),
+          yi = oy + (+y(d) >> k);
+        if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
+          values0[xi + yi * n] += +weight(d);
+        }
+      });
+      if (rx > 0 && ry > 0) {
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+        blurX(n, m, values0, values1, rx);
+        blurY(n, m, values1, values0, ry);
+      } else if (rx > 0) {
+        blurX(n, m, values0, values1, rx);
+        blurX(n, m, values1, values0, rx);
+        blurX(n, m, values0, values1, rx);
+        values = values1;
+      } else if (ry > 0) {
+        blurY(n, m, values0, values1, ry);
+        blurY(n, m, values1, values0, ry);
+        blurY(n, m, values0, values1, ry);
+        values = values1;
+      }
+
+      // scale density estimates
+      // density in points per square pixel or probability density
+      const s = counts ? Math.pow(2, -2 * k) : 1 / d3Array.sum(values);
+      for (let i = 0, sz = n * m; i < sz; ++i) values[i] *= s;
+      return {
+        values: values,
+        scale: 1 << k,
+        width: n,
+        height: m,
+        x1: ox,
+        y1: oy,
+        x2: ox + (dx >> k),
+        y2: oy + (dy >> k)
+      };
+    }
+    density.x = function (_) {
+      return arguments.length ? (x = number$3(_), density) : x;
+    };
+    density.y = function (_) {
+      return arguments.length ? (y = number$3(_), density) : y;
+    };
+    density.weight = function (_) {
+      return arguments.length ? (weight = number$3(_), density) : weight;
+    };
+    density.size = function (_) {
+      if (!arguments.length) return [dx, dy];
+      var _0 = +_[0],
+        _1 = +_[1];
+      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
+      return dx = _0, dy = _1, density;
+    };
+    density.cellSize = function (_) {
+      if (!arguments.length) return 1 << k;
+      if (!((_ = +_) >= 1)) error('invalid cell size');
+      k = Math.floor(Math.log(_) / Math.LN2);
+      return density;
+    };
+    density.bandwidth = function (_) {
+      if (!arguments.length) return bandwidth;
+      _ = array$2(_);
+      if (_.length === 1) _ = [+_[0], +_[0]];
+      if (_.length !== 2) error('invalid bandwidth');
+      return bandwidth = _, density;
+    };
+    return density;
+  }
+  function blurX(n, m, source, target, r) {
+    const w = (r << 1) + 1;
+    for (let j = 0; j < m; ++j) {
+      for (let i = 0, sr = 0; i < n + r; ++i) {
+        if (i < n) {
+          sr += source[i + j * n];
+        }
+        if (i >= r) {
+          if (i >= w) {
+            sr -= source[i - w + j * n];
+          }
+          target[i - r + j * n] = sr / Math.min(i + 1, n - 1 + w - i, w);
+        }
+      }
+    }
+  }
+  function blurY(n, m, source, target, r) {
+    const w = (r << 1) + 1;
+    for (let i = 0; i < n; ++i) {
+      for (let j = 0, sr = 0; j < m + r; ++j) {
+        if (j < m) {
+          sr += source[i + j * n];
+        }
+        if (j >= r) {
+          if (j >= w) {
+            sr -= source[i + (j - w) * n];
+          }
+          target[i + (j - r) * n] = sr / Math.min(j + 1, m - 1 + w - j, w);
+        }
+      }
+    }
+  }
+
+  /**
+   * Perform 2D kernel-density estimation of point data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<number>} params.size - The [width, height] extent (in
+   *   units of input pixels) over which to perform density estimation.
+   * @param {function(object): number} params.x - The x-coordinate accessor.
+   * @param {function(object): number} params.y - The y-coordinate accessor.
+   * @param {function(object): number} [params.weight] - The weight accessor.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors
+   *   to groupby.
+   * @param {number} [params.cellSize] - Contour density calculation cell size.
+   *   This parameter determines the level of spatial approximation. For example,
+   *   the default value of 4 maps to 2x reductions in both x- and y- dimensions.
+   *   A value of 1 will result in an output raster grid whose dimensions exactly
+   *   matches the size parameter.
+   * @param {Array<number>} [params.bandwidth] - The KDE kernel bandwidths,
+   *   in pixels. The input can be a two-element array specifying separate
+   *   x and y bandwidths, or a single-element array specifying both. If the
+   *   bandwidth is unspecified or less than zero, the bandwidth will be
+   *   automatically determined.
+   * @param {boolean} [params.counts=false] - A boolean flag indicating if the
+   *   output values should be probability estimates (false, default) or
+   *   smoothed counts (true).
+   * @param {string} [params.as='grid'] - The output field in which to store
+   *   the generated raster grid (default 'grid').
+   */
+  function KDE2D(params) {
+    Transform.call(this, null, params);
+  }
+  KDE2D.Definition = {
+    'type': 'KDE2D',
+    'metadata': {
+      'generates': true
+    },
+    'params': [{
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2,
+      'required': true
+    }, {
+      'name': 'x',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'y',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'weight',
+      'type': 'field'
+    }, {
+      'name': 'groupby',
+      'type': 'field',
+      'array': true
+    }, {
+      'name': 'cellSize',
+      'type': 'number'
+    }, {
+      'name': 'bandwidth',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'counts',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'grid'
+    }]
+  };
+  const PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
+  function params(obj, _) {
+    PARAMS.forEach(param => _[param] != null ? obj[param](_[param]) : 0);
+    return obj;
+  }
+  inherits(KDE2D, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified()) return pulse.StopPropagation;
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        source = pulse.materialize(pulse.SOURCE).source,
+        groups = partition$1(source, _.groupby),
+        names = (_.groupby || []).map(accessorName),
+        kde = params(density2D(), _),
+        as = _.as || 'grid',
+        values = [];
+      function set(t, vals) {
+        for (let i = 0; i < names.length; ++i) t[names[i]] = vals[i];
+        return t;
+      }
+
+      // generate density raster grids
+      values = groups.map(g => ingest$1(set({
+        [as]: kde(g, _.counts)
+      }, g.dims)));
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = values;
+      return out;
+    }
+  });
+  function partition$1(data, groupby) {
+    var groups = [],
+      get = f => f(t),
+      map,
+      i,
+      n,
+      t,
+      k,
+      g;
+
+    // partition data points into groups
+    if (groupby == null) {
+      groups.push(data);
+    } else {
+      for (map = {}, i = 0, n = data.length; i < n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = g = [];
+          g.dims = k;
+          groups.push(g);
+        }
+        g.push(t);
+      }
+    }
+    return groups;
+  }
+
+  /**
+   * Generate contours based on kernel-density estimation of point data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<number>} params.size - The dimensions [width, height] over which to compute contours.
+   *  If the values parameter is provided, this must be the dimensions of the input data.
+   *  If density estimation is performed, this is the output view dimensions in pixels.
+   * @param {Array<number>} [params.values] - An array of numeric values representing an
+   *  width x height grid of values over which to compute contours. If unspecified, this
+   *  transform will instead attempt to compute contours for the kernel density estimate
+   *  using values drawn from data tuples in the input pulse.
+   * @param {function(object): number} [params.x] - The pixel x-coordinate accessor for density estimation.
+   * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
+   * @param {function(object): number} [params.weight] - The data point weight accessor for density estimation.
+   * @param {number} [params.cellSize] - Contour density calculation cell size.
+   * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
+   * @param {Array<number>} [params.thresholds] - Contour threshold array. If
+   *   this parameter is set, the count and nice parameters will be ignored.
+   * @param {number} [params.count] - The desired number of contours.
+   * @param {boolean} [params.nice] - Boolean flag indicating if the contour
+   *   threshold values should be automatically aligned to "nice"
+   *   human-friendly values. Setting this flag may cause the number of
+   *   thresholds to deviate from the specified count.
+   * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
+   *   polygons should be smoothed using linear interpolation. The default is
+   *   true. The parameter is ignored when using density estimation.
+   */
+  function Contour(params) {
+    Transform.call(this, null, params);
+  }
+  Contour.Definition = {
+    'type': 'Contour',
+    'metadata': {
+      'generates': true
+    },
+    'params': [{
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2,
+      'required': true
+    }, {
+      'name': 'values',
+      'type': 'number',
+      'array': true
+    }, {
+      'name': 'x',
+      'type': 'field'
+    }, {
+      'name': 'y',
+      'type': 'field'
+    }, {
+      'name': 'weight',
+      'type': 'field'
+    }, {
+      'name': 'cellSize',
+      'type': 'number'
+    }, {
+      'name': 'bandwidth',
+      'type': 'number'
+    }, {
+      'name': 'count',
+      'type': 'number'
+    }, {
+      'name': 'nice',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'thresholds',
+      'type': 'number',
+      'array': true
+    }, {
+      'name': 'smooth',
+      'type': 'boolean',
+      'default': true
+    }]
+  };
+  inherits(Contour, Transform, {
+    transform(_, pulse) {
+      if (this.value && !pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
+      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
+        contour = contours().smooth(_.smooth !== false),
+        values = _.values,
+        thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
+        size = _.size,
+        grid,
+        post;
+      if (!values) {
+        values = pulse.materialize(pulse.SOURCE).source;
+        grid = params(density2D(), _)(values, true);
+        post = transform$1(grid, grid.scale || 1, grid.scale || 1, 0, 0);
+        size = [grid.width, grid.height];
+        values = grid.values;
+      }
+      thresh = isArray(thresh) ? thresh : thresh(values);
+      values = contour.size(size)(values, thresh);
+      if (post) values.forEach(post);
+      if (this.value) out.rem = this.value;
+      this.value = out.source = out.add = (values || []).map(ingest$1);
+      return out;
+    }
+  });
+  const Feature = 'Feature';
+  const FeatureCollection = 'FeatureCollection';
+  const MultiPoint = 'MultiPoint';
+
+  /**
+   * Consolidate an array of [longitude, latitude] points or GeoJSON features
+   * into a combined GeoJSON object. This transform is particularly useful for
+   * combining geo data for a Projection's fit argument. The resulting GeoJSON
+   * data is available as this transform's value. Input pulses are unchanged.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<function(object): *>} [params.fields] - A two-element array
+   *   of field accessors for the longitude and latitude values.
+   * @param {function(object): *} params.geojson - A field accessor for
+   *   retrieving GeoJSON feature data.
+   */
+  function GeoJSON(params) {
+    Transform.call(this, null, params);
+  }
+  GeoJSON.Definition = {
+    'type': 'GeoJSON',
+    'metadata': {},
+    'params': [{
+      'name': 'fields',
+      'type': 'field',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'geojson',
+      'type': 'field'
+    }]
+  };
+  inherits(GeoJSON, Transform, {
+    transform(_, pulse) {
+      var features = this._features,
+        points = this._points,
+        fields = _.fields,
+        lon = fields && fields[0],
+        lat = fields && fields[1],
+        geojson = _.geojson || !fields && identity,
+        flag = pulse.ADD,
+        mod;
+      mod = _.modified() || pulse.changed(pulse.REM) || pulse.modified(accessorFields(geojson)) || lon && pulse.modified(accessorFields(lon)) || lat && pulse.modified(accessorFields(lat));
+      if (!this.value || mod) {
+        flag = pulse.SOURCE;
+        this._features = features = [];
+        this._points = points = [];
+      }
+      if (geojson) {
+        pulse.visit(flag, t => features.push(geojson(t)));
+      }
+      if (lon && lat) {
+        pulse.visit(flag, t => {
+          var x = lon(t),
+            y = lat(t);
+          if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
+            points.push([x, y]);
+          }
+        });
+        features = features.concat({
+          type: Feature,
+          geometry: {
+            type: MultiPoint,
+            coordinates: points
+          }
+        });
+      }
+      this.value = {
+        type: FeatureCollection,
+        features: features
+      };
+    }
+  });
+
+  /**
+   * Map GeoJSON data to an SVG path string.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(number, number): *} params.projection - The cartographic
+   *   projection to apply.
+   * @param {function(object): *} [params.field] - The field with GeoJSON data,
+   *   or null if the tuple itself is a GeoJSON feature.
+   * @param {string} [params.as='path'] - The output field in which to store
+   *   the generated path data (default 'path').
+   */
+  function GeoPath(params) {
+    Transform.call(this, null, params);
+  }
+  GeoPath.Definition = {
+    'type': 'GeoPath',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'projection',
+      'type': 'projection'
+    }, {
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'pointRadius',
+      'type': 'number',
+      'expr': true
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'path'
+    }]
+  };
+  inherits(GeoPath, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ALL),
+        path = this.value,
+        field = _.field || identity,
+        as = _.as || 'path',
+        flag = out.SOURCE;
+      if (!path || _.modified()) {
+        // parameters updated, reset and reflow
+        this.value = path = getProjectionPath(_.projection);
+        out.materialize().reflow();
+      } else {
+        flag = field === identity || pulse.modified(field.fields) ? out.ADD_MOD : out.ADD;
+      }
+      const prev = initPath(path, _.pointRadius);
+      out.visit(flag, t => t[as] = path(field(t)));
+      path.pointRadius(prev);
+      return out.modifies(as);
+    }
+  });
+  function initPath(path, pointRadius) {
+    const prev = path.pointRadius();
+    path.context(null);
+    if (pointRadius != null) {
+      path.pointRadius(pointRadius);
+    }
+    return prev;
+  }
+
+  /**
+   * Geo-code a longitude/latitude point to an x/y coordinate.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(number, number): *} params.projection - The cartographic
+   *   projection to apply.
+   * @param {Array<function(object): *>} params.fields - A two-element array of
+   *   field accessors for the longitude and latitude values.
+   * @param {Array<string>} [params.as] - A two-element array of field names
+   *   under which to store the result. Defaults to ['x','y'].
+   */
+  function GeoPoint(params) {
+    Transform.call(this, null, params);
+  }
+  GeoPoint.Definition = {
+    'type': 'GeoPoint',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'projection',
+      'type': 'projection',
+      'required': true
+    }, {
+      'name': 'fields',
+      'type': 'field',
+      'array': true,
+      'required': true,
+      'length': 2
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': 2,
+      'default': ['x', 'y']
+    }]
+  };
+  inherits(GeoPoint, Transform, {
+    transform(_, pulse) {
+      var proj = _.projection,
+        lon = _.fields[0],
+        lat = _.fields[1],
+        as = _.as || ['x', 'y'],
+        x = as[0],
+        y = as[1],
+        mod;
+      function set(t) {
+        const xy = proj([lon(t), lat(t)]);
+        if (xy) {
+          t[x] = xy[0];
+          t[y] = xy[1];
+        } else {
+          t[x] = undefined;
+          t[y] = undefined;
+        }
+      }
+      if (_.modified()) {
+        // parameters updated, reflow
+        pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
+      } else {
+        mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
+        pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
+      }
+      return pulse.modifies(as);
+    }
+  });
+
+  /**
+   * Annotate items with a geopath shape generator.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(number, number): *} params.projection - The cartographic
+   *   projection to apply.
+   * @param {function(object): *} [params.field] - The field with GeoJSON data,
+   *   or null if the tuple itself is a GeoJSON feature.
+   * @param {string} [params.as='shape'] - The output field in which to store
+   *   the generated path data (default 'shape').
+   */
+  function GeoShape(params) {
+    Transform.call(this, null, params);
+  }
+  GeoShape.Definition = {
+    'type': 'GeoShape',
+    'metadata': {
+      'modifies': true,
+      'nomod': true
+    },
+    'params': [{
+      'name': 'projection',
+      'type': 'projection'
+    }, {
+      'name': 'field',
+      'type': 'field',
+      'default': 'datum'
+    }, {
+      'name': 'pointRadius',
+      'type': 'number',
+      'expr': true
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'shape'
+    }]
+  };
+  inherits(GeoShape, Transform, {
+    transform(_, pulse) {
+      var out = pulse.fork(pulse.ALL),
+        shape = this.value,
+        as = _.as || 'shape',
+        flag = out.ADD;
+      if (!shape || _.modified()) {
+        // parameters updated, reset and reflow
+        this.value = shape = shapeGenerator(getProjectionPath(_.projection), _.field || field$1('datum'), _.pointRadius);
+        out.materialize().reflow();
+        flag = out.SOURCE;
+      }
+      out.visit(flag, t => t[as] = shape);
+      return out.modifies(as);
+    }
+  });
+  function shapeGenerator(path, field, pointRadius) {
+    const shape = pointRadius == null ? _ => path(field(_)) : _ => {
+      var prev = path.pointRadius(),
+        value = path.pointRadius(pointRadius)(field(_));
+      path.pointRadius(prev);
+      return value;
+    };
+    shape.context = _ => {
+      path.context(_);
+      return shape;
+    };
+    return shape;
+  }
+
+  /**
+   * GeoJSON feature generator for creating graticules.
+   * @constructor
+   */
+  function Graticule(params) {
+    Transform.call(this, [], params);
+    this.generator = d3Geo.geoGraticule();
+  }
+  Graticule.Definition = {
+    'type': 'Graticule',
+    'metadata': {
+      'changes': true,
+      'generates': true
+    },
+    'params': [{
+      'name': 'extent',
+      'type': 'array',
+      'array': true,
+      'length': 2,
+      'content': {
+        'type': 'number',
+        'array': true,
+        'length': 2
+      }
+    }, {
+      'name': 'extentMajor',
+      'type': 'array',
+      'array': true,
+      'length': 2,
+      'content': {
+        'type': 'number',
+        'array': true,
+        'length': 2
+      }
+    }, {
+      'name': 'extentMinor',
+      'type': 'array',
+      'array': true,
+      'length': 2,
+      'content': {
+        'type': 'number',
+        'array': true,
+        'length': 2
+      }
+    }, {
+      'name': 'step',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'stepMajor',
+      'type': 'number',
+      'array': true,
+      'length': 2,
+      'default': [90, 360]
+    }, {
+      'name': 'stepMinor',
+      'type': 'number',
+      'array': true,
+      'length': 2,
+      'default': [10, 10]
+    }, {
+      'name': 'precision',
+      'type': 'number',
+      'default': 2.5
+    }]
+  };
+  inherits(Graticule, Transform, {
+    transform(_, pulse) {
+      var src = this.value,
+        gen = this.generator,
+        t;
+      if (!src.length || _.modified()) {
+        for (const prop in _) {
+          if (isFunction(gen[prop])) {
+            gen[prop](_[prop]);
+          }
+        }
+      }
+      t = gen();
+      if (src.length) {
+        pulse.mod.push(replace$1(src[0], t));
+      } else {
+        pulse.add.push(ingest$1(t));
+      }
+      src[0] = t;
+      return pulse;
+    }
+  });
+
+  /**
+   * Render a heatmap image for input raster grid data.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} [params.field] - The field with raster grid
+   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
+   * @param {string} [params.color] - A constant color value or function for
+   *   individual pixel color. If a function, it will be invoked with an input
+   *   object that includes $x, $y, $value, and $max fields for the grid.
+   * @param {number} [params.opacity] - A constant opacity value or function for
+   *   individual pixel opacity. If a function, it will be invoked with an input
+   *   object that includes $x, $y, $value, and $max fields for the grid.
+   * @param {string} [params.resolve] - The method for resolving maximum values
+   *   across multiple input grids. If 'independent' (the default), maximum
+   *   calculation will be performed separately for each grid. If 'shared',
+   *   a single global maximum will be used for all input grids.
+   * @param {string} [params.as='image'] - The output field in which to store
+   *   the generated bitmap canvas images (default 'image').
+   */
+  function Heatmap(params) {
+    Transform.call(this, null, params);
+  }
+  Heatmap.Definition = {
+    'type': 'heatmap',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'color',
+      'type': 'string',
+      'expr': true
+    }, {
+      'name': 'opacity',
+      'type': 'number',
+      'expr': true
+    }, {
+      'name': 'resolve',
+      'type': 'enum',
+      'values': ['shared', 'independent'],
+      'default': 'independent'
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'image'
+    }]
+  };
+  inherits(Heatmap, Transform, {
+    transform(_, pulse) {
+      if (!pulse.changed() && !_.modified()) {
+        return pulse.StopPropagation;
+      }
+      var source = pulse.materialize(pulse.SOURCE).source,
+        shared = _.resolve === 'shared',
+        field = _.field || identity,
+        opacity = opacity_(_.opacity, _),
+        color = color_(_.color, _),
+        as = _.as || 'image',
+        obj = {
+          $x: 0,
+          $y: 0,
+          $value: 0,
+          $max: shared ? d3Array.max(source.map(t => d3Array.max(field(t).values))) : 0
+        };
+      source.forEach(t => {
+        const v = field(t);
+
+        // build proxy data object
+        const o = extend({}, t, obj);
+        // set maximum value if not globally shared
+        if (!shared) o.$max = d3Array.max(v.values || []);
+
+        // generate canvas image
+        // optimize color/opacity if not pixel-dependent
+        t[as] = toCanvas(v, o, color.dep ? color : constant$1(color(o)), opacity.dep ? opacity : constant$1(opacity(o)));
+      });
+      return pulse.reflow(true).modifies(as);
+    }
+  });
+
+  // get image color function
+  function color_(color, _) {
+    let f;
+    if (isFunction(color)) {
+      f = obj => d3Color.rgb(color(obj, _));
+      f.dep = dependency(color);
+    } else {
+      // default to mid-grey
+      f = constant$1(d3Color.rgb(color || '#888'));
+    }
+    return f;
+  }
+
+  // get image opacity function
+  function opacity_(opacity, _) {
+    let f;
+    if (isFunction(opacity)) {
+      f = obj => opacity(obj, _);
+      f.dep = dependency(opacity);
+    } else if (opacity) {
+      f = constant$1(opacity);
+    } else {
+      // default to [0, max] opacity gradient
+      f = obj => obj.$value / obj.$max || 0;
+      f.dep = true;
+    }
+    return f;
+  }
+
+  // check if function depends on individual pixel data
+  function dependency(f) {
+    if (!isFunction(f)) return false;
+    const set = toSet(accessorFields(f));
+    return set.$x || set.$y || set.$value || set.$max;
+  }
+
+  // render raster grid to canvas
+  function toCanvas(grid, obj, color, opacity) {
+    const n = grid.width,
+      m = grid.height,
+      x1 = grid.x1 || 0,
+      y1 = grid.y1 || 0,
+      x2 = grid.x2 || n,
+      y2 = grid.y2 || m,
+      val = grid.values,
+      value = val ? i => val[i] : zero$1,
+      can = domCanvas(x2 - x1, y2 - y1),
+      ctx = can.getContext('2d'),
+      img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
+      pix = img.data;
+    for (let j = y1, k = 0; j < y2; ++j) {
+      obj.$y = j - y1;
+      for (let i = x1, r = j * n; i < x2; ++i, k += 4) {
+        obj.$x = i - x1;
+        obj.$value = value(i + r);
+        const v = color(obj);
+        pix[k + 0] = v.r;
+        pix[k + 1] = v.g;
+        pix[k + 2] = v.b;
+        pix[k + 3] = ~~(255 * opacity(obj));
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return can;
+  }
+
+  /**
+   * Maintains a cartographic projection.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function Projection$1(params) {
+    Transform.call(this, null, params);
+    this.modified(true); // always treat as modified
+  }
+
+  inherits(Projection$1, Transform, {
+    transform(_, pulse) {
+      let proj = this.value;
+      if (!proj || _.modified('type')) {
+        this.value = proj = create(_.type);
+        projectionProperties.forEach(prop => {
+          if (_[prop] != null) set(proj, prop, _[prop]);
+        });
+      } else {
+        projectionProperties.forEach(prop => {
+          if (_.modified(prop)) set(proj, prop, _[prop]);
+        });
+      }
+      if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
+      if (_.fit) fit(proj, _);
+      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+    }
+  });
+  function fit(proj, _) {
+    const data = collectGeoJSON(_.fit);
+    _.extent ? proj.fitExtent(_.extent, data) : _.size ? proj.fitSize(_.size, data) : 0;
+  }
+  function create(type) {
+    const constructor = projection((type || 'mercator').toLowerCase());
+    if (!constructor) error('Unrecognized projection type: ' + type);
+    return constructor();
+  }
+  function set(proj, key, value) {
+    if (isFunction(proj[key])) proj[key](value);
+  }
+  function collectGeoJSON(data) {
+    data = array$2(data);
+    return data.length === 1 ? data[0] : {
+      type: FeatureCollection,
+      features: data.reduce((a, f) => a.concat(featurize(f)), [])
+    };
+  }
+  function featurize(f) {
+    return f.type === FeatureCollection ? f.features : array$2(f).filter(d => d != null).map(d => d.type === Feature ? d : {
+      type: Feature,
+      geometry: d
+    });
+  }
+
+  var geo = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    contour: Contour,
+    geojson: GeoJSON,
+    geopath: GeoPath,
+    geopoint: GeoPoint,
+    geoshape: GeoShape,
+    graticule: Graticule,
+    heatmap: Heatmap,
+    isocontour: Isocontour,
+    kde2d: KDE2D,
+    projection: Projection$1
+  });
+
+  const ForceMap = {
+    center: d3Force.forceCenter,
+    collide: d3Force.forceCollide,
+    nbody: d3Force.forceManyBody,
+    link: d3Force.forceLink,
+    x: d3Force.forceX,
+    y: d3Force.forceY
+  };
+  const Forces = 'forces',
+    ForceParams = ['alpha', 'alphaMin', 'alphaTarget', 'velocityDecay', 'forces'],
+    ForceConfig = ['static', 'iterations'],
+    ForceOutput = ['x', 'y', 'vx', 'vy'];
+
+  /**
+   * Force simulation layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<object>} params.forces - The forces to apply.
+   */
+  function Force(params) {
+    Transform.call(this, null, params);
+  }
+  Force.Definition = {
+    'type': 'Force',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'static',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'restart',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'iterations',
+      'type': 'number',
+      'default': 300
+    }, {
+      'name': 'alpha',
+      'type': 'number',
+      'default': 1
+    }, {
+      'name': 'alphaMin',
+      'type': 'number',
+      'default': 0.001
+    }, {
+      'name': 'alphaTarget',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'velocityDecay',
+      'type': 'number',
+      'default': 0.4
+    }, {
+      'name': 'forces',
+      'type': 'param',
+      'array': true,
+      'params': [{
+        'key': {
+          'force': 'center'
+        },
+        'params': [{
+          'name': 'x',
+          'type': 'number',
+          'default': 0
+        }, {
+          'name': 'y',
+          'type': 'number',
+          'default': 0
+        }]
+      }, {
+        'key': {
+          'force': 'collide'
+        },
+        'params': [{
+          'name': 'radius',
+          'type': 'number',
+          'expr': true
+        }, {
+          'name': 'strength',
+          'type': 'number',
+          'default': 0.7
+        }, {
+          'name': 'iterations',
+          'type': 'number',
+          'default': 1
+        }]
+      }, {
+        'key': {
+          'force': 'nbody'
+        },
+        'params': [{
+          'name': 'strength',
+          'type': 'number',
+          'default': -30,
+          'expr': true
+        }, {
+          'name': 'theta',
+          'type': 'number',
+          'default': 0.9
+        }, {
+          'name': 'distanceMin',
+          'type': 'number',
+          'default': 1
+        }, {
+          'name': 'distanceMax',
+          'type': 'number'
+        }]
+      }, {
+        'key': {
+          'force': 'link'
+        },
+        'params': [{
+          'name': 'links',
+          'type': 'data'
+        }, {
+          'name': 'id',
+          'type': 'field'
+        }, {
+          'name': 'distance',
+          'type': 'number',
+          'default': 30,
+          'expr': true
+        }, {
+          'name': 'strength',
+          'type': 'number',
+          'expr': true
+        }, {
+          'name': 'iterations',
+          'type': 'number',
+          'default': 1
+        }]
+      }, {
+        'key': {
+          'force': 'x'
+        },
+        'params': [{
+          'name': 'strength',
+          'type': 'number',
+          'default': 0.1
+        }, {
+          'name': 'x',
+          'type': 'field'
+        }]
+      }, {
+        'key': {
+          'force': 'y'
+        },
+        'params': [{
+          'name': 'strength',
+          'type': 'number',
+          'default': 0.1
+        }, {
+          'name': 'y',
+          'type': 'field'
+        }]
+      }]
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'modify': false,
+      'default': ForceOutput
+    }]
+  };
+  inherits(Force, Transform, {
+    transform(_, pulse) {
+      var sim = this.value,
+        change = pulse.changed(pulse.ADD_REM),
+        params = _.modified(ForceParams),
+        iters = _.iterations || 300;
+
+      // configure simulation
+      if (!sim) {
+        this.value = sim = simulation(pulse.source, _);
+        sim.on('tick', rerun(pulse.dataflow, this));
+        if (!_.static) {
+          change = true;
+          sim.tick(); // ensure we run on init
+        }
+
+        pulse.modifies('index');
+      } else {
+        if (change) {
+          pulse.modifies('index');
+          sim.nodes(pulse.source);
+        }
+        if (params || pulse.changed(pulse.MOD)) {
+          setup(sim, _, 0, pulse);
+        }
+      }
+
+      // run simulation
+      if (params || change || _.modified(ForceConfig) || pulse.changed() && _.restart) {
+        sim.alpha(Math.max(sim.alpha(), _.alpha || 1)).alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
+        if (_.static) {
+          for (sim.stop(); --iters >= 0;) sim.tick();
+        } else {
+          if (sim.stopped()) sim.restart();
+          if (!change) return pulse.StopPropagation; // defer to sim ticks
+        }
+      }
+
+      return this.finish(_, pulse);
+    },
+    finish(_, pulse) {
+      const dataflow = pulse.dataflow;
+
+      // inspect dependencies, touch link source data
+      for (let args = this._argops, j = 0, m = args.length, arg; j < m; ++j) {
+        arg = args[j];
+        if (arg.name !== Forces || arg.op._argval.force !== 'link') {
+          continue;
+        }
+        for (var ops = arg.op._argops, i = 0, n = ops.length, op; i < n; ++i) {
+          if (ops[i].name === 'links' && (op = ops[i].op.source)) {
+            dataflow.pulse(op, dataflow.changeset().reflow());
+            break;
+          }
+        }
+      }
+
+      // reflow all nodes
+      return pulse.reflow(_.modified()).modifies(ForceOutput);
+    }
+  });
+  function rerun(df, op) {
+    return () => df.touch(op).run();
+  }
+  function simulation(nodes, _) {
+    const sim = d3Force.forceSimulation(nodes),
+      stop = sim.stop,
+      restart = sim.restart;
+    let stopped = false;
+    sim.stopped = () => stopped;
+    sim.restart = () => (stopped = false, restart());
+    sim.stop = () => (stopped = true, stop());
+    return setup(sim, _, true).on('end', () => stopped = true);
+  }
+  function setup(sim, _, init, pulse) {
+    var f = array$2(_.forces),
+      i,
+      n,
+      p,
+      name;
+    for (i = 0, n = ForceParams.length; i < n; ++i) {
+      p = ForceParams[i];
+      if (p !== Forces && _.modified(p)) sim[p](_[p]);
+    }
+    for (i = 0, n = f.length; i < n; ++i) {
+      name = Forces + i;
+      p = init || _.modified(Forces, i) ? getForce(f[i]) : pulse && modified(f[i], pulse) ? sim.force(name) : null;
+      if (p) sim.force(name, p);
+    }
+    for (n = sim.numForces || 0; i < n; ++i) {
+      sim.force(Forces + i, null); // remove
+    }
+
+    sim.numForces = f.length;
+    return sim;
+  }
+  function modified(f, pulse) {
+    var k, v;
+    for (k in f) {
+      if (isFunction(v = f[k]) && pulse.modified(accessorFields(v))) return 1;
+    }
+    return 0;
+  }
+  function getForce(_) {
+    var f, p;
+    if (!has$1(ForceMap, _.force)) {
+      error('Unrecognized force: ' + _.force);
+    }
+    f = ForceMap[_.force]();
+    for (p in _) {
+      if (isFunction(f[p])) setForceParam(f[p], _[p], _);
+    }
+    return f;
+  }
+  function setForceParam(f, v, _) {
+    f(isFunction(v) ? d => v(d, _) : v);
+  }
+
+  var force = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    force: Force
+  });
+
+  // Build lookup table mapping tuple keys to tree node instances
+  function lookup$3(tree, key, filter) {
+    const map = {};
+    tree.each(node => {
+      const t = node.data;
+      if (filter(t)) map[key(t)] = node;
+    });
+    tree.lookup = map;
+    return tree;
+  }
+
+  /**
+   * Nest tuples into a tree structure, grouped by key values.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<function(object): *>} params.keys - The key fields to nest by, in order.
+   * @param {boolean} [params.generate=false] - A boolean flag indicating if
+   *   non-leaf nodes generated by this transform should be included in the
+   *   output. The default (false) includes only the input data (leaf nodes)
+   *   in the data stream.
+   */
+  function Nest(params) {
+    Transform.call(this, null, params);
+  }
+  Nest.Definition = {
+    'type': 'Nest',
+    'metadata': {
+      'treesource': true,
+      'changes': true
+    },
+    'params': [{
+      'name': 'keys',
+      'type': 'field',
+      'array': true
+    }, {
+      'name': 'generate',
+      'type': 'boolean'
+    }]
+  };
+  const children$1 = n => n.values;
+  inherits(Nest, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source) {
+        error('Nest transform requires an upstream data source.');
+      }
+      var gen = _.generate,
+        mod = _.modified(),
+        out = pulse.clone(),
+        tree = this.value;
+      if (!tree || mod || pulse.changed()) {
+        // collect nodes to remove
+        if (tree) {
+          tree.each(node => {
+            if (node.children && isTuple(node.data)) {
+              out.rem.push(node.data);
+            }
+          });
+        }
+
+        // generate new tree structure
+        this.value = tree = d3Hierarchy.hierarchy({
+          values: array$2(_.keys).reduce((n, k) => {
+            n.key(k);
+            return n;
+          }, nest()).entries(out.source)
+        }, children$1);
+
+        // collect nodes to add
+        if (gen) {
+          tree.each(node => {
+            if (node.children) {
+              node = ingest$1(node.data);
+              out.add.push(node);
+              out.source.push(node);
+            }
+          });
+        }
+
+        // build lookup table
+        lookup$3(tree, tupleid, tupleid);
+      }
+      out.source.root = tree;
+      return out;
+    }
+  });
+  function nest() {
+    const keys = [],
+      nest = {
+        entries: array => entries(apply(array, 0), 0),
+        key: d => (keys.push(d), nest)
+      };
+    function apply(array, depth) {
+      if (depth >= keys.length) {
+        return array;
+      }
+      const n = array.length,
+        key = keys[depth++],
+        valuesByKey = {},
+        result = {};
+      let i = -1,
+        keyValue,
+        value,
+        values;
+      while (++i < n) {
+        keyValue = key(value = array[i]) + '';
+        if (values = valuesByKey[keyValue]) {
+          values.push(value);
+        } else {
+          valuesByKey[keyValue] = [value];
+        }
+      }
+      for (keyValue in valuesByKey) {
+        result[keyValue] = apply(valuesByKey[keyValue], depth);
+      }
+      return result;
+    }
+    function entries(map, depth) {
+      if (++depth > keys.length) return map;
+      const array = [];
+      for (const key in map) {
+        array.push({
+          key,
+          values: entries(map[key], depth)
+        });
+      }
+      return array;
+    }
+    return nest;
+  }
+
+  /**
+   * Abstract class for tree layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function HierarchyLayout(params) {
+    Transform.call(this, null, params);
+  }
+  const defaultSeparation = (a, b) => a.parent === b.parent ? 1 : 2;
+  inherits(HierarchyLayout, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source || !pulse.source.root) {
+        error(this.constructor.name + ' transform requires a backing tree data source.');
+      }
+      const layout = this.layout(_.method),
+        fields = this.fields,
+        root = pulse.source.root,
+        as = _.as || fields;
+      if (_.field) root.sum(_.field);else root.count();
+      if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
+      setParams(layout, this.params, _);
+      if (layout.separation) {
+        layout.separation(_.separation !== false ? defaultSeparation : one$1);
+      }
+      try {
+        this.value = layout(root);
+      } catch (err) {
+        error(err);
+      }
+      root.each(node => setFields(node, fields, as));
+      return pulse.reflow(_.modified()).modifies(as).modifies('leaf');
+    }
+  });
+  function setParams(layout, params, _) {
+    for (let p, i = 0, n = params.length; i < n; ++i) {
+      p = params[i];
+      if (p in _) layout[p](_[p]);
+    }
+  }
+  function setFields(node, fields, as) {
+    const t = node.data,
+      n = fields.length - 1;
+    for (let i = 0; i < n; ++i) {
+      t[as[i]] = node[fields[i]];
+    }
+    t[as[n]] = node.children ? node.children.length : 0;
+  }
+  const Output$3 = ['x', 'y', 'r', 'depth', 'children'];
+
+  /**
+   * Packed circle tree layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to size nodes.
+   */
+  function Pack(params) {
+    HierarchyLayout.call(this, params);
+  }
+  Pack.Definition = {
+    'type': 'Pack',
+    'metadata': {
+      'tree': true,
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'sort',
+      'type': 'compare'
+    }, {
+      'name': 'padding',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'radius',
+      'type': 'field',
+      'default': null
+    }, {
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': Output$3.length,
+      'default': Output$3
+    }]
+  };
+  inherits(Pack, HierarchyLayout, {
+    layout: d3Hierarchy.pack,
+    params: ['radius', 'size', 'padding'],
+    fields: Output$3
+  });
+  const Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+
+  /**
+   * Partition tree layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to size nodes.
+   */
+  function Partition(params) {
+    HierarchyLayout.call(this, params);
+  }
+  Partition.Definition = {
+    'type': 'Partition',
+    'metadata': {
+      'tree': true,
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'sort',
+      'type': 'compare'
+    }, {
+      'name': 'padding',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'round',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': Output$2.length,
+      'default': Output$2
+    }]
+  };
+  inherits(Partition, HierarchyLayout, {
+    layout: d3Hierarchy.partition,
+    params: ['size', 'round', 'padding'],
+    fields: Output$2
+  });
+
+  /**
+   * Stratify a collection of tuples into a tree structure based on
+   * id and parent id fields.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.key - Unique key field for each tuple.
+   * @param {function(object): *} params.parentKey - Field with key for parent tuple.
+   */
+  function Stratify(params) {
+    Transform.call(this, null, params);
+  }
+  Stratify.Definition = {
+    'type': 'Stratify',
+    'metadata': {
+      'treesource': true
+    },
+    'params': [{
+      'name': 'key',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'parentKey',
+      'type': 'field',
+      'required': true
+    }]
+  };
+  inherits(Stratify, Transform, {
+    transform(_, pulse) {
+      if (!pulse.source) {
+        error('Stratify transform requires an upstream data source.');
+      }
+      let tree = this.value;
+      const mod = _.modified(),
+        out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
+        run = !tree || mod || pulse.changed(pulse.ADD_REM) || pulse.modified(_.key.fields) || pulse.modified(_.parentKey.fields);
+
+      // prevent upstream source pollution
+      out.source = out.source.slice();
+      if (run) {
+        tree = out.source.length ? lookup$3(d3Hierarchy.stratify().id(_.key).parentId(_.parentKey)(out.source), _.key, truthy) : lookup$3(d3Hierarchy.stratify()([{}]), _.key, _.key);
+      }
+      out.source.root = this.value = tree;
+      return out;
+    }
+  });
+  const Layouts = {
+    tidy: d3Hierarchy.tree,
+    cluster: d3Hierarchy.cluster
+  };
+  const Output$1$1 = ['x', 'y', 'depth', 'children'];
+
+  /**
+   * Tree layout. Depending on the method parameter, performs either
+   * Reingold-Tilford 'tidy' layout or dendrogram 'cluster' layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function Tree(params) {
+    HierarchyLayout.call(this, params);
+  }
+  Tree.Definition = {
+    'type': 'Tree',
+    'metadata': {
+      'tree': true,
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'sort',
+      'type': 'compare'
+    }, {
+      'name': 'method',
+      'type': 'enum',
+      'default': 'tidy',
+      'values': ['tidy', 'cluster']
+    }, {
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'nodeSize',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'separation',
+      'type': 'boolean',
+      'default': true
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': Output$1$1.length,
+      'default': Output$1$1
+    }]
+  };
+  inherits(Tree, HierarchyLayout, {
+    /**
+     * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
+     */
+    layout(method) {
+      const m = method || 'tidy';
+      if (has$1(Layouts, m)) return Layouts[m]();else error('Unrecognized Tree layout method: ' + m);
+    },
+    params: ['size', 'nodeSize'],
+    fields: Output$1$1
+  });
+
+  /**
+   * Generate tuples representing links between tree nodes.
+   * The resulting tuples will contain 'source' and 'target' fields,
+   * which point to parent and child node tuples, respectively.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   */
+  function TreeLinks(params) {
+    Transform.call(this, [], params);
+  }
+  TreeLinks.Definition = {
+    'type': 'TreeLinks',
+    'metadata': {
+      'tree': true,
+      'generates': true,
+      'changes': true
+    },
+    'params': []
+  };
+  inherits(TreeLinks, Transform, {
+    transform(_, pulse) {
+      const links = this.value,
+        tree = pulse.source && pulse.source.root,
+        out = pulse.fork(pulse.NO_SOURCE),
+        lut = {};
+      if (!tree) error('TreeLinks transform requires a tree data source.');
+      if (pulse.changed(pulse.ADD_REM)) {
+        // remove previous links
+        out.rem = links;
+
+        // build lookup table of valid tuples
+        pulse.visit(pulse.SOURCE, t => lut[tupleid(t)] = 1);
+
+        // generate links for all edges incident on valid tuples
+        tree.each(node => {
+          const t = node.data,
+            p = node.parent && node.parent.data;
+          if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
+            out.add.push(ingest$1({
+              source: p,
+              target: t
+            }));
+          }
+        });
+        this.value = out.add;
+      } else if (pulse.changed(pulse.MOD)) {
+        // build lookup table of modified tuples
+        pulse.visit(pulse.MOD, t => lut[tupleid(t)] = 1);
+
+        // gather links incident on modified tuples
+        links.forEach(link => {
+          if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
+            out.mod.push(link);
+          }
+        });
+      }
+      return out;
+    }
+  });
+  const Tiles = {
+    binary: d3Hierarchy.treemapBinary,
+    dice: d3Hierarchy.treemapDice,
+    slice: d3Hierarchy.treemapSlice,
+    slicedice: d3Hierarchy.treemapSliceDice,
+    squarify: d3Hierarchy.treemapSquarify,
+    resquarify: d3Hierarchy.treemapResquarify
+  };
+  const Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
+
+  /**
+   * Treemap layout.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.field - The value field to size nodes.
+   */
+  function Treemap(params) {
+    HierarchyLayout.call(this, params);
+  }
+  Treemap.Definition = {
+    'type': 'Treemap',
+    'metadata': {
+      'tree': true,
+      'modifies': true
+    },
+    'params': [{
+      'name': 'field',
+      'type': 'field'
+    }, {
+      'name': 'sort',
+      'type': 'compare'
+    }, {
+      'name': 'method',
+      'type': 'enum',
+      'default': 'squarify',
+      'values': ['squarify', 'resquarify', 'binary', 'dice', 'slice', 'slicedice']
+    }, {
+      'name': 'padding',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingInner',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingOuter',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingTop',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingRight',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingBottom',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'paddingLeft',
+      'type': 'number',
+      'default': 0
+    }, {
+      'name': 'ratio',
+      'type': 'number',
+      'default': 1.618033988749895
+    }, {
+      'name': 'round',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': Output$4.length,
+      'default': Output$4
+    }]
+  };
+  inherits(Treemap, HierarchyLayout, {
+    /**
+     * Treemap layout generator. Adds 'method' and 'ratio' parameters
+     * to configure the underlying tile method.
+     */
+    layout() {
+      const x = d3Hierarchy.treemap();
+      x.ratio = _ => {
+        const t = x.tile();
+        if (t.ratio) x.tile(t.ratio(_));
+      };
+      x.method = _ => {
+        if (has$1(Tiles, _)) x.tile(Tiles[_]);else error('Unrecognized Treemap layout method: ' + _);
+      };
+      return x;
+    },
+    params: ['method', 'ratio', 'size', 'round', 'padding', 'paddingInner', 'paddingOuter', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'],
+    fields: Output$4
+  });
+
+  var tree = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    nest: Nest,
+    pack: Pack,
+    partition: Partition,
+    stratify: Stratify,
+    tree: Tree,
+    treelinks: TreeLinks,
+    treemap: Treemap
+  });
+
+  // bit mask for getting first 2 bytes of alpha value
+  const ALPHA_MASK = 0xff000000;
+  function baseBitmaps($, data) {
+    const bitmap = $.bitmap();
+    // when there is no base mark but data points are to be avoided
+    (data || []).forEach(d => bitmap.set($(d.boundary[0]), $(d.boundary[3])));
+    return [bitmap, undefined];
+  }
+  function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
+    // create canvas
+    const width = $.width,
+      height = $.height,
+      border = labelInside || isGroupArea,
+      context = domCanvas(width, height).getContext('2d'),
+      baseMarkContext = domCanvas(width, height).getContext('2d'),
+      strokeContext = border && domCanvas(width, height).getContext('2d');
+
+    // render all marks to be avoided into canvas
+    avoidMarks.forEach(items => draw$5(context, items, false));
+    draw$5(baseMarkContext, baseMark, false);
+    if (border) {
+      draw$5(strokeContext, baseMark, true);
+    }
+
+    // get canvas buffer, create bitmaps
+    const buffer = getBuffer(context, width, height),
+      baseMarkBuffer = getBuffer(baseMarkContext, width, height),
+      strokeBuffer = border && getBuffer(strokeContext, width, height),
+      layer1 = $.bitmap(),
+      layer2 = border && $.bitmap();
+
+    // populate bitmap layers
+    let x, y, u, v, index, alpha, strokeAlpha, baseMarkAlpha;
+    for (y = 0; y < height; ++y) {
+      for (x = 0; x < width; ++x) {
+        index = y * width + x;
+        alpha = buffer[index] & ALPHA_MASK;
+        baseMarkAlpha = baseMarkBuffer[index] & ALPHA_MASK;
+        strokeAlpha = border && strokeBuffer[index] & ALPHA_MASK;
+        if (alpha || strokeAlpha || baseMarkAlpha) {
+          u = $(x);
+          v = $(y);
+          if (!isGroupArea && (alpha || baseMarkAlpha)) layer1.set(u, v); // update interior bitmap
+          if (border && (alpha || strokeAlpha)) layer2.set(u, v); // update border bitmap
+        }
+      }
+    }
+
+    return [layer1, layer2];
+  }
+  function getBuffer(context, width, height) {
+    return new Uint32Array(context.getImageData(0, 0, width, height).data.buffer);
+  }
+  function draw$5(context, items, interior) {
+    if (!items.length) return;
+    const type = items[0].mark.marktype;
+    if (type === 'group') {
+      items.forEach(group => {
+        group.items.forEach(mark => draw$5(context, mark.items, interior));
+      });
+    } else {
+      Marks$1[type].draw(context, {
+        items: interior ? items.map(prepare) : items
+      });
+    }
+  }
+
+  /**
+   * Prepare item before drawing into canvas (setting stroke and opacity)
+   * @param {object} source item to be prepared
+   * @returns prepared item
+   */
+  function prepare(source) {
+    const item = rederive(source, {});
+    if (item.stroke && item.strokeOpacity !== 0 || item.fill && item.fillOpacity !== 0) {
+      return {
+        ...item,
+        strokeOpacity: 1,
+        stroke: '#000',
+        fillOpacity: 0
+      };
+    }
+    return item;
+  }
+  const DIV = 5,
+    // bit shift from x, y index to bit vector array index
+    MOD = 31,
+    // bit mask for index lookup within a bit vector
+    SIZE = 32,
+    // individual bit vector size
+    RIGHT0 = new Uint32Array(SIZE + 1),
+    // left-anchored bit vectors, full -> 0
+    RIGHT1 = new Uint32Array(SIZE + 1); // right-anchored bit vectors, 0 -> full
+
+  RIGHT1[0] = 0;
+  RIGHT0[0] = ~RIGHT1[0];
+  for (let i = 1; i <= SIZE; ++i) {
+    RIGHT1[i] = RIGHT1[i - 1] << 1 | 1;
+    RIGHT0[i] = ~RIGHT1[i];
+  }
+  function Bitmap(w, h) {
+    const array = new Uint32Array(~~((w * h + SIZE) / SIZE));
+    function _set(index, mask) {
+      array[index] |= mask;
+    }
+    function _clear(index, mask) {
+      array[index] &= mask;
+    }
+    return {
+      array: array,
+      get: (x, y) => {
+        const index = y * w + x;
+        return array[index >>> DIV] & 1 << (index & MOD);
+      },
+      set: (x, y) => {
+        const index = y * w + x;
+        _set(index >>> DIV, 1 << (index & MOD));
+      },
+      clear: (x, y) => {
+        const index = y * w + x;
+        _clear(index >>> DIV, ~(1 << (index & MOD)));
+      },
+      getRange: (x, y, x2, y2) => {
+        let r = y2,
+          start,
+          end,
+          indexStart,
+          indexEnd;
+        for (; r >= y; --r) {
+          start = r * w + x;
+          end = r * w + x2;
+          indexStart = start >>> DIV;
+          indexEnd = end >>> DIV;
+          if (indexStart === indexEnd) {
+            if (array[indexStart] & RIGHT0[start & MOD] & RIGHT1[(end & MOD) + 1]) {
+              return true;
+            }
+          } else {
+            if (array[indexStart] & RIGHT0[start & MOD]) return true;
+            if (array[indexEnd] & RIGHT1[(end & MOD) + 1]) return true;
+            for (let i = indexStart + 1; i < indexEnd; ++i) {
+              if (array[i]) return true;
+            }
+          }
+        }
+        return false;
+      },
+      setRange: (x, y, x2, y2) => {
+        let start, end, indexStart, indexEnd, i;
+        for (; y <= y2; ++y) {
+          start = y * w + x;
+          end = y * w + x2;
+          indexStart = start >>> DIV;
+          indexEnd = end >>> DIV;
+          if (indexStart === indexEnd) {
+            _set(indexStart, RIGHT0[start & MOD] & RIGHT1[(end & MOD) + 1]);
+          } else {
+            _set(indexStart, RIGHT0[start & MOD]);
+            _set(indexEnd, RIGHT1[(end & MOD) + 1]);
+            for (i = indexStart + 1; i < indexEnd; ++i) _set(i, 0xffffffff);
+          }
+        }
+      },
+      clearRange: (x, y, x2, y2) => {
+        let start, end, indexStart, indexEnd, i;
+        for (; y <= y2; ++y) {
+          start = y * w + x;
+          end = y * w + x2;
+          indexStart = start >>> DIV;
+          indexEnd = end >>> DIV;
+          if (indexStart === indexEnd) {
+            _clear(indexStart, RIGHT1[start & MOD] | RIGHT0[(end & MOD) + 1]);
+          } else {
+            _clear(indexStart, RIGHT1[start & MOD]);
+            _clear(indexEnd, RIGHT0[(end & MOD) + 1]);
+            for (i = indexStart + 1; i < indexEnd; ++i) _clear(i, 0);
+          }
+        }
+      },
+      outOfBounds: (x, y, x2, y2) => x < 0 || y < 0 || y2 >= h || x2 >= w
+    };
+  }
+  function scaler(width, height, padding) {
+    const ratio = Math.max(1, Math.sqrt(width * height / 1e6)),
+      w = ~~((width + 2 * padding + ratio) / ratio),
+      h = ~~((height + 2 * padding + ratio) / ratio),
+      scale = _ => ~~((_ + padding) / ratio);
+    scale.invert = _ => _ * ratio - padding;
+    scale.bitmap = () => Bitmap(w, h);
+    scale.ratio = ratio;
+    scale.padding = padding;
+    scale.width = width;
+    scale.height = height;
+    return scale;
+  }
+  function placeAreaLabelNaive($, bitmaps, avoidBaseMark, markIndex) {
+    const width = $.width,
+      height = $.height;
+
+    // try to place a label within an input area mark
+    return function (d) {
+      const items = d.datum.datum.items[markIndex].items,
+        // area points
+        n = items.length,
+        // number of points
+        textHeight = d.datum.fontSize,
+        // label width
+        textWidth = textMetrics$1.width(d.datum, d.datum.text); // label height
+
+      let maxAreaWidth = 0,
+        x1,
+        x2,
+        y1,
+        y2,
+        x,
+        y,
+        areaWidth;
+
+      // for each area sample point
+      for (let i = 0; i < n; ++i) {
+        x1 = items[i].x;
+        y1 = items[i].y;
+        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
+        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
+        x = (x1 + x2) / 2;
+        y = (y1 + y2) / 2;
+        areaWidth = Math.abs(x2 - x1 + y2 - y1);
+        if (areaWidth >= maxAreaWidth) {
+          maxAreaWidth = areaWidth;
+          d.x = x;
+          d.y = y;
+        }
+      }
+      x = textWidth / 2;
+      y = textHeight / 2;
+      x1 = d.x - x;
+      x2 = d.x + x;
+      y1 = d.y - y;
+      y2 = d.y + y;
+      d.align = 'center';
+      if (x1 < 0 && x2 <= width) {
+        d.align = 'left';
+      } else if (0 <= x1 && width < x2) {
+        d.align = 'right';
+      }
+      d.baseline = 'middle';
+      if (y1 < 0 && y2 <= height) {
+        d.baseline = 'top';
+      } else if (0 <= y1 && height < y2) {
+        d.baseline = 'bottom';
+      }
+      return true;
+    };
+  }
+  function outOfBounds(x, y, textWidth, textHeight, width, height) {
+    let r = textWidth / 2;
+    return x - r < 0 || x + r > width || y - (r = textHeight / 2) < 0 || y + r > height;
+  }
+  function collision($, x, y, textHeight, textWidth, h, bm0, bm1) {
+    const w = textWidth * h / (textHeight * 2),
+      x1 = $(x - w),
+      x2 = $(x + w),
+      y1 = $(y - (h = h / 2)),
+      y2 = $(y + h);
+    return bm0.outOfBounds(x1, y1, x2, y2) || bm0.getRange(x1, y1, x2, y2) || bm1 && bm1.getRange(x1, y1, x2, y2);
+  }
+  function placeAreaLabelReducedSearch($, bitmaps, avoidBaseMark, markIndex) {
+    const width = $.width,
+      height = $.height,
+      bm0 = bitmaps[0],
+      // where labels have been placed
+      bm1 = bitmaps[1]; // area outlines
+
+    function tryLabel(_x, _y, maxSize, textWidth, textHeight) {
+      const x = $.invert(_x),
+        y = $.invert(_y);
+      let lo = maxSize,
+        hi = height,
+        mid;
+      if (!outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
+        // if the label fits at the current sample point,
+        // perform binary search to find the largest font size that fits
+        while (hi - lo >= 1) {
+          mid = (lo + hi) / 2;
+          if (collision($, x, y, textHeight, textWidth, mid, bm0, bm1)) {
+            hi = mid;
+          } else {
+            lo = mid;
+          }
+        }
+        // place label if current lower bound exceeds prior max font size
+        if (lo > maxSize) {
+          return [x, y, lo, true];
+        }
+      }
+    }
+
+    // try to place a label within an input area mark
+    return function (d) {
+      const items = d.datum.datum.items[markIndex].items,
+        // area points
+        n = items.length,
+        // number of points
+        textHeight = d.datum.fontSize,
+        // label width
+        textWidth = textMetrics$1.width(d.datum, d.datum.text); // label height
+
+      let maxSize = avoidBaseMark ? textHeight : 0,
+        labelPlaced = false,
+        labelPlaced2 = false,
+        maxAreaWidth = 0,
+        x1,
+        x2,
+        y1,
+        y2,
+        x,
+        y,
+        _x,
+        _y,
+        _x1,
+        _xMid,
+        _x2,
+        _y1,
+        _yMid,
+        _y2,
+        areaWidth,
+        result,
+        swapTmp;
+
+      // for each area sample point
+      for (let i = 0; i < n; ++i) {
+        x1 = items[i].x;
+        y1 = items[i].y;
+        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
+        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
+        if (x1 > x2) {
+          swapTmp = x1;
+          x1 = x2;
+          x2 = swapTmp;
+        }
+        if (y1 > y2) {
+          swapTmp = y1;
+          y1 = y2;
+          y2 = swapTmp;
+        }
+        _x1 = $(x1);
+        _x2 = $(x2);
+        _xMid = ~~((_x1 + _x2) / 2);
+        _y1 = $(y1);
+        _y2 = $(y2);
+        _yMid = ~~((_y1 + _y2) / 2);
+
+        // search along the line from mid point between the 2 border to lower border
+        for (_x = _xMid; _x >= _x1; --_x) {
+          for (_y = _yMid; _y >= _y1; --_y) {
+            result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
+            if (result) {
+              [d.x, d.y, maxSize, labelPlaced] = result;
+            }
+          }
+        }
+
+        // search along the line from mid point between the 2 border to upper border
+        for (_x = _xMid; _x <= _x2; ++_x) {
+          for (_y = _yMid; _y <= _y2; ++_y) {
+            result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
+            if (result) {
+              [d.x, d.y, maxSize, labelPlaced] = result;
+            }
+          }
+        }
+
+        // place label at slice center if not placed through other means
+        // and if we're not avoiding overlap with other areas
+        if (!labelPlaced && !avoidBaseMark) {
+          // one span is zero, hence we can add
+          areaWidth = Math.abs(x2 - x1 + y2 - y1);
+          x = (x1 + x2) / 2;
+          y = (y1 + y2) / 2;
+
+          // place label if it fits and improves the max area width
+          if (areaWidth >= maxAreaWidth && !outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
+            maxAreaWidth = areaWidth;
+            d.x = x;
+            d.y = y;
+            labelPlaced2 = true;
+          }
+        }
+      }
+
+      // record current label placement information, update label bitmap
+      if (labelPlaced || labelPlaced2) {
+        x = textWidth / 2;
+        y = textHeight / 2;
+        bm0.setRange($(d.x - x), $(d.y - y), $(d.x + x), $(d.y + y));
+        d.align = 'center';
+        d.baseline = 'middle';
+        return true;
+      } else {
+        return false;
+      }
+    };
+  }
+
+  // pixel direction offsets for flood fill search
+  const X_DIR = [-1, -1, 1, 1];
+  const Y_DIR = [-1, 1, -1, 1];
+  function placeAreaLabelFloodFill($, bitmaps, avoidBaseMark, markIndex) {
+    const width = $.width,
+      height = $.height,
+      bm0 = bitmaps[0],
+      // where labels have been placed
+      bm1 = bitmaps[1],
+      // area outlines
+      bm2 = $.bitmap(); // flood-fill visitations
+
+    // try to place a label within an input area mark
+    return function (d) {
+      const items = d.datum.datum.items[markIndex].items,
+        // area points
+        n = items.length,
+        // number of points
+        textHeight = d.datum.fontSize,
+        // label width
+        textWidth = textMetrics$1.width(d.datum, d.datum.text),
+        // label height
+        stack = []; // flood fill stack
+
+      let maxSize = avoidBaseMark ? textHeight : 0,
+        labelPlaced = false,
+        labelPlaced2 = false,
+        maxAreaWidth = 0,
+        x1,
+        x2,
+        y1,
+        y2,
+        x,
+        y,
+        _x,
+        _y,
+        lo,
+        hi,
+        mid,
+        areaWidth;
+
+      // for each area sample point
+      for (let i = 0; i < n; ++i) {
+        x1 = items[i].x;
+        y1 = items[i].y;
+        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
+        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
+
+        // add scaled center point to stack
+        stack.push([$((x1 + x2) / 2), $((y1 + y2) / 2)]);
+
+        // perform flood fill, visit points
+        while (stack.length) {
+          [_x, _y] = stack.pop();
+
+          // exit if point already marked
+          if (bm0.get(_x, _y) || bm1.get(_x, _y) || bm2.get(_x, _y)) continue;
+
+          // mark point in flood fill bitmap
+          // add search points for all (in bound) directions
+          bm2.set(_x, _y);
+          for (let j = 0; j < 4; ++j) {
+            x = _x + X_DIR[j];
+            y = _y + Y_DIR[j];
+            if (!bm2.outOfBounds(x, y, x, y)) stack.push([x, y]);
+          }
+
+          // unscale point back to x, y space
+          x = $.invert(_x);
+          y = $.invert(_y);
+          lo = maxSize;
+          hi = height; // TODO: make this bound smaller
+
+          if (!outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
+            // if the label fits at the current sample point,
+            // perform binary search to find the largest font size that fits
+            while (hi - lo >= 1) {
+              mid = (lo + hi) / 2;
+              if (collision($, x, y, textHeight, textWidth, mid, bm0, bm1)) {
+                hi = mid;
+              } else {
+                lo = mid;
+              }
+            }
+            // place label if current lower bound exceeds prior max font size
+            if (lo > maxSize) {
+              d.x = x;
+              d.y = y;
+              maxSize = lo;
+              labelPlaced = true;
+            }
+          }
+        }
+
+        // place label at slice center if not placed through other means
+        // and if we're not avoiding overlap with other areas
+        if (!labelPlaced && !avoidBaseMark) {
+          // one span is zero, hence we can add
+          areaWidth = Math.abs(x2 - x1 + y2 - y1);
+          x = (x1 + x2) / 2;
+          y = (y1 + y2) / 2;
+
+          // place label if it fits and improves the max area width
+          if (areaWidth >= maxAreaWidth && !outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
+            maxAreaWidth = areaWidth;
+            d.x = x;
+            d.y = y;
+            labelPlaced2 = true;
+          }
+        }
+      }
+
+      // record current label placement information, update label bitmap
+      if (labelPlaced || labelPlaced2) {
+        x = textWidth / 2;
+        y = textHeight / 2;
+        bm0.setRange($(d.x - x), $(d.y - y), $(d.x + x), $(d.y + y));
+        d.align = 'center';
+        d.baseline = 'middle';
+        return true;
+      } else {
+        return false;
+      }
+    };
+  }
+  const Aligns = ['right', 'center', 'left'],
+    Baselines = ['bottom', 'middle', 'top'];
+  function placeMarkLabel($, bitmaps, anchors, offsets) {
+    const width = $.width,
+      height = $.height,
+      bm0 = bitmaps[0],
+      bm1 = bitmaps[1],
+      n = offsets.length;
+    return function (d) {
+      const boundary = d.boundary,
+        textHeight = d.datum.fontSize;
+
+      // can not be placed if the mark is not visible in the graph bound
+      if (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height) {
+        return false;
+      }
+      let textWidth = d.textWidth ?? 0,
+        dx,
+        dy,
+        isInside,
+        sizeFactor,
+        insideFactor,
+        x1,
+        x2,
+        y1,
+        y2,
+        xc,
+        yc,
+        _x1,
+        _x2,
+        _y1,
+        _y2;
+
+      // for each anchor and offset
+      for (let i = 0; i < n; ++i) {
+        dx = (anchors[i] & 0x3) - 1;
+        dy = (anchors[i] >>> 0x2 & 0x3) - 1;
+        isInside = dx === 0 && dy === 0 || offsets[i] < 0;
+        sizeFactor = dx && dy ? Math.SQRT1_2 : 1;
+        insideFactor = offsets[i] < 0 ? -1 : 1;
+        x1 = boundary[1 + dx] + offsets[i] * dx * sizeFactor;
+        yc = boundary[4 + dy] + insideFactor * textHeight * dy / 2 + offsets[i] * dy * sizeFactor;
+        y1 = yc - textHeight / 2;
+        y2 = yc + textHeight / 2;
+        _x1 = $(x1);
+        _y1 = $(y1);
+        _y2 = $(y2);
+        if (!textWidth) {
+          // to avoid finding width of text label,
+          if (!test(_x1, _x1, _y1, _y2, bm0, bm1, x1, x1, y1, y2, boundary, isInside)) {
+            // skip this anchor/offset option if we fail to place a label with 1px width
+            continue;
+          } else {
+            // Otherwise, find the label width
+            textWidth = textMetrics$1.width(d.datum, d.datum.text);
+          }
+        }
+        xc = x1 + insideFactor * textWidth * dx / 2;
+        x1 = xc - textWidth / 2;
+        x2 = xc + textWidth / 2;
+        _x1 = $(x1);
+        _x2 = $(x2);
+        if (test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
+          // place label if the position is placeable
+          d.x = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
+          d.y = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
+          d.align = Aligns[dx * insideFactor + 1];
+          d.baseline = Baselines[dy * insideFactor + 1];
+          bm0.setRange(_x1, _y1, _x2, _y2);
+          return true;
+        }
+      }
+      return false;
+    };
+  }
+
+  // Test if a label with the given dimensions can be added without overlap
+  function test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside) {
+    return !(bm0.outOfBounds(_x1, _y1, _x2, _y2) || (isInside && bm1 || bm0).getRange(_x1, _y1, _x2, _y2));
+  }
+
+  // 8-bit representation of anchors
+  const TOP = 0x0,
+    MIDDLE = 0x4,
+    BOTTOM = 0x8,
+    LEFT = 0x0,
+    CENTER = 0x1,
+    RIGHT = 0x2;
+
+  // Mapping from text anchor to number representation
+  const anchorCode = {
+    'top-left': TOP + LEFT,
+    'top': TOP + CENTER,
+    'top-right': TOP + RIGHT,
+    'left': MIDDLE + LEFT,
+    'middle': MIDDLE + CENTER,
+    'right': MIDDLE + RIGHT,
+    'bottom-left': BOTTOM + LEFT,
+    'bottom': BOTTOM + CENTER,
+    'bottom-right': BOTTOM + RIGHT
+  };
+  const placeAreaLabel = {
+    'naive': placeAreaLabelNaive,
+    'reduced-search': placeAreaLabelReducedSearch,
+    'floodfill': placeAreaLabelFloodFill
+  };
+  function labelLayout(texts, size, compare, offset, anchor, avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method) {
+    // early exit for empty data
+    if (!texts.length) return texts;
+    const positions = Math.max(offset.length, anchor.length),
+      offsets = getOffsets(offset, positions),
+      anchors = getAnchors(anchor, positions),
+      marktype = markType(texts[0].datum),
+      grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
+      isGroupArea = grouptype === 'area',
+      boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
+      infPadding = padding === null || padding === Infinity,
+      isNaiveGroupArea = isGroupArea && method === 'naive';
+    let maxTextWidth = -1,
+      maxTextHeight = -1;
+
+    // prepare text mark data for placing
+    const data = texts.map(d => {
+      const textWidth = infPadding ? textMetrics$1.width(d, d.text) : undefined;
+      maxTextWidth = Math.max(maxTextWidth, textWidth);
+      maxTextHeight = Math.max(maxTextHeight, d.fontSize);
+      return {
+        datum: d,
+        opacity: 0,
+        x: undefined,
+        y: undefined,
+        align: undefined,
+        baseline: undefined,
+        boundary: boundary(d),
+        textWidth
+      };
+    });
+    padding = padding === null || padding === Infinity ? Math.max(maxTextWidth, maxTextHeight) + Math.max(...offset) : padding;
+    const $ = scaler(size[0], size[1], padding);
+    let bitmaps;
+    if (!isNaiveGroupArea) {
+      // sort labels in priority order, if comparator is provided
+      if (compare) {
+        data.sort((a, b) => compare(a.datum, b.datum));
+      }
+
+      // flag indicating if label can be placed inside its base mark
+      let labelInside = false;
+      for (let i = 0; i < anchors.length && !labelInside; ++i) {
+        // label inside if anchor is at center
+        // label inside if offset to be inside the mark bound
+        labelInside = anchors[i] === 0x5 || offsets[i] < 0;
+      }
+
+      // extract data information from base mark when base mark is to be avoided
+      // base mark is implicitly avoided if it is a group area
+      const baseMark = (marktype && avoidBaseMark || isGroupArea) && texts.map(d => d.datum);
+
+      // generate bitmaps for layout calculation
+      bitmaps = avoidMarks.length || baseMark ? markBitmaps($, baseMark || [], avoidMarks, labelInside, isGroupArea) : baseBitmaps($, avoidBaseMark && data);
+    }
+
+    // generate label placement function
+    const place = isGroupArea ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex) : placeMarkLabel($, bitmaps, anchors, offsets);
+
+    // place all labels
+    data.forEach(d => d.opacity = +place(d));
+    return data;
+  }
+  function getOffsets(_, count) {
+    const offsets = new Float64Array(count),
+      n = _.length;
+    for (let i = 0; i < n; ++i) offsets[i] = _[i] || 0;
+    for (let i = n; i < count; ++i) offsets[i] = offsets[n - 1];
+    return offsets;
+  }
+  function getAnchors(_, count) {
+    const anchors = new Int8Array(count),
+      n = _.length;
+    for (let i = 0; i < n; ++i) anchors[i] |= anchorCode[_[i]];
+    for (let i = n; i < count; ++i) anchors[i] = anchors[n - 1];
+    return anchors;
+  }
+  function markType(item) {
+    return item && item.mark && item.mark.marktype;
+  }
+
+  /**
+   * Factory function for function for getting base mark boundary, depending
+   * on mark and group type. When mark type is undefined, line or area: boundary
+   * is the coordinate of each data point. When base mark is grouped line,
+   * boundary is either at the start or end of the line depending on the
+   * value of lineAnchor. Otherwise, use bounds of base mark.
+   */
+  function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
+    const xy = d => [d.x, d.x, d.x, d.y, d.y, d.y];
+    if (!marktype) {
+      return xy; // no reactive geometry
+    } else if (marktype === 'line' || marktype === 'area') {
+      return d => xy(d.datum);
+    } else if (grouptype === 'line') {
+      return d => {
+        const items = d.datum.items[markIndex].items;
+        return xy(items.length ? items[lineAnchor === 'start' ? 0 : items.length - 1] : {
+          x: NaN,
+          y: NaN
+        });
+      };
+    } else {
+      return d => {
+        const b = d.datum.bounds;
+        return [b.x1, (b.x1 + b.x2) / 2, b.x2, b.y1, (b.y1 + b.y2) / 2, b.y2];
+      };
+    }
+  }
+  const Output$1 = ['x', 'y', 'opacity', 'align', 'baseline'];
+  const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
+
+  /**
+   * Compute text label layout to annotate marks.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<number>} params.size - The size of the layout, provided as a [width, height] array.
+   * @param {function(*,*): number} [params.sort] - An optional
+   *   comparator function for sorting label data in priority order.
+   * @param {Array<string>} [params.anchor] - Label anchor points relative to the base mark bounding box.
+   *   The available options are 'top-left', 'left', 'bottom-left', 'top',
+   *   'bottom', 'top-right', 'right', 'bottom-right', 'middle'.
+   * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
+   *   This parameter is parallel to the list of anchor points.
+   * @param {number | null} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
+   *   If this parameter is null, a label may exceed the layout size without any boundary.
+   * @param {string} [params.lineAnchor='end'] - For group line mark labels only, indicates the anchor
+   *   position for labels. One of 'start' or 'end'.
+   * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
+   *   which mark within the group should be labeled.
+   * @param {Array<number>} [params.avoidMarks] - A list of additional mark names for which the label
+   *   layout should avoid overlap.
+   * @param {boolean} [params.avoidBaseMark=true] - Boolean flag indicating if labels should avoid
+   *   overlap with the underlying base mark being labeled.
+   * @param {string} [params.method='naive'] - For area make labels only, a method for
+   *   place labels. One of 'naive', 'reduced-search', or 'floodfill'.
+   * @param {Array<string>} [params.as] - The output fields written by the transform.
+   *   The default is ['x', 'y', 'opacity', 'align', 'baseline'].
+   */
+  function Label$1(params) {
+    Transform.call(this, null, params);
+  }
+  Label$1.Definition = {
+    type: 'Label',
+    metadata: {
+      modifies: true
+    },
+    params: [{
+      name: 'size',
+      type: 'number',
+      array: true,
+      length: 2,
+      required: true
+    }, {
+      name: 'sort',
+      type: 'compare'
+    }, {
+      name: 'anchor',
+      type: 'string',
+      array: true,
+      default: Anchors
+    }, {
+      name: 'offset',
+      type: 'number',
+      array: true,
+      default: [1]
+    }, {
+      name: 'padding',
+      type: 'number',
+      default: 0,
+      null: true
+    }, {
+      name: 'lineAnchor',
+      type: 'string',
+      values: ['start', 'end'],
+      default: 'end'
+    }, {
+      name: 'markIndex',
+      type: 'number',
+      default: 0
+    }, {
+      name: 'avoidBaseMark',
+      type: 'boolean',
+      default: true
+    }, {
+      name: 'avoidMarks',
+      type: 'data',
+      array: true
+    }, {
+      name: 'method',
+      type: 'string',
+      default: 'naive'
+    }, {
+      name: 'as',
+      type: 'string',
+      array: true,
+      length: Output$1.length,
+      default: Output$1
+    }]
+  };
+  inherits(Label$1, Transform, {
+    transform(_, pulse) {
+      function modp(param) {
+        const p = _[param];
+        return isFunction(p) && pulse.modified(p.fields);
+      }
+      const mod = _.modified();
+      if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
+      if (!_.size || _.size.length !== 2) {
+        error('Size parameter should be specified as a [width, height] array.');
+      }
+      const as = _.as || Output$1;
+
+      // run label layout
+      labelLayout(pulse.materialize(pulse.SOURCE).source || [], _.size, _.sort, array$2(_.offset == null ? 1 : _.offset), array$2(_.anchor || Anchors), _.avoidMarks || [], _.avoidBaseMark !== false, _.lineAnchor || 'end', _.markIndex || 0, _.padding === undefined ? 0 : _.padding, _.method || 'naive').forEach(l => {
+        // write layout results to data stream
+        const t = l.datum;
+        t[as[0]] = l.x;
+        t[as[1]] = l.y;
+        t[as[2]] = l.opacity;
+        t[as[3]] = l.align;
+        t[as[4]] = l.baseline;
+      });
+      return pulse.reflow(mod).modifies(as);
+    }
+  });
+
+  var label = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    label: Label$1
+  });
+
+  function partition(data, groupby) {
+    var groups = [],
+      get = function (f) {
+        return f(t);
+      },
+      map,
+      i,
+      n,
+      t,
+      k,
+      g;
+
+    // partition data points into stack groups
+    if (groupby == null) {
+      groups.push(data);
+    } else {
+      for (map = {}, i = 0, n = data.length; i < n; ++i) {
+        t = data[i];
+        k = groupby.map(get);
+        g = map[k];
+        if (!g) {
+          map[k] = g = [];
+          g.dims = k;
+          groups.push(g);
+        }
+        g.push(t);
+      }
+    }
+    return groups;
+  }
+
+  /**
+   * Compute locally-weighted regression fits for one or more data groups.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.x - An accessor for the predictor data field.
+   * @param {function(object): *} params.y - An accessor for the predicted data field.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+   * @param {number} [params.bandwidth=0.3] - The loess bandwidth.
+   */
+  function Loess(params) {
+    Transform.call(this, null, params);
+  }
+  Loess.Definition = {
+    'type': 'Loess',
+    'metadata': {
+      'generates': true
+    },
+    'params': [{
+      'name': 'x',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'y',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'groupby',
+      'type': 'field',
+      'array': true
+    }, {
+      'name': 'bandwidth',
+      'type': 'number',
+      'default': 0.3
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true
+    }]
+  };
+  inherits(Loess, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(source, _.groupby),
+          names = (_.groupby || []).map(accessorName),
+          m = names.length,
+          as = _.as || [accessorName(_.x), accessorName(_.y)],
+          values = [];
+        groups.forEach(g => {
+          loess(g, _.x, _.y, _.bandwidth || 0.3).forEach(p => {
+            const t = {};
+            for (let i = 0; i < m; ++i) {
+              t[names[i]] = g.dims[i];
+            }
+            t[as[0]] = p[0];
+            t[as[1]] = p[1];
+            values.push(ingest$1(t));
+          });
+        });
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
+      }
+      return out;
+    }
+  });
+  const Methods = {
+    constant: constant,
+    linear: linear,
+    log: log$1,
+    exp: exp,
+    pow: pow,
+    quad: quad,
+    poly: poly
+  };
+  const degreesOfFreedom = (method, order) => method === 'poly' ? order : method === 'quad' ? 2 : 1;
+
+  /**
+   * Compute regression fits for one or more data groups.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {function(object): *} params.x - An accessor for the predictor data field.
+   * @param {function(object): *} params.y - An accessor for the predicted data field.
+   * @param {string} [params.method='linear'] - The regression method to apply.
+   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
+   * @param {Array<number>} [params.extent] - The domain extent over which to plot the regression line.
+   * @param {number} [params.order=3] - The polynomial order. Only applies to the 'poly' method.
+   */
+  function Regression(params) {
+    Transform.call(this, null, params);
+  }
+  Regression.Definition = {
+    'type': 'Regression',
+    'metadata': {
+      'generates': true
+    },
+    'params': [{
+      'name': 'x',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'y',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'groupby',
+      'type': 'field',
+      'array': true
+    }, {
+      'name': 'method',
+      'type': 'string',
+      'default': 'linear',
+      'values': Object.keys(Methods)
+    }, {
+      'name': 'order',
+      'type': 'number',
+      'default': 3
+    }, {
+      'name': 'extent',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'params',
+      'type': 'boolean',
+      'default': false
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true
+    }]
+  };
+  inherits(Regression, Transform, {
+    transform(_, pulse) {
+      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
+      if (!this.value || pulse.changed() || _.modified()) {
+        const source = pulse.materialize(pulse.SOURCE).source,
+          groups = partition(source, _.groupby),
+          names = (_.groupby || []).map(accessorName),
+          method = _.method || 'linear',
+          order = _.order == null ? 3 : _.order,
+          dof = degreesOfFreedom(method, order),
+          as = _.as || [accessorName(_.x), accessorName(_.y)],
+          fit = Methods[method],
+          values = [];
+        let domain = _.extent;
+        if (!has$1(Methods, method)) {
+          error('Invalid regression method: ' + method);
+        }
+        if (domain != null) {
+          if (method === 'log' && domain[0] <= 0) {
+            pulse.dataflow.warn('Ignoring extent with values <= 0 for log regression.');
+            domain = null;
+          }
+        }
+        groups.forEach(g => {
+          const n = g.length;
+          if (n <= dof) {
+            pulse.dataflow.warn('Skipping regression with more parameters than data points.');
+            return;
+          }
+          const model = fit(g, _.x, _.y, order);
+          if (_.params) {
+            // if parameter vectors requested return those
+            values.push(ingest$1({
+              keys: g.dims,
+              coef: model.coef,
+              rSquared: model.rSquared
+            }));
+            return;
+          }
+          const dom = domain || extent(g, _.x),
+            add = p => {
+              const t = {};
+              for (let i = 0; i < names.length; ++i) {
+                t[names[i]] = g.dims[i];
+              }
+              t[as[0]] = p[0];
+              t[as[1]] = p[1];
+              values.push(ingest$1(t));
+            };
+          if (method === 'linear' || method === 'constant') {
+            // for linear or constant regression we only need the end points
+            dom.forEach(x => add([x, model.predict(x)]));
+          } else {
+            // otherwise return trend line sample points
+            sampleCurve(model.predict, dom, 25, 200).forEach(add);
+          }
+        });
+        if (this.value) out.rem = this.value;
+        this.value = out.add = out.source = values;
+      }
+      return out;
+    }
+  });
+
+  var reg = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    loess: Loess,
+    regression: Regression
+  });
+
+  function Voronoi(params) {
+    Transform.call(this, null, params);
+  }
+  Voronoi.Definition = {
+    'type': 'Voronoi',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'x',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'y',
+      'type': 'field',
+      'required': true
+    }, {
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'extent',
+      'type': 'array',
+      'array': true,
+      'length': 2,
+      'default': [[-1e5, -1e5], [1e5, 1e5]],
+      'content': {
+        'type': 'number',
+        'array': true,
+        'length': 2
+      }
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'default': 'path'
+    }]
+  };
+  const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
+  inherits(Voronoi, Transform, {
+    transform(_, pulse) {
+      const as = _.as || 'path',
+        data = pulse.source;
+
+      // nothing to do if no data
+      if (!data || !data.length) return pulse;
+
+      // configure and construct voronoi diagram
+      let s = _.size;
+      s = s ? [0, 0, s[0], s[1]] : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]] : defaultExtent;
+      const voronoi = this.value = d3Delaunay.Delaunay.from(data, _.x, _.y).voronoi(s);
+
+      // map polygons to paths
+      for (let i = 0, n = data.length; i < n; ++i) {
+        const polygon = voronoi.cellPolygon(i);
+        data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
+      }
+      return pulse.reflow(_.modified()).modifies(as);
+    }
+  });
+
+  // suppress duplicated end point vertices
+  function toPathString(p) {
+    const x = p[0][0],
+      y = p[0][1];
+    let n = p.length - 1;
+    for (; p[n][0] === x && p[n][1] === y; --n);
+    return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+  }
+  function isPoint(p) {
+    return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
+  }
+
+  var voronoi = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    voronoi: Voronoi
+  });
+
+  /*
+  Copyright (c) 2013, Jason Davies.
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this
+      list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+    * The name Jason Davies may not be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL JASON DAVIES BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+
+  // Word cloud layout by Jason Davies, https://www.jasondavies.com/wordcloud/
+  // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
+
+  var cloudRadians = Math.PI / 180,
+    cw = 1 << 11 >> 5,
+    ch = 1 << 11;
+  function cloud() {
+    var size = [256, 256],
+      text,
+      font,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      rotate,
+      padding,
+      spiral = archimedeanSpiral,
+      words = [],
+      random = Math.random,
+      cloud = {};
+    cloud.layout = function () {
+      var contextAndRatio = getContext(domCanvas()),
+        board = zeroArray((size[0] >> 5) * size[1]),
+        bounds = null,
+        n = words.length,
+        i = -1,
+        tags = [],
+        data = words.map(d => ({
+          text: text(d),
+          font: font(d),
+          style: fontStyle(d),
+          weight: fontWeight(d),
+          rotate: rotate(d),
+          size: ~~(fontSize(d) + 1e-14),
+          padding: padding(d),
+          xoff: 0,
+          yoff: 0,
+          x1: 0,
+          y1: 0,
+          x0: 0,
+          y0: 0,
+          hasText: false,
+          sprite: null,
+          datum: d
+        })).sort((a, b) => b.size - a.size);
+      while (++i < n) {
+        var d = data[i];
+        d.x = size[0] * (random() + .5) >> 1;
+        d.y = size[1] * (random() + .5) >> 1;
+        cloudSprite(contextAndRatio, d, data, i);
+        if (d.hasText && place(board, d, bounds)) {
+          tags.push(d);
+          if (bounds) cloudBounds(bounds, d);else bounds = [{
+            x: d.x + d.x0,
+            y: d.y + d.y0
+          }, {
+            x: d.x + d.x1,
+            y: d.y + d.y1
+          }];
+          // Temporary hack
+          d.x -= size[0] >> 1;
+          d.y -= size[1] >> 1;
+        }
+      }
+      return tags;
+    };
+    function getContext(canvas) {
+      canvas.width = canvas.height = 1;
+      var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2);
+      canvas.width = (cw << 5) / ratio;
+      canvas.height = ch / ratio;
+      var context = canvas.getContext('2d');
+      context.fillStyle = context.strokeStyle = 'red';
+      context.textAlign = 'center';
+      return {
+        context: context,
+        ratio: ratio
+      };
+    }
+    function place(board, tag, bounds) {
+      var startX = tag.x,
+        startY = tag.y,
+        maxDelta = Math.hypot(size[0], size[1]),
+        s = spiral(size),
+        dt = random() < .5 ? 1 : -1,
+        t = -dt,
+        dxdy,
+        dx,
+        dy;
+      while (dxdy = s(t += dt)) {
+        dx = ~~dxdy[0];
+        dy = ~~dxdy[1];
+        if (Math.min(Math.abs(dx), Math.abs(dy)) >= maxDelta) break;
+        tag.x = startX + dx;
+        tag.y = startY + dy;
+        if (tag.x + tag.x0 < 0 || tag.y + tag.y0 < 0 || tag.x + tag.x1 > size[0] || tag.y + tag.y1 > size[1]) continue;
+        // TODO only check for collisions within current bounds.
+        if (!bounds || !cloudCollide(tag, board, size[0])) {
+          if (!bounds || collideRects(tag, bounds)) {
+            var sprite = tag.sprite,
+              w = tag.width >> 5,
+              sw = size[0] >> 5,
+              lx = tag.x - (w << 4),
+              sx = lx & 0x7f,
+              msx = 32 - sx,
+              h = tag.y1 - tag.y0,
+              x = (tag.y + tag.y0) * sw + (lx >> 5),
+              last;
+            for (var j = 0; j < h; j++) {
+              last = 0;
+              for (var i = 0; i <= w; i++) {
+                board[x + i] |= last << msx | (i < w ? (last = sprite[j * w + i]) >>> sx : 0);
+              }
+              x += sw;
+            }
+            tag.sprite = null;
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    cloud.words = function (_) {
+      if (arguments.length) {
+        words = _;
+        return cloud;
+      } else {
+        return words;
+      }
+    };
+    cloud.size = function (_) {
+      if (arguments.length) {
+        size = [+_[0], +_[1]];
+        return cloud;
+      } else {
+        return size;
+      }
+    };
+    cloud.font = function (_) {
+      if (arguments.length) {
+        font = functor(_);
+        return cloud;
+      } else {
+        return font;
+      }
+    };
+    cloud.fontStyle = function (_) {
+      if (arguments.length) {
+        fontStyle = functor(_);
+        return cloud;
+      } else {
+        return fontStyle;
+      }
+    };
+    cloud.fontWeight = function (_) {
+      if (arguments.length) {
+        fontWeight = functor(_);
+        return cloud;
+      } else {
+        return fontWeight;
+      }
+    };
+    cloud.rotate = function (_) {
+      if (arguments.length) {
+        rotate = functor(_);
+        return cloud;
+      } else {
+        return rotate;
+      }
+    };
+    cloud.text = function (_) {
+      if (arguments.length) {
+        text = functor(_);
+        return cloud;
+      } else {
+        return text;
+      }
+    };
+    cloud.spiral = function (_) {
+      if (arguments.length) {
+        spiral = spirals[_] || _;
+        return cloud;
+      } else {
+        return spiral;
+      }
+    };
+    cloud.fontSize = function (_) {
+      if (arguments.length) {
+        fontSize = functor(_);
+        return cloud;
+      } else {
+        return fontSize;
+      }
+    };
+    cloud.padding = function (_) {
+      if (arguments.length) {
+        padding = functor(_);
+        return cloud;
+      } else {
+        return padding;
+      }
+    };
+    cloud.random = function (_) {
+      if (arguments.length) {
+        random = _;
+        return cloud;
+      } else {
+        return random;
+      }
+    };
+    return cloud;
+  }
+
+  // Fetches a monochrome sprite bitmap for the specified text.
+  // Load in batches for speed.
+  function cloudSprite(contextAndRatio, d, data, di) {
+    if (d.sprite) return;
+    var c = contextAndRatio.context,
+      ratio = contextAndRatio.ratio;
+    c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
+    var x = 0,
+      y = 0,
+      maxh = 0,
+      n = data.length,
+      w,
+      w32,
+      h,
+      i,
+      j;
+    --di;
+    while (++di < n) {
+      d = data[di];
+      c.save();
+      c.font = d.style + ' ' + d.weight + ' ' + ~~((d.size + 1) / ratio) + 'px ' + d.font;
+      w = c.measureText(d.text + 'm').width * ratio;
+      h = d.size << 1;
+      if (d.rotate) {
+        var sr = Math.sin(d.rotate * cloudRadians),
+          cr = Math.cos(d.rotate * cloudRadians),
+          wcr = w * cr,
+          wsr = w * sr,
+          hcr = h * cr,
+          hsr = h * sr;
+        w = Math.max(Math.abs(wcr + hsr), Math.abs(wcr - hsr)) + 0x1f >> 5 << 5;
+        h = ~~Math.max(Math.abs(wsr + hcr), Math.abs(wsr - hcr));
+      } else {
+        w = w + 0x1f >> 5 << 5;
+      }
+      if (h > maxh) maxh = h;
+      if (x + w >= cw << 5) {
+        x = 0;
+        y += maxh;
+        maxh = 0;
+      }
+      if (y + h >= ch) break;
+      c.translate((x + (w >> 1)) / ratio, (y + (h >> 1)) / ratio);
+      if (d.rotate) c.rotate(d.rotate * cloudRadians);
+      c.fillText(d.text, 0, 0);
+      if (d.padding) {
+        c.lineWidth = 2 * d.padding;
+        c.strokeText(d.text, 0, 0);
+      }
+      c.restore();
+      d.width = w;
+      d.height = h;
+      d.xoff = x;
+      d.yoff = y;
+      d.x1 = w >> 1;
+      d.y1 = h >> 1;
+      d.x0 = -d.x1;
+      d.y0 = -d.y1;
+      d.hasText = true;
+      x += w;
+    }
+    var pixels = c.getImageData(0, 0, (cw << 5) / ratio, ch / ratio).data,
+      sprite = [];
+    while (--di >= 0) {
+      d = data[di];
+      if (!d.hasText) continue;
+      w = d.width;
+      w32 = w >> 5;
+      h = d.y1 - d.y0;
+      // Zero the buffer
+      for (i = 0; i < h * w32; i++) sprite[i] = 0;
+      x = d.xoff;
+      if (x == null) return;
+      y = d.yoff;
+      var seen = 0,
+        seenRow = -1;
+      for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
+          var k = w32 * j + (i >> 5),
+            m = pixels[(y + j) * (cw << 5) + (x + i) << 2] ? 1 << 31 - i % 32 : 0;
+          sprite[k] |= m;
+          seen |= m;
+        }
+        if (seen) seenRow = j;else {
+          d.y0++;
+          h--;
+          j--;
+          y++;
+        }
+      }
+      d.y1 = d.y0 + seenRow;
+      d.sprite = sprite.slice(0, (d.y1 - d.y0) * w32);
+    }
+  }
+
+  // Use mask-based collision detection.
+  function cloudCollide(tag, board, sw) {
+    sw >>= 5;
+    var sprite = tag.sprite,
+      w = tag.width >> 5,
+      lx = tag.x - (w << 4),
+      sx = lx & 0x7f,
+      msx = 32 - sx,
+      h = tag.y1 - tag.y0,
+      x = (tag.y + tag.y0) * sw + (lx >> 5),
+      last;
+    for (var j = 0; j < h; j++) {
+      last = 0;
+      for (var i = 0; i <= w; i++) {
+        if ((last << msx | (i < w ? (last = sprite[j * w + i]) >>> sx : 0)) & board[x + i]) return true;
+      }
+      x += sw;
+    }
+    return false;
+  }
+  function cloudBounds(bounds, d) {
+    var b0 = bounds[0],
+      b1 = bounds[1];
+    if (d.x + d.x0 < b0.x) b0.x = d.x + d.x0;
+    if (d.y + d.y0 < b0.y) b0.y = d.y + d.y0;
+    if (d.x + d.x1 > b1.x) b1.x = d.x + d.x1;
+    if (d.y + d.y1 > b1.y) b1.y = d.y + d.y1;
+  }
+  function collideRects(a, b) {
+    return a.x + a.x1 > b[0].x && a.x + a.x0 < b[1].x && a.y + a.y1 > b[0].y && a.y + a.y0 < b[1].y;
+  }
+  function archimedeanSpiral(size) {
+    var e = size[0] / size[1];
+    return function (t) {
+      return [e * (t *= .1) * Math.cos(t), t * Math.sin(t)];
+    };
+  }
+  function rectangularSpiral(size) {
+    var dy = 4,
+      dx = dy * size[0] / size[1],
+      x = 0,
+      y = 0;
+    return function (t) {
+      var sign = t < 0 ? -1 : 1;
+      // See triangular numbers: T_n = n * (n + 1) / 2.
+      switch (Math.sqrt(1 + 4 * sign * t) - sign & 3) {
+        case 0:
+          x += dx;
+          break;
+        case 1:
+          y += dy;
+          break;
+        case 2:
+          x -= dx;
+          break;
+        default:
+          y -= dy;
+          break;
+      }
+      return [x, y];
+    };
+  }
+
+  // TODO reuse arrays?
+  function zeroArray(n) {
+    var a = [],
+      i = -1;
+    while (++i < n) a[i] = 0;
+    return a;
+  }
+  function functor(d) {
+    return typeof d === 'function' ? d : function () {
+      return d;
+    };
+  }
+  var spirals = {
+    archimedean: archimedeanSpiral,
+    rectangular: rectangularSpiral
+  };
+  const Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
+  const Params$1 = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
+  function Wordcloud(params) {
+    Transform.call(this, cloud(), params);
+  }
+  Wordcloud.Definition = {
+    'type': 'Wordcloud',
+    'metadata': {
+      'modifies': true
+    },
+    'params': [{
+      'name': 'size',
+      'type': 'number',
+      'array': true,
+      'length': 2
+    }, {
+      'name': 'font',
+      'type': 'string',
+      'expr': true,
+      'default': 'sans-serif'
+    }, {
+      'name': 'fontStyle',
+      'type': 'string',
+      'expr': true,
+      'default': 'normal'
+    }, {
+      'name': 'fontWeight',
+      'type': 'string',
+      'expr': true,
+      'default': 'normal'
+    }, {
+      'name': 'fontSize',
+      'type': 'number',
+      'expr': true,
+      'default': 14
+    }, {
+      'name': 'fontSizeRange',
+      'type': 'number',
+      'array': 'nullable',
+      'default': [10, 50]
+    }, {
+      'name': 'rotate',
+      'type': 'number',
+      'expr': true,
+      'default': 0
+    }, {
+      'name': 'text',
+      'type': 'field'
+    }, {
+      'name': 'spiral',
+      'type': 'string',
+      'values': ['archimedean', 'rectangular']
+    }, {
+      'name': 'padding',
+      'type': 'number',
+      'expr': true
+    }, {
+      'name': 'as',
+      'type': 'string',
+      'array': true,
+      'length': 7,
+      'default': Output
+    }]
+  };
+  inherits(Wordcloud, Transform, {
+    transform(_, pulse) {
+      if (_.size && !(_.size[0] && _.size[1])) {
+        error('Wordcloud size dimensions must be non-zero.');
+      }
+      function modp(param) {
+        const p = _[param];
+        return isFunction(p) && pulse.modified(p.fields);
+      }
+      const mod = _.modified();
+      if (!(mod || pulse.changed(pulse.ADD_REM) || Params$1.some(modp))) return;
+      const data = pulse.materialize(pulse.SOURCE).source,
+        layout = this.value,
+        as = _.as || Output;
+      let fontSize = _.fontSize || 14,
+        range;
+      isFunction(fontSize) ? range = _.fontSizeRange : fontSize = constant$1(fontSize);
+
+      // create font size scaling function as needed
+      if (range) {
+        const fsize = fontSize,
+          sizeScale = scale$5('sqrt')().domain(extent(data, fsize)).range(range);
+        fontSize = x => sizeScale(fsize(x));
+      }
+      data.forEach(t => {
+        t[as[0]] = NaN;
+        t[as[1]] = NaN;
+        t[as[3]] = 0;
+      });
+
+      // configure layout
+      const words = layout.words(data).text(_.text).size(_.size || [500, 500]).padding(_.padding || 1).spiral(_.spiral || 'archimedean').rotate(_.rotate || 0).font(_.font || 'sans-serif').fontStyle(_.fontStyle || 'normal').fontWeight(_.fontWeight || 'normal').fontSize(fontSize).random(exports.random).layout();
+      const size = layout.size(),
+        dx = size[0] >> 1,
+        dy = size[1] >> 1,
+        n = words.length;
+      for (let i = 0, w, t; i < n; ++i) {
+        w = words[i];
+        t = w.datum;
+        t[as[0]] = w.x + dx;
+        t[as[1]] = w.y + dy;
+        t[as[2]] = w.font;
+        t[as[3]] = w.size;
+        t[as[4]] = w.style;
+        t[as[5]] = w.weight;
+        t[as[6]] = w.rotate;
+      }
+      return pulse.reflow(mod).modifies(as);
+    }
+  });
+
+  var wordcloud = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    wordcloud: Wordcloud
+  });
+
+  const array8 = n => new Uint8Array(n);
+  const array16 = n => new Uint16Array(n);
+  const array32 = n => new Uint32Array(n);
+
+  /**
+   * Maintains CrossFilter state.
+   */
+  function Bitmaps() {
+    let width = 8,
+      data = [],
+      seen = array32(0),
+      curr = array$1(0, width),
+      prev = array$1(0, width);
+    return {
+      data: () => data,
+      seen: () => seen = lengthen(seen, data.length),
+      add(array) {
+        for (let i = 0, j = data.length, n = array.length, t; i < n; ++i) {
+          t = array[i];
+          t._index = j++;
+          data.push(t);
+        }
+      },
+      remove(num, map) {
+        // map: index -> boolean (true => remove)
+        const n = data.length,
+          copy = Array(n - num),
+          reindex = data; // reuse old data array for index map
+        let t, i, j;
+
+        // seek forward to first removal
+        for (i = 0; !map[i] && i < n; ++i) {
+          copy[i] = data[i];
+          reindex[i] = i;
+        }
+
+        // condense arrays
+        for (j = i; i < n; ++i) {
+          t = data[i];
+          if (!map[i]) {
+            reindex[i] = j;
+            curr[j] = curr[i];
+            prev[j] = prev[i];
+            copy[j] = t;
+            t._index = j++;
+          } else {
+            reindex[i] = -1;
+          }
+          curr[i] = 0; // clear unused bits
+        }
+
+        data = copy;
+        return reindex;
+      },
+      size: () => data.length,
+      curr: () => curr,
+      prev: () => prev,
+      reset: k => prev[k] = curr[k],
+      all: () => width < 0x101 ? 0xff : width < 0x10001 ? 0xffff : 0xffffffff,
+      set(k, one) {
+        curr[k] |= one;
+      },
+      clear(k, one) {
+        curr[k] &= ~one;
+      },
+      resize(n, m) {
+        const k = curr.length;
+        if (n > k || m > width) {
+          width = Math.max(m, width);
+          curr = array$1(n, width, curr);
+          prev = array$1(n, width);
+        }
+      }
+    };
+  }
+  function lengthen(array, length, copy) {
+    if (array.length >= length) return array;
+    copy = copy || new array.constructor(length);
+    copy.set(array);
+    return copy;
+  }
+  function array$1(n, m, array) {
+    const copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
+    if (array) copy.set(array);
+    return copy;
+  }
+  function Dimension(index, i, query) {
+    const bit = 1 << i;
+    return {
+      one: bit,
+      zero: ~bit,
+      range: query.slice(),
+      bisect: index.bisect,
+      index: index.index,
+      size: index.size,
+      onAdd(added, curr) {
+        const dim = this,
+          range = dim.bisect(dim.range, added.value),
+          idx = added.index,
+          lo = range[0],
+          hi = range[1],
+          n1 = idx.length;
+        let i;
+        for (i = 0; i < lo; ++i) curr[idx[i]] |= bit;
+        for (i = hi; i < n1; ++i) curr[idx[i]] |= bit;
+        return dim;
+      }
+    };
+  }
+
+  /**
+   * Maintains a list of values, sorted by key.
+   */
+  function SortedIndex() {
+    let index = array32(0),
+      value = [],
+      size = 0;
+    function insert(key, data, base) {
+      if (!data.length) return [];
+      const n0 = size,
+        n1 = data.length,
+        addi = array32(n1);
+      let addv = Array(n1),
+        oldv,
+        oldi,
+        i;
+      for (i = 0; i < n1; ++i) {
+        addv[i] = key(data[i]);
+        addi[i] = i;
+      }
+      addv = sort(addv, addi);
+      if (n0) {
+        oldv = value;
+        oldi = index;
+        value = Array(n0 + n1);
+        index = array32(n0 + n1);
+        merge$1(base, oldv, oldi, n0, addv, addi, n1, value, index);
+      } else {
+        if (base > 0) for (i = 0; i < n1; ++i) {
+          addi[i] += base;
+        }
+        value = addv;
+        index = addi;
+      }
+      size = n0 + n1;
+      return {
+        index: addi,
+        value: addv
+      };
+    }
+    function remove(num, map) {
+      // map: index -> remove
+      const n = size;
+      let idx, i, j;
+
+      // seek forward to first removal
+      for (i = 0; !map[index[i]] && i < n; ++i);
+
+      // condense index and value arrays
+      for (j = i; i < n; ++i) {
+        if (!map[idx = index[i]]) {
+          index[j] = idx;
+          value[j] = value[i];
+          ++j;
+        }
+      }
+      size = n - num;
+    }
+    function reindex(map) {
+      for (let i = 0, n = size; i < n; ++i) {
+        index[i] = map[index[i]];
+      }
+    }
+    function bisect(range, array) {
+      let n;
+      if (array) {
+        n = array.length;
+      } else {
+        array = value;
+        n = size;
+      }
+      return [d3Array.bisectLeft(array, range[0], 0, n), d3Array.bisectRight(array, range[1], 0, n)];
+    }
+    return {
+      insert: insert,
+      remove: remove,
+      bisect: bisect,
+      reindex: reindex,
+      index: () => index,
+      size: () => size
+    };
+  }
+  function sort(values, index) {
+    values.sort.call(index, (a, b) => {
+      const x = values[a],
+        y = values[b];
+      return x < y ? -1 : x > y ? 1 : 0;
+    });
+    return d3Array.permute(values, index);
+  }
+  function merge$1(base, value0, index0, n0, value1, index1, n1, value, index) {
+    let i0 = 0,
+      i1 = 0,
+      i;
+    for (i = 0; i0 < n0 && i1 < n1; ++i) {
+      if (value0[i0] < value1[i1]) {
+        value[i] = value0[i0];
+        index[i] = index0[i0++];
+      } else {
+        value[i] = value1[i1];
+        index[i] = index1[i1++] + base;
+      }
+    }
+    for (; i0 < n0; ++i0, ++i) {
+      value[i] = value0[i0];
+      index[i] = index0[i0];
+    }
+    for (; i1 < n1; ++i1, ++i) {
+      value[i] = value1[i1];
+      index[i] = index1[i1] + base;
+    }
+  }
+
+  /**
+   * An indexed multi-dimensional filter.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {Array<function(object): *>} params.fields - An array of dimension accessors to filter.
+   * @param {Array} params.query - An array of per-dimension range queries.
+   */
+  function CrossFilter(params) {
+    Transform.call(this, Bitmaps(), params);
+    this._indices = null;
+    this._dims = null;
+  }
+  CrossFilter.Definition = {
+    'type': 'CrossFilter',
+    'metadata': {},
+    'params': [{
+      'name': 'fields',
+      'type': 'field',
+      'array': true,
+      'required': true
+    }, {
+      'name': 'query',
+      'type': 'array',
+      'array': true,
+      'required': true,
+      'content': {
+        'type': 'number',
+        'array': true,
+        'length': 2
+      }
+    }]
+  };
+  inherits(CrossFilter, Transform, {
+    transform(_, pulse) {
+      if (!this._dims) {
+        return this.init(_, pulse);
+      } else {
+        var init = _.modified('fields') || _.fields.some(f => pulse.modified(f.fields));
+        return init ? this.reinit(_, pulse) : this.eval(_, pulse);
+      }
+    },
+    init(_, pulse) {
+      const fields = _.fields,
+        query = _.query,
+        indices = this._indices = {},
+        dims = this._dims = [],
+        m = query.length;
+      let i = 0,
+        key,
+        index;
+
+      // instantiate indices and dimensions
+      for (; i < m; ++i) {
+        key = fields[i].fname;
+        index = indices[key] || (indices[key] = SortedIndex());
+        dims.push(Dimension(index, i, query[i]));
+      }
+      return this.eval(_, pulse);
+    },
+    reinit(_, pulse) {
+      const output = pulse.materialize().fork(),
+        fields = _.fields,
+        query = _.query,
+        indices = this._indices,
+        dims = this._dims,
+        bits = this.value,
+        curr = bits.curr(),
+        prev = bits.prev(),
+        all = bits.all(),
+        out = output.rem = output.add,
+        mod = output.mod,
+        m = query.length,
+        adds = {};
+      let add, index, key, mods, remMap, modMap, i, n, f;
+
+      // set prev to current state
+      prev.set(curr);
+
+      // if pulse has remove tuples, process them first
+      if (pulse.rem.length) {
+        remMap = this.remove(_, pulse, output);
+      }
+
+      // if pulse has added tuples, add them to state
+      if (pulse.add.length) {
+        bits.add(pulse.add);
+      }
+
+      // if pulse has modified tuples, create an index map
+      if (pulse.mod.length) {
+        modMap = {};
+        for (mods = pulse.mod, i = 0, n = mods.length; i < n; ++i) {
+          modMap[mods[i]._index] = 1;
+        }
+      }
+
+      // re-initialize indices as needed, update curr bitmap
+      for (i = 0; i < m; ++i) {
+        f = fields[i];
+        if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
+          key = f.fname;
+          if (!(add = adds[key])) {
+            indices[key] = index = SortedIndex();
+            adds[key] = add = index.insert(f, pulse.source, 0);
+          }
+          dims[i] = Dimension(index, i, query[i]).onAdd(add, curr);
+        }
+      }
+
+      // visit each tuple
+      // if filter state changed, push index to add/rem
+      // else if in mod and passes a filter, push index to mod
+      for (i = 0, n = bits.data().length; i < n; ++i) {
+        if (remMap[i]) {
+          // skip if removed tuple
+          continue;
+        } else if (prev[i] !== curr[i]) {
+          // add if state changed
+          out.push(i);
+        } else if (modMap[i] && curr[i] !== all) {
+          // otherwise, pass mods through
+          mod.push(i);
+        }
+      }
+      bits.mask = (1 << m) - 1;
+      return output;
+    },
+    eval(_, pulse) {
+      const output = pulse.materialize().fork(),
+        m = this._dims.length;
+      let mask = 0;
+      if (pulse.rem.length) {
+        this.remove(_, pulse, output);
+        mask |= (1 << m) - 1;
+      }
+      if (_.modified('query') && !_.modified('fields')) {
+        mask |= this.update(_, pulse, output);
+      }
+      if (pulse.add.length) {
+        this.insert(_, pulse, output);
+        mask |= (1 << m) - 1;
+      }
+      if (pulse.mod.length) {
+        this.modify(pulse, output);
+        mask |= (1 << m) - 1;
+      }
+      this.value.mask = mask;
+      return output;
+    },
+    insert(_, pulse, output) {
+      const tuples = pulse.add,
+        bits = this.value,
+        dims = this._dims,
+        indices = this._indices,
+        fields = _.fields,
+        adds = {},
+        out = output.add,
+        n = bits.size() + tuples.length,
+        m = dims.length;
+      let k = bits.size(),
+        j,
+        key,
+        add;
+
+      // resize bitmaps and add tuples as needed
+      bits.resize(n, m);
+      bits.add(tuples);
+      const curr = bits.curr(),
+        prev = bits.prev(),
+        all = bits.all();
+
+      // add to dimensional indices
+      for (j = 0; j < m; ++j) {
+        key = fields[j].fname;
+        add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
+        dims[j].onAdd(add, curr);
+      }
+
+      // set previous filters, output if passes at least one filter
+      for (; k < n; ++k) {
+        prev[k] = all;
+        if (curr[k] !== all) out.push(k);
+      }
+    },
+    modify(pulse, output) {
+      const out = output.mod,
+        bits = this.value,
+        curr = bits.curr(),
+        all = bits.all(),
+        tuples = pulse.mod;
+      let i, n, k;
+      for (i = 0, n = tuples.length; i < n; ++i) {
+        k = tuples[i]._index;
+        if (curr[k] !== all) out.push(k);
+      }
+    },
+    remove(_, pulse, output) {
+      const indices = this._indices,
+        bits = this.value,
+        curr = bits.curr(),
+        prev = bits.prev(),
+        all = bits.all(),
+        map = {},
+        out = output.rem,
+        tuples = pulse.rem;
+      let i, n, k, f;
+
+      // process tuples, output if passes at least one filter
+      for (i = 0, n = tuples.length; i < n; ++i) {
+        k = tuples[i]._index;
+        map[k] = 1; // build index map
+        prev[k] = f = curr[k];
+        curr[k] = all;
+        if (f !== all) out.push(k);
+      }
+
+      // remove from dimensional indices
+      for (k in indices) {
+        indices[k].remove(n, map);
+      }
+      this.reindex(pulse, n, map);
+      return map;
+    },
+    // reindex filters and indices after propagation completes
+    reindex(pulse, num, map) {
+      const indices = this._indices,
+        bits = this.value;
+      pulse.runAfter(() => {
+        const indexMap = bits.remove(num, map);
+        for (const key in indices) indices[key].reindex(indexMap);
+      });
+    },
+    update(_, pulse, output) {
+      const dims = this._dims,
+        query = _.query,
+        stamp = pulse.stamp,
+        m = dims.length;
+      let mask = 0,
+        i,
+        q;
+
+      // survey how many queries have changed
+      output.filters = 0;
+      for (q = 0; q < m; ++q) {
+        if (_.modified('query', q)) {
+          i = q;
+          ++mask;
+        }
+      }
+      if (mask === 1) {
+        // only one query changed, use more efficient update
+        mask = dims[i].one;
+        this.incrementOne(dims[i], query[i], output.add, output.rem);
+      } else {
+        // multiple queries changed, perform full record keeping
+        for (q = 0, mask = 0; q < m; ++q) {
+          if (!_.modified('query', q)) continue;
+          mask |= dims[q].one;
+          this.incrementAll(dims[q], query[q], stamp, output.add);
+          output.rem = output.add; // duplicate add/rem for downstream resolve
+        }
+      }
+
+      return mask;
+    },
+    incrementAll(dim, query, stamp, out) {
+      const bits = this.value,
+        seen = bits.seen(),
+        curr = bits.curr(),
+        prev = bits.prev(),
+        index = dim.index(),
+        old = dim.bisect(dim.range),
+        range = dim.bisect(query),
+        lo1 = range[0],
+        hi1 = range[1],
+        lo0 = old[0],
+        hi0 = old[1],
+        one = dim.one;
+      let i, j, k;
+
+      // Fast incremental update based on previous lo index.
+      if (lo1 < lo0) {
+        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      } else if (lo1 > lo0) {
+        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      }
+
+      // Fast incremental update based on previous hi index.
+      if (hi1 > hi0) {
+        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      } else if (hi1 < hi0) {
+        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
+          k = index[i];
+          if (seen[k] !== stamp) {
+            prev[k] = curr[k];
+            seen[k] = stamp;
+            out.push(k);
+          }
+          curr[k] ^= one;
+        }
+      }
+      dim.range = query.slice();
+    },
+    incrementOne(dim, query, add, rem) {
+      const bits = this.value,
+        curr = bits.curr(),
+        index = dim.index(),
+        old = dim.bisect(dim.range),
+        range = dim.bisect(query),
+        lo1 = range[0],
+        hi1 = range[1],
+        lo0 = old[0],
+        hi0 = old[1],
+        one = dim.one;
+      let i, j, k;
+
+      // Fast incremental update based on previous lo index.
+      if (lo1 < lo0) {
+        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          add.push(k);
+        }
+      } else if (lo1 > lo0) {
+        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          rem.push(k);
+        }
+      }
+
+      // Fast incremental update based on previous hi index.
+      if (hi1 > hi0) {
+        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          add.push(k);
+        }
+      } else if (hi1 < hi0) {
+        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
+          k = index[i];
+          curr[k] ^= one;
+          rem.push(k);
+        }
+      }
+      dim.range = query.slice();
+    }
+  });
+
+  /**
+   * Selectively filters tuples by resolving against a filter bitmap.
+   * Useful for processing the output of a cross-filter transform.
+   * @constructor
+   * @param {object} params - The parameters for this operator.
+   * @param {object} params.ignore - A bit mask indicating which filters to ignore.
+   * @param {object} params.filter - The per-tuple filter bitmaps. Typically this
+   *   parameter value is a reference to a {@link CrossFilter} transform.
+   */
+  function ResolveFilter(params) {
+    Transform.call(this, null, params);
+  }
+  ResolveFilter.Definition = {
+    'type': 'ResolveFilter',
+    'metadata': {},
+    'params': [{
+      'name': 'ignore',
+      'type': 'number',
+      'required': true,
+      'description': 'A bit mask indicating which filters to ignore.'
+    }, {
+      'name': 'filter',
+      'type': 'object',
+      'required': true,
+      'description': 'Per-tuple filter bitmaps from a CrossFilter transform.'
+    }]
+  };
+  inherits(ResolveFilter, Transform, {
+    transform(_, pulse) {
+      const ignore = ~(_.ignore || 0),
+        // bit mask where zeros -> dims to ignore
+        bitmap = _.filter,
+        mask = bitmap.mask;
+
+      // exit early if no relevant filter changes
+      if ((mask & ignore) === 0) return pulse.StopPropagation;
+      const output = pulse.fork(pulse.ALL),
+        data = bitmap.data(),
+        curr = bitmap.curr(),
+        prev = bitmap.prev(),
+        pass = k => !(curr[k] & ignore) ? data[k] : null;
+
+      // propagate all mod tuples that pass the filter
+      output.filter(output.MOD, pass);
+
+      // determine add & rem tuples via filter functions
+      // for efficiency, we do *not* populate new arrays,
+      // instead we add filter functions applied downstream
+
+      if (!(mask & mask - 1)) {
+        // only one filter changed
+        output.filter(output.ADD, pass);
+        output.filter(output.REM, k => (curr[k] & ignore) === mask ? data[k] : null);
+      } else {
+        // multiple filters changed
+        output.filter(output.ADD, k => {
+          const c = curr[k] & ignore,
+            f = !c && c ^ prev[k] & ignore;
+          return f ? data[k] : null;
+        });
+        output.filter(output.REM, k => {
+          const c = curr[k] & ignore,
+            f = c && !(c ^ (c ^ prev[k] & ignore));
+          return f ? data[k] : null;
+        });
+      }
+
+      // add filter to source data in case of reflow...
+      return output.filter(output.SOURCE, t => pass(t._index));
+    }
+  });
+
+  var xf = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    crossfilter: CrossFilter,
+    resolvefilter: ResolveFilter
+  });
+
+  var version = "5.27.0";
+
   let gradient_id = 0;
   function resetSVGGradientId() {
     gradient_id = 0;
@@ -9297,18 +21068,18 @@
     if (!id) {
       id = g.id = 'gradient_' + gradient_id++;
       if (type === 'radial') {
-        g.x1 = get$1(g.x1, 0.5);
-        g.y1 = get$1(g.y1, 0.5);
-        g.r1 = get$1(g.r1, 0);
-        g.x2 = get$1(g.x2, 0.5);
-        g.y2 = get$1(g.y2, 0.5);
-        g.r2 = get$1(g.r2, 0.5);
+        g.x1 = get(g.x1, 0.5);
+        g.y1 = get(g.y1, 0.5);
+        g.r1 = get(g.r1, 0);
+        g.x2 = get(g.x2, 0.5);
+        g.y2 = get(g.y2, 0.5);
+        g.r2 = get(g.r2, 0.5);
         prefix = patternPrefix;
       } else {
-        g.x1 = get$1(g.x1, 0);
-        g.y1 = get$1(g.y1, 0);
-        g.x2 = get$1(g.x2, 1);
-        g.y2 = get$1(g.y2, 0);
+        g.x1 = get(g.x1, 0);
+        g.y1 = get(g.y1, 0);
+        g.x2 = get(g.x2, 1);
+        g.y2 = get(g.y2, 0);
       }
     }
 
@@ -9318,7 +21089,7 @@
     // return url reference
     return 'url(' + (base || '') + '#' + prefix + id + ')';
   }
-  function get$1(val, def) {
+  function get(val, def) {
     return val != null ? val : def;
   }
   function Gradient$1(p0, p1) {
@@ -9340,7 +21111,7 @@
       }
     };
   }
-  const lookup$4 = {
+  const lookup$2 = {
     'basis': {
       curve: d3Shape.curveBasis
     },
@@ -9409,7 +21180,7 @@
     }
   };
   function curves(type, orientation, tension) {
-    var entry = has$1(lookup$4, type) && lookup$4[type],
+    var entry = has$1(lookup$2, type) && lookup$2[type],
       curve = null;
     if (entry) {
       curve = entry.curve || entry[orientation || 'vertical'];
@@ -10010,7 +21781,7 @@
   function rectangleHeight(d) {
     return d.height;
   }
-  function number$3(_) {
+  function number$2(_) {
     return typeof _ === 'function' ? _ : () => +_;
   }
   function clamp(value, min, max) {
@@ -10021,7 +21792,7 @@
       y = rectangleY,
       width = rectangleWidth,
       height = rectangleHeight,
-      crTL = number$3(0),
+      crTL = number$2(0),
       crTR = crTL,
       crBL = crTL,
       crBR = crTL,
@@ -10061,7 +21832,7 @@
     }
     rectangle.x = function (_) {
       if (arguments.length) {
-        x = number$3(_);
+        x = number$2(_);
         return rectangle;
       } else {
         return x;
@@ -10069,7 +21840,7 @@
     };
     rectangle.y = function (_) {
       if (arguments.length) {
-        y = number$3(_);
+        y = number$2(_);
         return rectangle;
       } else {
         return y;
@@ -10077,7 +21848,7 @@
     };
     rectangle.width = function (_) {
       if (arguments.length) {
-        width = number$3(_);
+        width = number$2(_);
         return rectangle;
       } else {
         return width;
@@ -10085,7 +21856,7 @@
     };
     rectangle.height = function (_) {
       if (arguments.length) {
-        height = number$3(_);
+        height = number$2(_);
         return rectangle;
       } else {
         return height;
@@ -10093,10 +21864,10 @@
     };
     rectangle.cornerRadius = function (tl, tr, br, bl) {
       if (arguments.length) {
-        crTL = number$3(tl);
-        crTR = tr != null ? number$3(tr) : crTL;
-        crBR = br != null ? number$3(br) : crTL;
-        crBL = bl != null ? number$3(bl) : crTR;
+        crTL = number$2(tl);
+        crTR = tr != null ? number$2(tr) : crTL;
+        crBR = br != null ? number$2(br) : crTL;
+        crBL = bl != null ? number$2(bl) : crTR;
         return rectangle;
       } else {
         return crTL;
@@ -10929,7 +22700,7 @@
   function pickPath(path) {
     return pick$1(hitPath(path));
   }
-  function translate$1(x, y) {
+  function translate(x, y) {
     return 'translate(' + x + ',' + y + ')';
   }
   function rotate(a) {
@@ -10939,13 +22710,13 @@
     return 'scale(' + scaleX + ',' + scaleY + ')';
   }
   function translateItem(item) {
-    return translate$1(item.x || 0, item.y || 0);
+    return translate(item.x || 0, item.y || 0);
   }
   function rotateItem(item) {
-    return translate$1(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '');
+    return translate(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '');
   }
   function transformItem(item) {
-    return translate$1(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '') + (item.scaleX || item.scaleY ? ' ' + scale$3(item.scaleX || 1, item.scaleY || 1) : '');
+    return translate(item.x || 0, item.y || 0) + (item.angle ? ' ' + rotate(item.angle) : '') + (item.scaleX || item.scaleY ? ' ' + scale$3(item.scaleX || 1, item.scaleY || 1) : '');
   }
   function markItemPath(type, shape, isect) {
     function attr(emit, item) {
@@ -10978,7 +22749,7 @@
       isect: isect || intersectPath(draw)
     };
   }
-  var arc$2 = markItemPath('arc', arc$1);
+  var arc = markItemPath('arc', arc$1);
   function pickArea(a, p) {
     var v = a[0].orient === 'horizontal' ? p[1] : p[0],
       z = a[0].orient === 'horizontal' ? 'y' : 'x',
@@ -11067,7 +22838,7 @@
       tip: tip
     };
   }
-  var area$2 = markMultiItemPath('area', area$1, pickArea);
+  var area = markMultiItemPath('area', area$1, pickArea);
   function clip$2(context, scene) {
     var clip = scene.clip;
     context.save();
@@ -11291,7 +23062,7 @@
       y = (item.y || 0) - imageYOffset(item.baseline, h),
       i = !img.src && img.toDataURL ? img.toDataURL() : img.src || '';
     emit('href', i, metadata['xmlns:xlink'], 'xlink:href');
-    emit('transform', translate$1(x, y));
+    emit('transform', translate(x, y));
     emit('width', w);
     emit('height', h);
     emit('preserveAspectRatio', item.aspect === false ? 'none' : 'xMidYMid');
@@ -11356,7 +23127,7 @@
     xOffset: imageXOffset,
     yOffset: imageYOffset
   };
-  var line$2 = markMultiItemPath('line', line$1, pickLine);
+  var line = markMultiItemPath('line', line$1, pickLine);
   function attr$3(emit, item) {
     var sx = item.scaleX || 1,
       sy = item.scaleY || 1;
@@ -11586,7 +23357,7 @@
     'center': 'middle',
     'right': 'end'
   };
-  const tempBounds$1 = new Bounds();
+  const tempBounds = new Bounds();
   function anchorPoint(item) {
     var x = item.x || 0,
       y = item.y || 0,
@@ -11597,9 +23368,9 @@
       x += r * Math.cos(t);
       y += r * Math.sin(t);
     }
-    tempBounds$1.x1 = x;
-    tempBounds$1.y1 = y;
-    return tempBounds$1;
+    tempBounds.x1 = x;
+    tempBounds.y1 = y;
+    return tempBounds;
   }
   function attr(emit, item) {
     var dx = item.dx || 0,
@@ -11611,10 +23382,10 @@
       t;
     emit('text-anchor', textAlign[item.align] || 'start');
     if (a) {
-      t = translate$1(x, y) + ' ' + rotate(a);
-      if (dx || dy) t += ' ' + translate$1(dx, dy);
+      t = translate(x, y) + ' ' + rotate(a);
+      if (dx || dy) t += ' ' + translate(dx, dy);
     } else {
-      t = translate$1(x + dx, y + dy);
+      t = translate(x + dx, y + dy);
     }
     emit('transform', t);
   }
@@ -11654,7 +23425,7 @@
     }
     return bounds;
   }
-  function draw$5(context, scene, bounds) {
+  function draw(context, scene, bounds) {
     visit(scene, item => {
       var opacity = item.opacity == null ? 1 : item.opacity,
         p,
@@ -11714,7 +23485,7 @@
     var p = anchorPoint(item),
       ax = p.x1,
       ay = p.y1,
-      b = bound(tempBounds$1, item, 1),
+      b = bound(tempBounds, item, 1),
       a = -item.angle * DegToRad,
       cos = Math.cos(a),
       sin = Math.sin(a),
@@ -11723,7 +23494,7 @@
     return b.contains(px, py);
   }
   function intersectText(item, box) {
-    const p = bound(tempBounds$1, item, 2);
+    const p = bound(tempBounds, item, 2);
     return intersectBoxLine(box, p[0], p[1], p[2], p[3]) || intersectBoxLine(box, p[0], p[1], p[4], p[5]) || intersectBoxLine(box, p[4], p[5], p[6], p[7]) || intersectBoxLine(box, p[2], p[3], p[6], p[7]);
   }
   var text = {
@@ -11732,17 +23503,17 @@
     nested: false,
     attr: attr,
     bound: bound,
-    draw: draw$5,
+    draw: draw,
     pick: pick$1(hit),
     isect: intersectText
   };
   var trail = markMultiItemPath('trail', trail$1, pickTrail);
   var Marks = {
-    arc: arc$2,
-    area: area$2,
+    arc: arc,
+    area: area,
     group: group,
     image: image,
-    line: line$2,
+    line: line,
     path: path$2,
     rect: rect,
     rule: rule$1,
@@ -11751,7 +23522,7 @@
     text: text,
     trail: trail
   };
-  function boundItem$1(item, func, opt) {
+  function boundItem(item, func, opt) {
     var type = Marks[item.mark.marktype],
       bound = func || type.bound;
     if (type.nested) item = item.mark;
@@ -11777,14 +23548,14 @@
         DUMMY.mark = mark;
         item = DUMMY;
       }
-      b = boundItem$1(item, bound, opt);
+      b = boundItem(item, bound, opt);
       bounds = bounds && bounds.union(b) || b;
       return bounds;
     }
     bounds = bounds || mark.bounds && mark.bounds.clear() || new Bounds();
     if (hasItems) {
       for (i = 0, n = items.length; i < n; ++i) {
-        bounds.union(boundItem$1(items[i], bound, opt));
+        bounds.union(boundItem(items[i], bound, opt));
       }
     }
     return mark.bounds = bounds;
@@ -13990,13 +25761,13 @@
   const Hybrid = 'hybrid';
   const PNG = 'png';
   const SVG = 'svg';
-  const None$1 = 'none';
+  const None = 'none';
   const RenderType = {
     Canvas: Canvas,
     PNG: PNG,
     SVG: SVG,
     Hybrid: Hybrid,
-    None: None$1
+    None: None
   };
   const modules = {};
   modules[Canvas] = modules[PNG] = {
@@ -14014,7 +25785,7 @@
     headless: HybridRenderer,
     handler: HybridHandler
   };
-  modules[None$1] = {};
+  modules[None] = {};
   function renderModule(name, _) {
     name = String(name || '').toLowerCase();
     if (arguments.length > 1) {
@@ -14024,7 +25795,7 @@
       return modules[name];
     }
   }
-  function intersect$2(scene, bounds, filter) {
+  function intersect$1(scene, bounds, filter) {
     const hits = [],
       // intersection results
       box = new Bounds().union(bounds),
@@ -14122,6929 +25893,6 @@
     resetSVGClipId();
     resetSVGGradientId();
   }
-
-  const Top$1 = 'top';
-  const Left$1 = 'left';
-  const Right$1 = 'right';
-  const Bottom$1 = 'bottom';
-  const TopLeft = 'top-left';
-  const TopRight = 'top-right';
-  const BottomLeft = 'bottom-left';
-  const BottomRight = 'bottom-right';
-  const Start$1 = 'start';
-  const Middle$1 = 'middle';
-  const End$1 = 'end';
-  const X = 'x';
-  const Y = 'y';
-  const Group = 'group';
-  const AxisRole$1 = 'axis';
-  const TitleRole$1 = 'title';
-  const FrameRole$1 = 'frame';
-  const ScopeRole$1 = 'scope';
-  const LegendRole$1 = 'legend';
-  const RowHeader = 'row-header';
-  const RowFooter = 'row-footer';
-  const RowTitle = 'row-title';
-  const ColHeader = 'column-header';
-  const ColFooter = 'column-footer';
-  const ColTitle = 'column-title';
-  const Padding$1 = 'padding';
-  const Symbols$1 = 'symbol';
-  const Fit = 'fit';
-  const FitX = 'fit-x';
-  const FitY = 'fit-y';
-  const Pad = 'pad';
-  const None = 'none';
-  const All = 'all';
-  const Each = 'each';
-  const Flush = 'flush';
-  const Column = 'column';
-  const Row = 'row';
-
-  /**
-   * Calculate bounding boxes for scenegraph items.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.mark - The scenegraph mark instance to bound.
-   */
-  function Bound$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(Bound$1, Transform, {
-    transform(_, pulse) {
-      const view = pulse.dataflow,
-        mark = _.mark,
-        type = mark.marktype,
-        entry = Marks[type],
-        bound = entry.bound;
-      let markBounds = mark.bounds,
-        rebound;
-      if (entry.nested) {
-        // multi-item marks have a single bounds instance
-        if (mark.items.length) view.dirty(mark.items[0]);
-        markBounds = boundItem(mark, bound);
-        mark.items.forEach(item => {
-          item.bounds.clear().union(markBounds);
-        });
-      } else if (type === Group || _.modified()) {
-        // operator parameters modified -> re-bound all items
-        // updates group bounds in response to modified group content
-        pulse.visit(pulse.MOD, item => view.dirty(item));
-        markBounds.clear();
-        mark.items.forEach(item => markBounds.union(boundItem(item, bound)));
-
-        // force reflow for axes/legends/titles to propagate any layout changes
-        switch (mark.role) {
-          case AxisRole$1:
-          case LegendRole$1:
-          case TitleRole$1:
-            pulse.reflow();
-        }
-      } else {
-        // incrementally update bounds, re-bound mark as needed
-        rebound = pulse.changed(pulse.REM);
-        pulse.visit(pulse.ADD, item => {
-          markBounds.union(boundItem(item, bound));
-        });
-        pulse.visit(pulse.MOD, item => {
-          rebound = rebound || markBounds.alignsWith(item.bounds);
-          view.dirty(item);
-          markBounds.union(boundItem(item, bound));
-        });
-        if (rebound) {
-          markBounds.clear();
-          mark.items.forEach(item => markBounds.union(item.bounds));
-        }
-      }
-
-      // ensure mark bounds do not exceed any clipping region
-      boundClip(mark);
-      return pulse.modifies('bounds');
-    }
-  });
-  function boundItem(item, bound, opt) {
-    return bound(item.bounds.clear(), item, opt);
-  }
-  const COUNTER_NAME = ':vega_identifier:';
-
-  /**
-   * Adds a unique identifier to all added tuples.
-   * This transform creates a new signal that serves as an id counter.
-   * As a result, the id counter is shared across all instances of this
-   * transform, generating unique ids across multiple data streams. In
-   * addition, this signal value can be included in a snapshot of the
-   * dataflow state, enabling correct resumption of id allocation.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {string} params.as - The field name for the generated identifier.
-   */
-  function Identifier$1(params) {
-    Transform.call(this, 0, params);
-  }
-  Identifier$1.Definition = {
-    'type': 'Identifier',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'as',
-      'type': 'string',
-      'required': true
-    }]
-  };
-  inherits(Identifier$1, Transform, {
-    transform(_, pulse) {
-      const counter = getCounter(pulse.dataflow),
-        as = _.as;
-      let id = counter.value;
-      pulse.visit(pulse.ADD, t => t[as] = t[as] || ++id);
-      counter.set(this.value = id);
-      return pulse;
-    }
-  });
-  function getCounter(view) {
-    return view._signals[COUNTER_NAME] || (view._signals[COUNTER_NAME] = view.add(0));
-  }
-
-  /**
-   * Bind scenegraph items to a scenegraph mark instance.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.markdef - The mark definition for creating the mark.
-   *   This is an object of legal scenegraph mark properties which *must* include
-   *   the 'marktype' property.
-   */
-  function Mark$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(Mark$1, Transform, {
-    transform(_, pulse) {
-      let mark = this.value;
-
-      // acquire mark on first invocation, bind context and group
-      if (!mark) {
-        mark = pulse.dataflow.scenegraph().mark(_.markdef, lookup$1$1(_), _.index);
-        mark.group.context = _.context;
-        if (!_.context.group) _.context.group = mark.group;
-        mark.source = this.source; // point to upstream collector
-        mark.clip = _.clip;
-        mark.interactive = _.interactive;
-        this.value = mark;
-      }
-
-      // initialize entering items
-      const Init = mark.marktype === Group ? GroupItem : Item;
-      pulse.visit(pulse.ADD, item => Init.call(item, mark));
-
-      // update clipping and/or interactive status
-      if (_.modified('clip') || _.modified('interactive')) {
-        mark.clip = _.clip;
-        mark.interactive = !!_.interactive;
-        mark.zdirty = true; // force scenegraph re-eval
-        pulse.reflow();
-      }
-
-      // bind items array to scenegraph mark
-      mark.items = pulse.source;
-      return pulse;
-    }
-  });
-  function lookup$1$1(_) {
-    const g = _.groups,
-      p = _.parent;
-    return g && g.size === 1 ? g.get(Object.keys(g.object)[0]) : g && p ? g.lookup(p) : null;
-  }
-
-  /**
-   * Analyze items for overlap, changing opacity to hide items with
-   * overlapping bounding boxes. This transform will preserve at least
-   * two items (e.g., first and last) even if overlap persists.
-   * @param {object} params - The parameters for this operator.
-   * @param {function(*,*): number} [params.sort] - A comparator
-   *   function for sorting items.
-   * @param {object} [params.method] - The overlap removal method to apply.
-   *   One of 'parity' (default, hide every other item until there is no
-   *   more overlap) or 'greedy' (sequentially scan and hide and items that
-   *   overlap with the last visible item).
-   * @param {object} [params.boundScale] - A scale whose range should be used
-   *   to bound the items. Items exceeding the bounds of the scale range
-   *   will be treated as overlapping. If null or undefined, no bounds check
-   *   will be applied.
-   * @param {object} [params.boundOrient] - The orientation of the scale
-   *   (top, bottom, left, or right) used to bound items. This parameter is
-   *   ignored if boundScale is null or undefined.
-   * @param {object} [params.boundTolerance] - The tolerance in pixels for
-   *   bound inclusion testing (default 1). This specifies by how many pixels
-   *   an item's bounds may exceed the scale range bounds and not be culled.
-   * @constructor
-   */
-  function Overlap$1(params) {
-    Transform.call(this, null, params);
-  }
-  const methods = {
-    parity: items => items.filter((item, i) => i % 2 ? item.opacity = 0 : 1),
-    greedy: (items, sep) => {
-      let a;
-      return items.filter((b, i) => !i || !intersect$1(a.bounds, b.bounds, sep) ? (a = b, 1) : b.opacity = 0);
-    }
-  };
-
-  // compute bounding box intersection
-  // including padding pixels of separation
-  const intersect$1 = (a, b, sep) => sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
-  const hasOverlap = (items, pad) => {
-    for (var i = 1, n = items.length, a = items[0].bounds, b; i < n; a = b, ++i) {
-      if (intersect$1(a, b = items[i].bounds, pad)) return true;
-    }
-  };
-  const hasBounds = item => {
-    const b = item.bounds;
-    return b.width() > 1 && b.height() > 1;
-  };
-  const boundTest = (scale, orient, tolerance) => {
-    var range = scale.range(),
-      b = new Bounds();
-    if (orient === Top$1 || orient === Bottom$1) {
-      b.set(range[0], -Infinity, range[1], +Infinity);
-    } else {
-      b.set(-Infinity, range[0], +Infinity, range[1]);
-    }
-    b.expand(tolerance || 1);
-    return item => b.encloses(item.bounds);
-  };
-
-  // reset all items to be fully opaque
-  const reset = source => {
-    source.forEach(item => item.opacity = 1);
-    return source;
-  };
-
-  // add all tuples to mod, fork pulse if parameters were modified
-  // fork prevents cross-stream tuple pollution (e.g., pulse from scale)
-  const reflow = (pulse, _) => pulse.reflow(_.modified()).modifies('opacity');
-  inherits(Overlap$1, Transform, {
-    transform(_, pulse) {
-      const reduce = methods[_.method] || methods.parity,
-        sep = _.separation || 0;
-      let source = pulse.materialize(pulse.SOURCE).source,
-        items,
-        test;
-      if (!source || !source.length) return;
-      if (!_.method) {
-        // early exit if method is falsy
-        if (_.modified('method')) {
-          reset(source);
-          pulse = reflow(pulse, _);
-        }
-        return pulse;
-      }
-
-      // skip labels with no content
-      source = source.filter(hasBounds);
-
-      // early exit, nothing to do
-      if (!source.length) return;
-      if (_.sort) {
-        source = source.slice().sort(_.sort);
-      }
-      items = reset(source);
-      pulse = reflow(pulse, _);
-      if (items.length >= 3 && hasOverlap(items, sep)) {
-        do {
-          items = reduce(items, sep);
-        } while (items.length >= 3 && hasOverlap(items, sep));
-        if (items.length < 3 && !peek$1(source).opacity) {
-          if (items.length > 1) peek$1(items).opacity = 0;
-          peek$1(source).opacity = 1;
-        }
-      }
-      if (_.boundScale && _.boundTolerance >= 0) {
-        test = boundTest(_.boundScale, _.boundOrient, +_.boundTolerance);
-        source.forEach(item => {
-          if (!test(item)) item.opacity = 0;
-        });
-      }
-
-      // re-calculate mark bounds
-      const bounds = items[0].mark.bounds.clear();
-      source.forEach(item => {
-        if (item.opacity) bounds.union(item.bounds);
-      });
-      return pulse;
-    }
-  });
-
-  /**
-   * Queue modified scenegraph items for rendering.
-   * @constructor
-   */
-  function Render$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(Render$1, Transform, {
-    transform(_, pulse) {
-      const view = pulse.dataflow;
-      pulse.visit(pulse.ALL, item => view.dirty(item));
-
-      // set z-index dirty flag as needed
-      if (pulse.fields && pulse.fields['zindex']) {
-        const item = pulse.source && pulse.source[0];
-        if (item) item.mark.zdirty = true;
-      }
-    }
-  });
-  const tempBounds = new Bounds();
-  function set$1(item, property, value) {
-    return item[property] === value ? 0 : (item[property] = value, 1);
-  }
-  function isYAxis(mark) {
-    var orient = mark.items[0].orient;
-    return orient === Left$1 || orient === Right$1;
-  }
-  function axisIndices(datum) {
-    let index = +datum.grid;
-    return [datum.ticks ? index++ : -1,
-    // ticks index
-    datum.labels ? index++ : -1,
-    // labels index
-    index + +datum.domain // title index
-    ];
-  }
-
-  function axisLayout(view, axis, width, height) {
-    var item = axis.items[0],
-      datum = item.datum,
-      delta = item.translate != null ? item.translate : 0.5,
-      orient = item.orient,
-      indices = axisIndices(datum),
-      range = item.range,
-      offset = item.offset,
-      position = item.position,
-      minExtent = item.minExtent,
-      maxExtent = item.maxExtent,
-      title = datum.title && item.items[indices[2]].items[0],
-      titlePadding = item.titlePadding,
-      bounds = item.bounds,
-      dl = title && multiLineOffset(title),
-      x = 0,
-      y = 0,
-      i,
-      s;
-    tempBounds.clear().union(bounds);
-    bounds.clear();
-    if ((i = indices[0]) > -1) bounds.union(item.items[i].bounds);
-    if ((i = indices[1]) > -1) bounds.union(item.items[i].bounds);
-
-    // position axis group and title
-    switch (orient) {
-      case Top$1:
-        x = position || 0;
-        y = -offset;
-        s = Math.max(minExtent, Math.min(maxExtent, -bounds.y1));
-        bounds.add(0, -s).add(range, 0);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 0, -1, bounds);
-        break;
-      case Left$1:
-        x = -offset;
-        y = position || 0;
-        s = Math.max(minExtent, Math.min(maxExtent, -bounds.x1));
-        bounds.add(-s, 0).add(0, range);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, -1, bounds);
-        break;
-      case Right$1:
-        x = width + offset;
-        y = position || 0;
-        s = Math.max(minExtent, Math.min(maxExtent, bounds.x2));
-        bounds.add(0, 0).add(s, range);
-        if (title) axisTitleLayout(view, title, s, titlePadding, dl, 1, 1, bounds);
-        break;
-      case Bottom$1:
-        x = position || 0;
-        y = height + offset;
-        s = Math.max(minExtent, Math.min(maxExtent, bounds.y2));
-        bounds.add(0, 0).add(range, s);
-        if (title) axisTitleLayout(view, title, s, titlePadding, 0, 0, 1, bounds);
-        break;
-      default:
-        x = item.x;
-        y = item.y;
-    }
-
-    // update bounds
-    boundStroke(bounds.translate(x, y), item);
-    if (set$1(item, 'x', x + delta) | set$1(item, 'y', y + delta)) {
-      item.bounds = tempBounds;
-      view.dirty(item);
-      item.bounds = bounds;
-      view.dirty(item);
-    }
-    return item.mark.bounds.clear().union(bounds);
-  }
-  function axisTitleLayout(view, title, offset, pad, dl, isYAxis, sign, bounds) {
-    const b = title.bounds;
-    if (title.auto) {
-      const v = sign * (offset + dl + pad);
-      let dx = 0,
-        dy = 0;
-      view.dirty(title);
-      isYAxis ? dx = (title.x || 0) - (title.x = v) : dy = (title.y || 0) - (title.y = v);
-      title.mark.bounds.clear().union(b.translate(-dx, -dy));
-      view.dirty(title);
-    }
-    bounds.union(b);
-  }
-
-  // aggregation functions for grid margin determination
-  const min = (a, b) => Math.floor(Math.min(a, b));
-  const max = (a, b) => Math.ceil(Math.max(a, b));
-  function gridLayoutGroups(group) {
-    var groups = group.items,
-      n = groups.length,
-      i = 0,
-      mark,
-      items;
-    const views = {
-      marks: [],
-      rowheaders: [],
-      rowfooters: [],
-      colheaders: [],
-      colfooters: [],
-      rowtitle: null,
-      coltitle: null
-    };
-
-    // layout axes, gather legends, collect bounds
-    for (; i < n; ++i) {
-      mark = groups[i];
-      items = mark.items;
-      if (mark.marktype === Group) {
-        switch (mark.role) {
-          case AxisRole$1:
-          case LegendRole$1:
-          case TitleRole$1:
-            break;
-          case RowHeader:
-            views.rowheaders.push(...items);
-            break;
-          case RowFooter:
-            views.rowfooters.push(...items);
-            break;
-          case ColHeader:
-            views.colheaders.push(...items);
-            break;
-          case ColFooter:
-            views.colfooters.push(...items);
-            break;
-          case RowTitle:
-            views.rowtitle = items[0];
-            break;
-          case ColTitle:
-            views.coltitle = items[0];
-            break;
-          default:
-            views.marks.push(...items);
-        }
-      }
-    }
-    return views;
-  }
-  function bboxFlush(item) {
-    return new Bounds().set(0, 0, item.width || 0, item.height || 0);
-  }
-  function bboxFull(item) {
-    const b = item.bounds.clone();
-    return b.empty() ? b.set(0, 0, 0, 0) : b.translate(-(item.x || 0), -(item.y || 0));
-  }
-  function get(opt, key, d) {
-    const v = isObject(opt) ? opt[key] : opt;
-    return v != null ? v : d !== undefined ? d : 0;
-  }
-  function offsetValue$1(v) {
-    return v < 0 ? Math.ceil(-v) : 0;
-  }
-  function gridLayout(view, groups, opt) {
-    var dirty = !opt.nodirty,
-      bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
-      bounds = tempBounds.set(0, 0, 0, 0),
-      alignCol = get(opt.align, Column),
-      alignRow = get(opt.align, Row),
-      padCol = get(opt.padding, Column),
-      padRow = get(opt.padding, Row),
-      ncols = opt.columns || groups.length,
-      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
-      n = groups.length,
-      xOffset = Array(n),
-      xExtent = Array(ncols),
-      xMax = 0,
-      yOffset = Array(n),
-      yExtent = Array(nrows),
-      yMax = 0,
-      dx = Array(n),
-      dy = Array(n),
-      boxes = Array(n),
-      m,
-      i,
-      c,
-      r,
-      b,
-      g,
-      px,
-      py,
-      x,
-      y,
-      offset;
-    for (i = 0; i < ncols; ++i) xExtent[i] = 0;
-    for (i = 0; i < nrows; ++i) yExtent[i] = 0;
-
-    // determine offsets for each group
-    for (i = 0; i < n; ++i) {
-      g = groups[i];
-      b = boxes[i] = bbox(g);
-      g.x = g.x || 0;
-      dx[i] = 0;
-      g.y = g.y || 0;
-      dy[i] = 0;
-      c = i % ncols;
-      r = ~~(i / ncols);
-      xMax = Math.max(xMax, px = Math.ceil(b.x2));
-      yMax = Math.max(yMax, py = Math.ceil(b.y2));
-      xExtent[c] = Math.max(xExtent[c], px);
-      yExtent[r] = Math.max(yExtent[r], py);
-      xOffset[i] = padCol + offsetValue$1(b.x1);
-      yOffset[i] = padRow + offsetValue$1(b.y1);
-      if (dirty) view.dirty(groups[i]);
-    }
-
-    // set initial alignment offsets
-    for (i = 0; i < n; ++i) {
-      if (i % ncols === 0) xOffset[i] = 0;
-      if (i < ncols) yOffset[i] = 0;
-    }
-
-    // enforce column alignment constraints
-    if (alignCol === Each) {
-      for (c = 1; c < ncols; ++c) {
-        for (offset = 0, i = c; i < n; i += ncols) {
-          if (offset < xOffset[i]) offset = xOffset[i];
-        }
-        for (i = c; i < n; i += ncols) {
-          xOffset[i] = offset + xExtent[c - 1];
-        }
-      }
-    } else if (alignCol === All) {
-      for (offset = 0, i = 0; i < n; ++i) {
-        if (i % ncols && offset < xOffset[i]) offset = xOffset[i];
-      }
-      for (i = 0; i < n; ++i) {
-        if (i % ncols) xOffset[i] = offset + xMax;
-      }
-    } else {
-      for (alignCol = false, c = 1; c < ncols; ++c) {
-        for (i = c; i < n; i += ncols) {
-          xOffset[i] += xExtent[c - 1];
-        }
-      }
-    }
-
-    // enforce row alignment constraints
-    if (alignRow === Each) {
-      for (r = 1; r < nrows; ++r) {
-        for (offset = 0, i = r * ncols, m = i + ncols; i < m; ++i) {
-          if (offset < yOffset[i]) offset = yOffset[i];
-        }
-        for (i = r * ncols; i < m; ++i) {
-          yOffset[i] = offset + yExtent[r - 1];
-        }
-      }
-    } else if (alignRow === All) {
-      for (offset = 0, i = ncols; i < n; ++i) {
-        if (offset < yOffset[i]) offset = yOffset[i];
-      }
-      for (i = ncols; i < n; ++i) {
-        yOffset[i] = offset + yMax;
-      }
-    } else {
-      for (alignRow = false, r = 1; r < nrows; ++r) {
-        for (i = r * ncols, m = i + ncols; i < m; ++i) {
-          yOffset[i] += yExtent[r - 1];
-        }
-      }
-    }
-
-    // perform horizontal grid layout
-    for (x = 0, i = 0; i < n; ++i) {
-      x = xOffset[i] + (i % ncols ? x : 0);
-      dx[i] += x - groups[i].x;
-    }
-
-    // perform vertical grid layout
-    for (c = 0; c < ncols; ++c) {
-      for (y = 0, i = c; i < n; i += ncols) {
-        y += yOffset[i];
-        dy[i] += y - groups[i].y;
-      }
-    }
-
-    // perform horizontal centering
-    if (alignCol && get(opt.center, Column) && nrows > 1) {
-      for (i = 0; i < n; ++i) {
-        b = alignCol === All ? xMax : xExtent[i % ncols];
-        x = b - boxes[i].x2 - groups[i].x - dx[i];
-        if (x > 0) dx[i] += x / 2;
-      }
-    }
-
-    // perform vertical centering
-    if (alignRow && get(opt.center, Row) && ncols !== 1) {
-      for (i = 0; i < n; ++i) {
-        b = alignRow === All ? yMax : yExtent[~~(i / ncols)];
-        y = b - boxes[i].y2 - groups[i].y - dy[i];
-        if (y > 0) dy[i] += y / 2;
-      }
-    }
-
-    // position grid relative to anchor
-    for (i = 0; i < n; ++i) {
-      bounds.union(boxes[i].translate(dx[i], dy[i]));
-    }
-    x = get(opt.anchor, X);
-    y = get(opt.anchor, Y);
-    switch (get(opt.anchor, Column)) {
-      case End$1:
-        x -= bounds.width();
-        break;
-      case Middle$1:
-        x -= bounds.width() / 2;
-    }
-    switch (get(opt.anchor, Row)) {
-      case End$1:
-        y -= bounds.height();
-        break;
-      case Middle$1:
-        y -= bounds.height() / 2;
-    }
-    x = Math.round(x);
-    y = Math.round(y);
-
-    // update mark positions, bounds, dirty
-    bounds.clear();
-    for (i = 0; i < n; ++i) {
-      groups[i].mark.bounds.clear();
-    }
-    for (i = 0; i < n; ++i) {
-      g = groups[i];
-      g.x += dx[i] += x;
-      g.y += dy[i] += y;
-      bounds.union(g.mark.bounds.union(g.bounds.translate(dx[i], dy[i])));
-      if (dirty) view.dirty(g);
-    }
-    return bounds;
-  }
-  function trellisLayout(view, group, opt) {
-    var views = gridLayoutGroups(group),
-      groups = views.marks,
-      bbox = opt.bounds === Flush ? boundFlush : boundFull,
-      off = opt.offset,
-      ncols = opt.columns || groups.length,
-      nrows = ncols <= 0 ? 1 : Math.ceil(groups.length / ncols),
-      cells = nrows * ncols,
-      x,
-      y,
-      x2,
-      y2,
-      anchor,
-      band,
-      offset;
-
-    // -- initial grid layout
-    const bounds = gridLayout(view, groups, opt);
-    if (bounds.empty()) bounds.set(0, 0, 0, 0); // empty grid
-
-    // -- layout grid headers and footers --
-
-    // perform row header layout
-    if (views.rowheaders) {
-      band = get(opt.headerBand, Row, null);
-      x = layoutHeaders(view, views.rowheaders, groups, ncols, nrows, -get(off, 'rowHeader'), min, 0, bbox, 'x1', 0, ncols, 1, band);
-    }
-
-    // perform column header layout
-    if (views.colheaders) {
-      band = get(opt.headerBand, Column, null);
-      y = layoutHeaders(view, views.colheaders, groups, ncols, ncols, -get(off, 'columnHeader'), min, 1, bbox, 'y1', 0, 1, ncols, band);
-    }
-
-    // perform row footer layout
-    if (views.rowfooters) {
-      band = get(opt.footerBand, Row, null);
-      x2 = layoutHeaders(view, views.rowfooters, groups, ncols, nrows, get(off, 'rowFooter'), max, 0, bbox, 'x2', ncols - 1, ncols, 1, band);
-    }
-
-    // perform column footer layout
-    if (views.colfooters) {
-      band = get(opt.footerBand, Column, null);
-      y2 = layoutHeaders(view, views.colfooters, groups, ncols, ncols, get(off, 'columnFooter'), max, 1, bbox, 'y2', cells - ncols, 1, ncols, band);
-    }
-
-    // perform row title layout
-    if (views.rowtitle) {
-      anchor = get(opt.titleAnchor, Row);
-      offset = get(off, 'rowTitle');
-      offset = anchor === End$1 ? x2 + offset : x - offset;
-      band = get(opt.titleBand, Row, 0.5);
-      layoutTitle(view, views.rowtitle, offset, 0, bounds, band);
-    }
-
-    // perform column title layout
-    if (views.coltitle) {
-      anchor = get(opt.titleAnchor, Column);
-      offset = get(off, 'columnTitle');
-      offset = anchor === End$1 ? y2 + offset : y - offset;
-      band = get(opt.titleBand, Column, 0.5);
-      layoutTitle(view, views.coltitle, offset, 1, bounds, band);
-    }
-  }
-  function boundFlush(item, field) {
-    return field === 'x1' ? item.x || 0 : field === 'y1' ? item.y || 0 : field === 'x2' ? (item.x || 0) + (item.width || 0) : field === 'y2' ? (item.y || 0) + (item.height || 0) : undefined;
-  }
-  function boundFull(item, field) {
-    return item.bounds[field];
-  }
-  function layoutHeaders(view, headers, groups, ncols, limit, offset, agg, isX, bound, bf, start, stride, back, band) {
-    var n = groups.length,
-      init = 0,
-      edge = 0,
-      i,
-      j,
-      k,
-      m,
-      b,
-      h,
-      g,
-      x,
-      y;
-
-    // if no groups, early exit and return 0
-    if (!n) return init;
-
-    // compute margin
-    for (i = start; i < n; i += stride) {
-      if (groups[i]) init = agg(init, bound(groups[i], bf));
-    }
-
-    // if no headers, return margin calculation
-    if (!headers.length) return init;
-
-    // check if number of headers exceeds number of rows or columns
-    if (headers.length > limit) {
-      view.warn('Grid headers exceed limit: ' + limit);
-      headers = headers.slice(0, limit);
-    }
-
-    // apply offset
-    init += offset;
-
-    // clear mark bounds for all headers
-    for (j = 0, m = headers.length; j < m; ++j) {
-      view.dirty(headers[j]);
-      headers[j].mark.bounds.clear();
-    }
-
-    // layout each header
-    for (i = start, j = 0, m = headers.length; j < m; ++j, i += stride) {
-      h = headers[j];
-      b = h.mark.bounds;
-
-      // search for nearest group to align to
-      // necessary if table has empty cells
-      for (k = i; k >= 0 && (g = groups[k]) == null; k -= back);
-
-      // assign coordinates and update bounds
-      if (isX) {
-        x = band == null ? g.x : Math.round(g.bounds.x1 + band * g.bounds.width());
-        y = init;
-      } else {
-        x = init;
-        y = band == null ? g.y : Math.round(g.bounds.y1 + band * g.bounds.height());
-      }
-      b.union(h.bounds.translate(x - (h.x || 0), y - (h.y || 0)));
-      h.x = x;
-      h.y = y;
-      view.dirty(h);
-
-      // update current edge of layout bounds
-      edge = agg(edge, b[bf]);
-    }
-    return edge;
-  }
-  function layoutTitle(view, g, offset, isX, bounds, band) {
-    if (!g) return;
-    view.dirty(g);
-
-    // compute title coordinates
-    var x = offset,
-      y = offset;
-    isX ? x = Math.round(bounds.x1 + band * bounds.width()) : y = Math.round(bounds.y1 + band * bounds.height());
-
-    // assign coordinates and update bounds
-    g.bounds.translate(x - (g.x || 0), y - (g.y || 0));
-    g.mark.bounds.clear().union(g.bounds);
-    g.x = x;
-    g.y = y;
-
-    // queue title for redraw
-    view.dirty(g);
-  }
-
-  // utility for looking up legend layout configuration
-  function lookup$3(config, orient) {
-    const opt = config[orient] || {};
-    return (key, d) => opt[key] != null ? opt[key] : config[key] != null ? config[key] : d;
-  }
-
-  // if legends specify offset directly, use the maximum specified value
-  function offsets(legends, value) {
-    let max = -Infinity;
-    legends.forEach(item => {
-      if (item.offset != null) max = Math.max(max, item.offset);
-    });
-    return max > -Infinity ? max : value;
-  }
-  function legendParams(g, orient, config, xb, yb, w, h) {
-    const _ = lookup$3(config, orient),
-      offset = offsets(g, _('offset', 0)),
-      anchor = _('anchor', Start$1),
-      mult = anchor === End$1 ? 1 : anchor === Middle$1 ? 0.5 : 0;
-    const p = {
-      align: Each,
-      bounds: _('bounds', Flush),
-      columns: _('direction') === 'vertical' ? 1 : g.length,
-      padding: _('margin', 8),
-      center: _('center'),
-      nodirty: true
-    };
-    switch (orient) {
-      case Left$1:
-        p.anchor = {
-          x: Math.floor(xb.x1) - offset,
-          column: End$1,
-          y: mult * (h || xb.height() + 2 * xb.y1),
-          row: anchor
-        };
-        break;
-      case Right$1:
-        p.anchor = {
-          x: Math.ceil(xb.x2) + offset,
-          y: mult * (h || xb.height() + 2 * xb.y1),
-          row: anchor
-        };
-        break;
-      case Top$1:
-        p.anchor = {
-          y: Math.floor(yb.y1) - offset,
-          row: End$1,
-          x: mult * (w || yb.width() + 2 * yb.x1),
-          column: anchor
-        };
-        break;
-      case Bottom$1:
-        p.anchor = {
-          y: Math.ceil(yb.y2) + offset,
-          x: mult * (w || yb.width() + 2 * yb.x1),
-          column: anchor
-        };
-        break;
-      case TopLeft:
-        p.anchor = {
-          x: offset,
-          y: offset
-        };
-        break;
-      case TopRight:
-        p.anchor = {
-          x: w - offset,
-          y: offset,
-          column: End$1
-        };
-        break;
-      case BottomLeft:
-        p.anchor = {
-          x: offset,
-          y: h - offset,
-          row: End$1
-        };
-        break;
-      case BottomRight:
-        p.anchor = {
-          x: w - offset,
-          y: h - offset,
-          column: End$1,
-          row: End$1
-        };
-        break;
-    }
-    return p;
-  }
-  function legendLayout(view, legend) {
-    var item = legend.items[0],
-      datum = item.datum,
-      orient = item.orient,
-      bounds = item.bounds,
-      x = item.x,
-      y = item.y,
-      w,
-      h;
-
-    // cache current bounds for later comparison
-    item._bounds ? item._bounds.clear().union(bounds) : item._bounds = bounds.clone();
-    bounds.clear();
-
-    // adjust legend to accommodate padding and title
-    legendGroupLayout(view, item, item.items[0].items[0]);
-
-    // aggregate bounds to determine size, and include origin
-    bounds = legendBounds(item, bounds);
-    w = 2 * item.padding;
-    h = 2 * item.padding;
-    if (!bounds.empty()) {
-      w = Math.ceil(bounds.width() + w);
-      h = Math.ceil(bounds.height() + h);
-    }
-    if (datum.type === Symbols$1) {
-      legendEntryLayout(item.items[0].items[0].items[0].items);
-    }
-    if (orient !== None) {
-      item.x = x = 0;
-      item.y = y = 0;
-    }
-    item.width = w;
-    item.height = h;
-    boundStroke(bounds.set(x, y, x + w, y + h), item);
-    item.mark.bounds.clear().union(bounds);
-    return item;
-  }
-  function legendBounds(item, b) {
-    // aggregate item bounds
-    item.items.forEach(_ => b.union(_.bounds));
-
-    // anchor to legend origin
-    b.x1 = item.padding;
-    b.y1 = item.padding;
-    return b;
-  }
-  function legendGroupLayout(view, item, entry) {
-    var pad = item.padding,
-      ex = pad - entry.x,
-      ey = pad - entry.y;
-    if (!item.datum.title) {
-      if (ex || ey) translate(view, entry, ex, ey);
-    } else {
-      var title = item.items[1].items[0],
-        anchor = title.anchor,
-        tpad = item.titlePadding || 0,
-        tx = pad - title.x,
-        ty = pad - title.y;
-      switch (title.orient) {
-        case Left$1:
-          ex += Math.ceil(title.bounds.width()) + tpad;
-          break;
-        case Right$1:
-        case Bottom$1:
-          break;
-        default:
-          ey += title.bounds.height() + tpad;
-      }
-      if (ex || ey) translate(view, entry, ex, ey);
-      switch (title.orient) {
-        case Left$1:
-          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
-          break;
-        case Right$1:
-          tx += legendTitleOffset(item, entry, title, End$1, 0, 0) + tpad;
-          ty += legendTitleOffset(item, entry, title, anchor, 1, 1);
-          break;
-        case Bottom$1:
-          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
-          ty += legendTitleOffset(item, entry, title, End$1, -1, 0, 1) + tpad;
-          break;
-        default:
-          tx += legendTitleOffset(item, entry, title, anchor, 0, 0);
-      }
-      if (tx || ty) translate(view, title, tx, ty);
-
-      // translate legend if title pushes into negative coordinates
-      if ((tx = Math.round(title.bounds.x1 - pad)) < 0) {
-        translate(view, entry, -tx, 0);
-        translate(view, title, -tx, 0);
-      }
-    }
-  }
-  function legendTitleOffset(item, entry, title, anchor, y, lr, noBar) {
-    const grad = item.datum.type !== 'symbol',
-      vgrad = title.datum.vgrad,
-      e = grad && (lr || !vgrad) && !noBar ? entry.items[0] : entry,
-      s = e.bounds[y ? 'y2' : 'x2'] - item.padding,
-      u = vgrad && lr ? s : 0,
-      v = vgrad && lr ? 0 : s,
-      o = y <= 0 ? 0 : multiLineOffset(title);
-    return Math.round(anchor === Start$1 ? u : anchor === End$1 ? v - o : 0.5 * (s - o));
-  }
-  function translate(view, item, dx, dy) {
-    item.x += dx;
-    item.y += dy;
-    item.bounds.translate(dx, dy);
-    item.mark.bounds.translate(dx, dy);
-    view.dirty(item);
-  }
-  function legendEntryLayout(entries) {
-    // get max widths for each column
-    const widths = entries.reduce((w, g) => {
-      w[g.column] = Math.max(g.bounds.x2 - g.x, w[g.column] || 0);
-      return w;
-    }, {});
-
-    // set dimensions of legend entry groups
-    entries.forEach(g => {
-      g.width = widths[g.column];
-      g.height = g.bounds.y2 - g.y;
-    });
-  }
-  function titleLayout(view, mark, width, height, viewBounds) {
-    var group = mark.items[0],
-      frame = group.frame,
-      orient = group.orient,
-      anchor = group.anchor,
-      offset = group.offset,
-      padding = group.padding,
-      title = group.items[0].items[0],
-      subtitle = group.items[1] && group.items[1].items[0],
-      end = orient === Left$1 || orient === Right$1 ? height : width,
-      start = 0,
-      x = 0,
-      y = 0,
-      sx = 0,
-      sy = 0,
-      pos;
-    if (frame !== Group) {
-      orient === Left$1 ? (start = viewBounds.y2, end = viewBounds.y1) : orient === Right$1 ? (start = viewBounds.y1, end = viewBounds.y2) : (start = viewBounds.x1, end = viewBounds.x2);
-    } else if (orient === Left$1) {
-      start = height, end = 0;
-    }
-    pos = anchor === Start$1 ? start : anchor === End$1 ? end : (start + end) / 2;
-    if (subtitle && subtitle.text) {
-      // position subtitle
-      switch (orient) {
-        case Top$1:
-        case Bottom$1:
-          sy = title.bounds.height() + padding;
-          break;
-        case Left$1:
-          sx = title.bounds.width() + padding;
-          break;
-        case Right$1:
-          sx = -title.bounds.width() - padding;
-          break;
-      }
-      tempBounds.clear().union(subtitle.bounds);
-      tempBounds.translate(sx - (subtitle.x || 0), sy - (subtitle.y || 0));
-      if (set$1(subtitle, 'x', sx) | set$1(subtitle, 'y', sy)) {
-        view.dirty(subtitle);
-        subtitle.bounds.clear().union(tempBounds);
-        subtitle.mark.bounds.clear().union(tempBounds);
-        view.dirty(subtitle);
-      }
-      tempBounds.clear().union(subtitle.bounds);
-    } else {
-      tempBounds.clear();
-    }
-    tempBounds.union(title.bounds);
-
-    // position title group
-    switch (orient) {
-      case Top$1:
-        x = pos;
-        y = viewBounds.y1 - tempBounds.height() - offset;
-        break;
-      case Left$1:
-        x = viewBounds.x1 - tempBounds.width() - offset;
-        y = pos;
-        break;
-      case Right$1:
-        x = viewBounds.x2 + tempBounds.width() + offset;
-        y = pos;
-        break;
-      case Bottom$1:
-        x = pos;
-        y = viewBounds.y2 + offset;
-        break;
-      default:
-        x = group.x;
-        y = group.y;
-    }
-    if (set$1(group, 'x', x) | set$1(group, 'y', y)) {
-      tempBounds.translate(x, y);
-      view.dirty(group);
-      group.bounds.clear().union(tempBounds);
-      mark.bounds.clear().union(tempBounds);
-      view.dirty(group);
-    }
-    return group.bounds;
-  }
-
-  /**
-   * Layout view elements such as axes and legends.
-   * Also performs size adjustments.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.mark - Scenegraph mark of groups to layout.
-   */
-  function ViewLayout$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(ViewLayout$1, Transform, {
-    transform(_, pulse) {
-      const view = pulse.dataflow;
-      _.mark.items.forEach(group => {
-        if (_.layout) trellisLayout(view, group, _.layout);
-        layoutGroup(view, group, _);
-      });
-      return shouldReflow(_.mark.group) ? pulse.reflow() : pulse;
-    }
-  });
-  function shouldReflow(group) {
-    // We typically should reflow if layout is invoked (#2568), as child items
-    // may have resized and reflow ensures group bounds are re-calculated.
-    // However, legend entries have a special exception to avoid instability.
-    // For example, if a selected legend symbol gains a stroke on hover,
-    // we don't want to re-position subsequent elements in the legend.
-    return group && group.mark.role !== 'legend-entry';
-  }
-  function layoutGroup(view, group, _) {
-    var items = group.items,
-      width = Math.max(0, group.width || 0),
-      height = Math.max(0, group.height || 0),
-      viewBounds = new Bounds().set(0, 0, width, height),
-      xBounds = viewBounds.clone(),
-      yBounds = viewBounds.clone(),
-      legends = [],
-      title,
-      mark,
-      orient,
-      b,
-      i,
-      n;
-
-    // layout axes, gather legends, collect bounds
-    for (i = 0, n = items.length; i < n; ++i) {
-      mark = items[i];
-      switch (mark.role) {
-        case AxisRole$1:
-          b = isYAxis(mark) ? xBounds : yBounds;
-          b.union(axisLayout(view, mark, width, height));
-          break;
-        case TitleRole$1:
-          title = mark;
-          break;
-        case LegendRole$1:
-          legends.push(legendLayout(view, mark));
-          break;
-        case FrameRole$1:
-        case ScopeRole$1:
-        case RowHeader:
-        case RowFooter:
-        case RowTitle:
-        case ColHeader:
-        case ColFooter:
-        case ColTitle:
-          xBounds.union(mark.bounds);
-          yBounds.union(mark.bounds);
-          break;
-        default:
-          viewBounds.union(mark.bounds);
-      }
-    }
-
-    // layout legends, adjust viewBounds
-    if (legends.length) {
-      // group legends by orient
-      const l = {};
-      legends.forEach(item => {
-        orient = item.orient || Right$1;
-        if (orient !== None) (l[orient] || (l[orient] = [])).push(item);
-      });
-
-      // perform grid layout for each orient group
-      for (const orient in l) {
-        const g = l[orient];
-        gridLayout(view, g, legendParams(g, orient, _.legends, xBounds, yBounds, width, height));
-      }
-
-      // update view bounds
-      legends.forEach(item => {
-        const b = item.bounds;
-        if (!b.equals(item._bounds)) {
-          item.bounds = item._bounds;
-          view.dirty(item); // dirty previous location
-          item.bounds = b;
-          view.dirty(item);
-        }
-        if (_.autosize && (_.autosize.type === Fit || _.autosize.type === FitX || _.autosize.type === FitY)) {
-          // For autosize fit, incorporate the orthogonal dimension only.
-          // Legends that overrun the chart area will then be clipped;
-          // otherwise the chart area gets reduced to nothing!
-          switch (item.orient) {
-            case Left$1:
-            case Right$1:
-              viewBounds.add(b.x1, 0).add(b.x2, 0);
-              break;
-            case Top$1:
-            case Bottom$1:
-              viewBounds.add(0, b.y1).add(0, b.y2);
-          }
-        } else {
-          viewBounds.union(b);
-        }
-      });
-    }
-
-    // combine bounding boxes
-    viewBounds.union(xBounds).union(yBounds);
-
-    // layout title, adjust bounds
-    if (title) {
-      viewBounds.union(titleLayout(view, title, width, height, viewBounds));
-    }
-
-    // override aggregated view bounds if content is clipped
-    if (group.clip) {
-      viewBounds.set(0, 0, group.width || 0, group.height || 0);
-    }
-
-    // perform size adjustment
-    viewSizeLayout(view, group, viewBounds, _);
-  }
-  function viewSizeLayout(view, group, viewBounds, _) {
-    const auto = _.autosize || {},
-      type = auto.type;
-    if (view._autosize < 1 || !type) return;
-    let viewWidth = view._width,
-      viewHeight = view._height,
-      width = Math.max(0, group.width || 0),
-      left = Math.max(0, Math.ceil(-viewBounds.x1)),
-      height = Math.max(0, group.height || 0),
-      top = Math.max(0, Math.ceil(-viewBounds.y1));
-    const right = Math.max(0, Math.ceil(viewBounds.x2 - width)),
-      bottom = Math.max(0, Math.ceil(viewBounds.y2 - height));
-    if (auto.contains === Padding$1) {
-      const padding = view.padding();
-      viewWidth -= padding.left + padding.right;
-      viewHeight -= padding.top + padding.bottom;
-    }
-    if (type === None) {
-      left = 0;
-      top = 0;
-      width = viewWidth;
-      height = viewHeight;
-    } else if (type === Fit) {
-      width = Math.max(0, viewWidth - left - right);
-      height = Math.max(0, viewHeight - top - bottom);
-    } else if (type === FitX) {
-      width = Math.max(0, viewWidth - left - right);
-      viewHeight = height + top + bottom;
-    } else if (type === FitY) {
-      viewWidth = width + left + right;
-      height = Math.max(0, viewHeight - top - bottom);
-    } else if (type === Pad) {
-      viewWidth = width + left + right;
-      viewHeight = height + top + bottom;
-    }
-    view._resizeView(viewWidth, viewHeight, width, height, [left, top], auto.resize);
-  }
-
-  var vtx = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    bound: Bound$1,
-    identifier: Identifier$1,
-    mark: Mark$1,
-    overlap: Overlap$1,
-    render: Render$1,
-    viewlayout: ViewLayout$1
-  });
-
-  /**
-   * Generates axis ticks for visualizing a spatial scale.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Scale} params.scale - The scale to generate ticks for.
-   * @param {*} [params.count=10] - The approximate number of ticks, or
-   *   desired tick interval, to use.
-   * @param {Array<*>} [params.values] - The exact tick values to use.
-   *   These must be legal domain values for the provided scale.
-   *   If provided, the count argument is ignored.
-   * @param {function(*):string} [params.formatSpecifier] - A format specifier
-   *   to use in conjunction with scale.tickFormat. Legal values are
-   *   any valid d3 4.0 format specifier.
-   * @param {function(*):string} [params.format] - The format function to use.
-   *   If provided, the formatSpecifier argument is ignored.
-   */
-  function AxisTicks$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(AxisTicks$1, Transform, {
-    transform(_, pulse) {
-      if (this.value && !_.modified()) {
-        return pulse.StopPropagation;
-      }
-      var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        ticks = this.value,
-        scale = _.scale,
-        tally = _.count == null ? _.values ? _.values.length : 10 : _.count,
-        count = tickCount(scale, tally, _.minstep),
-        format = _.format || tickFormat(locale, scale, count, _.formatSpecifier, _.formatType, !!_.values),
-        values = _.values ? validTicks(scale, _.values, count) : tickValues(scale, count);
-      if (ticks) out.rem = ticks;
-      ticks = values.map((value, i) => ingest$1({
-        index: i / (values.length - 1 || 1),
-        value: value,
-        label: format(value)
-      }));
-      if (_.extra && ticks.length) {
-        // add an extra tick pegged to the initial domain value
-        // this is used to generate axes with 'binned' domains
-        ticks.push(ingest$1({
-          index: -1,
-          extra: {
-            value: ticks[0].value
-          },
-          label: ''
-        }));
-      }
-      out.source = ticks;
-      out.add = ticks;
-      this.value = ticks;
-      return out;
-    }
-  });
-
-  /**
-   * Joins a set of data elements against a set of visual items.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): object} [params.item] - An item generator function.
-   * @param {function(object): *} [params.key] - The key field associating data and visual items.
-   */
-  function DataJoin$1(params) {
-    Transform.call(this, null, params);
-  }
-  function defaultItemCreate() {
-    return ingest$1({});
-  }
-  function newMap(key) {
-    const map = fastmap().test(t => t.exit);
-    map.lookup = t => map.get(key(t));
-    return map;
-  }
-  inherits(DataJoin$1, Transform, {
-    transform(_, pulse) {
-      var df = pulse.dataflow,
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        item = _.item || defaultItemCreate,
-        key = _.key || tupleid,
-        map = this.value;
-
-      // prevent transient (e.g., hover) requests from
-      // cascading across marks derived from marks
-      if (isArray(out.encode)) {
-        out.encode = null;
-      }
-      if (map && (_.modified('key') || pulse.modified(key))) {
-        error('DataJoin does not support modified key function or fields.');
-      }
-      if (!map) {
-        pulse = pulse.addAll();
-        this.value = map = newMap(key);
-      }
-      pulse.visit(pulse.ADD, t => {
-        const k = key(t);
-        let x = map.get(k);
-        if (x) {
-          if (x.exit) {
-            map.empty--;
-            out.add.push(x);
-          } else {
-            out.mod.push(x);
-          }
-        } else {
-          x = item(t);
-          map.set(k, x);
-          out.add.push(x);
-        }
-        x.datum = t;
-        x.exit = false;
-      });
-      pulse.visit(pulse.MOD, t => {
-        const k = key(t),
-          x = map.get(k);
-        if (x) {
-          x.datum = t;
-          out.mod.push(x);
-        }
-      });
-      pulse.visit(pulse.REM, t => {
-        const k = key(t),
-          x = map.get(k);
-        if (t === x.datum && !x.exit) {
-          out.rem.push(x);
-          x.exit = true;
-          ++map.empty;
-        }
-      });
-      if (pulse.changed(pulse.ADD_MOD)) out.modifies('datum');
-      if (pulse.clean() || _.clean && map.empty > df.cleanThreshold) {
-        df.runAfter(map.clean);
-      }
-      return out;
-    }
-  });
-
-  /**
-   * Invokes encoding functions for visual items.
-   * @constructor
-   * @param {object} params - The parameters to the encoding functions. This
-   *   parameter object will be passed through to all invoked encoding functions.
-   * @param {object} [params.mod=false] - Flag indicating if tuples in the input
-   *   mod set that are unmodified by encoders should be included in the output.
-   * @param {object} param.encoders - The encoding functions
-   * @param {function(object, object): boolean} [param.encoders.update] - Update encoding set
-   * @param {function(object, object): boolean} [param.encoders.enter] - Enter encoding set
-   * @param {function(object, object): boolean} [param.encoders.exit] - Exit encoding set
-   */
-  function Encode$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(Encode$1, Transform, {
-    transform(_, pulse) {
-      var out = pulse.fork(pulse.ADD_REM),
-        fmod = _.mod || false,
-        encoders = _.encoders,
-        encode = pulse.encode;
-
-      // if an array, the encode directive includes additional sets
-      // that must be defined in order for the primary set to be invoked
-      // e.g., only run the update set if the hover set is defined
-      if (isArray(encode)) {
-        if (out.changed() || encode.every(e => encoders[e])) {
-          encode = encode[0];
-          out.encode = null; // consume targeted encode directive
-        } else {
-          return pulse.StopPropagation;
-        }
-      }
-
-      // marshall encoder functions
-      var reenter = encode === 'enter',
-        update = encoders.update || falsy,
-        enter = encoders.enter || falsy,
-        exit = encoders.exit || falsy,
-        set = (encode && !reenter ? encoders[encode] : update) || falsy;
-      if (pulse.changed(pulse.ADD)) {
-        pulse.visit(pulse.ADD, t => {
-          enter(t, _);
-          update(t, _);
-        });
-        out.modifies(enter.output);
-        out.modifies(update.output);
-        if (set !== falsy && set !== update) {
-          pulse.visit(pulse.ADD, t => {
-            set(t, _);
-          });
-          out.modifies(set.output);
-        }
-      }
-      if (pulse.changed(pulse.REM) && exit !== falsy) {
-        pulse.visit(pulse.REM, t => {
-          exit(t, _);
-        });
-        out.modifies(exit.output);
-      }
-      if (reenter || set !== falsy) {
-        const flag = pulse.MOD | (_.modified() ? pulse.REFLOW : 0);
-        if (reenter) {
-          pulse.visit(flag, t => {
-            const mod = enter(t, _) || fmod;
-            if (set(t, _) || mod) out.mod.push(t);
-          });
-          if (out.mod.length) out.modifies(enter.output);
-        } else {
-          pulse.visit(flag, t => {
-            if (set(t, _) || fmod) out.mod.push(t);
-          });
-        }
-        if (out.mod.length) out.modifies(set.output);
-      }
-      return out.changed() ? out : pulse.StopPropagation;
-    }
-  });
-
-  /**
-   * Generates legend entries for visualizing a scale.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Scale} params.scale - The scale to generate items for.
-   * @param {*} [params.count=5] - The approximate number of items, or
-   *   desired tick interval, to use.
-   * @param {*} [params.limit] - The maximum number of entries to
-   *   include in a symbol legend.
-   * @param {Array<*>} [params.values] - The exact tick values to use.
-   *   These must be legal domain values for the provided scale.
-   *   If provided, the count argument is ignored.
-   * @param {string} [params.formatSpecifier] - A format specifier
-   *   to use in conjunction with scale.tickFormat. Legal values are
-   *   any valid D3 format specifier string.
-   * @param {function(*):string} [params.format] - The format function to use.
-   *   If provided, the formatSpecifier argument is ignored.
-   */
-  function LegendEntries$1(params) {
-    Transform.call(this, [], params);
-  }
-  inherits(LegendEntries$1, Transform, {
-    transform(_, pulse) {
-      if (this.value != null && !_.modified()) {
-        return pulse.StopPropagation;
-      }
-      var locale = pulse.dataflow.locale(),
-        out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        items = this.value,
-        type = _.type || SymbolLegend,
-        scale = _.scale,
-        limit = +_.limit,
-        count = tickCount(scale, _.count == null ? 5 : _.count, _.minstep),
-        lskip = !!_.values || type === SymbolLegend,
-        format = _.format || labelFormat(locale, scale, count, type, _.formatSpecifier, _.formatType, lskip),
-        values = _.values || labelValues(scale, count),
-        domain,
-        fraction,
-        size,
-        offset,
-        ellipsis;
-      if (items) out.rem = items;
-      if (type === SymbolLegend) {
-        if (limit && values.length > limit) {
-          pulse.dataflow.warn('Symbol legend count exceeds limit, filtering items.');
-          items = values.slice(0, limit - 1);
-          ellipsis = true;
-        } else {
-          items = values;
-        }
-        if (isFunction(size = _.size)) {
-          // if first value maps to size zero, remove from list (vega#717)
-          if (!_.values && scale(items[0]) === 0) {
-            items = items.slice(1);
-          }
-          // compute size offset for legend entries
-          offset = items.reduce((max, value) => Math.max(max, size(value, _)), 0);
-        } else {
-          size = constant$1(offset = size || 8);
-        }
-        items = items.map((value, index) => ingest$1({
-          index: index,
-          label: format(value, index, items),
-          value: value,
-          offset: offset,
-          size: size(value, _)
-        }));
-        if (ellipsis) {
-          ellipsis = values[items.length];
-          items.push(ingest$1({
-            index: items.length,
-            label: `\u2026${values.length - items.length} entries`,
-            value: ellipsis,
-            offset: offset,
-            size: size(ellipsis, _)
-          }));
-        }
-      } else if (type === GradientLegend) {
-        domain = scale.domain(), fraction = scaleFraction(scale, domain[0], peek$1(domain));
-
-        // if automatic label generation produces 2 or fewer values,
-        // use the domain end points instead (fixes vega/vega#1364)
-        if (values.length < 3 && !_.values && domain[0] !== peek$1(domain)) {
-          values = [domain[0], peek$1(domain)];
-        }
-        items = values.map((value, index) => ingest$1({
-          index: index,
-          label: format(value, index, values),
-          value: value,
-          perc: fraction(value)
-        }));
-      } else {
-        size = values.length - 1;
-        fraction = labelFraction(scale);
-        items = values.map((value, index) => ingest$1({
-          index: index,
-          label: format(value, index, values),
-          value: value,
-          perc: index ? fraction(value) : 0,
-          perc2: index === size ? 1 : fraction(values[index + 1])
-        }));
-      }
-      out.source = items;
-      out.add = items;
-      this.value = items;
-      return out;
-    }
-  });
-  const sourceX = t => t.source.x;
-  const sourceY = t => t.source.y;
-  const targetX = t => t.target.x;
-  const targetY = t => t.target.y;
-
-  /**
-   * Layout paths linking source and target elements.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function LinkPath(params) {
-    Transform.call(this, {}, params);
-  }
-  LinkPath.Definition = {
-    'type': 'LinkPath',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'sourceX',
-      'type': 'field',
-      'default': 'source.x'
-    }, {
-      'name': 'sourceY',
-      'type': 'field',
-      'default': 'source.y'
-    }, {
-      'name': 'targetX',
-      'type': 'field',
-      'default': 'target.x'
-    }, {
-      'name': 'targetY',
-      'type': 'field',
-      'default': 'target.y'
-    }, {
-      'name': 'orient',
-      'type': 'enum',
-      'default': 'vertical',
-      'values': ['horizontal', 'vertical', 'radial']
-    }, {
-      'name': 'shape',
-      'type': 'enum',
-      'default': 'line',
-      'values': ['line', 'arc', 'curve', 'diagonal', 'orthogonal']
-    }, {
-      'name': 'require',
-      'type': 'signal'
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'path'
-    }]
-  };
-  inherits(LinkPath, Transform, {
-    transform(_, pulse) {
-      var sx = _.sourceX || sourceX,
-        sy = _.sourceY || sourceY,
-        tx = _.targetX || targetX,
-        ty = _.targetY || targetY,
-        as = _.as || 'path',
-        orient = _.orient || 'vertical',
-        shape = _.shape || 'line',
-        path = Paths.get(shape + '-' + orient) || Paths.get(shape);
-      if (!path) {
-        error('LinkPath unsupported type: ' + _.shape + (_.orient ? '-' + _.orient : ''));
-      }
-      pulse.visit(pulse.SOURCE, t => {
-        t[as] = path(sx(t), sy(t), tx(t), ty(t));
-      });
-      return pulse.reflow(_.modified()).modifies(as);
-    }
-  });
-  const line = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'L' + tx + ',' + ty;
-  const lineR = (sa, sr, ta, tr) => line(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
-  const arc = (sx, sy, tx, ty) => {
-    var dx = tx - sx,
-      dy = ty - sy,
-      rr = Math.hypot(dx, dy) / 2,
-      ra = 180 * Math.atan2(dy, dx) / Math.PI;
-    return 'M' + sx + ',' + sy + 'A' + rr + ',' + rr + ' ' + ra + ' 0 1' + ' ' + tx + ',' + ty;
-  };
-  const arcR = (sa, sr, ta, tr) => arc(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
-  const curve = (sx, sy, tx, ty) => {
-    const dx = tx - sx,
-      dy = ty - sy,
-      ix = 0.2 * (dx + dy),
-      iy = 0.2 * (dy - dx);
-    return 'M' + sx + ',' + sy + 'C' + (sx + ix) + ',' + (sy + iy) + ' ' + (tx + iy) + ',' + (ty - ix) + ' ' + tx + ',' + ty;
-  };
-  const curveR = (sa, sr, ta, tr) => curve(sr * Math.cos(sa), sr * Math.sin(sa), tr * Math.cos(ta), tr * Math.sin(ta));
-  const orthoX = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'V' + ty + 'H' + tx;
-  const orthoY = (sx, sy, tx, ty) => 'M' + sx + ',' + sy + 'H' + tx + 'V' + ty;
-  const orthoR = (sa, sr, ta, tr) => {
-    const sc = Math.cos(sa),
-      ss = Math.sin(sa),
-      tc = Math.cos(ta),
-      ts = Math.sin(ta),
-      sf = Math.abs(ta - sa) > Math.PI ? ta <= sa : ta > sa;
-    return 'M' + sr * sc + ',' + sr * ss + 'A' + sr + ',' + sr + ' 0 0,' + (sf ? 1 : 0) + ' ' + sr * tc + ',' + sr * ts + 'L' + tr * tc + ',' + tr * ts;
-  };
-  const diagonalX = (sx, sy, tx, ty) => {
-    const m = (sx + tx) / 2;
-    return 'M' + sx + ',' + sy + 'C' + m + ',' + sy + ' ' + m + ',' + ty + ' ' + tx + ',' + ty;
-  };
-  const diagonalY = (sx, sy, tx, ty) => {
-    const m = (sy + ty) / 2;
-    return 'M' + sx + ',' + sy + 'C' + sx + ',' + m + ' ' + tx + ',' + m + ' ' + tx + ',' + ty;
-  };
-  const diagonalR = (sa, sr, ta, tr) => {
-    const sc = Math.cos(sa),
-      ss = Math.sin(sa),
-      tc = Math.cos(ta),
-      ts = Math.sin(ta),
-      mr = (sr + tr) / 2;
-    return 'M' + sr * sc + ',' + sr * ss + 'C' + mr * sc + ',' + mr * ss + ' ' + mr * tc + ',' + mr * ts + ' ' + tr * tc + ',' + tr * ts;
-  };
-  const Paths = fastmap({
-    'line': line,
-    'line-radial': lineR,
-    'arc': arc,
-    'arc-radial': arcR,
-    'curve': curve,
-    'curve-radial': curveR,
-    'orthogonal-horizontal': orthoX,
-    'orthogonal-vertical': orthoY,
-    'orthogonal-radial': orthoR,
-    'diagonal-horizontal': diagonalX,
-    'diagonal-vertical': diagonalY,
-    'diagonal-radial': diagonalR
-  });
-
-  /**
-   * Pie and donut chart layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.field - The value field to size pie segments.
-   * @param {number} [params.startAngle=0] - The start angle (in radians) of the layout.
-   * @param {number} [params.endAngle=2π] - The end angle (in radians) of the layout.
-   * @param {boolean} [params.sort] - Boolean flag for sorting sectors by value.
-   */
-  function Pie(params) {
-    Transform.call(this, null, params);
-  }
-  Pie.Definition = {
-    'type': 'Pie',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'startAngle',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'endAngle',
-      'type': 'number',
-      'default': 6.283185307179586
-    }, {
-      'name': 'sort',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': 2,
-      'default': ['startAngle', 'endAngle']
-    }]
-  };
-  inherits(Pie, Transform, {
-    transform(_, pulse) {
-      var as = _.as || ['startAngle', 'endAngle'],
-        startAngle = as[0],
-        endAngle = as[1],
-        field = _.field || one$1,
-        start = _.startAngle || 0,
-        stop = _.endAngle != null ? _.endAngle : 2 * Math.PI,
-        data = pulse.source,
-        values = data.map(field),
-        n = values.length,
-        a = start,
-        k = (stop - start) / d3Array.sum(values),
-        index = d3Array.range(n),
-        i,
-        t,
-        v;
-      if (_.sort) {
-        index.sort((a, b) => values[a] - values[b]);
-      }
-      for (i = 0; i < n; ++i) {
-        v = values[index[i]];
-        t = data[index[i]];
-        t[startAngle] = a;
-        t[endAngle] = a += v * k;
-      }
-      this.value = values;
-      return pulse.reflow(_.modified()).modifies(as);
-    }
-  });
-  const DEFAULT_COUNT = 5;
-  function includeZero(scale) {
-    const type = scale.type;
-    return !scale.bins && (type === Linear || type === Pow || type === Sqrt);
-  }
-  function includePad(type) {
-    return isContinuous(type) && type !== Sequential;
-  }
-  const SKIP$1 = toSet(['set', 'modified', 'clear', 'type', 'scheme', 'schemeExtent', 'schemeCount', 'domain', 'domainMin', 'domainMid', 'domainMax', 'domainRaw', 'domainImplicit', 'nice', 'zero', 'bins', 'range', 'rangeStep', 'round', 'reverse', 'interpolate', 'interpolateGamma']);
-
-  /**
-   * Maintains a scale function mapping data values to visual channels.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function Scale$1(params) {
-    Transform.call(this, null, params);
-    this.modified(true); // always treat as modified
-  }
-
-  inherits(Scale$1, Transform, {
-    transform(_, pulse) {
-      var df = pulse.dataflow,
-        scale$1 = this.value,
-        key = scaleKey(_);
-      if (!scale$1 || key !== scale$1.type) {
-        this.value = scale$1 = scale$4(key)();
-      }
-      for (key in _) if (!SKIP$1[key]) {
-        // padding is a scale property for band/point but not others
-        if (key === 'padding' && includePad(scale$1.type)) continue;
-        // invoke scale property setter, raise warning if not found
-        isFunction(scale$1[key]) ? scale$1[key](_[key]) : df.warn('Unsupported scale property: ' + key);
-      }
-      configureRange(scale$1, _, configureBins(scale$1, _, configureDomain(scale$1, _, df)));
-      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-    }
-  });
-  function scaleKey(_) {
-    var t = _.type,
-      d = '',
-      n;
-
-    // backwards compatibility pre Vega 5.
-    if (t === Sequential) return Sequential + '-' + Linear;
-    if (isContinuousColor(_)) {
-      n = _.rawDomain ? _.rawDomain.length : _.domain ? _.domain.length + +(_.domainMid != null) : 0;
-      d = n === 2 ? Sequential + '-' : n === 3 ? Diverging + '-' : '';
-    }
-    return (d + t || Linear).toLowerCase();
-  }
-  function isContinuousColor(_) {
-    const t = _.type;
-    return isContinuous(t) && t !== Time && t !== UTC && (_.scheme || _.range && _.range.length && _.range.every(isString));
-  }
-  function configureDomain(scale, _, df) {
-    // check raw domain, if provided use that and exit early
-    const raw = rawDomain(scale, _.domainRaw, df);
-    if (raw > -1) return raw;
-    var domain = _.domain,
-      type = scale.type,
-      zero = _.zero || _.zero === undefined && includeZero(scale),
-      n,
-      mid;
-    if (!domain) return 0;
-
-    // adjust continuous domain for minimum pixel padding
-    if (includePad(type) && _.padding && domain[0] !== peek$1(domain)) {
-      domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
-    }
-
-    // adjust domain based on zero, min, max settings
-    if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
-      n = (domain = domain.slice()).length - 1 || 1;
-      if (zero) {
-        if (domain[0] > 0) domain[0] = 0;
-        if (domain[n] < 0) domain[n] = 0;
-      }
-      if (_.domainMin != null) domain[0] = _.domainMin;
-      if (_.domainMax != null) domain[n] = _.domainMax;
-      if (_.domainMid != null) {
-        mid = _.domainMid;
-        const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
-        if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
-        domain.splice(i, 0, mid);
-      }
-    }
-
-    // set the scale domain
-    scale.domain(domainCheck(type, domain, df));
-
-    // if ordinal scale domain is defined, prevent implicit
-    // domain construction as side-effect of scale lookup
-    if (type === Ordinal) {
-      scale.unknown(_.domainImplicit ? $$1.scaleImplicit : undefined);
-    }
-
-    // perform 'nice' adjustment as requested
-    if (_.nice && scale.nice) {
-      scale.nice(_.nice !== true && tickCount(scale, _.nice) || null);
-    }
-
-    // return the cardinality of the domain
-    return domain.length;
-  }
-  function rawDomain(scale, raw, df) {
-    if (raw) {
-      scale.domain(domainCheck(scale.type, raw, df));
-      return raw.length;
-    } else {
-      return -1;
-    }
-  }
-  function padDomain(type, domain, range, pad, exponent, constant) {
-    var span = Math.abs(peek$1(range) - range[0]),
-      frac = span / (span - 2 * pad),
-      d = type === Log ? zoomLog(domain, null, frac) : type === Sqrt ? zoomPow(domain, null, frac, 0.5) : type === Pow ? zoomPow(domain, null, frac, exponent || 1) : type === Symlog ? zoomSymlog(domain, null, frac, constant || 1) : zoomLinear(domain, null, frac);
-    domain = domain.slice();
-    domain[0] = d[0];
-    domain[domain.length - 1] = d[1];
-    return domain;
-  }
-  function domainCheck(type, domain, df) {
-    if (isLogarithmic(type)) {
-      // sum signs of domain values
-      // if all pos or all neg, abs(sum) === domain.length
-      var s = Math.abs(domain.reduce((s, v) => s + (v < 0 ? -1 : v > 0 ? 1 : 0), 0));
-      if (s !== domain.length) {
-        df.warn('Log scale domain includes zero: ' + $(domain));
-      }
-    }
-    return domain;
-  }
-  function configureBins(scale, _, count) {
-    let bins = _.bins;
-    if (bins && !isArray(bins)) {
-      // generate bin boundary array
-      const domain = scale.domain(),
-        lo = domain[0],
-        hi = peek$1(domain),
-        step = bins.step;
-      let start = bins.start == null ? lo : bins.start,
-        stop = bins.stop == null ? hi : bins.stop;
-      if (!step) error('Scale bins parameter missing step property.');
-      if (start < lo) start = step * Math.ceil(lo / step);
-      if (stop > hi) stop = step * Math.floor(hi / step);
-      bins = d3Array.range(start, stop + step / 2, step);
-    }
-    if (bins) {
-      // assign bin boundaries to scale instance
-      scale.bins = bins;
-    } else if (scale.bins) {
-      // no current bins, remove bins if previously set
-      delete scale.bins;
-    }
-
-    // special handling for bin-ordinal scales
-    if (scale.type === BinOrdinal) {
-      if (!bins) {
-        // the domain specifies the bins
-        scale.bins = scale.domain();
-      } else if (!_.domain && !_.domainRaw) {
-        // the bins specify the domain
-        scale.domain(bins);
-        count = bins.length;
-      }
-    }
-
-    // return domain cardinality
-    return count;
-  }
-  function configureRange(scale, _, count) {
-    var type = scale.type,
-      round = _.round || false,
-      range = _.range;
-
-    // if range step specified, calculate full range extent
-    if (_.rangeStep != null) {
-      range = configureRangeStep(type, _, count);
-    }
-
-    // else if a range scheme is defined, use that
-    else if (_.scheme) {
-      range = configureScheme(type, _, count);
-      if (isFunction(range)) {
-        if (scale.interpolator) {
-          return scale.interpolator(range);
-        } else {
-          error(`Scale type ${type} does not support interpolating color schemes.`);
-        }
-      }
-    }
-
-    // given a range array for an interpolating scale, convert to interpolator
-    if (range && isInterpolating(type)) {
-      return scale.interpolator(interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma));
-    }
-
-    // configure rounding / interpolation
-    if (range && _.interpolate && scale.interpolate) {
-      scale.interpolate(interpolate(_.interpolate, _.interpolateGamma));
-    } else if (isFunction(scale.round)) {
-      scale.round(round);
-    } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? $$1$1.interpolateRound : $$1$1.interpolate);
-    }
-    if (range) scale.range(flip(range, _.reverse));
-  }
-  function configureRangeStep(type, _, count) {
-    if (type !== Band && type !== Point) {
-      error('Only band and point scales support rangeStep.');
-    }
-
-    // calculate full range based on requested step size and padding
-    var outer = (_.paddingOuter != null ? _.paddingOuter : _.padding) || 0,
-      inner = type === Point ? 1 : (_.paddingInner != null ? _.paddingInner : _.padding) || 0;
-    return [0, _.rangeStep * bandSpace(count, inner, outer)];
-  }
-  function configureScheme(type, _, count) {
-    var extent = _.schemeExtent,
-      name,
-      scheme$1;
-    if (isArray(_.scheme)) {
-      scheme$1 = interpolateColors(_.scheme, _.interpolate, _.interpolateGamma);
-    } else {
-      name = _.scheme.toLowerCase();
-      scheme$1 = scheme(name);
-      if (!scheme$1) error(`Unrecognized scheme name: ${_.scheme}`);
-    }
-
-    // determine size for potential discrete range
-    count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
-
-    // adjust and/or quantize scheme as appropriate
-    return isInterpolating(type) ? adjustScheme(scheme$1, extent, _.reverse) : isFunction(scheme$1) ? quantizeInterpolator(adjustScheme(scheme$1, extent), count) : type === Ordinal ? scheme$1 : scheme$1.slice(0, count);
-  }
-  function adjustScheme(scheme, extent, reverse) {
-    return isFunction(scheme) && (extent || reverse) ? interpolateRange(scheme, flip(extent || [0, 1], reverse)) : scheme;
-  }
-  function flip(array, reverse) {
-    return reverse ? array.slice().reverse() : array;
-  }
-
-  /**
-   * Sorts scenegraph items in the pulse source array.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(*,*): number} [params.sort] - A comparator
-   *   function for sorting tuples.
-   */
-  function SortItems$1(params) {
-    Transform.call(this, null, params);
-  }
-  inherits(SortItems$1, Transform, {
-    transform(_, pulse) {
-      const mod = _.modified('sort') || pulse.changed(pulse.ADD) || pulse.modified(_.sort.fields) || pulse.modified('datum');
-      if (mod) pulse.source.sort(stableCompare(_.sort));
-      this.modified(mod);
-      return pulse;
-    }
-  });
-  const Zero = 'zero',
-    Center$1 = 'center',
-    Normalize = 'normalize',
-    DefOutput = ['y0', 'y1'];
-
-  /**
-   * Stack layout for visualization elements.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.field - The value field to stack.
-   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
-   * @param {function(object,object): number} [params.sort] - A comparator for stack sorting.
-   * @param {string} [offset='zero'] - Stack baseline offset. One of 'zero', 'center', 'normalize'.
-   */
-  function Stack(params) {
-    Transform.call(this, null, params);
-  }
-  Stack.Definition = {
-    'type': 'Stack',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'groupby',
-      'type': 'field',
-      'array': true
-    }, {
-      'name': 'sort',
-      'type': 'compare'
-    }, {
-      'name': 'offset',
-      'type': 'enum',
-      'default': Zero,
-      'values': [Zero, Center$1, Normalize]
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': 2,
-      'default': DefOutput
-    }]
-  };
-  inherits(Stack, Transform, {
-    transform(_, pulse) {
-      var as = _.as || DefOutput,
-        y0 = as[0],
-        y1 = as[1],
-        sort = stableCompare(_.sort),
-        field = _.field || one$1,
-        stack = _.offset === Center$1 ? stackCenter : _.offset === Normalize ? stackNormalize : stackZero,
-        groups,
-        i,
-        n,
-        max;
-
-      // partition, sum, and sort the stack groups
-      groups = partition$2(pulse.source, _.groupby, sort, field);
-
-      // compute stack layouts per group
-      for (i = 0, n = groups.length, max = groups.max; i < n; ++i) {
-        stack(groups[i], max, field, y0, y1);
-      }
-      return pulse.reflow(_.modified()).modifies(as);
-    }
-  });
-  function stackCenter(group, max, field, y0, y1) {
-    var last = (max - group.sum) / 2,
-      m = group.length,
-      j = 0,
-      t;
-    for (; j < m; ++j) {
-      t = group[j];
-      t[y0] = last;
-      t[y1] = last += Math.abs(field(t));
-    }
-  }
-  function stackNormalize(group, max, field, y0, y1) {
-    var scale = 1 / group.sum,
-      last = 0,
-      m = group.length,
-      j = 0,
-      v = 0,
-      t;
-    for (; j < m; ++j) {
-      t = group[j];
-      t[y0] = last;
-      t[y1] = last = scale * (v += Math.abs(field(t)));
-    }
-  }
-  function stackZero(group, max, field, y0, y1) {
-    var lastPos = 0,
-      lastNeg = 0,
-      m = group.length,
-      j = 0,
-      v,
-      t;
-    for (; j < m; ++j) {
-      t = group[j];
-      v = +field(t);
-      if (v < 0) {
-        t[y0] = lastNeg;
-        t[y1] = lastNeg += v;
-      } else {
-        t[y0] = lastPos;
-        t[y1] = lastPos += v;
-      }
-    }
-  }
-  function partition$2(data, groupby, sort, field) {
-    var groups = [],
-      get = f => f(t),
-      map,
-      i,
-      n,
-      m,
-      t,
-      k,
-      g,
-      s,
-      max;
-
-    // partition data points into stack groups
-    if (groupby == null) {
-      groups.push(data.slice());
-    } else {
-      for (map = {}, i = 0, n = data.length; i < n; ++i) {
-        t = data[i];
-        k = groupby.map(get);
-        g = map[k];
-        if (!g) {
-          map[k] = g = [];
-          groups.push(g);
-        }
-        g.push(t);
-      }
-    }
-
-    // compute sums of groups, sort groups as needed
-    for (k = 0, max = 0, m = groups.length; k < m; ++k) {
-      g = groups[k];
-      for (i = 0, s = 0, n = g.length; i < n; ++i) {
-        s += Math.abs(field(g[i]));
-      }
-      g.sum = s;
-      if (s > max) max = s;
-      if (sort) g.sort(sort);
-    }
-    groups.max = max;
-    return groups;
-  }
-
-  var encode$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    axisticks: AxisTicks$1,
-    datajoin: DataJoin$1,
-    encode: Encode$1,
-    legendentries: LegendEntries$1,
-    linkpath: LinkPath,
-    pie: Pie,
-    scale: Scale$1,
-    sortitems: SortItems$1,
-    stack: Stack
-  });
-
-  var abs = Math.abs;
-  var cos = Math.cos;
-  var sin = Math.sin;
-  var epsilon = 1e-6;
-  var pi = Math.PI;
-  var halfPi = pi / 2;
-  var sqrt2 = sqrt(2);
-  function asin(x) {
-    return x > 1 ? halfPi : x < -1 ? -halfPi : Math.asin(x);
-  }
-  function sqrt(x) {
-    return x > 0 ? Math.sqrt(x) : 0;
-  }
-
-  function mollweideBromleyTheta(cp, phi) {
-    var cpsinPhi = cp * sin(phi),
-      i = 30,
-      delta;
-    do phi -= delta = (phi + sin(phi) - cpsinPhi) / (1 + cos(phi)); while (abs(delta) > epsilon && --i > 0);
-    return phi / 2;
-  }
-  function mollweideBromleyRaw(cx, cy, cp) {
-    function forward(lambda, phi) {
-      return [cx * lambda * cos(phi = mollweideBromleyTheta(cp, phi)), cy * sin(phi)];
-    }
-    forward.invert = function (x, y) {
-      return y = asin(y / cy), [x / (cx * cos(y)), asin((2 * y + sin(2 * y)) / cp)];
-    };
-    return forward;
-  }
-  var mollweideRaw = mollweideBromleyRaw(sqrt2 / halfPi, sqrt2, pi);
-  function geoMollweide () {
-    return d3Geo.geoProjection(mollweideRaw).scale(169.529);
-  }
-
-  const defaultPath = d3Geo.geoPath();
-  const projectionProperties = [
-  // standard properties in d3-geo
-  'clipAngle', 'clipExtent', 'scale', 'translate', 'center', 'rotate', 'parallels', 'precision', 'reflectX', 'reflectY',
-  // extended properties in d3-geo-projections
-  'coefficient', 'distance', 'fraction', 'lobes', 'parallel', 'radius', 'ratio', 'spacing', 'tilt'];
-
-  /**
-   * Augment projections with their type and a copy method.
-   */
-  function create$1(type, constructor) {
-    return function projection() {
-      const p = constructor();
-      p.type = type;
-      p.path = d3Geo.geoPath().projection(p);
-      p.copy = p.copy || function () {
-        const c = projection();
-        projectionProperties.forEach(prop => {
-          if (p[prop]) c[prop](p[prop]());
-        });
-        c.path.pointRadius(p.path.pointRadius());
-        return c;
-      };
-      return registerScale(p);
-    };
-  }
-  function projection(type, proj) {
-    if (!type || typeof type !== 'string') {
-      throw new Error('Projection type must be a name string.');
-    }
-    type = type.toLowerCase();
-    if (arguments.length > 1) {
-      projections[type] = create$1(type, proj);
-      return this;
-    } else {
-      return projections[type] || null;
-    }
-  }
-  function getProjectionPath(proj) {
-    return proj && proj.path || defaultPath;
-  }
-  const projections = {
-    // base d3-geo projection types
-    albers: d3Geo.geoAlbers,
-    albersusa: d3Geo.geoAlbersUsa,
-    azimuthalequalarea: d3Geo.geoAzimuthalEqualArea,
-    azimuthalequidistant: d3Geo.geoAzimuthalEquidistant,
-    conicconformal: d3Geo.geoConicConformal,
-    conicequalarea: d3Geo.geoConicEqualArea,
-    conicequidistant: d3Geo.geoConicEquidistant,
-    equalEarth: d3Geo.geoEqualEarth,
-    equirectangular: d3Geo.geoEquirectangular,
-    gnomonic: d3Geo.geoGnomonic,
-    identity: d3Geo.geoIdentity,
-    mercator: d3Geo.geoMercator,
-    mollweide: geoMollweide,
-    naturalEarth1: d3Geo.geoNaturalEarth1,
-    orthographic: d3Geo.geoOrthographic,
-    stereographic: d3Geo.geoStereographic,
-    transversemercator: d3Geo.geoTransverseMercator
-  };
-  for (const key in projections) {
-    projection(key, projections[key]);
-  }
-
-  function noop() {}
-  const cases = [[], [[[1.0, 1.5], [0.5, 1.0]]], [[[1.5, 1.0], [1.0, 1.5]]], [[[1.5, 1.0], [0.5, 1.0]]], [[[1.0, 0.5], [1.5, 1.0]]], [[[1.0, 1.5], [0.5, 1.0]], [[1.0, 0.5], [1.5, 1.0]]], [[[1.0, 0.5], [1.0, 1.5]]], [[[1.0, 0.5], [0.5, 1.0]]], [[[0.5, 1.0], [1.0, 0.5]]], [[[1.0, 1.5], [1.0, 0.5]]], [[[0.5, 1.0], [1.0, 0.5]], [[1.5, 1.0], [1.0, 1.5]]], [[[1.5, 1.0], [1.0, 0.5]]], [[[0.5, 1.0], [1.5, 1.0]]], [[[1.0, 1.5], [1.5, 1.0]]], [[[0.5, 1.0], [1.0, 1.5]]], []];
-
-  // Implementation adapted from d3/d3-contour. Thanks!
-  function contours() {
-    var dx = 1,
-      dy = 1,
-      smooth = smoothLinear;
-    function contours(values, tz) {
-      return tz.map(value => contour(values, value));
-    }
-
-    // Accumulate, smooth contour rings, assign holes to exterior rings.
-    // Based on https://github.com/mbostock/shapefile/blob/v0.6.2/shp/polygon.js
-    function contour(values, value) {
-      var polygons = [],
-        holes = [];
-      isorings(values, value, ring => {
-        smooth(ring, values, value);
-        if (area(ring) > 0) polygons.push([ring]);else holes.push(ring);
-      });
-      holes.forEach(hole => {
-        for (var i = 0, n = polygons.length, polygon; i < n; ++i) {
-          if (contains((polygon = polygons[i])[0], hole) !== -1) {
-            polygon.push(hole);
-            return;
-          }
-        }
-      });
-      return {
-        type: 'MultiPolygon',
-        value: value,
-        coordinates: polygons
-      };
-    }
-
-    // Marching squares with isolines stitched into rings.
-    // Based on https://github.com/topojson/topojson-client/blob/v3.0.0/src/stitch.js
-    function isorings(values, value, callback) {
-      var fragmentByStart = new Array(),
-        fragmentByEnd = new Array(),
-        x,
-        y,
-        t0,
-        t1,
-        t2,
-        t3;
-
-      // Special case for the first row (y = -1, t2 = t3 = 0).
-      x = y = -1;
-      t1 = values[0] >= value;
-      cases[t1 << 1].forEach(stitch);
-      while (++x < dx - 1) {
-        t0 = t1, t1 = values[x + 1] >= value;
-        cases[t0 | t1 << 1].forEach(stitch);
-      }
-      cases[t1 << 0].forEach(stitch);
-
-      // General case for the intermediate rows.
-      while (++y < dy - 1) {
-        x = -1;
-        t1 = values[y * dx + dx] >= value;
-        t2 = values[y * dx] >= value;
-        cases[t1 << 1 | t2 << 2].forEach(stitch);
-        while (++x < dx - 1) {
-          t0 = t1, t1 = values[y * dx + dx + x + 1] >= value;
-          t3 = t2, t2 = values[y * dx + x + 1] >= value;
-          cases[t0 | t1 << 1 | t2 << 2 | t3 << 3].forEach(stitch);
-        }
-        cases[t1 | t2 << 3].forEach(stitch);
-      }
-
-      // Special case for the last row (y = dy - 1, t0 = t1 = 0).
-      x = -1;
-      t2 = values[y * dx] >= value;
-      cases[t2 << 2].forEach(stitch);
-      while (++x < dx - 1) {
-        t3 = t2, t2 = values[y * dx + x + 1] >= value;
-        cases[t2 << 2 | t3 << 3].forEach(stitch);
-      }
-      cases[t2 << 3].forEach(stitch);
-      function stitch(line) {
-        var start = [line[0][0] + x, line[0][1] + y],
-          end = [line[1][0] + x, line[1][1] + y],
-          startIndex = index(start),
-          endIndex = index(end),
-          f,
-          g;
-        if (f = fragmentByEnd[startIndex]) {
-          if (g = fragmentByStart[endIndex]) {
-            delete fragmentByEnd[f.end];
-            delete fragmentByStart[g.start];
-            if (f === g) {
-              f.ring.push(end);
-              callback(f.ring);
-            } else {
-              fragmentByStart[f.start] = fragmentByEnd[g.end] = {
-                start: f.start,
-                end: g.end,
-                ring: f.ring.concat(g.ring)
-              };
-            }
-          } else {
-            delete fragmentByEnd[f.end];
-            f.ring.push(end);
-            fragmentByEnd[f.end = endIndex] = f;
-          }
-        } else if (f = fragmentByStart[endIndex]) {
-          if (g = fragmentByEnd[startIndex]) {
-            delete fragmentByStart[f.start];
-            delete fragmentByEnd[g.end];
-            if (f === g) {
-              f.ring.push(end);
-              callback(f.ring);
-            } else {
-              fragmentByStart[g.start] = fragmentByEnd[f.end] = {
-                start: g.start,
-                end: f.end,
-                ring: g.ring.concat(f.ring)
-              };
-            }
-          } else {
-            delete fragmentByStart[f.start];
-            f.ring.unshift(start);
-            fragmentByStart[f.start = startIndex] = f;
-          }
-        } else {
-          fragmentByStart[startIndex] = fragmentByEnd[endIndex] = {
-            start: startIndex,
-            end: endIndex,
-            ring: [start, end]
-          };
-        }
-      }
-    }
-    function index(point) {
-      return point[0] * 2 + point[1] * (dx + 1) * 4;
-    }
-    function smoothLinear(ring, values, value) {
-      ring.forEach(point => {
-        var x = point[0],
-          y = point[1],
-          xt = x | 0,
-          yt = y | 0,
-          v0,
-          v1 = values[yt * dx + xt];
-        if (x > 0 && x < dx && xt === x) {
-          v0 = values[yt * dx + xt - 1];
-          point[0] = x + (value - v0) / (v1 - v0) - 0.5;
-        }
-        if (y > 0 && y < dy && yt === y) {
-          v0 = values[(yt - 1) * dx + xt];
-          point[1] = y + (value - v0) / (v1 - v0) - 0.5;
-        }
-      });
-    }
-    contours.contour = contour;
-    contours.size = function (_) {
-      if (!arguments.length) return [dx, dy];
-      var _0 = Math.floor(_[0]),
-        _1 = Math.floor(_[1]);
-      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
-      return dx = _0, dy = _1, contours;
-    };
-    contours.smooth = function (_) {
-      return arguments.length ? (smooth = _ ? smoothLinear : noop, contours) : smooth === smoothLinear;
-    };
-    return contours;
-  }
-  function area(ring) {
-    var i = 0,
-      n = ring.length,
-      area = ring[n - 1][1] * ring[0][0] - ring[n - 1][0] * ring[0][1];
-    while (++i < n) area += ring[i - 1][1] * ring[i][0] - ring[i - 1][0] * ring[i][1];
-    return area;
-  }
-  function contains(ring, hole) {
-    var i = -1,
-      n = hole.length,
-      c;
-    while (++i < n) if (c = ringContains(ring, hole[i])) return c;
-    return 0;
-  }
-  function ringContains(ring, point) {
-    var x = point[0],
-      y = point[1],
-      contains = -1;
-    for (var i = 0, n = ring.length, j = n - 1; i < n; j = i++) {
-      var pi = ring[i],
-        xi = pi[0],
-        yi = pi[1],
-        pj = ring[j],
-        xj = pj[0],
-        yj = pj[1];
-      if (segmentContains(pi, pj, point)) return 0;
-      if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) contains = -contains;
-    }
-    return contains;
-  }
-  function segmentContains(a, b, c) {
-    var i;
-    return collinear(a, b, c) && within(a[i = +(a[0] === b[0])], c[i], b[i]);
-  }
-  function collinear(a, b, c) {
-    return (b[0] - a[0]) * (c[1] - a[1]) === (c[0] - a[0]) * (b[1] - a[1]);
-  }
-  function within(p, q, r) {
-    return p <= q && q <= r || r <= q && q <= p;
-  }
-  function quantize(k, nice, zero) {
-    return function (values) {
-      var ex = extent(values),
-        start = zero ? Math.min(ex[0], 0) : ex[0],
-        stop = ex[1],
-        span = stop - start,
-        step = nice ? d3Array.tickStep(start, stop, k) : span / (k + 1);
-      return d3Array.range(start + step, stop, step);
-    };
-  }
-
-  /**
-   * Generate isocontours (level sets) based on input raster grid data.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} [params.field] - The field with raster grid
-   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
-   * @param {Array<number>} [params.thresholds] - Contour threshold array. If
-   *   specified, the levels, nice, resolve, and zero parameters are ignored.
-   * @param {number} [params.levels] - The desired number of contour levels.
-   * @param {boolean} [params.nice] - Boolean flag indicating if the contour
-   *   threshold values should be automatically aligned to "nice"
-   *   human-friendly values. Setting this flag may cause the number of
-   *   thresholds to deviate from the specified levels.
-   * @param {string} [params.resolve] - The method for resolving thresholds
-   *   across multiple input grids. If 'independent' (the default), threshold
-   *   calculation will be performed separately for each grid. If 'shared', a
-   *   single set of threshold values will be used for all input grids.
-   * @param {boolean} [params.zero] - Boolean flag indicating if the contour
-   *   threshold values should include zero.
-   * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
-   *   polygons should be smoothed using linear interpolation. The default is
-   *   true. The parameter is ignored when using density estimation.
-   * @param {boolean} [params.scale] - Optional numerical value by which to
-   *   scale the output isocontour coordinates. This parameter can be useful
-   *   to scale the contours to match a desired output resolution.
-   * @param {string} [params.as='contour'] - The output field in which to store
-   *   the generated isocontour data (default 'contour').
-   */
-  function Isocontour(params) {
-    Transform.call(this, null, params);
-  }
-  Isocontour.Definition = {
-    'type': 'Isocontour',
-    'metadata': {
-      'generates': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'thresholds',
-      'type': 'number',
-      'array': true
-    }, {
-      'name': 'levels',
-      'type': 'number'
-    }, {
-      'name': 'nice',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'resolve',
-      'type': 'enum',
-      'values': ['shared', 'independent'],
-      'default': 'independent'
-    }, {
-      'name': 'zero',
-      'type': 'boolean',
-      'default': true
-    }, {
-      'name': 'smooth',
-      'type': 'boolean',
-      'default': true
-    }, {
-      'name': 'scale',
-      'type': 'number',
-      'expr': true
-    }, {
-      'name': 'translate',
-      'type': 'number',
-      'array': true,
-      'expr': true
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'null': true,
-      'default': 'contour'
-    }]
-  };
-  inherits(Isocontour, Transform, {
-    transform(_, pulse) {
-      if (this.value && !pulse.changed() && !_.modified()) {
-        return pulse.StopPropagation;
-      }
-      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        field = _.field || identity,
-        contour = contours().smooth(_.smooth !== false),
-        tz = _.thresholds || levels(source, field, _),
-        as = _.as === null ? null : _.as || 'contour',
-        values = [];
-      source.forEach(t => {
-        const grid = field(t);
-
-        // generate contour paths in GeoJSON format
-        const paths = contour.size([grid.width, grid.height])(grid.values, isArray(tz) ? tz : tz(grid.values));
-
-        // adjust contour path coordinates as needed
-        transformPaths(paths, grid, t, _);
-
-        // ingest; copy source data properties to output
-        paths.forEach(p => {
-          values.push(rederive(t, ingest$1(as != null ? {
-            [as]: p
-          } : p)));
-        });
-      });
-      if (this.value) out.rem = this.value;
-      this.value = out.source = out.add = values;
-      return out;
-    }
-  });
-  function levels(values, f, _) {
-    const q = quantize(_.levels || 10, _.nice, _.zero !== false);
-    return _.resolve !== 'shared' ? q : q(values.map(t => d3Array.max(f(t).values)));
-  }
-  function transformPaths(paths, grid, datum, _) {
-    let s = _.scale || grid.scale,
-      t = _.translate || grid.translate;
-    if (isFunction(s)) s = s(datum, _);
-    if (isFunction(t)) t = t(datum, _);
-    if ((s === 1 || s == null) && !t) return;
-    const sx = (isNumber$1(s) ? s : s[0]) || 1,
-      sy = (isNumber$1(s) ? s : s[1]) || 1,
-      tx = t && t[0] || 0,
-      ty = t && t[1] || 0;
-    paths.forEach(transform$1(grid, sx, sy, tx, ty));
-  }
-  function transform$1(grid, sx, sy, tx, ty) {
-    const x1 = grid.x1 || 0,
-      y1 = grid.y1 || 0,
-      flip = sx * sy < 0;
-    function transformPolygon(coordinates) {
-      coordinates.forEach(transformRing);
-    }
-    function transformRing(coordinates) {
-      if (flip) coordinates.reverse(); // maintain winding order
-      coordinates.forEach(transformPoint);
-    }
-    function transformPoint(coordinates) {
-      coordinates[0] = (coordinates[0] - x1) * sx + tx;
-      coordinates[1] = (coordinates[1] - y1) * sy + ty;
-    }
-    return function (geometry) {
-      geometry.coordinates.forEach(transformPolygon);
-      return geometry;
-    };
-  }
-  function radius(bw, data, f) {
-    const v = bw >= 0 ? bw : estimateBandwidth(data, f);
-    return Math.round((Math.sqrt(4 * v * v + 1) - 1) / 2);
-  }
-  function number$2(_) {
-    return isFunction(_) ? _ : constant$1(+_);
-  }
-
-  // Implementation adapted from d3/d3-contour. Thanks!
-  function density2D() {
-    var x = d => d[0],
-      y = d => d[1],
-      weight = one$1,
-      bandwidth = [-1, -1],
-      dx = 960,
-      dy = 500,
-      k = 2; // log2(cellSize)
-
-    function density(data, counts) {
-      const rx = radius(bandwidth[0], data, x) >> k,
-        // blur x-radius
-        ry = radius(bandwidth[1], data, y) >> k,
-        // blur y-radius
-        ox = rx ? rx + 2 : 0,
-        // x-offset padding for blur
-        oy = ry ? ry + 2 : 0,
-        // y-offset padding for blur
-        n = 2 * ox + (dx >> k),
-        // grid width
-        m = 2 * oy + (dy >> k),
-        // grid height
-        values0 = new Float32Array(n * m),
-        values1 = new Float32Array(n * m);
-      let values = values0;
-      data.forEach(d => {
-        const xi = ox + (+x(d) >> k),
-          yi = oy + (+y(d) >> k);
-        if (xi >= 0 && xi < n && yi >= 0 && yi < m) {
-          values0[xi + yi * n] += +weight(d);
-        }
-      });
-      if (rx > 0 && ry > 0) {
-        blurX(n, m, values0, values1, rx);
-        blurY(n, m, values1, values0, ry);
-        blurX(n, m, values0, values1, rx);
-        blurY(n, m, values1, values0, ry);
-        blurX(n, m, values0, values1, rx);
-        blurY(n, m, values1, values0, ry);
-      } else if (rx > 0) {
-        blurX(n, m, values0, values1, rx);
-        blurX(n, m, values1, values0, rx);
-        blurX(n, m, values0, values1, rx);
-        values = values1;
-      } else if (ry > 0) {
-        blurY(n, m, values0, values1, ry);
-        blurY(n, m, values1, values0, ry);
-        blurY(n, m, values0, values1, ry);
-        values = values1;
-      }
-
-      // scale density estimates
-      // density in points per square pixel or probability density
-      const s = counts ? Math.pow(2, -2 * k) : 1 / d3Array.sum(values);
-      for (let i = 0, sz = n * m; i < sz; ++i) values[i] *= s;
-      return {
-        values: values,
-        scale: 1 << k,
-        width: n,
-        height: m,
-        x1: ox,
-        y1: oy,
-        x2: ox + (dx >> k),
-        y2: oy + (dy >> k)
-      };
-    }
-    density.x = function (_) {
-      return arguments.length ? (x = number$2(_), density) : x;
-    };
-    density.y = function (_) {
-      return arguments.length ? (y = number$2(_), density) : y;
-    };
-    density.weight = function (_) {
-      return arguments.length ? (weight = number$2(_), density) : weight;
-    };
-    density.size = function (_) {
-      if (!arguments.length) return [dx, dy];
-      var _0 = +_[0],
-        _1 = +_[1];
-      if (!(_0 >= 0 && _1 >= 0)) error('invalid size');
-      return dx = _0, dy = _1, density;
-    };
-    density.cellSize = function (_) {
-      if (!arguments.length) return 1 << k;
-      if (!((_ = +_) >= 1)) error('invalid cell size');
-      k = Math.floor(Math.log(_) / Math.LN2);
-      return density;
-    };
-    density.bandwidth = function (_) {
-      if (!arguments.length) return bandwidth;
-      _ = array$2(_);
-      if (_.length === 1) _ = [+_[0], +_[0]];
-      if (_.length !== 2) error('invalid bandwidth');
-      return bandwidth = _, density;
-    };
-    return density;
-  }
-  function blurX(n, m, source, target, r) {
-    const w = (r << 1) + 1;
-    for (let j = 0; j < m; ++j) {
-      for (let i = 0, sr = 0; i < n + r; ++i) {
-        if (i < n) {
-          sr += source[i + j * n];
-        }
-        if (i >= r) {
-          if (i >= w) {
-            sr -= source[i - w + j * n];
-          }
-          target[i - r + j * n] = sr / Math.min(i + 1, n - 1 + w - i, w);
-        }
-      }
-    }
-  }
-  function blurY(n, m, source, target, r) {
-    const w = (r << 1) + 1;
-    for (let i = 0; i < n; ++i) {
-      for (let j = 0, sr = 0; j < m + r; ++j) {
-        if (j < m) {
-          sr += source[i + j * n];
-        }
-        if (j >= r) {
-          if (j >= w) {
-            sr -= source[i + (j - w) * n];
-          }
-          target[i + (j - r) * n] = sr / Math.min(j + 1, m - 1 + w - j, w);
-        }
-      }
-    }
-  }
-
-  /**
-   * Perform 2D kernel-density estimation of point data.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<number>} params.size - The [width, height] extent (in
-   *   units of input pixels) over which to perform density estimation.
-   * @param {function(object): number} params.x - The x-coordinate accessor.
-   * @param {function(object): number} params.y - The y-coordinate accessor.
-   * @param {function(object): number} [params.weight] - The weight accessor.
-   * @param {Array<function(object): *>} [params.groupby] - An array of accessors
-   *   to groupby.
-   * @param {number} [params.cellSize] - Contour density calculation cell size.
-   *   This parameter determines the level of spatial approximation. For example,
-   *   the default value of 4 maps to 2x reductions in both x- and y- dimensions.
-   *   A value of 1 will result in an output raster grid whose dimensions exactly
-   *   matches the size parameter.
-   * @param {Array<number>} [params.bandwidth] - The KDE kernel bandwidths,
-   *   in pixels. The input can be a two-element array specifying separate
-   *   x and y bandwidths, or a single-element array specifying both. If the
-   *   bandwidth is unspecified or less than zero, the bandwidth will be
-   *   automatically determined.
-   * @param {boolean} [params.counts=false] - A boolean flag indicating if the
-   *   output values should be probability estimates (false, default) or
-   *   smoothed counts (true).
-   * @param {string} [params.as='grid'] - The output field in which to store
-   *   the generated raster grid (default 'grid').
-   */
-  function KDE2D(params) {
-    Transform.call(this, null, params);
-  }
-  KDE2D.Definition = {
-    'type': 'KDE2D',
-    'metadata': {
-      'generates': true
-    },
-    'params': [{
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2,
-      'required': true
-    }, {
-      'name': 'x',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'y',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'weight',
-      'type': 'field'
-    }, {
-      'name': 'groupby',
-      'type': 'field',
-      'array': true
-    }, {
-      'name': 'cellSize',
-      'type': 'number'
-    }, {
-      'name': 'bandwidth',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'counts',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'grid'
-    }]
-  };
-  const PARAMS = ['x', 'y', 'weight', 'size', 'cellSize', 'bandwidth'];
-  function params(obj, _) {
-    PARAMS.forEach(param => _[param] != null ? obj[param](_[param]) : 0);
-    return obj;
-  }
-  inherits(KDE2D, Transform, {
-    transform(_, pulse) {
-      if (this.value && !pulse.changed() && !_.modified()) return pulse.StopPropagation;
-      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        source = pulse.materialize(pulse.SOURCE).source,
-        groups = partition$1(source, _.groupby),
-        names = (_.groupby || []).map(accessorName),
-        kde = params(density2D(), _),
-        as = _.as || 'grid',
-        values = [];
-      function set(t, vals) {
-        for (let i = 0; i < names.length; ++i) t[names[i]] = vals[i];
-        return t;
-      }
-
-      // generate density raster grids
-      values = groups.map(g => ingest$1(set({
-        [as]: kde(g, _.counts)
-      }, g.dims)));
-      if (this.value) out.rem = this.value;
-      this.value = out.source = out.add = values;
-      return out;
-    }
-  });
-  function partition$1(data, groupby) {
-    var groups = [],
-      get = f => f(t),
-      map,
-      i,
-      n,
-      t,
-      k,
-      g;
-
-    // partition data points into groups
-    if (groupby == null) {
-      groups.push(data);
-    } else {
-      for (map = {}, i = 0, n = data.length; i < n; ++i) {
-        t = data[i];
-        k = groupby.map(get);
-        g = map[k];
-        if (!g) {
-          map[k] = g = [];
-          g.dims = k;
-          groups.push(g);
-        }
-        g.push(t);
-      }
-    }
-    return groups;
-  }
-
-  /**
-   * Generate contours based on kernel-density estimation of point data.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<number>} params.size - The dimensions [width, height] over which to compute contours.
-   *  If the values parameter is provided, this must be the dimensions of the input data.
-   *  If density estimation is performed, this is the output view dimensions in pixels.
-   * @param {Array<number>} [params.values] - An array of numeric values representing an
-   *  width x height grid of values over which to compute contours. If unspecified, this
-   *  transform will instead attempt to compute contours for the kernel density estimate
-   *  using values drawn from data tuples in the input pulse.
-   * @param {function(object): number} [params.x] - The pixel x-coordinate accessor for density estimation.
-   * @param {function(object): number} [params.y] - The pixel y-coordinate accessor for density estimation.
-   * @param {function(object): number} [params.weight] - The data point weight accessor for density estimation.
-   * @param {number} [params.cellSize] - Contour density calculation cell size.
-   * @param {number} [params.bandwidth] - Kernel density estimation bandwidth.
-   * @param {Array<number>} [params.thresholds] - Contour threshold array. If
-   *   this parameter is set, the count and nice parameters will be ignored.
-   * @param {number} [params.count] - The desired number of contours.
-   * @param {boolean} [params.nice] - Boolean flag indicating if the contour
-   *   threshold values should be automatically aligned to "nice"
-   *   human-friendly values. Setting this flag may cause the number of
-   *   thresholds to deviate from the specified count.
-   * @param {boolean} [params.smooth] - Boolean flag indicating if the contour
-   *   polygons should be smoothed using linear interpolation. The default is
-   *   true. The parameter is ignored when using density estimation.
-   */
-  function Contour(params) {
-    Transform.call(this, null, params);
-  }
-  Contour.Definition = {
-    'type': 'Contour',
-    'metadata': {
-      'generates': true
-    },
-    'params': [{
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2,
-      'required': true
-    }, {
-      'name': 'values',
-      'type': 'number',
-      'array': true
-    }, {
-      'name': 'x',
-      'type': 'field'
-    }, {
-      'name': 'y',
-      'type': 'field'
-    }, {
-      'name': 'weight',
-      'type': 'field'
-    }, {
-      'name': 'cellSize',
-      'type': 'number'
-    }, {
-      'name': 'bandwidth',
-      'type': 'number'
-    }, {
-      'name': 'count',
-      'type': 'number'
-    }, {
-      'name': 'nice',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'thresholds',
-      'type': 'number',
-      'array': true
-    }, {
-      'name': 'smooth',
-      'type': 'boolean',
-      'default': true
-    }]
-  };
-  inherits(Contour, Transform, {
-    transform(_, pulse) {
-      if (this.value && !pulse.changed() && !_.modified()) {
-        return pulse.StopPropagation;
-      }
-      var out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS),
-        contour = contours().smooth(_.smooth !== false),
-        values = _.values,
-        thresh = _.thresholds || quantize(_.count || 10, _.nice, !!values),
-        size = _.size,
-        grid,
-        post;
-      if (!values) {
-        values = pulse.materialize(pulse.SOURCE).source;
-        grid = params(density2D(), _)(values, true);
-        post = transform$1(grid, grid.scale || 1, grid.scale || 1, 0, 0);
-        size = [grid.width, grid.height];
-        values = grid.values;
-      }
-      thresh = isArray(thresh) ? thresh : thresh(values);
-      values = contour.size(size)(values, thresh);
-      if (post) values.forEach(post);
-      if (this.value) out.rem = this.value;
-      this.value = out.source = out.add = (values || []).map(ingest$1);
-      return out;
-    }
-  });
-  const Feature = 'Feature';
-  const FeatureCollection = 'FeatureCollection';
-  const MultiPoint = 'MultiPoint';
-
-  /**
-   * Consolidate an array of [longitude, latitude] points or GeoJSON features
-   * into a combined GeoJSON object. This transform is particularly useful for
-   * combining geo data for a Projection's fit argument. The resulting GeoJSON
-   * data is available as this transform's value. Input pulses are unchanged.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<function(object): *>} [params.fields] - A two-element array
-   *   of field accessors for the longitude and latitude values.
-   * @param {function(object): *} params.geojson - A field accessor for
-   *   retrieving GeoJSON feature data.
-   */
-  function GeoJSON(params) {
-    Transform.call(this, null, params);
-  }
-  GeoJSON.Definition = {
-    'type': 'GeoJSON',
-    'metadata': {},
-    'params': [{
-      'name': 'fields',
-      'type': 'field',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'geojson',
-      'type': 'field'
-    }]
-  };
-  inherits(GeoJSON, Transform, {
-    transform(_, pulse) {
-      var features = this._features,
-        points = this._points,
-        fields = _.fields,
-        lon = fields && fields[0],
-        lat = fields && fields[1],
-        geojson = _.geojson || !fields && identity,
-        flag = pulse.ADD,
-        mod;
-      mod = _.modified() || pulse.changed(pulse.REM) || pulse.modified(accessorFields(geojson)) || lon && pulse.modified(accessorFields(lon)) || lat && pulse.modified(accessorFields(lat));
-      if (!this.value || mod) {
-        flag = pulse.SOURCE;
-        this._features = features = [];
-        this._points = points = [];
-      }
-      if (geojson) {
-        pulse.visit(flag, t => features.push(geojson(t)));
-      }
-      if (lon && lat) {
-        pulse.visit(flag, t => {
-          var x = lon(t),
-            y = lat(t);
-          if (x != null && y != null && (x = +x) === x && (y = +y) === y) {
-            points.push([x, y]);
-          }
-        });
-        features = features.concat({
-          type: Feature,
-          geometry: {
-            type: MultiPoint,
-            coordinates: points
-          }
-        });
-      }
-      this.value = {
-        type: FeatureCollection,
-        features: features
-      };
-    }
-  });
-
-  /**
-   * Map GeoJSON data to an SVG path string.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(number, number): *} params.projection - The cartographic
-   *   projection to apply.
-   * @param {function(object): *} [params.field] - The field with GeoJSON data,
-   *   or null if the tuple itself is a GeoJSON feature.
-   * @param {string} [params.as='path'] - The output field in which to store
-   *   the generated path data (default 'path').
-   */
-  function GeoPath(params) {
-    Transform.call(this, null, params);
-  }
-  GeoPath.Definition = {
-    'type': 'GeoPath',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'projection',
-      'type': 'projection'
-    }, {
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'pointRadius',
-      'type': 'number',
-      'expr': true
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'path'
-    }]
-  };
-  inherits(GeoPath, Transform, {
-    transform(_, pulse) {
-      var out = pulse.fork(pulse.ALL),
-        path = this.value,
-        field = _.field || identity,
-        as = _.as || 'path',
-        flag = out.SOURCE;
-      if (!path || _.modified()) {
-        // parameters updated, reset and reflow
-        this.value = path = getProjectionPath(_.projection);
-        out.materialize().reflow();
-      } else {
-        flag = field === identity || pulse.modified(field.fields) ? out.ADD_MOD : out.ADD;
-      }
-      const prev = initPath(path, _.pointRadius);
-      out.visit(flag, t => t[as] = path(field(t)));
-      path.pointRadius(prev);
-      return out.modifies(as);
-    }
-  });
-  function initPath(path, pointRadius) {
-    const prev = path.pointRadius();
-    path.context(null);
-    if (pointRadius != null) {
-      path.pointRadius(pointRadius);
-    }
-    return prev;
-  }
-
-  /**
-   * Geo-code a longitude/latitude point to an x/y coordinate.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(number, number): *} params.projection - The cartographic
-   *   projection to apply.
-   * @param {Array<function(object): *>} params.fields - A two-element array of
-   *   field accessors for the longitude and latitude values.
-   * @param {Array<string>} [params.as] - A two-element array of field names
-   *   under which to store the result. Defaults to ['x','y'].
-   */
-  function GeoPoint(params) {
-    Transform.call(this, null, params);
-  }
-  GeoPoint.Definition = {
-    'type': 'GeoPoint',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'projection',
-      'type': 'projection',
-      'required': true
-    }, {
-      'name': 'fields',
-      'type': 'field',
-      'array': true,
-      'required': true,
-      'length': 2
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': 2,
-      'default': ['x', 'y']
-    }]
-  };
-  inherits(GeoPoint, Transform, {
-    transform(_, pulse) {
-      var proj = _.projection,
-        lon = _.fields[0],
-        lat = _.fields[1],
-        as = _.as || ['x', 'y'],
-        x = as[0],
-        y = as[1],
-        mod;
-      function set(t) {
-        const xy = proj([lon(t), lat(t)]);
-        if (xy) {
-          t[x] = xy[0];
-          t[y] = xy[1];
-        } else {
-          t[x] = undefined;
-          t[y] = undefined;
-        }
-      }
-      if (_.modified()) {
-        // parameters updated, reflow
-        pulse = pulse.materialize().reflow(true).visit(pulse.SOURCE, set);
-      } else {
-        mod = pulse.modified(lon.fields) || pulse.modified(lat.fields);
-        pulse.visit(mod ? pulse.ADD_MOD : pulse.ADD, set);
-      }
-      return pulse.modifies(as);
-    }
-  });
-
-  /**
-   * Annotate items with a geopath shape generator.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(number, number): *} params.projection - The cartographic
-   *   projection to apply.
-   * @param {function(object): *} [params.field] - The field with GeoJSON data,
-   *   or null if the tuple itself is a GeoJSON feature.
-   * @param {string} [params.as='shape'] - The output field in which to store
-   *   the generated path data (default 'shape').
-   */
-  function GeoShape(params) {
-    Transform.call(this, null, params);
-  }
-  GeoShape.Definition = {
-    'type': 'GeoShape',
-    'metadata': {
-      'modifies': true,
-      'nomod': true
-    },
-    'params': [{
-      'name': 'projection',
-      'type': 'projection'
-    }, {
-      'name': 'field',
-      'type': 'field',
-      'default': 'datum'
-    }, {
-      'name': 'pointRadius',
-      'type': 'number',
-      'expr': true
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'shape'
-    }]
-  };
-  inherits(GeoShape, Transform, {
-    transform(_, pulse) {
-      var out = pulse.fork(pulse.ALL),
-        shape = this.value,
-        as = _.as || 'shape',
-        flag = out.ADD;
-      if (!shape || _.modified()) {
-        // parameters updated, reset and reflow
-        this.value = shape = shapeGenerator(getProjectionPath(_.projection), _.field || field$1('datum'), _.pointRadius);
-        out.materialize().reflow();
-        flag = out.SOURCE;
-      }
-      out.visit(flag, t => t[as] = shape);
-      return out.modifies(as);
-    }
-  });
-  function shapeGenerator(path, field, pointRadius) {
-    const shape = pointRadius == null ? _ => path(field(_)) : _ => {
-      var prev = path.pointRadius(),
-        value = path.pointRadius(pointRadius)(field(_));
-      path.pointRadius(prev);
-      return value;
-    };
-    shape.context = _ => {
-      path.context(_);
-      return shape;
-    };
-    return shape;
-  }
-
-  /**
-   * GeoJSON feature generator for creating graticules.
-   * @constructor
-   */
-  function Graticule(params) {
-    Transform.call(this, [], params);
-    this.generator = d3Geo.geoGraticule();
-  }
-  Graticule.Definition = {
-    'type': 'Graticule',
-    'metadata': {
-      'changes': true,
-      'generates': true
-    },
-    'params': [{
-      'name': 'extent',
-      'type': 'array',
-      'array': true,
-      'length': 2,
-      'content': {
-        'type': 'number',
-        'array': true,
-        'length': 2
-      }
-    }, {
-      'name': 'extentMajor',
-      'type': 'array',
-      'array': true,
-      'length': 2,
-      'content': {
-        'type': 'number',
-        'array': true,
-        'length': 2
-      }
-    }, {
-      'name': 'extentMinor',
-      'type': 'array',
-      'array': true,
-      'length': 2,
-      'content': {
-        'type': 'number',
-        'array': true,
-        'length': 2
-      }
-    }, {
-      'name': 'step',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'stepMajor',
-      'type': 'number',
-      'array': true,
-      'length': 2,
-      'default': [90, 360]
-    }, {
-      'name': 'stepMinor',
-      'type': 'number',
-      'array': true,
-      'length': 2,
-      'default': [10, 10]
-    }, {
-      'name': 'precision',
-      'type': 'number',
-      'default': 2.5
-    }]
-  };
-  inherits(Graticule, Transform, {
-    transform(_, pulse) {
-      var src = this.value,
-        gen = this.generator,
-        t;
-      if (!src.length || _.modified()) {
-        for (const prop in _) {
-          if (isFunction(gen[prop])) {
-            gen[prop](_[prop]);
-          }
-        }
-      }
-      t = gen();
-      if (src.length) {
-        pulse.mod.push(replace$1(src[0], t));
-      } else {
-        pulse.add.push(ingest$1(t));
-      }
-      src[0] = t;
-      return pulse;
-    }
-  });
-
-  /**
-   * Render a heatmap image for input raster grid data.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} [params.field] - The field with raster grid
-   *   data. If unspecified, the tuple itself is interpreted as a raster grid.
-   * @param {string} [params.color] - A constant color value or function for
-   *   individual pixel color. If a function, it will be invoked with an input
-   *   object that includes $x, $y, $value, and $max fields for the grid.
-   * @param {number} [params.opacity] - A constant opacity value or function for
-   *   individual pixel opacity. If a function, it will be invoked with an input
-   *   object that includes $x, $y, $value, and $max fields for the grid.
-   * @param {string} [params.resolve] - The method for resolving maximum values
-   *   across multiple input grids. If 'independent' (the default), maximum
-   *   calculation will be performed separately for each grid. If 'shared',
-   *   a single global maximum will be used for all input grids.
-   * @param {string} [params.as='image'] - The output field in which to store
-   *   the generated bitmap canvas images (default 'image').
-   */
-  function Heatmap(params) {
-    Transform.call(this, null, params);
-  }
-  Heatmap.Definition = {
-    'type': 'heatmap',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'color',
-      'type': 'string',
-      'expr': true
-    }, {
-      'name': 'opacity',
-      'type': 'number',
-      'expr': true
-    }, {
-      'name': 'resolve',
-      'type': 'enum',
-      'values': ['shared', 'independent'],
-      'default': 'independent'
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'image'
-    }]
-  };
-  inherits(Heatmap, Transform, {
-    transform(_, pulse) {
-      if (!pulse.changed() && !_.modified()) {
-        return pulse.StopPropagation;
-      }
-      var source = pulse.materialize(pulse.SOURCE).source,
-        shared = _.resolve === 'shared',
-        field = _.field || identity,
-        opacity = opacity_(_.opacity, _),
-        color = color_(_.color, _),
-        as = _.as || 'image',
-        obj = {
-          $x: 0,
-          $y: 0,
-          $value: 0,
-          $max: shared ? d3Array.max(source.map(t => d3Array.max(field(t).values))) : 0
-        };
-      source.forEach(t => {
-        const v = field(t);
-
-        // build proxy data object
-        const o = extend({}, t, obj);
-        // set maximum value if not globally shared
-        if (!shared) o.$max = d3Array.max(v.values || []);
-
-        // generate canvas image
-        // optimize color/opacity if not pixel-dependent
-        t[as] = toCanvas(v, o, color.dep ? color : constant$1(color(o)), opacity.dep ? opacity : constant$1(opacity(o)));
-      });
-      return pulse.reflow(true).modifies(as);
-    }
-  });
-
-  // get image color function
-  function color_(color, _) {
-    let f;
-    if (isFunction(color)) {
-      f = obj => d3Color.rgb(color(obj, _));
-      f.dep = dependency(color);
-    } else {
-      // default to mid-grey
-      f = constant$1(d3Color.rgb(color || '#888'));
-    }
-    return f;
-  }
-
-  // get image opacity function
-  function opacity_(opacity, _) {
-    let f;
-    if (isFunction(opacity)) {
-      f = obj => opacity(obj, _);
-      f.dep = dependency(opacity);
-    } else if (opacity) {
-      f = constant$1(opacity);
-    } else {
-      // default to [0, max] opacity gradient
-      f = obj => obj.$value / obj.$max || 0;
-      f.dep = true;
-    }
-    return f;
-  }
-
-  // check if function depends on individual pixel data
-  function dependency(f) {
-    if (!isFunction(f)) return false;
-    const set = toSet(accessorFields(f));
-    return set.$x || set.$y || set.$value || set.$max;
-  }
-
-  // render raster grid to canvas
-  function toCanvas(grid, obj, color, opacity) {
-    const n = grid.width,
-      m = grid.height,
-      x1 = grid.x1 || 0,
-      y1 = grid.y1 || 0,
-      x2 = grid.x2 || n,
-      y2 = grid.y2 || m,
-      val = grid.values,
-      value = val ? i => val[i] : zero$1,
-      can = domCanvas(x2 - x1, y2 - y1),
-      ctx = can.getContext('2d'),
-      img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
-      pix = img.data;
-    for (let j = y1, k = 0; j < y2; ++j) {
-      obj.$y = j - y1;
-      for (let i = x1, r = j * n; i < x2; ++i, k += 4) {
-        obj.$x = i - x1;
-        obj.$value = value(i + r);
-        const v = color(obj);
-        pix[k + 0] = v.r;
-        pix[k + 1] = v.g;
-        pix[k + 2] = v.b;
-        pix[k + 3] = ~~(255 * opacity(obj));
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-    return can;
-  }
-
-  /**
-   * Maintains a cartographic projection.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function Projection$1(params) {
-    Transform.call(this, null, params);
-    this.modified(true); // always treat as modified
-  }
-
-  inherits(Projection$1, Transform, {
-    transform(_, pulse) {
-      let proj = this.value;
-      if (!proj || _.modified('type')) {
-        this.value = proj = create(_.type);
-        projectionProperties.forEach(prop => {
-          if (_[prop] != null) set(proj, prop, _[prop]);
-        });
-      } else {
-        projectionProperties.forEach(prop => {
-          if (_.modified(prop)) set(proj, prop, _[prop]);
-        });
-      }
-      if (_.pointRadius != null) proj.path.pointRadius(_.pointRadius);
-      if (_.fit) fit(proj, _);
-      return pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-    }
-  });
-  function fit(proj, _) {
-    const data = collectGeoJSON(_.fit);
-    _.extent ? proj.fitExtent(_.extent, data) : _.size ? proj.fitSize(_.size, data) : 0;
-  }
-  function create(type) {
-    const constructor = projection((type || 'mercator').toLowerCase());
-    if (!constructor) error('Unrecognized projection type: ' + type);
-    return constructor();
-  }
-  function set(proj, key, value) {
-    if (isFunction(proj[key])) proj[key](value);
-  }
-  function collectGeoJSON(data) {
-    data = array$2(data);
-    return data.length === 1 ? data[0] : {
-      type: FeatureCollection,
-      features: data.reduce((a, f) => a.concat(featurize(f)), [])
-    };
-  }
-  function featurize(f) {
-    return f.type === FeatureCollection ? f.features : array$2(f).filter(d => d != null).map(d => d.type === Feature ? d : {
-      type: Feature,
-      geometry: d
-    });
-  }
-
-  var geo = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    contour: Contour,
-    geojson: GeoJSON,
-    geopath: GeoPath,
-    geopoint: GeoPoint,
-    geoshape: GeoShape,
-    graticule: Graticule,
-    heatmap: Heatmap,
-    isocontour: Isocontour,
-    kde2d: KDE2D,
-    projection: Projection$1
-  });
-
-  const ForceMap = {
-    center: d3Force.forceCenter,
-    collide: d3Force.forceCollide,
-    nbody: d3Force.forceManyBody,
-    link: d3Force.forceLink,
-    x: d3Force.forceX,
-    y: d3Force.forceY
-  };
-  const Forces = 'forces',
-    ForceParams = ['alpha', 'alphaMin', 'alphaTarget', 'velocityDecay', 'forces'],
-    ForceConfig = ['static', 'iterations'],
-    ForceOutput = ['x', 'y', 'vx', 'vy'];
-
-  /**
-   * Force simulation layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<object>} params.forces - The forces to apply.
-   */
-  function Force(params) {
-    Transform.call(this, null, params);
-  }
-  Force.Definition = {
-    'type': 'Force',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'static',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'restart',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'iterations',
-      'type': 'number',
-      'default': 300
-    }, {
-      'name': 'alpha',
-      'type': 'number',
-      'default': 1
-    }, {
-      'name': 'alphaMin',
-      'type': 'number',
-      'default': 0.001
-    }, {
-      'name': 'alphaTarget',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'velocityDecay',
-      'type': 'number',
-      'default': 0.4
-    }, {
-      'name': 'forces',
-      'type': 'param',
-      'array': true,
-      'params': [{
-        'key': {
-          'force': 'center'
-        },
-        'params': [{
-          'name': 'x',
-          'type': 'number',
-          'default': 0
-        }, {
-          'name': 'y',
-          'type': 'number',
-          'default': 0
-        }]
-      }, {
-        'key': {
-          'force': 'collide'
-        },
-        'params': [{
-          'name': 'radius',
-          'type': 'number',
-          'expr': true
-        }, {
-          'name': 'strength',
-          'type': 'number',
-          'default': 0.7
-        }, {
-          'name': 'iterations',
-          'type': 'number',
-          'default': 1
-        }]
-      }, {
-        'key': {
-          'force': 'nbody'
-        },
-        'params': [{
-          'name': 'strength',
-          'type': 'number',
-          'default': -30,
-          'expr': true
-        }, {
-          'name': 'theta',
-          'type': 'number',
-          'default': 0.9
-        }, {
-          'name': 'distanceMin',
-          'type': 'number',
-          'default': 1
-        }, {
-          'name': 'distanceMax',
-          'type': 'number'
-        }]
-      }, {
-        'key': {
-          'force': 'link'
-        },
-        'params': [{
-          'name': 'links',
-          'type': 'data'
-        }, {
-          'name': 'id',
-          'type': 'field'
-        }, {
-          'name': 'distance',
-          'type': 'number',
-          'default': 30,
-          'expr': true
-        }, {
-          'name': 'strength',
-          'type': 'number',
-          'expr': true
-        }, {
-          'name': 'iterations',
-          'type': 'number',
-          'default': 1
-        }]
-      }, {
-        'key': {
-          'force': 'x'
-        },
-        'params': [{
-          'name': 'strength',
-          'type': 'number',
-          'default': 0.1
-        }, {
-          'name': 'x',
-          'type': 'field'
-        }]
-      }, {
-        'key': {
-          'force': 'y'
-        },
-        'params': [{
-          'name': 'strength',
-          'type': 'number',
-          'default': 0.1
-        }, {
-          'name': 'y',
-          'type': 'field'
-        }]
-      }]
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'modify': false,
-      'default': ForceOutput
-    }]
-  };
-  inherits(Force, Transform, {
-    transform(_, pulse) {
-      var sim = this.value,
-        change = pulse.changed(pulse.ADD_REM),
-        params = _.modified(ForceParams),
-        iters = _.iterations || 300;
-
-      // configure simulation
-      if (!sim) {
-        this.value = sim = simulation(pulse.source, _);
-        sim.on('tick', rerun(pulse.dataflow, this));
-        if (!_.static) {
-          change = true;
-          sim.tick(); // ensure we run on init
-        }
-
-        pulse.modifies('index');
-      } else {
-        if (change) {
-          pulse.modifies('index');
-          sim.nodes(pulse.source);
-        }
-        if (params || pulse.changed(pulse.MOD)) {
-          setup(sim, _, 0, pulse);
-        }
-      }
-
-      // run simulation
-      if (params || change || _.modified(ForceConfig) || pulse.changed() && _.restart) {
-        sim.alpha(Math.max(sim.alpha(), _.alpha || 1)).alphaDecay(1 - Math.pow(sim.alphaMin(), 1 / iters));
-        if (_.static) {
-          for (sim.stop(); --iters >= 0;) sim.tick();
-        } else {
-          if (sim.stopped()) sim.restart();
-          if (!change) return pulse.StopPropagation; // defer to sim ticks
-        }
-      }
-
-      return this.finish(_, pulse);
-    },
-    finish(_, pulse) {
-      const dataflow = pulse.dataflow;
-
-      // inspect dependencies, touch link source data
-      for (let args = this._argops, j = 0, m = args.length, arg; j < m; ++j) {
-        arg = args[j];
-        if (arg.name !== Forces || arg.op._argval.force !== 'link') {
-          continue;
-        }
-        for (var ops = arg.op._argops, i = 0, n = ops.length, op; i < n; ++i) {
-          if (ops[i].name === 'links' && (op = ops[i].op.source)) {
-            dataflow.pulse(op, dataflow.changeset().reflow());
-            break;
-          }
-        }
-      }
-
-      // reflow all nodes
-      return pulse.reflow(_.modified()).modifies(ForceOutput);
-    }
-  });
-  function rerun(df, op) {
-    return () => df.touch(op).run();
-  }
-  function simulation(nodes, _) {
-    const sim = d3Force.forceSimulation(nodes),
-      stop = sim.stop,
-      restart = sim.restart;
-    let stopped = false;
-    sim.stopped = () => stopped;
-    sim.restart = () => (stopped = false, restart());
-    sim.stop = () => (stopped = true, stop());
-    return setup(sim, _, true).on('end', () => stopped = true);
-  }
-  function setup(sim, _, init, pulse) {
-    var f = array$2(_.forces),
-      i,
-      n,
-      p,
-      name;
-    for (i = 0, n = ForceParams.length; i < n; ++i) {
-      p = ForceParams[i];
-      if (p !== Forces && _.modified(p)) sim[p](_[p]);
-    }
-    for (i = 0, n = f.length; i < n; ++i) {
-      name = Forces + i;
-      p = init || _.modified(Forces, i) ? getForce(f[i]) : pulse && modified(f[i], pulse) ? sim.force(name) : null;
-      if (p) sim.force(name, p);
-    }
-    for (n = sim.numForces || 0; i < n; ++i) {
-      sim.force(Forces + i, null); // remove
-    }
-
-    sim.numForces = f.length;
-    return sim;
-  }
-  function modified(f, pulse) {
-    var k, v;
-    for (k in f) {
-      if (isFunction(v = f[k]) && pulse.modified(accessorFields(v))) return 1;
-    }
-    return 0;
-  }
-  function getForce(_) {
-    var f, p;
-    if (!has$1(ForceMap, _.force)) {
-      error('Unrecognized force: ' + _.force);
-    }
-    f = ForceMap[_.force]();
-    for (p in _) {
-      if (isFunction(f[p])) setForceParam(f[p], _[p], _);
-    }
-    return f;
-  }
-  function setForceParam(f, v, _) {
-    f(isFunction(v) ? d => v(d, _) : v);
-  }
-
-  var force = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    force: Force
-  });
-
-  // Build lookup table mapping tuple keys to tree node instances
-  function lookup$2(tree, key, filter) {
-    const map = {};
-    tree.each(node => {
-      const t = node.data;
-      if (filter(t)) map[key(t)] = node;
-    });
-    tree.lookup = map;
-    return tree;
-  }
-
-  /**
-   * Nest tuples into a tree structure, grouped by key values.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<function(object): *>} params.keys - The key fields to nest by, in order.
-   * @param {boolean} [params.generate=false] - A boolean flag indicating if
-   *   non-leaf nodes generated by this transform should be included in the
-   *   output. The default (false) includes only the input data (leaf nodes)
-   *   in the data stream.
-   */
-  function Nest(params) {
-    Transform.call(this, null, params);
-  }
-  Nest.Definition = {
-    'type': 'Nest',
-    'metadata': {
-      'treesource': true,
-      'changes': true
-    },
-    'params': [{
-      'name': 'keys',
-      'type': 'field',
-      'array': true
-    }, {
-      'name': 'generate',
-      'type': 'boolean'
-    }]
-  };
-  const children$1 = n => n.values;
-  inherits(Nest, Transform, {
-    transform(_, pulse) {
-      if (!pulse.source) {
-        error('Nest transform requires an upstream data source.');
-      }
-      var gen = _.generate,
-        mod = _.modified(),
-        out = pulse.clone(),
-        tree = this.value;
-      if (!tree || mod || pulse.changed()) {
-        // collect nodes to remove
-        if (tree) {
-          tree.each(node => {
-            if (node.children && isTuple(node.data)) {
-              out.rem.push(node.data);
-            }
-          });
-        }
-
-        // generate new tree structure
-        this.value = tree = d3Hierarchy.hierarchy({
-          values: array$2(_.keys).reduce((n, k) => {
-            n.key(k);
-            return n;
-          }, nest()).entries(out.source)
-        }, children$1);
-
-        // collect nodes to add
-        if (gen) {
-          tree.each(node => {
-            if (node.children) {
-              node = ingest$1(node.data);
-              out.add.push(node);
-              out.source.push(node);
-            }
-          });
-        }
-
-        // build lookup table
-        lookup$2(tree, tupleid, tupleid);
-      }
-      out.source.root = tree;
-      return out;
-    }
-  });
-  function nest() {
-    const keys = [],
-      nest = {
-        entries: array => entries(apply(array, 0), 0),
-        key: d => (keys.push(d), nest)
-      };
-    function apply(array, depth) {
-      if (depth >= keys.length) {
-        return array;
-      }
-      const n = array.length,
-        key = keys[depth++],
-        valuesByKey = {},
-        result = {};
-      let i = -1,
-        keyValue,
-        value,
-        values;
-      while (++i < n) {
-        keyValue = key(value = array[i]) + '';
-        if (values = valuesByKey[keyValue]) {
-          values.push(value);
-        } else {
-          valuesByKey[keyValue] = [value];
-        }
-      }
-      for (keyValue in valuesByKey) {
-        result[keyValue] = apply(valuesByKey[keyValue], depth);
-      }
-      return result;
-    }
-    function entries(map, depth) {
-      if (++depth > keys.length) return map;
-      const array = [];
-      for (const key in map) {
-        array.push({
-          key,
-          values: entries(map[key], depth)
-        });
-      }
-      return array;
-    }
-    return nest;
-  }
-
-  /**
-   * Abstract class for tree layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function HierarchyLayout(params) {
-    Transform.call(this, null, params);
-  }
-  const defaultSeparation = (a, b) => a.parent === b.parent ? 1 : 2;
-  inherits(HierarchyLayout, Transform, {
-    transform(_, pulse) {
-      if (!pulse.source || !pulse.source.root) {
-        error(this.constructor.name + ' transform requires a backing tree data source.');
-      }
-      const layout = this.layout(_.method),
-        fields = this.fields,
-        root = pulse.source.root,
-        as = _.as || fields;
-      if (_.field) root.sum(_.field);else root.count();
-      if (_.sort) root.sort(stableCompare(_.sort, d => d.data));
-      setParams(layout, this.params, _);
-      if (layout.separation) {
-        layout.separation(_.separation !== false ? defaultSeparation : one$1);
-      }
-      try {
-        this.value = layout(root);
-      } catch (err) {
-        error(err);
-      }
-      root.each(node => setFields(node, fields, as));
-      return pulse.reflow(_.modified()).modifies(as).modifies('leaf');
-    }
-  });
-  function setParams(layout, params, _) {
-    for (let p, i = 0, n = params.length; i < n; ++i) {
-      p = params[i];
-      if (p in _) layout[p](_[p]);
-    }
-  }
-  function setFields(node, fields, as) {
-    const t = node.data,
-      n = fields.length - 1;
-    for (let i = 0; i < n; ++i) {
-      t[as[i]] = node[fields[i]];
-    }
-    t[as[n]] = node.children ? node.children.length : 0;
-  }
-  const Output$3 = ['x', 'y', 'r', 'depth', 'children'];
-
-  /**
-   * Packed circle tree layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.field - The value field to size nodes.
-   */
-  function Pack(params) {
-    HierarchyLayout.call(this, params);
-  }
-  Pack.Definition = {
-    'type': 'Pack',
-    'metadata': {
-      'tree': true,
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'sort',
-      'type': 'compare'
-    }, {
-      'name': 'padding',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'radius',
-      'type': 'field',
-      'default': null
-    }, {
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': Output$3.length,
-      'default': Output$3
-    }]
-  };
-  inherits(Pack, HierarchyLayout, {
-    layout: d3Hierarchy.pack,
-    params: ['radius', 'size', 'padding'],
-    fields: Output$3
-  });
-  const Output$2 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
-
-  /**
-   * Partition tree layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.field - The value field to size nodes.
-   */
-  function Partition(params) {
-    HierarchyLayout.call(this, params);
-  }
-  Partition.Definition = {
-    'type': 'Partition',
-    'metadata': {
-      'tree': true,
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'sort',
-      'type': 'compare'
-    }, {
-      'name': 'padding',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'round',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': Output$2.length,
-      'default': Output$2
-    }]
-  };
-  inherits(Partition, HierarchyLayout, {
-    layout: d3Hierarchy.partition,
-    params: ['size', 'round', 'padding'],
-    fields: Output$2
-  });
-
-  /**
-   * Stratify a collection of tuples into a tree structure based on
-   * id and parent id fields.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.key - Unique key field for each tuple.
-   * @param {function(object): *} params.parentKey - Field with key for parent tuple.
-   */
-  function Stratify(params) {
-    Transform.call(this, null, params);
-  }
-  Stratify.Definition = {
-    'type': 'Stratify',
-    'metadata': {
-      'treesource': true
-    },
-    'params': [{
-      'name': 'key',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'parentKey',
-      'type': 'field',
-      'required': true
-    }]
-  };
-  inherits(Stratify, Transform, {
-    transform(_, pulse) {
-      if (!pulse.source) {
-        error('Stratify transform requires an upstream data source.');
-      }
-      let tree = this.value;
-      const mod = _.modified(),
-        out = pulse.fork(pulse.ALL).materialize(pulse.SOURCE),
-        run = !tree || mod || pulse.changed(pulse.ADD_REM) || pulse.modified(_.key.fields) || pulse.modified(_.parentKey.fields);
-
-      // prevent upstream source pollution
-      out.source = out.source.slice();
-      if (run) {
-        tree = out.source.length ? lookup$2(d3Hierarchy.stratify().id(_.key).parentId(_.parentKey)(out.source), _.key, truthy) : lookup$2(d3Hierarchy.stratify()([{}]), _.key, _.key);
-      }
-      out.source.root = this.value = tree;
-      return out;
-    }
-  });
-  const Layouts = {
-    tidy: d3Hierarchy.tree,
-    cluster: d3Hierarchy.cluster
-  };
-  const Output$1$1 = ['x', 'y', 'depth', 'children'];
-
-  /**
-   * Tree layout. Depending on the method parameter, performs either
-   * Reingold-Tilford 'tidy' layout or dendrogram 'cluster' layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function Tree(params) {
-    HierarchyLayout.call(this, params);
-  }
-  Tree.Definition = {
-    'type': 'Tree',
-    'metadata': {
-      'tree': true,
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'sort',
-      'type': 'compare'
-    }, {
-      'name': 'method',
-      'type': 'enum',
-      'default': 'tidy',
-      'values': ['tidy', 'cluster']
-    }, {
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'nodeSize',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'separation',
-      'type': 'boolean',
-      'default': true
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': Output$1$1.length,
-      'default': Output$1$1
-    }]
-  };
-  inherits(Tree, HierarchyLayout, {
-    /**
-     * Tree layout generator. Supports both 'tidy' and 'cluster' layouts.
-     */
-    layout(method) {
-      const m = method || 'tidy';
-      if (has$1(Layouts, m)) return Layouts[m]();else error('Unrecognized Tree layout method: ' + m);
-    },
-    params: ['size', 'nodeSize'],
-    fields: Output$1$1
-  });
-
-  /**
-   * Generate tuples representing links between tree nodes.
-   * The resulting tuples will contain 'source' and 'target' fields,
-   * which point to parent and child node tuples, respectively.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   */
-  function TreeLinks(params) {
-    Transform.call(this, [], params);
-  }
-  TreeLinks.Definition = {
-    'type': 'TreeLinks',
-    'metadata': {
-      'tree': true,
-      'generates': true,
-      'changes': true
-    },
-    'params': []
-  };
-  inherits(TreeLinks, Transform, {
-    transform(_, pulse) {
-      const links = this.value,
-        tree = pulse.source && pulse.source.root,
-        out = pulse.fork(pulse.NO_SOURCE),
-        lut = {};
-      if (!tree) error('TreeLinks transform requires a tree data source.');
-      if (pulse.changed(pulse.ADD_REM)) {
-        // remove previous links
-        out.rem = links;
-
-        // build lookup table of valid tuples
-        pulse.visit(pulse.SOURCE, t => lut[tupleid(t)] = 1);
-
-        // generate links for all edges incident on valid tuples
-        tree.each(node => {
-          const t = node.data,
-            p = node.parent && node.parent.data;
-          if (p && lut[tupleid(t)] && lut[tupleid(p)]) {
-            out.add.push(ingest$1({
-              source: p,
-              target: t
-            }));
-          }
-        });
-        this.value = out.add;
-      } else if (pulse.changed(pulse.MOD)) {
-        // build lookup table of modified tuples
-        pulse.visit(pulse.MOD, t => lut[tupleid(t)] = 1);
-
-        // gather links incident on modified tuples
-        links.forEach(link => {
-          if (lut[tupleid(link.source)] || lut[tupleid(link.target)]) {
-            out.mod.push(link);
-          }
-        });
-      }
-      return out;
-    }
-  });
-  const Tiles = {
-    binary: d3Hierarchy.treemapBinary,
-    dice: d3Hierarchy.treemapDice,
-    slice: d3Hierarchy.treemapSlice,
-    slicedice: d3Hierarchy.treemapSliceDice,
-    squarify: d3Hierarchy.treemapSquarify,
-    resquarify: d3Hierarchy.treemapResquarify
-  };
-  const Output$4 = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];
-
-  /**
-   * Treemap layout.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.field - The value field to size nodes.
-   */
-  function Treemap(params) {
-    HierarchyLayout.call(this, params);
-  }
-  Treemap.Definition = {
-    'type': 'Treemap',
-    'metadata': {
-      'tree': true,
-      'modifies': true
-    },
-    'params': [{
-      'name': 'field',
-      'type': 'field'
-    }, {
-      'name': 'sort',
-      'type': 'compare'
-    }, {
-      'name': 'method',
-      'type': 'enum',
-      'default': 'squarify',
-      'values': ['squarify', 'resquarify', 'binary', 'dice', 'slice', 'slicedice']
-    }, {
-      'name': 'padding',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingInner',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingOuter',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingTop',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingRight',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingBottom',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'paddingLeft',
-      'type': 'number',
-      'default': 0
-    }, {
-      'name': 'ratio',
-      'type': 'number',
-      'default': 1.618033988749895
-    }, {
-      'name': 'round',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': Output$4.length,
-      'default': Output$4
-    }]
-  };
-  inherits(Treemap, HierarchyLayout, {
-    /**
-     * Treemap layout generator. Adds 'method' and 'ratio' parameters
-     * to configure the underlying tile method.
-     */
-    layout() {
-      const x = d3Hierarchy.treemap();
-      x.ratio = _ => {
-        const t = x.tile();
-        if (t.ratio) x.tile(t.ratio(_));
-      };
-      x.method = _ => {
-        if (has$1(Tiles, _)) x.tile(Tiles[_]);else error('Unrecognized Treemap layout method: ' + _);
-      };
-      return x;
-    },
-    params: ['method', 'ratio', 'size', 'round', 'padding', 'paddingInner', 'paddingOuter', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'],
-    fields: Output$4
-  });
-
-  var tree = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    nest: Nest,
-    pack: Pack,
-    partition: Partition,
-    stratify: Stratify,
-    tree: Tree,
-    treelinks: TreeLinks,
-    treemap: Treemap
-  });
-
-  // bit mask for getting first 2 bytes of alpha value
-  const ALPHA_MASK = 0xff000000;
-  function baseBitmaps($, data) {
-    const bitmap = $.bitmap();
-    // when there is no base mark but data points are to be avoided
-    (data || []).forEach(d => bitmap.set($(d.boundary[0]), $(d.boundary[3])));
-    return [bitmap, undefined];
-  }
-  function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
-    // create canvas
-    const width = $.width,
-      height = $.height,
-      border = labelInside || isGroupArea,
-      context = domCanvas(width, height).getContext('2d'),
-      baseMarkContext = domCanvas(width, height).getContext('2d'),
-      strokeContext = border && domCanvas(width, height).getContext('2d');
-
-    // render all marks to be avoided into canvas
-    avoidMarks.forEach(items => draw(context, items, false));
-    draw(baseMarkContext, baseMark, false);
-    if (border) {
-      draw(strokeContext, baseMark, true);
-    }
-
-    // get canvas buffer, create bitmaps
-    const buffer = getBuffer(context, width, height),
-      baseMarkBuffer = getBuffer(baseMarkContext, width, height),
-      strokeBuffer = border && getBuffer(strokeContext, width, height),
-      layer1 = $.bitmap(),
-      layer2 = border && $.bitmap();
-
-    // populate bitmap layers
-    let x, y, u, v, index, alpha, strokeAlpha, baseMarkAlpha;
-    for (y = 0; y < height; ++y) {
-      for (x = 0; x < width; ++x) {
-        index = y * width + x;
-        alpha = buffer[index] & ALPHA_MASK;
-        baseMarkAlpha = baseMarkBuffer[index] & ALPHA_MASK;
-        strokeAlpha = border && strokeBuffer[index] & ALPHA_MASK;
-        if (alpha || strokeAlpha || baseMarkAlpha) {
-          u = $(x);
-          v = $(y);
-          if (!isGroupArea && (alpha || baseMarkAlpha)) layer1.set(u, v); // update interior bitmap
-          if (border && (alpha || strokeAlpha)) layer2.set(u, v); // update border bitmap
-        }
-      }
-    }
-
-    return [layer1, layer2];
-  }
-  function getBuffer(context, width, height) {
-    return new Uint32Array(context.getImageData(0, 0, width, height).data.buffer);
-  }
-  function draw(context, items, interior) {
-    if (!items.length) return;
-    const type = items[0].mark.marktype;
-    if (type === 'group') {
-      items.forEach(group => {
-        group.items.forEach(mark => draw(context, mark.items, interior));
-      });
-    } else {
-      Marks[type].draw(context, {
-        items: interior ? items.map(prepare) : items
-      });
-    }
-  }
-
-  /**
-   * Prepare item before drawing into canvas (setting stroke and opacity)
-   * @param {object} source item to be prepared
-   * @returns prepared item
-   */
-  function prepare(source) {
-    const item = rederive(source, {});
-    if (item.stroke && item.strokeOpacity !== 0 || item.fill && item.fillOpacity !== 0) {
-      return {
-        ...item,
-        strokeOpacity: 1,
-        stroke: '#000',
-        fillOpacity: 0
-      };
-    }
-    return item;
-  }
-  const DIV = 5,
-    // bit shift from x, y index to bit vector array index
-    MOD = 31,
-    // bit mask for index lookup within a bit vector
-    SIZE = 32,
-    // individual bit vector size
-    RIGHT0 = new Uint32Array(SIZE + 1),
-    // left-anchored bit vectors, full -> 0
-    RIGHT1 = new Uint32Array(SIZE + 1); // right-anchored bit vectors, 0 -> full
-
-  RIGHT1[0] = 0;
-  RIGHT0[0] = ~RIGHT1[0];
-  for (let i = 1; i <= SIZE; ++i) {
-    RIGHT1[i] = RIGHT1[i - 1] << 1 | 1;
-    RIGHT0[i] = ~RIGHT1[i];
-  }
-  function Bitmap(w, h) {
-    const array = new Uint32Array(~~((w * h + SIZE) / SIZE));
-    function _set(index, mask) {
-      array[index] |= mask;
-    }
-    function _clear(index, mask) {
-      array[index] &= mask;
-    }
-    return {
-      array: array,
-      get: (x, y) => {
-        const index = y * w + x;
-        return array[index >>> DIV] & 1 << (index & MOD);
-      },
-      set: (x, y) => {
-        const index = y * w + x;
-        _set(index >>> DIV, 1 << (index & MOD));
-      },
-      clear: (x, y) => {
-        const index = y * w + x;
-        _clear(index >>> DIV, ~(1 << (index & MOD)));
-      },
-      getRange: (x, y, x2, y2) => {
-        let r = y2,
-          start,
-          end,
-          indexStart,
-          indexEnd;
-        for (; r >= y; --r) {
-          start = r * w + x;
-          end = r * w + x2;
-          indexStart = start >>> DIV;
-          indexEnd = end >>> DIV;
-          if (indexStart === indexEnd) {
-            if (array[indexStart] & RIGHT0[start & MOD] & RIGHT1[(end & MOD) + 1]) {
-              return true;
-            }
-          } else {
-            if (array[indexStart] & RIGHT0[start & MOD]) return true;
-            if (array[indexEnd] & RIGHT1[(end & MOD) + 1]) return true;
-            for (let i = indexStart + 1; i < indexEnd; ++i) {
-              if (array[i]) return true;
-            }
-          }
-        }
-        return false;
-      },
-      setRange: (x, y, x2, y2) => {
-        let start, end, indexStart, indexEnd, i;
-        for (; y <= y2; ++y) {
-          start = y * w + x;
-          end = y * w + x2;
-          indexStart = start >>> DIV;
-          indexEnd = end >>> DIV;
-          if (indexStart === indexEnd) {
-            _set(indexStart, RIGHT0[start & MOD] & RIGHT1[(end & MOD) + 1]);
-          } else {
-            _set(indexStart, RIGHT0[start & MOD]);
-            _set(indexEnd, RIGHT1[(end & MOD) + 1]);
-            for (i = indexStart + 1; i < indexEnd; ++i) _set(i, 0xffffffff);
-          }
-        }
-      },
-      clearRange: (x, y, x2, y2) => {
-        let start, end, indexStart, indexEnd, i;
-        for (; y <= y2; ++y) {
-          start = y * w + x;
-          end = y * w + x2;
-          indexStart = start >>> DIV;
-          indexEnd = end >>> DIV;
-          if (indexStart === indexEnd) {
-            _clear(indexStart, RIGHT1[start & MOD] | RIGHT0[(end & MOD) + 1]);
-          } else {
-            _clear(indexStart, RIGHT1[start & MOD]);
-            _clear(indexEnd, RIGHT0[(end & MOD) + 1]);
-            for (i = indexStart + 1; i < indexEnd; ++i) _clear(i, 0);
-          }
-        }
-      },
-      outOfBounds: (x, y, x2, y2) => x < 0 || y < 0 || y2 >= h || x2 >= w
-    };
-  }
-  function scaler(width, height, padding) {
-    const ratio = Math.max(1, Math.sqrt(width * height / 1e6)),
-      w = ~~((width + 2 * padding + ratio) / ratio),
-      h = ~~((height + 2 * padding + ratio) / ratio),
-      scale = _ => ~~((_ + padding) / ratio);
-    scale.invert = _ => _ * ratio - padding;
-    scale.bitmap = () => Bitmap(w, h);
-    scale.ratio = ratio;
-    scale.padding = padding;
-    scale.width = width;
-    scale.height = height;
-    return scale;
-  }
-  function placeAreaLabelNaive($, bitmaps, avoidBaseMark, markIndex) {
-    const width = $.width,
-      height = $.height;
-
-    // try to place a label within an input area mark
-    return function (d) {
-      const items = d.datum.datum.items[markIndex].items,
-        // area points
-        n = items.length,
-        // number of points
-        textHeight = d.datum.fontSize,
-        // label width
-        textWidth = textMetrics.width(d.datum, d.datum.text); // label height
-
-      let maxAreaWidth = 0,
-        x1,
-        x2,
-        y1,
-        y2,
-        x,
-        y,
-        areaWidth;
-
-      // for each area sample point
-      for (let i = 0; i < n; ++i) {
-        x1 = items[i].x;
-        y1 = items[i].y;
-        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
-        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
-        x = (x1 + x2) / 2;
-        y = (y1 + y2) / 2;
-        areaWidth = Math.abs(x2 - x1 + y2 - y1);
-        if (areaWidth >= maxAreaWidth) {
-          maxAreaWidth = areaWidth;
-          d.x = x;
-          d.y = y;
-        }
-      }
-      x = textWidth / 2;
-      y = textHeight / 2;
-      x1 = d.x - x;
-      x2 = d.x + x;
-      y1 = d.y - y;
-      y2 = d.y + y;
-      d.align = 'center';
-      if (x1 < 0 && x2 <= width) {
-        d.align = 'left';
-      } else if (0 <= x1 && width < x2) {
-        d.align = 'right';
-      }
-      d.baseline = 'middle';
-      if (y1 < 0 && y2 <= height) {
-        d.baseline = 'top';
-      } else if (0 <= y1 && height < y2) {
-        d.baseline = 'bottom';
-      }
-      return true;
-    };
-  }
-  function outOfBounds(x, y, textWidth, textHeight, width, height) {
-    let r = textWidth / 2;
-    return x - r < 0 || x + r > width || y - (r = textHeight / 2) < 0 || y + r > height;
-  }
-  function collision($, x, y, textHeight, textWidth, h, bm0, bm1) {
-    const w = textWidth * h / (textHeight * 2),
-      x1 = $(x - w),
-      x2 = $(x + w),
-      y1 = $(y - (h = h / 2)),
-      y2 = $(y + h);
-    return bm0.outOfBounds(x1, y1, x2, y2) || bm0.getRange(x1, y1, x2, y2) || bm1 && bm1.getRange(x1, y1, x2, y2);
-  }
-  function placeAreaLabelReducedSearch($, bitmaps, avoidBaseMark, markIndex) {
-    const width = $.width,
-      height = $.height,
-      bm0 = bitmaps[0],
-      // where labels have been placed
-      bm1 = bitmaps[1]; // area outlines
-
-    function tryLabel(_x, _y, maxSize, textWidth, textHeight) {
-      const x = $.invert(_x),
-        y = $.invert(_y);
-      let lo = maxSize,
-        hi = height,
-        mid;
-      if (!outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
-        // if the label fits at the current sample point,
-        // perform binary search to find the largest font size that fits
-        while (hi - lo >= 1) {
-          mid = (lo + hi) / 2;
-          if (collision($, x, y, textHeight, textWidth, mid, bm0, bm1)) {
-            hi = mid;
-          } else {
-            lo = mid;
-          }
-        }
-        // place label if current lower bound exceeds prior max font size
-        if (lo > maxSize) {
-          return [x, y, lo, true];
-        }
-      }
-    }
-
-    // try to place a label within an input area mark
-    return function (d) {
-      const items = d.datum.datum.items[markIndex].items,
-        // area points
-        n = items.length,
-        // number of points
-        textHeight = d.datum.fontSize,
-        // label width
-        textWidth = textMetrics.width(d.datum, d.datum.text); // label height
-
-      let maxSize = avoidBaseMark ? textHeight : 0,
-        labelPlaced = false,
-        labelPlaced2 = false,
-        maxAreaWidth = 0,
-        x1,
-        x2,
-        y1,
-        y2,
-        x,
-        y,
-        _x,
-        _y,
-        _x1,
-        _xMid,
-        _x2,
-        _y1,
-        _yMid,
-        _y2,
-        areaWidth,
-        result,
-        swapTmp;
-
-      // for each area sample point
-      for (let i = 0; i < n; ++i) {
-        x1 = items[i].x;
-        y1 = items[i].y;
-        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
-        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
-        if (x1 > x2) {
-          swapTmp = x1;
-          x1 = x2;
-          x2 = swapTmp;
-        }
-        if (y1 > y2) {
-          swapTmp = y1;
-          y1 = y2;
-          y2 = swapTmp;
-        }
-        _x1 = $(x1);
-        _x2 = $(x2);
-        _xMid = ~~((_x1 + _x2) / 2);
-        _y1 = $(y1);
-        _y2 = $(y2);
-        _yMid = ~~((_y1 + _y2) / 2);
-
-        // search along the line from mid point between the 2 border to lower border
-        for (_x = _xMid; _x >= _x1; --_x) {
-          for (_y = _yMid; _y >= _y1; --_y) {
-            result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
-            if (result) {
-              [d.x, d.y, maxSize, labelPlaced] = result;
-            }
-          }
-        }
-
-        // search along the line from mid point between the 2 border to upper border
-        for (_x = _xMid; _x <= _x2; ++_x) {
-          for (_y = _yMid; _y <= _y2; ++_y) {
-            result = tryLabel(_x, _y, maxSize, textWidth, textHeight);
-            if (result) {
-              [d.x, d.y, maxSize, labelPlaced] = result;
-            }
-          }
-        }
-
-        // place label at slice center if not placed through other means
-        // and if we're not avoiding overlap with other areas
-        if (!labelPlaced && !avoidBaseMark) {
-          // one span is zero, hence we can add
-          areaWidth = Math.abs(x2 - x1 + y2 - y1);
-          x = (x1 + x2) / 2;
-          y = (y1 + y2) / 2;
-
-          // place label if it fits and improves the max area width
-          if (areaWidth >= maxAreaWidth && !outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
-            maxAreaWidth = areaWidth;
-            d.x = x;
-            d.y = y;
-            labelPlaced2 = true;
-          }
-        }
-      }
-
-      // record current label placement information, update label bitmap
-      if (labelPlaced || labelPlaced2) {
-        x = textWidth / 2;
-        y = textHeight / 2;
-        bm0.setRange($(d.x - x), $(d.y - y), $(d.x + x), $(d.y + y));
-        d.align = 'center';
-        d.baseline = 'middle';
-        return true;
-      } else {
-        return false;
-      }
-    };
-  }
-
-  // pixel direction offsets for flood fill search
-  const X_DIR = [-1, -1, 1, 1];
-  const Y_DIR = [-1, 1, -1, 1];
-  function placeAreaLabelFloodFill($, bitmaps, avoidBaseMark, markIndex) {
-    const width = $.width,
-      height = $.height,
-      bm0 = bitmaps[0],
-      // where labels have been placed
-      bm1 = bitmaps[1],
-      // area outlines
-      bm2 = $.bitmap(); // flood-fill visitations
-
-    // try to place a label within an input area mark
-    return function (d) {
-      const items = d.datum.datum.items[markIndex].items,
-        // area points
-        n = items.length,
-        // number of points
-        textHeight = d.datum.fontSize,
-        // label width
-        textWidth = textMetrics.width(d.datum, d.datum.text),
-        // label height
-        stack = []; // flood fill stack
-
-      let maxSize = avoidBaseMark ? textHeight : 0,
-        labelPlaced = false,
-        labelPlaced2 = false,
-        maxAreaWidth = 0,
-        x1,
-        x2,
-        y1,
-        y2,
-        x,
-        y,
-        _x,
-        _y,
-        lo,
-        hi,
-        mid,
-        areaWidth;
-
-      // for each area sample point
-      for (let i = 0; i < n; ++i) {
-        x1 = items[i].x;
-        y1 = items[i].y;
-        x2 = items[i].x2 === undefined ? x1 : items[i].x2;
-        y2 = items[i].y2 === undefined ? y1 : items[i].y2;
-
-        // add scaled center point to stack
-        stack.push([$((x1 + x2) / 2), $((y1 + y2) / 2)]);
-
-        // perform flood fill, visit points
-        while (stack.length) {
-          [_x, _y] = stack.pop();
-
-          // exit if point already marked
-          if (bm0.get(_x, _y) || bm1.get(_x, _y) || bm2.get(_x, _y)) continue;
-
-          // mark point in flood fill bitmap
-          // add search points for all (in bound) directions
-          bm2.set(_x, _y);
-          for (let j = 0; j < 4; ++j) {
-            x = _x + X_DIR[j];
-            y = _y + Y_DIR[j];
-            if (!bm2.outOfBounds(x, y, x, y)) stack.push([x, y]);
-          }
-
-          // unscale point back to x, y space
-          x = $.invert(_x);
-          y = $.invert(_y);
-          lo = maxSize;
-          hi = height; // TODO: make this bound smaller
-
-          if (!outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, lo, bm0, bm1) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
-            // if the label fits at the current sample point,
-            // perform binary search to find the largest font size that fits
-            while (hi - lo >= 1) {
-              mid = (lo + hi) / 2;
-              if (collision($, x, y, textHeight, textWidth, mid, bm0, bm1)) {
-                hi = mid;
-              } else {
-                lo = mid;
-              }
-            }
-            // place label if current lower bound exceeds prior max font size
-            if (lo > maxSize) {
-              d.x = x;
-              d.y = y;
-              maxSize = lo;
-              labelPlaced = true;
-            }
-          }
-        }
-
-        // place label at slice center if not placed through other means
-        // and if we're not avoiding overlap with other areas
-        if (!labelPlaced && !avoidBaseMark) {
-          // one span is zero, hence we can add
-          areaWidth = Math.abs(x2 - x1 + y2 - y1);
-          x = (x1 + x2) / 2;
-          y = (y1 + y2) / 2;
-
-          // place label if it fits and improves the max area width
-          if (areaWidth >= maxAreaWidth && !outOfBounds(x, y, textWidth, textHeight, width, height) && !collision($, x, y, textHeight, textWidth, textHeight, bm0, null)) {
-            maxAreaWidth = areaWidth;
-            d.x = x;
-            d.y = y;
-            labelPlaced2 = true;
-          }
-        }
-      }
-
-      // record current label placement information, update label bitmap
-      if (labelPlaced || labelPlaced2) {
-        x = textWidth / 2;
-        y = textHeight / 2;
-        bm0.setRange($(d.x - x), $(d.y - y), $(d.x + x), $(d.y + y));
-        d.align = 'center';
-        d.baseline = 'middle';
-        return true;
-      } else {
-        return false;
-      }
-    };
-  }
-  const Aligns = ['right', 'center', 'left'],
-    Baselines = ['bottom', 'middle', 'top'];
-  function placeMarkLabel($, bitmaps, anchors, offsets) {
-    const width = $.width,
-      height = $.height,
-      bm0 = bitmaps[0],
-      bm1 = bitmaps[1],
-      n = offsets.length;
-    return function (d) {
-      const boundary = d.boundary,
-        textHeight = d.datum.fontSize;
-
-      // can not be placed if the mark is not visible in the graph bound
-      if (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height) {
-        return false;
-      }
-      let textWidth = d.textWidth ?? 0,
-        dx,
-        dy,
-        isInside,
-        sizeFactor,
-        insideFactor,
-        x1,
-        x2,
-        y1,
-        y2,
-        xc,
-        yc,
-        _x1,
-        _x2,
-        _y1,
-        _y2;
-
-      // for each anchor and offset
-      for (let i = 0; i < n; ++i) {
-        dx = (anchors[i] & 0x3) - 1;
-        dy = (anchors[i] >>> 0x2 & 0x3) - 1;
-        isInside = dx === 0 && dy === 0 || offsets[i] < 0;
-        sizeFactor = dx && dy ? Math.SQRT1_2 : 1;
-        insideFactor = offsets[i] < 0 ? -1 : 1;
-        x1 = boundary[1 + dx] + offsets[i] * dx * sizeFactor;
-        yc = boundary[4 + dy] + insideFactor * textHeight * dy / 2 + offsets[i] * dy * sizeFactor;
-        y1 = yc - textHeight / 2;
-        y2 = yc + textHeight / 2;
-        _x1 = $(x1);
-        _y1 = $(y1);
-        _y2 = $(y2);
-        if (!textWidth) {
-          // to avoid finding width of text label,
-          if (!test(_x1, _x1, _y1, _y2, bm0, bm1, x1, x1, y1, y2, boundary, isInside)) {
-            // skip this anchor/offset option if we fail to place a label with 1px width
-            continue;
-          } else {
-            // Otherwise, find the label width
-            textWidth = textMetrics.width(d.datum, d.datum.text);
-          }
-        }
-        xc = x1 + insideFactor * textWidth * dx / 2;
-        x1 = xc - textWidth / 2;
-        x2 = xc + textWidth / 2;
-        _x1 = $(x1);
-        _x2 = $(x2);
-        if (test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside)) {
-          // place label if the position is placeable
-          d.x = !dx ? xc : dx * insideFactor < 0 ? x2 : x1;
-          d.y = !dy ? yc : dy * insideFactor < 0 ? y2 : y1;
-          d.align = Aligns[dx * insideFactor + 1];
-          d.baseline = Baselines[dy * insideFactor + 1];
-          bm0.setRange(_x1, _y1, _x2, _y2);
-          return true;
-        }
-      }
-      return false;
-    };
-  }
-
-  // Test if a label with the given dimensions can be added without overlap
-  function test(_x1, _x2, _y1, _y2, bm0, bm1, x1, x2, y1, y2, boundary, isInside) {
-    return !(bm0.outOfBounds(_x1, _y1, _x2, _y2) || (isInside && bm1 || bm0).getRange(_x1, _y1, _x2, _y2));
-  }
-
-  // 8-bit representation of anchors
-  const TOP = 0x0,
-    MIDDLE = 0x4,
-    BOTTOM = 0x8,
-    LEFT = 0x0,
-    CENTER = 0x1,
-    RIGHT = 0x2;
-
-  // Mapping from text anchor to number representation
-  const anchorCode = {
-    'top-left': TOP + LEFT,
-    'top': TOP + CENTER,
-    'top-right': TOP + RIGHT,
-    'left': MIDDLE + LEFT,
-    'middle': MIDDLE + CENTER,
-    'right': MIDDLE + RIGHT,
-    'bottom-left': BOTTOM + LEFT,
-    'bottom': BOTTOM + CENTER,
-    'bottom-right': BOTTOM + RIGHT
-  };
-  const placeAreaLabel = {
-    'naive': placeAreaLabelNaive,
-    'reduced-search': placeAreaLabelReducedSearch,
-    'floodfill': placeAreaLabelFloodFill
-  };
-  function labelLayout(texts, size, compare, offset, anchor, avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method) {
-    // early exit for empty data
-    if (!texts.length) return texts;
-    const positions = Math.max(offset.length, anchor.length),
-      offsets = getOffsets(offset, positions),
-      anchors = getAnchors(anchor, positions),
-      marktype = markType(texts[0].datum),
-      grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
-      isGroupArea = grouptype === 'area',
-      boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex),
-      infPadding = padding === null || padding === Infinity,
-      isNaiveGroupArea = isGroupArea && method === 'naive';
-    let maxTextWidth = -1,
-      maxTextHeight = -1;
-
-    // prepare text mark data for placing
-    const data = texts.map(d => {
-      const textWidth = infPadding ? textMetrics.width(d, d.text) : undefined;
-      maxTextWidth = Math.max(maxTextWidth, textWidth);
-      maxTextHeight = Math.max(maxTextHeight, d.fontSize);
-      return {
-        datum: d,
-        opacity: 0,
-        x: undefined,
-        y: undefined,
-        align: undefined,
-        baseline: undefined,
-        boundary: boundary(d),
-        textWidth
-      };
-    });
-    padding = padding === null || padding === Infinity ? Math.max(maxTextWidth, maxTextHeight) + Math.max(...offset) : padding;
-    const $ = scaler(size[0], size[1], padding);
-    let bitmaps;
-    if (!isNaiveGroupArea) {
-      // sort labels in priority order, if comparator is provided
-      if (compare) {
-        data.sort((a, b) => compare(a.datum, b.datum));
-      }
-
-      // flag indicating if label can be placed inside its base mark
-      let labelInside = false;
-      for (let i = 0; i < anchors.length && !labelInside; ++i) {
-        // label inside if anchor is at center
-        // label inside if offset to be inside the mark bound
-        labelInside = anchors[i] === 0x5 || offsets[i] < 0;
-      }
-
-      // extract data information from base mark when base mark is to be avoided
-      // base mark is implicitly avoided if it is a group area
-      const baseMark = (marktype && avoidBaseMark || isGroupArea) && texts.map(d => d.datum);
-
-      // generate bitmaps for layout calculation
-      bitmaps = avoidMarks.length || baseMark ? markBitmaps($, baseMark || [], avoidMarks, labelInside, isGroupArea) : baseBitmaps($, avoidBaseMark && data);
-    }
-
-    // generate label placement function
-    const place = isGroupArea ? placeAreaLabel[method]($, bitmaps, avoidBaseMark, markIndex) : placeMarkLabel($, bitmaps, anchors, offsets);
-
-    // place all labels
-    data.forEach(d => d.opacity = +place(d));
-    return data;
-  }
-  function getOffsets(_, count) {
-    const offsets = new Float64Array(count),
-      n = _.length;
-    for (let i = 0; i < n; ++i) offsets[i] = _[i] || 0;
-    for (let i = n; i < count; ++i) offsets[i] = offsets[n - 1];
-    return offsets;
-  }
-  function getAnchors(_, count) {
-    const anchors = new Int8Array(count),
-      n = _.length;
-    for (let i = 0; i < n; ++i) anchors[i] |= anchorCode[_[i]];
-    for (let i = n; i < count; ++i) anchors[i] = anchors[n - 1];
-    return anchors;
-  }
-  function markType(item) {
-    return item && item.mark && item.mark.marktype;
-  }
-
-  /**
-   * Factory function for function for getting base mark boundary, depending
-   * on mark and group type. When mark type is undefined, line or area: boundary
-   * is the coordinate of each data point. When base mark is grouped line,
-   * boundary is either at the start or end of the line depending on the
-   * value of lineAnchor. Otherwise, use bounds of base mark.
-   */
-  function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
-    const xy = d => [d.x, d.x, d.x, d.y, d.y, d.y];
-    if (!marktype) {
-      return xy; // no reactive geometry
-    } else if (marktype === 'line' || marktype === 'area') {
-      return d => xy(d.datum);
-    } else if (grouptype === 'line') {
-      return d => {
-        const items = d.datum.items[markIndex].items;
-        return xy(items.length ? items[lineAnchor === 'start' ? 0 : items.length - 1] : {
-          x: NaN,
-          y: NaN
-        });
-      };
-    } else {
-      return d => {
-        const b = d.datum.bounds;
-        return [b.x1, (b.x1 + b.x2) / 2, b.x2, b.y1, (b.y1 + b.y2) / 2, b.y2];
-      };
-    }
-  }
-  const Output$1 = ['x', 'y', 'opacity', 'align', 'baseline'];
-  const Anchors = ['top-left', 'left', 'bottom-left', 'top', 'bottom', 'top-right', 'right', 'bottom-right'];
-
-  /**
-   * Compute text label layout to annotate marks.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<number>} params.size - The size of the layout, provided as a [width, height] array.
-   * @param {function(*,*): number} [params.sort] - An optional
-   *   comparator function for sorting label data in priority order.
-   * @param {Array<string>} [params.anchor] - Label anchor points relative to the base mark bounding box.
-   *   The available options are 'top-left', 'left', 'bottom-left', 'top',
-   *   'bottom', 'top-right', 'right', 'bottom-right', 'middle'.
-   * @param {Array<number>} [params.offset] - Label offsets (in pixels) from the base mark bounding box.
-   *   This parameter is parallel to the list of anchor points.
-   * @param {number | null} [params.padding=0] - The amount (in pixels) that a label may exceed the layout size.
-   *   If this parameter is null, a label may exceed the layout size without any boundary.
-   * @param {string} [params.lineAnchor='end'] - For group line mark labels only, indicates the anchor
-   *   position for labels. One of 'start' or 'end'.
-   * @param {string} [params.markIndex=0] - For group mark labels only, an index indicating
-   *   which mark within the group should be labeled.
-   * @param {Array<number>} [params.avoidMarks] - A list of additional mark names for which the label
-   *   layout should avoid overlap.
-   * @param {boolean} [params.avoidBaseMark=true] - Boolean flag indicating if labels should avoid
-   *   overlap with the underlying base mark being labeled.
-   * @param {string} [params.method='naive'] - For area make labels only, a method for
-   *   place labels. One of 'naive', 'reduced-search', or 'floodfill'.
-   * @param {Array<string>} [params.as] - The output fields written by the transform.
-   *   The default is ['x', 'y', 'opacity', 'align', 'baseline'].
-   */
-  function Label$1(params) {
-    Transform.call(this, null, params);
-  }
-  Label$1.Definition = {
-    type: 'Label',
-    metadata: {
-      modifies: true
-    },
-    params: [{
-      name: 'size',
-      type: 'number',
-      array: true,
-      length: 2,
-      required: true
-    }, {
-      name: 'sort',
-      type: 'compare'
-    }, {
-      name: 'anchor',
-      type: 'string',
-      array: true,
-      default: Anchors
-    }, {
-      name: 'offset',
-      type: 'number',
-      array: true,
-      default: [1]
-    }, {
-      name: 'padding',
-      type: 'number',
-      default: 0,
-      null: true
-    }, {
-      name: 'lineAnchor',
-      type: 'string',
-      values: ['start', 'end'],
-      default: 'end'
-    }, {
-      name: 'markIndex',
-      type: 'number',
-      default: 0
-    }, {
-      name: 'avoidBaseMark',
-      type: 'boolean',
-      default: true
-    }, {
-      name: 'avoidMarks',
-      type: 'data',
-      array: true
-    }, {
-      name: 'method',
-      type: 'string',
-      default: 'naive'
-    }, {
-      name: 'as',
-      type: 'string',
-      array: true,
-      length: Output$1.length,
-      default: Output$1
-    }]
-  };
-  inherits(Label$1, Transform, {
-    transform(_, pulse) {
-      function modp(param) {
-        const p = _[param];
-        return isFunction(p) && pulse.modified(p.fields);
-      }
-      const mod = _.modified();
-      if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
-      if (!_.size || _.size.length !== 2) {
-        error('Size parameter should be specified as a [width, height] array.');
-      }
-      const as = _.as || Output$1;
-
-      // run label layout
-      labelLayout(pulse.materialize(pulse.SOURCE).source || [], _.size, _.sort, array$2(_.offset == null ? 1 : _.offset), array$2(_.anchor || Anchors), _.avoidMarks || [], _.avoidBaseMark !== false, _.lineAnchor || 'end', _.markIndex || 0, _.padding === undefined ? 0 : _.padding, _.method || 'naive').forEach(l => {
-        // write layout results to data stream
-        const t = l.datum;
-        t[as[0]] = l.x;
-        t[as[1]] = l.y;
-        t[as[2]] = l.opacity;
-        t[as[3]] = l.align;
-        t[as[4]] = l.baseline;
-      });
-      return pulse.reflow(mod).modifies(as);
-    }
-  });
-
-  var label = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    label: Label$1
-  });
-
-  function partition(data, groupby) {
-    var groups = [],
-      get = function (f) {
-        return f(t);
-      },
-      map,
-      i,
-      n,
-      t,
-      k,
-      g;
-
-    // partition data points into stack groups
-    if (groupby == null) {
-      groups.push(data);
-    } else {
-      for (map = {}, i = 0, n = data.length; i < n; ++i) {
-        t = data[i];
-        k = groupby.map(get);
-        g = map[k];
-        if (!g) {
-          map[k] = g = [];
-          g.dims = k;
-          groups.push(g);
-        }
-        g.push(t);
-      }
-    }
-    return groups;
-  }
-
-  /**
-   * Compute locally-weighted regression fits for one or more data groups.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.x - An accessor for the predictor data field.
-   * @param {function(object): *} params.y - An accessor for the predicted data field.
-   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
-   * @param {number} [params.bandwidth=0.3] - The loess bandwidth.
-   */
-  function Loess(params) {
-    Transform.call(this, null, params);
-  }
-  Loess.Definition = {
-    'type': 'Loess',
-    'metadata': {
-      'generates': true
-    },
-    'params': [{
-      'name': 'x',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'y',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'groupby',
-      'type': 'field',
-      'array': true
-    }, {
-      'name': 'bandwidth',
-      'type': 'number',
-      'default': 0.3
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true
-    }]
-  };
-  inherits(Loess, Transform, {
-    transform(_, pulse) {
-      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-      if (!this.value || pulse.changed() || _.modified()) {
-        const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby),
-          names = (_.groupby || []).map(accessorName),
-          m = names.length,
-          as = _.as || [accessorName(_.x), accessorName(_.y)],
-          values = [];
-        groups.forEach(g => {
-          loess(g, _.x, _.y, _.bandwidth || 0.3).forEach(p => {
-            const t = {};
-            for (let i = 0; i < m; ++i) {
-              t[names[i]] = g.dims[i];
-            }
-            t[as[0]] = p[0];
-            t[as[1]] = p[1];
-            values.push(ingest$1(t));
-          });
-        });
-        if (this.value) out.rem = this.value;
-        this.value = out.add = out.source = values;
-      }
-      return out;
-    }
-  });
-  const Methods = {
-    constant: constant,
-    linear: linear,
-    log: log$1,
-    exp: exp,
-    pow: pow,
-    quad: quad,
-    poly: poly
-  };
-  const degreesOfFreedom = (method, order) => method === 'poly' ? order : method === 'quad' ? 2 : 1;
-
-  /**
-   * Compute regression fits for one or more data groups.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {function(object): *} params.x - An accessor for the predictor data field.
-   * @param {function(object): *} params.y - An accessor for the predicted data field.
-   * @param {string} [params.method='linear'] - The regression method to apply.
-   * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
-   * @param {Array<number>} [params.extent] - The domain extent over which to plot the regression line.
-   * @param {number} [params.order=3] - The polynomial order. Only applies to the 'poly' method.
-   */
-  function Regression(params) {
-    Transform.call(this, null, params);
-  }
-  Regression.Definition = {
-    'type': 'Regression',
-    'metadata': {
-      'generates': true
-    },
-    'params': [{
-      'name': 'x',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'y',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'groupby',
-      'type': 'field',
-      'array': true
-    }, {
-      'name': 'method',
-      'type': 'string',
-      'default': 'linear',
-      'values': Object.keys(Methods)
-    }, {
-      'name': 'order',
-      'type': 'number',
-      'default': 3
-    }, {
-      'name': 'extent',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'params',
-      'type': 'boolean',
-      'default': false
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true
-    }]
-  };
-  inherits(Regression, Transform, {
-    transform(_, pulse) {
-      const out = pulse.fork(pulse.NO_SOURCE | pulse.NO_FIELDS);
-      if (!this.value || pulse.changed() || _.modified()) {
-        const source = pulse.materialize(pulse.SOURCE).source,
-          groups = partition(source, _.groupby),
-          names = (_.groupby || []).map(accessorName),
-          method = _.method || 'linear',
-          order = _.order == null ? 3 : _.order,
-          dof = degreesOfFreedom(method, order),
-          as = _.as || [accessorName(_.x), accessorName(_.y)],
-          fit = Methods[method],
-          values = [];
-        let domain = _.extent;
-        if (!has$1(Methods, method)) {
-          error('Invalid regression method: ' + method);
-        }
-        if (domain != null) {
-          if (method === 'log' && domain[0] <= 0) {
-            pulse.dataflow.warn('Ignoring extent with values <= 0 for log regression.');
-            domain = null;
-          }
-        }
-        groups.forEach(g => {
-          const n = g.length;
-          if (n <= dof) {
-            pulse.dataflow.warn('Skipping regression with more parameters than data points.');
-            return;
-          }
-          const model = fit(g, _.x, _.y, order);
-          if (_.params) {
-            // if parameter vectors requested return those
-            values.push(ingest$1({
-              keys: g.dims,
-              coef: model.coef,
-              rSquared: model.rSquared
-            }));
-            return;
-          }
-          const dom = domain || extent(g, _.x),
-            add = p => {
-              const t = {};
-              for (let i = 0; i < names.length; ++i) {
-                t[names[i]] = g.dims[i];
-              }
-              t[as[0]] = p[0];
-              t[as[1]] = p[1];
-              values.push(ingest$1(t));
-            };
-          if (method === 'linear' || method === 'constant') {
-            // for linear or constant regression we only need the end points
-            dom.forEach(x => add([x, model.predict(x)]));
-          } else {
-            // otherwise return trend line sample points
-            sampleCurve(model.predict, dom, 25, 200).forEach(add);
-          }
-        });
-        if (this.value) out.rem = this.value;
-        this.value = out.add = out.source = values;
-      }
-      return out;
-    }
-  });
-
-  var reg = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    loess: Loess,
-    regression: Regression
-  });
-
-  function Voronoi(params) {
-    Transform.call(this, null, params);
-  }
-  Voronoi.Definition = {
-    'type': 'Voronoi',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'x',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'y',
-      'type': 'field',
-      'required': true
-    }, {
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'extent',
-      'type': 'array',
-      'array': true,
-      'length': 2,
-      'default': [[-1e5, -1e5], [1e5, 1e5]],
-      'content': {
-        'type': 'number',
-        'array': true,
-        'length': 2
-      }
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'default': 'path'
-    }]
-  };
-  const defaultExtent = [-1e5, -1e5, 1e5, 1e5];
-  inherits(Voronoi, Transform, {
-    transform(_, pulse) {
-      const as = _.as || 'path',
-        data = pulse.source;
-
-      // nothing to do if no data
-      if (!data || !data.length) return pulse;
-
-      // configure and construct voronoi diagram
-      let s = _.size;
-      s = s ? [0, 0, s[0], s[1]] : (s = _.extent) ? [s[0][0], s[0][1], s[1][0], s[1][1]] : defaultExtent;
-      const voronoi = this.value = d3Delaunay.Delaunay.from(data, _.x, _.y).voronoi(s);
-
-      // map polygons to paths
-      for (let i = 0, n = data.length; i < n; ++i) {
-        const polygon = voronoi.cellPolygon(i);
-        data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
-      }
-      return pulse.reflow(_.modified()).modifies(as);
-    }
-  });
-
-  // suppress duplicated end point vertices
-  function toPathString(p) {
-    const x = p[0][0],
-      y = p[0][1];
-    let n = p.length - 1;
-    for (; p[n][0] === x && p[n][1] === y; --n);
-    return 'M' + p.slice(0, n + 1).join('L') + 'Z';
-  }
-  function isPoint(p) {
-    return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
-  }
-
-  var voronoi = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    voronoi: Voronoi
-  });
-
-  /*
-  Copyright (c) 2013, Jason Davies.
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    * The name Jason Davies may not be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL JASON DAVIES BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
-
-  // Word cloud layout by Jason Davies, https://www.jasondavies.com/wordcloud/
-  // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
-
-  var cloudRadians = Math.PI / 180,
-    cw = 1 << 11 >> 5,
-    ch = 1 << 11;
-  function cloud() {
-    var size = [256, 256],
-      text,
-      font,
-      fontSize,
-      fontStyle,
-      fontWeight,
-      rotate,
-      padding,
-      spiral = archimedeanSpiral,
-      words = [],
-      random = Math.random,
-      cloud = {};
-    cloud.layout = function () {
-      var contextAndRatio = getContext(domCanvas()),
-        board = zeroArray((size[0] >> 5) * size[1]),
-        bounds = null,
-        n = words.length,
-        i = -1,
-        tags = [],
-        data = words.map(d => ({
-          text: text(d),
-          font: font(d),
-          style: fontStyle(d),
-          weight: fontWeight(d),
-          rotate: rotate(d),
-          size: ~~(fontSize(d) + 1e-14),
-          padding: padding(d),
-          xoff: 0,
-          yoff: 0,
-          x1: 0,
-          y1: 0,
-          x0: 0,
-          y0: 0,
-          hasText: false,
-          sprite: null,
-          datum: d
-        })).sort((a, b) => b.size - a.size);
-      while (++i < n) {
-        var d = data[i];
-        d.x = size[0] * (random() + .5) >> 1;
-        d.y = size[1] * (random() + .5) >> 1;
-        cloudSprite(contextAndRatio, d, data, i);
-        if (d.hasText && place(board, d, bounds)) {
-          tags.push(d);
-          if (bounds) cloudBounds(bounds, d);else bounds = [{
-            x: d.x + d.x0,
-            y: d.y + d.y0
-          }, {
-            x: d.x + d.x1,
-            y: d.y + d.y1
-          }];
-          // Temporary hack
-          d.x -= size[0] >> 1;
-          d.y -= size[1] >> 1;
-        }
-      }
-      return tags;
-    };
-    function getContext(canvas) {
-      canvas.width = canvas.height = 1;
-      var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2);
-      canvas.width = (cw << 5) / ratio;
-      canvas.height = ch / ratio;
-      var context = canvas.getContext('2d');
-      context.fillStyle = context.strokeStyle = 'red';
-      context.textAlign = 'center';
-      return {
-        context: context,
-        ratio: ratio
-      };
-    }
-    function place(board, tag, bounds) {
-      var startX = tag.x,
-        startY = tag.y,
-        maxDelta = Math.hypot(size[0], size[1]),
-        s = spiral(size),
-        dt = random() < .5 ? 1 : -1,
-        t = -dt,
-        dxdy,
-        dx,
-        dy;
-      while (dxdy = s(t += dt)) {
-        dx = ~~dxdy[0];
-        dy = ~~dxdy[1];
-        if (Math.min(Math.abs(dx), Math.abs(dy)) >= maxDelta) break;
-        tag.x = startX + dx;
-        tag.y = startY + dy;
-        if (tag.x + tag.x0 < 0 || tag.y + tag.y0 < 0 || tag.x + tag.x1 > size[0] || tag.y + tag.y1 > size[1]) continue;
-        // TODO only check for collisions within current bounds.
-        if (!bounds || !cloudCollide(tag, board, size[0])) {
-          if (!bounds || collideRects(tag, bounds)) {
-            var sprite = tag.sprite,
-              w = tag.width >> 5,
-              sw = size[0] >> 5,
-              lx = tag.x - (w << 4),
-              sx = lx & 0x7f,
-              msx = 32 - sx,
-              h = tag.y1 - tag.y0,
-              x = (tag.y + tag.y0) * sw + (lx >> 5),
-              last;
-            for (var j = 0; j < h; j++) {
-              last = 0;
-              for (var i = 0; i <= w; i++) {
-                board[x + i] |= last << msx | (i < w ? (last = sprite[j * w + i]) >>> sx : 0);
-              }
-              x += sw;
-            }
-            tag.sprite = null;
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-    cloud.words = function (_) {
-      if (arguments.length) {
-        words = _;
-        return cloud;
-      } else {
-        return words;
-      }
-    };
-    cloud.size = function (_) {
-      if (arguments.length) {
-        size = [+_[0], +_[1]];
-        return cloud;
-      } else {
-        return size;
-      }
-    };
-    cloud.font = function (_) {
-      if (arguments.length) {
-        font = functor(_);
-        return cloud;
-      } else {
-        return font;
-      }
-    };
-    cloud.fontStyle = function (_) {
-      if (arguments.length) {
-        fontStyle = functor(_);
-        return cloud;
-      } else {
-        return fontStyle;
-      }
-    };
-    cloud.fontWeight = function (_) {
-      if (arguments.length) {
-        fontWeight = functor(_);
-        return cloud;
-      } else {
-        return fontWeight;
-      }
-    };
-    cloud.rotate = function (_) {
-      if (arguments.length) {
-        rotate = functor(_);
-        return cloud;
-      } else {
-        return rotate;
-      }
-    };
-    cloud.text = function (_) {
-      if (arguments.length) {
-        text = functor(_);
-        return cloud;
-      } else {
-        return text;
-      }
-    };
-    cloud.spiral = function (_) {
-      if (arguments.length) {
-        spiral = spirals[_] || _;
-        return cloud;
-      } else {
-        return spiral;
-      }
-    };
-    cloud.fontSize = function (_) {
-      if (arguments.length) {
-        fontSize = functor(_);
-        return cloud;
-      } else {
-        return fontSize;
-      }
-    };
-    cloud.padding = function (_) {
-      if (arguments.length) {
-        padding = functor(_);
-        return cloud;
-      } else {
-        return padding;
-      }
-    };
-    cloud.random = function (_) {
-      if (arguments.length) {
-        random = _;
-        return cloud;
-      } else {
-        return random;
-      }
-    };
-    return cloud;
-  }
-
-  // Fetches a monochrome sprite bitmap for the specified text.
-  // Load in batches for speed.
-  function cloudSprite(contextAndRatio, d, data, di) {
-    if (d.sprite) return;
-    var c = contextAndRatio.context,
-      ratio = contextAndRatio.ratio;
-    c.clearRect(0, 0, (cw << 5) / ratio, ch / ratio);
-    var x = 0,
-      y = 0,
-      maxh = 0,
-      n = data.length,
-      w,
-      w32,
-      h,
-      i,
-      j;
-    --di;
-    while (++di < n) {
-      d = data[di];
-      c.save();
-      c.font = d.style + ' ' + d.weight + ' ' + ~~((d.size + 1) / ratio) + 'px ' + d.font;
-      w = c.measureText(d.text + 'm').width * ratio;
-      h = d.size << 1;
-      if (d.rotate) {
-        var sr = Math.sin(d.rotate * cloudRadians),
-          cr = Math.cos(d.rotate * cloudRadians),
-          wcr = w * cr,
-          wsr = w * sr,
-          hcr = h * cr,
-          hsr = h * sr;
-        w = Math.max(Math.abs(wcr + hsr), Math.abs(wcr - hsr)) + 0x1f >> 5 << 5;
-        h = ~~Math.max(Math.abs(wsr + hcr), Math.abs(wsr - hcr));
-      } else {
-        w = w + 0x1f >> 5 << 5;
-      }
-      if (h > maxh) maxh = h;
-      if (x + w >= cw << 5) {
-        x = 0;
-        y += maxh;
-        maxh = 0;
-      }
-      if (y + h >= ch) break;
-      c.translate((x + (w >> 1)) / ratio, (y + (h >> 1)) / ratio);
-      if (d.rotate) c.rotate(d.rotate * cloudRadians);
-      c.fillText(d.text, 0, 0);
-      if (d.padding) {
-        c.lineWidth = 2 * d.padding;
-        c.strokeText(d.text, 0, 0);
-      }
-      c.restore();
-      d.width = w;
-      d.height = h;
-      d.xoff = x;
-      d.yoff = y;
-      d.x1 = w >> 1;
-      d.y1 = h >> 1;
-      d.x0 = -d.x1;
-      d.y0 = -d.y1;
-      d.hasText = true;
-      x += w;
-    }
-    var pixels = c.getImageData(0, 0, (cw << 5) / ratio, ch / ratio).data,
-      sprite = [];
-    while (--di >= 0) {
-      d = data[di];
-      if (!d.hasText) continue;
-      w = d.width;
-      w32 = w >> 5;
-      h = d.y1 - d.y0;
-      // Zero the buffer
-      for (i = 0; i < h * w32; i++) sprite[i] = 0;
-      x = d.xoff;
-      if (x == null) return;
-      y = d.yoff;
-      var seen = 0,
-        seenRow = -1;
-      for (j = 0; j < h; j++) {
-        for (i = 0; i < w; i++) {
-          var k = w32 * j + (i >> 5),
-            m = pixels[(y + j) * (cw << 5) + (x + i) << 2] ? 1 << 31 - i % 32 : 0;
-          sprite[k] |= m;
-          seen |= m;
-        }
-        if (seen) seenRow = j;else {
-          d.y0++;
-          h--;
-          j--;
-          y++;
-        }
-      }
-      d.y1 = d.y0 + seenRow;
-      d.sprite = sprite.slice(0, (d.y1 - d.y0) * w32);
-    }
-  }
-
-  // Use mask-based collision detection.
-  function cloudCollide(tag, board, sw) {
-    sw >>= 5;
-    var sprite = tag.sprite,
-      w = tag.width >> 5,
-      lx = tag.x - (w << 4),
-      sx = lx & 0x7f,
-      msx = 32 - sx,
-      h = tag.y1 - tag.y0,
-      x = (tag.y + tag.y0) * sw + (lx >> 5),
-      last;
-    for (var j = 0; j < h; j++) {
-      last = 0;
-      for (var i = 0; i <= w; i++) {
-        if ((last << msx | (i < w ? (last = sprite[j * w + i]) >>> sx : 0)) & board[x + i]) return true;
-      }
-      x += sw;
-    }
-    return false;
-  }
-  function cloudBounds(bounds, d) {
-    var b0 = bounds[0],
-      b1 = bounds[1];
-    if (d.x + d.x0 < b0.x) b0.x = d.x + d.x0;
-    if (d.y + d.y0 < b0.y) b0.y = d.y + d.y0;
-    if (d.x + d.x1 > b1.x) b1.x = d.x + d.x1;
-    if (d.y + d.y1 > b1.y) b1.y = d.y + d.y1;
-  }
-  function collideRects(a, b) {
-    return a.x + a.x1 > b[0].x && a.x + a.x0 < b[1].x && a.y + a.y1 > b[0].y && a.y + a.y0 < b[1].y;
-  }
-  function archimedeanSpiral(size) {
-    var e = size[0] / size[1];
-    return function (t) {
-      return [e * (t *= .1) * Math.cos(t), t * Math.sin(t)];
-    };
-  }
-  function rectangularSpiral(size) {
-    var dy = 4,
-      dx = dy * size[0] / size[1],
-      x = 0,
-      y = 0;
-    return function (t) {
-      var sign = t < 0 ? -1 : 1;
-      // See triangular numbers: T_n = n * (n + 1) / 2.
-      switch (Math.sqrt(1 + 4 * sign * t) - sign & 3) {
-        case 0:
-          x += dx;
-          break;
-        case 1:
-          y += dy;
-          break;
-        case 2:
-          x -= dx;
-          break;
-        default:
-          y -= dy;
-          break;
-      }
-      return [x, y];
-    };
-  }
-
-  // TODO reuse arrays?
-  function zeroArray(n) {
-    var a = [],
-      i = -1;
-    while (++i < n) a[i] = 0;
-    return a;
-  }
-  function functor(d) {
-    return typeof d === 'function' ? d : function () {
-      return d;
-    };
-  }
-  var spirals = {
-    archimedean: archimedeanSpiral,
-    rectangular: rectangularSpiral
-  };
-  const Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
-  const Params$1 = ['text', 'font', 'rotate', 'fontSize', 'fontStyle', 'fontWeight'];
-  function Wordcloud(params) {
-    Transform.call(this, cloud(), params);
-  }
-  Wordcloud.Definition = {
-    'type': 'Wordcloud',
-    'metadata': {
-      'modifies': true
-    },
-    'params': [{
-      'name': 'size',
-      'type': 'number',
-      'array': true,
-      'length': 2
-    }, {
-      'name': 'font',
-      'type': 'string',
-      'expr': true,
-      'default': 'sans-serif'
-    }, {
-      'name': 'fontStyle',
-      'type': 'string',
-      'expr': true,
-      'default': 'normal'
-    }, {
-      'name': 'fontWeight',
-      'type': 'string',
-      'expr': true,
-      'default': 'normal'
-    }, {
-      'name': 'fontSize',
-      'type': 'number',
-      'expr': true,
-      'default': 14
-    }, {
-      'name': 'fontSizeRange',
-      'type': 'number',
-      'array': 'nullable',
-      'default': [10, 50]
-    }, {
-      'name': 'rotate',
-      'type': 'number',
-      'expr': true,
-      'default': 0
-    }, {
-      'name': 'text',
-      'type': 'field'
-    }, {
-      'name': 'spiral',
-      'type': 'string',
-      'values': ['archimedean', 'rectangular']
-    }, {
-      'name': 'padding',
-      'type': 'number',
-      'expr': true
-    }, {
-      'name': 'as',
-      'type': 'string',
-      'array': true,
-      'length': 7,
-      'default': Output
-    }]
-  };
-  inherits(Wordcloud, Transform, {
-    transform(_, pulse) {
-      if (_.size && !(_.size[0] && _.size[1])) {
-        error('Wordcloud size dimensions must be non-zero.');
-      }
-      function modp(param) {
-        const p = _[param];
-        return isFunction(p) && pulse.modified(p.fields);
-      }
-      const mod = _.modified();
-      if (!(mod || pulse.changed(pulse.ADD_REM) || Params$1.some(modp))) return;
-      const data = pulse.materialize(pulse.SOURCE).source,
-        layout = this.value,
-        as = _.as || Output;
-      let fontSize = _.fontSize || 14,
-        range;
-      isFunction(fontSize) ? range = _.fontSizeRange : fontSize = constant$1(fontSize);
-
-      // create font size scaling function as needed
-      if (range) {
-        const fsize = fontSize,
-          sizeScale = scale$4('sqrt')().domain(extent(data, fsize)).range(range);
-        fontSize = x => sizeScale(fsize(x));
-      }
-      data.forEach(t => {
-        t[as[0]] = NaN;
-        t[as[1]] = NaN;
-        t[as[3]] = 0;
-      });
-
-      // configure layout
-      const words = layout.words(data).text(_.text).size(_.size || [500, 500]).padding(_.padding || 1).spiral(_.spiral || 'archimedean').rotate(_.rotate || 0).font(_.font || 'sans-serif').fontStyle(_.fontStyle || 'normal').fontWeight(_.fontWeight || 'normal').fontSize(fontSize).random(exports.random).layout();
-      const size = layout.size(),
-        dx = size[0] >> 1,
-        dy = size[1] >> 1,
-        n = words.length;
-      for (let i = 0, w, t; i < n; ++i) {
-        w = words[i];
-        t = w.datum;
-        t[as[0]] = w.x + dx;
-        t[as[1]] = w.y + dy;
-        t[as[2]] = w.font;
-        t[as[3]] = w.size;
-        t[as[4]] = w.style;
-        t[as[5]] = w.weight;
-        t[as[6]] = w.rotate;
-      }
-      return pulse.reflow(mod).modifies(as);
-    }
-  });
-
-  var wordcloud = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    wordcloud: Wordcloud
-  });
-
-  const array8 = n => new Uint8Array(n);
-  const array16 = n => new Uint16Array(n);
-  const array32 = n => new Uint32Array(n);
-
-  /**
-   * Maintains CrossFilter state.
-   */
-  function Bitmaps() {
-    let width = 8,
-      data = [],
-      seen = array32(0),
-      curr = array$1(0, width),
-      prev = array$1(0, width);
-    return {
-      data: () => data,
-      seen: () => seen = lengthen(seen, data.length),
-      add(array) {
-        for (let i = 0, j = data.length, n = array.length, t; i < n; ++i) {
-          t = array[i];
-          t._index = j++;
-          data.push(t);
-        }
-      },
-      remove(num, map) {
-        // map: index -> boolean (true => remove)
-        const n = data.length,
-          copy = Array(n - num),
-          reindex = data; // reuse old data array for index map
-        let t, i, j;
-
-        // seek forward to first removal
-        for (i = 0; !map[i] && i < n; ++i) {
-          copy[i] = data[i];
-          reindex[i] = i;
-        }
-
-        // condense arrays
-        for (j = i; i < n; ++i) {
-          t = data[i];
-          if (!map[i]) {
-            reindex[i] = j;
-            curr[j] = curr[i];
-            prev[j] = prev[i];
-            copy[j] = t;
-            t._index = j++;
-          } else {
-            reindex[i] = -1;
-          }
-          curr[i] = 0; // clear unused bits
-        }
-
-        data = copy;
-        return reindex;
-      },
-      size: () => data.length,
-      curr: () => curr,
-      prev: () => prev,
-      reset: k => prev[k] = curr[k],
-      all: () => width < 0x101 ? 0xff : width < 0x10001 ? 0xffff : 0xffffffff,
-      set(k, one) {
-        curr[k] |= one;
-      },
-      clear(k, one) {
-        curr[k] &= ~one;
-      },
-      resize(n, m) {
-        const k = curr.length;
-        if (n > k || m > width) {
-          width = Math.max(m, width);
-          curr = array$1(n, width, curr);
-          prev = array$1(n, width);
-        }
-      }
-    };
-  }
-  function lengthen(array, length, copy) {
-    if (array.length >= length) return array;
-    copy = copy || new array.constructor(length);
-    copy.set(array);
-    return copy;
-  }
-  function array$1(n, m, array) {
-    const copy = (m < 0x101 ? array8 : m < 0x10001 ? array16 : array32)(n);
-    if (array) copy.set(array);
-    return copy;
-  }
-  function Dimension(index, i, query) {
-    const bit = 1 << i;
-    return {
-      one: bit,
-      zero: ~bit,
-      range: query.slice(),
-      bisect: index.bisect,
-      index: index.index,
-      size: index.size,
-      onAdd(added, curr) {
-        const dim = this,
-          range = dim.bisect(dim.range, added.value),
-          idx = added.index,
-          lo = range[0],
-          hi = range[1],
-          n1 = idx.length;
-        let i;
-        for (i = 0; i < lo; ++i) curr[idx[i]] |= bit;
-        for (i = hi; i < n1; ++i) curr[idx[i]] |= bit;
-        return dim;
-      }
-    };
-  }
-
-  /**
-   * Maintains a list of values, sorted by key.
-   */
-  function SortedIndex() {
-    let index = array32(0),
-      value = [],
-      size = 0;
-    function insert(key, data, base) {
-      if (!data.length) return [];
-      const n0 = size,
-        n1 = data.length,
-        addi = array32(n1);
-      let addv = Array(n1),
-        oldv,
-        oldi,
-        i;
-      for (i = 0; i < n1; ++i) {
-        addv[i] = key(data[i]);
-        addi[i] = i;
-      }
-      addv = sort(addv, addi);
-      if (n0) {
-        oldv = value;
-        oldi = index;
-        value = Array(n0 + n1);
-        index = array32(n0 + n1);
-        merge$1(base, oldv, oldi, n0, addv, addi, n1, value, index);
-      } else {
-        if (base > 0) for (i = 0; i < n1; ++i) {
-          addi[i] += base;
-        }
-        value = addv;
-        index = addi;
-      }
-      size = n0 + n1;
-      return {
-        index: addi,
-        value: addv
-      };
-    }
-    function remove(num, map) {
-      // map: index -> remove
-      const n = size;
-      let idx, i, j;
-
-      // seek forward to first removal
-      for (i = 0; !map[index[i]] && i < n; ++i);
-
-      // condense index and value arrays
-      for (j = i; i < n; ++i) {
-        if (!map[idx = index[i]]) {
-          index[j] = idx;
-          value[j] = value[i];
-          ++j;
-        }
-      }
-      size = n - num;
-    }
-    function reindex(map) {
-      for (let i = 0, n = size; i < n; ++i) {
-        index[i] = map[index[i]];
-      }
-    }
-    function bisect(range, array) {
-      let n;
-      if (array) {
-        n = array.length;
-      } else {
-        array = value;
-        n = size;
-      }
-      return [d3Array.bisectLeft(array, range[0], 0, n), d3Array.bisectRight(array, range[1], 0, n)];
-    }
-    return {
-      insert: insert,
-      remove: remove,
-      bisect: bisect,
-      reindex: reindex,
-      index: () => index,
-      size: () => size
-    };
-  }
-  function sort(values, index) {
-    values.sort.call(index, (a, b) => {
-      const x = values[a],
-        y = values[b];
-      return x < y ? -1 : x > y ? 1 : 0;
-    });
-    return d3Array.permute(values, index);
-  }
-  function merge$1(base, value0, index0, n0, value1, index1, n1, value, index) {
-    let i0 = 0,
-      i1 = 0,
-      i;
-    for (i = 0; i0 < n0 && i1 < n1; ++i) {
-      if (value0[i0] < value1[i1]) {
-        value[i] = value0[i0];
-        index[i] = index0[i0++];
-      } else {
-        value[i] = value1[i1];
-        index[i] = index1[i1++] + base;
-      }
-    }
-    for (; i0 < n0; ++i0, ++i) {
-      value[i] = value0[i0];
-      index[i] = index0[i0];
-    }
-    for (; i1 < n1; ++i1, ++i) {
-      value[i] = value1[i1];
-      index[i] = index1[i1] + base;
-    }
-  }
-
-  /**
-   * An indexed multi-dimensional filter.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {Array<function(object): *>} params.fields - An array of dimension accessors to filter.
-   * @param {Array} params.query - An array of per-dimension range queries.
-   */
-  function CrossFilter(params) {
-    Transform.call(this, Bitmaps(), params);
-    this._indices = null;
-    this._dims = null;
-  }
-  CrossFilter.Definition = {
-    'type': 'CrossFilter',
-    'metadata': {},
-    'params': [{
-      'name': 'fields',
-      'type': 'field',
-      'array': true,
-      'required': true
-    }, {
-      'name': 'query',
-      'type': 'array',
-      'array': true,
-      'required': true,
-      'content': {
-        'type': 'number',
-        'array': true,
-        'length': 2
-      }
-    }]
-  };
-  inherits(CrossFilter, Transform, {
-    transform(_, pulse) {
-      if (!this._dims) {
-        return this.init(_, pulse);
-      } else {
-        var init = _.modified('fields') || _.fields.some(f => pulse.modified(f.fields));
-        return init ? this.reinit(_, pulse) : this.eval(_, pulse);
-      }
-    },
-    init(_, pulse) {
-      const fields = _.fields,
-        query = _.query,
-        indices = this._indices = {},
-        dims = this._dims = [],
-        m = query.length;
-      let i = 0,
-        key,
-        index;
-
-      // instantiate indices and dimensions
-      for (; i < m; ++i) {
-        key = fields[i].fname;
-        index = indices[key] || (indices[key] = SortedIndex());
-        dims.push(Dimension(index, i, query[i]));
-      }
-      return this.eval(_, pulse);
-    },
-    reinit(_, pulse) {
-      const output = pulse.materialize().fork(),
-        fields = _.fields,
-        query = _.query,
-        indices = this._indices,
-        dims = this._dims,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all = bits.all(),
-        out = output.rem = output.add,
-        mod = output.mod,
-        m = query.length,
-        adds = {};
-      let add, index, key, mods, remMap, modMap, i, n, f;
-
-      // set prev to current state
-      prev.set(curr);
-
-      // if pulse has remove tuples, process them first
-      if (pulse.rem.length) {
-        remMap = this.remove(_, pulse, output);
-      }
-
-      // if pulse has added tuples, add them to state
-      if (pulse.add.length) {
-        bits.add(pulse.add);
-      }
-
-      // if pulse has modified tuples, create an index map
-      if (pulse.mod.length) {
-        modMap = {};
-        for (mods = pulse.mod, i = 0, n = mods.length; i < n; ++i) {
-          modMap[mods[i]._index] = 1;
-        }
-      }
-
-      // re-initialize indices as needed, update curr bitmap
-      for (i = 0; i < m; ++i) {
-        f = fields[i];
-        if (!dims[i] || _.modified('fields', i) || pulse.modified(f.fields)) {
-          key = f.fname;
-          if (!(add = adds[key])) {
-            indices[key] = index = SortedIndex();
-            adds[key] = add = index.insert(f, pulse.source, 0);
-          }
-          dims[i] = Dimension(index, i, query[i]).onAdd(add, curr);
-        }
-      }
-
-      // visit each tuple
-      // if filter state changed, push index to add/rem
-      // else if in mod and passes a filter, push index to mod
-      for (i = 0, n = bits.data().length; i < n; ++i) {
-        if (remMap[i]) {
-          // skip if removed tuple
-          continue;
-        } else if (prev[i] !== curr[i]) {
-          // add if state changed
-          out.push(i);
-        } else if (modMap[i] && curr[i] !== all) {
-          // otherwise, pass mods through
-          mod.push(i);
-        }
-      }
-      bits.mask = (1 << m) - 1;
-      return output;
-    },
-    eval(_, pulse) {
-      const output = pulse.materialize().fork(),
-        m = this._dims.length;
-      let mask = 0;
-      if (pulse.rem.length) {
-        this.remove(_, pulse, output);
-        mask |= (1 << m) - 1;
-      }
-      if (_.modified('query') && !_.modified('fields')) {
-        mask |= this.update(_, pulse, output);
-      }
-      if (pulse.add.length) {
-        this.insert(_, pulse, output);
-        mask |= (1 << m) - 1;
-      }
-      if (pulse.mod.length) {
-        this.modify(pulse, output);
-        mask |= (1 << m) - 1;
-      }
-      this.value.mask = mask;
-      return output;
-    },
-    insert(_, pulse, output) {
-      const tuples = pulse.add,
-        bits = this.value,
-        dims = this._dims,
-        indices = this._indices,
-        fields = _.fields,
-        adds = {},
-        out = output.add,
-        n = bits.size() + tuples.length,
-        m = dims.length;
-      let k = bits.size(),
-        j,
-        key,
-        add;
-
-      // resize bitmaps and add tuples as needed
-      bits.resize(n, m);
-      bits.add(tuples);
-      const curr = bits.curr(),
-        prev = bits.prev(),
-        all = bits.all();
-
-      // add to dimensional indices
-      for (j = 0; j < m; ++j) {
-        key = fields[j].fname;
-        add = adds[key] || (adds[key] = indices[key].insert(fields[j], tuples, k));
-        dims[j].onAdd(add, curr);
-      }
-
-      // set previous filters, output if passes at least one filter
-      for (; k < n; ++k) {
-        prev[k] = all;
-        if (curr[k] !== all) out.push(k);
-      }
-    },
-    modify(pulse, output) {
-      const out = output.mod,
-        bits = this.value,
-        curr = bits.curr(),
-        all = bits.all(),
-        tuples = pulse.mod;
-      let i, n, k;
-      for (i = 0, n = tuples.length; i < n; ++i) {
-        k = tuples[i]._index;
-        if (curr[k] !== all) out.push(k);
-      }
-    },
-    remove(_, pulse, output) {
-      const indices = this._indices,
-        bits = this.value,
-        curr = bits.curr(),
-        prev = bits.prev(),
-        all = bits.all(),
-        map = {},
-        out = output.rem,
-        tuples = pulse.rem;
-      let i, n, k, f;
-
-      // process tuples, output if passes at least one filter
-      for (i = 0, n = tuples.length; i < n; ++i) {
-        k = tuples[i]._index;
-        map[k] = 1; // build index map
-        prev[k] = f = curr[k];
-        curr[k] = all;
-        if (f !== all) out.push(k);
-      }
-
-      // remove from dimensional indices
-      for (k in indices) {
-        indices[k].remove(n, map);
-      }
-      this.reindex(pulse, n, map);
-      return map;
-    },
-    // reindex filters and indices after propagation completes
-    reindex(pulse, num, map) {
-      const indices = this._indices,
-        bits = this.value;
-      pulse.runAfter(() => {
-        const indexMap = bits.remove(num, map);
-        for (const key in indices) indices[key].reindex(indexMap);
-      });
-    },
-    update(_, pulse, output) {
-      const dims = this._dims,
-        query = _.query,
-        stamp = pulse.stamp,
-        m = dims.length;
-      let mask = 0,
-        i,
-        q;
-
-      // survey how many queries have changed
-      output.filters = 0;
-      for (q = 0; q < m; ++q) {
-        if (_.modified('query', q)) {
-          i = q;
-          ++mask;
-        }
-      }
-      if (mask === 1) {
-        // only one query changed, use more efficient update
-        mask = dims[i].one;
-        this.incrementOne(dims[i], query[i], output.add, output.rem);
-      } else {
-        // multiple queries changed, perform full record keeping
-        for (q = 0, mask = 0; q < m; ++q) {
-          if (!_.modified('query', q)) continue;
-          mask |= dims[q].one;
-          this.incrementAll(dims[q], query[q], stamp, output.add);
-          output.rem = output.add; // duplicate add/rem for downstream resolve
-        }
-      }
-
-      return mask;
-    },
-    incrementAll(dim, query, stamp, out) {
-      const bits = this.value,
-        seen = bits.seen(),
-        curr = bits.curr(),
-        prev = bits.prev(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one;
-      let i, j, k;
-
-      // Fast incremental update based on previous lo index.
-      if (lo1 < lo0) {
-        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
-          k = index[i];
-          if (seen[k] !== stamp) {
-            prev[k] = curr[k];
-            seen[k] = stamp;
-            out.push(k);
-          }
-          curr[k] ^= one;
-        }
-      } else if (lo1 > lo0) {
-        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
-          k = index[i];
-          if (seen[k] !== stamp) {
-            prev[k] = curr[k];
-            seen[k] = stamp;
-            out.push(k);
-          }
-          curr[k] ^= one;
-        }
-      }
-
-      // Fast incremental update based on previous hi index.
-      if (hi1 > hi0) {
-        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
-          k = index[i];
-          if (seen[k] !== stamp) {
-            prev[k] = curr[k];
-            seen[k] = stamp;
-            out.push(k);
-          }
-          curr[k] ^= one;
-        }
-      } else if (hi1 < hi0) {
-        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
-          k = index[i];
-          if (seen[k] !== stamp) {
-            prev[k] = curr[k];
-            seen[k] = stamp;
-            out.push(k);
-          }
-          curr[k] ^= one;
-        }
-      }
-      dim.range = query.slice();
-    },
-    incrementOne(dim, query, add, rem) {
-      const bits = this.value,
-        curr = bits.curr(),
-        index = dim.index(),
-        old = dim.bisect(dim.range),
-        range = dim.bisect(query),
-        lo1 = range[0],
-        hi1 = range[1],
-        lo0 = old[0],
-        hi0 = old[1],
-        one = dim.one;
-      let i, j, k;
-
-      // Fast incremental update based on previous lo index.
-      if (lo1 < lo0) {
-        for (i = lo1, j = Math.min(lo0, hi1); i < j; ++i) {
-          k = index[i];
-          curr[k] ^= one;
-          add.push(k);
-        }
-      } else if (lo1 > lo0) {
-        for (i = lo0, j = Math.min(lo1, hi0); i < j; ++i) {
-          k = index[i];
-          curr[k] ^= one;
-          rem.push(k);
-        }
-      }
-
-      // Fast incremental update based on previous hi index.
-      if (hi1 > hi0) {
-        for (i = Math.max(lo1, hi0), j = hi1; i < j; ++i) {
-          k = index[i];
-          curr[k] ^= one;
-          add.push(k);
-        }
-      } else if (hi1 < hi0) {
-        for (i = Math.max(lo0, hi1), j = hi0; i < j; ++i) {
-          k = index[i];
-          curr[k] ^= one;
-          rem.push(k);
-        }
-      }
-      dim.range = query.slice();
-    }
-  });
-
-  /**
-   * Selectively filters tuples by resolving against a filter bitmap.
-   * Useful for processing the output of a cross-filter transform.
-   * @constructor
-   * @param {object} params - The parameters for this operator.
-   * @param {object} params.ignore - A bit mask indicating which filters to ignore.
-   * @param {object} params.filter - The per-tuple filter bitmaps. Typically this
-   *   parameter value is a reference to a {@link CrossFilter} transform.
-   */
-  function ResolveFilter(params) {
-    Transform.call(this, null, params);
-  }
-  ResolveFilter.Definition = {
-    'type': 'ResolveFilter',
-    'metadata': {},
-    'params': [{
-      'name': 'ignore',
-      'type': 'number',
-      'required': true,
-      'description': 'A bit mask indicating which filters to ignore.'
-    }, {
-      'name': 'filter',
-      'type': 'object',
-      'required': true,
-      'description': 'Per-tuple filter bitmaps from a CrossFilter transform.'
-    }]
-  };
-  inherits(ResolveFilter, Transform, {
-    transform(_, pulse) {
-      const ignore = ~(_.ignore || 0),
-        // bit mask where zeros -> dims to ignore
-        bitmap = _.filter,
-        mask = bitmap.mask;
-
-      // exit early if no relevant filter changes
-      if ((mask & ignore) === 0) return pulse.StopPropagation;
-      const output = pulse.fork(pulse.ALL),
-        data = bitmap.data(),
-        curr = bitmap.curr(),
-        prev = bitmap.prev(),
-        pass = k => !(curr[k] & ignore) ? data[k] : null;
-
-      // propagate all mod tuples that pass the filter
-      output.filter(output.MOD, pass);
-
-      // determine add & rem tuples via filter functions
-      // for efficiency, we do *not* populate new arrays,
-      // instead we add filter functions applied downstream
-
-      if (!(mask & mask - 1)) {
-        // only one filter changed
-        output.filter(output.ADD, pass);
-        output.filter(output.REM, k => (curr[k] & ignore) === mask ? data[k] : null);
-      } else {
-        // multiple filters changed
-        output.filter(output.ADD, k => {
-          const c = curr[k] & ignore,
-            f = !c && c ^ prev[k] & ignore;
-          return f ? data[k] : null;
-        });
-        output.filter(output.REM, k => {
-          const c = curr[k] & ignore,
-            f = c && !(c ^ (c ^ prev[k] & ignore));
-          return f ? data[k] : null;
-        });
-      }
-
-      // add filter to source data in case of reflow...
-      return output.filter(output.SOURCE, t => pass(t._index));
-    }
-  });
-
-  var xf = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    crossfilter: CrossFilter,
-    resolvefilter: ResolveFilter
-  });
-
-  var version = "5.27.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -23291,14 +28139,14 @@
   }
   function scaleGradient(scale, p0, p1, count, group) {
     scale = getScale(scale, (group || this).context);
-    const gradient = Gradient$1(p0, p1);
+    const gradient = Gradient$2(p0, p1);
     let stops = scale.domain(),
       min = stops[0],
       max = peek$1(stops),
       fraction = identity;
     if (!(max - min)) {
       // expand scale if domain has zero span, fix #1479
-      scale = (scale.interpolator ? scale$4('sequential')().interpolator(scale.interpolator()) : scale$4('linear')().interpolate(scale.interpolate()).range(scale.range())).domain([min = 0, max = 1]);
+      scale = (scale.interpolator ? scale$5('sequential')().interpolator(scale.interpolator()) : scale$5('linear')().interpolate(scale.interpolate()).range(scale.range())).domain([min = 0, max = 1]);
     } else {
       fraction = scaleFraction(scale, min, max);
     }
@@ -23319,7 +28167,7 @@
   function pathShape(path) {
     let p = null;
     return function (context) {
-      return context ? pathRender(context, p = p || parse$3(path)) : path;
+      return context ? pathRender$1(context, p = p || parse$4(path)) : path;
     };
   }
   const datum = d => d.data;
@@ -23354,9 +28202,9 @@
   function intersect(b, opt, group) {
     if (!b) return [];
     const [u, v] = b,
-      box = new Bounds().set(u[0], u[1], v[0], v[1]),
+      box = new Bounds$1().set(u[0], u[1], v[0], v[1]),
       scene = group || this.context.dataflow.scenegraph().root;
-    return intersect$2(scene, box, filter(opt));
+    return intersect$3(scene, box, filter(opt));
   }
   function filter(opt) {
     let p = null;
@@ -23414,7 +28262,7 @@
       y,
       mark
     } = unit;
-    const bb = new Bounds().set(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, Number.MIN_SAFE_INTEGER);
+    const bb = new Bounds$1().set(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, Number.MIN_SAFE_INTEGER);
 
     // Get bounding box around lasso
     for (const [px, py] of pixelLasso) {
@@ -23511,7 +28359,7 @@
     pluck,
     span,
     inrange,
-    truncate: truncate$1,
+    truncate: truncate$2,
     rgb: d3Color.rgb,
     lab: d3Color.lab,
     hcl: d3Color.hcl,
@@ -23974,7 +28822,7 @@
     // Keep here for now for backwards compatibility.
     const k = 'c:' + _.$compare + '_' + _.$order,
       c = array$2(_.$compare).map(_ => _ && _.$tupleid ? tupleid : _);
-    return ctx.fn[k] || (ctx.fn[k] = compare$1(c, _.$order, ctx.expr.codegen));
+    return ctx.fn[k] || (ctx.fn[k] = compare$2(c, _.$order, ctx.expr.codegen));
   }
 
   /**
@@ -24418,7 +29266,7 @@
     if (el) {
       translate = offset(view);
       e = event.changedTouches ? event.changedTouches[0] : event;
-      p = point(e, el);
+      p = point$1(e, el);
       p[0] -= translate[0];
       p[1] -= translate[1];
     }
@@ -24887,7 +29735,7 @@
     const view = this,
       type = view._renderType,
       config = view._eventConfig.bind,
-      module = renderModule(type);
+      module = renderModule$1(type);
 
     // containing dom element
     el = view._el = el ? lookup$1(view, el, true) : null;
@@ -24897,7 +29745,7 @@
 
     // select appropriate renderer & handler
     if (!module) view.error('Unrecognized renderer type: ' + type);
-    const Handler = module.handler || CanvasHandler,
+    const Handler = module.handler || CanvasHandler$1,
       Renderer = el ? module.renderer : module.headless;
 
     // initialize renderer and input handler
@@ -24966,7 +29814,7 @@
    * @return {Promise} - A Promise that resolves to a renderer.
    */
   async function renderHeadless(view, type, scaleFactor, opt) {
-    const module = renderModule(type),
+    const module = renderModule$1(type),
       ctr = module && module.headless;
     if (!ctr) error('Unrecognized renderer type: ' + type);
     await view.runAsync();
@@ -24983,11 +29831,11 @@
    * @return {Promise} - A promise that resolves to an image URL.
    */
   async function renderToImageURL(type, scaleFactor) {
-    if (type !== RenderType.Canvas && type !== RenderType.SVG && type !== RenderType.PNG) {
+    if (type !== RenderType$1.Canvas && type !== RenderType$1.SVG && type !== RenderType$1.PNG) {
       error('Unrecognized image type: ' + type);
     }
     const r = await renderHeadless(this, type, scaleFactor);
-    return type === RenderType.SVG ? toBlobURL(r.svg(), 'image/svg+xml') : r.canvas().toDataURL('image/png');
+    return type === RenderType$1.SVG ? toBlobURL(r.svg(), 'image/svg+xml') : r.canvas().toDataURL('image/png');
   }
   function toBlobURL(data, mime) {
     const blob = new Blob([data], {
@@ -25002,7 +29850,7 @@
    * @return {Promise} - A promise that resolves to a Canvas instance.
    */
   async function renderToCanvas(scaleFactor, opt) {
-    const r = await renderHeadless(this, RenderType.Canvas, scaleFactor, opt);
+    const r = await renderHeadless(this, RenderType$1.Canvas, scaleFactor, opt);
     return r.canvas();
   }
 
@@ -25012,7 +29860,7 @@
    * @return {Promise} - A promise that resolves to an SVG string.
    */
   async function renderToSVG(scaleFactor) {
-    const r = await renderHeadless(this, RenderType.SVG, scaleFactor);
+    const r = await renderHeadless(this, RenderType$1.SVG, scaleFactor);
     return r.svg();
   }
   function runtime(view, spec, expr) {
@@ -25241,14 +30089,14 @@
     }
     view._el = null;
     view._elBind = null;
-    view._renderType = options.renderer || RenderType.Canvas;
-    view._scenegraph = new Scenegraph();
+    view._renderType = options.renderer || RenderType$1.Canvas;
+    view._scenegraph = new Scenegraph$1();
     const root = view._scenegraph.root;
 
     // initialize renderer, handler and event management
     view._renderer = null;
     view._tooltip = options.tooltip || defaultTooltip, view._redraw = true;
-    view._handler = new CanvasHandler().scene(root);
+    view._handler = new CanvasHandler$1().scene(root);
     view._globalCursor = false;
     view._preventDefault = false;
     view._timers = [];
@@ -25391,7 +30239,7 @@
     },
     renderer(type) {
       if (!arguments.length) return this._renderType;
-      if (!renderModule(type)) error('Unrecognized renderer type: ' + type);
+      if (!renderModule$1(type)) error('Unrecognized renderer type: ' + type);
       if (type !== this._renderType) {
         this._renderType = type;
         this._resetRenderer();
@@ -26317,7 +31165,7 @@
       parseScaleInterpolate(spec.interpolate, params);
     }
     if (spec.nice != null) {
-      params.nice = parseScaleNice(spec.nice);
+      params.nice = parseScaleNice(spec.nice, scope);
     }
     if (spec.bins != null) {
       params.bins = parseScaleBins(spec.bins, scope);
@@ -26475,8 +31323,8 @@
 
   // -- SCALE NICE -----
 
-  function parseScaleNice(nice) {
-    return isObject(nice) ? {
+  function parseScaleNice(nice, scope) {
+    return nice.signal ? scope.signalRef(nice.signal) : isObject(nice) ? {
       interval: parseLiteral(nice.interval),
       step: parseLiteral(nice.step)
     } : parseLiteral(nice);
@@ -29480,7 +34328,7 @@
   exports.MONTH = MONTH;
   exports.Marks = Marks;
   exports.MultiPulse = MultiPulse;
-  exports.None = None$2;
+  exports.None = None$3;
   exports.Operator = Operator;
   exports.Parameters = Parameters;
   exports.Pulse = Pulse;
@@ -29509,13 +34357,13 @@
   exports.bootstrapCI = bootstrapCI;
   exports.boundClip = boundClip;
   exports.boundContext = boundContext;
-  exports.boundItem = boundItem$1;
+  exports.boundItem = boundItem;
   exports.boundMark = boundMark;
   exports.boundStroke = boundStroke;
   exports.changeset = changeset;
   exports.clampRange = clampRange;
   exports.codegenExpression = codegen;
-  exports.compare = compare$1;
+  exports.compare = compare$2;
   exports.constant = constant$1;
   exports.cumulativeLogNormal = cumulativeLogNormal;
   exports.cumulativeNormal = cumulativeNormal;
@@ -29558,7 +34406,7 @@
   exports.interpolate = interpolate;
   exports.interpolateColors = interpolateColors;
   exports.interpolateRange = interpolateRange;
-  exports.intersect = intersect$2;
+  exports.intersect = intersect$1;
   exports.intersectBoxLine = intersectBoxLine;
   exports.intersectPath = intersectPath;
   exports.intersectPoint = intersectPoint;
@@ -29637,7 +34485,7 @@
   exports.sampleLogNormal = sampleLogNormal;
   exports.sampleNormal = sampleNormal;
   exports.sampleUniform = sampleUniform;
-  exports.scale = scale$4;
+  exports.scale = scale$5;
   exports.sceneEqual = sceneEqual;
   exports.sceneFromJSON = sceneFromJSON;
   exports.scenePickVisit = pickVisit;
@@ -29667,7 +34515,7 @@
   exports.toString = toString;
   exports.transform = transform$2;
   exports.transforms = transforms;
-  exports.truncate = truncate$1;
+  exports.truncate = truncate$2;
   exports.truthy = truthy;
   exports.tupleid = tupleid;
   exports.typeParsers = typeParsers;
