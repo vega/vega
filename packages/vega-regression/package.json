@@ -1,6 +1,6 @@
 {
   "name": "vega-regression",
-  "version": "1.0.9",
+  "version": "1.2.0",
   "description": "Regression transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -15,15 +15,15 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1",
+    "d3-array": "^3.2.2",
     "vega-dataflow": "^5.7.3",
-    "vega-statistics": "^1.7.9",
+    "vega-statistics": "^1.9.0",
     "vega-util": "^1.15.2"
   },
   "devDependencies": {

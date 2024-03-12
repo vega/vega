@@ -5,7 +5,8 @@ menu: usage
 permalink: /usage/interpreter/index.html
 ---
 
-By default, the Vega parser performs code generation for parsed Vega expressions, and the Vega runtime uses the [Function constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function) to create JavaScript functions from the generated code. Although the Vega parser includes its own security checks, the runtime generation of functions from source code nevertheless violates security policies designed to prevent cross-site scripting.
+By default, the Vega parser performs code generation for parsed Vega expressions, and the Vega runtime uses the [Function constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function) to create JavaScript functions from the generated code. Although the Vega parser includes its own security checks, the runtime generation of functions from source code nevertheless violates security policies designed to prevent cross-site scripting
+(such as `script-src` without `unsafe-eval` on).
 
 Vega version 5.13.0 and higher adds interpreter support for Vega expressions that is compliant with [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP). The [vega-interpreter](https://github.com/vega/vega/blob/master/packages/vega-interpreter/) package provides a plug-in interpreter that evaluates expressions by traversing an [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) for an expression and performing each operation in turn. Use of the interpreter enables compliance with CSP, but can incur a performance penalty. In tests of initial parse and dataflow evaluation times, the interpreter is on average ~10% slower. Interactive updates may incur higher penalties, as they are often more expression-heavy and amortize the one-time cost of Function constructor parsing.
 

@@ -9,8 +9,8 @@ export default function(view) {
     item: null
   }));
 
-  // evaluate cursor on each mousemove event
-  view.on(view.events('view', 'mousemove'), cursor,
+  // evaluate cursor on each pointermove event
+  view.on(view.events('view', 'pointermove'), cursor,
     (_, event) => {
       const value = cursor.value,
             user = value ? (isString(value) ? value : value.user) : Default,

@@ -1,6 +1,6 @@
 {
   "name": "vega-projection-extended",
-  "version": "2.0.7",
+  "version": "2.1.1",
   "description": "Extended projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -17,12 +17,12 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-core",
+    "build": "rollup -c  rollup.config.mjs --config-core",
     "pretest": "yarn build --config-test",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "d3-geo-projection": "^3.0.0",
-    "vega-projection": "^1.4.5"
+    "d3-geo-projection": "^4.0.0",
+    "vega-projection": "^1.6.0"
   }
 }

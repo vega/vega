@@ -125,6 +125,9 @@ export default function() {
       cell: {
         fill: 'transparent',
         stroke: lightGray
+      },
+      view: {
+        fill: 'transparent'
       }
     },
 

@@ -1,28 +1,19 @@
 import Handler from './Handler';
 import {domFind} from './util/dom';
 import {HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
-import {inherits} from 'vega-util';
 
-export default function SVGHandler(loader, tooltip) {
-  Handler.call(this, loader, tooltip);
-  const h = this;
-  h._hrefHandler = listener(h, (evt, item) => {
-    if (item && item.href) h.handleHref(evt, item, item.href);
-  });
-  h._tooltipHandler = listener(h, (evt, item) => {
-    h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
-  });
-}
+export default class SVGHandler extends Handler {
+  constructor(loader, tooltip) {
+    super(loader, tooltip);
+    const h = this;
+    h._hrefHandler = listener(h, (evt, item) => {
+      if (item && item.href) h.handleHref(evt, item, item.href);
+    });
+    h._tooltipHandler = listener(h, (evt, item) => {
+      h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
+    });
+  }
 
-// wrap an event listener for the SVG DOM
-const listener = (context, handler) => evt => {
-  let item = evt.target.__data__;
-  item = Array.isArray(item) ? item[0] : item;
-  evt.vegaType = evt.type;
-  handler.call(context._obj, evt, item);
-};
-
-inherits(SVGHandler, Handler, {
   initialize(el, origin, obj) {
     let svg = this._svg;
     if (svg) {
@@ -36,12 +27,12 @@ inherits(SVGHandler, Handler, {
       svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
       svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
     }
-    return Handler.prototype.initialize.call(this, el, origin, obj);
-  },
+    return super.initialize(el, origin, obj);
+  }
 
   canvas() {
     return this._svg;
-  },
+  }
 
   // add an event handler
   on(type, handler) {
@@ -63,7 +54,7 @@ inherits(SVGHandler, Handler, {
     }
 
     return this;
-  },
+  }
 
   // remove an event handler
   off(type, handler) {
@@ -80,4 +71,12 @@ inherits(SVGHandler, Handler, {
 
     return this;
   }
-});
+}
+
+// wrap an event listener for the SVG DOM
+const listener = (context, handler) => evt => {
+  let item = evt.target.__data__;
+  item = Array.isArray(item) ? item[0] : item;
+  evt.vegaType = evt.type;
+  handler.call(context._obj, evt, item);
+};

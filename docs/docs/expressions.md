@@ -237,6 +237,10 @@ Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's
 <b>floor</b>(<i>value</i>)<br/>
 Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's [`Math.floor`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
+<a name="hypot" href="#hypot">#</a>
+<b>hypot</b>(<i>value</i>)<br/>
+Returns the square root of the sum of squares of its arguments. Same as JavaScript's [`Math.hypot`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot).
+
 <a name="log" href="#log">#</a>
 <b>log</b>(<i>value</i>)<br/>
 Returns the natural logarithm of _value_. Same as JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
@@ -836,6 +840,10 @@ Returns the projected planar bounding box (typically in pixels) for the specifie
 <a name="geoCentroid" href="#geoCentroid">#</a>
 <b>geoCentroid</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
 Returns the projected planar centroid (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. If the _projection_ argument is `null`, computes the spherical centroid using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoCentroid](https://github.com/d3/d3-geo#geoCentroid) and [path.centroid](https://github.com/d3/d3-geo#path_centroid) methods.
+
+<a name="geoScale" href="#geoScale">#</a>
+<b>geoScale</b>(<i>projection</i>[, <i>group</i>])<br/>
+Returns the scale value for the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection.
 
 [Back to Top](#reference)
 

@@ -78,7 +78,8 @@
         {"name": "parallel-coordinates"},
         {"name": "word-cloud"},
         {"name": "beeswarm-plot"},
-        {"name": "calendar-view"}
+        {"name": "calendar-view"},
+        {"name": "packed-bubble-chart"}
     ],
     "Custom Designs": [
         {"name": "budget-forecasts"},
@@ -90,7 +91,9 @@
         {"name": "timelines"},
         {"name": "u-district-cuisine"},
         {"name": "clock"},
-        {"name": "watch"}
+        {"name": "watch"},
+        {"name": "warming-stripes"},
+        {"name": "serpentine-timeline"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
@@ -102,6 +105,7 @@
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
+        {"name": "zoomable-circle-packing"},
         {"name": "pacman"},
         {"name": "platformer"}
     ]

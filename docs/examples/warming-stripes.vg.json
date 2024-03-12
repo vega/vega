@@ -1,0 +1,264 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Warming Stripes Chart. Originally designed by Ed Hawkins.",
+  "usermeta": {
+    "Author": "Andrzej Leszkiewicz",
+    "Github": "https://github.com/avatorl/Deneb-Vega/",
+    "License": "CC BY 4.0 (Share and Adapt with Attribution)",
+    "Original Idea Author": "Ed Hawkins",
+    "Original Idea URL": "https://www.climate-lab-book.ac.uk/2018/warming-stripes/",
+    "Read More URL": "https://en.wikipedia.org/wiki/Warming_stripes",
+    "Data Source URL": "https://climate.nasa.gov/vital-signs/global-temperature/"
+  },
+  "background": "white",
+  "width": 650,
+  "height": 200,
+  "padding": 10,
+  "autosize": "pad",
+  "config": {},
+  "signals": [
+    {"name": "fontMain", "value": "Tahoma"},
+    {"name": "labelColor", "value": "#808080"},
+    {"name": "labelDataSrcColor", "value": "#CCCCCC"},
+    {"name": "basePeriodColor", "value": "black"},
+    {"name": "titleFontSize", "value": "16"},
+    {"name": "labelFontSizeMajor", "value": "20"},
+    {"name": "labelFontSizeMinor", "value": "14"},
+    {"name": "legendFontSize", "value": "12"},
+    {"name": "labelDataSrcFontSize", "value": "12"},
+    {"name": "basePeriodS", "value": "1951"},
+    {"name": "basePeriodE", "value": "1980"},
+    {
+      "name": "selectedStripeTemp",
+      "description": "Temperature in the selected year (stripe). To dispaly as a tick on the legend.",
+      "value": "0",
+      "on": [
+        {"events": "@stripe:pointerover", "update": "datum.temp"},
+        {"events": "@stripe:pointerout", "update": "0"}
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "dataset",
+      "url": "data/global-temp.csv",
+      "format": {"type": "csv", "parse": "auto", "delimiter": ","}
+    }
+  ],
+  "scales": [
+    {
+      "name": "scaleX",
+      "type": "linear",
+      "domain": {"data": "dataset", "field": "year"},
+      "range": [0, {"signal": "width"}],
+      "zero": false
+    },
+    {
+      "name": "scaleY",
+      "type": "point",
+      "domain": [1],
+      "range": [0, {"signal": "height"}]
+    },
+    {
+      "name": "scaleYForLegendTick",
+      "type": "linear",
+      "domain": {"data": "dataset", "field": "temp"},
+      "range": [0, {"signal": "height"}],
+      "zero": false,
+      "reverse": true
+    },
+    {
+      "name": "colorHawkins",
+      "type": "linear",
+      "range": {
+        "scheme": [
+          "#67000D",
+          "#A50F15",
+          "#CB181D",
+          "#EF3B2C",
+          "#FB6A4A",
+          "#FC9272",
+          "#FCBBA1",
+          "#FEE0D2",
+          "#FFFFFF",
+          "#DEEBF7",
+          "#C6DBEF",
+          "#9ECAE1",
+          "#6BAED6",
+          "#4292C6",
+          "#2171B5",
+          "#08519C",
+          "#08306B"
+        ]
+      },
+      "domain": {"data": "dataset", "field": "temp"},
+      "reverse": true,
+      "domainMid": 0
+    }
+  ],
+  "title": {
+    "text": {
+      "signal": "'Global Temperature in 1880-2021 (compared to '+ basePeriodS+'-'+basePeriodE+' average)'"
+    },
+    "anchor": "start",
+    "font": {"signal": "fontMain"},
+    "fontSize": {"signal": "titleFontSize"},
+    "fontWeight": "lighter",
+    "subtitle": "Reproduction of 'warming stripes' chart originally designed by Ed Hawkins",
+    "subtitlePadding": 5
+  },
+  "axes": [
+    {
+      "scale": "scaleX",
+      "orient": "bottom",
+      "domain": false,
+      "tickCount": {"signal": "5"},
+      "labelColor": {"signal": "labelColor"},
+      "format": ".4",
+      "encode": {
+        "ticks": {"update": {"y": {"value": -3}}},
+        "labels": {
+          "update": {
+            "y": {"value": 8},
+            "fontSize": {
+              "signal": "(datum.value==1900||datum.value==2000)?labelFontSizeMajor:labelFontSizeMinor"
+            }
+          }
+        }
+      }
+    },
+    {
+      "scale": "scaleX",
+      "orient": "top",
+      "domain": true,
+      "tickCount": {"signal": "length(data('dataset'))"},
+      "labelFontSize": {"signal": "0"},
+      "format": ".4",
+      "encode": {
+        "ticks": {
+          "enter": {
+            "stroke": {"signal": "basePeriodColor"},
+            "strokeWidth": {
+              "signal": "(datum.value==basePeriodS||datum.value==basePeriodE)?1:0"
+            }
+          }
+        },
+        "labels": {
+          "enter": {"fill": {"signal": "basePeriodColor"}},
+          "update": {
+            "fontSize": {
+              "signal": "(datum.value==basePeriodS||datum.value==basePeriodE)?labelFontSizeMinor:0"
+            }
+          }
+        },
+        "domain": {
+          "enter": {"stroke": {"signal": "basePeriodColor"}},
+          "update": {
+            "x": {"scale": "scaleX", "signal": "basePeriodS"},
+            "x2": {"scale": "scaleX", "signal": "basePeriodE"},
+            "strokeWidth": {"signal": "0.9"}
+          }
+        }
+      }
+    },
+    {
+      "scale": "scaleYForLegendTick",
+      "orient": "right",
+      "domain": false,
+      "labels": false,
+      "ticks": true,
+      "tickColor": "black",
+      "offset": 45,
+      "encode": {
+        "ticks": {
+          "update": {
+            "x": {"value": -7},
+            "x2": {"value": 13},
+            "y": {
+              "scale": "scaleYForLegendTick",
+              "signal": "selectedStripeTemp"
+            },
+            "strokeWidth": {"signal": "datum.value==0?0.5:0"}
+          }
+        }
+      }
+    }
+  ],
+  "legends": [
+    {
+      "fill": "colorHawkins",
+      "orient": "none",
+      "legendX": {"signal": "width+40"},
+      "legendY": -40,
+      "padding": 20,
+      "title": "°C",
+      "titleColor": "gray",
+      "tickCount": 10,
+      "tickMinStep": 0.2,
+      "titleFontSize": {"signal": "labelFontSizeMinor"},
+      "encode": {
+        "labels": {
+          "enter": {
+            "dx": {"value": 3},
+            "fontSize": {"signal": "legendFontSize"},
+            "fill": {"signal": "labelColor"}
+          },
+          "update": {
+            "text": {
+              "signal": "(datum.value>0?'+':datum.value==0?'':'')+datum.label"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "marks": [
+    {
+      "name": "stripe",
+      "type": "rect",
+      "interactive": true,
+      "from": {"data": "dataset"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "colorHawkins", "field": "temp"},
+          "opacity": {"value": 1},
+          "height": {"signal": "height*0.92"},
+          "width": {"signal": "4.0"},
+          "stroke": {"value": "gray"},
+          "strokeWidth": {"value": 0},
+          "xc": {"scale": "scaleX", "field": "year"},
+          "yc": {"scale": "scaleY", "value": 1},
+          "tooltip": {
+            "signal": "datum.year+': '+(datum.temp>0?'+':'')+datum.temp+'°C'"
+          }
+        },
+        "hover": {
+          "y": {"value": 3},
+          "height": {"signal": "height*0.92+10"},
+          "width": {"signal": "4.2"},
+          "strokeWidth": {"value": 0.05}
+        }
+      }
+    },
+    {
+      "name": "labelDataSource",
+      "type": "text",
+      "encode": {
+        "enter": {
+          "fill": {"signal": "labelDataSrcColor"},
+          "text": {"value": "Data Source: NASA 🔗"},
+          "href": {
+            "value": "https://climate.nasa.gov/vital-signs/global-temperature/"
+          },
+          "cursor": {"value": "pointer"}
+        },
+        "update": {
+          "opacity": {"value": 1},
+          "x": {"signal": "width"},
+          "y": {"signal": "height+50"},
+          "fontSize": {"signal": "labelDataSrcFontSize"}
+        }
+      }
+    }
+  ]
+}

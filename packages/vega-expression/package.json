@@ -1,6 +1,6 @@
 {
   "name": "vega-expression",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
     "vega",
@@ -17,13 +17,13 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-util": "^1.16.0",
-    "@types/estree": "^0.0.50"
+    "vega-util": "^1.17.1",
+    "@types/estree": "^1.0.0"
   }
 }

@@ -1,9 +1,8 @@
 import {bisector} from 'd3-array';
-import {Intersect} from './constants';
-import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
+import {inrange, isArray, isDate, toNumber} from 'vega-util';
+import {$selectionId, Intersect, getter} from './util';
 
-const SELECTION_ID = '_vgsid_',
-    TYPE_ENUM = 'E',
+const TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
@@ -19,17 +18,16 @@ function testPoint(datum, entry) {
 
   for (; i<n; ++i) {
     f = fields[i];
-    f.getter = field.getter || field(f.field);
-    dval = f.getter(datum);
+    dval = getter(f)(datum);
 
     if (isDate(dval)) dval = toNumber(dval);
     if (isDate(values[i])) values[i] = toNumber(values[i]);
-    if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+    if (isArray(values[i]) && isDate(values[i][0])) values[i] = values[i].map(toNumber);
 
     if (f.type === TYPE_ENUM) {
       // Enumerated fields can either specify individual values (single/multi selections)
       // or an array of values (interval selections).
-      if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+      if(isArray(values[i]) ? !values[i].includes(dval) : dval !== values[i]) {
         return false;
       }
     } else {
@@ -105,8 +103,7 @@ export function selectionTest(name, datum, op) {
   return n && intersect;
 }
 
-const selectionId = field(SELECTION_ID),
-  bisect = bisector(selectionId),
+const bisect = bisector($selectionId),
   bisectLeft = bisect.left,
   bisectRight = bisect.right;
 
@@ -115,11 +112,11 @@ export function selectionIdTest(name, datum, op) {
       entries = data ? data.values.value : [],
       unitIdx = data ? data[UNIT_INDEX] && data[UNIT_INDEX].value : undefined,
       intersect = op === Intersect,
-      value = selectionId(datum),
+      value = $selectionId(datum),
       index = bisectLeft(entries, value);
 
   if (index === entries.length) return false;
-  if (selectionId(entries[index]) !== value) return false;
+  if ($selectionId(entries[index]) !== value) return false;
 
   if (unitIdx && intersect) {
     if (unitIdx.size === 1) return true;

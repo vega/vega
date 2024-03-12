@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "6.1.3",
+  "version": "6.1.4",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -16,14 +16,14 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.7.3",
-    "vega-util": "^1.15.2"
+    "vega-dataflow": "^5.7.5",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-encode": "*",

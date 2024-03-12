@@ -11,6 +11,7 @@ import {accessorFields, accessorName, array, error, inherits} from 'vega-util';
  * @param {Array<function(object): *>} [params.groupby] - An array of accessors to groupby.
  * @param {Array<function(object): *>} [params.fields] - An array of accessors to aggregate.
  * @param {Array<string>} [params.ops] - An array of strings indicating aggregation operations.
+ * @param {Array<number>} [params.aggregate_params] - An optional array of parameters for aggregation operations.
  * @param {Array<string>} [params.as] - An array of output field names for aggregated values.
  * @param {boolean} [params.cross=false] - A flag indicating that the full
  *   cross-product of groupby values should be generated, including empty cells.
@@ -45,6 +46,7 @@ Aggregate.Definition = {
   'params': [
     { 'name': 'groupby', 'type': 'field', 'array': true },
     { 'name': 'ops', 'type': 'enum', 'array': true, 'values': ValidAggregateOps },
+    { 'name': 'aggregate_params', 'type': 'number', 'null': true, 'array': true },
     { 'name': 'fields', 'type': 'field', 'null': true, 'array': true },
     { 'name': 'as', 'type': 'string', 'null': true, 'array': true },
     { 'name': 'drop', 'type': 'boolean', 'default': true },
@@ -63,7 +65,7 @@ inherits(Aggregate, Transform, {
 
     if (aggr.value && (mod || pulse.modified(aggr._inputs, true))) {
       aggr._prev = aggr.value;
-      aggr.value = mod ? aggr.init(_) : {};
+      aggr.value = mod ? aggr.init(_) : Object.create(null);
       pulse.visit(pulse.SOURCE, t => aggr.add(t));
     } else {
       aggr.value = aggr.value || aggr.init(_);
@@ -161,10 +163,11 @@ inherits(Aggregate, Transform, {
 
     const fields = _.fields || [null],
           ops = _.ops || ['count'],
+          aggregate_params = _.aggregate_params || [null],
           as = _.as || [],
           n = fields.length,
           map = {};
-    let field, op, m, mname, outname, i;
+    let field, op, aggregate_param, m, mname, outname, i;
 
     if (n !== ops.length) {
       error('Unmatched number of fields and aggregate ops.');
@@ -173,6 +176,7 @@ inherits(Aggregate, Transform, {
     for (i=0; i<n; ++i) {
       field = fields[i];
       op = ops[i];
+      aggregate_param = aggregate_params[i] || null;
 
       if (field == null && op !== 'count') {
         error('Null aggregate field specified.');
@@ -195,12 +199,12 @@ inherits(Aggregate, Transform, {
       }
 
       if (op !== 'count') this._countOnly = false;
-      m.push(createMeasure(op, outname));
+      m.push(createMeasure(op, aggregate_param, outname));
     }
 
     this._measures = this._measures.map(m => compileMeasures(m, m.field));
 
-    return {}; // aggregation cells (this.value)
+    return Object.create(null); // aggregation cells (this.value)
   },
 
   // -- Cell Management -----

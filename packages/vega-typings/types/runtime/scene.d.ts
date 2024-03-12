@@ -50,6 +50,7 @@ export interface SceneItem {
   };
   x: number;
   y: number;
+  opacity?: number;
 }
 
 export type SceneAxis = SceneItem & {
@@ -58,12 +59,16 @@ export type SceneAxis = SceneItem & {
 
 export type SceneRect = SceneItem & {
   fill: string;
+  fillOpacity?: number;
+  stroke?: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
   height: number;
   width: number;
+  cornerRadius?: number;
 };
 
 export type SceneLine = SceneItem & {
-  opacity: number;
   stroke: string;
   strokeWidth: number;
   x2: number;
@@ -76,7 +81,7 @@ export interface SceneContext {
 
 export type SceneGroup = SceneItem & {
   context: SceneContext;
-  items: SceneItem[];
+  items: Scene[];
   height: number;
   width: number;
   stroke?: string;
@@ -84,9 +89,12 @@ export type SceneGroup = SceneItem & {
 
 export type SceneSymbol = SceneItem & {
   fill: string;
+  fillOpacity?: number;
   shape: string;
   size: number;
-  strokeWidth: number;
+  stroke?: string;
+  strokeWidth?: number;
+  strokeOpacity?: number;
 };
 
 export type SceneTextBaseline = 'top' | 'middle' | 'bottom';
@@ -121,5 +129,5 @@ export interface SceneLegendItem {
 
 export function sceneVisit(
   scene: Scene | SceneGroup,
-  itemCallback: (item: Scene | SceneGroup | SceneItem) => void,
+  itemCallback: (item: Scene | SceneGroup | SceneItem) => void
 ): void;

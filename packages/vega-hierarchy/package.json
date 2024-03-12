@@ -1,6 +1,6 @@
 {
   "name": "vega-hierarchy",
-  "version": "4.0.9",
+  "version": "4.1.1",
   "description": "Hierarchical layout transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -19,15 +19,15 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-hierarchy": "^2.0.0",
-    "vega-dataflow": "^5.7.3",
-    "vega-util": "^1.15.2"
+    "d3-hierarchy": "^3.1.2",
+    "vega-dataflow": "^5.7.5",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-transforms": "*"

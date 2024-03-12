@@ -113,7 +113,9 @@ function layoutGroup(view, group, _) {
         view.dirty(item);
       }
 
-      if (_.autosize && _.autosize.type === Fit) {
+      if (_.autosize && (_.autosize.type === Fit  || 
+                         _.autosize.type === FitX || 
+                         _.autosize.type === FitY )) {
         // For autosize fit, incorporate the orthogonal dimension only.
         // Legends that overrun the chart area will then be clipped;
         // otherwise the chart area gets reduced to nothing!

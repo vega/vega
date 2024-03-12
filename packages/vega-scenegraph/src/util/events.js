@@ -4,6 +4,11 @@ export const KeyUpEvent = 'keyup';
 export const DragEnterEvent = 'dragenter';
 export const DragLeaveEvent = 'dragleave';
 export const DragOverEvent = 'dragover';
+export const PointerDownEvent = 'pointerdown';
+export const PointerUpEvent = 'pointerup';
+export const PointerMoveEvent = 'pointermove';
+export const PointerOutEvent = 'pointerout';
+export const PointerOverEvent = 'pointerover';
 export const MouseDownEvent = 'mousedown';
 export const MouseUpEvent = 'mouseup';
 export const MouseMoveEvent = 'mousemove';
@@ -24,6 +29,11 @@ export const Events = [
   DragEnterEvent,
   DragLeaveEvent,
   DragOverEvent,
+  PointerDownEvent,
+  PointerUpEvent,
+  PointerMoveEvent,
+  PointerOutEvent,
+  PointerOverEvent,
   MouseDownEvent,
   MouseUpEvent,
   MouseMoveEvent,
@@ -38,8 +48,8 @@ export const Events = [
   TouchEndEvent
 ];
 
-export const TooltipShowEvent = MouseMoveEvent;
+export const TooltipShowEvent = PointerMoveEvent;
 
-export const TooltipHideEvent = MouseOutEvent;
+export const TooltipHideEvent = PointerOutEvent;
 
 export const HrefEvent = ClickEvent;

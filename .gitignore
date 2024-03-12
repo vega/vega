@@ -5,6 +5,8 @@
 /build
 /docs/_site
 /docs/Gemfile.lock
+/docs/.bundle/
+/docs/vendor/
 /node_modules
 /packages/*/node_modules
 /packages/*/build

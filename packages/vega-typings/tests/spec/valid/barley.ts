@@ -1,148 +1,146 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 200,
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 200,
+  padding: 5,
 
-  "signals": [
-    {"name": "offset", "value": 15},
-    {"name": "cellHeight", "value": 100},
-    {"name": "height", "update": "6 * (offset + cellHeight)"}
+  signals: [
+    { name: 'offset', value: 15 },
+    { name: 'cellHeight', value: 100 },
+    { name: 'height', update: '6 * (offset + cellHeight)' }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "barley",
-      "url": "data/barley.json"
+      name: 'barley',
+      url: 'data/barley.json'
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "gscale",
-      "type": "band",
-      "range": [0, {"signal": "height"}],
-      "round": true,
-      "domain": {
-        "data": "barley",
-        "field": "site",
-        "sort": {
-          "field": "yield",
-          "op": "median",
-          "order": "descending"
+      name: 'gscale',
+      type: 'band',
+      range: [0, { signal: 'height' }],
+      round: true,
+      domain: {
+        data: 'barley',
+        field: 'site',
+        sort: {
+          field: 'yield',
+          op: 'median',
+          order: 'descending'
         }
       }
     },
     {
-      "name": "xscale",
-      "type": "linear",
-      "nice": true,
-      "range": "width",
-      "round": true,
-      "domain": {"data": "barley", "field": "yield"}
+      name: 'xscale',
+      type: 'linear',
+      nice: true,
+      range: 'width',
+      round: true,
+      domain: { data: 'barley', field: 'yield' }
     },
     {
-      "name": "cscale",
-      "type": "ordinal",
-      "range": "category",
-      "domain": {"data": "barley", "field": "year"}
+      name: 'cscale',
+      type: 'ordinal',
+      range: 'category',
+      domain: { data: 'barley', field: 'year' }
     }
   ],
 
-  "axes": [
-    {"orient": "bottom", "scale": "xscale", "tickCount": 5, "zindex": 1}
-  ],
+  axes: [{ orient: 'bottom', scale: 'xscale', tickCount: 5, zindex: 1 }],
 
-  "legends": [
+  legends: [
     {
-      "stroke": "cscale",
-      "title": "Year",
-      "padding": 4,
-      "encode": {
-        "symbols": {
-          "enter": {
-            "strokeWidth": {"value": 2},
-            "size": {"value": 50}
+      stroke: 'cscale',
+      title: 'Year',
+      padding: 4,
+      encode: {
+        symbols: {
+          enter: {
+            strokeWidth: { value: 2 },
+            size: { value: 50 }
           }
         }
       }
     }
   ],
 
-  "marks": [
+  marks: [
     {
-      "name": "site",
-      "type": "group",
+      name: 'site',
+      type: 'group',
 
-      "from": {
-        "facet": {
-          "data": "barley",
-          "name": "sites",
-          "groupby": "site"
+      from: {
+        facet: {
+          data: 'barley',
+          name: 'sites',
+          groupby: 'site'
         }
       },
 
-      "encode": {
-        "enter": {
-          "y": {"scale": "gscale", "field": "site", "offset": {"signal": "offset"}},
-          "height": {"signal": "cellHeight"},
-          "width": {"signal": "width"},
-          "stroke": {"value": "#ccc"}
+      encode: {
+        enter: {
+          y: { scale: 'gscale', field: 'site', offset: { signal: 'offset' } },
+          height: { signal: 'cellHeight' },
+          width: { signal: 'width' },
+          stroke: { value: '#ccc' }
         }
       },
 
-      "scales": [
+      scales: [
         {
-          "name": "yscale",
-          "type": "point",
-          "range": [0, {"signal": "cellHeight"}],
-          "padding": 1,
-          "round": true,
-          "domain": {
-            "data": "barley",
-            "field": "variety",
-            "sort": {
-              "field": "yield",
-              "op": "median",
-              "order": "descending"
+          name: 'yscale',
+          type: 'point',
+          range: [0, { signal: 'cellHeight' }],
+          padding: 1,
+          round: true,
+          domain: {
+            data: 'barley',
+            field: 'variety',
+            sort: {
+              field: 'yield',
+              op: 'median',
+              order: 'descending'
             }
           }
         }
       ],
 
-      "axes": [
+      axes: [
         {
-          "orient": "left",
-          "scale": "yscale",
-          "tickSize": 0,
-          "domain": false,
-          "grid": true,
-          "encode": {
-            "grid": {
-              "enter": {"strokeDash": {"value": [3,3]}}
+          orient: 'left',
+          scale: 'yscale',
+          tickSize: 0,
+          domain: false,
+          grid: true,
+          encode: {
+            grid: {
+              enter: { strokeDash: { value: [3, 3] } }
             }
           }
         },
         {
-          "orient": "right",
-          "scale": "yscale",
-          "tickSize": 0,
-          "domain": false
+          orient: 'right',
+          scale: 'yscale',
+          tickSize: 0,
+          domain: false
         }
       ],
 
-      "marks": [
+      marks: [
         {
-          "type": "symbol",
-          "from": {"data": "sites"},
-          "encode": {
-            "enter": {
-              "x": {"scale": "xscale", "field": "yield"},
-              "y": {"scale": "yscale", "field": "variety"},
-              "stroke": {"scale": "cscale", "field": "year"},
-              "strokeWidth": {"value": 2},
-              "size": {"value": 50}
+          type: 'symbol',
+          from: { data: 'sites' },
+          encode: {
+            enter: {
+              x: { scale: 'xscale', field: 'yield' },
+              y: { scale: 'yscale', field: 'variety' },
+              stroke: { scale: 'cscale', field: 'year' },
+              strokeWidth: { value: 2 },
+              size: { value: 50 }
             }
           }
         }
@@ -150,18 +148,18 @@ export const spec: Spec = {
     },
 
     {
-      "type": "text",
-      "from": {"data": "site"},
-      "encode": {
-        "enter": {
-          "x": {"field": "width", "mult": 0.5},
-          "y": {"field": "y"},
-          "fontSize": {"value": 11},
-          "fontWeight": {"value": "bold"},
-          "text": {"field": "datum.site"},
-          "align": {"value": "center"},
-          "baseline": {"value": "bottom"},
-          "fill": {"value": "#000"}
+      type: 'text',
+      from: { data: 'site' },
+      encode: {
+        enter: {
+          x: { field: 'width', mult: 0.5 },
+          y: { field: 'y' },
+          fontSize: { value: 11 },
+          fontWeight: { value: 'bold' },
+          text: { field: 'datum.site' },
+          align: { value: 'center' },
+          baseline: { value: 'bottom' },
+          fill: { value: '#000' }
         }
       }
     }

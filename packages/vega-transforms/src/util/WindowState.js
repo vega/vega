@@ -7,6 +7,7 @@ export default function WindowState(_) {
   const ops = array(_.ops),
         fields = array(_.fields),
         params = array(_.params),
+        aggregate_params = array(_.aggregate_params),
         as = array(_.as),
         outputs = this.outputs = [],
         windows = this.windows = [],
@@ -24,6 +25,8 @@ export default function WindowState(_) {
 
   ops.forEach((op, i) => {
     const field = fields[i],
+          param = params[i],
+          aggregate_param = aggregate_params[i] || null,
           mname = accessorName(field),
           name = measureName(op, mname, as[i]);
 
@@ -32,7 +35,7 @@ export default function WindowState(_) {
 
     // Window operation
     if (hasOwnProperty(WindowOps, op)) {
-      windows.push(WindowOp(op, fields[i], params[i], name));
+      windows.push(WindowOp(op, field, param, name));
     }
 
     // Aggregate operation
@@ -52,7 +55,7 @@ export default function WindowState(_) {
         m.field = field;
         measures.push(m);
       }
-      m.push(createMeasure(op, name));
+      m.push(createMeasure(op, aggregate_param, name));
     }
   });
 

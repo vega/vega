@@ -1,62 +1,70 @@
-// Path parsing and rendering code adapted from fabric.js -- Thanks!
-const cmdlen = { m:2, l:2, h:1, v:1, c:6, s:4, q:4, t:2, a:7 },
-      regexp = [
-        /([MLHVCSQTAZmlhvcsqtaz])/g,
-        /###/,
-        /(\.\d+)(\.\d)/g,
-        /(\d)([-+])/g,
-        /\s|,|###/
-      ];
+const paramCounts = { m:2, l:2, h:1, v:1, z:0, c:6, s:4, q:4, t:2, a:7 };
+const commandPattern = /[mlhvzcsqta]([^mlhvzcsqta]+|$)/gi;
+const numberPattern = /^[+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)|([0-9]+))([eE][+-]?[0-9]+)?/;
+const spacePattern = /^((\s+,?\s*)|(,\s*))/;
+const flagPattern = /^[01]/;
 
-export default function(pathstr) {
-  const result = [];
-  let curr,
-      chunks,
-      parsed, param,
-      cmd, len, i, j, n, m;
+export default function parse(path) {
+  const commands = [];
+  const matches = path.match(commandPattern) || [];
 
-  // First, break path into command sequence
-  const path = pathstr
-    .slice()
-    .replace(regexp[0], '###$1')
-    .split(regexp[1])
-    .slice(1);
+  matches.forEach(str => {
+    let cmd = str[0];
+    const type = cmd.toLowerCase();
 
-  // Next, parse each command in turn
-  for (i = 0, n = path.length; i < n; ++i) {
-    curr = path[i];
-    chunks = curr
-      .slice(1)
-      .trim()
-      .replace(regexp[2], '$1###$2')
-      .replace(regexp[3], '$1###$2')
-      .split(regexp[4]);
-    cmd = curr.charAt(0);
+    // parse parameters
+    const paramCount = paramCounts[type];
+    const params = parseParams(type, paramCount, str.slice(1).trim());
+    const count = params.length;
 
-    parsed = [cmd];
-    for (j = 0, m = chunks.length; j < m; ++j) {
-      if ((param = +chunks[j]) === param) { // not NaN
-        parsed.push(param);
-      }
+    // error checking based on parameter count
+    if (count < paramCount || (count && count % paramCount !== 0)) {
+      throw Error('Invalid SVG path, incorrect parameter count');
     }
 
-    len = cmdlen[cmd.toLowerCase()];
-    if (parsed.length - 1 > len) {
-      const m = parsed.length;
-      j = 1;
-      result.push([cmd].concat(parsed.slice(j, j += len)));
+    // register the command
+    commands.push([cmd, ...params.slice(0, paramCount)]);
 
-      // handle implicit lineTo (#2803)
-      cmd = cmd === 'M' ? 'L' : cmd === 'm' ? 'l' : cmd;
-
-      for (; j < m; j += len) {
-        result.push([cmd].concat(parsed.slice(j, j+len)));
-      }
+    // exit now if we're done, also handles zero-param 'z'
+    if (count === paramCount) {
+      return;
     }
-    else {
-      result.push(parsed);
+
+    // handle implicit line-to
+    if (type === 'm') {
+      cmd = (cmd === 'M') ? 'L' : 'l';
+    }
+
+    // repeat command when given extended param list
+    for (let i = paramCount; i < count; i += paramCount) {
+      commands.push([cmd, ...params.slice(i, i + paramCount)]);
+    }
+  });
+
+  return commands;
+}
+
+function parseParams(type, paramCount, segment) {
+  const params = [];
+
+  for (let index = 0; paramCount && index < segment.length; ) {
+    for (let i = 0; i < paramCount; ++i) {
+      const pattern = type === 'a' && (i === 3 || i === 4) ? flagPattern : numberPattern;
+      const match = segment.slice(index).match(pattern);
+
+      if (match === null) {
+        throw Error('Invalid SVG path, incorrect parameter type');
+      }
+
+      index += match[0].length;
+      params.push(+match[0]);
+
+      const ws = segment.slice(index).match(spacePattern);
+      if (ws !== null) {
+        index += ws[0].length;
+      }
     }
   }
 
-  return result;
+  return params;
 }

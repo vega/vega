@@ -1,6 +1,6 @@
 var tape = require('tape'),
-    context = require('d3-path').path,
     vega = require('../'),
+    context = vega.path,
     Bounds = vega.Bounds,
     pathParse = vega.pathParse,
     pathRender = vega.pathRender;
@@ -111,6 +111,13 @@ tape('pathParse should parse svg path', t => {
   t.end();
 });
 
+tape('pathParse should handle an empty string', t => {
+  const s = '';
+  const p = [];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
 tape('pathParse should handle repeated arguments', t => {
   const s = 'M 1 1 L 1 2 3 4';
   const p = [['M',1,1], ['L',1,2], ['L',3,4]];
@@ -118,16 +125,22 @@ tape('pathParse should handle repeated arguments', t => {
   t.end();
 });
 
-tape('pathParse should skip NaN parameters', t => {
-  const s = 'M 1 1 L 1 x';
-  const p = [['M',1,1], ['L',1]];
-  t.deepEqual(pathParse(s), p);
+tape('pathParse should throw on invalid parameters', t => {
+  t.throws(() => pathParse('M 1 foo'));
+  t.throws(() => pathParse('M 1 2 3'));
   t.end();
 });
 
 tape('pathParse should handle concatenated decimals', t => {
-  const s = 'M.5.5l.3.3';
-  const p = [['M',.5,.5], ['l',.3,.3]];
+  const s = 'l.5.5.3.3';
+  const p = [['l',.5,.5], ['l',.3,.3]];
+  t.deepEqual(pathParse(s), p);
+  t.end();
+});
+
+tape('pathParse should handle dense arc flags', t => {
+  const s = 'A 1 2 3 00-1 1';
+  const p = [['A',1,2,3,0,0,-1,1]];
   t.deepEqual(pathParse(s), p);
   t.end();
 });

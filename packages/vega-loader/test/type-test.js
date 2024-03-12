@@ -1,5 +1,4 @@
 var tape = require('tape'),
-    d3 = require('d3-time-format'),
     vega = require('../'),
     inferType = vega.inferType,
     inferTypes = vega.inferTypes,
@@ -98,11 +97,17 @@ tape('type parsers should parse date', t => {
 
 tape('type parsers should parse date with format', t => {
   t.equal(
-    +typeParsers.date('18.07.1990', d3.timeParse('%d.%m.%Y')),
+    +typeParsers.date('18.07.1990', s => {
+      const [d, m, Y] = s.split('.');
+      return new Date(Y, m - 1, d);
+    }),
     +(new Date(1990, 6, 18))
   );
   t.equal(
-    +typeParsers.date('07.18.1990', d3.timeParse('%m.%d.%Y')),
+    +typeParsers.date('07.18.1990', s => {
+      const [m, d, Y] = s.split('.');
+      return new Date(Y, m - 1, d);
+    }),
     +(new Date(1990, 6, 18))
   );
   t.equal(typeParsers.date(null, '%d.%m.%Y'), null);

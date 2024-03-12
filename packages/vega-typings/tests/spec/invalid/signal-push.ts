@@ -1,10 +1,10 @@
-import { Spec } from 'vega'
+import { Spec } from 'vega';
 
 // FIXME commented-out cases are due to https://github.com/Microsoft/TypeScript/issues/20863
 
 // let spec: Spec
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -23,7 +23,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -42,7 +42,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}
@@ -61,7 +61,7 @@ import { Spec } from 'vega'
 //   ]
 // }
 
-// // $ExpectError
+// // @ts-expect-error
 // spec = {
 //   "signals": [
 //     {"name": "foo", "value": 1}

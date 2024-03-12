@@ -34,7 +34,9 @@ export default function(context, path, l, t, sX, sY) {
       tempX,
       tempY,
       tempControlX,
-      tempControlY;
+      tempControlY,
+      anchorX = 0,
+      anchorY = 0;
 
   if (l == null) l = 0;
   if (t == null) t = 0;
@@ -86,12 +88,16 @@ export default function(context, path, l, t, sX, sY) {
       case 'm': // moveTo, relative
         x += current[1];
         y += current[2];
+        anchorX = x;
+        anchorY = y;
         context.moveTo(x + l, y + t);
         break;
 
       case 'M': // moveTo, absolute
         x = current[1];
         y = current[2];
+        anchorX = x;
+        anchorY = y;
         context.moveTo(x + l, y + t);
         break;
 
@@ -298,6 +304,8 @@ export default function(context, path, l, t, sX, sY) {
 
       case 'z':
       case 'Z':
+        x = anchorX;
+        y = anchorY;
         context.closePath();
         break;
     }

@@ -1,6 +1,6 @@
 {
   "name": "vega-geo",
-  "version": "4.3.8",
+  "version": "4.4.1",
   "description": "Geographic data transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -16,20 +16,20 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-transform",
+    "build": "rollup -c rollup.config.mjs --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1",
-    "d3-color": "^2.0.0",
-    "d3-geo": "^2.0.1",
-    "vega-canvas": "^1.2.5",
-    "vega-dataflow": "^5.7.3",
-    "vega-projection": "^1.4.5",
-    "vega-statistics": "^1.7.9",
-    "vega-util": "^1.15.2"
+    "d3-array": "^3.2.2",
+    "d3-color": "^3.1.0",
+    "d3-geo": "^3.1.0",
+    "vega-canvas": "^1.2.7",
+    "vega-dataflow": "^5.7.5",
+    "vega-projection": "^1.6.0",
+    "vega-statistics": "^1.8.1",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-transforms": "*"

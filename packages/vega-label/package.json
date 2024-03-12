@@ -1,6 +1,6 @@
 {
   "name": "vega-label",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "Label layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -18,13 +18,13 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --config-transform",
+    "build": "rollup -c rollup.config.mjs --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-canvas": "^1.2.5",
+    "vega-canvas": "^1.2.6",
     "vega-dataflow": "^5.7.3",
     "vega-scenegraph": "^4.9.2",
     "vega-util": "^1.15.2"

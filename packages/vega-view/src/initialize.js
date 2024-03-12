@@ -62,7 +62,7 @@ function lookup(view, el, clear) {
   }
   if (el && clear) {
     try {
-      el.innerHTML = '';
+      el.textContent = '';
     } catch (e) {
       el = null;
       view.error(e);

@@ -25,6 +25,7 @@ export type RangeScheme =
 export type RangeBand =
   | RangeEnum
   | RangeRaw
+  | SignalRef
   | {
       step: number | SignalRef;
     };

@@ -18,6 +18,8 @@ tape('splitAccessPath parses field accessor paths', t => {
   t.deepEqual(vega.splitAccessPath('y\\[foo\\]'), ['y[foo]']);
   t.deepEqual(vega.splitAccessPath('y\\[foo'), ['y[foo']);
   t.deepEqual(vega.splitAccessPath('yfoo\\]'), ['yfoo]']);
+  t.deepEqual(vega.splitAccessPath("\\[\\'foo\\'\\]"), ["['foo']"]);
+  t.deepEqual(vega.splitAccessPath('\\a\\b\\c'), ['abc']);
   t.end();
 });
 

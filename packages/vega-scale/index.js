@@ -33,6 +33,8 @@ export {
 
 export {
   scale,
+  registerScale,
+  isRegisteredScale,
   isValidScaleType,
   isContinuous,
   isDiscrete,

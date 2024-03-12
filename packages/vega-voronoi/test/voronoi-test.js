@@ -72,7 +72,7 @@ tape('Voronoi generates voronoi cell paths with 2 input points', t => {
 
   df.pulse(c0, changeset().insert(data)).run();
   const out = vo.pulse.add;
-  t.equal(out[0].path, 'M15,20L0,20L0,0L15,0Z');
-  t.equal(out[1].path, 'M15,20L15,0L30,0L30,20Z');
+  t.equal(out[0].path, 'M0,20L0,0L15,0L15,20Z');
+  t.equal(out[1].path, 'M30,0L30,20L15,20L15,0Z');
   t.end();
 });

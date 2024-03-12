@@ -1,4 +1,4 @@
-export const styles = {
+export const stylesAttr = {
   fill:             'fill',
   fillOpacity:      'fill-opacity',
   stroke:           'stroke',
@@ -9,7 +9,10 @@ export const styles = {
   strokeDash:       'stroke-dasharray',
   strokeDashOffset: 'stroke-dashoffset',
   strokeMiterLimit: 'stroke-miterlimit',
-  opacity:          'opacity',
+  opacity:          'opacity'
+};
+
+export const stylesCss = {
   blend:            'mix-blend-mode'
 };
 

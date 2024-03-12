@@ -118,7 +118,8 @@ import {
 import {
   geoArea,
   geoBounds,
-  geoCentroid
+  geoCentroid,
+  geoScale
 } from './functions/geo';
 
 import inScope from './functions/inscope';
@@ -150,6 +151,12 @@ import {
   reverse,
   slice
 } from './functions/sequence';
+
+import {
+  intersectLasso,
+  lassoAppend,
+  lassoPath
+} from './functions/lasso';
 
 import {
   bandspace,
@@ -219,7 +226,7 @@ export const functionContext = {
   isTuple,
   isValid(_) { return _ != null && _ === _; },
   toBoolean,
-  toDate,
+  toDate(_) { return toDate(_); }, // suppress extra arguments
   toNumber,
   toString,
   indexof,
@@ -267,7 +274,7 @@ export const functionContext = {
   warn,
   info,
   debug,
-  extent,
+  extent(_) { return extent(_); }, // suppress extra arguments
   inScope,
   intersect,
   clampRange,
@@ -288,7 +295,10 @@ export const functionContext = {
   zoomPow,
   zoomSymlog,
   encode,
-  modify
+  modify,
+  lassoAppend,
+  lassoPath,
+  intersectLasso
 };
 
 const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
@@ -349,6 +359,7 @@ expressionFunction('geoArea', geoArea, scaleVisitor);
 expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('geoShape', geoShape, scaleVisitor);
+expressionFunction('geoScale', geoScale, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('treePath', treePath, dataVisitor);

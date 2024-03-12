@@ -1,6 +1,6 @@
 {
   "name": "vega-encode",
-  "version": "4.8.3",
+  "version": "4.9.2",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
     "vega",
@@ -16,17 +16,17 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^2.7.1",
-    "d3-interpolate": "^2.0.1",
-    "vega-dataflow": "^5.7.3",
-    "vega-scale": "^7.0.3",
-    "vega-util": "^1.15.2"
+    "d3-array": "^3.2.2",
+    "d3-interpolate": "^3.0.1",
+    "vega-dataflow": "^5.7.5",
+    "vega-scale": "^7.3.0",
+    "vega-util": "^1.17.1"
   },
   "devDependencies": {
     "vega-transforms": "*"

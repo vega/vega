@@ -11166,6 +11166,12 @@
                       },
                       {
                         "$ref": "#/definitions/signalRef"
+                      },
+                      {
+                        "$ref": "#/definitions/expr"
+                      },
+                      {
+                        "$ref": "#/definitions/paramField"
                       }
                     ],
                     "default": -30
@@ -13486,7 +13492,6 @@
                     "enum": [
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
@@ -13507,11 +13512,36 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
                     "$ref": "#/definitions/signalRef"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
+        "aggregate_params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/definitions/signalRef"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               }
@@ -14772,7 +14802,6 @@
                     "enum": [
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
@@ -14793,7 +14822,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15194,7 +15225,6 @@
               "enum": [
                 "values",
                 "count",
-                "__count__",
                 "missing",
                 "valid",
                 "sum",
@@ -15215,7 +15245,9 @@
                 "min",
                 "max",
                 "argmin",
-                "argmax"
+                "argmax",
+                "exponential",
+                "exponentialb"
               ]
             },
             {
@@ -15732,7 +15764,6 @@
                       "next_value",
                       "values",
                       "count",
-                      "__count__",
                       "missing",
                       "valid",
                       "sum",
@@ -15753,7 +15784,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15768,6 +15801,29 @@
           ]
         },
         "params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/definitions/signalRef"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
+        "aggregate_params": {
           "oneOf": [
             {
               "type": "array",

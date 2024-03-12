@@ -145,11 +145,13 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   var df = new vega.Dataflow(),
       an = df.add('left'),
       c0 = df.add(Collect),
+      avoidBaseMark = df.add(true),
       lb = df.add(Label, {
         size: [50, 30],
         anchor: [an],
         offset: [2],
-        pulse: c0
+        pulse: c0,
+        avoidBaseMark
       });
 
   df.update(an, 'left')
@@ -242,10 +244,30 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[0].opacity, 1);
   t.equal(out[1].opacity, 0);
 
+  df.update(an, 'middle')
+    .update(avoidBaseMark, true)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  t.equal(out[0].opacity, 0);
+  t.equal(out[1].opacity, 0);
+
+  df.update(an, 'middle')
+    .update(avoidBaseMark, false)
+    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .run();
+  out = c0.value;
+  closeTo(t, out[0].x, 21);
+  closeTo(t, out[0].y, 16);
+  t.equal(out[0].align, 'center');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
   t.end();
 });
 
-tape('Label performs label layout over input points with infinity padding', t => {
+tape('Label performs label layout over input point with infinity padding', t => {
   function data() {
     return [
       {text: 'very-long-label', x: 5, y: 5, fontSize: 10}
@@ -368,6 +390,49 @@ tape('Label performs label layout over input points with infinity padding', t =>
   t.equal(out[0].align, 'left');
   t.equal(out[0].baseline, 'middle');
   t.equal(out[0].opacity, 1);
+
+  t.end();
+});
+
+tape('Label performs label layout over input multiple points outside of chart\'s bounding box with infinity padding', t => {
+  function data() {
+    return [
+      {text: 'l', x: 0, y: 5, fontSize: 10},
+      {text: 'l', x: 9, y: 5, fontSize: 10}
+    ];
+  }
+
+  var df = new vega.Dataflow(),
+      pd = df.add(Infinity),
+      an = df.add('left'),
+      c0 = df.add(Collect),
+      lb = df.add(Label, {
+        size: [10, 10],
+        anchor: [an],
+        offset: [10],
+        padding: pd,
+        pulse: c0
+      });
+
+  df.update(an, 'left')
+    .update(pd, Infinity)
+    .pulse(c0, vega.changeset().insert(data()))
+    .run();
+
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out.length, data().length);
+  closeTo(t, out[0].x, -10);
+  closeTo(t, out[0].y, 5);
+  t.equal(out[0].align, 'right');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+
+  closeTo(t, out[1].x, -1);
+  closeTo(t, out[1].y, 5);
+  t.equal(out[1].align, 'right');
+  t.equal(out[1].baseline, 'middle');
+  t.equal(out[1].opacity, 1);
 
   t.end();
 });

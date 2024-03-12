@@ -10,7 +10,7 @@ import {
   Padding,
   RangeScheme,
   SymbolShape,
-  TextBaseline,
+  TextBaseline
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
@@ -22,7 +22,7 @@ import {
   NumericValueRef,
   ScaledValueRef,
   Text,
-  TextDirection,
+  TextDirection
 } from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';
@@ -317,16 +317,16 @@ export interface MarkConfig {
   /**
    * The inner radius in pixels of arc marks.
    *
-   * @minimum 0
    * __Default value:__ `0`
+   * @minimum 0
    */
   innerRadius?: number | SignalRef;
 
   /**
    * The outer radius in pixels of arc marks.
    *
-   * @minimum 0
    * __Default value:__ `0`
+   * @minimum 0
    */
   outerRadius?: number | SignalRef;
 

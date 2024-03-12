@@ -1,7 +1,8 @@
 import { SignalRef, Vector2, Vector3 } from '.';
+import { Feature, FeatureCollection } from 'geojson';
 
-export type GeoJsonFeature = any; // TODO
-export type GeoJsonFeatureCollection = any; // TODO
+export type GeoJsonFeature = Feature;
+export type GeoJsonFeatureCollection = FeatureCollection;
 export type Fit = GeoJsonFeature | GeoJsonFeatureCollection | GeoJsonFeature[];
 export type ProjectionType =
   | 'albers'

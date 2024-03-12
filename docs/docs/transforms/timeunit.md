@@ -14,11 +14,11 @@ The **timeunit** transform {% include tag ver="5.8" %} discretizes date-time val
 | units               | {% include type t="String[]" %} | An array of time unit specifiers defining how date-time values should be binned. See the [time unit reference](#time-units) for more. If unspecified, the units will be inferred based on the value _extent_.|
 | step               | {% include type t="Number" %}    | The number of steps between bins in terms of the smallest provided time unit in _units_ (default `1`). If _units_ is unspecified, this parameter is ignored.|
 | timezone            | {% include type t="String" %}   | The timezone to use, one of `"local"` (default) for the local timezone or `"utc"` for [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC).|
-| interval            | {% include type t="String" %}   | A boolean flag (default `true`) indicating if both the start and end unit values should be output. If `false`, only the starting (floored) time unit value is written to the output.|
+| interval            | {% include type t="Boolean" %}   | A boolean flag (default `true`) indicating if both the start and end unit values should be output. If `false`, only the starting (floored) time unit value is written to the output.|
 | extent              | {% include type t="Date[]" %} | A two-element array with the minimum and maximum values to consider for inferred time units. If unspecified, the observed minimum and maximum values of _field_ will be used. This parameter is applicable only if the _units_ parameter is unspecified.|
 | maxbins             | {% include type t="Number" %}   | The maximum number of bins to create for inferred time units (default `40`). There will often be fewer bins as the domain gets sliced at "nicely" rounded values. This parameter is applicable only if the _units_ parameter is unspecified.|
-| signal              | {% include type t="String" %}   | If defined, binds the computed time unit specification to a signal with the given name. The bound has object has _unit_ (the smallest time unit), _units_ (the array of all time units), _step_, _start_, and _stop_ properties. |
-| as                  | {% include type t="String[]" %} | The output fields at which to write the start and end time unit interval values. The default is `["unit0", "unit1"]`.|
+| signal              | {% include type t="String" %}   | If defined, binds the computed time unit specification to a signal with the given name. The bound object has _unit_ (the smallest time unit), _units_ (the array of all time units), _step_, _start_, and _stop_ properties. |
+| as                  | {% include type t="String[]" %} | The output fields at which to write the start and end time unit interval values. The default is `["unit0", "unit1"]`. Only the first field will be written if the _interval_ parameter is `false`. |
 
 ## <a name="time-units"></a>Time Units
 
@@ -45,7 +45,7 @@ The _units_ transform parameter accepts an array to indicate desired intervals o
 This example discretizes values in the _date_ field by year and Sunday-based week number (_units_), using two week intervals (_step_).
 
 ```json
-{"type": "timeunit", "field": "amount", "units": ["year", "week"], "step": 2}
+{"type": "timeunit", "field": "date", "units": ["year", "week"], "step": 2}
 ```
 
 Given the input data
@@ -77,7 +77,7 @@ Alternatively, a grouping by year and month is specified using `"units": ["year"
 This example discretizes values in the _date_ field by month, regardless of the year.
 
 ```json
-{"type": "timeunit", "field": "amount", "units": ["month"]}
+{"type": "timeunit", "field": "date", "units": ["month"]}
 ```
 
 Given the input data
