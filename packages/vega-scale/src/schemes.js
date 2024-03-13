@@ -1,7 +1,9 @@
 import {continuous, discrete} from './palettes';
 import {interpolateColors} from './interpolate';
+import {isArray} from 'vega-util';
 
 function colors(palette) {
+  if (isArray(palette)) return palette;
   const n = palette.length / 6 | 0,
         c = new Array(n);
 
