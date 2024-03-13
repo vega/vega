@@ -75,21 +75,20 @@ export const continuous = {
   darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
 };
 
-const toStream = (scheme) => scheme.map((x) => x.slice(1)).join('').toLowerCase();
 export const discrete = {
-  accent: toStream(schemeAccent),
-  category10: toStream(schemeCategory10),
+  accent: schemeAccent,
+  category10: schemeCategory10,
   category20: '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5',
   category20b: '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6',
   category20c: '3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9',
-  dark2: toStream(schemeDark2),
-  observable10: toStream(schemeObservable10),
-  paired: toStream(schemePaired),
-  pastel1: toStream(schemePastel1),
-  pastel2: toStream(schemePastel2),
-  set1: toStream(schemeSet1),
-  set2: toStream(schemeSet2),
-  set3: toStream(schemeSet3),
+  dark2: schemeDark2,
+  observable10: schemeObservable10,
+  paired: schemePaired,
+  pastel1: schemePastel1,
+  pastel2: schemePastel2,
+  set1: schemeSet1,
+  set2: schemeSet2,
+  set3: schemeSet3,
   tableau10: '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac',
   tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5'
 };

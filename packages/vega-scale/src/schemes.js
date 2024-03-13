@@ -2,6 +2,7 @@ import {continuous, discrete} from './palettes';
 import {interpolateColors} from './interpolate';
 
 function colors(palette) {
+  if (Array.isArray(palette)) return palette;
   const n = palette.length / 6 | 0,
         c = new Array(n);
 
