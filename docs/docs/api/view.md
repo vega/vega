@@ -79,7 +79,7 @@ var view = await new vega.View(runtime, {
 view.<b>finalize</b>()
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/finalize.js "Source")
 
-Prepares the view to be removed. To prevent unwanted behaviors and memory leaks, this method unregisters any timers and removes any event listeners the visualization has registered on external DOM elements. Applications should invoke this method when a View instance is no longer needed.
+Prepares the view to be removed. To prevent unwanted behaviors and memory leaks, this method unregisters any timers and removes any event listeners that have been registered on the View or that the visualization has registered on external DOM elements. Applications should invoke this method when a View instance is no longer needed.
 
 [Back to reference](#reference)
 
