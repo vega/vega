@@ -1,0 +1,241 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of a custom tooltip (on a map)",
+  "width": 960,
+  "height": 500,
+  "padding": {"top": 30},
+  "background": "white",
+  "autosize": "none",
+  "signals": [
+    {"name": "mapCenter", "description": "Map center", "value": [-95, 38]},
+    {"name": "scale", "description": "Map scale", "value": 900},
+    {
+      "name": "zoom",
+      "description": "Map scale multiplier for the tooltip",
+      "value": 3
+    },
+    {
+      "name": "tooltipSize",
+      "description": "Tooltip width/height",
+      "value": 150
+    },
+    {
+      "name": "tooltipStroke",
+      "description": "Tooltip outline color",
+      "value": "#BBBBBB"
+    },
+    {
+      "name": "tooltipCountyStroke",
+      "description": "Tooltip county outline color",
+      "value": "#000000"
+    },
+    {
+      "name": "tooltipFill",
+      "description": "Tooltip fill color",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "tooltipTextFill",
+      "description": "Tooltip text fill color",
+      "value": "#000000"
+    },
+    {
+      "name": "tooltipTextFontSize",
+      "description": "Tooltip text font size",
+      "value": 16
+    },
+    {
+      "name": "tooltipFillOpacity",
+      "description": "Tooltip fill opacity",
+      "value": 0.7
+    },
+    {
+      "name": "tooltipStrokeWidth",
+      "description": "Tooltip outline width",
+      "value": 0.5
+    },
+    {
+      "name": "tooltipCountyStrokeWidth",
+      "description": "Tooltip county outline width",
+      "value": 0.5
+    },
+    {
+      "name": "county",
+      "description": "County under cursor",
+      "value": null,
+      "on": [
+        {
+          "events": "@shapeMap:pointerover",
+          "update": "datum.id",
+          "force": true
+        },
+        {"events": "@shapeMap:pointerout", "update": "null", "force": true}
+      ]
+    },
+    {
+      "name": "mousePositionXY",
+      "description": "Mouse [x,y] position over the map",
+      "value": [null, null],
+      "on": [
+        {"events": "@shapeMap:pointermove", "update": "xy()"},
+        {
+          "events": "@shapeMap:pointerout",
+          "update": "[null, null]",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "countyCentroid",
+      "description": "Centroid coordinates of the county under cursor",
+      "value": [null, null],
+      "on": [
+        {
+          "events": "@shapeMap:pointermove",
+          "update": "data('data-county')[0]['centroid']"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "unemp",
+      "url": "data/unemployment.tsv",
+      "format": {"type": "tsv", "parse": "auto", "delimiter": "\t"}
+    },
+    {
+      "name": "counties-json",
+      "url": "data/us-10m.json",
+      "format": {"type": "topojson", "feature": "counties"}
+    },
+    {
+      "name": "data-counties",
+      "source": ["counties-json"],
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "invert('projection', geoCentroid('projection', datum))",
+          "as": "centroid"
+        },
+        {
+          "type": "lookup",
+          "from": "unemp",
+          "key": "id",
+          "fields": ["id"],
+          "values": ["rate"]
+        },
+        {"type": "filter", "expr": "datum.rate != null"}
+      ]
+    },
+    {
+      "name": "data-county",
+      "source": "data-counties",
+      "transform": [{"type": "filter", "expr": "datum.id==county"}]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "type": "mercator",
+      "scale": {"signal": "scale"},
+      "center": [{"signal": "mapCenter[0]"}, {"signal": "mapCenter[1]"}],
+      "translate": [{"signal": "width/2"}, {"signal": "height/2"}]
+    },
+    {
+      "name": "projectionCounty",
+      "type": "mercator",
+      "scale": {"signal": "scale*zoom"},
+      "rotate": [0, 0, 0],
+      "center": [
+        {"signal": "countyCentroid[0]"},
+        {"signal": "countyCentroid[1]"}
+      ],
+      "translate": [
+        {"signal": "tooltipSize/2"},
+        {"signal": "tooltipSize/2*1.25"}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "quantize",
+      "domain": [0, 0.15],
+      "range": {"scheme": "blues", "count": 7}
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "orient": "bottom-right",
+      "title": "Unemployment",
+      "format": "0.1%"
+    }
+  ],
+  "marks": [
+    {
+      "name": "shapeMap",
+      "interactive": true,
+      "type": "shape",
+      "from": {"data": "data-counties"},
+      "encode": {"update": {"fill": {"scale": "color", "field": "rate"}}},
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "grpTooltip",
+      "type": "group",
+      "zindex": 1,
+      "encode": {
+        "enter": {
+          "clip": {"signal": "true"},
+          "cornerRadius": {"signal": "100"},
+          "strokeWidth": {"signal": "tooltipStrokeWidth"},
+          "stroke": {"signal": "tooltipStroke"},
+          "fill": {"signal": "tooltipFill"},
+          "fillOpacity": {"signal": "tooltipFillOpacity"}
+        },
+        "update": {
+          "x": {"signal": "mousePositionXY[0]"},
+          "y": {"signal": "mousePositionXY[1]"},
+          "width": {"signal": "county==null ? 0 : tooltipSize"},
+          "height": {"signal": "county==null ? 0 : tooltipSize"}
+        }
+      },
+      "marks": [
+        {
+          "name": "shapeCountyInTooltip",
+          "type": "shape",
+          "from": {"data": "data-county"},
+          "encode": {
+            "enter": {
+              "fill": {"scale": "color", "field": "rate"},
+              "stroke": {"signal": "tooltipCountyStroke"},
+              "strokeWidth": {"signal": "tooltipCountyStrokeWidth"}
+            }
+          },
+          "transform": [{"type": "geoshape", "projection": "projectionCounty"}]
+        },
+        {
+          "type": "text",
+          "from": {"data": "shapeCountyInTooltip"},
+          "encode": {
+            "enter": {
+              "fontSize": {"signal": "tooltipTextFontSize"},
+              "fontWeight": {"value": "bold"},
+              "align": {"value": "center"},
+              "fill": {"signal": "tooltipTextFill"},
+              "lineBreak": {"value": "/"}
+            },
+            "update": {
+              "text": {
+                "signal": "'County '+datum.datum.id+'/'+format(datum.datum.rate, '0.1%')"
+              },
+              "x": {"signal": "tooltipSize/2"},
+              "y": {"signal": "tooltipSize/4"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
