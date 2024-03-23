@@ -38,7 +38,7 @@
     "canvas": "^2.11.2",
     "eslint": "^8.53.0",
     "jsdom": "^24.0.0",
-    "lerna": "^7.4.2",
+    "lerna": "^8.1.2",
     "pixelmatch": "^5.3.0",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.5",
