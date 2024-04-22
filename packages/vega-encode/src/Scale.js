@@ -136,11 +136,6 @@ function configureDomain(scale, _, df) {
 
   if (!domain) return 0;
 
-  // adjust continuous domain for minimum pixel padding
-  if (includePad(type) && _.padding && domain[0] !== peek(domain)) {
-    domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
-  }
-
   // adjust domain based on zero, min, max settings
   if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
     n = ((domain = domain.slice()).length - 1) || 1;
@@ -157,6 +152,11 @@ function configureDomain(scale, _, df) {
       if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
       domain.splice(i, 0, mid);
     }
+  }
+
+  // adjust continuous domain for minimum pixel padding
+  if (includePad(type) && _.padding && domain[0] !== peek(domain)) {
+    domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
   }
 
   // set the scale domain
