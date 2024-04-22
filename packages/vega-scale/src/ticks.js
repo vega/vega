@@ -101,7 +101,7 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? validTicks(scale, scale.bins)
+  return scale.bins ? validTicks(scale, scale.bins, count)
     : scale.ticks ? scale.ticks(count)
     : scale.domain();
 }

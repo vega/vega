@@ -1,5 +1,6 @@
 var tape = require('tape'),
     validTicks = require('../').validTicks,
+    tickValues = require('../').tickValues,
     timeInterval = require('vega-time').timeInterval;
 
 tape('validTicks uses count correctly', t => {
@@ -26,6 +27,40 @@ tape('validTicks uses count correctly', t => {
   // single tick should pass through
   const t5 = validTicks(identity, [1], 5);
   t.deepEqual(t5, [1]);
+
+  t.end();
+});
+
+tape('tickValues uses scale and count correctly', t => {
+  const data = [0, 1, 2, 3, 4, 5, 6, 7];
+
+  const scaleWithBins = function(x) { return x; };
+  scaleWithBins.range = function() { return [0, 10]; };
+  scaleWithBins.bins = [0, 2, 4, 6, 8];
+
+  // Use all bins if within specified count
+  const t1 = tickValues(scaleWithBins, 5);
+  t.deepEqual(t1, [0, 2, 4, 6, 8]);
+
+  // Filter bins if too many
+  const t2 = tickValues(scaleWithBins, 4);
+  t.deepEqual(t2, [0, 4, 8]);
+
+  const scaleWithTicks = function(x) { return x; };
+  scaleWithTicks.range = function() { return [0, 10]; };
+  scaleWithTicks.ticks = function(count) { return Array.from(Array(count).keys()); };
+
+  // Use scale.ticks with specified count if available
+  const t3 = tickValues(scaleWithTicks, 3);
+  t.deepEqual(t3, [0, 1, 2]);
+
+  const scale = function(x) { return x; };
+  scale.range = function() { return [0, 10]; };
+  scale.domain = function() { return data; };
+
+  // Use full domain if no bins or ticks
+  const t4 = tickValues(scale, 5);
+  t.deepEqual(t4, data);
 
   t.end();
 });
