@@ -120,22 +120,22 @@ tape('CanvasHandler should handle input events ', t => {
   });
 
   // extra mouse events on pointer move, pointer out
-  t.equal(count, handler.events.length + 2);
+  t.equal(count, handler.events.length + 1);
 
-  // 12 events below + 17 triggered
-  handler.DOMMouseScroll(event('mousewheel'));         // 1 event
-  canvas.dispatchEvent(event('mousemove', 0, 0));    // 2 (pointer, mouse) * move
-  canvas.dispatchEvent(event('mousemove', 50, 150)); // 6 (pointer, mouse) * (out, over, move)
+  // 17 triggered
+  handler.DOMMouseScroll(event('mousewheel'));       // 1 event
+  canvas.dispatchEvent(event('mousemove', 0, 0));    // 2 (mouse) * (move, enter)
+  canvas.dispatchEvent(event('mousemove', 50, 150)); // 1 (mouse) * move
   canvas.dispatchEvent(event('mousedown', 50, 150)); // 1 event
   canvas.dispatchEvent(event('mouseup', 50, 150));   // 1 event
-  canvas.dispatchEvent(event('click', 50, 150));       // 1 event
-  canvas.dispatchEvent(event('mousemove', 50, 151)); // 2 (points, mouse) * move
-  canvas.dispatchEvent(event('mousemove', 50, 1));   // 6 (pointer, mouse) * (out, over, move)
-  canvas.dispatchEvent(event('mouseout', 1, 1));     // 2 (pointer, mouse) * out
-  canvas.dispatchEvent(event('dragover', 50, 151));    // 3 (leave, enter, move)
-  canvas.dispatchEvent(event('dragover', 50, 1));      // 3 (leave, enter, move)
-  canvas.dispatchEvent(event('dragleave', 1, 1));      // 1 event
-  t.equal(count, handler.events.length + 2 + 29);
+  canvas.dispatchEvent(event('click', 50, 150));     // 1 event
+  canvas.dispatchEvent(event('mousemove', 50, 151)); // 1 (mouse) * move
+  canvas.dispatchEvent(event('mousemove', 50, 1));   // 1 (mouse) * move
+  canvas.dispatchEvent(event('mouseout', 1, 1));     // 1 (mouse) * out
+  canvas.dispatchEvent(event('dragover', 50, 151));  // 3 (leave, enter, move)
+  canvas.dispatchEvent(event('dragover', 50, 1));    // 3 (leave, enter, move)
+  canvas.dispatchEvent(event('dragleave', 1, 1));    // 1 event
+  t.equal(count, handler.events.length + 17);
 
   handler.off('mousemove', {});
   t.equal(handler.handlers().length, handler.events.length);
