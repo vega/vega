@@ -19,7 +19,7 @@
       "name": "angles",
       "value": [0, 0],
       "on": [{
-        "events": "pointerdown",
+        "events": "mousedown",
         "update": "[rotateX, centerY]"
       }]
     },
@@ -27,7 +27,7 @@
       "name": "cloned",
       "value": null,
       "on": [{
-        "events": "pointerdown",
+        "events": "mousedown",
         "update": "copy('projection')"
       }]
     },
@@ -35,14 +35,14 @@
       "name": "start",
       "value": null,
       "on": [{
-        "events": "pointerdown",
+        "events": "mousedown",
         "update": "invert(cloned, xy())"
       }]
     },
     {
       "name": "drag", "value": null,
       "on": [{
-        "events": "[pointerdown, window:pointerup] > window:pointermove",
+        "events": "[mousedown, window:mouseup] > window:mousemove",
         "update": "invert(cloned, xy())"
       }]
     },

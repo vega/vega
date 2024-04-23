@@ -22,15 +22,15 @@
       "name": "fix", "value": false,
       "on": [
         {
-          "events": "symbol:pointerout[!event.buttons], window:pointerup",
+          "events": "symbol:mouseout[!event.buttons], window:mouseup",
           "update": "false"
         },
         {
-          "events": "symbol:pointerover",
+          "events": "symbol:mouseover",
           "update": "fix || true"
         },
         {
-          "events": "[symbol:pointerdown, window:pointerup] > window:pointermove!",
+          "events": "[symbol:mousedown, window:mouseup] > window:mousemove!",
           "update": "xy()",
           "force": true
         }
@@ -41,7 +41,7 @@
       "name": "node", "value": null,
       "on": [
         {
-          "events": "symbol:pointerover",
+          "events": "symbol:mouseover",
           "update": "fix === true ? item() : node"
         }
       ]

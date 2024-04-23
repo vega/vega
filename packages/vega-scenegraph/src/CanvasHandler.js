@@ -30,7 +30,7 @@ export default class CanvasHandler extends Handler {
 
     this.dragover = move([DragOverEvent], [DragEnterEvent], [DragLeaveEvent]),
 
-    this.pointerout = inactive([PointerOutEvent, MouseOutEvent]);
+    this.pointerout = inactive([MouseOutEvent]);
     this.dragleave = inactive([DragLeaveEvent]);
   }
 
@@ -40,7 +40,7 @@ export default class CanvasHandler extends Handler {
     // add minimal events required for proper state management
     [
       ClickEvent, MouseDownEvent,
-      PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+      MouseDownEvent, MouseMoveEvent, MouseOutEvent,
       DragLeaveEvent
     ].forEach(type => eventListenerCheck(this, type));
 
@@ -159,8 +159,8 @@ export default class CanvasHandler extends Handler {
     return this.pick(this._scene, p[0], p[1], p[0] - o[0], p[1] - o[1]);
   }
 
-  // find the scenegraph item at the current pointer position
-  // x, y -- the absolute x, y pointer coordinates on the canvas element
+  // find the scenegraph item at the current mouse position
+  // x, y -- the absolute x, y mouse coordinates on the canvas element
   // gx, gy -- the relative coordinates within the current group
   pick(scene, x, y, gx, gy) {
     const g = this.context(),

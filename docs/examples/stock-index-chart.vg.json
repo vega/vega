@@ -12,7 +12,7 @@
       "update": "time('Jan 1 2005')",
       "on": [
         {
-          "events": "pointermove",
+          "events": "mousemove",
           "update": "invert('x', clamp(x(), 0, width))"
         }
       ]

@@ -25,12 +25,12 @@ export const spec: Spec = {
             '[(delayRange[0]+delayRange[1])/2 - delayZoom, (delayRange[0]+delayRange[1])/2 + delayZoom]'
         },
         {
-          events: '[@delayBrush:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@delayBrush:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[delayRange[0] + invert('delayScale', x()) - invert('delayScale', xmove), delayRange[1] + invert('delayScale', x()) - invert('delayScale', xmove)]"
         },
         {
-          events: '[@delay:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@delay:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[min(delayAnchor, invert('delayScale', x())), max(delayAnchor, invert('delayScale', x()))]"
         }
@@ -46,7 +46,7 @@ export const spec: Spec = {
             '[(delayRange2[0]+delayRange2[1])/2 - delayZoom2, (delayRange2[0]+delayRange2[1])/2 + delayZoom2]'
         },
         {
-          events: '[@delayBrush2:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@delayBrush2:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[delayRange2[0] + invert('delayScale', x()) - invert('delayScale', xmove), delayRange2[1] + invert('delayScale', x()) - invert('delayScale', xmove)]"
         }
@@ -79,7 +79,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: '@delay:pointerdown!',
+          events: '@delay:mousedown!',
           update: "invert('delayScale', x())"
         }
       ]
@@ -98,12 +98,12 @@ export const spec: Spec = {
           update: '[timeExtent[0], timeExtent[1]]'
         },
         {
-          events: '[@timeBrush:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@timeBrush:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[timeRange[0] + invert('timeScale', x()) - invert('timeScale', xmove), timeRange[1] + invert('timeScale', x()) - invert('timeScale', xmove)]"
         },
         {
-          events: '[@time:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@time:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[min(timeAnchor, invert('timeScale', x())), max(timeAnchor, invert('timeScale', x()))]"
         }
@@ -125,7 +125,7 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: '@time:pointerdown!',
+          events: '@time:mousedown!',
           update: "invert('timeScale', x())"
         }
       ]
@@ -144,12 +144,12 @@ export const spec: Spec = {
           update: '[distExtent[0], distExtent[1]]'
         },
         {
-          events: '[@distBrush:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@distBrush:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[distRange[0] + invert('distScale', x()) - invert('distScale', xmove), distRange[1] + invert('distScale', x()) - invert('distScale', xmove)]"
         },
         {
-          events: '[@dist:pointerdown, window:pointerup] > window:pointermove!',
+          events: '[@dist:mousedown, window:mouseup] > window:mousemove!',
           update:
             "[min(distAnchor, invert('distScale', x())), max(distAnchor, invert('distScale', x()))]"
         }
@@ -171,12 +171,12 @@ export const spec: Spec = {
       value: 0,
       on: [
         {
-          events: '@dist:pointerdown!',
+          events: '@dist:mousedown!',
           update: "invert('distScale', x())"
         }
       ]
     },
-    { name: 'xmove', value: 0, on: [{ events: 'window:pointermove', update: 'x()' }] }
+    { name: 'xmove', value: 0, on: [{ events: 'window:mousemove', update: 'x()' }] }
   ],
 
   data: [

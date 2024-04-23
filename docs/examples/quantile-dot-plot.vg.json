@@ -19,7 +19,7 @@
       "name": "select", "init": "quantileLogNormal(0.05, mean, sd)",
       "on": [
         {
-          "events": "click, [pointerdown, window:pointerup] > pointermove",
+          "events": "click, [mousedown, window:mouseup] > mousemove",
           "update": "clamp(invert('x', x()), 0.0001, 30)"
         },
         {

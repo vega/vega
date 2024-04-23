@@ -32,8 +32,8 @@ export const spec: Spec = {
       name: 'hover',
       value: null,
       on: [
-        { events: '@cell:pointerover', update: 'datum' },
-        { events: '@cell:pointerout', update: 'null' }
+        { events: '@cell:mouseover', update: 'datum' },
+        { events: '@cell:mouseout', update: 'null' }
       ]
     },
     {
@@ -46,7 +46,7 @@ export const spec: Spec = {
       value: null,
       on: [
         { events: 'dblclick', update: "cell_stroke ? null : 'brown'" },
-        { events: 'pointerdown!', update: 'cell_stroke' }
+        { events: 'mousedown!', update: 'cell_stroke' }
       ]
     }
   ],

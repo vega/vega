@@ -48,8 +48,8 @@ export const Events = [
   TouchEndEvent
 ];
 
-export const TooltipShowEvent = PointerMoveEvent;
+export const TooltipShowEvent = MouseMoveEvent;
 
-export const TooltipHideEvent = PointerOutEvent;
+export const TooltipHideEvent = MouseOutEvent;
 
 export const HrefEvent = ClickEvent;
