@@ -14,7 +14,7 @@
     "serve": "serve packages/vega/ -l 8080",
     "test": "yarn test:no-lint && yarn lint",
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
-    "lint": "yarn eslint . --ext .js,.d.ts",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true yarn eslint -c eslint.config.mjs .",
     "format": "yarn lint --fix",
     "postinstall": "yarn data"
   },
@@ -26,6 +26,7 @@
     "@babel/plugin-transform-runtime": "^7.23.7",
     "@babel/preset-env": "^7.23.2",
     "@definitelytyped/dtslint": "0.0.159",
+    "@eslint/js": "^9.2.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -37,6 +38,7 @@
     "ajv-formats": "^2.1.1",
     "canvas": "^2.11.2",
     "eslint": "^8.53.0",
+    "globals": "^15.1.0",
     "jsdom": "^24.0.0",
     "lerna": "^7.4.2",
     "pixelmatch": "^5.3.0",
@@ -47,9 +49,8 @@
     "serve": "^14.2.1",
     "tape": "^5.7.2",
     "typescript": "~5.4.5",
+    "typescript-eslint": "^7.8.0",
     "vega-datasets": "^2.8.0"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": ["packages/*"]
 }

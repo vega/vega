@@ -16,7 +16,7 @@
     "format-tests": "prettier --write 'tests/**/*.ts'",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
-    "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
+    "test": "yarn format && yarn tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
     "@types/geojson": "7946.0.4",
@@ -25,6 +25,7 @@
     "vega-util": "^1.17.2"
   },
   "devDependencies": {
-    "ts-json-schema-generator": "^1.4.0"
+    "ts-json-schema-generator": "^1.4.0",
+    "tsd": "^0.31.0"
   }
 }
