@@ -8530,6 +8530,34 @@
   }
   const domImage = () => typeof Image !== 'undefined' ? Image : null;
 
+  function colors$1 (specifier) {
+    var n = specifier.length / 6 | 0,
+      colors = new Array(n),
+      i = 0;
+    while (i < n) colors[i] = "#" + specifier.slice(i * 6, ++i * 6);
+    return colors;
+  }
+
+  var schemeCategory10 = colors$1("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
+
+  var schemeAccent = colors$1("7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666");
+
+  var schemeDark2 = colors$1("1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666");
+
+  var schemeObservable10 = colors$1("4269d0efb118ff725c6cc5b03ca951ff8ab7a463f297bbf59c6b4e9498a0");
+
+  var schemePaired = colors$1("a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928");
+
+  var schemePastel1 = colors$1("fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2");
+
+  var schemePastel2 = colors$1("b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc");
+
+  var schemeSet1 = colors$1("e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999");
+
+  var schemeSet2 = colors$1("66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3");
+
+  var schemeSet3 = colors$1("8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f");
+
   function bandSpace(count, paddingInner, paddingOuter) {
     const space = count - paddingInner + paddingOuter * 2;
     return count ? space > 0 ? space : 1 : 0;
@@ -9005,22 +9033,24 @@
     darkRed: '3434347036339e3c38cc4037e75d1eec8620eeab29f0ce32ffeb2c'
   };
   const discrete = {
-    category10: '1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf',
+    accent: schemeAccent,
+    category10: schemeCategory10,
     category20: '1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5',
     category20b: '393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6',
     category20c: '3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9',
+    dark2: schemeDark2,
+    observable10: schemeObservable10,
+    paired: schemePaired,
+    pastel1: schemePastel1,
+    pastel2: schemePastel2,
+    set1: schemeSet1,
+    set2: schemeSet2,
+    set3: schemeSet3,
     tableau10: '4c78a8f58518e4575672b7b254a24beeca3bb279a2ff9da69d755dbab0ac',
-    tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5',
-    accent: '7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666',
-    dark2: '1b9e77d95f027570b3e7298a66a61ee6ab02a6761d666666',
-    paired: 'a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928',
-    pastel1: 'fbb4aeb3cde3ccebc5decbe4fed9a6ffffcce5d8bdfddaecf2f2f2',
-    pastel2: 'b3e2cdfdcdaccbd5e8f4cae4e6f5c9fff2aef1e2cccccccc',
-    set1: 'e41a1c377eb84daf4a984ea3ff7f00ffff33a65628f781bf999999',
-    set2: '66c2a5fc8d628da0cbe78ac3a6d854ffd92fe5c494b3b3b3',
-    set3: '8dd3c7ffffb3bebadafb807280b1d3fdb462b3de69fccde5d9d9d9bc80bdccebc5ffed6f'
+    tableau20: '4c78a89ecae9f58518ffbf7954a24b88d27ab79a20f2cf5b43989483bcb6e45756ff9d9879706ebab0acd67195fcbfd2b279a2d6a5c99e765fd8b5a5'
   };
   function colors(palette) {
+    if (isArray(palette)) return palette;
     const n = palette.length / 6 | 0,
       c = new Array(n);
     for (let i = 0; i < n;) {
@@ -9125,7 +9155,7 @@
    * @return {Array<*>} - The generated tick values.
    */
   function tickValues(scale, count) {
-    return scale.bins ? validTicks(scale, scale.bins) : scale.ticks ? scale.ticks(count) : scale.domain();
+    return scale.bins ? validTicks(scale, scale.bins, count) : scale.ticks ? scale.ticks(count) : scale.domain();
   }
 
   /**
@@ -12369,7 +12399,7 @@
   const TouchEndEvent = 'touchend';
   const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
-  const TooltipHideEvent = PointerOutEvent;
+  const TooltipHideEvent = MouseOutEvent;
   const HrefEvent = ClickEvent;
   class CanvasHandler extends Handler {
     constructor(loader, tooltip) {
@@ -16074,11 +16104,6 @@
       mid;
     if (!domain) return 0;
 
-    // adjust continuous domain for minimum pixel padding
-    if (includePad(type) && _.padding && domain[0] !== peek$1(domain)) {
-      domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
-    }
-
     // adjust domain based on zero, min, max settings
     if (zero || _.domainMin != null || _.domainMax != null || _.domainMid != null) {
       n = (domain = domain.slice()).length - 1 || 1;
@@ -16094,6 +16119,11 @@
         if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
         domain.splice(i, 0, mid);
       }
+    }
+
+    // adjust continuous domain for minimum pixel padding
+    if (includePad(type) && _.padding && domain[0] !== peek$1(domain)) {
+      domain = padDomain(type, domain, _.range, _.padding, _.exponent, _.constant);
     }
 
     // set the scale domain
@@ -16575,8 +16605,8 @@
     // Marching squares with isolines stitched into rings.
     // Based on https://github.com/topojson/topojson-client/blob/v3.0.0/src/stitch.js
     function isorings(values, value, callback) {
-      var fragmentByStart = new Array(),
-        fragmentByEnd = new Array(),
+      var fragmentByStart = [],
+        fragmentByEnd = [],
         x,
         y,
         t0,
@@ -21096,7 +21126,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.27.0";
+  var version = "5.29.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -24641,10 +24671,13 @@
   function finalize() {
     var tooltip = this._tooltip,
       timers = this._timers,
+      handlers = this._handler.handlers(),
       listeners = this._eventListeners,
       n,
       m,
-      e;
+      e,
+      h,
+      t;
     n = timers.length;
     while (--n >= 0) {
       timers[n].stop();
@@ -24659,6 +24692,14 @@
     }
     if (tooltip) {
       tooltip.call(this, this._handler, null, null, null);
+    }
+
+    // turn off all registered handlers
+    n = handlers.length;
+    while (--n >= 0) {
+      t = handlers[n].type;
+      h = handlers[n].handler;
+      this._handler.off(t, h);
     }
     return this;
   }
