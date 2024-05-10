@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "5.28.0",
+  "version": "5.29.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
