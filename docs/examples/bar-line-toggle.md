@@ -1,6 +1,6 @@
 ---
 layout: example
-title: Bar and Line chart
+title: Bar and Line Chart
 permalink: /examples/bar-line-toggle/index.html
 spec: bar-line-toggle
 image: /examples/img/bar-line-toggle.png
