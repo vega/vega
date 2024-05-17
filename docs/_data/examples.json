@@ -109,7 +109,7 @@
         {"name": "pi-monte-carlo"},
         {"name": "zoomable-circle-packing"},
         {"name": "table-scrollbar"},
-        {"name": "column-line-dynamical"},
+        {"name": "bar-line-toggle"},
         {"name": "map-with-tooltip"},
         {"name": "pacman"},
         {"name": "platformer"}
