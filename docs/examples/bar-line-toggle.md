@@ -1,9 +1,9 @@
 ---
 layout: example
 title: Column and Line chart
-permalink: /examples/column-line-toggle/index.html
-spec: column-line-toggle
-image: /examples/img/column-line-toggle.png
+permalink: /examples/bar-line-toggle/index.html
+spec: bar-line-toggle
+image: /examples/img/bar-line-toggle.png
 ---
 
 An example of a Vega visualization that automatically switches between a bar chart and a line chart depending on the number of data points.
