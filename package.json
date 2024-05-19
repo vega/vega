@@ -53,5 +53,6 @@
     "typescript-eslint": "^7.8.0",
     "vega-datasets": "^2.8.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/*"],
+  "packageManager": "yarn@1.22.19"
 }
