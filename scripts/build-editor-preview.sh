@@ -28,7 +28,14 @@ git clone https://github.com/vega/editor.git
 
 cd editor
 yarn --frozen-lockfile --ignore-scripts
-yarn link vega
+
+# For every package nbame in the packages folder, link it in the editor
+for package in ../packages/*; do
+  if [ -d "$package" ]; then
+    package_name=$(basename $package)
+    yarn link $package_name
+  fi
+done
 
 echo "Creating stub index.json for vega and vega-lite library"
 
