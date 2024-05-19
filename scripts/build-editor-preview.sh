@@ -2,16 +2,18 @@
 
 set -eo pipefail
 
-apt-get install rsync
-
 # Build the editor site and replace main build with local copy of vega-lite
 echo "Installing Vega"
-
 yarn lerna run build
+
+echo "Linking vega"
+cd packages/vega
 yarn link
-git clone https://github.com/vega/editor.git
+cd ../..
 
 echo "Installing vega editor"
+git clone https://github.com/vega/editor.git
+
 cd editor
 yarn --frozen-lockfile --ignore-scripts
 yarn link vega
