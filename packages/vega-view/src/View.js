@@ -43,8 +43,6 @@ export default function View(spec, options) {
   const view = this;
   options = options || {};
 
-  console.log("Msg new view");
-
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
   if (options.logger) view.logger(options.logger);
@@ -74,6 +72,9 @@ export default function View(spec, options) {
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
   view.globalCursor(view._eventConfig.globalCursor);
+
+  console.log("Created a new view");
+
 
   // initialize dataflow graph
   const ctx = runtime(view, spec, options.expr);
