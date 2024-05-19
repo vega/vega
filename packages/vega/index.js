@@ -95,3 +95,4 @@ export {
 export {
   parseSelector
 } from 'vega-event-selector';
+console.log("This is greetings from the build preview")
