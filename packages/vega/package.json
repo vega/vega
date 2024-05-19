@@ -53,7 +53,7 @@
     "vega-transforms": "~4.11.1",
     "vega-typings": "~1.1.0",
     "vega-util": "~1.17.2",
-    "vega-view": "~5.12.1",
+    "vega-view": "workspace:*",
     "vega-view-transforms": "~4.5.9",
     "vega-voronoi": "~4.2.2",
     "vega-wordcloud": "~4.1.4"
