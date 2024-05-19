@@ -43,7 +43,7 @@ export default function View(spec, options) {
   const view = this;
   options = options || {};
 
-  console.log("Test build new view");
+  console.log("Msg new view");
 
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
