@@ -4,12 +4,24 @@ set -eo pipefail
 
 # Build the editor site and replace main build with local copy of vega-lite
 echo "Installing Vega"
+
+# echo "Linking vega"
+# cd packages/vega
+# yarn link
+# cd ../..
+
+# Repeat same link process for every package in
+# the packages folder
+for package in packages/*; do
+  if [ -d "$package" ]; then
+    cd $package
+    yarn link
+    cd ../..
+  fi
+done
+
 yarn lerna run build
 
-echo "Linking vega"
-cd packages/vega
-yarn link
-cd ../..
 
 echo "Installing vega editor"
 git clone https://github.com/vega/editor.git
