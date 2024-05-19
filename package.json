@@ -5,6 +5,7 @@
   "repository": "vega/vega",
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
+    "build-editor-preview": "scripts/build-editor-preview.sh",
     "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
