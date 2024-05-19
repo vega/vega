@@ -43,6 +43,8 @@ export default function View(spec, options) {
   const view = this;
   options = options || {};
 
+  console.log("Test build new view");
+
   Dataflow.call(view);
   if (options.loader) view.loader(options.loader);
   if (options.logger) view.logger(options.logger);
@@ -114,7 +116,7 @@ export default function View(spec, options) {
 
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
-  
+
   if (options.watchPixelRatio) view._watchPixelRatio();
 }
 
