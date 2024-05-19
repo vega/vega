@@ -2,6 +2,8 @@
 
 set -eo pipefail
 
+apt-get install rsync
+
 # Build the editor site and replace main build with local copy of vega-lite
 echo "Installing Vega"
 
