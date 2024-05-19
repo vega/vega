@@ -5,13 +5,7 @@ set -eo pipefail
 # Build the editor site and replace main build with local copy of vega-lite
 echo "Installing Vega"
 
-# echo "Linking vega"
-# cd packages/vega
-# yarn link
-# cd ../..
-
-# Repeat same link process for every package in
-# the packages folder
+# Link every package to make sure that the editor uses the local version
 for package in packages/*; do
   if [ -d "$package" ]; then
     cd $package
@@ -20,8 +14,8 @@ for package in packages/*; do
   fi
 done
 
+#Build - assumes lerna handles the topological sort
 yarn lerna run build
-
 
 echo "Installing vega editor"
 git clone https://github.com/vega/editor.git
@@ -29,7 +23,7 @@ git clone https://github.com/vega/editor.git
 cd editor
 yarn --frozen-lockfile --ignore-scripts
 
-# For every package nbame in the packages folder, link it in the editor
+# Make sure we prefer the local version to the one from npm
 for package in ../packages/*; do
   if [ -d "$package" ]; then
     package_name=$(basename $package)
@@ -52,4 +46,5 @@ cat <<EOF > public/spec/vega/index.json
 {}
 EOF
 
+# Final site build
 yarn run vite build --base /
