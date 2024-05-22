@@ -5,7 +5,7 @@ set -eo pipefail
 # Build the editor site and replace main build with local copy of vega-lite
 echo "Installing Vega"
 
-# Link every package to make sure that the editor uses the local version
+# Link every package to make sure the editor uses the local version
 for package in packages/*; do
   if [ -d "$package" ]; then
     cd $package
