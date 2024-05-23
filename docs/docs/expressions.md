@@ -618,7 +618,7 @@ Formats a (0-6) _weekday_ number as an abbreviated week day name, according to t
 <a name="format" href="#format">#</a>
 <b>format</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a numeric _value_ as a string. The _specifier_ must be a valid [d3-format specifier](https://github.com/d3/d3-format/) (e.g., `format(value, ',.2f')`.
-Null values will be formatted as `"null"`. 
+Null values are formatted as `"null"`. 
 
 <a name="monthFormat" href="#monthFormat">#</a>
 <b>monthFormat</b>(<i>month</i>)<br/>
