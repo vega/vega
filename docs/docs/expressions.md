@@ -618,6 +618,7 @@ Formats a (0-6) _weekday_ number as an abbreviated week day name, according to t
 <a name="format" href="#format">#</a>
 <b>format</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a numeric _value_ as a string. The _specifier_ must be a valid [d3-format specifier](https://github.com/d3/d3-format/) (e.g., `format(value, ',.2f')`.
+Null values are formatted as `"null"`. 
 
 <a name="monthFormat" href="#monthFormat">#</a>
 <b>monthFormat</b>(<i>month</i>)<br/>
@@ -634,6 +635,7 @@ Returns a time format specifier string for the given time [_units_](../api/time/
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
+Null values are formatted as `"null"`. 
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -642,6 +644,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
+Null values are formatted as `"null"`. 
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
