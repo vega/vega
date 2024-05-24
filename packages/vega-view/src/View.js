@@ -73,9 +73,6 @@ export default function View(spec, options) {
   view._eventConfig = initializeEventConfig(spec.eventConfig);
   view.globalCursor(view._eventConfig.globalCursor);
 
-  console.log("Created a new view");
-
-
   // initialize dataflow graph
   const ctx = runtime(view, spec, options.expr);
   view._runtime = ctx;
