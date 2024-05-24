@@ -5,6 +5,7 @@
   "repository": "vega/vega",
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
+    "build-editor-preview": "scripts/build-editor-preview.sh",
     "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
@@ -16,7 +17,7 @@
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
     "lint": "ESLINT_USE_FLAT_CONFIG=true yarn eslint -c eslint.config.mjs .",
     "format": "yarn lint --fix",
-    "postinstall": "yarn data"
+    "postinstall": "scripts/postinstall.sh"
   },
   "dependencies": {},
   "devDependencies": {
@@ -52,5 +53,11 @@
     "typescript-eslint": "^7.8.0",
     "vega-datasets": "^2.8.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "packageManager": "yarn@1.22.19"
 }

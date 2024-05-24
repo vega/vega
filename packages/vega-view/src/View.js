@@ -114,7 +114,7 @@ export default function View(spec, options) {
 
   // initialize DOM container(s) and renderer
   if (options.container) view.initialize(options.container, options.bind);
-  
+
   if (options.watchPixelRatio) view._watchPixelRatio();
 }
 
