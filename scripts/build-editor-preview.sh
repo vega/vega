@@ -14,7 +14,7 @@ for package in packages/*; do
   fi
 done
 
-#Build - assumes lerna handles the topological sort
+# Build - assumes lerna handles the topological sort
 yarn lerna run build
 
 echo "Installing vega editor"
@@ -23,7 +23,8 @@ git clone https://github.com/vega/editor.git
 cd editor
 yarn --frozen-lockfile --ignore-scripts
 
-# Make sure we prefer the local version to the one from npm
+# HACK: Make sure we prefer the local version to the one from npm
+# Test if we can remove this after verifying that only 1 copy of every subpackage is used per repo
 for package in ../packages/*; do
   if [ -d "$package" ]; then
     package_name=$(basename $package)

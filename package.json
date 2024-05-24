@@ -59,8 +59,5 @@
   "engines": {
     "node": ">=18.18.0"
   },
-  "packageManager": "yarn@1.22.19",
-  "volta": {
-    "node": "18.18.0"
-  }
+  "packageManager": "yarn@1.22.19"
 }
