@@ -102,7 +102,8 @@
     "font": {"value": "Tahoma"},
     "fontSize": {"value": 18},
     "fontWeight": "lighter",
-    "subtitle": "Click anywhere to pause/restart rotation",
+    "subtitle": "Click anywhere to pause/resume rotation",
+
     "subtitleColor": {"signal": "textColorSubtitle"},
     "subtitlePadding": 5,
     "subtitleFont": {"value": "Tahoma"}
