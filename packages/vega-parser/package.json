@@ -25,7 +25,7 @@
     "vega-dataflow": "^5.7.5",
     "vega-event-selector": "^3.0.1",
     "vega-functions": "^5.14.0",
-    "vega-scale": "^7.3.1",
+    "vega-scale": "^7.4.0",
     "vega-util": "^1.17.2"
   }
 }
