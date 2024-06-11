@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-# Build the editor site and replace main build with local copy of vega-lite
+# Build the editor site and replace the NPM copy with local copy of vega
 echo "Installing Vega"
 
 # Link every package to make sure the editor uses the local version
@@ -47,5 +47,7 @@ cat <<EOF > public/spec/vega/index.json
 {}
 EOF
 
-# Final site build
-yarn run vite build --base /
+# Build the editor site in the dist folder
+# Disable minification to make it easier to debug, and because sourcemaps
+# exceed 25 MB limit on cloudflare
+yarn run build:only --public-url / --no-optimize --no-source-maps
