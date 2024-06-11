@@ -21,19 +21,19 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-color": "^3.1.0",
-    "d3-geo": "^3.1.0",
+    "d3-geo": "^3.1.1",
     "vega-dataflow": "^5.7.5",
     "vega-expression": "^5.1.0",
-    "vega-scale": "^7.3.0",
-    "vega-scenegraph": "^4.10.2",
+    "vega-scale": "^7.4.0",
+    "vega-scenegraph": "^4.12.0",
     "vega-selections": "^5.4.2",
-    "vega-statistics": "^1.8.1",
+    "vega-statistics": "^1.9.0",
     "vega-time": "^2.1.1",
-    "vega-util": "^1.17.1"
+    "vega-util": "^1.17.2"
   },
   "devDependencies": {
-    "vega-format": "^1.1.0"
+    "vega-format": "^1.1.1"
   }
 }
