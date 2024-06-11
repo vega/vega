@@ -22,11 +22,11 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-interpolate": "^3.0.1",
     "vega-dataflow": "^5.7.5",
-    "vega-scale": "^7.3.0",
-    "vega-util": "^1.17.1"
+    "vega-scale": "^7.4.0",
+    "vega-util": "^1.17.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
