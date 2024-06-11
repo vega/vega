@@ -22,7 +22,7 @@
   "dependencies": {
     "d3-force": "^3.0.0",
     "vega-dataflow": "^5.7.5",
-    "vega-util": "^1.17.1"
+    "vega-util": "^1.17.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
