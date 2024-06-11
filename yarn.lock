@@ -8232,16 +8232,6 @@ vega-datasets@^2.8.0:
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-2.8.0.tgz#9c7022be6fac8aa7ab9104befaf09bc6c6851d83"
   integrity sha512-pIoP8Cqtq/3Y4rPgtuCle4QWrK2DidmqQzwoNjVVhnNO3H4OWki7vzvDD4/CzWg9wVjoDN98plb3EpJfLcQ5Tw==
 
-vega-typings@~1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vega-typings/-/vega-typings-1.1.0.tgz#95bee43fff8a3c9cb921dd5aee2ea87c7f4ca58b"
-  integrity sha512-uI6RWlMiGRhsgmw/LzJtjCc0kwhw2f0JpyNMTAnOy90kE4e4CiaZN5nJp8S9CcfcBoPEZHc166AOn2SSNrKn3A==
-  dependencies:
-    "@types/geojson" "7946.0.4"
-    vega-event-selector "^3.0.1"
-    vega-expression "^5.1.0"
-    vega-util "^1.17.2"
-
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.npmjs.org/verror/-/verror-1.10.0.tgz"
