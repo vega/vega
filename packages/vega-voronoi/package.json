@@ -20,9 +20,9 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-delaunay": "^6.0.2",
+    "d3-delaunay": "^6.0.4",
     "vega-dataflow": "^5.7.5",
-    "vega-util": "^1.17.1"
+    "vega-util": "^1.17.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
