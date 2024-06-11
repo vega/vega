@@ -28,10 +28,10 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "vega-dataflow": "^5.7.5",
-    "vega-statistics": "^1.8.1",
+    "vega-statistics": "^1.9.0",
     "vega-time": "^2.1.1",
-    "vega-util": "^1.17.1"
+    "vega-util": "^1.17.2"
   }
 }
