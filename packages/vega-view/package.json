@@ -21,13 +21,13 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-timer": "^3.0.1",
     "vega-dataflow": "^5.7.5",
     "vega-format": "^1.1.1",
-    "vega-functions": "^5.13.1",
+    "vega-functions": "^5.14.0",
     "vega-runtime": "^6.1.4",
-    "vega-scenegraph": "^4.10.2",
-    "vega-util": "^1.17.1"
+    "vega-scenegraph": "^4.12.0",
+    "vega-util": "^1.17.2"
   }
 }
