@@ -23,9 +23,9 @@
   "dependencies": {
     "vega-canvas": "^1.2.7",
     "vega-dataflow": "^5.7.5",
-    "vega-scale": "^7.3.0",
-    "vega-statistics": "^1.8.1",
-    "vega-util": "^1.17.1"
+    "vega-scale": "^7.4.0",
+    "vega-statistics": "^1.9.0",
+    "vega-util": "^1.17.2"
   },
   "devDependencies": {
     "vega-transforms": "*"
