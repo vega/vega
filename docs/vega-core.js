@@ -124,7 +124,6 @@
     const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
   }
-
   const None$2 = 0;
   const Error$1 = 1;
   const Warn = 2;
@@ -1058,7 +1057,6 @@
       if (c >= 48 && c <= 57) return i + 1; // is digit
     }
   }
-
   function numberLocale(locale) {
     const format = memoize(locale.format),
       formatPrefix = locale.formatPrefix;
@@ -2490,7 +2488,6 @@
       }
     }
   }
-
   function updater(target, update) {
     update = isFunction(update) ? update : constant$1(update);
     return target ? function (_, pulse) {
@@ -5154,7 +5151,6 @@
     this._inputs = null; // array of dependent input tuple field names
     this._outputs = null; // array of output tuple field names
   }
-
   Aggregate$1.Definition = {
     'type': 'Aggregate',
     'metadata': {
@@ -5332,7 +5328,6 @@
       this._measures = this._measures.map(m => compileMeasures(m, m.field));
       return Object.create(null); // aggregation cells (this.value)
     },
-
     // -- Cell Management -----
 
     cellkey: groupkey(),
@@ -5452,13 +5447,11 @@
         add.push(this.celltuple(adds[i]));
         adds[i] = null; // for garbage collection
       }
-
       for (i = 0, n = this._mlen; i < n; ++i) {
         cell = mods[i];
         (cell.num === 0 && drop ? rem : mod).push(this.celltuple(cell));
         mods[i] = null; // for garbage collection
       }
-
       this._alen = this._mlen = 0; // reset list of active cells
       this._prev = null;
       return out;
@@ -5757,7 +5750,6 @@
       }
       return this._finish(pulse, as); // generate output tuples
     },
-
     _parameterCheck(_, pulse) {
       let init = false;
       if (_.modified('stopwords') || !this._stop) {
@@ -6161,7 +6153,6 @@
       if (this.value && !(_.modified() || pulse.changed())) {
         return pulse; // early exit
       }
-
       const source = pulse.materialize(pulse.SOURCE).source,
         groups = partition$1$1(pulse.source, _.groupby, identity),
         smooth = _.smooth || false,
@@ -6398,7 +6389,6 @@
       for (; i < n && a[i] != null; ++i) {
         a[i] = null; // ensure old flows can be garbage collected
       }
-
       a.active = m;
     },
     transform(_, pulse) {
@@ -6984,12 +6974,10 @@
         this.celltuple(adds[i]);
         adds[i] = null; // for garbage collection
       }
-
       for (i = 0, n = this._mlen; i < n; ++i) {
         this.celltuple(mods[i]);
         mods[i] = null; // for garbage collection
       }
-
       this._alen = this._mlen = 0; // reset list of active cells
     }
   });
@@ -7870,7 +7858,6 @@
     Transform.call(this, null, params);
     this.modified(true); // always treat as modified
   }
-
   inherits(Sieve$1, Transform, {
     transform(_, pulse) {
       this.value = pulse.source;
@@ -10629,7 +10616,6 @@
             sa = ea;
             ea = s; // swap end-points
           }
-
           if (ccw) {
             ea -= Tau;
             s = sa - sa % HalfPi;
@@ -11707,7 +11693,6 @@
         context.rotate(item.angle * DegToRad);
         x = y = 0; // reset x, y
       }
-
       x += item.dx || 0;
       y += (item.dy || 0) + offset$2(item);
       tl = textLines(item);
@@ -11851,7 +11836,6 @@
   // font
   'description', 'aria', 'ariaRole', 'ariaRoleDescription' // aria
   ];
-
   function sceneToJSON(scene, indent) {
     return JSON.stringify(scene, keys$1, indent);
   }
@@ -12566,7 +12550,6 @@
       }
     };
   }
-
   function inactive(types) {
     return function (evt) {
       fireAll(this, types, evt);
@@ -13743,7 +13726,6 @@
         m.close(); // </tag>
         if (href) m.close(); // </a>
       };
-
       if (mdef.nested) {
         if (scene.items && scene.items.length) process(scene.items[0]);
       } else {
@@ -14552,7 +14534,6 @@
     index + +datum.domain // title index
     ];
   }
-
   function axisLayout(view, axis, width, height) {
     var item = axis.items[0],
       datum = item.datum,
@@ -16057,7 +16038,6 @@
     Transform.call(this, null, params);
     this.modified(true); // always treat as modified
   }
-
   inherits(Scale$1, Transform, {
     transform(_, pulse) {
       var df = pulse.dataflow,
@@ -17828,7 +17808,6 @@
     Transform.call(this, null, params);
     this.modified(true); // always treat as modified
   }
-
   inherits(Projection$1, Transform, {
     transform(_, pulse) {
       let proj = this.value;
@@ -18069,7 +18048,6 @@
           change = true;
           sim.tick(); // ensure we run on init
         }
-
         pulse.modifies('index');
       } else {
         if (change) {
@@ -18091,7 +18069,6 @@
           if (!change) return pulse.StopPropagation; // defer to sim ticks
         }
       }
-
       return this.finish(_, pulse);
     },
     finish(_, pulse) {
@@ -18146,7 +18123,6 @@
     for (n = sim.numForces || 0; i < n; ++i) {
       sim.force(Forces + i, null); // remove
     }
-
     sim.numForces = f.length;
     return sim;
   }
@@ -18786,7 +18762,6 @@
         }
       }
     }
-
     return [layer1, layer2];
   }
   function getBuffer(context, width, height) {
@@ -20502,7 +20477,6 @@
           }
           curr[i] = 0; // clear unused bits
         }
-
         data = copy;
         return reindex;
       },
@@ -20937,7 +20911,6 @@
           output.rem = output.add; // duplicate add/rem for downstream resolve
         }
       }
-
       return mask;
     },
     incrementAll(dim, query, stamp, out) {
@@ -21126,7 +21099,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.29.0";
+  var version = "5.30.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -21277,7 +21250,6 @@
   function isDecimalDigit(ch) {
     return ch >= 0x30 && ch <= 0x39; // 0..9
   }
-
   function isHexDigit(ch) {
     return '0123456789abcdefABCDEF'.includes(ch);
   }
@@ -22502,7 +22474,6 @@
     if (match(',')) {
       throw new Error(DISABLED); // no sequence expressions
     }
-
     return expr;
   }
   function parser$1(code) {
@@ -23046,7 +23017,7 @@
   }
   const wrap = method => function (value, spec) {
     const locale = this.context.dataflow.locale();
-    return locale[method](spec)(value);
+    return value === null ? 'null' : locale[method](spec)(value);
   };
   const format = wrap('format');
   const timeFormat = wrap('timeFormat');
@@ -25587,7 +25558,6 @@
           this._globalCursor = !!_;
           if (prev) setCursor(this, prev); // swap cursor
         }
-
         return this;
       } else {
         return this._globalCursor;
@@ -26439,7 +26409,6 @@
       }
       return; // default domain
     }
-
     return domain.signal ? scope.signalRef(domain.signal) : (isArray(domain) ? explicitDomain : domain.fields ? multipleDomain : singularDomain)(domain, spec, scope);
   }
   function explicitDomain(domain, spec, scope) {
