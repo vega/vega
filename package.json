@@ -26,7 +26,7 @@
     "@babel/eslint-parser": "^7.24.7",
     "@babel/plugin-transform-runtime": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
-    "@definitelytyped/dtslint": "0.0.159",
+    "@definitelytyped/dtslint": "0.2.22",
     "@eslint/js": "^9.4.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
