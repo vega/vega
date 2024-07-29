@@ -6,6 +6,6 @@ const {createWriteStream} = require('fs'),
 render('png', function(canvas, arg) {
   const file = arg._[1] || null,
         out = file ? createWriteStream(file) : process.stdout,
-        stream = canvas.createPNGStream();
+        stream = canvas.createPNGStream({ resolution: arg.ppi || undefined });
   stream.on('data', chunk => { out.write(chunk); });
 });

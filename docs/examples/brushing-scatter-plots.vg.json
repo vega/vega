@@ -18,10 +18,10 @@
       "name": "cell", "value": null,
       "on": [
         {
-          "events": "@cell:mousedown", "update": "group()"
+          "events": "@cell:pointerdown", "update": "group()"
         },
         {
-          "events": "@cell:mouseup",
+          "events": "@cell:pointerup",
           "update": "!span(brushX) && !span(brushY) ? null : cell"
         }
       ]
@@ -30,11 +30,11 @@
       "name": "brushX", "value": 0,
       "on": [
         {
-          "events": "@cell:mousedown",
+          "events": "@cell:pointerdown",
           "update": "[x(cell), x(cell)]"
         },
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove",
+          "events": "[@cell:pointerdown, window:pointerup] > window:pointermove",
           "update": "[brushX[0], clamp(x(cell), 0, chartSize)]"
         },
         {
@@ -47,11 +47,11 @@
       "name": "brushY", "value": 0,
       "on": [
         {
-          "events": "@cell:mousedown",
+          "events": "@cell:pointerdown",
           "update": "[y(cell), y(cell)]"
         },
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove",
+          "events": "[@cell:pointerdown, window:pointerup] > window:pointermove",
           "update": "[brushY[0], clamp(y(cell), 0, chartSize)]"
         },
         {
@@ -62,21 +62,21 @@
     },
     {
       "name": "down", "value": [0, 0],
-      "on": [{"events": "@brush:mousedown", "update": "[x(cell), y(cell)]"}]
+      "on": [{"events": "@brush:pointerdown", "update": "[x(cell), y(cell)]"}]
     },
     {
       "name": "anchorX", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brushX)"}]
+      "on": [{"events": "@brush:pointerdown", "update": "slice(brushX)"}]
     },
     {
       "name": "anchorY", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brushY)"}]
+      "on": [{"events": "@brush:pointerdown", "update": "slice(brushY)"}]
     },
     {
       "name": "delta", "value": [0, 0],
       "on": [
         {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove",
+          "events": "[@brush:pointerdown, window:pointerup] > window:pointermove",
           "update": "[x(cell) - down[0], y(cell) - down[1]]"
         }
       ]
@@ -103,15 +103,15 @@
       "name": "cursor", "value": "'default'",
       "on": [
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove!",
+          "events": "[@cell:pointerdown, window:pointerup] > window:pointermove!",
           "update": "'nwse-resize'"
         },
         {
-          "events": "@brush:mousemove, [@brush:mousedown, window:mouseup] > window:mousemove!",
+          "events": "@brush:pointermove, [@brush:pointerdown, window:pointerup] > window:pointermove!",
           "update": "'move'"
         },
         {
-          "events": "@brush:mouseout, window:mouseup",
+          "events": "@brush:pointerout, window:pointerup",
           "update": "'default'"
         }
       ]

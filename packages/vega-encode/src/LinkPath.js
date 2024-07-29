@@ -68,7 +68,7 @@ const lineR= (sa, sr, ta, tr) => line(
 const arc = (sx, sy, tx, ty) => {
   var dx = tx - sx,
       dy = ty - sy,
-      rr = Math.sqrt(dx * dx + dy * dy) / 2,
+      rr = Math.hypot(dx, dy) / 2,
       ra = 180 * Math.atan2(dy, dx) / Math.PI;
   return 'M' + sx + ',' + sy +
          'A' + rr + ',' + rr +

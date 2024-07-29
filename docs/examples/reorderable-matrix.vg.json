@@ -13,22 +13,22 @@
     {
       "name": "src", "value": {},
       "on": [
-        {"events": "text:mousedown", "update": "datum"},
-        {"events": "window:mouseup", "update": "{}"}
+        {"events": "text:pointerdown", "update": "datum"},
+        {"events": "window:pointerup", "update": "{}"}
       ]
     },
     {
       "name": "dest", "value": -1,
       "on": [
         {
-          "events": "[@columns:mousedown, window:mouseup] > window:mousemove",
+          "events": "[@columns:pointerdown, window:pointerup] > window:pointermove",
           "update": "src.name && datum !== src ? (0.5 + count * clamp(x(), 0, width) / width) : dest"
         },
         {
-          "events": "[@rows:mousedown, window:mouseup] > window:mousemove",
+          "events": "[@rows:pointerdown, window:pointerup] > window:pointermove",
           "update": "src.name && datum !== src ? (0.5 + count * clamp(y(), 0, height) / height) : dest"
         },
-        {"events": "window:mouseup", "update": "-1"}
+        {"events": "window:pointerup", "update": "-1"}
       ]
     }
   ],

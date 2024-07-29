@@ -1,5 +1,5 @@
-import {extend, field} from 'vega-util';
-import {$selectionId, SelectionId} from './constants';
+import {extend} from 'vega-util';
+import {$selectionId, SelectionId, getter} from './util';
 
 /**
  * Maps an array of scene graph items to an array of selection tuples.
@@ -11,7 +11,7 @@ import {$selectionId, SelectionId} from './constants';
 export function selectionTuples(array, base) {
   return array.map(x => extend(
     base.fields ? {
-      values: base.fields.map(f => (f.getter || (f.getter = field(f.field)))(x.datum))
+      values: base.fields.map(f => getter(f)(x.datum))
     } : {
       [SelectionId]: $selectionId(x.datum)
     }, base));

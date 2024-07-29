@@ -12,7 +12,8 @@ export type Categorical =
   | 'set2'
   | 'set3'
   | 'tableau10'
-  | 'tableau20';
+  | 'tableau20'
+  | 'observable10';
 
 export type SequentialSingleHue =
   | 'blues'

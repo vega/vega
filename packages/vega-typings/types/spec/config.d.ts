@@ -10,7 +10,7 @@ import {
   Padding,
   RangeScheme,
   SymbolShape,
-  TextBaseline,
+  TextBaseline
 } from '.';
 import { BaseAxis } from './axis';
 import { Color } from './color';
@@ -22,7 +22,7 @@ import {
   NumericValueRef,
   ScaledValueRef,
   Text,
-  TextDirection,
+  TextDirection
 } from './encode.d';
 import { LayoutBounds } from './layout';
 import { BaseLegend } from './legend';

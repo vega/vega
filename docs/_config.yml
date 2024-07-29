@@ -24,6 +24,7 @@ kramdown:
 exclude:
   - Gemfile
   - Gemfile.lock
+  - vendor
 
 plugins:
   - jekyll-sitemap

@@ -62,11 +62,11 @@ tape('Pivot pivots values', t => {
   d = out.value;
   t.equal(d.length, 2);
   t.equal(d[0].a, 'A');
-  t.equal(d[0].u, 0);
+  t.equal(d[0].u, undefined);
   t.equal(d[0].v, 9);
   t.equal(d[1].a, 'B');
   t.equal(d[1].u, 3);
-  t.equal(d[1].v, 0);
+  t.equal(d[1].v, undefined);
 
   t.end();
 });

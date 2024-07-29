@@ -94,11 +94,11 @@
           "name": "brush", "value": 0,
           "on": [
             {
-              "events": "@overview:mousedown",
+              "events": "@overview:pointerdown",
               "update": "[x(), x()]"
             },
             {
-              "events": "[@overview:mousedown, window:mouseup] > window:mousemove!",
+              "events": "[@overview:pointerdown, window:pointerup] > window:pointermove!",
               "update": "[brush[0], clamp(x(), 0, width)]"
             },
             {
@@ -109,17 +109,17 @@
         },
         {
           "name": "anchor", "value": null,
-          "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+          "on": [{"events": "@brush:pointerdown", "update": "slice(brush)"}]
         },
         {
           "name": "xdown", "value": 0,
-          "on": [{"events": "@brush:mousedown", "update": "x()"}]
+          "on": [{"events": "@brush:pointerdown", "update": "x()"}]
         },
         {
           "name": "delta", "value": 0,
           "on": [
             {
-              "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
+              "events": "[@brush:pointerdown, window:pointerup] > window:pointermove!",
               "update": "x() - xdown"
             }
           ]

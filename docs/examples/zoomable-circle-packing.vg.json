@@ -1,0 +1,329 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of a zoomable circle packing layout for hierarchical data.",
+  "width": 600,
+  "height": 600,
+  "padding": 5,
+  "signals": [
+    {
+      "name": "duration",
+      "init": "750",
+      "description": "The duration for the zoom transitions. Fade-in transitions will be the same duration, but will be delayed per the amount set here.",
+      "on": [
+        {
+          "events": {"type": "click", "marknames": ["circles", "background"]},
+          "update": "(event.metaKey || event.ctrlKey ? 4 : 1) *750"
+        }
+      ]
+    },
+    {
+      "name": "k",
+      "value": 1,
+      "description": "The scale used for zooming based on the focused node",
+      "on": [
+        {
+          "events": [{"signal": "focus"}],
+          "update": "focus ? width/(focus.r*2) : 1"
+        }
+      ]
+    },
+    {
+      "name": "root",
+      "update": "{'id': data('tree')[0]['id'], 'x': data('tree')[0]['x'], 'y': data('tree')[0]['y'], 'r': data('tree')[0]['r'], 'k': 1, 'children': data('tree')[0]['children']}",
+      "description": "The root node in the hierarchy"
+    },
+    {
+      "name": "focus",
+      "init": "root",
+      "description": "The zoomed-in node in the hierarchy",
+      "on": [
+        {
+          "events": {"type": "click", "markname": "background"},
+          "update": "{id: root['id'], 'x': root['x'], 'y': root['y'], 'r': root['r'], 'k': 1,'children': root['children']}"
+        },
+        {
+          "events": {"type": "click", "markname": "circles"},
+          "update": "(focus['x'] === datum['x'] && focus['y'] === datum['y'] && focus['r'] === datum['r'] && focus['r'] !== root['r']) ? {'id': root['id'], 'x': root['x'], 'y': root['y'], 'r': root['r'], 'k': 1, 'children': root['children']} : {'id': datum['id'], 'x': datum['x'], 'y': datum['y'], 'r': datum['r'], 'k': k, 'children': datum['children']}"
+        }
+      ]
+    },
+    {
+      "name": "focus0",
+      "update": "data('focus0') && length(data('focus0'))>0 ? data('focus0')[0] : focus",
+      "description": "The prior zoomed-in node in the hierarchy"
+    },
+    {
+      "name": "timer",
+      "description": "The timer to be used for transitions such as zoom, fade, etc.",
+      "on": [{"events": "timer", "update": "now()"}]
+    },
+    {
+      "name": "interpolateTime",
+      "description": "the start and end times in miliseconds for animation interpolations",
+      "on": [
+        {
+          "events": {
+            "type": "click",
+            "marknames": ["circles", "background"]
+          },
+          "update": "{'start': timer, 'end': timer+duration}"
+        }
+      ]
+    },
+    {
+      "name": "t",
+      "description": "The normalized time for easing",
+      "update": "interpolateTime ? clamp((timer-interpolateTime.start)/(interpolateTime.end-interpolateTime.start), 0, 1): null"
+    },
+    {
+      "name": "tEase",
+      "description": "The easing calculation. Currently set as easeInOutCubic",
+      "update": "t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1"
+    },
+    {
+      "name": "interpolateTimeDelayed",
+      "description": "The delayed time for easing",
+      "on": [
+        {
+          "events": {"signal": "interpolateTime"},
+          "update": "{'start': interpolateTime['end'], 'end': interpolateTime['end']+duration}"
+        }
+      ]
+    },
+    {
+      "name": "tDelayed",
+      "description": "The delayed normalized time for easing",
+      "update": "interpolateTimeDelayed ? clamp((timer-interpolateTimeDelayed.start)/(interpolateTimeDelayed.end-interpolateTimeDelayed.start), 0, 1): null"
+    },
+    {
+      "name": "tEaseDelayed",
+      "description": "The delayed easing calculation. Currently set as easeInOutCubic",
+      "update": "tDelayed < 0.5 ? 4 * tDelayed * tDelayed * tDelayed : (tDelayed - 1) * (2 * tDelayed - 2) * (2 * tDelayed - 2) + 1"
+    },
+    {
+      "name": "showDetails",
+      "description": "A boolean to indicate whether to show a node's details",
+      "value": false,
+      "on": [
+        {
+          "events": {
+            "type": "click",
+            "marknames": ["circles", "background"],
+            "filter": [
+              "!event.altKey && !event.shiftKey",
+              "event.button === 0"
+            ],
+            "markname": "circles"
+          },
+          "update": "focus['children'] > 0 ? false : datum['id'] === root['id'] || focus0['id'] !== root['id'] && focus['id'] === root['id'] ? false : true"
+        },
+        {
+          "events": {
+            "type": "click",
+            "marknames": ["circles", "background"],
+            "filter": ["event.altKey || event.shiftKey", "event.button === 0"]
+          },
+          "update": "focus0['id'] === focus['id'] ? !showDetails : true"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "source",
+      "url": "data/flare.json",
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "isValid(datum['parent']) ? datum['parent'] : null",
+          "as": "parent"
+        },
+        {
+          "type": "formula",
+          "expr": "isValid(datum['size']) ? datum['size'] : null",
+          "as": "size"
+        }
+      ]
+    },
+    {
+      "name": "tree",
+      "source": "source",
+      "transform": [
+        {"type": "stratify", "key": "id", "parentKey": "parent"},
+        {
+          "type": "pack",
+          "field": "size",
+          "sort": {"field": "value"},
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    },
+    {
+      "name": "focus0",
+      "on": [{"trigger": "focus", "insert": "focus"}],
+      "transform": [
+        {"type": "formula", "expr": "now()", "as": "now"},
+        {
+          "type": "window",
+          "ops": ["row_number"],
+          "as": ["row"],
+          "sort": {"field": "now", "order": "descending"}
+        },
+        {"type": "filter", "expr": "datum['row'] ? datum['row'] == 2 : true "},
+        {"type": "project", "fields": ["id", "x", "y", "r", "children"]},
+        {"type": "formula", "expr": "width/(datum['r']*2)", "as": "k"}
+      ]
+    },
+    {
+      "name": "details_data",
+      "source": "tree",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum['id'] === focus['id'] && showDetails"
+        },
+        {
+          "type": "formula",
+          "expr": "['hierarchy depth: ' + datum['depth'], 'children count: ' + datum['children'],isValid( datum['size']) ? 'size: ' + datum['size'] + ' bytes' : '']",
+          "as": "details"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "tree", "field": "depth"},
+      "range": {"scheme": "magma"}
+    }
+  ],
+  "marks": [
+    {
+      "name": "background",
+      "description": "An ivisible rect that covers the entire canvas and sits behind everything",
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "x": {"signal": "-padding['left']"},
+          "y": {"signal": "-padding['top']"},
+          "width": {"signal": "width+padding['left']+padding['right']"},
+          "height": {"signal": "height+padding['top']+padding['bottom']"},
+          "fillOpacity": {"value": 0}
+        }
+      }
+    },
+    {
+      "name": "circles",
+      "description": "the zoomable packed circles",
+      "type": "symbol",
+      "from": {"data": "tree"},
+      "encode": {
+        "enter": {
+          "shape": {"value": "circle"},
+          "fill": {"scale": "color", "field": "depth"},
+          "cursor": {"value": "pointer"},
+          "tooltip": {"field": "name"}
+        },
+        "update": {
+          "x": {
+            "signal": "lerp([root['x']+ (datum['x'] - focus0['x']) * focus0['k'], root['x'] + (datum['x'] - focus['x']) * k], tEase)"
+          },
+          "y": {
+            "signal": "lerp([ root['y'] + (datum['y'] - focus0['y']) * focus0['k'],  root['y'] + (datum['y'] - focus['y']) * k], tEase)"
+          },
+          "size": {
+            "signal": "pow(2*(datum['r'] * lerp([focus0['k'], k],tEase)),2)"
+          },
+          "fill": {
+            "signal": "showDetails && focus['id'] === datum['id'] ? '#fff' : scale('color',datum['depth'])"
+          },
+          "zindex": {
+            "signal": "!showDetails ? 1 : (focus['id'] === root['id'] && isValid(datum['parent'])) ? -99 : indexof(pluck(treeAncestors('tree', datum['id']), 'id'), focus['id']) > 0 ? -99 : 1"
+          },
+          "stroke": {
+            "signal": "showDetails ? scale('color', datum['depth']) : luminance(scale('color', datum['depth'])) > 0.5 ?  'black' : 'white'"
+          },
+          "strokeWidth": {
+            "signal": "focus['id'] === datum['id'] && showDetails ? 20 : 0.5"
+          },
+          "strokeOpacity": {
+            "signal": "!showDetails ? 0.5 : focus['id'] === root['id'] ? min(tEase, 0.35) : min(tEaseDelayed, 0.35)"
+          }
+        },
+        "hover": {
+          "color": {
+            "signal": "showDetails ? scale('color', datum['depth']) : luminance(scale('color', datum['depth'])) > 0.5 ?  'black' : 'white'"
+          },
+          "strokeWidth": {"value": 2}
+        }
+      }
+    },
+    {
+      "name": "details_title",
+      "details": "the name of the node (appears on zoom)",
+      "type": "text",
+      "from": {"data": "details_data"},
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "text": {"signal": "datum['name']"},
+          "fill": {"scale": "color", "field": "depth"},
+          "fontSize": {"signal": "0.055*width"},
+          "align": {"value": "center"},
+          "x": {"signal": "width/2"},
+          "y": {"signal": "height/4"},
+          "opacity": {"value": 0}
+        },
+        "update": {
+          "opacity": {
+            "signal": "!showDetails ? 0 : focus['id'] === root['id'] ? tEase : tEaseDelayed"
+          }
+        }
+      }
+    },
+    {
+      "name": "details",
+      "description": "additional information about the node (appears on zoom)",
+      "type": "text",
+      "from": {"data": "details_data"},
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "text": {"signal": "datum['details']"},
+          "fontSize": {"signal": "0.045*width"},
+          "align": {"value": "center"},
+          "x": {"signal": "width/2"},
+          "y": {"signal": "height/3"},
+          "fill": {"value": "gray"},
+          "opacity": {"value": 0}
+        },
+        "update": {
+          "opacity": {
+            "signal": "!showDetails ? 0 : focus['id'] === root['id'] ? tEase : tEaseDelayed"
+          }
+        }
+      }
+    },
+    {
+      "name": "helper_text",
+      "interactive": false,
+      "description": "interactivity instructions located at the bottom of left",
+      "type": "text",
+      "encode": {
+        "enter": {
+          "fontSize": {"value": 14},
+          "text": {
+            "signal": "['interactivity instructions:', '• click on a node to zoom-in','• for nodes with children, shift + click to see details for that node', '• to slow down animations, ⌘ + click (Mac) / ⊞ + click (Windows)']"
+          },
+          "y": {"signal": "height+5"}
+        },
+        "update": {
+          "opacity": {
+            "signal": "ceil(k) === 1 ? isValid(t) ? tEaseDelayed : 1 : 0"
+          }
+        }
+      }
+    }
+  ]
+}

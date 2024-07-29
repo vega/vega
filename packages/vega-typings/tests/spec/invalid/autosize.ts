@@ -1,18 +1,18 @@
 import { AutoSizeType } from 'vega';
 
-let autosize: AutoSizeType
+let autosize: AutoSizeType;
 
-// $ExpectError
-autosize = null
+// @ts-expect-error
+autosize = null;
 
-// $ExpectError
-autosize = false
+// @ts-expect-error
+autosize = false;
 
-// $ExpectError
-autosize = "foo"
+// @ts-expect-error
+autosize = 'foo';
 
-// $ExpectError
-autosize = {}
+// @ts-expect-error
+autosize = {};
 
-// $ExpectError
-autosize = 100
+// @ts-expect-error
+autosize = 100;

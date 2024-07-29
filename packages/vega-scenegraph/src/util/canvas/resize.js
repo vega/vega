@@ -2,14 +2,12 @@ function devicePixelRatio() {
   return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 }
 
-var pixelRatio = devicePixelRatio();
-
 export default function(canvas, width, height, origin, scaleFactor, opt) {
   const inDOM = typeof HTMLElement !== 'undefined'
               && canvas instanceof HTMLElement
               && canvas.parentNode != null,
         context = canvas.getContext('2d'),
-        ratio = inDOM ? pixelRatio : scaleFactor;
+        ratio = inDOM ? devicePixelRatio() : scaleFactor;
 
   canvas.width = width * ratio;
   canvas.height = height * ratio;

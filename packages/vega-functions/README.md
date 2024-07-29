@@ -102,6 +102,7 @@ This package provides the following expression functions. All other constants an
 - [geoArea](https://vega.github.io/vega/docs/expressions/#geoArea)
 - [geoBounds](https://vega.github.io/vega/docs/expressions/#geoBounds)
 - [geoCentroid](https://vega.github.io/vega/docs/expressions/#geoCentroid)
+- [geoScale](https://vega.github.io/vega/docs/expressions/#geoScale)
 
 **Shape Functions**
 

@@ -20,6 +20,11 @@ const events = [
   'mousemove',
   'mouseout',
   'mouseover',
+  'pointerdown',
+  'pointerup',
+  'pointermove',
+  'pointerout',
+  'pointerover',
   'dragover',
   'dragenter',
   'dragleave',
@@ -65,7 +70,7 @@ tape('SVGHandler should add/remove event callbacks', t => {
       f = function() {},
       atype = 'click',
       btype = 'click.foo',
-      ctype = 'mouseover';
+      ctype = 'pointerover';
 
   // add event callbacks
   handler.on(atype, f);
@@ -128,14 +133,14 @@ tape('SVGHandler should handle input events', t => {
     svg.dispatchEvent(event(name));
   });
 
-  svg.dispatchEvent(event('mousemove', 0, 0));
-  svg.dispatchEvent(event('mousemove', 50, 150));
-  svg.dispatchEvent(event('mousedown', 50, 150));
-  svg.dispatchEvent(event('mouseup', 50, 150));
+  svg.dispatchEvent(event('pointermove', 0, 0));
+  svg.dispatchEvent(event('pointermove', 50, 150));
+  svg.dispatchEvent(event('pointerdown', 50, 150));
+  svg.dispatchEvent(event('pointerup', 50, 150));
   svg.dispatchEvent(event('click', 50, 150));
-  svg.dispatchEvent(event('mousemove', 50, 151));
-  svg.dispatchEvent(event('mousemove', 50, 1));
-  svg.dispatchEvent(event('mouseout', 1, 1));
+  svg.dispatchEvent(event('pointermove', 50, 151));
+  svg.dispatchEvent(event('pointermove', 50, 1));
+  svg.dispatchEvent(event('pointerout', 1, 1));
   svg.dispatchEvent(event('dragover', 50, 151));
   svg.dispatchEvent(event('dragover', 50, 1));
   svg.dispatchEvent(event('dragleave', 1, 1));
@@ -143,7 +148,7 @@ tape('SVGHandler should handle input events', t => {
   // 11 events above + no sub-events from JSDOM
   t.equal(count, events.length + 11);
 
-  handler.off('mousemove', {});
+  handler.off('pointermove', {});
   t.equal(handler.handlers().length, events.length);
 
   handler.off('nonevent');

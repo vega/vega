@@ -8,7 +8,8 @@ tape('Parser parses Vega specs with scales', t => {
     'signals': [
       {'name': 'yfield', 'value': 'y'},
       {'name': 'sortop', 'value': 'median'},
-      {'name': 'order', 'value': 'ascending'}
+      {'name': 'order', 'value': 'ascending'},
+      {'name': 'niceCount', 'value': '3'}
     ],
     'data': [
       {
@@ -24,6 +25,7 @@ tape('Parser parses Vega specs with scales', t => {
         'name': 'xscale',
         'type': 'band',
         'range': [0, {'signal': 'width'}],
+        'nice': {'signal': 'niceCount'},
         'domain': {
           'data': 'table',
           'field': 'x',
@@ -54,11 +56,11 @@ tape('Parser parses Vega specs with scales', t => {
 
   const dfs = parse(spec);
 
-  t.equal(dfs.operators.length, 28);
+  t.equal(dfs.operators.length, 29);
   t.deepEqual(dfs.operators.map(o => o.type),
     ['operator', 'operator', 'operator', 'operator', 'operator',
      'operator', 'operator', 'operator', 'operator', 'operator',
-     'collect', 'encode', 'sieve',
+     'operator', 'collect', 'encode', 'sieve',
      'scale', 'scale', 'scale',
      'collect', 'sieve',
      'field', 'aggregate', 'collect', 'compare', 'values',

@@ -1,6 +1,6 @@
 import { Loader } from '.';
 
-export type Renderers = 'canvas' | 'svg' | 'none';
+export type Renderers = 'canvas' | 'svg' | 'hybrid' | 'none';
 
 export class Renderer {
   constructor(loader: Loader);

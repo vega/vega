@@ -22,6 +22,10 @@ import {
   geoMollweide
 } from 'd3-geo-projection';
 
+import {
+  registerScale
+} from 'vega-scale';
+
 const defaultPath = geoPath();
 
 export const projectionProperties = [
@@ -69,7 +73,7 @@ function create(type, constructor) {
       return c;
     };
 
-    return p;
+    return registerScale(p);
   };
 }
 

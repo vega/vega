@@ -41,7 +41,7 @@ inherits(Voronoi, Transform, {
     // map polygons to paths
     for (let i=0, n=data.length; i<n; ++i) {
       const polygon = voronoi.cellPolygon(i);
-      data[i][as] = polygon ? toPathString(polygon) : null;
+      data[i][as] = polygon && !isPoint(polygon) ? toPathString(polygon) : null;
     }
 
     return pulse.reflow(_.modified()).modifies(as);
@@ -57,4 +57,8 @@ function toPathString(p) {
   for (; p[n][0] === x && p[n][1] === y; --n);
 
   return 'M' + p.slice(0, n + 1).join('L') + 'Z';
+}
+
+function isPoint(p) {
+  return p.length === 2 && p[0][0] === p[1][0] && p[0][1] === p[1][1];
 }

@@ -21,3 +21,8 @@ function geoMethod(methodName, globalMethod) {
 export const geoArea = geoMethod('area', area);
 export const geoBounds = geoMethod('bounds', bounds);
 export const geoCentroid = geoMethod('centroid', centroid);
+
+export function geoScale(projection, group) {
+  const p = getScale(projection, (group || this).context);
+  return p && p.scale();
+}

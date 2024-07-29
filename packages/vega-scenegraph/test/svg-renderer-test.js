@@ -188,7 +188,7 @@ tape('SVGRenderer should support enter-item redraw', t => {
   rect2.bounds = new Bounds().set(70, 10, 120, 60);
   rects.items.push(rect2);
 
-  var svg = compensate(r.render(scene, [rect1, rect2]).svg());
+  var svg = compensate(r.render(scene).svg());
   const file = load('svg/scenegraph-enter-redraw.svg');
   t.equal(svg, file);
   t.end();
@@ -208,7 +208,7 @@ tape('SVGRenderer should support exit-item redraw', function(t) {
   rect._svg.remove = rect._svg.remove || function() {
     this.parentNode.removeChild(this);
   };
-  r.render(scene, [rect]);
+  r.render(scene);
 
   var svg = compensate(r.svg());
   const file = load('svg/scenegraph-exit-redraw.svg');
@@ -229,7 +229,7 @@ tape('SVGRenderer should support single-item redraw', t => {
   rect.fill = 'red';
   rect.width *= 2;
   rect.bounds.x2 = 2*rect.bounds.x2 - rect.bounds.x1;
-  r.render(scene, [rect]);
+  r.render(scene);
 
   var svg = compensate(r.svg());
   const file = load('svg/scenegraph-single-redraw.svg');
@@ -251,7 +251,7 @@ tape('SVGRenderer should support multi-item redraw', t => {
   const line3 = {x:400, y:200}; line3.mark = scene;                 // enter
   scene.items.push(line3);
 
-  var svg = compensate(r.render(scene, [line1, line2, line3]).svg());
+  var svg = compensate(r.render(scene).svg());
   const file = load('svg/scenegraph-line-redraw.svg');
   t.equal(svg, file);
   t.end();
@@ -271,7 +271,7 @@ tape('SVGRenderer should support enter-group redraw', t => {
   group.mark = scene;
   scene.items.push(group);
 
-  var svg = compensate(r.render(scene, [group]).svg());
+  var svg = compensate(r.render(scene).svg());
   const file = load('svg/scenegraph-enter-group-redraw.svg');
   t.equal(svg, file);
   t.end();

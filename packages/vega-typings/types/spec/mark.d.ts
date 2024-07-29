@@ -1,6 +1,6 @@
 import * as Encode from './encode';
 import { ExprRef } from './expr';
-import { SortOrder, Scope, SignalRef, Transforms, OnMarkTrigger } from '.';
+import { OnMarkTrigger, Scope, SignalRef, SortOrder, Transforms } from '.';
 
 export type Facet =
   | {

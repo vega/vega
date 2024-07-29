@@ -1,137 +1,142 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 770,
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 770,
+  padding: 5,
 
-  "data": [
+  data: [
     {
-      "name": "edges",
-      "url": "data/miserables.json",
-      "format": {"type": "json", "property": "links"}
+      name: 'edges',
+      url: 'data/miserables.json',
+      format: { type: 'json', property: 'links' }
     },
     {
-      "name": "sourceDegree",
-      "source": "edges",
-      "transform": [
-        {"type": "aggregate", "groupby": ["source"]}
-      ]
+      name: 'sourceDegree',
+      source: 'edges',
+      transform: [{ type: 'aggregate', groupby: ['source'] }]
     },
     {
-      "name": "targetDegree",
-      "source": "edges",
-      "transform": [
-        {"type": "aggregate", "groupby": ["target"]}
-      ]
+      name: 'targetDegree',
+      source: 'edges',
+      transform: [{ type: 'aggregate', groupby: ['target'] }]
     },
     {
-      "name": "nodes",
-      "url": "data/miserables.json",
-      "format": {"type": "json", "property": "nodes"},
-      "transform": [
-        { "type": "window", "ops": ["rank"], "as": ["order"] },
+      name: 'nodes',
+      url: 'data/miserables.json',
+      format: { type: 'json', property: 'nodes' },
+      transform: [
+        { type: 'window', ops: ['rank'], as: ['order'] },
         {
-          "type": "lookup", "from": "sourceDegree", "key": "source",
-          "fields": ["index"], "as": ["sourceDegree"],
-          "default": {"count": 0}
+          type: 'lookup',
+          from: 'sourceDegree',
+          key: 'source',
+          fields: ['index'],
+          as: ['sourceDegree'],
+          default: { count: 0 }
         },
         {
-          "type": "lookup", "from": "targetDegree", "key": "target",
-          "fields": ["index"], "as": ["targetDegree"],
-          "default": {"count": 0}
+          type: 'lookup',
+          from: 'targetDegree',
+          key: 'target',
+          fields: ['index'],
+          as: ['targetDegree'],
+          default: { count: 0 }
         },
         {
-          "type": "formula", "as": "degree",
-          "expr": "datum.sourceDegree.count + datum.targetDegree.count"
+          type: 'formula',
+          as: 'degree',
+          expr: 'datum.sourceDegree.count + datum.targetDegree.count'
         }
       ]
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "position",
-      "type": "band",
-      "domain": {"data": "nodes", "field": "order", "sort": true},
-      "range": "width"
+      name: 'position',
+      type: 'band',
+      domain: { data: 'nodes', field: 'order', sort: true },
+      range: 'width'
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "range": "category",
-      "domain": {"data": "nodes", "field": "group"}
+      name: 'color',
+      type: 'ordinal',
+      range: 'category',
+      domain: { data: 'nodes', field: 'group' }
     }
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "symbol",
-      "name": "layout",
-      "interactive": false,
-      "from": {"data": "nodes"},
-      "encode": {
-        "enter": {
-          "opacity": {"value": 0}
+      type: 'symbol',
+      name: 'layout',
+      interactive: false,
+      from: { data: 'nodes' },
+      encode: {
+        enter: {
+          opacity: { value: 0 }
         },
-        "update": {
-          "x": {"scale": "position", "field": "order"},
-          "y": {"value": 0},
-          "size": {"field": "degree", "mult": 5, "offset": 10},
-          "fill": {"scale": "color", "field": "group"}
+        update: {
+          x: { scale: 'position', field: 'order' },
+          y: { value: 0 },
+          size: { field: 'degree', mult: 5, offset: 10 },
+          fill: { scale: 'color', field: 'group' }
         }
       }
     },
     {
-      "type": "path",
-      "from": {"data": "edges"},
-      "encode": {
-        "update": {
-          "stroke": {"value": "#000"},
-          "strokeOpacity": {"value": 0.2},
-          "strokeWidth": {"field": "value"}
+      type: 'path',
+      from: { data: 'edges' },
+      encode: {
+        update: {
+          stroke: { value: '#000' },
+          strokeOpacity: { value: 0.2 },
+          strokeWidth: { field: 'value' }
         }
       },
-      "transform": [
+      transform: [
         {
-          "type": "lookup", "from": "layout", "key": "datum.index",
-          "fields": ["datum.source", "datum.target"],
-          "as": ["sourceNode", "targetNode"]
+          type: 'lookup',
+          from: 'layout',
+          key: 'datum.index',
+          fields: ['datum.source', 'datum.target'],
+          as: ['sourceNode', 'targetNode']
         },
         {
-          "type": "linkpath",
-          "sourceX": {"expr": "min(datum.sourceNode.x, datum.targetNode.x)"},
-          "targetX": {"expr": "max(datum.sourceNode.x, datum.targetNode.x)"},
-          "sourceY": {"expr": "0"},
-          "targetY": {"expr": "0"},
-          "shape": "arc"
+          type: 'linkpath',
+          sourceX: { expr: 'min(datum.sourceNode.x, datum.targetNode.x)' },
+          targetX: { expr: 'max(datum.sourceNode.x, datum.targetNode.x)' },
+          sourceY: { expr: '0' },
+          targetY: { expr: '0' },
+          shape: 'arc'
         }
       ]
     },
     {
-      "type": "symbol",
-      "from": {"data": "layout"},
-      "encode": {
-        "update": {
-          "x": {"field": "x"},
-          "y": {"field": "y"},
-          "fill": {"field": "fill"},
-          "size": {"field": "size"}
+      type: 'symbol',
+      from: { data: 'layout' },
+      encode: {
+        update: {
+          x: { field: 'x' },
+          y: { field: 'y' },
+          fill: { field: 'fill' },
+          size: { field: 'size' }
         }
       }
     },
     {
-      "type": "text",
-      "from": {"data": "nodes"},
-      "encode": {
-        "update": {
-          "x": {"scale": "position", "field": "order"},
-          "y": {"value": 7},
-          "fontSize": {"value": 9},
-          "align": {"value": "right"},
-          "baseline": {"value": "middle"},
-          "angle": {"value": -90},
-          "text": {"field": "name"}
+      type: 'text',
+      from: { data: 'nodes' },
+      encode: {
+        update: {
+          x: { scale: 'position', field: 'order' },
+          y: { value: 7 },
+          fontSize: { value: 9 },
+          align: { value: 'right' },
+          baseline: { value: 'middle' },
+          angle: { value: -90 },
+          text: { field: 'name' }
         }
       }
     }

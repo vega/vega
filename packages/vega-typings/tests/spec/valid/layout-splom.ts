@@ -1,287 +1,307 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "padding": 10,
-  "config": {
-    "axis": {
-      "tickColor": "#ccc",
-      "domainColor": "#ccc"
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  padding: 10,
+  config: {
+    axis: {
+      tickColor: '#ccc',
+      domainColor: '#ccc'
     },
-    "legend": {
-      "layout": {
-        "anchor": {"signal": "legendAnchor"}
+    legend: {
+      layout: {
+        anchor: { signal: 'legendAnchor' }
       }
     }
   },
 
-  "signals": [
-    { "name": "chartSize", "value": 120 },
-    { "name": "chartPad", "value": 30 },
-    { "name": "chartStep", "update": "chartSize + chartPad" },
+  signals: [
+    { name: 'chartSize', value: 120 },
+    { name: 'chartPad', value: 30 },
+    { name: 'chartStep', update: 'chartSize + chartPad' },
     {
-      "name": "cell", "value": null,
-      "on": [
+      name: 'cell',
+      value: null,
+      on: [
         {
-          "events": "@cell:mousedown", "update": "group()"
+          events: '@cell:mousedown',
+          update: 'group()'
         },
         {
-          "events": "@cell:mouseup",
-          "update": "!span(brushX) && !span(brushY) ? null : cell"
+          events: '@cell:mouseup',
+          update: '!span(brushX) && !span(brushY) ? null : cell'
         }
       ]
     },
     {
-      "name": "brushX", "value": 0,
-      "on": [
+      name: 'brushX',
+      value: 0,
+      on: [
         {
-          "events": "@cell:mousedown",
-          "update": "[x(cell), x(cell)]"
+          events: '@cell:mousedown',
+          update: '[x(cell), x(cell)]'
         },
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove",
-          "update": "[brushX[0], clamp(x(cell), 0, chartSize)]"
+          events: '[@cell:mousedown, window:mouseup] > window:mousemove',
+          update: '[brushX[0], clamp(x(cell), 0, chartSize)]'
         },
         {
-          "events": {"signal": "delta"},
-          "update": "clampRange([anchorX[0] + delta[0], anchorX[1] + delta[0]], 0, chartSize)"
+          events: { signal: 'delta' },
+          update: 'clampRange([anchorX[0] + delta[0], anchorX[1] + delta[0]], 0, chartSize)'
         }
       ]
     },
     {
-      "name": "brushY", "value": 0,
-      "on": [
+      name: 'brushY',
+      value: 0,
+      on: [
         {
-          "events": "@cell:mousedown",
-          "update": "[y(cell), y(cell)]"
+          events: '@cell:mousedown',
+          update: '[y(cell), y(cell)]'
         },
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove",
-          "update": "[brushY[0], clamp(y(cell), 0, chartSize)]"
+          events: '[@cell:mousedown, window:mouseup] > window:mousemove',
+          update: '[brushY[0], clamp(y(cell), 0, chartSize)]'
         },
         {
-          "events": {"signal": "delta"},
-          "update": "clampRange([anchorY[0] + delta[1], anchorY[1] + delta[1]], 0, chartSize)"
+          events: { signal: 'delta' },
+          update: 'clampRange([anchorY[0] + delta[1], anchorY[1] + delta[1]], 0, chartSize)'
         }
       ]
     },
     {
-      "name": "down", "value": [0, 0],
-      "on": [{"events": "@brush:mousedown", "update": "[x(cell), y(cell)]"}]
+      name: 'down',
+      value: [0, 0],
+      on: [{ events: '@brush:mousedown', update: '[x(cell), y(cell)]' }]
     },
     {
-      "name": "anchorX", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brushX)"}]
+      name: 'anchorX',
+      value: null,
+      on: [{ events: '@brush:mousedown', update: 'slice(brushX)' }]
     },
     {
-      "name": "anchorY", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brushY)"}]
+      name: 'anchorY',
+      value: null,
+      on: [{ events: '@brush:mousedown', update: 'slice(brushY)' }]
     },
     {
-      "name": "delta", "value": [0, 0],
-      "on": [
+      name: 'delta',
+      value: [0, 0],
+      on: [
         {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove",
-          "update": "[x(cell) - down[0], y(cell) - down[1]]"
+          events: '[@brush:mousedown, window:mouseup] > window:mousemove',
+          update: '[x(cell) - down[0], y(cell) - down[1]]'
         }
       ]
     },
     {
-      "name": "rangeX", "value": [0, 0],
-      "on": [
+      name: 'rangeX',
+      value: [0, 0],
+      on: [
         {
-          "events": {"signal": "brushX"},
-          "update": "invert('innerX', brushX, cell)"
+          events: { signal: 'brushX' },
+          update: "invert('innerX', brushX, cell)"
         }
       ]
     },
     {
-      "name": "rangeY", "value": [0, 0],
-      "on": [
+      name: 'rangeY',
+      value: [0, 0],
+      on: [
         {
-          "events": {"signal": "brushY"},
-          "update": "invert('innerY', brushY, cell)"
+          events: { signal: 'brushY' },
+          update: "invert('innerY', brushY, cell)"
         }
       ]
     },
     {
-      "name": "cursor", "value": "'default'",
-      "on": [
+      name: 'cursor',
+      value: "'default'",
+      on: [
         {
-          "events": "[@cell:mousedown, window:mouseup] > window:mousemove!",
-          "update": "'nwse-resize'"
+          events: '[@cell:mousedown, window:mouseup] > window:mousemove!',
+          update: "'nwse-resize'"
         },
         {
-          "events": "@brush:mousemove, [@brush:mousedown, window:mouseup] > window:mousemove!",
-          "update": "'move'"
+          events: '@brush:mousemove, [@brush:mousedown, window:mouseup] > window:mousemove!',
+          update: "'move'"
         },
         {
-          "events": "@brush:mouseout, window:mouseup",
-          "update": "'default'"
+          events: '@brush:mouseout, window:mouseup',
+          update: "'default'"
         }
       ]
     },
     {
-      "name": "layoutBounds", "value": "flush",
-      "bind": {"input": "select", "options": ["flush", "full"]}
+      name: 'layoutBounds',
+      value: 'flush',
+      bind: { input: 'select', options: ['flush', 'full'] }
     },
     {
-      "name": "layoutAlign", "value": "all",
-      "bind": {"input": "select", "options": ["all", "each", "none"]}
+      name: 'layoutAlign',
+      value: 'all',
+      bind: { input: 'select', options: ['all', 'each', 'none'] }
     },
     {
-      "name": "layoutRowPad", "value": 10,
-      "bind": {"input": "range", "min": 0, "max": 20, "step": 1}
+      name: 'layoutRowPad',
+      value: 10,
+      bind: { input: 'range', min: 0, max: 20, step: 1 }
     },
     {
-      "name": "layoutColPad", "value": 10,
-      "bind": {"input": "range", "min": 0, "max": 20, "step": 1}
+      name: 'layoutColPad',
+      value: 10,
+      bind: { input: 'range', min: 0, max: 20, step: 1 }
     },
     {
-      "name": "layoutOffset", "value": 0,
-      "bind": {"input": "range", "min": 0, "max": 10, "step": 1}
+      name: 'layoutOffset',
+      value: 0,
+      bind: { input: 'range', min: 0, max: 10, step: 1 }
     },
     {
-      "name": "legendAnchor", "value": "start",
-      "bind": {"input": "select", "options": ["start", "middle", "end"]}
+      name: 'legendAnchor',
+      value: 'start',
+      bind: { input: 'select', options: ['start', 'middle', 'end'] }
     }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "penguins",
-      "url": "data/penguins.json",
-      "transform": [
-        {"type": "filter", "expr": "datum['Beak Length (mm)'] != null"}
-      ]
+      name: 'penguins',
+      url: 'data/penguins.json',
+      transform: [{ type: 'filter', expr: "datum['Beak Length (mm)'] != null" }]
     },
     {
-      "name": "fields",
-      "values": ["Beak Length (mm)", "Beak Depth (mm)", "Flipper Length (mm)", "Body Mass (g)"]
+      name: 'fields',
+      values: ['Beak Length (mm)', 'Beak Depth (mm)', 'Flipper Length (mm)', 'Body Mass (g)']
     },
     {
-      "name": "cross",
-      "source": "fields",
-      "transform": [
-        { "type": "cross", "as": ["x", "y"] },
-        { "type": "formula", "as": "xscale", "expr": "datum.x.data + 'X'" },
-        { "type": "formula", "as": "yscale", "expr": "datum.y.data + 'Y'" }
+      name: 'cross',
+      source: 'fields',
+      transform: [
+        { type: 'cross', as: ['x', 'y'] },
+        { type: 'formula', as: 'xscale', expr: "datum.x.data + 'X'" },
+        { type: 'formula', as: 'yscale', expr: "datum.y.data + 'Y'" }
       ]
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "color",
-      "type": "ordinal",
-      "domain": {"data": "penguins", "field": "Species"},
-      "range": "category"
+      name: 'color',
+      type: 'ordinal',
+      domain: { data: 'penguins', field: 'Species' },
+      range: 'category'
     }
   ],
 
-  "legends": [
+  legends: [
     {
-      "fill": "color",
-      "title": "Species",
-      "offset": 20,
-      "encode": {
-        "symbols": {
-          "update": {
-            "fillOpacity": {"value": 0.5},
-            "stroke": {"value": "transparent"}
+      fill: 'color',
+      title: 'Species',
+      offset: 20,
+      encode: {
+        symbols: {
+          update: {
+            fillOpacity: { value: 0.5 },
+            stroke: { value: 'transparent' }
           }
         }
       }
     }
   ],
 
-  "layout": {
-    "padding": {
-      "row": {"signal": "layoutRowPad"},
-      "column": {"signal": "layoutColPad"}
+  layout: {
+    padding: {
+      row: { signal: 'layoutRowPad' },
+      column: { signal: 'layoutColPad' }
     },
-    "offset": {"signal": "layoutOffset"},
-    "columns": 4,
-    "bounds": {"signal": "layoutBounds"},
-    "align": {"signal": "layoutAlign"}
+    offset: { signal: 'layoutOffset' },
+    columns: 4,
+    bounds: { signal: 'layoutBounds' },
+    align: { signal: 'layoutAlign' }
   },
 
-  "marks": [
+  marks: [
     {
-      "type": "rect",
-      "encode": {
-        "enter": {
-          "fill": {"value": "#eee"}
+      type: 'rect',
+      encode: {
+        enter: {
+          fill: { value: '#eee' }
         },
-        "update": {
-          "opacity": {"signal": "cell ? 1 : 0"},
-          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
+        update: {
+          opacity: { signal: 'cell ? 1 : 0' },
+          x: { signal: 'cell ? cell.x + brushX[0] : 0' },
+          x2: { signal: 'cell ? cell.x + brushX[1] : 0' },
+          y: { signal: 'cell ? cell.y + brushY[0] : 0' },
+          y2: { signal: 'cell ? cell.y + brushY[1] : 0' }
         }
       }
     },
     {
-      "name": "cell",
-      "type": "group",
-      "from": {"data": "cross"},
-      "role": "scope",
+      name: 'cell',
+      type: 'group',
+      from: { data: 'cross' },
+      role: 'scope',
 
-      "encode": {
-        "enter": {
-          "width": {"signal": "chartSize"},
-          "height": {"signal": "chartSize"},
-          "fill": {"value": "transparent"},
-          "stroke": {"value": "#ddd"}
+      encode: {
+        enter: {
+          width: { signal: 'chartSize' },
+          height: { signal: 'chartSize' },
+          fill: { value: 'transparent' },
+          stroke: { value: '#ddd' }
         }
       },
 
-      "signals": [
-        {"name": "width", "update": "chartSize"},
-        {"name": "height", "update": "chartSize"}
+      signals: [
+        { name: 'width', update: 'chartSize' },
+        { name: 'height', update: 'chartSize' }
       ],
 
-      "scales": [
+      scales: [
         {
-          "name": "innerX", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.x.data"}},
-          "range": "width"
+          name: 'innerX',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.x.data' } },
+          range: 'width'
         },
         {
-          "name": "innerY", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.y.data"}},
-          "range": "height"
+          name: 'innerY',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.y.data' } },
+          range: 'height'
         }
       ],
 
-      "marks": [
+      marks: [
         {
-          "type": "symbol",
-          "from": {"data": "penguins"},
-          "interactive": false,
-          "encode": {
-            "enter": {
-              "x": {
-                "scale": "innerX",
-                "field": {"datum": {"parent": "x.data"}}
+          type: 'symbol',
+          from: { data: 'penguins' },
+          interactive: false,
+          encode: {
+            enter: {
+              x: {
+                scale: 'innerX',
+                field: { datum: { parent: 'x.data' } }
               },
-              "y": {
-                "scale": "innerY",
-                "field": {"datum": {"parent": "y.data"}}
+              y: {
+                scale: 'innerY',
+                field: { datum: { parent: 'y.data' } }
               },
-              "fillOpacity": {"value": 0.5},
-              "size": {"value": 36}
+              fillOpacity: { value: 0.5 },
+              size: { value: 36 }
             },
-            "update": {
-              "fill": [
+            update: {
+              fill: [
                 {
-                  "test": "!cell || inrange(datum[cell.datum.x.data], rangeX) && inrange(datum[cell.datum.y.data], rangeY)",
-                  "scale": "color", "field": "Species"
+                  test: '!cell || inrange(datum[cell.datum.x.data], rangeX) && inrange(datum[cell.datum.y.data], rangeY)',
+                  scale: 'color',
+                  field: 'Species'
                 },
-                {"value": "#ddd"}
+                { value: '#ddd' }
               ]
             }
           }
@@ -289,145 +309,133 @@ export const spec: Spec = {
       ]
     },
     {
-      "role": "row-header",
-      "type": "group",
-      "from": {"data": "fields"},
-      "interactive": false,
+      role: 'row-header',
+      type: 'group',
+      from: { data: 'fields' },
+      interactive: false,
 
-      "encode": {
-        "enter": {
-          "width": {"value": 0},
-          "height": {"signal": "chartSize"},
-          "fill": {"value": "transparent"}
+      encode: {
+        enter: {
+          width: { value: 0 },
+          height: { signal: 'chartSize' },
+          fill: { value: 'transparent' }
         }
       },
 
-      "signals": [
-        {"name": "height", "update": "chartSize"}
-      ],
+      signals: [{ name: 'height', update: 'chartSize' }],
 
-      "scales": [
+      scales: [
         {
-          "name": "innerY", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
-          "range": "height"
+          name: 'innerY',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.data' } },
+          range: 'height'
         }
       ],
 
-      "axes": [
-        {"orient": "left", "scale": "innerY", "tickCount": 5,
-         "title": {"signal": "parent.data"}}
-      ]
+      axes: [{ orient: 'left', scale: 'innerY', tickCount: 5, title: { signal: 'parent.data' } }]
     },
     {
-      "role": "row-footer",
-      "type": "group",
-      "from": {"data": "fields"},
-      "interactive": false,
+      role: 'row-footer',
+      type: 'group',
+      from: { data: 'fields' },
+      interactive: false,
 
-      "encode": {
-        "enter": {
-          "width": {"value": 0},
-          "height": {"signal": "chartSize"},
-          "fill": {"value": "transparent"}
+      encode: {
+        enter: {
+          width: { value: 0 },
+          height: { signal: 'chartSize' },
+          fill: { value: 'transparent' }
         }
       },
 
-      "signals": [
-        {"name": "height", "update": "chartSize"}
-      ],
+      signals: [{ name: 'height', update: 'chartSize' }],
 
-      "scales": [
+      scales: [
         {
-          "name": "innerY", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
-          "range": "height"
+          name: 'innerY',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.data' } },
+          range: 'height'
         }
       ],
 
-      "axes": [
-        {"orient": "right", "scale": "innerY", "tickCount": 5,
-         "title": {"signal": "parent.data"}}
-      ]
+      axes: [{ orient: 'right', scale: 'innerY', tickCount: 5, title: { signal: 'parent.data' } }]
     },
     {
-      "role": "column-header",
-      "type": "group",
-      "from": {"data": "fields"},
-      "interactive": false,
+      role: 'column-header',
+      type: 'group',
+      from: { data: 'fields' },
+      interactive: false,
 
-      "encode": {
-        "enter": {
-          "width": {"signal": "chartSize"},
-          "height": {"value": 0},
-          "fill": {"value": "transparent"}
+      encode: {
+        enter: {
+          width: { signal: 'chartSize' },
+          height: { value: 0 },
+          fill: { value: 'transparent' }
         }
       },
 
-      "signals": [
-        {"name": "width", "update": "chartSize"}
-      ],
+      signals: [{ name: 'width', update: 'chartSize' }],
 
-      "scales": [
+      scales: [
         {
-          "name": "innerX", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
-          "range": "width"
+          name: 'innerX',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.data' } },
+          range: 'width'
         }
       ],
 
-      "axes": [
-        {"orient": "top", "scale": "innerX", "tickCount": 5,
-         "title": {"signal": "parent.data"}}
-      ]
+      axes: [{ orient: 'top', scale: 'innerX', tickCount: 5, title: { signal: 'parent.data' } }]
     },
     {
-      "role": "column-footer",
-      "type": "group",
-      "from": {"data": "fields"},
-      "interactive": false,
+      role: 'column-footer',
+      type: 'group',
+      from: { data: 'fields' },
+      interactive: false,
 
-      "encode": {
-        "enter": {
-          "width": {"signal": "chartSize"},
-          "height": {"value": 0},
-          "fill": {"value": "transparent"}
+      encode: {
+        enter: {
+          width: { signal: 'chartSize' },
+          height: { value: 0 },
+          fill: { value: 'transparent' }
         }
       },
 
-      "signals": [
-        {"name": "width", "update": "chartSize"}
-      ],
+      signals: [{ name: 'width', update: 'chartSize' }],
 
-      "scales": [
+      scales: [
         {
-          "name": "innerX", "type": "linear",
-          "zero": false, "nice": true,
-          "domain": {"data": "penguins", "field": {"signal": "parent.data"}},
-          "range": "width"
+          name: 'innerX',
+          type: 'linear',
+          zero: false,
+          nice: true,
+          domain: { data: 'penguins', field: { signal: 'parent.data' } },
+          range: 'width'
         }
       ],
 
-      "axes": [
-        {"orient": "bottom", "scale": "innerX", "tickCount": 5,
-         "title": {"signal": "parent.data"}}
-      ]
+      axes: [{ orient: 'bottom', scale: 'innerX', tickCount: 5, title: { signal: 'parent.data' } }]
     },
     {
-      "type": "rect",
-      "name": "brush",
-      "encode": {
-        "enter": {
-          "fill": {"value": "transparent"}
+      type: 'rect',
+      name: 'brush',
+      encode: {
+        enter: {
+          fill: { value: 'transparent' }
         },
-        "update": {
-          "x": {"signal": "cell ? cell.x + brushX[0] : 0"},
-          "x2": {"signal": "cell ? cell.x + brushX[1] : 0"},
-          "y": {"signal": "cell ? cell.y + brushY[0] : 0"},
-          "y2": {"signal": "cell ? cell.y + brushY[1] : 0"}
+        update: {
+          x: { signal: 'cell ? cell.x + brushX[0] : 0' },
+          x2: { signal: 'cell ? cell.x + brushX[1] : 0' },
+          y: { signal: 'cell ? cell.y + brushY[0] : 0' },
+          y2: { signal: 'cell ? cell.y + brushY[1] : 0' }
         }
       }
     }

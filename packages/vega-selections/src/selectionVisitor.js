@@ -1,6 +1,6 @@
-import {Intersect} from './constants';
 import {Literal} from 'vega-expression';
 import {error, hasOwnProperty, peek} from 'vega-util';
+import {Intersect} from './util';
 
 const DataPrefix = ':',
       IndexPrefix = '@';

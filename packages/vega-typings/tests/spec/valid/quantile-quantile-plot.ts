@@ -1,161 +1,158 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "padding": 5,
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  padding: 5,
 
-  "signals": [
-    { "name": "plotWidth", "value": 250 },
-    { "name": "height", "update": "plotWidth" },
+  signals: [
+    { name: 'plotWidth', value: 250 },
+    { name: 'height', update: 'plotWidth' },
     {
-      "name": "numQuantiles", "value": 100,
-      "bind": {"input": "range", "min": 20, "max": 200, "step": 1}
+      name: 'numQuantiles',
+      value: 100,
+      bind: { input: 'range', min: 20, max: 200, step: 1 }
     },
     {
-      "name": "url",
-      "value": "data/normal-2d.json",
-      "bind": {
-        "input": "select",
-        "options": [
-          "data/normal-2d.json",
-          "data/uniform-2d.json"
-        ]
+      name: 'url',
+      value: 'data/normal-2d.json',
+      bind: {
+        input: 'select',
+        options: ['data/normal-2d.json', 'data/uniform-2d.json']
       }
     }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "points",
-      "url": {"signal": "url"}
+      name: 'points',
+      url: { signal: 'url' }
     },
     {
-      "name": "quantiles",
-      "source": "points",
-      "transform": [
+      name: 'quantiles',
+      source: 'points',
+      transform: [
         {
-          "type": "quantile",
-          "field": "u",
-          "step": {"signal": "1 / (numQuantiles + 1)"}
+          type: 'quantile',
+          field: 'u',
+          step: { signal: '1 / (numQuantiles + 1)' }
         },
         {
-          "type": "formula",
-          "as": "quniform",
-          "expr": "quantileUniform(datum.prob)"
+          type: 'formula',
+          as: 'quniform',
+          expr: 'quantileUniform(datum.prob)'
         },
         {
-          "type": "formula",
-          "as": "qnormal",
-          "expr": "quantileNormal(datum.prob)"
+          type: 'formula',
+          as: 'qnormal',
+          expr: 'quantileNormal(datum.prob)'
         }
       ]
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "y",
-      "domain": {"data": "points", "field": "u"},
-      "range": "height",
-      "nice": true
+      name: 'y',
+      domain: { data: 'points', field: 'u' },
+      range: 'height',
+      nice: true
     }
   ],
 
-  "layout": {
-    "columns": 2,
-    "padding": 10
+  layout: {
+    columns: 2,
+    padding: 10
   },
 
-  "marks": [
+  marks: [
     {
-      "type": "group",
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotWidth"}
+      type: 'group',
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotWidth' }
         }
       },
-      "signals": [
-        {"name": "width", "update": "plotWidth"}
-      ],
-      "scales": [
+      signals: [{ name: 'width', update: 'plotWidth' }],
+      scales: [
         {
-          "name": "x",
-          "domain": [0, 1],
-          "range": "width"
+          name: 'x',
+          domain: [0, 1],
+          range: 'width'
         }
       ],
-      "axes": [
+      axes: [
         {
-          "scale": "y",
-          "orient": "left",
-          "offset": 10,
-          "grid": true,
-          "title": "Empirical Data Quantiles"
+          scale: 'y',
+          orient: 'left',
+          offset: 10,
+          grid: true,
+          title: 'Empirical Data Quantiles'
         },
         {
-          "scale": "x",
-          "orient": "bottom",
-          "grid": true,
-          "title": "Theoretical Uniform Quantiles"
+          scale: 'x',
+          orient: 'bottom',
+          grid: true,
+          title: 'Theoretical Uniform Quantiles'
         }
       ],
-      "marks": [
+      marks: [
         {
-          "type": "symbol",
-          "from": {"data": "quantiles"},
-          "encode": {
-            "update": {
-              "x": {"scale": "x", "field": "quniform"},
-              "y": {"scale": "y", "field": "value"},
-              "fill": {"value": "steelblue"},
-              "size": {"value": 16}
+          type: 'symbol',
+          from: { data: 'quantiles' },
+          encode: {
+            update: {
+              x: { scale: 'x', field: 'quniform' },
+              y: { scale: 'y', field: 'value' },
+              fill: { value: 'steelblue' },
+              size: { value: 16 }
             }
           }
         }
       ]
     },
     {
-      "type": "group",
-      "encode": {
-        "update": {
-          "width": {"signal": "plotWidth"},
-          "height": {"signal": "plotWidth"}
+      type: 'group',
+      encode: {
+        update: {
+          width: { signal: 'plotWidth' },
+          height: { signal: 'plotWidth' }
         }
       },
-      "signals": [
-        {"name": "width", "update": "plotWidth"}
-      ],
-      "scales": [
+      signals: [{ name: 'width', update: 'plotWidth' }],
+      scales: [
         {
-          "name": "x",
-          "domain": [-3, 3],
-          "range": "width"
+          name: 'x',
+          domain: [-3, 3],
+          range: 'width'
         }
       ],
-      "axes": [
+      axes: [
         {
-          "scale": "y",
-          "orient": "left",
-          "domain": false, "labels": false, "ticks": false, "grid": true
+          scale: 'y',
+          orient: 'left',
+          domain: false,
+          labels: false,
+          ticks: false,
+          grid: true
         },
         {
-          "scale": "x",
-          "orient": "bottom",
-          "grid": true,
-          "title": "Theoretical Normal Quantiles"
+          scale: 'x',
+          orient: 'bottom',
+          grid: true,
+          title: 'Theoretical Normal Quantiles'
         }
       ],
-      "marks": [
+      marks: [
         {
-          "type": "symbol",
-          "from": {"data": "quantiles"},
-          "encode": {
-            "update": {
-              "x": {"scale": "x", "field": "qnormal"},
-              "y": {"scale": "y", "field": "value"},
-              "fill": {"value": "steelblue"},
-              "size": {"value": 16}
+          type: 'symbol',
+          from: { data: 'quantiles' },
+          encode: {
+            update: {
+              x: { scale: 'x', field: 'qnormal' },
+              y: { scale: 'y', field: 'value' },
+              fill: { value: 'steelblue' },
+              size: { value: 16 }
             }
           }
         }

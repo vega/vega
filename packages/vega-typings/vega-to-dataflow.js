@@ -10,4 +10,4 @@ const outputPath = process.argv[3];
 const spec = require(specPath);
 const dataflow = vega.parse(spec);
 const dataflowStr = JSON.stringify(dataflow);
-fs.appendFileSync(outputPath, dataflowStr + ';');
+fs.appendFileSync(outputPath, dataflowStr + ';\n');

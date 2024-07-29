@@ -4,7 +4,7 @@ import {
   RuleEncodeEntry,
   SignalRef,
   TextEncodeEntry,
-  TimeInterval,
+  TimeInterval
 } from '.';
 import { Text } from './encode';
 import { TimeIntervalStep } from './scale';
@@ -19,7 +19,7 @@ import {
   NumberValue,
   StringValue,
   StrokeCapValue,
-  TextBaselineValue,
+  TextBaselineValue
 } from './values';
 
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';

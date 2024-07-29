@@ -15,6 +15,8 @@ export {default as CanvasRenderer} from './src/CanvasRenderer';
 export {default as SVGHandler} from './src/SVGHandler';
 export {default as SVGRenderer} from './src/SVGRenderer';
 export {default as SVGStringRenderer} from './src/SVGStringRenderer';
+export {default as HybridRenderer, setHybridRendererOptions} from './src/HybridRenderer';
+export {default as HybridHandler} from './src/HybridHandler';
 export {RenderType, renderModule} from './src/modules';
 export {intersect} from './src/intersect';
 

@@ -8,7 +8,7 @@
     {
       "name": "layers",
       "value": 2,
-      "on": [{"events": "mousedown!", "update": "1 + (layers % 4)"}],
+      "on": [{"events": "pointerdown!", "update": "1 + (layers % 4)"}],
       "bind": {"input": "select", "options": [1, 2, 3, 4]}
     },
     {

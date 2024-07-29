@@ -20,8 +20,7 @@ export default function(p) {
   for (i=j=0; j<n; ++j) {
     c = p[j];
     if (c === '\\') {
-      s += p.substring(i, j);
-      s += p.substring(++j, ++j);
+      s += p.substring(i, j++);
       i = j;
     } else if (c === q) {
       push();

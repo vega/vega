@@ -42,8 +42,8 @@
     {
       "name": "active", "value": null,
       "on": [
-        { "events": "text:mouseover", "update": "datum.id" },
-        { "events": "mouseover[!event.item]", "update": "null" }
+        { "events": "text:pointerover", "update": "datum.id" },
+        { "events": "pointerover[!event.item]", "update": "null" }
       ]
     }
   ],

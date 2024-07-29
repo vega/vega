@@ -40,7 +40,7 @@ export function parseScale(spec, scope) {
   }
 
   if (spec.nice != null) {
-    params.nice = parseScaleNice(spec.nice);
+    params.nice = parseScaleNice(spec.nice, scope);
   }
 
   if (spec.bins != null) {
@@ -213,8 +213,10 @@ function parseScaleBins(v, scope) {
 
 // -- SCALE NICE -----
 
-function parseScaleNice(nice) {
-  return isObject(nice)
+function parseScaleNice(nice, scope) {
+  return nice.signal
+    ? scope.signalRef(nice.signal)
+    : isObject(nice)
     ? {
         interval: parseLiteral(nice.interval),
         step: parseLiteral(nice.step)

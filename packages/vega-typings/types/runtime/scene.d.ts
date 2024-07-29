@@ -81,7 +81,7 @@ export interface SceneContext {
 
 export type SceneGroup = SceneItem & {
   context: SceneContext;
-  items: SceneItem[];
+  items: Scene[];
   height: number;
   width: number;
   stroke?: string;
@@ -129,5 +129,5 @@ export interface SceneLegendItem {
 
 export function sceneVisit(
   scene: Scene | SceneGroup,
-  itemCallback: (item: Scene | SceneGroup | SceneItem) => void,
+  itemCallback: (item: Scene | SceneGroup | SceneItem) => void
 ): void;

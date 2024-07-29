@@ -2,23 +2,23 @@ import Bounds from './Bounds';
 import GroupItem from './GroupItem';
 import {sceneFromJSON, sceneToJSON} from './util/serialize';
 
-export default function Scenegraph(scene) {
-  if (arguments.length) {
-    this.root = sceneFromJSON(scene);
-  } else {
-    this.root = createMark({
-      marktype: 'group',
-      name: 'root',
-      role: 'frame'
-    });
-    this.root.items = [new GroupItem(this.root)];
+export default class Scenegraph {
+  constructor(scene) {
+    if (arguments.length) {
+      this.root = sceneFromJSON(scene);
+    } else {
+      this.root = createMark({
+        marktype: 'group',
+        name: 'root',
+        role: 'frame'
+      });
+      this.root.items = [new GroupItem(this.root)];
+    }
   }
-}
 
-Scenegraph.prototype = {
   toJSON(indent) {
     return sceneToJSON(this.root, indent || 0);
-  },
+  }
 
   mark(markdef, group, index) {
     group = group || this.root.items[0];
@@ -27,7 +27,8 @@ Scenegraph.prototype = {
     if (mark.zindex) mark.group.zdirty = true;
     return mark;
   }
-};
+}
+
 
 function createMark(def, group) {
   const mark = {

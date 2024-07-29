@@ -11,7 +11,7 @@
       "name": "clear", "value": true,
       "on": [
         {
-          "events": "mouseup[!event.item]",
+          "events": "pointerup[!event.item]",
           "update": "true",
           "force": true
         }
@@ -45,11 +45,11 @@
           "update": "clear ? [0, 0] : brush"
         },
         {
-          "events": "@xaxis:mousedown",
+          "events": "@xaxis:pointerdown",
           "update": "[x(), x()]"
         },
         {
-          "events": "[@xaxis:mousedown, window:mouseup] > window:mousemove!",
+          "events": "[@xaxis:pointerdown, window:pointerup] > window:pointermove!",
           "update": "[brush[0], clamp(x(), 0, width)]"
         },
         {
@@ -60,17 +60,17 @@
     },
     {
       "name": "anchor", "value": null,
-      "on": [{"events": "@brush:mousedown", "update": "slice(brush)"}]
+      "on": [{"events": "@brush:pointerdown", "update": "slice(brush)"}]
     },
     {
       "name": "xdown", "value": 0,
-      "on": [{"events": "@brush:mousedown", "update": "x()"}]
+      "on": [{"events": "@brush:pointerdown", "update": "x()"}]
     },
     {
       "name": "delta", "value": 0,
       "on": [
         {
-          "events": "[@brush:mousedown, window:mouseup] > window:mousemove!",
+          "events": "[@brush:pointerdown, window:pointerup] > window:pointermove!",
           "update": "x() - xdown"
         }
       ]

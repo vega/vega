@@ -2,7 +2,6 @@ import {
   CanvasHandler,
   Renderer,
   Renderers,
-  renderModule,
   Scene,
   SceneGroup,
   SceneItem,
@@ -11,8 +10,9 @@ import {
   SceneRect,
   SceneSymbol,
   SceneText,
-  sceneVisit,
   View,
+  renderModule,
+  sceneVisit
 } from 'vega';
 
 type SceneRenderer = (scene: Scene) => void;
@@ -53,7 +53,7 @@ const legend: SceneRenderer = (scene: Scene) => {
       symbol.datum;
       symbol.shape;
       symbol.size;
-    },
+    }
   };
   sceneVisit(scene, sceneGroupOrItem => {
     const sceneItem = sceneGroupOrItem as SceneItem;
@@ -94,7 +94,7 @@ const sceneRenderers: { [id: string]: SceneRenderer } = {
   legend,
   rect,
   rule,
-  text,
+  text
 };
 
 const rootRenderer: SceneRenderer = (scene: Scene) => {
@@ -116,8 +116,8 @@ class TestRenderer extends Renderer {
 }
 
 class TestView extends View {
-  renderer(renderer: Renderers | 'test'): this
-  renderer(): Renderers
+  renderer(renderer: Renderers | 'test'): this;
+  renderer(): Renderers;
   renderer(renderer?: Renderers | 'test') {
     if (!renderer) {
       return super.renderer();

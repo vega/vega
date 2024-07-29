@@ -35,4 +35,4 @@ do
 
 done
 
-yarn run format-dataflow-tests
+yarn run format-tests

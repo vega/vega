@@ -123,12 +123,12 @@ Vega visualizations will be added to a parent DOM container element. This elemen
 
 ### <a name="ie"></a>Supporting Internet Explorer or Older Browsers
 
-Vega is intended to be used with [ES6](http://es6-features.org/)-compliant JavaScript runtimes. This includes all major modern browsers, including Firefox, Chrome, Safari, and Edge, and server-side using Node.js. Prior to version 4.4, Vega supported Internet Explorer 10 or 11 in conjunction with a set of polyfills; for more details, see the [supporting Internet Explorer](internet-explorer) documentation. Subsequent Vega versions do *not* directly support IE. To use the latest versions of Vega with IE, you can use a JavaScript compiler such as [Babel](https://babeljs.io/) to generate ES5-compliant code or use our precompiled ES5 compliant versions as shown below.
+Vega is intended to be used with [modern JavaScript runtimes](https://browsersl.ist/#q=defaults%2C+last+1+node+versions). This includes all major modern browsers, including Firefox, Chrome, Safari, and Edge, and server-side using Node.js. Prior to version 4.4, Vega supported Internet Explorer 10 or 11 in conjunction with a set of polyfills; for more details, see the [supporting Internet Explorer](internet-explorer) documentation. Subsequent Vega versions do *not* directly support IE. To use the latest versions of Vega with IE, you can use a JavaScript compiler such as [Babel](https://babeljs.io/) to generate IE compatible code or use our precompiled IE compatible versions as shown below.
 
 ```html
 <head>
   <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build-es5/vega.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}/build-es5/vega-embed.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.3/build-es5/vega-embed.js"></script>
 </head>
 <body>
   <div id="view"></div>

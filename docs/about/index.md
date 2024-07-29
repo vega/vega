@@ -19,4 +19,4 @@ While Vega is useful in its own right (for example, [Vega is deployed on Wikiped
 | [Projects](projects)       | Other languages, tools and models built on Vega.|
 | [Research](research)       | Research publications from the Vega project.|
 | [Vega and D3](vega-and-d3) | On the relationship between Vega and D3.|
-| [Code of Conduct](code-of-conduct) | The Vega project is governed by a code of conduct to foster an inclusive community.|
+| [Code of Conduct](https://github.com/vega/.github/blob/master/CODE_OF_CONDUCT.md) | The Vega project is governed by a code of conduct to foster an inclusive community.|

@@ -163,7 +163,7 @@ A _value reference_ specifies the value for a given mark property. The value may
 - `{"value": "left"}` - Literal value
 - `{"field": "amount"}` - Data field value
 - `{"scale": "yscale", "field": "amount"}` - Scale-transformed data field value
-- `{"signal": "sqrt(pow(datum.a, 2) + pow(datum.b, 2))"` - Signal expression value
+- `{"signal": "hypot(datum.a, datum.b)"` - Signal expression value
 
 For more, see the [Value type documentation](../types/#Value), including the specialized [Color Value](../types/#ColorValue) and [Field Value](../types/#FieldValue) types.
 

@@ -84,6 +84,7 @@ This package provides the following constants and functions:
 - [`cos`](https://vega.github.io/vega/docs/expressions/#cos)
 - [`exp`](https://vega.github.io/vega/docs/expressions/#exp)
 - [`floor`](https://vega.github.io/vega/docs/expressions/#floor)
+- [`hypot`](https://vega.github.io/vega/docs/expressions/#hypot)
 - [`log`](https://vega.github.io/vega/docs/expressions/#log)
 - [`max`](https://vega.github.io/vega/docs/expressions/#max)
 - [`min`](https://vega.github.io/vega/docs/expressions/#min)

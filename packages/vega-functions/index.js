@@ -23,7 +23,8 @@ export {
 export {
   geoArea,
   geoBounds,
-  geoCentroid
+  geoCentroid,
+  geoScale
 } from './src/functions/geo';
 
 export {

@@ -69,7 +69,7 @@ An n-body force that causes nodes to either attract or repel each other.
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
 | force               | {% include type t="String" %}  | The value `"nbody"`.|
-| strength            | {% include type t="Number" %}  | The relative strength of this force (default `-30`). Negative values cause nodes to repel, positive values to attract.|
+| strength            | {% include type t="Number|Expr" %}  | The relative strength of this force (default `-30`). Negative values cause nodes to repel, positive values to attract.|
 | theta               | {% include type t="Number" %}  | Approximation parameter for aggregating more distance forces (default `0.9`).|
 | distanceMin         | {% include type t="Number" %}  | The minimum distance over which this force acts. If two nodes are close than _distanceMin_, the exerted forces will be as if they are _distanceMin_ apart (default `1`).|
 | distanceMax         | {% include type t="Number" %}  | The maximum distance over which this force acts. If two nodes exceed _distanceMax_, they will not exert forces on each other.|

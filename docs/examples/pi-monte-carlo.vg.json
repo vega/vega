@@ -104,7 +104,7 @@
               "opacity": {"value": 0.6},
               "fill": [
                 {
-                  "test": "sqrt(datum.x * datum.x + datum.y * datum.y) <= 1",
+                  "test": "hypot(datum.x, datum.y) <= 1",
                   "value": "#003f5c"
                 },
                 { "value": "#ffa600" }

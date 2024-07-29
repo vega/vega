@@ -1,6 +1,6 @@
 {
   "name": "vega-loader",
-  "version": "4.5.0",
+  "version": "4.5.2",
   "description": "Network request and file loading utilities.",
   "keywords": [
     "vega",
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c",
+    "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
@@ -38,7 +38,7 @@
     "d3-dsv": "^3.0.1",
     "node-fetch": "^2.6.7",
     "topojson-client": "^3.1.0",
-    "vega-format": "^1.1.0",
-    "vega-util": "^1.16.0"
+    "vega-format": "^1.1.2",
+    "vega-util": "^1.17.2"
   }
 }

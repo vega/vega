@@ -19,16 +19,16 @@ export default function(hoverSet, leaveSet) {
   hoverSet = [hoverSet || 'hover'];
   leaveSet = [leaveSet || 'update', hoverSet[0]];
 
-  // invoke hover set upon mouseover
+  // invoke hover set upon pointerover
   this.on(
-    this.events('view', 'mouseover', itemFilter),
+    this.events('view', 'pointerover', itemFilter),
     markTarget,
     invoke(hoverSet)
   );
 
-  // invoke leave set upon mouseout
+  // invoke leave set upon pointerout
   this.on(
-    this.events('view', 'mouseout', itemFilter),
+    this.events('view', 'pointerout', itemFilter),
     markTarget,
     invoke(leaveSet)
   );

@@ -33,7 +33,7 @@
         },
         {
           "type": "formula",
-          "expr": "sqrt(datum.y * datum.y + datum.x * datum.x)",
+          "expr": "hypot(datum.y, datum.x)",
           "as":   "radius"
         },
         {

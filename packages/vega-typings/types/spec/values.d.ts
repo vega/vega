@@ -19,7 +19,7 @@ import {
   SymbolShape,
   SymbolShapeValueRef,
   TextBaseline,
-  TextBaselineValueRef,
+  TextBaselineValueRef
 } from './encode';
 import { TitleAnchor } from './title';
 

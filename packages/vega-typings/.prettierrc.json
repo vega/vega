@@ -7,7 +7,7 @@
         "singleQuote": true,
         "bracketSpacing": true,
         "arrowParens": "avoid",
-        "trailingComma": "all",
+        "trailingComma": "none",
         "proseWrap": "never",
         "semi": true,
         "tabWidth": 2

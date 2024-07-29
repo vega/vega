@@ -110,7 +110,7 @@ export default function() {
   function place(board, tag, bounds) {
     var startX = tag.x,
         startY = tag.y,
-        maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
+        maxDelta = Math.hypot(size[0], size[1]),
         s = spiral(size),
         dt = random() < .5 ? 1 : -1,
         t = -dt,

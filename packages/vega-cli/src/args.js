@@ -51,6 +51,9 @@ To load data, you may need to set a base directory:
     args.boolean('test')
       .describe('test', 'Disable default PDF metadata for test suites.');
   }
+  else if (type === 'png') {
+    args.number('ppi').describe('ppi', 'Resolution in ppi.');
+  }
 
   return args.help().version().argv;
 };

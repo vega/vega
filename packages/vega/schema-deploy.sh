@@ -4,7 +4,7 @@
 set -e
 
 # get the current installed vega version
-version=$(npm list vega | head -n 1 | sed 's/.*@//' | awk '{print $1}')
+version=$(npm list vega | head -n 2 | tail -n 1 | sed 's/.*@//' | awk '{print $1}')
 
 # schema repo must be immediately outside the vega monorepo!
 pushd ../../../schema/vega/

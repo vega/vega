@@ -1,0 +1,239 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Rotating globe animation depicting earthquake locations. Background - pseudorandomly distributed 'stars'.",
+  "width": 600,
+  "height": 600,
+  "padding": 5,
+  "autosize": "pad",
+  "background": "#000000",
+  "signals": [
+    {"name": "scale", "description": "globe scale", "value": 225},
+    {
+      "name": "circleSize",
+      "description": "Earthquaqe circle size",
+      "value": 1.8
+    },
+    {"name": "textColorMain", "value": "#dddddd"},
+    {"name": "textColorSubtitle", "value": "#888888"},
+    {"name": "backSideColor", "value": "#aaaaaa"},
+    {
+      "name": "pauseClicked",
+      "description": "rotation pause",
+      "value": false,
+      "on": [{"events": "view:click", "update": "!pauseClicked", "force": true}]
+    },
+    {
+      "name": "globeRotationAngle",
+      "description": "globe position: changes from 0 to -180 and then from 180 to 0",
+      "init": "0",
+      "on": [
+        {
+          "events": "timer{100}",
+          "update": "pauseClicked ? globeRotationAngle : (globeRotationAngle<=-180?180:globeRotationAngle-1)"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {"name": "data-sphere", "values": [{"type": "Sphere"}]},
+    {
+      "name": "data-json-world-map",
+      "url": "data/world-110m.json",
+      "format": {"type": "topojson", "feature": "countries"}
+    },
+    {
+      "name": "data-earthquakes",
+      "url": "data/earthquakes.json",
+      "format": {"type": "json", "property": "features"}
+    },
+    {
+      "name": "stars",
+      "transform": [
+        {"type": "sequence", "start": 1, "step": 1, "stop": 201, "as": "star"},
+        {"type": "formula", "expr": "ceil(random()*width)", "as": "x"},
+        {"type": "formula", "expr": "ceil(random()*height)", "as": "y"},
+        {
+          "type": "formula",
+          "expr": "datum.x<60 && datum.y<200 ? 0 : ceil(random()*1.5)",
+          "as": "size"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "scale": {"signal": "scale"},
+      "type": "orthographic",
+      "translate": {"signal": "[width/2, height/2]"},
+      "rotate": [{"signal": "-globeRotationAngle"}, 0, 0]
+    }
+  ],
+  "scales": [
+    {
+      "name": "scaleColor",
+      "type": "linear",
+      "domain": [1.9, 2.9, 3.9, 4.9, 5.9, 6.9, 7.9, 8.9, 9.9],
+      "range": [
+        "#afeeee",
+        "#98fb98",
+        "#adff2f",
+        "#ffff00",
+        "#ffd700",
+        "#ff8c00",
+        "#ff0000",
+        "#800000"
+      ]
+    },
+    {
+      "name": "scaleSize",
+      "type": "sqrt",
+      "domain": [0, 100],
+      "range": [0, {"signal": "circleSize"}]
+    }
+  ],
+  "title": {
+    "text": {
+      "signal": "'Earthquakes with magnitude 2.5+, last 30 days (live feed)'"
+    },
+    "dy": -10,
+    "anchor": "start",
+    "color": {"signal": "textColorMain"},
+    "font": {"value": "Tahoma"},
+    "fontSize": {"value": 18},
+    "fontWeight": "lighter",
+    "subtitle": "Click anywhere to pause/resume rotation",
+
+    "subtitleColor": {"signal": "textColorSubtitle"},
+    "subtitlePadding": 5,
+    "subtitleFont": {"value": "Tahoma"}
+  },
+  "legends": [
+    {
+      "type": "symbol",
+      "fill": "scaleColor",
+      "orient": "left",
+      "offset": -50,
+      "tickCount": 8,
+      "title": "Magnitude",
+      "titleColor": {"signal": "textColorMain"},
+      "titleFont": "Tahoma",
+      "titleFontSize": 14,
+      "titleFontWeight": "lighter",
+      "titleAlign": "center",
+      "titleOrient": "top",
+      "labelColor": {"signal": "'#DDDDDD'"},
+      "labelAlign": "right",
+      "labelFontSize": 13,
+      "format": ".4",
+      "encode": {
+        "symbols": {
+          "update": {
+            "size": {
+              "signal": "datum.value<1?0:3.14*scale('scaleSize', exp(datum.value))*scale('scaleSize', exp(datum.value))"
+            },
+            "strokeOpacity": {"value": 1},
+            "fillOpacity": {"value": 0},
+            "strokeWidth": {
+              "signal": "1+scale('scaleSize', exp(datum.value))*0.15"
+            },
+            "stroke": {"signal": "scale('scaleColor', datum.value)"}
+          }
+        },
+        "labels": {
+          "update": {
+            "text": {"signal": "datum.value<1?'':datum.label"},
+            "dx": {"value": 25}
+          }
+        }
+      }
+    }
+  ],
+  "marks": [
+    {
+      "name": "symbol-circle-stars",
+      "type": "symbol",
+      "shape": "circle",
+      "from": {"data": "stars"},
+      "index": 0,
+      "encode": {
+        "enter": {
+          "xc": {"signal": "datum.x"},
+          "yc": {"signal": "datum.y"},
+          "size": {"signal": "datum.size"},
+          "fill": {"signal": "'white'"},
+          "opacity": {"value": 1}
+        }
+      }
+    },
+    {
+      "name": "globe-with-blue-sky",
+      "type": "shape",
+      "from": {"data": "data-sphere"},
+      "index": 5,
+      "encode": {
+        "enter": {
+          "fill": {"value": "#000022"},
+          "fillOpacity": {"value": 1},
+          "stroke": {
+            "value": {
+              "x1": 1,
+              "y1": 1,
+              "x2": 0,
+              "y2": 0,
+              "gradient": "linear",
+              "stops": [
+                {"offset": 0, "color": "#6666FF"},
+                {"offset": 1, "color": "#0000FF"}
+              ]
+            }
+          },
+          "strokeWidth": {"value": 8},
+          "strokeOpacity": {"value": 0.3}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "shape-continets-and-countries",
+      "type": "shape",
+      "from": {"data": "data-json-world-map"},
+      "index": 2,
+      "encode": {
+        "enter": {
+          "fill": {"value": "white"},
+          "fillOpacity": {"value": 0.1},
+          "stroke": {"value": "white"},
+          "strokeWidth": {"value": 0.2}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "shape-circle-earthquakes",
+      "type": "shape",
+      "from": {"data": "data-earthquakes"},
+      "index": 3,
+      "encode": {
+        "update": {
+          "strokeOpacity": {"value": 1},
+          "fillOpacity": {"value": 0},
+          "strokeWidth": {
+            "signal": "1+scale('scaleSize', exp(datum.properties.mag))*0.15"
+          },
+          "stroke": {"signal": "scale('scaleColor', datum.properties.mag)"},
+          "fill": {"signal": "scale('scaleColor', datum.properties.mag)"}
+        }
+      },
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "projection",
+          "pointRadius": {
+            "expr": "scale('scaleSize', exp(datum.properties.mag))"
+          }
+        }
+      ]
+    }
+  ]
+}

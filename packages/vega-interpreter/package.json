@@ -1,6 +1,6 @@
 {
   "name": "vega-interpreter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "CSP-compliant interpreter for Vega expressions.",
   "keywords": [
     "vega",
@@ -17,7 +17,7 @@
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",
-    "build": "rollup -c --extend",
+    "build": "rollup -c rollup.config.mjs --extend",
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

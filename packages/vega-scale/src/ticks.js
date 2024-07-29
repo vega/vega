@@ -27,7 +27,7 @@ export function tickCount(scale, count, minStep) {
     if (minStep != null) {
       count = Math.min(
         count,
-        Math.floor((span(scale.domain()) / minStep) || 1)
+        Math.floor((span(scale.domain()) / minStep) || 1) + 1
       );
     }
   }
@@ -101,7 +101,7 @@ export function validTicks(scale, ticks, count) {
  * @return {Array<*>} - The generated tick values.
  */
 export function tickValues(scale, count) {
-  return scale.bins ? validTicks(scale, scale.bins)
+  return scale.bins ? validTicks(scale, scale.bins, count)
     : scale.ticks ? scale.ticks(count)
     : scale.domain();
 }

@@ -98,7 +98,7 @@ export function events(source, type, filter) {
       }
     } else if (typeof document !== 'undefined') {
       if (permit(view, 'selector', type)) {
-        sources = document.querySelectorAll(source);
+        sources = Array.from(document.querySelectorAll(source));
       }
     }
 
