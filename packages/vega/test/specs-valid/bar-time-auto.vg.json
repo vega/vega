@@ -33,9 +33,7 @@
         {
           "type": "timeunit",
           "field": "t",
-          "units": [
-            "auto"
-          ]
+          "inferUnits": true
         }
       ]
     }

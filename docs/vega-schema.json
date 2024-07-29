@@ -15601,8 +15601,7 @@
                       "hours",
                       "minutes",
                       "seconds",
-                      "milliseconds",
-                      "auto"
+                      "milliseconds"
                     ]
                   },
                   {
@@ -15610,6 +15609,16 @@
                   }
                 ]
               }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
+        "inferUnits": {
+          "anyOf": [
+            {
+              "type": "boolean"
             },
             {
               "$ref": "#/definitions/signalRef"

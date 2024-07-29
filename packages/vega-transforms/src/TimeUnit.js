@@ -18,18 +18,30 @@ export default function TimeUnit(params) {
 const OUTPUT = ['unit0', 'unit1'];
 
 TimeUnit.Definition = {
-  'type': 'TimeUnit',
-  'metadata': { 'modifies': true },
-  'params': [
-    { 'name': 'field', 'type': 'field', 'required': true },
-    { 'name': 'interval', 'type': 'boolean', 'default': true },
-    { 'name': 'units', 'type': 'enum', 'values': [...TIME_UNITS, 'auto'], 'array': true },
-    { 'name': 'step', 'type': 'number', 'default': 1 },
-    { 'name': 'maxbins', 'type': 'number', 'default': 40 },
-    { 'name': 'extent', 'type': 'date', 'array': true },
-    { 'name': 'timezone', 'type': 'enum', 'default': 'local', 'values': ['local', 'utc'] },
-    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': OUTPUT }
-  ]
+  "type": "TimeUnit",
+  "metadata": { "modifies": true },
+  "params": [
+    { "name": "field", "type": "field", "required": true },
+    { "name": "interval", "type": "boolean", "default": true },
+    { "name": "units", "type": "enum", "values": TIME_UNITS, "array": true },
+    { "name": "inferUnits", "type": "boolean", "default": false },
+    { "name": "step", "type": "number", "default": 1 },
+    { "name": "maxbins", "type": "number", "default": 40 },
+    { "name": "extent", "type": "date", "array": true },
+    {
+      "name": "timezone",
+      "type": "enum",
+      "default": "local",
+      "values": ["local", "utc"],
+    },
+    {
+      "name": "as",
+      "type": "string",
+      "array": true,
+      "length": 2,
+      "default": OUTPUT,
+    },
+  ],
 };
 
 inherits(TimeUnit, Transform, {
@@ -83,7 +95,7 @@ inherits(TimeUnit, Transform, {
     const utc = _.timezone === 'utc';
 
     // get parameters
-    const { units, step } = _.units === 'auto'
+    const { units, step } = _.inferUnits
       ? detectTimeUnits(pulse.materialize(pulse.SOURCE).source, _.field)
       : _.units
         ? { units: _.units, step: _.step || 1 }
