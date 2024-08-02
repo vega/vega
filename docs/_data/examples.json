@@ -94,7 +94,8 @@
         {"name": "watch"},
         {"name": "warming-stripes"},
         {"name": "earthquakes-globe"},
-        {"name": "serpentine-timeline"}
+        {"name": "serpentine-timeline"},
+        {"name": "particle-simulation-simple.md"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
