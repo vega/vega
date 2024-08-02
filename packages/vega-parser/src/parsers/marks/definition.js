@@ -7,6 +7,7 @@ export default function(spec) {
     role:         spec.role || role(spec),
     zindex:       +spec.zindex || undefined,
     aria:         spec.aria,
-    description:  spec.description
+    description:  spec.description,
+    tabindex:     isNaN(spec.tabindex) ? undefined : +spec.tabindex
   };
 }

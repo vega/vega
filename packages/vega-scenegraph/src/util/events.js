@@ -1,3 +1,5 @@
+export const FocusInEvent = 'focusin';
+export const FocusOutEvent = 'focusout';
 export const KeyDownEvent = 'keydown';
 export const KeyPressEvent = 'keypress';
 export const KeyUpEvent = 'keyup';
@@ -23,6 +25,8 @@ export const TouchMoveEvent = 'touchmove';
 export const TouchEndEvent = 'touchend';
 
 export const Events = [
+  FocusInEvent,
+  FocusOutEvent,
   KeyDownEvent,
   KeyPressEvent,
   KeyUpEvent,

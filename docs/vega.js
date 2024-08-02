@@ -17323,8 +17323,9 @@
   // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight', 'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant',
   // font
-  'description', 'aria', 'ariaRole', 'ariaRoleDescription' // aria
-  ];
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription',
+  // aria
+  'tabindex'];
   function sceneToJSON(scene, indent) {
     return JSON.stringify(scene, keys$1, indent);
   }
@@ -17383,7 +17384,8 @@
       marktype: def.marktype,
       name: def.name || undefined,
       role: def.role || undefined,
-      zindex: def.zindex || 0
+      zindex: def.zindex || 0,
+      tabindex: def.tabindex
     };
 
     // add accessibility properties if defined
@@ -17847,6 +17849,8 @@
       return this._load('loadImage', uri);
     }
   }
+  const FocusInEvent = 'focusin';
+  const FocusOutEvent = 'focusout';
   const KeyDownEvent = 'keydown';
   const KeyPressEvent = 'keypress';
   const KeyUpEvent = 'keyup';
@@ -17870,7 +17874,7 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const Events = [FocusInEvent, FocusOutEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
   const TooltipHideEvent = MouseOutEvent;
   const HrefEvent = ClickEvent;
@@ -18255,10 +18259,12 @@
   const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
   const GRAPHICS_OBJECT = 'graphics-object';
   const GRAPHICS_SYMBOL = 'graphics-symbol';
-  const bundle = (role, roledesc, label) => ({
+  const TABINDEX = 'tabindex';
+  const bundle = (role, roledesc, label, tabindex) => ({
     [ARIA_ROLE]: role,
     [ARIA_ROLEDESCRIPTION]: roledesc,
-    [ARIA_LABEL]: label || undefined
+    [ARIA_LABEL]: label || undefined,
+    [TABINDEX]: isNaN(tabindex) ? undefined : tabindex
   });
 
   // these roles are covered by related roles
@@ -18289,7 +18295,8 @@
   const AriaEncode = {
     ariaRole: ARIA_ROLE,
     ariaRoleDescription: ARIA_ROLEDESCRIPTION,
-    description: ARIA_LABEL
+    description: ARIA_LABEL,
+    tabindex: TABINDEX
   };
   function ariaItemAttributes(emit, item) {
     const hide = item.aria === false;
@@ -18303,6 +18310,7 @@
       emit(ARIA_LABEL, item.description);
       emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
       emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
+      emit(TABINDEX, item.tabindex);
     }
   }
   function ariaMarkAttributes(mark) {
@@ -18313,13 +18321,13 @@
   function ariaMark(mark) {
     const type = mark.marktype;
     const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
-    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description);
+    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description, mark.tabindex);
   }
   function ariaGuide(mark, opt) {
     try {
       const item = mark.items[0],
         caption = opt.caption || (() => '');
-      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item));
+      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), item.tabindex);
     } catch (err) {
       return null;
     }
@@ -22901,7 +22909,7 @@
 
   function clipCircle (radius) {
     var cr = cos$1(radius),
-      delta = 6 * radians,
+      delta = 2 * radians,
       smallRadius = cr > 0,
       notHemisphere = abs$1(cr) > epsilon$3; // TODO optimise for this common case
 
@@ -30626,7 +30634,6 @@
     const detleft = (ay - cy) * (bx - cx);
     const detright = (ax - cx) * (by - cy);
     const det = detleft - detright;
-    if (detleft === 0 || detright === 0 || detleft > 0 !== detright > 0) return det;
     const detsum = Math.abs(detleft + detright);
     if (Math.abs(det) >= ccwerrboundA * detsum) return det;
     return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
@@ -30662,7 +30669,7 @@
       this._hullPrev = new Uint32Array(n); // edge to prev edge
       this._hullNext = new Uint32Array(n); // edge to next edge
       this._hullTri = new Uint32Array(n); // edge to adjacent triangle
-      this._hullHash = new Int32Array(this._hashSize).fill(-1); // angular edge hash
+      this._hullHash = new Int32Array(this._hashSize); // angular edge hash
 
       // temporary arrays for sorting points
       this._ids = new Uint32Array(n);
@@ -30695,11 +30702,10 @@
       }
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
-      let minDist = Infinity;
       let i0, i1, i2;
 
       // pick a seed point close to the center
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         const d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist) {
           i0 = i;
@@ -30708,10 +30714,9 @@
       }
       const i0x = coords[2 * i0];
       const i0y = coords[2 * i0 + 1];
-      minDist = Infinity;
 
       // find the point closest to the seed
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         if (i === i0) continue;
         const d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist && d > 0) {
@@ -30745,9 +30750,10 @@
         let j = 0;
         for (let i = 0, d0 = -Infinity; i < n; i++) {
           const id = this._ids[i];
-          if (this._dists[id] > d0) {
+          const d = this._dists[id];
+          if (d > d0) {
             hull[j++] = id;
-            d0 = this._dists[id];
+            d0 = d;
           }
         }
         this.hull = hull.subarray(0, j);
@@ -35590,7 +35596,7 @@
     lassoPath,
     intersectLasso
   };
-  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'],
+  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'],
     // event functions
     eventPrefix = 'event.vega.',
     // event function prefix
@@ -36470,13 +36476,19 @@
       }
       return p;
     }
+    function focus(element) {
+      if (element && typeof element.focus === 'function') {
+        element.focus();
+      }
+    }
     return {
       view: constant$5(view),
       item: constant$5(item || {}),
       group: group,
       xy: xy,
       x: item => xy(item)[0],
-      y: item => xy(item)[1]
+      y: item => xy(item)[1],
+      focus: focus
     };
   }
   const VIEW$1 = 'view',
@@ -39187,7 +39199,8 @@
       role: spec.role || getRole(spec),
       zindex: +spec.zindex || undefined,
       aria: spec.aria,
-      description: spec.description
+      description: spec.description,
+      tabindex: isNaN(spec.tabindex) ? undefined : +spec.tabindex
     };
   }
   function interactive(spec, scope) {

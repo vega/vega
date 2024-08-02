@@ -73,12 +73,19 @@ function extension(view, item, point) {
     return p;
   }
 
+  function focus(element) {
+    if (element && typeof element.focus === 'function') {
+      element.focus();
+    }
+  }
+
   return {
     view:  constant(view),
     item:  constant(item || {}),
     group: group,
     xy:    xy,
     x:     item => xy(item)[0],
-    y:     item => xy(item)[1]
+    y:     item => xy(item)[1],
+    focus: focus
   };
 }

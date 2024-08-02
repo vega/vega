@@ -221,7 +221,8 @@ const ITEM_BASE = {
     'description': { 'type': 'string' },
     'aria': { 'type': 'boolean' },
     'ariaRole': { 'type': 'string' },
-    'ariaRoleDescription': { 'type': 'string' }
+    'ariaRoleDescription': { 'type': 'string' },
+    'tabindex': { 'type': 'number' }
   }
 };
 

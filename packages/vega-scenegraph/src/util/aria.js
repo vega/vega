@@ -7,11 +7,13 @@ const ARIA_ROLE = 'role';
 const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
 const GRAPHICS_OBJECT = 'graphics-object';
 const GRAPHICS_SYMBOL = 'graphics-symbol';
+const TABINDEX = 'tabindex';
 
-const bundle = (role, roledesc, label) => ({
+const bundle = (role, roledesc, label, tabindex) => ({
   [ARIA_ROLE]: role,
   [ARIA_ROLEDESCRIPTION]: roledesc,
-  [ARIA_LABEL]: label || undefined
+  [ARIA_LABEL]: label || undefined,
+  [TABINDEX]: isNaN(tabindex) ? undefined : tabindex
 });
 
 // these roles are covered by related roles
@@ -49,7 +51,8 @@ const AriaGuides = {
 export const AriaEncode = {
   ariaRole: ARIA_ROLE,
   ariaRoleDescription: ARIA_ROLEDESCRIPTION,
-  description: ARIA_LABEL
+  description: ARIA_LABEL,
+  tabindex: TABINDEX
 };
 
 export function ariaItemAttributes(emit, item) {
@@ -74,6 +77,10 @@ export function ariaItemAttributes(emit, item) {
       ARIA_ROLEDESCRIPTION,
       item.ariaRoleDescription || `${type} mark`
     );
+    emit(
+      TABINDEX,
+      item.tabindex
+    );
   }
 }
 
@@ -94,7 +101,8 @@ function ariaMark(mark) {
   return bundle(
     recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
     `${type} mark container`,
-    mark.description
+    mark.description,
+    mark.tabindex
   );
 }
 
@@ -105,7 +113,8 @@ function ariaGuide(mark, opt) {
     return bundle(
       opt.role || GRAPHICS_SYMBOL,
       opt.desc,
-      item.description || caption(item)
+      item.description || caption(item),
+      item.tabindex
     );
   } catch (err) {
     return null;

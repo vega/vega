@@ -5,6 +5,13 @@
   "height": 560,
   "padding": {"top": 25, "left": 0, "right": 0, "bottom": 0},
   "autosize": "none",
+  "config": {
+    "events": {
+      "defaults": {
+        "allow": ["wheel", "keydown"]
+      }
+    }
+  },
 
   "signals": [
     {
@@ -24,17 +31,75 @@
       "bind": {"input": "radio", "options": ["line", "curve"]}
     },
     {
+      "name": "showConnections",
+      "value": false,
+      "on": [
+        {
+         "events": "@airport:keydown![event.key === 'Enter' || event.key === ' ']",
+         "update": "!showConnections",
+         "capture": false
+        },
+        {
+          "events": "@cell:pointerover",
+          "update": "showConnections ? false : showConnections",
+          "capture": false
+        }
+      ]
+    },
+    {
+      "name": "focusedAirport",
+      "value": null,
+      "on": [
+        {
+          "events": "@airport:focusin",
+          "update": "datum"
+        }
+      ]
+    },
+    {
+      "name": "focusOnCellClick",
+      "on": [
+        {
+          "events": "@cell:click",
+          "update": "item()._svg && item()._svg.parentElement && item()._svg.parentElement.previousElementSibling ? focus(item()._svg.parentElement.previousElementSibling.children[indexof(item().mark.items, item())]) : null"
+        }
+      ]
+    },
+    {
       "name": "hover",
       "value": null,
       "on": [
-        {"events": "@cell:pointerover", "update": "datum"},
-        {"events": "@cell:pointerout", "update": "null"}
+        {"events": "@cell:pointerover, @cell:click", "update": "datum"},
+        {"events": "@cell:pointerout", "update": "null"},
+        {
+         "events": "@airport:focusin, @airport:click, @airport:keydown![event.key === 'Enter' || event.key === ' ']",
+         "update": "showConnections ? datum : null",
+         "capture": false
+        }
+      ]
+    },
+    {
+      "name": "focusPreviousAirport",
+      "on": [
+        {
+         "events": "@airport:keydown![event.key === 'ArrowUp' || event.key === 'ArrowLeft']",
+         "update": "item()._svg && item()._svg.previousElementSibling ? focus(item()._svg.previousElementSibling) : null"
+        }
+      ]
+    },
+    {
+      "name": "focusNextAirport",
+      "on": [
+        {
+         "events": "@airport:keydown![event.key === 'ArrowDown' || event.key === 'ArrowRight']",
+         "update": "item() && item()._svg && item()._svg.nextElementSibling ? focus(item()._svg.nextElementSibling) : null"
+        }
       ]
     },
     {
       "name": "title",
       "value": "U.S. Airports, 2008",
-      "update": "hover ? hover.name + ' (' + hover.iata + ')' : 'U.S. Airports, 2008'"
+      "update": "hover ? hover.name + ' (' + hover.iata + ')' : focusedAirport ? focusedAirport.name + ' (' + focusedAirport.iata + ')' : 'U.S. Airports, 2008'"
     },
     {
       "name": "cell_stroke",
@@ -151,8 +216,25 @@
 
   "marks": [
     {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "x": {"value": 895},
+          "y": {"value": 0},
+          "fill": {"value": "black"},
+          "fontSize": {"value": 20},
+          "align": {"value": "right"}
+        },
+        "update": {
+          "text": {"signal": "title"}
+        }
+      }
+    },
+    {
       "type": "path",
       "from": {"data": "states"},
+      "aria": false,
       "encode": {
         "enter": {
           "fill": {"value": "#dedede"},
@@ -165,6 +247,7 @@
     },
     {
       "type": "symbol",
+      "name": "airport",
       "from": {"data": "airports"},
       "encode": {
         "enter": {
@@ -172,11 +255,17 @@
           "fill": {"value": "steelblue"},
           "fillOpacity": {"value": 0.8},
           "stroke": {"value": "white"},
-          "strokeWidth": {"value": 1.5}
+          "strokeWidth": {"value": 1.5},
+          "ariaRoleDescription": {"value": "airport mark symbol"},
+          "description": {"signal": "datum.name + ' (' + datum.iata + '), ' + datum.city + ', ' + datum.state + ' (' + datum.traffic.flights + ' flights in 2008)'"}
         },
         "update": {
           "x": {"field": "x"},
-          "y": {"field": "y"}
+          "y": {"field": "y"},
+          "tabindex": [
+            {"test": "focusedAirport && focusedAirport.iata !== datum.iata", "value": -1},
+            {"value": 0}
+          ]
         }
       }
     },
@@ -184,6 +273,7 @@
       "type": "path",
       "name": "cell",
       "from": {"data": "airports"},
+      "aria": false,
       "encode": {
         "enter": {
           "fill": {"value": "transparent"},
@@ -199,27 +289,12 @@
       "type": "path",
       "interactive": false,
       "from": {"data": "routes"},
+      "aria": false,
       "encode": {
         "enter": {
           "path": {"field": "path"},
           "stroke": {"value": "black"},
           "strokeOpacity": {"value": 0.35}
-        }
-      }
-    },
-    {
-      "type": "text",
-      "interactive": false,
-      "encode": {
-        "enter": {
-          "x": {"value": 895},
-          "y": {"value": 0},
-          "fill": {"value": "black"},
-          "fontSize": {"value": 20},
-          "align": {"value": "right"}
-        },
-        "update": {
-          "text": {"signal": "title"}
         }
       }
     }

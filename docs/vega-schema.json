@@ -1865,6 +1865,9 @@
         "ariaRoleDescription": {
           "$ref": "#/definitions/stringValue"
         },
+        "tabindex": {
+          "$ref": "#/definitions/numberValue"
+        },
         "clip": {
           "$ref": "#/definitions/booleanValue"
         },

@@ -4,6 +4,13 @@
   "width": 400,
   "height": 200,
   "padding": 5,
+  "config": {
+    "events": {
+      "defaults": {
+        "allow": ["keydown"]
+      }
+    }
+  },
 
   "data": [
     {
@@ -26,8 +33,50 @@
       "name": "tooltip",
       "value": {},
       "on": [
-        {"events": "rect:pointerover", "update": "datum"},
-        {"events": "rect:pointerout",  "update": "{}"}
+        {"events": "@bars:pointerover", "update": "datum"},
+        {"events": "@bars:pointerout",  "update": "{}"}
+      ]
+    },
+    {
+      "name": "focused",
+      "value": {},
+      "on": [
+        {
+          "events": "@bars:focusin",
+          "update": "tooltip !== datum && isNaN(tooltip.amount) ? {} : datum"
+        },
+        {
+          "events": "@bars:focusout",
+          "update": "tooltip !== datum ? {} : {category: tooltip.category}"
+        }
+      ]
+    },
+    {
+      "name": "lastFocused",
+      "value": null,
+      "on": [
+        {
+          "events": "@bars:focusin",
+          "update": "datum"
+        }
+      ]
+    },
+    {
+      "name": "focusPrevious",
+      "on": [
+        {
+         "events": "@bars:keydown![event.key === 'ArrowUp' || event.key === 'ArrowLeft']",
+         "update": "item() && item()._svg && item()._svg.previousElementSibling ? focus(item()._svg.previousElementSibling) : null"
+        }
+      ]
+    },
+    {
+      "name": "focusNext",
+      "on": [
+        {
+         "events": "@bars:keydown![event.key === 'ArrowDown' || event.key === 'ArrowRight']",
+         "update": "item() && item()._svg && item()._svg.nextElementSibling ? focus(item()._svg.nextElementSibling) : null"
+        }
       ]
     }
   ],
@@ -57,19 +106,27 @@
   "marks": [
     {
       "type": "rect",
+      "name": "bars",
       "from": {"data":"table"},
       "encode": {
         "enter": {
           "x": {"scale": "xscale", "field": "category"},
           "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "amount"},
-          "y2": {"scale": "yscale", "value": 0}
+          "y2": {"scale": "yscale", "value": 0},
+          "ariaRole": {"value": "graphics-symbol"},
+          "ariaRoleDescription": {"value": "bar"},
+          "description": {"signal": "datum.category + ': ' + datum.amount"},
         },
         "update": {
-          "fill": {"value": "steelblue"}
-        },
-        "hover": {
-          "fill": {"value": "red"}
+          "fill": [
+            {"test": "(focused === datum && !tooltip.category) || tooltip === datum", "value": "red"},
+            {"value": "steelblue"}
+          ],
+          "tabindex": [
+            {"test": "lastFocused === null || lastFocused === datum", "value": 0},
+            {"value": -1}
+          ]
         }
       }
     },
@@ -82,11 +139,11 @@
           "fill": {"value": "#333"}
         },
         "update": {
-          "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
-          "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
-          "text": {"signal": "tooltip.amount"},
+          "x": {"scale": "xscale", "signal": "tooltip.category || focused.category", "band": 0.5},
+          "y": {"scale": "yscale", "signal": "tooltip.amount || focused.amount", "offset": -2},
+          "text": {"signal": "tooltip.amount || focused.amount"},
           "fillOpacity": [
-            {"test": "datum === tooltip", "value": 0},
+            {"test": "isNaN(tooltip.amount) || isNaN(focused.amount)", "value": 0},
             {"value": 1}
           ]
         }

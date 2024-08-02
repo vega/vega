@@ -11834,8 +11834,9 @@
   // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight', 'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant',
   // font
-  'description', 'aria', 'ariaRole', 'ariaRoleDescription' // aria
-  ];
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription',
+  // aria
+  'tabindex'];
   function sceneToJSON(scene, indent) {
     return JSON.stringify(scene, keys$1, indent);
   }
@@ -11894,7 +11895,8 @@
       marktype: def.marktype,
       name: def.name || undefined,
       role: def.role || undefined,
-      zindex: def.zindex || 0
+      zindex: def.zindex || 0,
+      tabindex: def.tabindex
     };
 
     // add accessibility properties if defined
@@ -12358,6 +12360,8 @@
       return this._load('loadImage', uri);
     }
   }
+  const FocusInEvent = 'focusin';
+  const FocusOutEvent = 'focusout';
   const KeyDownEvent = 'keydown';
   const KeyPressEvent = 'keypress';
   const KeyUpEvent = 'keyup';
@@ -12381,7 +12385,7 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const Events = [FocusInEvent, FocusOutEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
   const TooltipHideEvent = MouseOutEvent;
   const HrefEvent = ClickEvent;
@@ -12766,10 +12770,12 @@
   const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
   const GRAPHICS_OBJECT = 'graphics-object';
   const GRAPHICS_SYMBOL = 'graphics-symbol';
-  const bundle = (role, roledesc, label) => ({
+  const TABINDEX = 'tabindex';
+  const bundle = (role, roledesc, label, tabindex) => ({
     [ARIA_ROLE]: role,
     [ARIA_ROLEDESCRIPTION]: roledesc,
-    [ARIA_LABEL]: label || undefined
+    [ARIA_LABEL]: label || undefined,
+    [TABINDEX]: isNaN(tabindex) ? undefined : tabindex
   });
 
   // these roles are covered by related roles
@@ -12800,7 +12806,8 @@
   const AriaEncode = {
     ariaRole: ARIA_ROLE,
     ariaRoleDescription: ARIA_ROLEDESCRIPTION,
-    description: ARIA_LABEL
+    description: ARIA_LABEL,
+    tabindex: TABINDEX
   };
   function ariaItemAttributes(emit, item) {
     const hide = item.aria === false;
@@ -12814,6 +12821,7 @@
       emit(ARIA_LABEL, item.description);
       emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
       emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
+      emit(TABINDEX, item.tabindex);
     }
   }
   function ariaMarkAttributes(mark) {
@@ -12824,13 +12832,13 @@
   function ariaMark(mark) {
     const type = mark.marktype;
     const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
-    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description);
+    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description, mark.tabindex);
   }
   function ariaGuide(mark, opt) {
     try {
       const item = mark.items[0],
         caption = opt.caption || (() => '');
-      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item));
+      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), item.tabindex);
     } catch (err) {
       return null;
     }
@@ -23624,7 +23632,7 @@
     lassoPath,
     intersectLasso
   };
-  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'],
+  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'],
     // event functions
     eventPrefix = 'event.vega.',
     // event function prefix
@@ -24504,13 +24512,19 @@
       }
       return p;
     }
+    function focus(element) {
+      if (element && typeof element.focus === 'function') {
+        element.focus();
+      }
+    }
     return {
       view: constant$1(view),
       item: constant$1(item || {}),
       group: group,
       xy: xy,
       x: item => xy(item)[0],
-      y: item => xy(item)[1]
+      y: item => xy(item)[1],
+      focus: focus
     };
   }
   const VIEW$1 = 'view',
@@ -27221,7 +27235,8 @@
       role: spec.role || getRole(spec),
       zindex: +spec.zindex || undefined,
       aria: spec.aria,
-      description: spec.description
+      description: spec.description,
+      tabindex: isNaN(spec.tabindex) ? undefined : +spec.tabindex
     };
   }
   function interactive(spec, scope) {
