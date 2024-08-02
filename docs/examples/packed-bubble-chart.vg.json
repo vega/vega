@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "description": "Warming Stripes Chart. Originally designed by Ed Hawkins.",
+  "description": "A packed bubble chart.",
   "usermeta": {
     "author": "David Bacci",
     "github": "https://github.com/PBI-David/Deneb-Showcase"
