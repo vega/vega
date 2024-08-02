@@ -49,9 +49,8 @@
   "scales": [
     {
       "name": "size",
-      "type": "sqrt",
       "domain": {"data": "table", "field": "amount"},
-      "range": [0, 5000]
+      "range": [0, 10000]
     },
     {
       "name": "color",
@@ -72,7 +71,7 @@
           "yfocus": {"signal": "cy"}
         },
         "update": {
-          "size": {"signal": "pow(2 * datum.amount, 2)", "scale": "size"},
+          "size": {"signal": "datum.amount", "scale": "size"},
           "stroke": {"value": "white"},
           "strokeWidth": {"value": 1},
           "tooltip": {"signal": "datum"}
@@ -87,7 +86,7 @@
             {
               "force": "collide",
               "iterations": 2,
-              "radius": {"expr": "sqrt(datum.size) / 2"}
+              "radius": {"expr": "sqrt(datum.size)/2"}
             },
             {"force": "center", "x": {"signal": "cx"}, "y": {"signal": "cy"}},
             {"force": "x", "x": "xfocus", "strength": {"signal": "gravityX"}},
