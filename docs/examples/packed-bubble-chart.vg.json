@@ -1,5 +1,10 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Warming Stripes Chart. Originally designed by Ed Hawkins.",
+  "usermeta": {
+    "author": "David Bacci",
+    "github": "https://github.com/PBI-David/Deneb-Showcase"
+  },
   "width": 800,
   "height": 500,
   "padding": {"left": 5, "right": 5, "top": 20, "bottom": 0},
@@ -44,8 +49,9 @@
   "scales": [
     {
       "name": "size",
+      "type": "sqrt",
       "domain": {"data": "table", "field": "amount"},
-      "range": [100, 3000]
+      "range": [0, 5000]
     },
     {
       "name": "color",
