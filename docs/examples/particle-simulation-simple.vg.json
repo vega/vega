@@ -1,0 +1,130 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A simple particle simulation that makes use of the cross transform",
+  "usermeta": {
+    "author": "David Bacci",
+    "github": "https://github.com/PBI-David/Deneb-Showcase"
+  },
+  "width": 1000,
+  "height": 800,
+  "padding": 0,
+  "autosize": "none",
+  "signals": [
+    {"name": "particleCount", "value": 100},
+    {"name": "connectionDistance", "value": 100},
+    {
+      "name": "run",
+      "value": true,
+      "on": [{"events": "dblclick", "update": "!run"}]
+    },
+    {
+      "name": "counter",
+      "init": "now()",
+      "on": [
+        {
+          "events": {"type": "timer", "throttle": 17},
+          "update": "run?now()  :counter"
+        }
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "particles",
+      "transform": [
+        {
+          "type": "sequence",
+          "start": 1,
+          "stop": {"signal": "particleCount"},
+          "as": "id"
+        },
+        {"type": "formula", "as": "radius", "expr": "floor(random()*12+2)"},
+        {
+          "type": "formula",
+          "as": "size",
+          "expr": "datum.radius*datum.radius*4"
+        },
+        {
+          "type": "formula",
+          "as": "x",
+          "expr": "datum.radius + (random()*(width- datum.radius*2))"
+        },
+        {
+          "type": "formula",
+          "as": "y",
+          "expr": "datum.radius + (random()*(height- datum.radius*2))"
+        },
+        {"type": "formula", "as": "vx", "expr": "random()*1-0.5"},
+        {
+          "type": "formula",
+          "as": "vx",
+          "expr": "(counter-counter)+datum.x>width-datum.radius || datum.x<datum.radius? datum.vx*-1:datum.vx"
+        },
+        {"type": "formula", "as": "x", "expr": "datum.x +datum.vx"},
+        {"type": "formula", "as": "vy", "expr": "random()*1-0.5"},
+        {
+          "type": "formula",
+          "as": "vy",
+          "expr": "(counter-counter)+datum.y>height-datum.radius || datum.y<datum.radius? datum.vy*-1:datum.vy"
+        },
+        {"type": "formula", "as": "y", "expr": "datum.y +datum.vy"}
+      ]
+    },
+    {
+      "name": "connections",
+      "source": "particles",
+      "transform": [
+        {"type": "project", "fields": ["id", "x", "y"]},
+        {"type": "cross", "filter": "datum.a.id < datum.b.id"},
+        {
+          "type": "formula",
+          "as": "distance",
+          "expr": "hypot(datum.a.x -datum.b.x,datum.a.y -datum.b.y)"
+        },
+        {"type": "filter", "expr": "datum.distance < connectionDistance"}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": {"signal": "[0,width+height]"},
+      "range": {"scheme": "plasma"}
+    },
+    {
+      "name": "opacity",
+      "type": "linear",
+      "domain": {"signal": "[0,connectionDistance]"},
+      "range": [1, 0]
+    }
+  ],
+  "marks": [
+    {
+      "type": "rule",
+      "from": {"data": "connections"},
+      "encode": {
+        "update": {
+          "x": {"field": "a.x"},
+          "y": {"field": "a.y"},
+          "x2": {"field": "b.x"},
+          "y2": {"field": "b.y"},
+          "stroke": {"value": "grey"},
+          "strokeOpacity": {"scale": "opacity", "field": "distance"}
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "from": {"data": "particles"},
+      "encode": {
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "size": {"field": "size"},
+          "fill": {"signal": "scale('color', datum.x+datum.y)"}
+        }
+      }
+    }
+  ]
+}
