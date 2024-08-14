@@ -65,6 +65,7 @@ export function ariaItemAttributes(emit, item) {
     }
   } else {
     const type = item.mark.marktype;
+    const interactive = item.mark.interactive;
     emit(
       ARIA_LABEL,
       item.description
@@ -79,7 +80,7 @@ export function ariaItemAttributes(emit, item) {
     );
     emit(
       TABINDEX,
-      item.tabindex
+      interactive ? item.tabindex : undefined
     );
   }
 }
@@ -102,7 +103,7 @@ function ariaMark(mark) {
     recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
     `${type} mark container`,
     mark.description,
-    mark.tabindex
+    mark.interactive ? mark.tabindex : undefined
   );
 }
 
@@ -114,7 +115,7 @@ function ariaGuide(mark, opt) {
       opt.role || GRAPHICS_SYMBOL,
       opt.desc,
       item.description || caption(item),
-      item.tabindex
+      mark.interactive === false ? undefined : item.tabindex
     );
   } catch (err) {
     return null;

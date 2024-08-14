@@ -40,8 +40,7 @@ function createMark(def, group) {
     marktype:    def.marktype,
     name:        def.name || undefined,
     role:        def.role || undefined,
-    zindex:      def.zindex || 0,
-    tabindex:    def.tabindex
+    zindex:      def.zindex || 0
   };
 
   // add accessibility properties if defined
@@ -50,6 +49,9 @@ function createMark(def, group) {
   }
   if (def.description) {
     mark.description = def.description;
+  }
+  if (def.interactive !== false && !isNaN(def.tabindex)) {
+    mark.tabindex = def.tabindex;
   }
 
   return mark;

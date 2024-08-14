@@ -434,9 +434,8 @@
     }
     return [u, v];
   }
-  const hop = Object.prototype.hasOwnProperty;
   function has$1(object, property) {
-    return hop.call(object, property);
+    return Object.hasOwn(object, property);
   }
   const NULL = {};
   function fastmap(input) {
@@ -17384,8 +17383,7 @@
       marktype: def.marktype,
       name: def.name || undefined,
       role: def.role || undefined,
-      zindex: def.zindex || 0,
-      tabindex: def.tabindex
+      zindex: def.zindex || 0
     };
 
     // add accessibility properties if defined
@@ -17394,6 +17392,9 @@
     }
     if (def.description) {
       mark.description = def.description;
+    }
+    if (def.interactive !== false && !isNaN(def.tabindex)) {
+      mark.tabindex = def.tabindex;
     }
     return mark;
   }
@@ -18310,7 +18311,7 @@
       emit(ARIA_LABEL, item.description);
       emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
       emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
-      emit(TABINDEX, item.tabindex);
+      emit(TABINDEX, item.mark.interactive === false ? undefined : item.tabindex);
     }
   }
   function ariaMarkAttributes(mark) {
@@ -18321,13 +18322,13 @@
   function ariaMark(mark) {
     const type = mark.marktype;
     const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
-    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description, mark.tabindex);
+    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description, mark.interactive ? mark.tabindex : undefined);
   }
   function ariaGuide(mark, opt) {
     try {
       const item = mark.items[0],
         caption = opt.caption || (() => '');
-      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), item.tabindex);
+      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), !mark.interactive || !item.interactive ? undefined : item.tabindex);
     } catch (err) {
       return null;
     }

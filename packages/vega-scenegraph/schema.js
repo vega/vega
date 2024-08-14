@@ -171,7 +171,8 @@ const MARK_BASE = {
       'type': 'array',
       'items': { '$ref': '#/definitions/item-' }
     },
-    'zindex': { 'type': 'number' }
+    'zindex': { 'type': 'number' },
+    'tabindex': { 'type': 'number' }
   },
   'required': [ 'marktype' ]
 };
