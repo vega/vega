@@ -13,9 +13,30 @@ function formatTooltip(value) {
 }
 
 function formatObject(obj) {
-  return Object.keys(obj).map(key => {
+  var kv_list = [];
+  var sort_tooltip = undefined
+  Object.keys(obj).forEach(key => {
+    // Handle sort placeholder.
+    if (key === "tooltip_sort_placeholder") {
+      sort_tooltip = obj[key];
+      return;
+    }
+
     const v = obj[key];
-    return key + ': ' + (isArray(v) ? formatArray(v) : formatValue(v));
+    // Hide undefined values, to be consistent with vega-tooltip's behaviors.
+    if (v !== undefined) {
+      const kv = [key, v];
+      kv_list.push(kv)
+    }
+  })
+  // Sort tooltip if specified.
+  if (sort_tooltip !== undefined) {
+    const order = sort_tooltip === "0" ? 1 : -1; // order = 1: ascending, order = -1: descending
+    kv_list = kv_list.sort((n1,n2) => order * (n1[1] - n2[1])); // Sort by values.
+  }
+  //kv_list.push(key + ': ' + (isArray(v) ? formatArray(v) : formatValue(v)));
+  return kv_list.map(kv => {
+    return kv[0] + ': ' + (isArray(kv[1]) ? formatArray(kv[1]) : formatValue(kv[1]));
   }).join('\n');
 }
 
