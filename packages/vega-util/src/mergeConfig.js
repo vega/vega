@@ -29,7 +29,8 @@ export function mergeConfig(...configs) {
 export function writeConfig(output, key, value, recurse) {
   if (!isLegalKey(key)) return;
 
-  let k, o;
+  let k;
+  let o;
   if (isObject(value) && !isArray(value)) {
     o = isObject(output[key]) ? output[key] : (output[key] = {});
     for (k in value) {
@@ -47,7 +48,8 @@ export function writeConfig(output, key, value, recurse) {
 function mergeNamed(a, b) {
   if (a == null) return b;
 
-  const map = {}, out = [];
+  const map = {};
+  const out = [];
 
   function add(_) {
     if (!map[_.name]) {
