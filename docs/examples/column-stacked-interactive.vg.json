@@ -1,0 +1,357 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Major Trophies for some English teams",
+  "width": 714,
+  "height": 476,
+  "padding": 5,
+  "config": {
+    "range": {
+      "category":
+      [
+        "#90ed7d",
+        "#434348",
+        "#7cb5ec"
+      ]
+    },
+    "events": {
+      "defaults": {
+        "allow": ["keydown"]
+      }
+    }
+  },
+  "title": {
+    "text": "Major Trophies for some English teams",
+    "orient": "top",
+    "align": "left",
+    "anchor": "start",
+    "offset": 20,
+    "fontSize": 16
+  },
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"team": "Arsenal", "trophies": 0, "contest": "CL"},
+        {"team": "Arsenal", "trophies": 14, "contest": "FA Cup"},
+        {"team": "Arsenal", "trophies": 3, "contest": "BPL"},
+        {"team": "Chelsea", "trophies": 2, "contest": "CL"},
+        {"team": "Chelsea", "trophies": 8, "contest": "FA Cup"},
+        {"team": "Chelsea", "trophies": 5, "contest": "BPL"},
+        {"team": "Liverpool", "trophies": 6, "contest": "CL"},
+        {"team": "Liverpool", "trophies": 8, "contest": "FA Cup"},
+        {"team": "Liverpool", "trophies": 1, "contest": "BPL"},
+        {"team": "Manchester United", "trophies": 3, "contest": "CL"},
+        {"team": "Manchester United", "trophies": 12, "contest": "FA Cup"},
+        {"team": "Manchester United", "trophies": 13, "contest": "BPL"}
+      ],
+      "transform": [
+        {"type": "stack", "groupby": ["team"], "field": "trophies"}
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "navigateBy",
+      "value": "team",
+      "description": "Select the navigation mode",
+      "bind": {
+        "input": "select",
+        "options": ["team", "contest"]
+      },
+      "on": [
+        {
+          "events": "@column:keydown![event.key === 'Enter' || event.key === ' ']",
+          "update": "navigateBy === 'team' ? 'contest' : 'team'"
+        },
+        {
+          "events": "@bar:keydown![event.key === 'Escape']",
+          "update": "navigateBy === 'contest' ? 'team' : 'contest'"
+        }
+      ]
+    },
+    {
+      "name": "focused",
+      "value": {},
+      "on": [
+        {
+          "events": "@column:focusin, @bar:focusin",
+          "update": "{team: datum.team, contest: datum.contest, itemLookup: item()}"
+        }
+      ]
+    },
+    {
+      "name": "focusManager",
+      "on": [
+        {
+         "events": "@column:keydown![event.key === 'ArrowRight']",
+          "update": "focus( indexof(group('column').mark.items, item()) < length(group('column').mark.items) - 1 ? group('column').mark.items[indexof(group('column').mark.items, item()) + 1] : group('column').mark.items[0] )"
+        },
+        {
+          "events": "@column:keydown![event.key === 'ArrowLeft']",
+          "update": "focus( indexof(group('column').mark.items, item()) > 0 ? group('column').mark.items[indexof(group('column').mark.items, item()) - 1] : peek(group('column').mark.items) )"
+        },
+        {
+          "events": "@column:keydown![event.key === 'Enter' || event.key === ' ']",
+          "update": "focus( peek(item().items[0].items) )"
+        },
+        {
+          "events": "@bar:keydown![event.key === 'Escape']",
+          "update": "focus(group('column'))"
+        },
+        {
+          "events": "@bar:focusin",
+          "update": "navigateBy === 'team' && group('column') && focus(group('column'))"
+        },
+        {
+        "events": "@bar:keydown![event.key === 'ArrowUp']",
+        "update": "focus( indexof(group('bar').mark.items, item()) < length(group('bar').mark.items) - 1 ? group('bar').mark.items[indexof(group('bar').mark.items, item()) + 1] : group('bar').mark.items[0] )"
+        },
+        {
+          "events": "@bar:keydown![event.key === 'ArrowDown']",
+          "update": "focus( indexof(group('bar').mark.items, item()) > 0 ? group('bar').mark.items[indexof(group('bar').mark.items, item()) - 1] : peek(group('bar').mark.items) )"
+        },
+        {
+          "events": "@bar:keydown![event.key === 'ArrowLeft']",
+          "update": "focus( indexof(group('column').mark.items, group('column')) > 0 ? group('column').mark.items[indexof(group('column').mark.items, group('column')) - 1].items[0].items[indexof(group('bar').mark.items, item())] : peek(group('column').mark.items).items[0].items[indexof(group('bar').mark.items, item())] )"
+        },
+        {
+          "events": "@bar:keydown![event.key === 'ArrowRight']",
+          "update": "focus( indexof(group('column').mark.items, group('column')) < length(group('column').mark.items) - 1 ? group('column').mark.items[indexof(group('column').mark.items, group('column')) + 1].items[0].items[indexof(group('bar').mark.items, item())] : group('column').mark.items[0].items[0].items[indexof(group('bar').mark.items, item())] )"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "domain": {"data": "table", "field": "team"},
+      "padding": 0.25
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "table", "field": "y1"},
+      "domainMax": 30
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": {"data": "table", "field": "contest"}
+    }
+  ],
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "xscale",
+      "title": "Teams",
+      "tickColor": "#ccc",
+      "titleColor": "#676767",
+      "labelColor": "#676767",
+      "zindex": 1
+    },
+    {
+      "grid": true,
+      "gridColor": "#ccc",
+      "orient": "left",
+      "scale": "y",
+      "title": "Count trophies",
+      "tickColor": "#ccc",
+      "titleColor": "#676767",
+      "labelColor": "#676767",
+      "tickCount": 6,
+      "tickMinStep": 5,
+      "zindex": 1
+    }
+  ],
+  "legends": [
+    {
+      "orient": "top-left",
+      "fill": "color",
+      "offset": 15,
+      "padding": 4,
+      "zindex": 1,
+      "direction": "horizontal",
+      "values": ["BPL", "FA Cup", "CL"],
+      "strokeColor": "#ccc",
+      "fillColor": "#fff"
+    }
+  ],
+  "marks": [
+    {
+      "name": "column",
+      "type": "group",
+      "encode": {
+        "enter": {
+          "ariaRole": {"value": "graphics-object"},
+          "ariaRoleDescription": {"value": "stacked bar"},
+          "description": {
+            "signal": "'team: ' + datum.team + ', total trophies: ' + datum.trophies_total + ', contains ' + datum.contests_total + ' contests'"
+          }
+        },
+        "update": {
+          "tabindex": [
+            {"test": "navigateBy === 'team' && (!focused.team || (focused.team === datum.team && !focused.contest))", "value": 0},
+            {"test": "navigateBy === 'team' && focused.team", "value": -1},
+            {"value": -1}
+          ],
+          "zindex": [
+            {"test": "focused.team && focused.team === datum.team", "value": 2},
+            {"value": 1}
+          ]
+        }
+      },
+      "from": {
+        "facet": {
+          "name": "table_team",
+          "data": "table",
+          "groupby": ["team"],
+          "aggregate":
+          {
+            "fields": ["trophies", "contest"],
+            "ops": ["sum", "count"],
+            "as": ["trophies_total", "contests_total"]
+          }
+        }
+      },
+      "data": [
+        {
+          "name": "trophies_total",
+          "source": "table_team",
+          "transform": [
+            {
+              "type": "aggregate",
+              "groupby": ["team"],
+              "fields": ["trophies"],
+              "ops": ["sum"],
+              "as": ["trophies_total"]
+            }
+          ]
+        }
+      ],
+      "zindex": 1,
+      "marks": [
+        {
+          "name": "bar",
+          "type": "rect",
+          "from": {"data": "table_team"},
+          "zindex": 1,
+          "encode": {
+            "enter": {
+              "x": {"scale": "xscale", "field": "team", "offset": 1},
+              "width": {"scale": "xscale", "band": 1, "offset": -1},
+              "y": {"scale": "y", "field": "y0"},
+              "y2": [
+                {"test": "datum.trophies === 0", "scale": "y", "field": "y1", "offset": -1},
+                {"scale": "y", "field": "y1"}
+              ],
+              "fill": [
+                {"test": "datum.trophies === 0", "value": "transparent"},
+                {"scale": "color", "field": "contest"}
+              ],
+              "ariaRole": {"value": "graphics-symbol"},
+              "ariaRoleDescription": {"value": "bar"},
+              "description": {
+                "signal": "'team: ' + datum.team + ', contest: ' + datum.contest + ', trophies: ' + datum.trophies"
+              },
+              "tooltip": {
+                "signal": "{'contest': datum.contest, 'team': datum.team, 'trophies': datum.trophies}"
+              }
+            },
+            "update": {
+              "fillOpacity": {"value": 1},
+              "tabindex": [
+                {"test": "navigateBy === 'contest' && (!focused.team || (focused.team === datum.team && focused.contest === datum.contest))", "value": 0},
+                {"test": "navigateBy === 'contest'", "value": -1},
+                {"value": -1}
+              ],
+              "zindex": [
+                {"test": "focused.contest && focused.contest === datum.contest", "value": 2},
+                {"value": 1}
+              ]
+            },
+            "hover": {"fillOpacity": {"value": 0.75}}
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "bar"},
+          "aria": false,
+          "interactive": false,
+          "zindex": 2,
+          "encode": {
+            "update": {
+              "y": {"signal": "datum.y"},
+              "dy": [
+                {"test": "datum.datum.trophies === 0", "signal": "datum.y2 - datum.y"},
+                {"signal": "(datum.y2 - datum.y)/2 + 1"}
+              ],
+              "x": {"signal": "datum.x + datum.width/2"},
+              "align": {"value": "center"},
+              "baseline": [
+                {"test": "datum.datum.trophies === 0", "value": "bottom"},
+                {"value": "middle"}
+              ],
+              "fill": {"value": "transparent"},
+              "stroke": {"value": "white"},
+              "strokeWidth": {"value": 2},
+              "strokeJoin": {"value": "round"},
+              "fontWeight": {"value": "bold"},
+              "text": {"field": "datum.trophies"}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {"data": "bar"},
+          "aria": false,
+          "interactive": false,
+          "zindex": 2,
+          "encode": {
+            "update": {
+              "y": {"signal": "datum.y"},
+              "dy": [
+                {"test": "datum.datum.trophies === 0", "signal": "datum.y2 - datum.y"},
+                {"signal": "(datum.y2 - datum.y)/2 + 1"}
+              ],
+              "x": {"signal": "datum.x + datum.width/2"},
+              "width": {"signal": "datum.width"},
+              "align": {"value": "center"},
+              "baseline": [
+                {"test": "datum.datum.trophies === 0", "value": "bottom"},
+                {"value": "middle"}
+              ],
+              "fill": {"value": "black"},
+              "fontWeight": {"value": "bold"},
+              "text": {"field": "datum.trophies"}
+            }
+          }
+        },
+        {
+          "type": "text",
+          "from": {
+            "data": "trophies_total"
+          },
+          "aria": false,
+          "interactive": false,
+          "encode": {
+            "enter": {
+              "x": {"scale": "xscale", "field": "team", "band": 0.5},
+              "y": {"scale": "y", "field": "trophies_total", "offset": -2},
+              "text": {"field": "trophies_total"},
+              "align": {"value": "center"},
+              "baseline": {"value": "bottom"},
+              "fontWeight": {"value": "bold"},
+              "fill": {"value": "#676767"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -74,8 +74,10 @@ function extension(view, item, point) {
   }
 
   function focus(element) {
-    if (element && typeof element.focus === 'function') {
-      element.focus();
+    if (!element) return;
+    const focusable = element._svg || element;
+    if (focusable && typeof focusable.focus === 'function') {
+      focusable.focus();
     }
   }
 

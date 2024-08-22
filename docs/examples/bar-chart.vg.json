@@ -66,7 +66,7 @@
       "on": [
         {
          "events": "@bars:keydown![event.key === 'ArrowUp' || event.key === 'ArrowLeft']",
-         "update": "item() && item()._svg && item()._svg.previousElementSibling ? focus(item()._svg.previousElementSibling) : null"
+         "update": "focus( indexof(group('bars').mark.items, item()) > 0 ? group('bars').mark.items[indexof(group('bars').mark.items, item()) - 1] : peek(group('bars').mark.items) )"
         }
       ]
     },
@@ -75,7 +75,7 @@
       "on": [
         {
          "events": "@bars:keydown![event.key === 'ArrowDown' || event.key === 'ArrowRight']",
-         "update": "item() && item()._svg && item()._svg.nextElementSibling ? focus(item()._svg.nextElementSibling) : null"
+         "update": "focus( indexof(group('bars').mark.items, item()) < length(group('bars').mark.items) - 1 ? group('bars').mark.items[indexof(group('bars').mark.items, item()) + 1] : group('bars').mark.items[0] )"
         }
       ]
     }

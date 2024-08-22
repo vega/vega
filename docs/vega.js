@@ -18308,10 +18308,11 @@
       }
     } else {
       const type = item.mark.marktype;
+      const interactive = item.mark.interactive;
       emit(ARIA_LABEL, item.description);
       emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
       emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
-      emit(TABINDEX, item.mark.interactive === false ? undefined : item.tabindex);
+      emit(TABINDEX, interactive ? item.tabindex : undefined);
     }
   }
   function ariaMarkAttributes(mark) {
@@ -18328,7 +18329,7 @@
     try {
       const item = mark.items[0],
         caption = opt.caption || (() => '');
-      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), !mark.interactive || !item.interactive ? undefined : item.tabindex);
+      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), mark.interactive === false ? undefined : item.tabindex);
     } catch (err) {
       return null;
     }
@@ -36478,8 +36479,10 @@
       return p;
     }
     function focus(element) {
-      if (element && typeof element.focus === 'function') {
-        element.focus();
+      if (!element) return;
+      const focusable = element._svg || element;
+      if (focusable && typeof focusable.focus === 'function') {
+        focusable.focus();
       }
     }
     return {

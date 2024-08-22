@@ -61,7 +61,7 @@
       "on": [
         {
           "events": "@cell:click",
-          "update": "item()._svg && item()._svg.parentElement && item()._svg.parentElement.previousElementSibling ? focus(item()._svg.parentElement.previousElementSibling.children[indexof(item().mark.items, item())]) : null"
+          "update": "focus(group().items[indexof(group().items, group('cell').mark) - 1].items[indexof(group('cell').mark.items, item())])"
         }
       ]
     },
@@ -83,7 +83,7 @@
       "on": [
         {
          "events": "@airport:keydown![event.key === 'ArrowUp' || event.key === 'ArrowLeft']",
-         "update": "item()._svg && item()._svg.previousElementSibling ? focus(item()._svg.previousElementSibling) : null"
+         "update": "focus( indexof(group('airport').mark.items, item()) > 0 ? group('airport').mark.items[indexof(group('airport').mark.items, item()) - 1] : null )"
         }
       ]
     },
@@ -92,7 +92,7 @@
       "on": [
         {
          "events": "@airport:keydown![event.key === 'ArrowDown' || event.key === 'ArrowRight']",
-         "update": "item() && item()._svg && item()._svg.nextElementSibling ? focus(item()._svg.nextElementSibling) : null"
+         "update": "focus( indexof(group('airport').mark.items, item()) < length(group('airport').mark.items) - 1 ? group('airport').mark.items[indexof(group('airport').mark.items, item()) + 1] : null )"
         }
       ]
     },

@@ -740,8 +740,8 @@ Returns the angle of the line connecting the first two touch points of a multi-t
 Returns true if the given scenegraph _item_ is a descendant of the group mark in which the event handler was defined, false otherwise.
 
 <a name="focus" href="#focus">#</a>
-<b>focus</b>(<i>SVGElement</i>) (SVG output only)<br/>
-Sets focus to a node within the scenegraph when rendered using SVG output. This is used when defining keyboard navigation for elements within the scenegraph.
+<b>focus</b>(<i>item</i>) (SVG output only)<br/>
+Sets focus to a _item_ within the scenegraph when rendered using SVG output. This is used when defining keyboard navigation for elements within the scenegraph.
 
 [Back to Top](#reference)
 
