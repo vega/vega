@@ -172,7 +172,8 @@ const MARK_BASE = {
       'items': { '$ref': '#/definitions/item-' }
     },
     'zindex': { 'type': 'number' },
-    'tabindex': { 'type': 'number' }
+    'tabindex': { 'type': 'number' },
+    'outline': { 'type': 'string' }
   },
   'required': [ 'marktype' ]
 };
@@ -223,7 +224,8 @@ const ITEM_BASE = {
     'aria': { 'type': 'boolean' },
     'ariaRole': { 'type': 'string' },
     'ariaRoleDescription': { 'type': 'string' },
-    'tabindex': { 'type': 'number' }
+    'tabindex': { 'type': 'number' },
+    'outline': { 'type': 'string' }
   }
 };
 

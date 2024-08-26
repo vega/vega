@@ -12964,7 +12964,8 @@
     opacity: 'opacity'
   };
   const stylesCss = {
-    blend: 'mix-blend-mode'
+    blend: 'mix-blend-mode',
+    outline: 'outline'
   };
 
   // ensure miter limit default is consistent with canvas (#2498)
@@ -13495,6 +13496,9 @@
         setAttribute(fg, 'pointer-events', value);
         setAttribute(bg, 'pointer-events', value);
         values.events = value;
+      }
+      if (item.outline) {
+        setStyle(el, 'outline', item.outline);
       }
       if (item.strokeForeground && item.stroke) {
         const fill = item.fill;
@@ -27240,7 +27244,8 @@
       zindex: +spec.zindex || undefined,
       aria: spec.aria,
       description: spec.description,
-      tabindex: isNaN(spec.tabindex) ? undefined : +spec.tabindex
+      tabindex: isNaN(spec.tabindex) ? undefined : +spec.tabindex,
+      outline: spec.outline
     };
   }
   function interactive(spec, scope) {

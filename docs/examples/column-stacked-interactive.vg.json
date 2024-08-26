@@ -45,7 +45,14 @@
         {"team": "Manchester United", "trophies": 13, "contest": "BPL"}
       ],
       "transform": [
-        {"type": "stack", "groupby": ["team"], "field": "trophies"}
+        {"type": "stack", "groupby": ["team"], "field": "trophies"},
+        {
+          "type": "joinaggregate",
+          "groupby": ["team"],
+          "fields": ["trophies", "contest"],
+          "ops": ["sum", "count"],
+          "as": ["trophies_total", "contests_total"]
+        }
       ]
     }
   ],
@@ -54,10 +61,6 @@
       "name": "navigateBy",
       "value": "team",
       "description": "Select the navigation mode",
-      "bind": {
-        "input": "select",
-        "options": ["team", "contest"]
-      },
       "on": [
         {
           "events": "@column:keydown![event.key === 'Enter' || event.key === ' ']",
@@ -70,12 +73,28 @@
       ]
     },
     {
-      "name": "focused",
+      "name": "lastFocused",
       "value": {},
+      "description": "Sets the lastFocused team and contest, for managing the tabindex for the tabbable element in the scenegraph.",
       "on": [
         {
           "events": "@column:focusin, @bar:focusin",
-          "update": "{team: datum.team, contest: datum.contest, itemLookup: item()}"
+          "update": "{team: datum.team, contest: datum.contest}"
+        }
+      ]
+    },
+    {
+      "name": "focusedItem",
+      "value": null,
+      "description": "Sets the focused item(), for display of the focus outline.",
+      "on": [
+        {
+          "events": "@column:focusin, @bar:focusin",
+          "update": "item() ? item() : null"
+        },
+        {
+          "events": "@column:focusout, @bar:focusout",
+          "update": "null"
         }
       ]
     },
@@ -192,18 +211,23 @@
           "ariaRoleDescription": {"value": "stacked bar"},
           "description": {
             "signal": "'team: ' + datum.team + ', total trophies: ' + datum.trophies_total + ', contains ' + datum.contests_total + ' contests'"
-          }
+          },
+          "x": {"scale": "xscale", "field": "team"},
+          "width": {"scale": "xscale", "band": 1},
+          "height": {"signal": "height - scale('y', datum.trophies_total)"},
+          "y": {"scale": "y", "field": "trophies_total"}
         },
         "update": {
           "tabindex": [
-            {"test": "navigateBy === 'team' && (!focused.team || (focused.team === datum.team && !focused.contest))", "value": 0},
-            {"test": "navigateBy === 'team' && focused.team", "value": -1},
+            {"test": "navigateBy === 'team' && (!lastFocused.team || (lastFocused.team === datum.team && !lastFocused.contest))", "value": 0},
+            {"test": "navigateBy === 'team' && lastFocused.team", "value": -1},
             {"value": -1}
           ],
           "zindex": [
-            {"test": "focused.team && focused.team === datum.team", "value": 2},
+            {"test": "lastFocused.team && lastFocused.team === datum.team", "value": 2},
             {"value": 1}
-          ]
+          ],
+          "outline": {"value": "none"}
         }
       },
       "from": {
@@ -243,17 +267,35 @@
           "zindex": 1,
           "encode": {
             "enter": {
-              "x": {"scale": "xscale", "field": "team", "offset": 1},
+              "x": {"value": 0},
               "width": {"scale": "xscale", "band": 1, "offset": -1},
-              "y": {"scale": "y", "field": "y0"},
+              "y": {
+                "scale": "y",
+                "field": "y0",
+                "offset": {"signal": "-scale('y', datum.trophies_total)"}
+              },
               "y2": [
-                {"test": "datum.trophies === 0", "scale": "y", "field": "y1", "offset": -1},
-                {"scale": "y", "field": "y1"}
+                {
+                  "test": "datum.trophies === 0",
+                  "scale": "y",
+                  "field": "y1",
+                  "offset": {"signal": "- scale('y', datum.trophies_total) - 1"}
+                },
+                {
+                  "scale": "y",
+                  "field": "y1",
+                  "offset": {"signal": "-scale('y', datum.trophies_total)"}
+                }
               ],
               "fill": [
                 {"test": "datum.trophies === 0", "value": "transparent"},
                 {"scale": "color", "field": "contest"}
               ],
+              "stroke": [
+                {"test": "datum.trophies === 0", "value": "transparent"},
+                {"value": "#fff"}
+              ],
+              "strokeWidth": {"value": 1},
               "ariaRole": {"value": "graphics-symbol"},
               "ariaRoleDescription": {"value": "bar"},
               "description": {
@@ -266,14 +308,15 @@
             "update": {
               "fillOpacity": {"value": 1},
               "tabindex": [
-                {"test": "navigateBy === 'contest' && (!focused.team || (focused.team === datum.team && focused.contest === datum.contest))", "value": 0},
+                {"test": "navigateBy === 'contest' && (!lastFocused.team || (lastFocused.team === datum.team && lastFocused.contest === datum.contest))", "value": 0},
                 {"test": "navigateBy === 'contest'", "value": -1},
                 {"value": -1}
               ],
               "zindex": [
-                {"test": "focused.contest && focused.contest === datum.contest", "value": 2},
+                {"test": "lastFocused.contest && lastFocused.contest === datum.contest", "value": 2},
                 {"value": 1}
-              ]
+              ],
+              "outline": {"value": "none"}
             },
             "hover": {"fillOpacity": {"value": 0.75}}
           }
@@ -288,10 +331,13 @@
             "update": {
               "y": {"signal": "datum.y"},
               "dy": [
-                {"test": "datum.datum.trophies === 0", "signal": "datum.y2 - datum.y"},
+                {
+                  "test": "datum.datum.trophies === 0",
+                  "signal": "datum.y2 - datum.y"
+                },
                 {"signal": "(datum.y2 - datum.y)/2 + 1"}
               ],
-              "x": {"signal": "datum.x + datum.width/2"},
+              "x": {"scale": "xscale", "band": 0.5},
               "align": {"value": "center"},
               "baseline": [
                 {"test": "datum.datum.trophies === 0", "value": "bottom"},
@@ -316,11 +362,13 @@
             "update": {
               "y": {"signal": "datum.y"},
               "dy": [
-                {"test": "datum.datum.trophies === 0", "signal": "datum.y2 - datum.y"},
+                {
+                  "test": "datum.datum.trophies === 0",
+                  "signal": "datum.y2 - datum.y"
+                },
                 {"signal": "(datum.y2 - datum.y)/2 + 1"}
               ],
-              "x": {"signal": "datum.x + datum.width/2"},
-              "width": {"signal": "datum.width"},
+              "x": {"scale": "xscale", "band": 0.5},
               "align": {"value": "center"},
               "baseline": [
                 {"test": "datum.datum.trophies === 0", "value": "bottom"},
@@ -341,8 +389,8 @@
           "interactive": false,
           "encode": {
             "enter": {
-              "x": {"scale": "xscale", "field": "team", "band": 0.5},
-              "y": {"scale": "y", "field": "trophies_total", "offset": -2},
+              "x": {"scale": "xscale", "band": 0.5},
+              "y": {"value": 0, "offset": -2},
               "text": {"field": "trophies_total"},
               "align": {"value": "center"},
               "baseline": {"value": "bottom"},
@@ -352,6 +400,47 @@
           }
         }
       ]
+    },
+    {
+      "name": "focusOutlineBg",
+      "type": "rect",
+      "aria": false,
+      "interactive": false,
+      "zindex": 2,
+      "encode": {
+        "update": {
+          "x": {"signal": "focusedItem ? focusedItem.mark.group.x + focusedItem.x - 2 : 0"},
+          "width": {"signal": "focusedItem ? focusedItem.width + 3 : 0"},
+          "y": {"signal": "focusedItem ? focusedItem.mark.group.y + focusedItem.y - 2 : 0"},
+          "height": {"signal": "focusedItem ? focusedItem.height + 4 : 0"},
+          "fill": {"value": "transparent"},
+          "stroke": {"value": "#fff"},
+          "strokeWidth": {"value": 5},
+          "strokeOpacity": {"value": 1},
+          "cornerRadius": {"value": 6}
+        }
+      }
+    },
+    {
+      "name": "focusOutlineFg",
+      "type": "rect",
+      "from": {"data": "focusOutlineBg"},
+      "aria": false,
+      "interactive": false,
+      "zindex": 2,
+      "encode": {
+        "update": {
+          "x": {"signal": "datum.x + 1"},
+          "width": {"signal": "datum.width - 2"},
+          "y": {"signal": "datum.y + 1"},
+          "height": {"signal": "datum.height - 2"},
+          "fill": {"signal": "datum.fill"},
+          "stroke": {"value": "#005fcc"},
+          "strokeWidth": {"signal": "datum.strokeWidth - 1"},
+          "strokeOpacity": {"signal": "datum.strokeOpacity"},
+          "cornerRadius": {"signal": "datum.cornerRadius - 1"}
+        }
+      }
     }
   ]
 }

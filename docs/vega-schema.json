@@ -1868,6 +1868,9 @@
         "tabindex": {
           "$ref": "#/definitions/numberValue"
         },
+        "outline": {
+          "$ref": "#/definitions/stringValue"
+        },
         "clip": {
           "$ref": "#/definitions/booleanValue"
         },

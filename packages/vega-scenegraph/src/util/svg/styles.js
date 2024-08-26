@@ -13,7 +13,8 @@ export const stylesAttr = {
 };
 
 export const stylesCss = {
-  blend:            'mix-blend-mode'
+  blend:            'mix-blend-mode',
+  outline:          'outline'
 };
 
 // ensure miter limit default is consistent with canvas (#2498)

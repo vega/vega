@@ -577,6 +577,10 @@ const mark_extras = {
       values.events = value;
     }
 
+    if (item.outline) {
+      setStyle(el, 'outline', item.outline);
+    }
+
     if (item.strokeForeground && item.stroke) {
       const fill = item.fill;
       setAttribute(fg, 'display', null);

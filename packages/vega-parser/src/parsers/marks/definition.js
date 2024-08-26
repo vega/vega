@@ -8,6 +8,7 @@ export default function(spec) {
     zindex:       +spec.zindex || undefined,
     aria:         spec.aria,
     description:  spec.description,
-    tabindex:     isNaN(spec.tabindex) ? undefined : +spec.tabindex
+    tabindex:     isNaN(spec.tabindex) ? undefined : +spec.tabindex,
+    outline:      spec.outline
   };
 }
