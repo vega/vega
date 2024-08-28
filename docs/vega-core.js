@@ -13581,6 +13581,12 @@
 
     // note current value for future comparison
     values[name] = value;
+
+    // prevent the ownerSVGElement from becoming tabbable when
+    // a tabindex is set on an element within the scenegraph
+    if (name === 'tabindex' && !element$1.ownerSVGElement.hasAttribute(name)) {
+      element$1.ownerSVGElement.setAttribute(name, -1);
+    }
   }
   function setStyle(el, name, value) {
     if (value !== values[name]) {

@@ -665,6 +665,12 @@ function emit(name, value, ns) {
 
   // note current value for future comparison
   values[name] = value;
+
+  // prevent the ownerSVGElement from becoming tabbable when
+  // a tabindex is set on an element within the scenegraph
+  if (name === 'tabindex' && !element.ownerSVGElement.hasAttribute(name)) {
+    element.ownerSVGElement.setAttribute(name, -1);
+  }
 }
 
 function setStyle(el, name, value) {
