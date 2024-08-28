@@ -215,7 +215,8 @@
           "x": {"scale": "xscale", "field": "team"},
           "width": {"scale": "xscale", "band": 1},
           "height": {"signal": "height - scale('y', datum.trophies_total)"},
-          "y": {"scale": "y", "field": "trophies_total"}
+          "y": {"scale": "y", "field": "trophies_total"},
+          "outline": {"value": "0"}
         },
         "update": {
           "tabindex": [
@@ -226,8 +227,7 @@
           "zindex": [
             {"test": "lastFocused.team && lastFocused.team === datum.team", "value": 2},
             {"value": 1}
-          ],
-          "outline": {"value": "none"}
+          ]
         }
       },
       "from": {
@@ -303,7 +303,8 @@
               },
               "tooltip": {
                 "signal": "{'contest': datum.contest, 'team': datum.team, 'trophies': datum.trophies}"
-              }
+              },
+              "outline": {"value": "0"}
             },
             "update": {
               "fillOpacity": {"value": 1},
@@ -315,8 +316,7 @@
               "zindex": [
                 {"test": "lastFocused.contest && lastFocused.contest === datum.contest", "value": 2},
                 {"value": 1}
-              ],
-              "outline": {"value": "none"}
+              ]
             },
             "hover": {"fillOpacity": {"value": 0.75}}
           }

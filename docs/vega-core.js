@@ -13497,9 +13497,6 @@
         setAttribute(bg, 'pointer-events', value);
         values.events = value;
       }
-      if (item.outline) {
-        setStyle(el, 'outline', item.outline);
-      }
       if (item.strokeForeground && item.stroke) {
         const fill = item.fill;
         setAttribute(fg, 'display', null);
@@ -13519,6 +13516,9 @@
       } else {
         // ensure foreground is ignored
         setAttribute(fg, 'display', 'none');
+      }
+      if (item.outline) {
+        setStyle(el, 'outline', item.outline);
       }
     },
     image(mdef, el, item) {
@@ -13585,7 +13585,8 @@
     // prevent the ownerSVGElement from becoming tabbable when
     // a tabindex is set on an element within the scenegraph
     if (name === 'tabindex' && !element$1.ownerSVGElement.hasAttribute(name)) {
-      element$1.ownerSVGElement.setAttribute(name, -1);
+      setAttribute(element$1.ownerSVGElement, name, -1);
+      setStyle(element$1.ownerSVGElement, 'outline', 'none');
     }
   }
   function setStyle(el, name, value) {

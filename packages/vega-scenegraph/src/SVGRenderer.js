@@ -669,7 +669,8 @@ function emit(name, value, ns) {
   // prevent the ownerSVGElement from becoming tabbable when
   // a tabindex is set on an element within the scenegraph
   if (name === 'tabindex' && !element.ownerSVGElement.hasAttribute(name)) {
-    element.ownerSVGElement.setAttribute(name, -1);
+    setAttribute(element.ownerSVGElement, name, -1);
+    setStyle(element.ownerSVGElement, 'outline', 'none');
   }
 }
 
