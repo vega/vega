@@ -415,7 +415,10 @@
           "height": {"signal": "focusedItem ? focusedItem.height + 4 : 0"},
           "fill": {"value": "transparent"},
           "stroke": {"value": "#fff"},
-          "strokeWidth": {"value": 5},
+          "strokeWidth": [
+            {"test": "isValid(focusedItem)", "value": 5},
+            {"value": 0}
+          ],
           "strokeOpacity": {"value": 1},
           "cornerRadius": {"value": 6}
         }
@@ -436,7 +439,7 @@
           "height": {"signal": "datum.height - 2"},
           "fill": {"signal": "datum.fill"},
           "stroke": {"value": "#005fcc"},
-          "strokeWidth": {"signal": "datum.strokeWidth - 1"},
+          "strokeWidth": {"signal": "max(datum.strokeWidth - 1, 0)"},
           "strokeOpacity": {"signal": "datum.strokeOpacity"},
           "cornerRadius": {"signal": "datum.cornerRadius - 1"}
         }
