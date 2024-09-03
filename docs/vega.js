@@ -18191,7 +18191,7 @@
         if (item && item.href) h.handleHref(evt, item, item.href);
       });
       h._tooltipHandler = listener(h, (evt, item) => {
-        h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
+        h.handleTooltip(evt, item, evt.type !== TooltipHideEvent && evt.type !== FocusOutEvent);
       });
     }
     initialize(el, origin, obj) {
@@ -18200,12 +18200,16 @@
         svg.removeEventListener(HrefEvent, this._hrefHandler);
         svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
         svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
+        svg.removeEventListener(FocusInEvent, this._tooltipHandler);
+        svg.removeEventListener(FocusOutEvent, this._tooltipHandler);
       }
       this._svg = svg = el && domFind(el, 'svg');
       if (svg) {
         svg.addEventListener(HrefEvent, this._hrefHandler);
         svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
         svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
+        svg.addEventListener(FocusInEvent, this._tooltipHandler);
+        svg.addEventListener(FocusOutEvent, this._tooltipHandler);
       }
       return super.initialize(el, origin, obj);
     }
@@ -18986,6 +18990,9 @@
         setAttribute(bg, 'pointer-events', value);
         values.events = value;
       }
+      if (item.outline) {
+        setStyle(el, 'outline', item.outline);
+      }
       if (item.strokeForeground && item.stroke) {
         const fill = item.fill;
         setAttribute(fg, 'display', null);
@@ -19005,9 +19012,6 @@
       } else {
         // ensure foreground is ignored
         setAttribute(fg, 'display', 'none');
-      }
-      if (item.outline) {
-        setStyle(el, 'outline', item.outline);
       }
     },
     image(mdef, el, item) {

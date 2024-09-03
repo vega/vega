@@ -208,7 +208,7 @@ export type EventListenerHandler = (event: ScenegraphEvent, item?: Item | null) 
 export type SignalListenerHandler = (name: string, value: SignalValue) => void;
 export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
-export type TooltipHandler = (handler: any, event: MouseEvent, item: Item, value: any) => void;
+export type TooltipHandler = (handler: any, event: MouseEvent | FocusEvent, item: Item, value: any) => void;
 
 export interface Item<T = any> {
   /**
