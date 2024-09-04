@@ -25,7 +25,8 @@
     "frame": "group",
     "anchor": "start",
     "fontSize": 16,
-    "lineHeight": 1.2
+    "lineHeight": 1.2,
+    "offset": 5
   },
   "data": [
     {
@@ -252,7 +253,7 @@
         "textFill": "#000",
         "fontFamily": "sans-serif",
         "baseline": "top",
-        "fontSize": 11,
+        "fontSize": 12,
         "lineHeight": 1.2,
         "cornerRadius": 6
       }
@@ -791,15 +792,15 @@
         "update": {
           "x": [
             {
-              "test": "tooltipItem && tooltipItem.mark.group.x + tooltipItem.x + tooltipItem.width * 1.5 + tooltipStyles.fontSize * 2 > width",
-              "signal": "tooltipItem.mark.group.x + tooltipItem.x - tooltipItem.width/2 - tooltipStyles.fontSize * 2"
+              "test": "tooltipItem && tooltipItem.mark.group.x + tooltipItem.x + tooltipItem.width * 1.5 + tooltipStyles.fontSize > width",
+              "signal": "tooltipItem.mark.group.x + tooltipItem.x - tooltipItem.width/2 - tooltipStyles.fontSize * 4"
             },
             {
-              "signal": "tooltipItem ? tooltipItem.mark.group.x + tooltipItem.x + tooltipItem.width/2 + tooltipStyles.fontSize * 2 : 0"
+              "signal": "tooltipItem ? tooltipItem.mark.group.x + tooltipItem.x + tooltipItem.width/2 + tooltipStyles.fontSize : 0"
             }
           ],
           "y": {
-            "signal": "tooltipItem ? tooltipItem.mark.group.y + tooltipItem.y + tooltipItem.height/2 - (tooltipStyles.fontSize * tooltipStyles.lineHeight * 3) : 0"
+            "signal": "tooltipItem ? max(0, tooltipItem.mark.group.y + tooltipItem.y + (navigateBy === 'contest' ? tooltipItem.height/2 : -tooltipStyles.fontSize) - (tooltipStyles.fontSize * tooltipStyles.lineHeight * 4)) : 0"
           }
         }
       },
@@ -807,8 +808,8 @@
         {
           "type": "text",
           "name": "tooltipText",
-          "role": "tooltip",
           "zindex": 2,
+          "aria": false,
           "interactive": false,
           "encode": {
             "enter": {
@@ -826,6 +827,12 @@
               },
               "lineBreak": {
                 "value": "/"
+              },
+              "dx": {
+                "signal": "tooltipStyles.fontSize"
+              },
+              "dy": {
+                "signal": "tooltipStyles.fontSize"
               }
             },
             "update": {
@@ -882,32 +889,20 @@
                 "signal": "tooltipStyles.cornerRadius"
               },
               "x": {
-                "field": "bounds.x1",
-                "round": true,
-                "offset": {
-                  "signal": "-tooltipStyles.fontSize"
-                }
+                "signal": "datum.bounds.x1 - tooltipStyles.fontSize",
+                "round": true
               },
               "x2": {
-                "field": "bounds.x2",
-                "round": true,
-                "offset": {
-                  "signal": "tooltipStyles.fontSize"
-                }
+                "signal": "datum.bounds.x2 + tooltipStyles.fontSize",
+                "round": true
               },
               "y": {
-                "field": "bounds.y1",
-                "round": true,
-                "offset": {
-                  "signal": "-tooltipStyles.fontSize"
-                }
+                "signal": "datum.bounds.y1 - tooltipStyles.fontSize",
+                "round": true
               },
               "y2": {
-                "field": "bounds.y2",
-                "round": true,
-                "offset": {
-                  "signal": "tooltipStyles.fontSize"
-                }
+                "signal": "datum.bounds.y2 + tooltipStyles.fontSize",
+                "round": true
               }
             }
           }
