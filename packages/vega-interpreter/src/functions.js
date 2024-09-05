@@ -1,4 +1,4 @@
-import { ascending } from "vega-util";
+import { ascending } from 'vega-util';
 
 const slice = Array.prototype.slice;
 
