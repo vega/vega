@@ -102,7 +102,7 @@ inherits(Bin, Transform, {
     };
 
     f.start = start;
-    f.stop = bins.stop;
+    f.stop = stop;
     f.step = step;
 
     return this.value = accessor(

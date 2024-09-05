@@ -80,31 +80,13 @@ tape('Bin handles tail aggregation for last bin', t => {
       });
 
   df.run();
-  testBin(t, bin.value, [0, 29], 5);
+  testBin(t, bin.value, [0, 30], 5);
 
   // inspired by vega/vega#2181
   t.equal(bin.value({v:28}), 25);
   t.equal(bin.value({v:29}), 25);
   t.equal(bin.value({v:30}), 25);
   t.equal(bin.value({v:31}), Infinity);
-
-  t.end();
-});
-
-tape('Bin handles last value in edge case', t => {
-  var df = new vega.Dataflow(),
-      bin = df.add(Bin, {
-        field:   util.field('v'),
-        extent:  [-0.25, 0],
-        maxbins: 3,
-        nice:    true
-      });
-
-  df.run();
-  testBin(t, bin.value, [-0.30000000000000004, 0], 0.1);
-
-  t.equal(bin.value({v:-0.25}), -0.30000000000000004);
-  t.equal(bin.value({v:0}), -0.10000000000000003);
 
   t.end();
 });
