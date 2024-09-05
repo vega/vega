@@ -62,8 +62,8 @@ inherits(Bin, Transform, {
           t[b0] = v;
           // maximum bin value (exclusive)
           // use convoluted math for better floating point agreement
-          // see https://github.com/vega/vega/issues/830
-          // infinite values propagate through this formula! #2227
+          // see vega/vega#830
+          // infinite values propagate through this formula! vega/vega#2227
           t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
         }
       : t => t[b0] = bins(t)

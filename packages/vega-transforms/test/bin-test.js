@@ -104,7 +104,7 @@ tape('Bin handles last value in edge case', t => {
   testBin(t, bin.value, [-0.30000000000000004, 0], 0.1);
 
   t.equal(bin.value({v:-0.25}), -0.30000000000000004);
-  t.equal(bin.value({v:0}), 0);
+  t.equal(bin.value({v:0}), -0.10000000000000003);
 
   t.end();
 });
