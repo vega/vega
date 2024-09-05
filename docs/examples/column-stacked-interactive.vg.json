@@ -335,8 +335,8 @@
   ],
   "marks": [
     {
-      "name": "column",
       "type": "group",
+      "name": "column",
       "encode": {
         "enter": {
           "ariaRole": {
@@ -712,9 +712,6 @@
       "zindex": 2,
       "encode": {
         "update": {
-          "visibility": {
-            "signal": "focusedItem ? 'visible' : 'hidden'"
-          },
           "x": {
             "signal": "focusedItem ? focusedItem.mark.group.x + focusedItem.x - focusOutlineStyles.strokeOffset : 0"
           },
@@ -755,9 +752,6 @@
       "zindex": 2,
       "encode": {
         "update": {
-          "visibility": {
-            "signal": "datum.visibility"
-          },
           "x": {
             "signal": "datum.x + 1"
           },
