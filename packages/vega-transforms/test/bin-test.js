@@ -91,6 +91,24 @@ tape('Bin handles tail aggregation for last bin', t => {
   t.end();
 });
 
+tape('Bin handles last value in edge case', t => {
+  var df = new vega.Dataflow(),
+      bin = df.add(Bin, {
+        field:   util.field('v'),
+        extent:  [-0.25, 0],
+        maxbins: 3,
+        nice:    true
+      });
+
+  df.run();
+  testBin(t, bin.value, [-0.30000000000000004, 0], 0.1);
+
+  t.equal(bin.value({v:-0.25}), -0.30000000000000004);
+  t.equal(bin.value({v:0}), 0);
+
+  t.end();
+});
+
 tape('Bin supports point output', t => {
   const data = [{v: 5.5}];
 

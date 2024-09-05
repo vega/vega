@@ -79,9 +79,9 @@ tape('bin generates boundaries with minimum step size', t => {
 
 tape('bin generates boundaries around the data', t => {
   const b = bin({extent:[-0.25, 0], maxbins:3});
-  t.equal(b.start, -0.3);
+  t.equal(b.start, -0.30000000000000004);  // floating point issues can come from this
   t.equal(b.stop, 0);
-  t.equal(b.step, 0.3);
+  t.equal(b.step, 0.1);
 
   t.end();
 });
