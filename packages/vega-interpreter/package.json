@@ -22,6 +22,9 @@
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
+  "dependencies": {
+    "vega-util": "^1.17.2"
+  },
   "devDependencies": {
     "vega": "*"
   }
