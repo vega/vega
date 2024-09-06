@@ -88,6 +88,8 @@ Scope.prototype = Subscope.prototype = {
     this.finish();
     return {
       description: this.description,
+      ariaRole:    this.ariaRole,
+      ariaRoleDescription: this.ariaRoleDescription,
       operators:   this.operators,
       streams:     this.streams,
       updates:     this.updates,

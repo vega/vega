@@ -96,6 +96,12 @@ export class View {
   description(s: string): this;
   description(): string;
 
+  ariaRole(s: string): this;
+  ariaRole(): string;
+
+  ariaRoleDescription(s: string): this;
+  ariaRoleDescription(): string;
+
   background(s: Color): this;
   background(): Color;
 
@@ -208,7 +214,12 @@ export type EventListenerHandler = (event: ScenegraphEvent, item?: Item | null) 
 export type SignalListenerHandler = (name: string, value: SignalValue) => void;
 export type DataListenerHandler = (name: string, value: any) => void;
 export type ResizeHandler = (width: number, height: number) => void;
-export type TooltipHandler = (handler: any, event: MouseEvent | FocusEvent, item: Item, value: any) => void;
+export type TooltipHandler = (
+  handler: any,
+  event: MouseEvent | FocusEvent,
+  item: Item,
+  value: any
+) => void;
 
 export interface Item<T = any> {
   /**

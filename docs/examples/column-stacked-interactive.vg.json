@@ -1,5 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "ariaRole": "application",
+  "ariaRoleDescription": "interactive stacked bar chart",
   "description": "Major Trophies for some English teams",
   "width": 714,
   "height": 476,

@@ -24349,8 +24349,8 @@
   function initializeAria(view) {
     const el = view.container();
     if (el) {
-      el.setAttribute('role', 'graphics-document');
-      el.setAttribute('aria-roleDescription', 'visualization');
+      ariaRole(el, view.ariaRole());
+      ariaRoleDescription(el, view.ariaRoleDescription());
       ariaLabel(el, view.description());
     }
   }
@@ -24358,6 +24358,16 @@
   // update aria-label if we have a DOM container element
   function ariaLabel(el, desc) {
     if (el) desc == null ? el.removeAttribute('aria-label') : el.setAttribute('aria-label', desc);
+  }
+
+  // update role if we have a DOM container element
+  function ariaRole(el, desc) {
+    if (el) desc == null ? el.setAttribute('role', 'graphics-document') : el.setAttribute('role', desc + ' graphics-document');
+  }
+
+  // update aria-roledescription if we have a DOM container element
+  function ariaRoleDescription(el, desc) {
+    if (el) desc == null ? el.setAttribute('aria-roledescription', 'visualization') : el.setAttribute('aria-roledescription', desc);
   }
   function background(view) {
     // respond to background signal
@@ -25386,6 +25396,12 @@
     // initialize cursor
     cursor(view);
 
+    // initialize aria role for the view
+    view.ariaRole(spec.ariaRole);
+
+    // initialize aria-roledescription for the view
+    view.ariaRoleDescription(spec.ariaRoleDescription);
+
     // initialize view description
     view.description(spec.description);
 
@@ -25457,6 +25473,22 @@
         return this;
       }
       return this._desc;
+    },
+    ariaRole(text) {
+      if (arguments.length) {
+        const desc = text != null ? text + '' : null;
+        if (desc !== this._ariaRole) ariaRole(this._el, this._ariaRole = desc);
+        return this;
+      }
+      return this._ariaRole;
+    },
+    ariaRoleDescription(text) {
+      if (arguments.length) {
+        const desc = text != null ? text + '' : null;
+        if (desc !== this._ariaRoleDescription) ariaRoleDescription(this._el, this._ariaRoleDescription = desc);
+        return this;
+      }
+      return this._ariaRoleDescription;
     },
     container() {
       return this._el;
@@ -28857,6 +28889,8 @@
 
     // assign description, event, legend, and locale configuration
     scope.description = spec.description || config.description;
+    scope.ariaRole = spec.ariaRole || config.ariaRole;
+    scope.ariaRoleDescription = spec.ariaRoleDescription || config.ariaRoleDescription;
     scope.eventConfig = config.events;
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
     scope.locale = config.locale;
@@ -29009,6 +29043,8 @@
       this.finish();
       return {
         description: this.description,
+        ariaRole: this.ariaRole,
+        ariaRoleDescription: this.ariaRoleDescription,
         operators: this.operators,
         streams: this.streams,
         updates: this.updates,

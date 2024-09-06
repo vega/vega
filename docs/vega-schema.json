@@ -16310,6 +16310,12 @@
         "config": {
           "type": "object"
         },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
+        },
         "description": {
           "type": "string"
         },
