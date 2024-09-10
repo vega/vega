@@ -22,6 +22,7 @@ export const GuideTitleStyle = 'guide-title';
 export const GroupTitleStyle = 'group-title';
 export const GroupSubtitleStyle = 'group-subtitle';
 
+/** All values of LegendType */
 export const Symbols = 'symbol';
 export const Gradient = 'gradient';
 export const Discrete = 'discrete';
