@@ -527,6 +527,9 @@ function bind(item, el, sibling, tag, svg) {
         const cg = domCreate(doc, 'g', svgns);
         node.appendChild(cg);
         cg.__data__ = item;
+        if (item.outline) {
+          setStyle(cg, 'outline', item.outline);
+        }
 
         const fg = domCreate(doc, 'path', svgns);
         node.appendChild(fg);

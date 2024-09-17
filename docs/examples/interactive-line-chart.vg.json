@@ -1,0 +1,494 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An interactive and keyboard accessible line chart example.",
+  "width": 540,
+  "height": 200,
+  "padding": 20,
+  "config": {
+    "range": {
+      "category": [
+        "#1F77B4",
+        "#E8740D",
+        "#2CA02C",
+        "#D62728",
+        "#9467BD",
+        "#8C564B",
+        "#D670B7",
+        "#98991C",
+        "#14A4B3"
+      ]
+    },
+    "events": {
+      "defaults": {
+        "allow": [
+          "keydown"
+        ]
+      }
+    }
+  },
+
+  "signals": [
+    {
+      "name": "interpolate",
+      "value": "linear",
+      "bind": {
+        "input": "select",
+        "options": [
+          "basis",
+          "cardinal",
+          "catmull-rom",
+          "linear",
+          "monotone",
+          "natural",
+          "step",
+          "step-after",
+          "step-before"
+        ]
+      }
+    },
+    {
+      "name": "navigationMode",
+      "value": "line",
+      "on": [
+        {
+          "events": "@line:focusin",
+          "update": "'line'"
+        },
+        {
+          "events": "@point:focusin",
+          "update": "'point'"
+        }
+      ]
+    },
+    {
+      "name": "lastFocused",
+      "value": null,
+      "description": "Sets the lastFocused datum, for managing the tabindex for the tabbable element in the scenegraph.",
+      "on": [
+        {
+          "events": "@line:focusin, @point:focusin",
+          "update": "item() ? item() : null"
+        }
+      ]
+    },
+    {
+      "name": "focusedItem",
+      "value": null,
+      "description": "Sets the focused item(), for display and positioning of the focus outline.",
+      "on": [
+        {
+          "events": "@line:focusin, @point:focusin",
+          "update": "item() ? item() : null"
+        },
+        {
+          "events": "@line:focusout, @point:focusout",
+          "update": "null"
+        }
+      ]
+    },
+    {
+      "name": "tooltipItem",
+      "value": null,
+      "description": "Sets the focused or hovered item(), for display and positioning of a tooltip.",
+      "on": [
+        {
+          "events": "@point:focusin",
+          "update": "item() ? item() : null"
+        },
+        {
+          "events": "@point:focusout",
+          "update": "null"
+        }
+      ]
+    },
+    {
+      "name": "focusManager",
+      "description": "Manages the focus state of the scenegraph in response to keyboard events.",
+      "on": [
+        {
+          "description": "Focuses the previous line in the scenegraph.",
+          "events": "@line:keydown![event.key === 'ArrowUp'], @point:keydown![event.key === 'ArrowUp']",
+          "update": "focus( indexof(group('lines').mark.items, item().mark.group) > 0 ? (navigationMode === 'line' ? group('lines').mark.items[ indexof(group('lines').mark.items, item().mark.group) - 1 ].items[2].items[0] : group('lines').mark.items[ indexof(group('lines').mark.items, item().mark.group) - 1 ].items[3].items[ indexof(item().mark.items, item()) ] ) : (navigationMode === 'line' ? group('lines').mark.items[ length( group('lines').mark.items ) - 1 ].items[2].items[0] : group('lines').mark.items[ length( group('lines').mark.items ) - 1 ].items[3].items[ indexof(item().mark.items, item()) ] ) )"
+        },
+        {
+          "description": "Focuses the next line in the scenegraph.",
+          "events": "@line:keydown![event.key === 'ArrowDown'], @point:keydown![event.key === 'ArrowDown']",
+          "update": "focus( indexof(group('lines').mark.items, item().mark.group) < length( group('lines').mark.items ) - 1 ? (navigationMode === 'line' ? group('lines').mark.items[indexof(group('lines').mark.items, item().mark.group) + 1].items[2].items[0] : group('lines').mark.items[indexof(group('lines').mark.items, item().mark.group) + 1].items[3].items[ indexof(item().mark.items, item()) ] ): (navigationMode === 'line' ? group('lines').mark.items[0].items[2].items[0] : group('lines').mark.items[0].items[3].items[ indexof(item().mark.items, item()) ] ) )"
+        },
+        {
+          "description": "Focuses the first point in current line within the scenegraph.",
+          "events": "@line:keydown![event.key === 'ArrowRight' || event.key === 'Enter' || event.key === ' ']",
+          "update": "navigationMode === 'line' ? focus( group('line').mark.group.items[3].items[0] ) : null"
+        },
+        {
+          "description": "Focuses the last point in current line within the scenegraph.",
+          "events": "@line:keydown![event.key === 'ArrowLeft']",
+          "update": "navigationMode === 'line' ? focus( group('line').mark.group.items[3].items[ length(group('line').mark.group.items[3].items) - 1 ] ) : null"
+        },
+        {
+          "description": "Focuses the next point in current line within the scenegraph.",
+          "events": "@point:keydown![event.key === 'ArrowRight']",
+          "update": "navigationMode === 'point' ? focus( indexof(item().mark.items, item()) < length(item().mark.items) - 1 ? item().mark.items[ indexof(item().mark.items, item()) + 1 ] : item().mark.items[0] ) : null"
+        },
+        {
+          "description": "Focuses the previous point in current line within the scenegraph.",
+          "events": "@point:keydown![event.key === 'ArrowLeft']",
+          "update": "navigationMode === 'point' ? focus( indexof(item().mark.items, item()) > 0 ? item().mark.items[ indexof(item().mark.items, item()) - 1 ] : item().mark.items[ length( item().mark.items ) - 1 ] ) : null"
+        },
+        {
+          "description": "Focuses the previous point in current line within the scenegraph.",
+          "events": "@point:keydown![event.key === 'Escape']",
+          "update": "navigationMode === 'point' ? focus( group('line').items[2].items[0] ) : null"
+        }
+      ]
+    },
+    {
+      "name": "tooltipStyles",
+      "description": "Tooltip container styles",
+      "value": {
+        "strokeColor": "#bbb",
+        "strokeWidth": 0.5,
+        "fill": "#fff",
+        "textFill": "#000",
+        "fontFamily": "sans-serif",
+        "baseline": "top",
+        "fontSize": 12,
+        "lineHeight": 1.2,
+        "cornerRadius": 6
+      }
+    }
+  ],
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"x": 0, "y": 28, "c":0}, {"x": 0, "y": 20, "c":1},
+        {"x": 1, "y": 43, "c":0}, {"x": 1, "y": 35, "c":1},
+        {"x": 2, "y": 81, "c":0}, {"x": 2, "y": 10, "c":1},
+        {"x": 3, "y": 19, "c":0}, {"x": 3, "y": 15, "c":1},
+        {"x": 4, "y": 52, "c":0}, {"x": 4, "y": 48, "c":1},
+        {"x": 5, "y": 24, "c":0}, {"x": 5, "y": 28, "c":1},
+        {"x": 6, "y": 87, "c":0}, {"x": 6, "y": 66, "c":1},
+        {"x": 7, "y": 17, "c":0}, {"x": 7, "y": 27, "c":1},
+        {"x": 8, "y": 68, "c":0}, {"x": 8, "y": 16, "c":1},
+        {"x": 9, "y": 49, "c":0}, {"x": 9, "y": 25, "c":1}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "point",
+      "range": "width",
+      "domain": {"data": "table", "field": "x"}
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "range": "height",
+      "nice": true,
+      "zero": true,
+      "domain": {"data": "table", "field": "y"}
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "range": "category",
+      "domain": {"data": "table", "field": "c"}
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "x"},
+    {"orient": "left", "scale": "y"}
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "name": "lines",
+      "from": {
+        "facet": {
+          "name": "series",
+          "data": "table",
+          "groupby": "c"
+        }
+      },
+      "encode": {
+        "update": {
+          "zindex": [
+            {"test": "lastFocused && lastFocused.datum.c === datum.c", "value": 1},
+            {"value": 0}
+          ]
+        },
+        "hover": {
+          "zindex": {"value": 1}
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "name": "linefocusOutline",
+          "from": {"data": "series"},
+          "interactive": false,
+          "aria": false,
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "stroke": {"value": "#005fcc"},
+              "strokeWidth": {"value": 0},
+              "strokeJoin": {"value": "round"},
+              "strokeCap": {"value": "round"}
+            },
+            "update": {
+              "interpolate": {"signal": "interpolate"},
+              "strokeWidth": [
+                {"test": "navigationMode === 'line' && focusedItem && focusedItem.datum.c === datum.c", "value": 12},
+                {"value": 0}
+              ]
+            }
+          }
+        },
+        {
+          "type": "line",
+          "name": "linefocusOutlineBg",
+          "from": {"data": "series"},
+          "interactive": false,
+          "aria": false,
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "stroke": {"value": "white"},
+              "strokeWidth": {"value": 6},
+              "strokeJoin": {"value": "round"},
+              "strokeCap": {"value": "round"}
+            }
+            ,
+            "update": {
+              "interpolate": {"signal": "interpolate"},
+              "strokeWidth": [
+                {"test": "navigationMode === 'line' && focusedItem && focusedItem.datum.c === datum.c", "value": 8},
+                {"value": 0}
+              ]
+            }
+          }
+        },
+        {
+          "type": "line",
+          "name": "line",
+          "from": {"data": "series"},
+          "interactive": true,
+          "aria": true,
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "stroke": {"scale": "color", "field": "c"},
+              "strokeWidth": {"value": 2},
+              "strokeJoin": {"value": "round"},
+              "strokeCap": {"value": "round"},
+              "ariaRole": {"value": "graphics-symbol"},
+              "description": {"signal": "datum.c === 0 ? 'A' : 'B'"}
+            },
+            "update": {
+              "interpolate": {"signal": "interpolate"},
+              "strokeOpacity": [
+                {"test": "isValid(focusedItem) && focusedItem.datum.c !== datum.c", "value": 0.33},
+                {"value": 1}
+              ],
+              "tabindex": [
+                {"test": "navigationMode === 'line' && (!isValid(lastFocused) || lastFocused.datum.c === datum.c)", "value": 0},
+                {"value": -1}
+              ],
+              "outline": [
+                {"test": "focusedItem && focusedItem.datum.c === datum.c", "value": "none"},
+                {"value": "transparent"}
+              ],
+              "zindex": [
+                {"test": "focusedItem && focusedItem.datum.c === datum.c", "value": 1},
+                {"value": 0}
+              ]
+            }
+          }
+        },
+        {
+          "type": "symbol",
+          "name": "point",
+          "style": ["point"],
+          "from": {"data": "series"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "fill": {"scale": "color", "field": "c"},
+              "size": {"value": 256},
+              "stroke": {"value": "white"},
+              "strokeWidth": {"value": 2},
+              "ariaRoleDescription": {"value": "point"},
+              "description": {
+                "signal": "'line ' + (datum.c === 0 ? 'A' : 'B') + ', x:' + datum.x + ', y:' + datum.y"
+              }
+            },
+            "update": {
+              "tabindex": [
+                {"test": "navigationMode === 'point' && isValid(lastFocused) && lastFocused.datum === datum", "value": 0},
+                {"value": -1}
+              ],
+              "opacity": [
+                {"test": "navigationMode === 'point' && isValid(focusedItem) && focusedItem.datum === datum", "value": 1},
+                {"value": 0}
+              ],
+              "outline": [
+                {"test": "isValid(focusedItem) && focusedItem.datum === datum", "value": "none"},
+                {"value": "transparent"}
+              ],
+              "tooltip": {"signal": "isValid(tooltipItem) && tooltipItem.datum === datum ? '' : {'line': (datum.c === 0 ? 'A' : 'B' ), 'x': datum.x + ', y: ' + datum.y}"}
+            },
+            "hover": {
+              "opacity": {"value": 1}
+            }
+          }
+        },
+        {
+          "type": "symbol",
+          "name": "pointFocusOutline",
+          "style": ["point"],
+          "from": {"data": "series"},
+          "aria": false,
+          "interactive": false,
+          "encode": {
+            "update": {
+              "fill": {"value": "transparent"},
+              "size": {"value": 384},
+              "stroke": {"value": "#005fcc"},
+              "strokeWidth": {"value": 2},
+              "x": {"scale": "x", "field": "x"},
+              "y": {"scale": "y", "field": "y"},
+              "opacity": [
+                {"test": "navigationMode === 'point' && isValid(focusedItem) && focusedItem.datum === datum", "value": 1},
+                {"value": 0}
+              ]
+            }
+          }
+        },
+        {
+          "type": "group",
+          "name": "tooltipGroup",
+          "aria": false,
+          "interactive": false,
+          "marks": [
+            {
+              "type": "text",
+              "name": "tooltipText",
+              "aria": false,
+              "interactive": false,
+              "zindex": 1,
+              "from": {"data": "point"},
+              "encode": {
+                "enter": {
+                  "fill": {
+                    "signal": "tooltipStyles.textFill"
+                  },
+                  "fontSize": {
+                    "signal": "tooltipStyles.fontSize"
+                  },
+                  "fontFamily": {
+                    "signal": "tooltipStyles.fontFamily"
+                  },
+                  "baseline": {
+                    "signal": "tooltipStyles.baseline"
+                  },
+                  "align": {
+                    "value": "left"
+                  },
+                  "lineBreak": {
+                    "value": "/"
+                  }
+                },
+                "update": {
+                  "text": [
+                    {
+                      "test": "isValid(tooltipItem) && tooltipItem.datum === datum.datum",
+                      "signal": "'line: ' + (datum.datum.c === 0 ? 'A' : 'B') + '/x: ' + datum.datum.x + ', y: ' + datum.datum.y"
+                    },
+                    {"value": ""}
+                  ],
+                  "dx": {
+                    "signal": "-tooltipStyles.fontSize * 2.5"
+                  },
+                  "align": {
+                    "value": "left"
+                  }
+                }
+              },
+              "transform": [
+                {
+                  "type": "label",
+                  "avoidBaseMark": true,
+                  "offset": {"signal": "[tooltipStyles.fontSize * 3, tooltipStyles.fontSize * 3]"},
+                  "padding": {"signal": "tooltipStyles.fontSize"},
+                  "size": {"signal": "[width, height]"}
+                }
+              ]
+            },
+            {
+              "type": "rect",
+              "name": "tooltipRect",
+              "aria": false,
+              "interactive": false,
+              "from": {
+                "data": "tooltipText"
+              },
+              "encode": {
+                "enter": {
+                  "fill": {
+                    "value": "transparent"
+                  },
+                  "stroke": {
+                    "value": "transparent"
+                  },
+                  "strokeWidth": {
+                    "value": 0
+                  },
+                  "cornerRadius": {
+                    "signal": "tooltipStyles.cornerRadius"
+                  }
+                },
+                "update": {
+                  "fill": {
+                    "signal": "isValid(tooltipItem) && datum.text !== '' ? tooltipStyles.fill : 'transparent'"
+                  },
+                  "stroke": {
+                    "signal": "isValid(tooltipItem) && datum.text !== '' ? tooltipStyles.strokeColor : 'transparent'"
+                  },
+                  "strokeWidth": {
+                    "signal": "isValid(tooltipItem) && datum.text !== '' ? tooltipStyles.strokeWidth : 0"
+                  },
+                  "cornerRadius": {
+                    "signal": "tooltipStyles.cornerRadius"
+                  },
+                  "x": {
+                    "signal": "datum.bounds.x1 - tooltipStyles.fontSize * 0.75"
+                  },
+                  "x2": {
+                    "signal": "datum.bounds.x2 + tooltipStyles.fontSize * 0.75"
+                  },
+                  "y": {
+                    "signal": "datum.bounds.y1 - tooltipStyles.fontSize * 0.75"
+                  },
+                  "y2": {
+                    "signal": "datum.bounds.y2 + tooltipStyles.fontSize * 0.75"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

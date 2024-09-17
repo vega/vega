@@ -12047,12 +12047,12 @@
     /**
      * Add an event handler. Subclasses should override this method.
      */
-    on( /*type, handler*/) {}
+    on(/*type, handler*/) {}
 
     /**
      * Remove an event handler. Subclasses should override this method.
      */
-    off( /*type, handler*/) {}
+    off(/*type, handler*/) {}
 
     /**
      * Utility method for finding the array index of an event handler.
@@ -12258,7 +12258,7 @@
      * incremental should implement this method.
      * @param {Item} item - The dirty item whose bounds should be redrawn.
      */
-    dirty( /*item*/) {}
+    dirty(/*item*/) {}
 
     /**
      * Render an input scenegraph, potentially with a set of dirty items.
@@ -12297,7 +12297,7 @@
      * @param {Array} markTypes - Array of the mark types to render.
      *                            If undefined, render all mark types
      */
-    _render( /*scene, markTypes*/
+    _render(/*scene, markTypes*/
     ) {
       // subclasses to override
     }
@@ -13456,6 +13456,9 @@
           const cg = domCreate(doc, 'g', svgns);
           node.appendChild(cg);
           cg.__data__ = item;
+          if (item.outline) {
+            setStyle(cg, 'outline', item.outline);
+          }
           const fg = domCreate(doc, 'path', svgns);
           node.appendChild(fg);
           fg.__data__ = item;

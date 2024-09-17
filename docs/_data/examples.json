@@ -112,6 +112,7 @@
         {"name": "map-with-tooltip"},
         {"name": "pacman"},
         {"name": "platformer"},
-        {"name": "column-stacked-interactive"}
+        {"name": "column-stacked-interactive"},
+        {"name": "interactive-line-chart"}
     ]
 }

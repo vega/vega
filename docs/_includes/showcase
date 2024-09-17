@@ -42,6 +42,7 @@ function addExample(name) {
   'reorderable-matrix',
   'stock-index-chart',
   'airport-connections',
-  'column-stacked-interactive'
+  'column-stacked-interactive',
+  'interactive-line-chart'
 ].forEach(addExample);
 </script>

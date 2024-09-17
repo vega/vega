@@ -356,7 +356,8 @@ const MARKS = {
       'cornerRadiusTopLeft': { 'type': 'number' },
       'cornerRadiusTopRight': { 'type': 'number' },
       'cornerRadiusBottomRight': { 'type': 'number' },
-      'cornerRadiusBottomLeft': { 'type': 'number' }
+      'cornerRadiusBottomLeft': { 'type': 'number' },
+      'outline': { 'type': 'string' }
     }
   },
   'rule': {
