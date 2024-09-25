@@ -149,7 +149,8 @@ import {
   lastindexof,
   replace,
   reverse,
-  slice
+  slice,
+  sort
 } from './functions/sequence';
 
 import {
@@ -234,6 +235,7 @@ export const functionContext = {
   lastindexof,
   replace,
   reverse,
+  sort,
   slice,
   flush,
   lerp,

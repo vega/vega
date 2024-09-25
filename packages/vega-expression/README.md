@@ -128,6 +128,7 @@ This package provides the following constants and functions:
 - [`lastindexof`](https://vega.github.io/vega/docs/expressions/#lastindexof)
 - [`reverse`](https://vega.github.io/vega/docs/expressions/#reverse)
 - [`slice`](https://vega.github.io/vega/docs/expressions/#slice)
+- [`sort`](https://vega.github.io/vega/docs/expressions/#sort)
 
 **String Functions**
 
