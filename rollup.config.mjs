@@ -1,45 +1,46 @@
 /* eslint-disable no-console */
-import { readFile } from 'fs/promises';
-import babel from '@rollup/plugin-babel';
-import json from '@rollup/plugin-json';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
-import bundleSize from 'rollup-plugin-bundle-size';
+import { readFile } from "fs/promises";
+import babel from "@rollup/plugin-babel";
+import json from "@rollup/plugin-json";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
+import bundleSize from "rollup-plugin-bundle-size";
 
-const pkg = JSON.parse(await readFile('./package.json'));
+const pkg = JSON.parse(await readFile("./package.json"));
 
 const d3Deps = [
-  'd3-array',
-  'd3-color',
-  'd3-dispatch',
-  'd3-dsv',
-  'd3-force',
-  'd3-format',
-  'd3-geo',
-  'd3-hierarchy',
-  'd3-interpolate',
-  'd3-path',
-  'd3-scale',
-  'd3-shape',
-  'd3-time',
-  'd3-time-format',
-  'd3-timer',
-  'd3-delaunay'
+  "d3-array",
+  "d3-color",
+  "d3-dispatch",
+  "d3-dsv",
+  "d3-force",
+  "d3-format",
+  "d3-geo",
+  "d3-hierarchy",
+  "d3-interpolate",
+  "d3-path",
+  "d3-scale",
+  "d3-shape",
+  "d3-time",
+  "d3-time-format",
+  "d3-timer",
+  "d3-delaunay",
 ];
 
 const esmDeps = [
   ...d3Deps,
-  'd3-geo-projection',
-  'd3-scale-chromatic'
+  "d3-geo-projection",
+  "d3-scale-chromatic",
+  "time-grain-detector",
 ];
 
 const d3CoreDeps = [
   ...d3Deps,
-  'topojson-client'
+  "topojson-client",
 ];
 
 function onwarn(warning, defaultHandler) {
-  if (warning.code !== 'CIRCULAR_DEPENDENCY') {
+  if (warning.code !== "CIRCULAR_DEPENDENCY") {
     defaultHandler(warning);
   }
 }
@@ -55,8 +56,8 @@ function onwarn(warning, defaultHandler) {
  *  `config-ie`: generate ie 11 compatible bundles in `build-es5`
  *  `config-test`: skip bundles not required for tests
  */
-export default function(commandLineArgs) {
-  const debug = !!commandLineArgs['config-debug'];
+export default function (commandLineArgs) {
+  const debug = !!commandLineArgs["config-debug"];
 
   if (debug) {
     console.info(pkg);
@@ -64,24 +65,26 @@ export default function(commandLineArgs) {
   }
 
   const browser = !!pkg.browser;
-  const bundle = !!commandLineArgs['config-bundle'];
-  const ie = !!commandLineArgs['config-ie'];
-  const test = !!commandLineArgs['config-test'];
+  const bundle = !!commandLineArgs["config-bundle"];
+  const ie = !!commandLineArgs["config-ie"];
+  const test = !!commandLineArgs["config-test"];
 
   const dependencies = Object.keys(pkg.dependencies || {});
   const coreExternal = d3CoreDeps;
-  const vgDependencies = bundle ? [] : dependencies.filter(dep => dep.startsWith('vega-'));
+  const vgDependencies = bundle
+    ? []
+    : dependencies.filter((dep) => dep.startsWith("vega-"));
 
-  const name = commandLineArgs['config-transform'] ? 'vega.transforms' : 'vega';
+  const name = commandLineArgs["config-transform"] ? "vega.transforms" : "vega";
 
   const globals = {};
   for (const dep of [...dependencies, ...d3CoreDeps]) {
-    if (dep.startsWith('d3')) {
-      globals[dep] = 'd3';
-    } else if (dep.startsWith('vega-')) {
-      globals[dep] = 'vega';
-    } else if (dep.startsWith('topojson-')) {
-      globals[dep] = 'topojson';
+    if (dep.startsWith("d3")) {
+      globals[dep] = "d3";
+    } else if (dep.startsWith("vega-")) {
+      globals[dep] = "vega";
+    } else if (dep.startsWith("topojson-")) {
+      globals[dep] = "topojson";
     }
   }
 
@@ -94,16 +97,16 @@ export default function(commandLineArgs) {
       json(),
       babel({
         presets: [[
-          '@babel/preset-env',
+          "@babel/preset-env",
           {
             targets,
-            debug
-          }
+            debug,
+          },
         ]],
-        babelHelpers: 'bundled',
-        extensions: ['.js', '.ts']
+        babelHelpers: "bundled",
+        extensions: [".js", ".ts"],
       }),
-      bundleSize()
+      bundleSize(),
     ];
   }
 
@@ -111,44 +114,47 @@ export default function(commandLineArgs) {
     return nodeResolve({
       browser,
       modulesOnly: true,
-      customResolveOptions: { preserveSymlinks: false }
+      customResolveOptions: { preserveSymlinks: false },
     });
   }
 
   const outputs = [{
-    input: './index.js',
-    external: dependencies.filter(dep => !esmDeps.includes(dep)),
+    input: "./index.js",
+    external: dependencies.filter((dep) => !esmDeps.includes(dep)),
     onwarn,
     output: {
       file: pkg.main,
-      format: pkg.main.includes('-node') ? 'cjs' : 'umd',
+      format: pkg.main.includes("-node") ? "cjs" : "umd",
       globals,
       sourcemap: false,
-      name
+      name,
     },
-    plugins: [nodePlugin(false), ...commonPlugins({node: true})]
+    plugins: [nodePlugin(false), ...commonPlugins({ node: true })],
   }, {
-    input: './index.js',
+    input: "./index.js",
     external: dependencies,
     onwarn,
     output: {
       file: pkg.module,
-      format: 'esm',
-      sourcemap: false
+      format: "esm",
+      sourcemap: false,
     },
-    plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
+    plugins: [
+      nodePlugin(true),
+      ...commonPlugins("defaults, last 1 node versions"),
+    ],
   }];
 
   if (browser) {
     outputs.push(
-      ...outputs.map(out => ({
+      ...outputs.map((out) => ({
         ...out,
-        input: './index.browser.js',
+        input: "./index.browser.js",
         output: {
           ...out.output,
-          file: out.output.file.replace('node', 'browser')
-        }
-      }))
+          file: out.output.file.replace("node", "browser"),
+        },
+      })),
     );
   }
 
@@ -163,83 +169,89 @@ export default function(commandLineArgs) {
     if (bundle) {
       return [{
         ...output,
-        plugins: [terser()]
+        plugins: [terser()],
       }, {
         ...output,
         sourcemap: false,
-        file: output.file.replace('.min', '')
+        file: output.file.replace(".min", ""),
       }];
     } else {
       return {
         ...output,
-        plugins: [terser()]
+        plugins: [terser()],
       };
     }
   }
 
-  if (!commandLineArgs['config-node']) {
+  if (!commandLineArgs["config-node"]) {
     outputs.push({
-      input: browser ? './index.browser.js' : './index.js',
+      input: browser ? "./index.browser.js" : "./index.js",
       external: vgDependencies,
       onwarn,
       output: bundleOutputs({
         file: pkg.unpkg,
-        format: 'umd',
+        format: "umd",
         sourcemap: true,
         globals,
-        name
+        name,
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
+      plugins: [
+        nodePlugin(true),
+        ...commonPlugins("defaults, last 1 node versions"),
+      ],
     });
 
     if (ie) {
       outputs.push({
-        input: browser ? './index.browser.js' : './index.js',
+        input: browser ? "./index.browser.js" : "./index.js",
         external: vgDependencies,
         onwarn,
         output: bundleOutputs({
-          file: pkg.unpkg.replace('build/', 'build-es5/'),
-          format: 'umd',
+          file: pkg.unpkg.replace("build/", "build-es5/"),
+          format: "umd",
           sourcemap: true,
           globals,
-          name
+          name,
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
+        plugins: [nodePlugin(true), ...commonPlugins("defaults, IE 11")],
       });
     }
   }
 
-  if (commandLineArgs['config-core']) {
+  if (commandLineArgs["config-core"]) {
     // Create bundle without d3 (core bundle)
     outputs.push({
-      input: browser ? './index.browser.js' : './index.js',
+      input: browser ? "./index.browser.js" : "./index.js",
       external: [...vgDependencies, ...coreExternal],
       onwarn,
       output: bundleOutputs({
-        file: pkg.unpkg.replace('.min.js', '-core.min.js'),
-        format: 'umd',
+        file: pkg.unpkg.replace(".min.js", "-core.min.js"),
+        format: "umd",
         sourcemap: true,
         globals,
-        name
+        name,
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
+      plugins: [
+        nodePlugin(true),
+        ...commonPlugins("defaults, last 1 node versions"),
+      ],
     });
 
     if (ie) {
       outputs.push({
-        input: browser ? './index.browser.js' : './index.js',
+        input: browser ? "./index.browser.js" : "./index.js",
         external: [...vgDependencies, ...coreExternal],
         onwarn,
         output: bundleOutputs({
           file: pkg.unpkg
-            .replace('.min.js', '-core.min.js')
-            .replace('build/', 'build-es5/'),
-          format: 'umd',
+            .replace(".min.js", "-core.min.js")
+            .replace("build/", "build-es5/"),
+          format: "umd",
           sourcemap: true,
           globals,
-          name
+          name,
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
+        plugins: [nodePlugin(true), ...commonPlugins("defaults, IE 11")],
       });
     }
   }
