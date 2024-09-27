@@ -3,7 +3,7 @@ import Ops from './ops-binary';
 import Unary from './ops-unary';
 import Functions from './functions';
 
-const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
+const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'];
 const DisallowedMethods = new Set([
   Function,
   eval,

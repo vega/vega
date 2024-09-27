@@ -434,9 +434,8 @@
     }
     return [u, v];
   }
-  const hop = Object.prototype.hasOwnProperty;
   function has$1(object, property) {
-    return hop.call(object, property);
+    return Object.hasOwn(object, property);
   }
   const NULL = {};
   function fastmap(input) {
@@ -12767,7 +12766,7 @@
     };
   }
 
-  var constant$2 = (x => () => x);
+  var constant$2 = x => () => x;
 
   function linear$1(a, d) {
     return function (t) {
@@ -17323,8 +17322,9 @@
   // text
   'ellipsis', 'limit', 'lineBreak', 'lineHeight', 'font', 'fontSize', 'fontWeight', 'fontStyle', 'fontVariant',
   // font
-  'description', 'aria', 'ariaRole', 'ariaRoleDescription' // aria
-  ];
+  'description', 'aria', 'ariaRole', 'ariaRoleDescription',
+  // aria
+  'tabindex'];
   function sceneToJSON(scene, indent) {
     return JSON.stringify(scene, keys$1, indent);
   }
@@ -17392,6 +17392,9 @@
     }
     if (def.description) {
       mark.description = def.description;
+    }
+    if (def.interactive !== false && !isNaN(def.tabindex)) {
+      mark.tabindex = def.tabindex;
     }
     return mark;
   }
@@ -17533,12 +17536,12 @@
     /**
      * Add an event handler. Subclasses should override this method.
      */
-    on( /*type, handler*/) {}
+    on(/*type, handler*/) {}
 
     /**
      * Remove an event handler. Subclasses should override this method.
      */
-    off( /*type, handler*/) {}
+    off(/*type, handler*/) {}
 
     /**
      * Utility method for finding the array index of an event handler.
@@ -17744,7 +17747,7 @@
      * incremental should implement this method.
      * @param {Item} item - The dirty item whose bounds should be redrawn.
      */
-    dirty( /*item*/) {}
+    dirty(/*item*/) {}
 
     /**
      * Render an input scenegraph, potentially with a set of dirty items.
@@ -17783,7 +17786,7 @@
      * @param {Array} markTypes - Array of the mark types to render.
      *                            If undefined, render all mark types
      */
-    _render( /*scene, markTypes*/
+    _render(/*scene, markTypes*/
     ) {
       // subclasses to override
     }
@@ -17847,6 +17850,8 @@
       return this._load('loadImage', uri);
     }
   }
+  const FocusInEvent = 'focusin';
+  const FocusOutEvent = 'focusout';
   const KeyDownEvent = 'keydown';
   const KeyPressEvent = 'keypress';
   const KeyUpEvent = 'keyup';
@@ -17870,7 +17875,7 @@
   const TouchStartEvent = 'touchstart';
   const TouchMoveEvent = 'touchmove';
   const TouchEndEvent = 'touchend';
-  const Events = [KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
+  const Events = [FocusInEvent, FocusOutEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, DragEnterEvent, DragLeaveEvent, DragOverEvent, PointerDownEvent, PointerUpEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, MouseDownEvent, MouseUpEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, ClickEvent, DoubleClickEvent, WheelEvent, MouseWheelEvent, TouchStartEvent, TouchMoveEvent, TouchEndEvent];
   const TooltipShowEvent = PointerMoveEvent;
   const TooltipHideEvent = MouseOutEvent;
   const HrefEvent = ClickEvent;
@@ -18186,7 +18191,7 @@
         if (item && item.href) h.handleHref(evt, item, item.href);
       });
       h._tooltipHandler = listener(h, (evt, item) => {
-        h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
+        h.handleTooltip(evt, item, evt.type !== TooltipHideEvent && evt.type !== FocusOutEvent);
       });
     }
     initialize(el, origin, obj) {
@@ -18195,12 +18200,16 @@
         svg.removeEventListener(HrefEvent, this._hrefHandler);
         svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
         svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
+        svg.removeEventListener(FocusInEvent, this._tooltipHandler);
+        svg.removeEventListener(FocusOutEvent, this._tooltipHandler);
       }
       this._svg = svg = el && domFind(el, 'svg');
       if (svg) {
         svg.addEventListener(HrefEvent, this._hrefHandler);
         svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
         svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
+        svg.addEventListener(FocusInEvent, this._tooltipHandler);
+        svg.addEventListener(FocusOutEvent, this._tooltipHandler);
       }
       return super.initialize(el, origin, obj);
     }
@@ -18255,10 +18264,12 @@
   const ARIA_ROLEDESCRIPTION = 'aria-roledescription';
   const GRAPHICS_OBJECT = 'graphics-object';
   const GRAPHICS_SYMBOL = 'graphics-symbol';
-  const bundle = (role, roledesc, label) => ({
+  const TABINDEX = 'tabindex';
+  const bundle = (role, roledesc, label, tabindex) => ({
     [ARIA_ROLE]: role,
     [ARIA_ROLEDESCRIPTION]: roledesc,
-    [ARIA_LABEL]: label || undefined
+    [ARIA_LABEL]: label || undefined,
+    [TABINDEX]: isNaN(tabindex) ? undefined : tabindex
   });
 
   // these roles are covered by related roles
@@ -18289,7 +18300,8 @@
   const AriaEncode = {
     ariaRole: ARIA_ROLE,
     ariaRoleDescription: ARIA_ROLEDESCRIPTION,
-    description: ARIA_LABEL
+    description: ARIA_LABEL,
+    tabindex: TABINDEX
   };
   function ariaItemAttributes(emit, item) {
     const hide = item.aria === false;
@@ -18300,9 +18312,11 @@
       }
     } else {
       const type = item.mark.marktype;
+      const interactive = item.mark.interactive;
       emit(ARIA_LABEL, item.description);
       emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
       emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
+      emit(TABINDEX, interactive ? item.tabindex : undefined);
     }
   }
   function ariaMarkAttributes(mark) {
@@ -18313,13 +18327,13 @@
   function ariaMark(mark) {
     const type = mark.marktype;
     const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
-    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description);
+    return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description, mark.interactive ? mark.tabindex : undefined);
   }
   function ariaGuide(mark, opt) {
     try {
       const item = mark.items[0],
         caption = opt.caption || (() => '');
-      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item));
+      return bundle(opt.role || GRAPHICS_SYMBOL, opt.desc, item.description || caption(item), mark.interactive === false ? undefined : item.tabindex);
     } catch (err) {
       return null;
     }
@@ -18443,7 +18457,8 @@
     opacity: 'opacity'
   };
   const stylesCss = {
-    blend: 'mix-blend-mode'
+    blend: 'mix-blend-mode',
+    outline: 'outline'
   };
 
   // ensure miter limit default is consistent with canvas (#2498)
@@ -18930,6 +18945,9 @@
           const cg = domCreate(doc, 'g', svgns);
           node.appendChild(cg);
           cg.__data__ = item;
+          if (item.outline) {
+            setStyle(cg, 'outline', item.outline);
+          }
           const fg = domCreate(doc, 'path', svgns);
           node.appendChild(fg);
           fg.__data__ = item;
@@ -18974,6 +18992,9 @@
         setAttribute(fg, 'pointer-events', value);
         setAttribute(bg, 'pointer-events', value);
         values.events = value;
+      }
+      if (item.outline) {
+        setStyle(el, 'outline', item.outline);
       }
       if (item.strokeForeground && item.stroke) {
         const fill = item.fill;
@@ -19056,6 +19077,13 @@
 
     // note current value for future comparison
     values[name] = value;
+
+    // prevent the ownerSVGElement from becoming tabbable when
+    // a tabindex is set on an element within the scenegraph
+    if (name === 'tabindex' && !element$1.ownerSVGElement.hasAttribute(name)) {
+      setAttribute(element$1.ownerSVGElement, name, -1);
+      setStyle(element$1.ownerSVGElement, 'outline', 'none');
+    }
   }
   function setStyle(el, name, value) {
     if (value !== values[name]) {
@@ -22901,7 +22929,7 @@
 
   function clipCircle (radius) {
     var cr = cos$1(radius),
-      delta = 6 * radians,
+      delta = 2 * radians,
       smallRadius = cr > 0,
       notHemisphere = abs$1(cr) > epsilon$3; // TODO optimise for this common case
 
@@ -23371,7 +23399,7 @@
     return graticule.extentMajor([[-180, -90 + epsilon$3], [180, 90 - epsilon$3]]).extentMinor([[-180, -80 - epsilon$3], [180, 80 + epsilon$3]]);
   }
 
-  var identity = (x => x);
+  var identity = x => x;
 
   var areaSum = new Adder(),
     areaRingSum = new Adder(),
@@ -30626,7 +30654,6 @@
     const detleft = (ay - cy) * (bx - cx);
     const detright = (ax - cx) * (by - cy);
     const det = detleft - detright;
-    if (detleft === 0 || detright === 0 || detleft > 0 !== detright > 0) return det;
     const detsum = Math.abs(detleft + detright);
     if (Math.abs(det) >= ccwerrboundA * detsum) return det;
     return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
@@ -30662,7 +30689,7 @@
       this._hullPrev = new Uint32Array(n); // edge to prev edge
       this._hullNext = new Uint32Array(n); // edge to next edge
       this._hullTri = new Uint32Array(n); // edge to adjacent triangle
-      this._hullHash = new Int32Array(this._hashSize).fill(-1); // angular edge hash
+      this._hullHash = new Int32Array(this._hashSize); // angular edge hash
 
       // temporary arrays for sorting points
       this._ids = new Uint32Array(n);
@@ -30695,11 +30722,10 @@
       }
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
-      let minDist = Infinity;
       let i0, i1, i2;
 
       // pick a seed point close to the center
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         const d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist) {
           i0 = i;
@@ -30708,10 +30734,9 @@
       }
       const i0x = coords[2 * i0];
       const i0y = coords[2 * i0 + 1];
-      minDist = Infinity;
 
       // find the point closest to the seed
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         if (i === i0) continue;
         const d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist && d > 0) {
@@ -30745,9 +30770,10 @@
         let j = 0;
         for (let i = 0, d0 = -Infinity; i < n; i++) {
           const id = this._ids[i];
-          if (this._dists[id] > d0) {
+          const d = this._dists[id];
+          if (d > d0) {
             hull[j++] = id;
-            d0 = this._dists[id];
+            d0 = d;
           }
         }
         this.hull = hull.subarray(0, j);
@@ -35590,7 +35616,7 @@
     lassoPath,
     intersectLasso
   };
-  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'],
+  const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'],
     // event functions
     eventPrefix = 'event.vega.',
     // event function prefix
@@ -36290,8 +36316,8 @@
   function initializeAria(view) {
     const el = view.container();
     if (el) {
-      el.setAttribute('role', 'graphics-document');
-      el.setAttribute('aria-roleDescription', 'visualization');
+      ariaRole(el, view.ariaRole());
+      ariaRoleDescription(el, view.ariaRoleDescription());
       ariaLabel(el, view.description());
     }
   }
@@ -36299,6 +36325,16 @@
   // update aria-label if we have a DOM container element
   function ariaLabel(el, desc) {
     if (el) desc == null ? el.removeAttribute('aria-label') : el.setAttribute('aria-label', desc);
+  }
+
+  // update role if we have a DOM container element
+  function ariaRole(el, desc) {
+    if (el) desc == null ? el.setAttribute('role', 'graphics-document') : el.setAttribute('role', desc + ' graphics-document');
+  }
+
+  // update aria-roledescription if we have a DOM container element
+  function ariaRoleDescription(el, desc) {
+    if (el) desc == null ? el.setAttribute('aria-roledescription', 'visualization') : el.setAttribute('aria-roledescription', desc);
   }
   function background(view) {
     // respond to background signal
@@ -36470,13 +36506,21 @@
       }
       return p;
     }
+    function focus(element) {
+      if (!element) return;
+      const focusable = element._svg || element;
+      if (focusable && typeof focusable.focus === 'function') {
+        focusable.focus();
+      }
+    }
     return {
       view: constant$5(view),
       item: constant$5(item || {}),
       group: group,
       xy: xy,
       x: item => xy(item)[0],
-      y: item => xy(item)[1]
+      y: item => xy(item)[1],
+      focus: focus
     };
   }
   const VIEW$1 = 'view',
@@ -37319,6 +37363,12 @@
     // initialize cursor
     cursor(view);
 
+    // initialize aria role for the view
+    view.ariaRole(spec.ariaRole);
+
+    // initialize aria-roledescription for the view
+    view.ariaRoleDescription(spec.ariaRoleDescription);
+
     // initialize view description
     view.description(spec.description);
 
@@ -37390,6 +37440,22 @@
         return this;
       }
       return this._desc;
+    },
+    ariaRole(text) {
+      if (arguments.length) {
+        const desc = text != null ? text + '' : null;
+        if (desc !== this._ariaRole) ariaRole(this._el, this._ariaRole = desc);
+        return this;
+      }
+      return this._ariaRole;
+    },
+    ariaRoleDescription(text) {
+      if (arguments.length) {
+        const desc = text != null ? text + '' : null;
+        if (desc !== this._ariaRoleDescription) ariaRoleDescription(this._el, this._ariaRoleDescription = desc);
+        return this;
+      }
+      return this._ariaRoleDescription;
     },
     container() {
       return this._el;
@@ -39187,7 +39253,9 @@
       role: spec.role || getRole(spec),
       zindex: +spec.zindex || undefined,
       aria: spec.aria,
-      description: spec.description
+      description: spec.description,
+      tabindex: isNaN(spec.tabindex) ? undefined : +spec.tabindex,
+      outline: spec.outline
     };
   }
   function interactive(spec, scope) {
@@ -40788,6 +40856,8 @@
 
     // assign description, event, legend, and locale configuration
     scope.description = spec.description || config.description;
+    scope.ariaRole = spec.ariaRole || config.ariaRole;
+    scope.ariaRoleDescription = spec.ariaRoleDescription || config.ariaRoleDescription;
     scope.eventConfig = config.events;
     scope.legends = scope.objectProperty(config.legend && config.legend.layout);
     scope.locale = config.locale;
@@ -40940,6 +41010,8 @@
       this.finish();
       return {
         description: this.description,
+        ariaRole: this.ariaRole,
+        ariaRoleDescription: this.ariaRoleDescription,
         operators: this.operators,
         streams: this.streams,
         updates: this.updates,

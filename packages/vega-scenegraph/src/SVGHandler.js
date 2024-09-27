@@ -1,6 +1,6 @@
 import Handler from './Handler';
 import {domFind} from './util/dom';
-import {HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
+import {FocusInEvent, FocusOutEvent, HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
 
 export default class SVGHandler extends Handler {
   constructor(loader, tooltip) {
@@ -10,7 +10,7 @@ export default class SVGHandler extends Handler {
       if (item && item.href) h.handleHref(evt, item, item.href);
     });
     h._tooltipHandler = listener(h, (evt, item) => {
-      h.handleTooltip(evt, item, evt.type !== TooltipHideEvent);
+      h.handleTooltip(evt, item, evt.type !== TooltipHideEvent && evt.type !== FocusOutEvent);
     });
   }
 
@@ -20,12 +20,16 @@ export default class SVGHandler extends Handler {
       svg.removeEventListener(HrefEvent, this._hrefHandler);
       svg.removeEventListener(TooltipShowEvent, this._tooltipHandler);
       svg.removeEventListener(TooltipHideEvent, this._tooltipHandler);
+      svg.removeEventListener(FocusInEvent, this._tooltipHandler);
+      svg.removeEventListener(FocusOutEvent, this._tooltipHandler);
     }
     this._svg = svg = el && domFind(el, 'svg');
     if (svg) {
       svg.addEventListener(HrefEvent, this._hrefHandler);
       svg.addEventListener(TooltipShowEvent, this._tooltipHandler);
       svg.addEventListener(TooltipHideEvent, this._tooltipHandler);
+      svg.addEventListener(FocusInEvent, this._tooltipHandler);
+      svg.addEventListener(FocusOutEvent, this._tooltipHandler);
     }
     return super.initialize(el, origin, obj);
   }

@@ -73,12 +73,21 @@ function extension(view, item, point) {
     return p;
   }
 
+  function focus(element) {
+    if (!element) return;
+    const focusable = element._svg || element;
+    if (focusable && typeof focusable.focus === 'function') {
+      focusable.focus();
+    }
+  }
+
   return {
     view:  constant(view),
     item:  constant(item || {}),
     group: group,
     xy:    xy,
     x:     item => xy(item)[0],
-    y:     item => xy(item)[1]
+    y:     item => xy(item)[1],
+    focus: focus
   };
 }

@@ -50,6 +50,9 @@ function createMark(def, group) {
   if (def.description) {
     mark.description = def.description;
   }
+  if (def.interactive !== false && !isNaN(def.tabindex)) {
+    mark.tabindex = def.tabindex;
+  }
 
   return mark;
 }
