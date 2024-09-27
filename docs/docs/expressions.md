@@ -522,6 +522,10 @@ Returns an array containing an arithmetic sequence of numbers. If _step_ is omit
 <b>slice</b>(<i>array</i>, <i>start</i>[, <i>end</i>])<br/>
 Returns a section of _array_ between the _start_ and _end_ indices. If the _end_ argument is negative, it is treated as an offset from the end of the array (_length(array) + end_).
 
+<a name="sort" href="#sort">#</a>
+<b>sort</b>(<i>array</i>)<br/>
+Sorts the array in natural order using [ascending from Vega Utils](https://vega.github.io/vega/docs/api/util/#ascending).
+
 <a name="span" href="#span">#</a>
 <b>span</b>(<i>array</i>)<br/>
 Returns the span of _array_: the difference between the last and first elements, or _array[array.length-1] - array[0]_.

@@ -5,7 +5,8 @@ var tape = require('tape'),
       lastindexof,
       replace,
       reverse,
-      slice
+      slice,
+      sort
     } = require('../');
 
 tape('indexof finds first index', t => {
@@ -49,5 +50,15 @@ tape('join combines elements into a string', t => {
   t.deepEqual(join([1, 2, 3]), [1, 2, 3].join());
   t.deepEqual(join([1, 2, 3], ', '), [1, 2, 3].join(', '));
   t.throws(() => join({join: v => v + 1}, 1));
+  t.end();
+});
+
+tape('sort handles strings, numbers, dates, and missing data in ascending order', t => {
+  t.deepEqual(sort([3, 1, 2]), [1, 2, 3]);
+  t.deepEqual(sort(['c', 'a', 'b']), ['a', 'b', 'c']);
+  t.deepEqual(sort([2, null, 1]), [null, 1, 2]);
+  t.deepEqual(sort([2, undefined, 1]), [1, 2, undefined]);
+  t.deepEqual(sort([1, NaN, 2]), [NaN, 1, 2]);
+  t.deepEqual(sort([new Date('2019-01-01'), new Date('2018-01-01')]), [new Date('2018-01-01'), new Date('2019-01-01')]);
   t.end();
 });
