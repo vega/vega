@@ -7,12 +7,12 @@ const TYPE_ENUM = 'E',
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
     TYPE_RANGE_RE = 'R-RE',
-    TYPE_PRED_LT = 'LT',
-    TYPE_PRED_LTE = 'LTE',
-    TYPE_PRED_GT = 'GT',
-    TYPE_PRED_GTE = 'GTE',
-    TYPE_PRED_VALID = 'VALID',
-    TYPE_PRED_ONE_OF = 'ONE',
+    TYPE_PRED_LT = 'E-LT',
+    TYPE_PRED_LTE = 'E-LTE',
+    TYPE_PRED_GT = 'E-GT',
+    TYPE_PRED_GTE = 'E-GTE',
+    TYPE_PRED_VALID = 'E-VALID',
+    TYPE_PRED_ONE_OF = 'E-ONE',
     UNIT_INDEX = 'index:unit';
 
 // TODO: revisit date coercion?
