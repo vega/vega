@@ -6,9 +6,9 @@
  * If the span exceeds (max - min), the range [min, max] is returned.
  */
 export default function(range, min, max) {
-  let lo = range[0],
-      hi = range[1],
-      span;
+  let lo = range[0];
+  let hi = range[1];
+  let span;
 
   if (hi < lo) {
     span = hi;
