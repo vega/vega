@@ -37,7 +37,7 @@
     "@typescript-eslint/parser": "^6.10.0",
     "ajv": "^8.16.0",
     "ajv-formats": "^2.1.1",
-    "canvas": "^2.11.2",
+    "canvas": "^v3.0.0-rc2",
     "eslint": "^8.53.0",
     "globals": "^15.4.0",
     "jsdom": "^24.1.0",
