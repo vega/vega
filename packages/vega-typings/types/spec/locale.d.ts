@@ -1,4 +1,4 @@
-import { Vector2, Vector7, Vector10, Vector12 } from '.';
+import { Vector10, Vector12, Vector2, Vector7 } from '.';
 
 export interface Locale {
   number?: NumberLocale;

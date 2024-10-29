@@ -48,8 +48,8 @@ function find(s, i, endChar, pushChar, popChar) {
   for (; i < n; ++i) {
     c = s[i];
     if (!count && c === endChar) return i;
-    else if (popChar && popChar.indexOf(c) >= 0) --count;
-    else if (pushChar && pushChar.indexOf(c) >= 0) ++count;
+    else if (popChar && popChar.includes(c)) --count;
+    else if (pushChar && pushChar.includes(c)) ++count;
   }
   return i;
 }

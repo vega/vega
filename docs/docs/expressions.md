@@ -237,6 +237,10 @@ Returns the value of _e_ raised to the provided _exponent_. Same as JavaScript's
 <b>floor</b>(<i>value</i>)<br/>
 Rounds _value_ to the nearest integer of equal or lower value. Same as JavaScript's [`Math.floor`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor).
 
+<a name="hypot" href="#hypot">#</a>
+<b>hypot</b>(<i>value</i>)<br/>
+Returns the square root of the sum of squares of its arguments. Same as JavaScript's [`Math.hypot`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot).
+
 <a name="log" href="#log">#</a>
 <b>log</b>(<i>value</i>)<br/>
 Returns the natural logarithm of _value_. Same as JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log).
@@ -518,6 +522,10 @@ Returns an array containing an arithmetic sequence of numbers. If _step_ is omit
 <b>slice</b>(<i>array</i>, <i>start</i>[, <i>end</i>])<br/>
 Returns a section of _array_ between the _start_ and _end_ indices. If the _end_ argument is negative, it is treated as an offset from the end of the array (_length(array) + end_).
 
+<a name="sort" href="#sort">#</a>
+<b>sort</b>(<i>array</i>)<br/>
+Sorts the array in natural order using [ascending from Vega Utils](https://vega.github.io/vega/docs/api/util/#ascending).
+
 <a name="span" href="#span">#</a>
 <b>span</b>(<i>array</i>)<br/>
 Returns the span of _array_: the difference between the last and first elements, or _array[array.length-1] - array[0]_.
@@ -614,6 +622,7 @@ Formats a (0-6) _weekday_ number as an abbreviated week day name, according to t
 <a name="format" href="#format">#</a>
 <b>format</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a numeric _value_ as a string. The _specifier_ must be a valid [d3-format specifier](https://github.com/d3/d3-format/) (e.g., `format(value, ',.2f')`.
+Null values are formatted as `"null"`. 
 
 <a name="monthFormat" href="#monthFormat">#</a>
 <b>monthFormat</b>(<i>month</i>)<br/>
@@ -630,6 +639,7 @@ Returns a time format specifier string for the given time [_units_](../api/time/
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
+Null values are formatted as `"null"`. 
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -638,6 +648,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
+Null values are formatted as `"null"`. 
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
@@ -836,6 +847,10 @@ Returns the projected planar bounding box (typically in pixels) for the specifie
 <a name="geoCentroid" href="#geoCentroid">#</a>
 <b>geoCentroid</b>(<i>projection</i>, <i>feature</i>[, <i>group</i>])<br/>
 Returns the projected planar centroid (typically in pixels) for the specified GeoJSON _feature_, according to the named _projection_. If the _projection_ argument is `null`, computes the spherical centroid using unprojected longitude, latitude coordinates. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection. Uses d3-geo's [geoCentroid](https://github.com/d3/d3-geo#geoCentroid) and [path.centroid](https://github.com/d3/d3-geo#path_centroid) methods.
+
+<a name="geoScale" href="#geoScale">#</a>
+<b>geoScale</b>(<i>projection</i>[, <i>group</i>])<br/>
+Returns the scale value for the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection.
 
 [Back to Top](#reference)
 

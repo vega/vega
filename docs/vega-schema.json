@@ -11166,6 +11166,12 @@
                       },
                       {
                         "$ref": "#/definitions/signalRef"
+                      },
+                      {
+                        "$ref": "#/definitions/expr"
+                      },
+                      {
+                        "$ref": "#/definitions/paramField"
                       }
                     ],
                     "default": -30
@@ -13506,11 +13512,36 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
                     "$ref": "#/definitions/signalRef"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
+        "aggregate_params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/definitions/signalRef"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               }
@@ -14791,7 +14822,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15212,7 +15245,9 @@
                 "min",
                 "max",
                 "argmin",
-                "argmax"
+                "argmax",
+                "exponential",
+                "exponentialb"
               ]
             },
             {
@@ -15749,7 +15784,9 @@
                       "min",
                       "max",
                       "argmin",
-                      "argmax"
+                      "argmax",
+                      "exponential",
+                      "exponentialb"
                     ]
                   },
                   {
@@ -15764,6 +15801,29 @@
           ]
         },
         "params": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/definitions/signalRef"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
+        "aggregate_params": {
           "oneOf": [
             {
               "type": "array",

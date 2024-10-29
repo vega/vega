@@ -23,7 +23,8 @@ export {
 export {
   geoArea,
   geoBounds,
-  geoCentroid
+  geoCentroid,
+  geoScale
 } from './src/functions/geo';
 
 export {
@@ -64,7 +65,8 @@ export {
   lastindexof,
   replace,
   reverse,
-  slice
+  slice,
+  sort
 } from './src/functions/sequence';
 
 export {

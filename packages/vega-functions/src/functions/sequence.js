@@ -1,4 +1,4 @@
-import {error, isArray, isFunction, isString} from 'vega-util';
+import { ascending, error, isArray, isFunction, isString } from 'vega-util';
 
 function array(seq) {
   return isArray(seq) || ArrayBuffer.isView(seq) ? seq : null;
@@ -30,4 +30,7 @@ export function replace(str, pattern, repl) {
 }
 export function reverse(seq) {
   return array(seq).slice().reverse();
+}
+export function sort(seq) {
+  return array(seq).slice().sort(ascending);
 }

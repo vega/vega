@@ -111,18 +111,18 @@ function isDecimalDigit(ch) {
 }
 
 function isHexDigit(ch) {
-  return '0123456789abcdefABCDEF'.indexOf(ch) >= 0;
+  return '0123456789abcdefABCDEF'.includes(ch);
 }
 
 function isOctalDigit(ch) {
-  return '01234567'.indexOf(ch) >= 0;
+  return '01234567'.includes(ch);
 }
 
 // 7.2 White Space
 
 function isWhiteSpace(ch) {
   return (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
-    (ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].indexOf(ch) >= 0);
+    (ch >= 0x1680 && [0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF].includes(ch));
 }
 
 // 7.3 Line Terminators
@@ -426,7 +426,7 @@ function scanPunctuator() {
   // Other 2-character punctuators: ++ -- << >> && ||
   ch2 = ch3.substr(0, 2);
 
-  if ((ch1 === ch2[1] && ('+-<>&|'.indexOf(ch1) >= 0)) || ch2 === '=>') {
+  if ((ch1 === ch2[1] && ('+-<>&|'.includes(ch1))) || ch2 === '=>') {
     index += 2;
     return {
       type: TokenPunctuator,
@@ -442,7 +442,7 @@ function scanPunctuator() {
 
   // 1-character punctuators: < > = ! + - * % & | ^ /
 
-  if ('<>=!+-*%&|^/'.indexOf(ch1) >= 0) {
+  if ('<>=!+-*%&|^/'.includes(ch1)) {
     ++index;
     return {
       type: TokenPunctuator,
@@ -643,7 +643,7 @@ function scanStringLiteral() {
 
                 // 3 digits are only allowed when string starts
                 // with 0, 1, 2, 3
-                if ('0123'.indexOf(ch) >= 0 &&
+                if ('0123'.includes(ch) &&
                   index < length &&
                   isOctalDigit(source[index])) {
                   code = code * 8 + '01234567'.indexOf(source[index++]);
@@ -683,7 +683,7 @@ function scanStringLiteral() {
 function testRegExp(pattern, flags) {
   let tmp = pattern;
 
-  if (flags.indexOf('u') >= 0) {
+  if (flags.includes('u')) {
     // Replace each astral symbol and every Unicode code point
     // escape sequence with a single ASCII symbol to avoid throwing on
     // regular expressions that are only valid in combination with the

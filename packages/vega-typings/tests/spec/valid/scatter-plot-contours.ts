@@ -1,169 +1,169 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 400,
-  "height": 300,
-  "padding": 5,
-  "autosize": "pad",
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 400,
+  height: 300,
+  padding: 5,
+  autosize: 'pad',
 
-  "signals": [
+  signals: [
     {
-      "name": "bandwidth", "value": -1,
-      "bind": {"input": "range", "min": -1, "max": 100, "step": 1}
+      name: 'bandwidth',
+      value: -1,
+      bind: { input: 'range', min: -1, max: 100, step: 1 }
     },
     {
-      "name": "resolve", "value": "shared",
-      "bind": {"input": "select", "options": ["independent", "shared"]}
+      name: 'resolve',
+      value: 'shared',
+      bind: { input: 'select', options: ['independent', 'shared'] }
     },
     {
-      "name": "counts", "value": true,
-      "bind": {"input": "checkbox"}
+      name: 'counts',
+      value: true,
+      bind: { input: 'checkbox' }
     }
   ],
 
-  "data": [
+  data: [
     {
-      "name": "source",
-      "url": "data/cars.json",
-      "transform": [
+      name: 'source',
+      url: 'data/cars.json',
+      transform: [
         {
-          "type": "filter",
-          "expr": "datum.Horsepower != null && datum.Miles_per_Gallon != null && datum.Acceleration != null"
+          type: 'filter',
+          expr: 'datum.Horsepower != null && datum.Miles_per_Gallon != null && datum.Acceleration != null'
         }
       ]
     },
     {
-      "name": "density",
-      "source": "source",
-      "transform": [
+      name: 'density',
+      source: 'source',
+      transform: [
         {
-          "type": "kde2d",
-          "groupby": ["Origin"],
-          "size": [{"signal": "width"}, {"signal": "height"}],
-          "x": {"expr": "scale('x', datum.Horsepower)"},
-          "y": {"expr": "scale('y', datum.Miles_per_Gallon)"},
-          "bandwidth": {"signal": "[bandwidth, bandwidth]"},
-          "counts": {"signal": "counts"}
+          type: 'kde2d',
+          groupby: ['Origin'],
+          size: [{ signal: 'width' }, { signal: 'height' }],
+          x: { expr: "scale('x', datum.Horsepower)" },
+          y: { expr: "scale('y', datum.Miles_per_Gallon)" },
+          bandwidth: { signal: '[bandwidth, bandwidth]' },
+          counts: { signal: 'counts' }
         }
       ]
     },
     {
-      "name": "contours",
-      "source": "density",
-      "transform": [
+      name: 'contours',
+      source: 'density',
+      transform: [
         {
-          "type": "isocontour",
-          "field": "grid",
-          "resolve": {"signal": "resolve"},
-          "levels": 3
+          type: 'isocontour',
+          field: 'grid',
+          resolve: { signal: 'resolve' },
+          levels: 3
         }
       ]
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "x",
-      "type": "linear",
-      "round": true,
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "source", "field": "Horsepower"},
-      "range": "width"
+      name: 'x',
+      type: 'linear',
+      round: true,
+      nice: true,
+      zero: true,
+      domain: { data: 'source', field: 'Horsepower' },
+      range: 'width'
     },
     {
-      "name": "y",
-      "type": "linear",
-      "round": true,
-      "nice": true,
-      "zero": true,
-      "domain": {"data": "source", "field": "Miles_per_Gallon"},
-      "range": "height"
+      name: 'y',
+      type: 'linear',
+      round: true,
+      nice: true,
+      zero: true,
+      domain: { data: 'source', field: 'Miles_per_Gallon' },
+      range: 'height'
     },
     {
-      "name": "color",
-      "type": "ordinal",
-      "domain": {
-        "data": "source", "field": "Origin",
-        "sort": {"order": "descending"}
+      name: 'color',
+      type: 'ordinal',
+      domain: {
+        data: 'source',
+        field: 'Origin',
+        sort: { order: 'descending' }
       },
-      "range": "category"
+      range: 'category'
     }
   ],
 
-  "axes": [
+  axes: [
     {
-      "scale": "x",
-      "grid": true,
-      "domain": false,
-      "orient": "bottom",
-      "tickCount": 5,
-      "title": "Horsepower"
+      scale: 'x',
+      grid: true,
+      domain: false,
+      orient: 'bottom',
+      tickCount: 5,
+      title: 'Horsepower'
     },
     {
-      "scale": "y",
-      "grid": true,
-      "domain": false,
-      "orient": "left",
-      "titlePadding": 5,
-      "title": "Miles_per_Gallon"
+      scale: 'y',
+      grid: true,
+      domain: false,
+      orient: 'left',
+      titlePadding: 5,
+      title: 'Miles_per_Gallon'
     }
   ],
 
-  "legends": [
-    {"stroke": "color", "symbolType": "stroke"}
-  ],
+  legends: [{ stroke: 'color', symbolType: 'stroke' }],
 
-  "marks": [
+  marks: [
     {
-      "name": "marks",
-      "type": "symbol",
-      "from": {"data": "source"},
-      "encode": {
-        "update": {
-          "x": {"scale": "x", "field": "Horsepower"},
-          "y": {"scale": "y", "field": "Miles_per_Gallon"},
-          "size": {"value": 4},
-          "fill": {"value": "#ccc"}
+      name: 'marks',
+      type: 'symbol',
+      from: { data: 'source' },
+      encode: {
+        update: {
+          x: { scale: 'x', field: 'Horsepower' },
+          y: { scale: 'y', field: 'Miles_per_Gallon' },
+          size: { value: 4 },
+          fill: { value: '#ccc' }
         }
       }
     },
     {
-      "type": "image",
-      "from": {"data": "density"},
-      "encode": {
-        "update": {
-          "x": {"value": 0},
-          "y": {"value": 0},
-          "width": {"signal": "width"},
-          "height": {"signal": "height"},
-          "aspect": {"value": false}
+      type: 'image',
+      from: { data: 'density' },
+      encode: {
+        update: {
+          x: { value: 0 },
+          y: { value: 0 },
+          width: { signal: 'width' },
+          height: { signal: 'height' },
+          aspect: { value: false }
         }
       },
-      "transform": [
+      transform: [
         {
-          "type": "heatmap",
-          "field": "datum.grid",
-          "resolve": {"signal": "resolve"},
-          "color": {"expr": "scale('color', datum.datum.Origin)"}
+          type: 'heatmap',
+          field: 'datum.grid',
+          resolve: { signal: 'resolve' },
+          color: { expr: "scale('color', datum.datum.Origin)" }
         }
       ]
     },
     {
-      "type": "path",
-      "clip": true,
-      "from": {"data": "contours"},
-      "encode": {
-        "enter": {
-          "strokeWidth": {"value": 1},
-          "strokeOpacity": {"value": 1},
-          "stroke": {"scale": "color", "field": "Origin"}
+      type: 'path',
+      clip: true,
+      from: { data: 'contours' },
+      encode: {
+        enter: {
+          strokeWidth: { value: 1 },
+          strokeOpacity: { value: 1 },
+          stroke: { scale: 'color', field: 'Origin' }
         }
       },
-      "transform": [
-        { "type": "geopath", "field": "datum.contour" }
-      ]
+      transform: [{ type: 'geopath', field: 'datum.contour' }]
     }
   ]
 };

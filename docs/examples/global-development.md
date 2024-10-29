@@ -6,6 +6,6 @@ spec: global-development
 image: /examples/img/global-development.png
 ---
 
-Interactive timelines for global health and economic development data: grab a point to drag it through time! Based on the [DimpVis](http://vialab.science.uoit.ca/portfolio/dimpvis) technique by Brittany Kondo and Christopher Collins, _University of Ontario Institute of Technology_ (2014).
+Interactive timelines for global health and economic development data: grab a point to drag it through time! Based on the [DimpVis](https://vialab.ca/research/dimpvis) technique by Brittany Kondo and Christopher Collins, _University of Ontario Institute of Technology_ (2014).
 
 {% include example spec=page.spec %}

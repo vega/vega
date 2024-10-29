@@ -29,7 +29,8 @@ const d3Deps = [
 
 const esmDeps = [
   ...d3Deps,
-  'd3-geo-projection'
+  'd3-geo-projection',
+  'd3-scale-chromatic'
 ];
 
 const d3CoreDeps = [
@@ -116,7 +117,7 @@ export default function(commandLineArgs) {
 
   const outputs = [{
     input: './index.js',
-    external: dependencies.filter(dep => esmDeps.indexOf(dep) < 0),
+    external: dependencies.filter(dep => !esmDeps.includes(dep)),
     onwarn,
     output: {
       file: pkg.main,
@@ -135,7 +136,7 @@ export default function(commandLineArgs) {
       format: 'esm',
       sourcemap: false
     },
-    plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+    plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
   }];
 
   if (browser) {
@@ -188,7 +189,7 @@ export default function(commandLineArgs) {
         globals,
         name
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
     });
 
     if (ie) {
@@ -203,7 +204,7 @@ export default function(commandLineArgs) {
           globals,
           name
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults')]
+        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
       });
     }
   }
@@ -221,7 +222,7 @@ export default function(commandLineArgs) {
         globals,
         name
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults and not IE 11')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
     });
 
     if (ie) {
@@ -238,7 +239,7 @@ export default function(commandLineArgs) {
           globals,
           name
         }),
-        plugins: [nodePlugin(true), ...commonPlugins('defaults')]
+        plugins: [nodePlugin(true), ...commonPlugins('defaults, IE 11')]
       });
     }
   }

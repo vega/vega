@@ -118,7 +118,8 @@ import {
 import {
   geoArea,
   geoBounds,
-  geoCentroid
+  geoCentroid,
+  geoScale
 } from './functions/geo';
 
 import inScope from './functions/inscope';
@@ -148,7 +149,8 @@ import {
   lastindexof,
   replace,
   reverse,
-  slice
+  slice,
+  sort
 } from './functions/sequence';
 
 import {
@@ -233,6 +235,7 @@ export const functionContext = {
   lastindexof,
   replace,
   reverse,
+  sort,
   slice,
   flush,
   lerp,
@@ -358,6 +361,7 @@ expressionFunction('geoArea', geoArea, scaleVisitor);
 expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('geoShape', geoShape, scaleVisitor);
+expressionFunction('geoScale', geoScale, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('treePath', treePath, dataVisitor);

@@ -1,6 +1,6 @@
 import {bisector} from 'd3-array';
-import {$selectionId, Intersect} from './constants';
-import {field, inrange, isArray, isDate, toNumber} from 'vega-util';
+import {inrange, isArray, isDate, toNumber} from 'vega-util';
+import {$selectionId, Intersect, getter} from './util';
 
 const TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',
@@ -24,17 +24,16 @@ function testPoint(datum, entry) {
 
   for (; i<n; ++i) {
     f = fields[i];
-    f.getter = field.getter || field(f.field);
-    dval = f.getter(datum);
+    dval = getter(f)(datum);
 
     if (isDate(dval)) dval = toNumber(dval);
-    if (values[i] && isDate(values[i])) values[i] = toNumber(values[i]);
-    if (values[i] && isDate(values[i][0])) values[i] = values[i].map(toNumber);
+    if (isDate(values[i])) values[i] = toNumber(values[i]);
+    if (isArray(values[i]) && isDate(values[i][0])) values[i] = values[i].map(toNumber);
 
     if (f.type === TYPE_ENUM) {
       // Enumerated fields can either specify individual values (single/multi selections)
       // or an array of values (interval selections).
-      if(isArray(values[i]) ? values[i].indexOf(dval) < 0 : dval !== values[i]) {
+      if(isArray(values[i]) ? !values[i].includes(dval) : dval !== values[i]) {
         return false;
       }
     } else {

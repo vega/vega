@@ -37,6 +37,7 @@ Constructor that creates a new View instance for the provided [Vega dataflow *ru
 - *tooltip*: Handler function invoked to support tooltip display. See the [tooltip](#view_tooltip) method.
 - *locale*: Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../locale). If unspecified, the current default locale at the time of instantiation will be used for the View instance. <small>{% include tag ver="5.12" %}</small>
 - *expr*: Alternate evaluator for Vega expressions. See the [interpreter](../../../usage/interpreter) usage documentation. <small>{% include tag ver="5.13" %}</small>
+- *watchPixelRatio*: Boolean flag allowing an event listener to trigger a re-render when the pixel ratio of the page changes (such as via zooming or changing monitors).
 
 The View constructor call is typically followed by a chain of method calls to setup the desired view configuration. After this chain, the [runAsync](#view_runAsync) method evaluates the underlying dataflow graph to update and render the visualization.
 
@@ -78,7 +79,7 @@ var view = await new vega.View(runtime, {
 view.<b>finalize</b>()
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/finalize.js "Source")
 
-Prepares the view to be removed. To prevent unwanted behaviors and memory leaks, this method unregisters any timers and removes any event listeners the visualization has registered on external DOM elements. Applications should invoke this method when a View instance is no longer needed.
+Prepares the view to be removed. To prevent unwanted behaviors and memory leaks, this method unregisters any timers and removes any event listeners that have been registered on the View or that the visualization has registered on external DOM elements. Applications should invoke this method when a View instance is no longer needed.
 
 [Back to reference](#reference)
 

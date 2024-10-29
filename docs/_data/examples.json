@@ -91,7 +91,10 @@
         {"name": "timelines"},
         {"name": "u-district-cuisine"},
         {"name": "clock"},
-        {"name": "watch"}
+        {"name": "watch"},
+        {"name": "warming-stripes"},
+        {"name": "earthquakes-globe"},
+        {"name": "serpentine-timeline"}
     ],
     "Interaction Techniques": [
         {"name": "crossfilter-flights"},
@@ -103,6 +106,10 @@
         {"name": "interactive-legend"},
         {"name": "stock-index-chart"},
         {"name": "pi-monte-carlo"},
+        {"name": "zoomable-circle-packing"},
+        {"name": "table-scrollbar"},
+        {"name": "bar-line-toggle"},
+        {"name": "map-with-tooltip"},
         {"name": "pacman"},
         {"name": "platformer"}
     ]

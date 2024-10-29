@@ -63,6 +63,17 @@ tape('Scale respects domain padding', t => {
   }).domain();
   t.deepEqual(d, [0, 100]);
 
+  d = scale({
+    type: 'linear',
+    domain: [0, 100],
+    range: [0, 100],
+    padding: 5,
+    domainMin: 5,
+    domainMax: 95,
+    zero: false
+  }).domain();
+  t.deepEqual(d, [0, 100]);
+
   // test log scale padding
   d = scale({
     type: 'log',

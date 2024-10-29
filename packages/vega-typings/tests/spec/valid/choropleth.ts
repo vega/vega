@@ -1,65 +1,63 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
-  "width": 960,
-  "height": 500,
-  "autosize": "none",
+  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  width: 960,
+  height: 500,
+  autosize: 'none',
 
-  "data": [
+  data: [
     {
-      "name": "unemp",
-      "url": "data/unemployment.tsv",
-      "format": {"type": "tsv", "parse": "auto"}
+      name: 'unemp',
+      url: 'data/unemployment.tsv',
+      format: { type: 'tsv', parse: 'auto' }
     },
     {
-      "name": "counties",
-      "url": "data/us-10m.json",
-      "format": {"type": "topojson", "feature": "counties"},
-      "transform": [
-        { "type": "lookup", "from": "unemp", "key": "id", "fields": ["id"], "values": ["rate"] },
-        { "type": "filter", "expr": "datum.rate != null" }
+      name: 'counties',
+      url: 'data/us-10m.json',
+      format: { type: 'topojson', feature: 'counties' },
+      transform: [
+        { type: 'lookup', from: 'unemp', key: 'id', fields: ['id'], values: ['rate'] },
+        { type: 'filter', expr: 'datum.rate != null' }
       ]
     }
   ],
 
-  "projections": [
+  projections: [
     {
-      "name": "projection",
-      "type": "albersUsa"
+      name: 'projection',
+      type: 'albersUsa'
     }
   ],
 
-  "scales": [
+  scales: [
     {
-      "name": "color",
-      "type": "quantize",
-      "domain": [0, 0.15],
-      "range": {"scheme": "blues", "count": 9}
+      name: 'color',
+      type: 'quantize',
+      domain: [0, 0.15],
+      range: { scheme: 'blues', count: 9 }
     }
   ],
 
-  "legends": [
+  legends: [
     {
-      "fill": "color",
-      "orient": "bottom-right",
-      "title": "Unemployment",
-      "format": "0.1%"
+      fill: 'color',
+      orient: 'bottom-right',
+      title: 'Unemployment',
+      format: '0.1%'
     }
   ],
 
-  "marks": [
+  marks: [
     {
-      "type": "shape",
-      "from": {"data": "counties"},
-      "encode": {
-        "enter": { "tooltip": {"signal": "format(datum.rate, '0.1%')"}},
-        "update": { "fill": {"scale": "color", "field": "rate"} },
-        "hover": { "fill": {"value": "red"} }
+      type: 'shape',
+      from: { data: 'counties' },
+      encode: {
+        enter: { tooltip: { signal: "format(datum.rate, '0.1%')" } },
+        update: { fill: { scale: 'color', field: 'rate' } },
+        hover: { fill: { value: 'red' } }
       },
-      "transform": [
-        { "type": "geoshape", "projection": "projection" }
-      ]
+      transform: [{ type: 'geoshape', projection: 'projection' }]
     }
   ]
 };

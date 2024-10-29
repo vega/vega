@@ -9,24 +9,22 @@ import {visit} from './util/visit';
 import clip from './util/svg/clip';
 import metadata from './util/svg/metadata';
 import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles';
-import {inherits, isArray} from 'vega-util';
+import {isArray} from 'vega-util';
 
 const RootIndex = 0,
       xmlns = 'http://www.w3.org/2000/xmlns/',
       svgns = metadata.xmlns;
 
-export default function SVGRenderer(loader) {
-  Renderer.call(this, loader);
-  this._dirtyID = 0;
-  this._dirty = [];
-  this._svg = null;
-  this._root = null;
-  this._defs = null;
-}
+export default class SVGRenderer extends Renderer {
+  constructor(loader) {
+    super(loader);
+    this._dirtyID = 0;
+    this._dirty = [];
+    this._svg = null;
+    this._root = null;
+    this._defs = null;
+  }
 
-const base = Renderer.prototype;
-
-inherits(SVGRenderer, Renderer, {
   /**
    * Initialize a new SVGRenderer instance.
    * @param {DOMElement} el - The containing DOM element for the display.
@@ -62,8 +60,8 @@ inherits(SVGRenderer, Renderer, {
     // set background color if defined
     this.background(this._bgcolor);
 
-    return base.initialize.call(this, el, width, height, origin, scaleFactor);
-  },
+    return super.initialize(el, width, height, origin, scaleFactor);
+  }
 
   /**
    * Get / set the background color.
@@ -72,8 +70,8 @@ inherits(SVGRenderer, Renderer, {
     if (arguments.length && this._svg) {
       this._svg.style.setProperty('background-color', bgcolor);
     }
-    return base.background.apply(this, arguments);
-  },
+    return super.background(...arguments);
+  }
 
   /**
    * Resize the display.
@@ -86,7 +84,7 @@ inherits(SVGRenderer, Renderer, {
    * @return {SVGRenderer} - This renderer instance;
    */
   resize(width, height, origin, scaleFactor) {
-    base.resize.call(this, width, height, origin, scaleFactor);
+    super.resize(width, height, origin, scaleFactor);
 
     if (this._svg) {
       setAttributes(this._svg, {
@@ -100,7 +98,7 @@ inherits(SVGRenderer, Renderer, {
     this._dirty = [];
 
     return this;
-  },
+  }
 
   /**
    * Returns the SVG element of the visualization.
@@ -108,7 +106,7 @@ inherits(SVGRenderer, Renderer, {
    */
   canvas() {
     return this._svg;
-  },
+  }
 
   /**
    * Returns an SVG text string for the rendered content,
@@ -135,17 +133,19 @@ inherits(SVGRenderer, Renderer, {
     }
 
     return text;
-  },
+  }
 
   /**
    * Internal rendering method.
    * @param {object} scene - The root mark of a scenegraph to render.
+   * @param {Array} markTypes - Array of the mark types to render.
+   *                            If undefined, render all mark types
    */
-  _render(scene) {
+  _render(scene, markTypes) {
     // perform spot updates and re-render markup
     if (this._dirtyCheck()) {
       if (this._dirtyAll) this._clearDefs();
-      this.mark(this._root, scene);
+      this.mark(this._root, scene, undefined, markTypes);
       domClear(this._root, 1);
     }
 
@@ -155,7 +155,7 @@ inherits(SVGRenderer, Renderer, {
     ++this._dirtyID;
 
     return this;
-  },
+  }
 
   // -- Manage rendering of items marked as dirty --
 
@@ -168,7 +168,7 @@ inherits(SVGRenderer, Renderer, {
       item.dirty = this._dirtyID;
       this._dirty.push(item);
     }
-  },
+  }
 
   /**
    * Check if a mark item is considered dirty.
@@ -179,7 +179,7 @@ inherits(SVGRenderer, Renderer, {
       || !item._svg
       || !item._svg.ownerSVGElement
       || item.dirty === this._dirtyID;
-  },
+  }
 
   /**
    * Internal method to check dirty status and, if possible,
@@ -238,7 +238,7 @@ inherits(SVGRenderer, Renderer, {
       item._update = id;
     }
     return !this._dirtyAll;
-  },
+  }
 
   // -- Construct & maintain scenegraph to SVG mapping ---
 
@@ -247,18 +247,26 @@ inherits(SVGRenderer, Renderer, {
    * @param {SVGElement} el - The parent element in the SVG tree.
    * @param {object} scene - The mark parent to render.
    * @param {SVGElement} prev - The previous sibling in the SVG tree.
+   * @param {Array} markTypes - Array of the mark types to render.
+   *                            If undefined, render all mark types
    */
-  mark(el, scene, prev) {
+  mark(el, scene, prev, markTypes) {
     if (!this.isDirty(scene)) {
       return scene._svg;
     }
 
     const svg = this._svg,
-          mdef = marks[scene.marktype],
+          markType = scene.marktype,
+          mdef = marks[markType],
           events = scene.interactive === false ? 'none' : null,
           isGroup = mdef.tag === 'g';
 
     const parent = bind(scene, el, prev, 'g', svg);
+    if (markType !== 'group' && markTypes != null && !markTypes.includes(markType)) {
+      domClear(parent, 0);
+      return scene._svg;
+    }
+
     parent.setAttribute('class', cssClass(scene));
 
     // apply aria attributes to parent container element
@@ -280,7 +288,7 @@ inherits(SVGRenderer, Renderer, {
 
       if (dirty) {
         this._update(mdef, node, item);
-        if (isGroup) recurse(this, node, item);
+        if (isGroup) recurse(this, node, item, markTypes);
       }
 
       sibling = node;
@@ -295,7 +303,7 @@ inherits(SVGRenderer, Renderer, {
 
     domClear(parent, i);
     return parent;
-  },
+  }
 
   /**
    * Update the attributes of an SVG element for a mark item.
@@ -322,7 +330,7 @@ inherits(SVGRenderer, Renderer, {
     // apply svg style attributes
     // note: element state may have been modified by 'extra' method
     if (element) this.style(element, item);
-  },
+  }
 
   /**
    * Update the presentation attributes of an SVG element for a mark item.
@@ -352,7 +360,7 @@ inherits(SVGRenderer, Renderer, {
     for (const prop in stylesCss) {
       setStyle(el, stylesCss[prop], item[prop]);
     }
-  },
+  }
 
   /**
    * Render SVG defs, as needed.
@@ -382,7 +390,7 @@ inherits(SVGRenderer, Renderer, {
         ? (svg.removeChild(el), defs.el = null)
         : domClear(el, index);
     }
-  },
+  }
 
   /**
    * Clear defs caches.
@@ -392,7 +400,7 @@ inherits(SVGRenderer, Renderer, {
     def.gradient = {};
     def.clipping = {};
   }
-});
+}
 
 // mark ancestor chain with a dirty id
 function dirtyParents(item, id) {
@@ -480,14 +488,14 @@ function updateClipping(el, clip, index) {
 }
 
 // Recursively process group contents.
-function recurse(renderer, el, group) {
+function recurse(renderer, el, group, markTypes) {
   // child 'g' element is second to last among children (path, g, path)
   // other children here are foreground and background path elements
   el = el.lastChild.previousSibling;
   let prev, idx = 0;
 
   visit(group, item => {
-    prev = renderer.mark(el, item, prev);
+    prev = renderer.mark(el, item, prev, markTypes);
     ++idx;
   });
 

@@ -13,7 +13,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 
 | Property      | Type                           | Description    |
 | :------------ |:------------------------------:| :------------- |
-| type          | {% include type t="String" %}  | The type of legend to include. One of `symbol` for discrete symbol legends, or `gradient` for a continuous color gradient. If `gradient` is used only the _fill_ or _stroke_ scale parameters are considered. If unspecified, the _type_ will be inferred based on the scale parameters used and their backing scale types.|
+| type          | {% include type t="String" %}  | The type of legend to include. One of `"symbol"` for discrete symbol legends, `"gradient"` for a continuous color gradient, or `"discrete"` for a discrete color gradient. If gradient or discrete are used, only the fill or stroke scale parameters are considered. If unspecified, the type will be inferred based on the scale parameters used and their backing scale types.|
 | direction     | {% include type t="String" %}  | The direction of the legend, one of `"vertical"` (default) or `"horizontal"`.|
 | orient        | {% include type t="String" %}  | The orientation of the legend, determining where the legend is placed relative to a chart's data rectangle (default `right`). See the [legend orientation reference](#orientation). |
 | fill          | {% include type t="String" %}  | The name of a scale that maps to a fill color. |
