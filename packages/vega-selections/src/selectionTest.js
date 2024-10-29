@@ -28,8 +28,8 @@ function testPoint(datum, entry) {
     dval = f.getter(datum);
 
     if (isDate(dval)) dval = toNumber(dval);
-    if (isDate(values[i])) values[i] = toNumber(values[i]);
-    if (isDate(values[i][0])) values[i] = values[i].map(toNumber);
+    if (values[i] && isDate(values[i])) values[i] = toNumber(values[i]);
+    if (values[i] && isDate(values[i][0])) values[i] = values[i].map(toNumber);
 
     if (f.type === TYPE_ENUM) {
       // Enumerated fields can either specify individual values (single/multi selections)
