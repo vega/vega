@@ -1865,6 +1865,12 @@
         "ariaRoleDescription": {
           "$ref": "#/definitions/stringValue"
         },
+        "tabindex": {
+          "$ref": "#/definitions/numberValue"
+        },
+        "outline": {
+          "$ref": "#/definitions/stringValue"
+        },
         "clip": {
           "$ref": "#/definitions/booleanValue"
         },
@@ -16303,6 +16309,12 @@
         },
         "config": {
           "type": "object"
+        },
+        "ariaRole": {
+          "type": "string"
+        },
+        "ariaRoleDescription": {
+          "type": "string"
         },
         "description": {
           "type": "string"

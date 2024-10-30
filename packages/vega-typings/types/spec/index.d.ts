@@ -10,6 +10,8 @@ export interface Spec extends Scope, Encodable<EncodeEntry> {
   $schema?: string;
   config?: Config;
   description?: string;
+  ariaRole?: string;
+  ariaRoleDescription?: string;
   width?: number | SignalRef;
   height?: number | SignalRef;
   padding?: Padding | SignalRef;

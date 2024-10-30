@@ -12,6 +12,8 @@ const marks = JSON.parse(load('marks.json'));
 for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 const events = [
+  'focusin',
+  'focusout',
   'keydown',
   'keypress',
   'keyup',

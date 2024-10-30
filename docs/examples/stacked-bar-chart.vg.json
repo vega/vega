@@ -68,10 +68,14 @@
           "width": {"scale": "x", "band": 1, "offset": -1},
           "y": {"scale": "y", "field": "y0"},
           "y2": {"scale": "y", "field": "y1"},
-          "fill": {"scale": "color", "field": "c"}
+          "fill": {"scale": "color", "field": "c"},
+          "ariaRole": {"value": "graphics-symbol"},
+          "ariaRoleDescription": {"value": "bar"},
+          "description": {"signal": "'x: ' + datum.x + ', y: ' + datum.y + ', c: ' + datum.c"}
         },
         "update": {
-          "fillOpacity": {"value": 1}
+          "fillOpacity": {"value": 1},
+          "tabindex": {"value": 0}
         },
         "hover": {
           "fillOpacity": {"value": 0.5}
