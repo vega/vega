@@ -130,7 +130,7 @@ inherits(Bin, Transform, {
       stop += d;
     }
 
-    const f = function (t) {
+    const f = function(t) {
       let v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
@@ -138,7 +138,7 @@ inherits(Bin, Transform, {
         : (
             v = Math.max(start, Math.min(v, stop - step)),
             start + step * Math.floor(EPSILON + (v - start) / step)
-          );   
+          );
     };
 
     f.start = start;
