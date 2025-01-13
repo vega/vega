@@ -59,13 +59,14 @@ inherits(Bin, Transform, {
     pulse.visit(flag, band
       ? t => {
         const v = bins(t);
-        // minimum bin value (inclusive)
         t[b0] = v;
-        // maximum bin value (exclusive)
         if(v == null){
-          t[b1] = null
+          t[b1] = null;
         } else if(bins.thresholds){
-          t[b1] = bins.thresholds[bins.thresholds.indexOf(v) + 1] || Infinity
+          const thresholds = bins.thresholds;
+          const index = thresholds.findIndex((t, i) => v >= t && v < thresholds[i + 1]);
+          // set upper boundary to next threshold value, or to infinity when min bound is the max threshold
+          t[b1] = index >= 0 ? thresholds[index + 1] : v === thresholds[thresholds.length - 1] ? Infinity : thresholds[0];
         } else {
           t[b1] = start + step * (1 + (v - start) / step);
         }
