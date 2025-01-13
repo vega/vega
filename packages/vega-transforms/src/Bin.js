@@ -1,6 +1,6 @@
-import {Transform} from 'vega-dataflow';
-import {bin} from 'vega-statistics';
-import {accessor, accessorFields, accessorName, inherits, toNumber} from 'vega-util';
+import { Transform } from 'vega-dataflow';
+import { bin } from 'vega-statistics';
+import { accessor, accessorFields, accessorName, inherits, toNumber } from 'vega-util';
 
 // epsilon bias to offset floating point error (#1737)
 const EPSILON = 1e-14;
@@ -18,7 +18,7 @@ export default function Bin(params) {
 
 Bin.Definition = {
   'type': 'Bin',
-  'metadata': {'modifies': true},
+  'metadata': { 'modifies': true },
   'params': [
     { 'name': 'field', 'type': 'field', 'required': true },
     { 'name': 'interval', 'type': 'boolean', 'default': true },
@@ -33,19 +33,20 @@ Bin.Definition = {
     { 'name': 'minstep', 'type': 'number', 'default': 0 },
     { 'name': 'nice', 'type': 'boolean', 'default': true },
     { 'name': 'name', 'type': 'string' },
-    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['bin0', 'bin1'] }
+    { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': ['bin0', 'bin1'] },
+    { 'name': 'thresholds', 'type': 'number', 'array': true }
   ]
 };
 
 inherits(Bin, Transform, {
   transform(_, pulse) {
     const band = _.interval !== false,
-        bins = this._bins(_),
-        start = bins.start,
-        step = bins.step,
-        as = _.as || ['bin0', 'bin1'],
-        b0 = as[0],
-        b1 = as[1];
+      bins = this._bins(_),
+      start = bins.start,
+      step = bins.step,
+      as = _.as || ['bin0', 'bin1'],
+      b0 = as[0],
+      b1 = as[1];
 
     let flag;
     if (_.modified()) {
@@ -57,15 +58,19 @@ inherits(Bin, Transform, {
 
     pulse.visit(flag, band
       ? t => {
-          const v = bins(t);
-          // minimum bin value (inclusive)
-          t[b0] = v;
-          // maximum bin value (exclusive)
-          // use convoluted math for better floating point agreement
-          // see https://github.com/vega/vega/issues/830
-          // infinite values propagate through this formula! #2227
-          t[b1] = v == null ? null : start + step * (1 + (v - start) / step);
+        const v = bins(t);
+        // minimum bin value (inclusive)
+        t[b0] = v;
+        // maximum bin value (exclusive)
+        if(v == null){
+          t[b1] = null
+        } else if(bins.thresholds){
+          t[b1] = bins.thresholds[bins.thresholds.indexOf(v) + 1] || Infinity
+        } else {
+          t[b1] = start + step * (1 + (v - start) / step);
         }
+      }
+       
       : t => t[b0] = bins(t)
     );
 
@@ -77,12 +82,47 @@ inherits(Bin, Transform, {
       return this.value;
     }
 
-    const field = _.field,
-          bins  = bin(_),
-          step  = bins.step;
+    const field = _.field;
+
+    if (_.thresholds) {
+      console.log("IN THRESH")
+      const thresholds = _.thresholds.slice().sort((a, b) => a - b);
+
+      const f = function (t) {
+        const v = toNumber(field(t));
+        if (v == null) return null;
+
+        for (let i = 0; i < thresholds.length - 1; i++) {
+          if (v >= thresholds[i] && v < thresholds[i + 1]) {
+            return thresholds[i];
+          }
+        }
+
+        // The last bin should contain the highest threshold's value
+        if (v === thresholds[thresholds.length - 1]) {
+          return thresholds[thresholds.length - 1];
+        }
+
+        return v < thresholds[0] ? -Infinity : Infinity;
+      };
+
+      f.start = thresholds[0];
+      f.stop = thresholds[thresholds.length - 1];
+      f.step = null; // No step for thresholds
+      f.thresholds = thresholds; // Save thresholds for use in `transform`
+
+      return this.value = accessor(
+        f,
+        accessorFields(field),
+        _.name || 'bin_' + accessorName(field)
+      );
+    }
+
+    const bins = bin(_),
+      step = bins.step;
     let start = bins.start,
-        stop  = start + Math.ceil((bins.stop - start) / step) * step,
-        a, d;
+      stop = start + Math.ceil((bins.stop - start) / step) * step,
+      a, d;
 
     if ((a = _.anchor) != null) {
       d = a - (start + step * Math.floor((a - start) / step));
@@ -90,15 +130,15 @@ inherits(Bin, Transform, {
       stop += d;
     }
 
-    const f = function(t) {
+    const f = function (t) {
       let v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
-        : v > stop ? +Infinity
-        : (
-            v = Math.max(start, Math.min(v, stop - step)),
-            start + step * Math.floor(EPSILON + (v - start) / step)
-          );
+          : v > stop ? +Infinity
+            : (
+              v = Math.max(start, Math.min(v, stop - step)),
+              start + step * Math.floor(EPSILON + (v - start) / step)
+            );
     };
 
     f.start = start;
