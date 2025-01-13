@@ -18,7 +18,7 @@ export default function Bin(params) {
 
 Bin.Definition = {
   'type': 'Bin',
-  'metadata': { 'modifies': true },
+  'metadata': {'modifies': true},
   'params': [
     { 'name': 'field', 'type': 'field', 'required': true },
     { 'name': 'interval', 'type': 'boolean', 'default': true },
@@ -41,12 +41,12 @@ Bin.Definition = {
 inherits(Bin, Transform, {
   transform(_, pulse) {
     const band = _.interval !== false,
-      bins = this._bins(_),
-      start = bins.start,
-      step = bins.step,
-      as = _.as || ['bin0', 'bin1'],
-      b0 = as[0],
-      b1 = as[1];
+        bins = this._bins(_),
+        start = bins.start,
+        step = bins.step,
+        as = _.as || ['bin0', 'bin1'],
+        b0 = as[0],
+        b1 = as[1];
 
     let flag;
     if (_.modified()) {
@@ -85,7 +85,6 @@ inherits(Bin, Transform, {
     const field = _.field;
 
     if (_.thresholds) {
-      console.log("IN THRESH")
       const thresholds = _.thresholds.slice().sort((a, b) => a - b);
 
       const f = function (t) {
