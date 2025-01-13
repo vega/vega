@@ -121,8 +121,8 @@ inherits(Bin, Transform, {
     const bins = bin(_),
       step = bins.step;
     let start = bins.start,
-      stop = start + Math.ceil((bins.stop - start) / step) * step,
-      a, d;
+        stop  = start + Math.ceil((bins.stop - start) / step) * step,
+        a, d;
 
     if ((a = _.anchor) != null) {
       d = a - (start + step * Math.floor((a - start) / step));
