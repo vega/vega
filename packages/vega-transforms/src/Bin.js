@@ -134,11 +134,11 @@ inherits(Bin, Transform, {
       let v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
-          : v > stop ? +Infinity
-            : (
-              v = Math.max(start, Math.min(v, stop - step)),
-              start + step * Math.floor(EPSILON + (v - start) / step)
-            );
+        : v > stop ? +Infinity
+        : (
+            v = Math.max(start, Math.min(v, stop - step)),
+            start + step * Math.floor(EPSILON + (v - start) / step)
+          );   
     };
 
     f.start = start;
