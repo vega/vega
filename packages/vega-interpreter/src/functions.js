@@ -1,3 +1,5 @@
+import { ascending } from 'vega-util';
+
 const slice = Array.prototype.slice;
 
 const apply = (m, args, cast) => {
@@ -67,6 +69,7 @@ export default {
   lastindexof:  function() { return apply('lastIndexOf', arguments); },
   slice:        function() { return apply('slice', arguments); },
   reverse:      x => x.slice().reverse(),
+  sort:         x => x.slice().sort(ascending),
 
   // string functions
   parseFloat:   parseFloat,

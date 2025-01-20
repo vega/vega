@@ -65,7 +65,8 @@ export {
   lastindexof,
   replace,
   reverse,
-  slice
+  slice,
+  sort
 } from './src/functions/sequence';
 
 export {

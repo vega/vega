@@ -1,6 +1,6 @@
 const wrap = method => function(value, spec) {
   const locale = this.context.dataflow.locale();
-  return locale[method](spec)(value);
+  return value === null ? 'null' : locale[method](spec)(value);
 };
 
 export const format = wrap('format');

@@ -1,5 +1,10 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A packed bubble chart.",
+  "usermeta": {
+    "author": "David Bacci",
+    "github": "https://github.com/PBI-David/Deneb-Showcase"
+  },
   "width": 800,
   "height": 500,
   "padding": {"left": 5, "right": 5, "top": 20, "bottom": 0},
@@ -45,7 +50,7 @@
     {
       "name": "size",
       "domain": {"data": "table", "field": "amount"},
-      "range": [100, 3000]
+      "range": [0, 10000]
     },
     {
       "name": "color",
@@ -66,7 +71,7 @@
           "yfocus": {"signal": "cy"}
         },
         "update": {
-          "size": {"signal": "pow(2 * datum.amount, 2)", "scale": "size"},
+          "size": {"signal": "datum.amount", "scale": "size"},
           "stroke": {"value": "white"},
           "strokeWidth": {"value": 1},
           "tooltip": {"signal": "datum"}
@@ -81,7 +86,7 @@
             {
               "force": "collide",
               "iterations": 2,
-              "radius": {"expr": "sqrt(datum.size) / 2"}
+              "radius": {"expr": "sqrt(datum.size)/2"}
             },
             {"force": "center", "x": {"signal": "cx"}, "y": {"signal": "cy"}},
             {"force": "x", "x": "xfocus", "strength": {"signal": "gravityX"}},

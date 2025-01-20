@@ -40,7 +40,7 @@ export interface GuideEncodeEntry<T> {
   hover?: T;
 }
 
-export type LegendType = 'gradient' | 'symbol';
+export type LegendType = 'gradient' | 'symbol' | 'discrete';
 
 export type LegendOrient =
   | 'none'
@@ -63,7 +63,7 @@ export interface Legend extends BaseLegend {
   opacity?: string;
 
   /**
-   * The type of legend to include. One of `"symbol"` for discrete symbol legends, or `"gradient"` for a continuous color gradient. If gradient is used only the fill or stroke scale parameters are considered. If unspecified, the type will be inferred based on the scale parameters used and their backing scale types.
+   * The type of legend to include. One of `"symbol"` for discrete symbol legends, `"gradient"` for a continuous color gradient, or `"discrete"` for a discrete color gradient. If gradient or discrete are used, only the fill or stroke scale parameters are considered. If unspecified, the type will be inferred based on the scale parameters used and their backing scale types.
    */
   type?: LegendType;
 

@@ -34,4 +34,4 @@ Interested in contributing to Vega? Please see our [contribution and development
 
 Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack-2020)! We also have examples available as [Observable notebooks](https://observablehq.com/@vega).
 
-If you're curious about system performance, see some [in-browser benchmarks](https://observablehq.com/@vega/vega-performance-tests). Read about future plans in [our roadmap](https://github.com/vega/roadmap/projects/1).
+If you're curious about system performance, see some [in-browser benchmarks](https://observablehq.com/@vega/vega-performance-tests). Read about future plans in [our roadmap](https://github.com/orgs/vega/projects/9/views/3?pane=info).

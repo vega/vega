@@ -5,6 +5,7 @@
   "repository": "vega/vega",
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
+    "build-editor-preview": "scripts/build-editor-preview.sh",
     "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
@@ -14,42 +15,49 @@
     "serve": "serve packages/vega/ -l 8080",
     "test": "yarn test:no-lint && yarn lint",
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
-    "lint": "yarn eslint . --ext .js,.d.ts",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true yarn eslint -c eslint.config.mjs .",
     "format": "yarn lint --fix",
-    "postinstall": "yarn data"
+    "postinstall": "scripts/postinstall.sh"
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.23.0",
-    "@babel/core": "^7.23.2",
-    "@babel/eslint-parser": "^7.23.3",
-    "@babel/plugin-transform-runtime": "^7.23.7",
-    "@babel/preset-env": "^7.23.2",
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
+    "@babel/eslint-parser": "^7.24.7",
+    "@babel/plugin-transform-runtime": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
     "@definitelytyped/dtslint": "0.0.159",
+    "@eslint/js": "^9.4.0",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@types/node": "^20.8.10",
+    "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
-    "ajv": "^8.12.0",
+    "ajv": "^8.16.0",
     "ajv-formats": "^2.1.1",
     "canvas": "^2.11.2",
     "eslint": "^8.53.0",
-    "jsdom": "^24.0.0",
+    "globals": "^15.4.0",
+    "jsdom": "^24.1.0",
     "lerna": "^7.4.2",
     "pixelmatch": "^5.3.0",
     "prettier": "^2.8.8",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.9.2",
+    "rimraf": "^5.0.7",
+    "rollup": "^4.18.0",
     "rollup-plugin-bundle-size": "^1.0.3",
-    "serve": "^14.2.1",
-    "tape": "^5.7.2",
-    "typescript": "~5.1.6",
-    "vega-datasets": "^2.8.0"
+    "serve": "^14.2.3",
+    "tape": "^5.7.5",
+    "typescript": "~5.4.5",
+    "typescript-eslint": "^7.13.0",
+    "vega-datasets": "^2.8.1"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "packageManager": "yarn@1.22.19"
 }

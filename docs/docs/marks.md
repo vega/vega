@@ -188,4 +188,4 @@ For example, the following specification sets a mark's fill colour using a produ
 ]
 ```
 
-Here, if the ID of a particular data point [is found](https://vega.github.io/vega/docs/expressions/#indata) is the `selectedPoints` data source, the fill color is determined by a scale transform. Otherwise, the mark instance is filled grey.
+Here, if the ID of a particular data point [is found](https://vega.github.io/vega/docs/expressions/#indata) in the `selectedPoints` data source, the fill color is determined by a scale transform. Otherwise, the mark instance is filled grey.

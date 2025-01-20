@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "1.2.0",
+  "version": "1.3.1",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
@@ -16,15 +16,16 @@
     "format-tests": "prettier --write 'tests/**/*.ts'",
     "build-tests": "./build-tests.sh",
     "pretest": "yarn build-tests",
-    "test": "yarn format && dtslint . --localTs ../../node_modules/typescript/lib && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
+    "test": "yarn format && yarn tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
     "@types/geojson": "7946.0.4",
     "vega-event-selector": "^3.0.1",
-    "vega-expression": "^5.1.0",
+    "vega-expression": "^5.1.1",
     "vega-util": "^1.17.2"
   },
   "devDependencies": {
-    "ts-json-schema-generator": "^1.4.0"
+    "ts-json-schema-generator": "^1.4.0",
+    "tsd": "^0.31.0"
   }
 }

@@ -1,0 +1,205 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "An example of a simple table with a scrollbar",
+  "width": 300,
+  "height": 400,
+  "padding": 5,
+  "background": "#FFFFFF",
+  "config": {
+    "title": {"font": "Tahoma", "fontSize": 18},
+    "text": {"font": "Tahoma", "fontSize": 16}
+  },
+  "signals": [
+    {
+      "name": "rowsToDisplay",
+      "description": "The number of rows displayed in the table (visible without scrolling)",
+      "value": 10
+    },
+    {"name": "rowHeight", "description": "Row height in pixels", "value": 40},
+    {
+      "name": "scrollAreaHeight",
+      "description": "Scroll area height in pixels",
+      "update": "rowHeight*rowsToDisplay"
+    },
+    {
+      "name": "scrollBarWidth",
+      "description": "Scrollbar width in pixels",
+      "init": "12"
+    },
+    {
+      "name": "scrollBarHeight",
+      "description": "Scrollbar height: Dynamically calculated based on the percentage of visible rows out of all data rows, with a range limited to minimum and maximum values",
+      "init": "clamp((rowHeight*rowsToDisplay)*rowsToDisplay/length(data('dataset-raw')),30,600)"
+    },
+    {
+      "name": "scrollPositionMax",
+      "update": "length(data('dataset-raw'))-rowsToDisplay+1"
+    },
+    {
+      "name": "scrollbarMouseDragY",
+      "init": "0",
+      "on": [
+        {
+          "events": "[@rect-scrollbar:pointerdown, window:pointerup] > window:pointermove",
+          "update": "clamp(y(),1,scrollAreaHeight)"
+        }
+      ]
+    },
+    {
+      "name": "scrollPosition",
+      "description": "Scrollbar Position: The scrollbar responds to dragging the scrollbar with a mouse, mouse wheel scrolling, and the Home, End, Page Up, Page Down, Arrow Up, and Arrow Down buttons",
+      "value": 1,
+      "on": [
+        {
+          "events": {"type": "wheel", "consume": true},
+          "update": "clamp(round(scrollPosition+event.deltaY/abs(event.deltaY)*pow(1.0001, event.deltaY*pow(16, event.deltaMode)),0),1,scrollPositionMax)"
+        },
+        {
+          "events": "window:keydown",
+          "update": "event.code=='Home'?1:event.code=='End'?scrollPositionMax:scrollPosition"
+        },
+        {
+          "events": "window:keydown",
+          "update": "clamp(event.code=='PageDown'?(scrollPosition+rowsToDisplay):event.code=='PageUp'?(scrollPosition-rowsToDisplay):scrollPosition,1,scrollPositionMax)"
+        },
+        {
+          "events": "window:keydown",
+          "update": "clamp(event.code=='ArrowDown'?(scrollPosition+1):event.code=='ArrowUp'?(scrollPosition-1):scrollPosition,1,scrollPositionMax)"
+        },
+        {
+          "events": "[@rect-scrollbar:pointerdown, window:pointerup] > window:pointermove",
+          "update": "clamp(round(invert('scaleScrollBarY',scrollbarMouseDragY),0),1,scrollPositionMax)"
+        }
+      ]
+    },
+    {
+      "name": "scrollbarFillOpacity",
+      "value": 0.2,
+      "on": [
+        {"events": "view:pointerover", "update": "0.4"},
+        {"events": "view:pointerout", "update": "0.2"}
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "dataset-raw",
+      "transform": [
+        {"type": "sequence", "start": 1, "stop": 251, "step": 1, "as": "id"}
+      ]
+    },
+    {
+      "name": "dataset",
+      "source": "dataset-raw",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "(datum.id>=scrollPosition)&&(datum.id<(scrollPosition+rowsToDisplay))"
+        },
+        {"type": "collect", "sort": {"field": "id", "order": "ascending"}}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "scaleY",
+      "type": "band",
+      "domain": {"data": "dataset", "field": "id", "sort": true},
+      "range": [
+        {"signal": "0"},
+        {"signal": "rowHeight*length(data('dataset'))"}
+      ]
+    },
+    {
+      "name": "scaleScrollBarY",
+      "type": "linear",
+      "domain": [1, {"signal": "scrollPositionMax"}],
+      "range": [
+        {"signal": "0"},
+        {"signal": "rowHeight*rowsToDisplay-scrollBarHeight-1"}
+      ]
+    },
+    {
+      "name": "scaleRowStripeColors",
+      "type": "ordinal",
+      "domain": [0, 1],
+      "range": ["#FFFFFF", "#EAEAEA"]
+    }
+  ],
+  "title": {"text": "Scrollbar Example"},
+  "marks": [
+    {
+      "name": "rule-scrolltrack-1",
+      "type": "rule",
+      "encode": {
+        "update": {
+          "x": {"signal": "width-scrollBarWidth-2"},
+          "x2": {"signal": "width-scrollBarWidth-2"},
+          "y": {"signal": "0"},
+          "y2": {"signal": "scrollAreaHeight"},
+          "stroke": {"signal": "'black'"},
+          "strokeWidth": {"signal": "0.2"}
+        }
+      }
+    },
+    {
+      "name": "rule-scrolltrack-2",
+      "type": "rule",
+      "encode": {
+        "update": {
+          "x": {"signal": "width"},
+          "x2": {"signal": "width"},
+          "y": {"signal": "0"},
+          "y2": {"signal": "scrollAreaHeight"},
+          "stroke": {"signal": "'black'"},
+          "strokeWidth": {"signal": "0.2"}
+        }
+      }
+    },
+    {
+      "name": "rect-scrollbar",
+      "type": "rect",
+      "encode": {
+        "update": {
+          "x": {"signal": "width-scrollBarWidth-1"},
+          "y": {"scale": "scaleScrollBarY", "signal": "scrollPosition"},
+          "width": {"signal": "scrollBarWidth"},
+          "height": {"signal": "scrollBarHeight"},
+          "fill": {"value": "#666666"},
+          "fillOpacity": {"signal": "scrollbarFillOpacity"}
+        }
+      }
+    },
+    {
+      "name": "rect-table-cell",
+      "type": "rect",
+      "from": {"data": "dataset"},
+      "encode": {
+        "update": {
+          "x": {"signal": "0"},
+          "x2": {"signal": "width-scrollBarWidth-3"},
+          "y": {"scale": "scaleY", "field": "id", "band": 0},
+          "height": {"signal": "rowHeight"},
+          "fill": {
+            "scale": "scaleRowStripeColors",
+            "signal": "(ceil(datum.id/2,0)==datum.id/2)?1:0"
+          }
+        }
+      }
+    },
+    {
+      "name": "text-cell-content",
+      "type": "text",
+      "from": {"data": "dataset"},
+      "encode": {
+        "update": {
+          "text": {"signal": "'Test Row #'+datum.id"},
+          "dx": {"value": 5},
+          "y": {"scale": "scaleY", "field": "id", "band": 0.5},
+          "baseline": {"value": "middle"},
+          "align": {"value": "left"}
+        }
+      }
+    }
+  ]
+}
