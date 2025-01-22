@@ -527,6 +527,9 @@ function bind(item, el, sibling, tag, svg) {
         const cg = domCreate(doc, 'g', svgns);
         node.appendChild(cg);
         cg.__data__ = item;
+        if (item.outline) {
+          setStyle(cg, 'outline', item.outline);
+        }
 
         const fg = domCreate(doc, 'path', svgns);
         node.appendChild(fg);
@@ -575,6 +578,10 @@ const mark_extras = {
       setAttribute(fg, 'pointer-events', value);
       setAttribute(bg, 'pointer-events', value);
       values.events = value;
+    }
+
+    if (item.outline) {
+      setStyle(el, 'outline', item.outline);
     }
 
     if (item.strokeForeground && item.stroke) {
@@ -661,6 +668,13 @@ function emit(name, value, ns) {
 
   // note current value for future comparison
   values[name] = value;
+
+  // prevent the ownerSVGElement from becoming tabbable when
+  // a tabindex is set on an element within the scenegraph
+  if (name === 'tabindex' && !element.ownerSVGElement.hasAttribute(name)) {
+    setAttribute(element.ownerSVGElement, name, -1);
+    setStyle(element.ownerSVGElement, 'outline', 'none');
+  }
 }
 
 function setStyle(el, name, value) {

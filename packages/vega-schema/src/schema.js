@@ -45,6 +45,8 @@ export default function(definitions) {
         properties: {
           $schema: type('string', {format: 'uri'}),
           config: objectType,
+          ariaRole: stringType,
+          ariaRoleDescription: stringType,
           description: stringType,
           width: numberOrSignal,
           height: numberOrSignal,

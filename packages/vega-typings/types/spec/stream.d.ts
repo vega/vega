@@ -7,6 +7,8 @@ export type EventType =
   | 'dragenter'
   | 'dragleave'
   | 'dragover'
+  | 'focusin'
+  | 'focusout'
   | 'keydown'
   | 'keypress'
   | 'keyup'

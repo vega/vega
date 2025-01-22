@@ -41,6 +41,8 @@ function addExample(name) {
   'force-directed-layout',
   'reorderable-matrix',
   'stock-index-chart',
-  'airport-connections'
+  'airport-connections',
+  'column-stacked-interactive',
+  'interactive-line-chart'
 ].forEach(addExample);
 </script>

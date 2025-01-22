@@ -278,6 +278,7 @@ export interface EncodeEntry {
    * If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute).
    */
   description?: ProductionRule<StringValueRef>;
+  tabindex?: ProductionRule<NumericValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 
@@ -451,4 +452,6 @@ export type EncodeEntryName =
   | 'hover'
   | 'leave'
   | 'select'
-  | 'release';
+  | 'release'
+  | 'focusin'
+  | 'focusout';
