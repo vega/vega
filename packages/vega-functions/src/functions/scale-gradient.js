@@ -3,8 +3,13 @@ import {scale as get, scaleFraction} from 'vega-scale';
 import {Gradient} from 'vega-scenegraph';
 import {identity, peek} from 'vega-util';
 
-export default function(scale, p0, p1, count, group) {
-  scale = getScale(scale, (group || this).context);
+/**
+ * Passing a function is only used for for testing.
+ * Outside of tests, the first argument should be a string.
+ */
+export default function(scaleOrFunction, p0, p1, count, group) {
+
+  let scale = typeof scaleOrFunction === 'string' ? getScale(scaleOrFunction, (group || this).context) : scaleOrFunction;
 
   const gradient = Gradient(p0, p1);
 
