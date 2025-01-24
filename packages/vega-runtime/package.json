@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -22,8 +22,8 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-dataflow": "^5.7.6",
-    "vega-util": "^1.17.2"
+    "vega-dataflow": "^5.7.7",
+    "vega-util": "^1.17.3"
   },
   "devDependencies": {
     "vega-encode": "*",
