@@ -318,7 +318,7 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 
 <a name="sampleUniform" href="#sampleUniform">#</a>
 <b>sampleUniform</b>([<i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
-Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
 <b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
