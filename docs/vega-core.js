@@ -454,9 +454,8 @@
     }
     return [u, v];
   }
-  const hop = Object.prototype.hasOwnProperty;
   function has$1(object, property) {
-    return hop.call(object, property);
+    return Object.hasOwn(object, property);
   }
   const NULL = {};
   function fastmap(input) {
@@ -1232,7 +1231,7 @@
       options: options || {},
       sanitize: sanitize,
       load: load$1,
-      fileAccess: !!fs,
+      fileAccess: false,
       file: fileLoader(fs),
       http: httpLoader(fetch)
     });
@@ -3919,67 +3918,67 @@
       p;
     if (w < 6.25) {
       w -= 3.125;
-      p = -3.6444120640178196996e-21;
-      p = -1.685059138182016589e-19 + p * w;
+      p = -364441206401782e-35;
+      p = -16850591381820166e-35 + p * w;
       p = 1.2858480715256400167e-18 + p * w;
       p = 1.115787767802518096e-17 + p * w;
-      p = -1.333171662854620906e-16 + p * w;
+      p = -1333171662854621e-31 + p * w;
       p = 2.0972767875968561637e-17 + p * w;
       p = 6.6376381343583238325e-15 + p * w;
-      p = -4.0545662729752068639e-14 + p * w;
-      p = -8.1519341976054721522e-14 + p * w;
+      p = -4054566272975207e-29 + p * w;
+      p = -8151934197605472e-29 + p * w;
       p = 2.6335093153082322977e-12 + p * w;
-      p = -1.2975133253453532498e-11 + p * w;
-      p = -5.4154120542946279317e-11 + p * w;
+      p = -12975133253453532e-27 + p * w;
+      p = -5415412054294628e-26 + p * w;
       p = 1.051212273321532285e-09 + p * w;
-      p = -4.1126339803469836976e-09 + p * w;
-      p = -2.9070369957882005086e-08 + p * w;
+      p = -4.112633980346984e-9 + p * w;
+      p = -2.9070369957882005e-8 + p * w;
       p = 4.2347877827932403518e-07 + p * w;
-      p = -1.3654692000834678645e-06 + p * w;
-      p = -1.3882523362786468719e-05 + p * w;
+      p = -13654692000834679e-22 + p * w;
+      p = -13882523362786469e-21 + p * w;
       p = 0.0001867342080340571352 + p * w;
-      p = -0.00074070253416626697512 + p * w;
-      p = -0.0060336708714301490533 + p * w;
+      p = -740702534166267e-18 + p * w;
+      p = -0.006033670871430149 + p * w;
       p = 0.24015818242558961693 + p * w;
       p = 1.6536545626831027356 + p * w;
     } else if (w < 16.0) {
       w = Math.sqrt(w) - 3.25;
       p = 2.2137376921775787049e-09;
       p = 9.0756561938885390979e-08 + p * w;
-      p = -2.7517406297064545428e-07 + p * w;
+      p = -2.7517406297064545e-7 + p * w;
       p = 1.8239629214389227755e-08 + p * w;
       p = 1.5027403968909827627e-06 + p * w;
-      p = -4.013867526981545969e-06 + p * w;
+      p = -4013867526981546e-21 + p * w;
       p = 2.9234449089955446044e-06 + p * w;
       p = 1.2475304481671778723e-05 + p * w;
-      p = -4.7318229009055733981e-05 + p * w;
+      p = -47318229009055734e-21 + p * w;
       p = 6.8284851459573175448e-05 + p * w;
       p = 2.4031110387097893999e-05 + p * w;
-      p = -0.0003550375203628474796 + p * w;
+      p = -3550375203628475e-19 + p * w;
       p = 0.00095328937973738049703 + p * w;
-      p = -0.0016882755560235047313 + p * w;
+      p = -0.0016882755560235047 + p * w;
       p = 0.0024914420961078508066 + p * w;
-      p = -0.0037512085075692412107 + p * w;
+      p = -0.003751208507569241 + p * w;
       p = 0.005370914553590063617 + p * w;
       p = 1.0052589676941592334 + p * w;
       p = 3.0838856104922207635 + p * w;
     } else if (Number.isFinite(w)) {
       w = Math.sqrt(w) - 5.0;
-      p = -2.7109920616438573243e-11;
-      p = -2.5556418169965252055e-10 + p * w;
+      p = -27109920616438573e-27;
+      p = -2555641816996525e-25 + p * w;
       p = 1.5076572693500548083e-09 + p * w;
-      p = -3.7894654401267369937e-09 + p * w;
+      p = -3.789465440126737e-9 + p * w;
       p = 7.6157012080783393804e-09 + p * w;
-      p = -1.4960026627149240478e-08 + p * w;
+      p = -1.496002662714924e-8 + p * w;
       p = 2.9147953450901080826e-08 + p * w;
-      p = -6.7711997758452339498e-08 + p * w;
+      p = -6.771199775845234e-8 + p * w;
       p = 2.2900482228026654717e-07 + p * w;
-      p = -9.9298272942317002539e-07 + p * w;
+      p = -9.9298272942317e-7 + p * w;
       p = 4.5260625972231537039e-06 + p * w;
-      p = -1.9681778105531670567e-05 + p * w;
+      p = -1968177810553167e-20 + p * w;
       p = 7.5995277030017761139e-05 + p * w;
-      p = -0.00021503011930044477347 + p * w;
-      p = -0.00013871931833623122026 + p * w;
+      p = -21503011930044477e-20 + p * w;
+      p = -13871931833623122e-20 + p * w;
       p = 1.0103004648645343977 + p * w;
       p = 4.8499064014085844221 + p * w;
     } else {
@@ -12044,12 +12043,12 @@
     /**
      * Add an event handler. Subclasses should override this method.
      */
-    on( /*type, handler*/) {}
+    on(/*type, handler*/) {}
 
     /**
      * Remove an event handler. Subclasses should override this method.
      */
-    off( /*type, handler*/) {}
+    off(/*type, handler*/) {}
 
     /**
      * Utility method for finding the array index of an event handler.
@@ -12255,7 +12254,7 @@
      * incremental should implement this method.
      * @param {Item} item - The dirty item whose bounds should be redrawn.
      */
-    dirty( /*item*/) {}
+    dirty(/*item*/) {}
 
     /**
      * Render an input scenegraph, potentially with a set of dirty items.
@@ -12294,7 +12293,7 @@
      * @param {Array} markTypes - Array of the mark types to render.
      *                            If undefined, render all mark types
      */
-    _render( /*scene, markTypes*/
+    _render(/*scene, markTypes*/
     ) {
       // subclasses to override
     }
@@ -20556,7 +20555,7 @@
         addv[i] = key(data[i]);
         addi[i] = i;
       }
-      addv = sort(addv, addi);
+      addv = sort$1(addv, addi);
       if (n0) {
         oldv = value;
         oldi = index;
@@ -20618,7 +20617,7 @@
       size: () => size
     };
   }
-  function sort(values, index) {
+  function sort$1(values, index) {
     values.sort.call(index, (a, b) => {
       const x = values[a],
         y = values[b];
@@ -21099,7 +21098,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.30.0";
+  var version = "5.31.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22700,6 +22699,12 @@
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
     TYPE_RANGE_RE = 'R-RE',
+    TYPE_PRED_LT = 'E-LT',
+    TYPE_PRED_LTE = 'E-LTE',
+    TYPE_PRED_GT = 'E-GT',
+    TYPE_PRED_GTE = 'E-GTE',
+    TYPE_PRED_VALID = 'E-VALID',
+    TYPE_PRED_ONE_OF = 'E-ONE',
     UNIT_INDEX = 'index:unit';
 
   // TODO: revisit date coercion?
@@ -22733,6 +22738,18 @@
           if (!inrange(dval, values[i], false, false)) return false;
         } else if (f.type === TYPE_RANGE_LE) {
           if (!inrange(dval, values[i], false, true)) return false;
+        } else if (f.type === TYPE_PRED_LT) {
+          if (dval >= values[i]) return false;
+        } else if (f.type === TYPE_PRED_LTE) {
+          if (dval > values[i]) return false;
+        } else if (f.type === TYPE_PRED_GT) {
+          if (dval <= values[i]) return false;
+        } else if (f.type === TYPE_PRED_GTE) {
+          if (dval < values[i]) return false;
+        } else if (f.type === TYPE_PRED_VALID) {
+          if (dval === null || isNaN(dval)) return false;
+        } else if (f.type === TYPE_PRED_ONE_OF) {
+          if (values[i].indexOf(dval) === -1) return false;
         }
       }
     }
@@ -23093,12 +23110,13 @@
       }
     }
   }
-  function getScale(nameOrFunction, ctx) {
-    if (isFunction(nameOrFunction)) {
-      return nameOrFunction;
-    }
-    if (isString(nameOrFunction)) {
-      const maybeScale = ctx.scales[nameOrFunction];
+
+  /**
+   * Name must be a string. Return undefined if the scale is not registered.
+   */
+  function getScale(name, ctx) {
+    if (isString(name)) {
+      const maybeScale = ctx.scales[name];
       return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
     }
     return undefined;
@@ -23315,6 +23333,9 @@
   function reverse(seq) {
     return array(seq).slice().reverse();
   }
+  function sort(seq) {
+    return array(seq).slice().sort(ascending$1);
+  }
   function bandspace(count, paddingInner, paddingOuter) {
     return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
   }
@@ -23342,8 +23363,13 @@
     const s = getScale(name, (group || this).context);
     return s ? s(value) : undefined;
   }
-  function scaleGradient(scale, p0, p1, count, group) {
-    scale = getScale(scale, (group || this).context);
+
+  /**
+   * Passing a function is only used for for testing.
+   * Outside of tests, the first argument should be a string.
+   */
+  function scaleGradient(scaleOrFunction, p0, p1, count, group) {
+    let scale = typeof scaleOrFunction === 'string' ? getScale(scaleOrFunction, (group || this).context) : scaleOrFunction;
     const gradient = Gradient$1(p0, p1);
     let stops = scale.domain(),
       min = stops[0],
@@ -23555,6 +23581,7 @@
     lastindexof,
     replace,
     reverse,
+    sort,
     slice,
     flush,
     lerp,
@@ -23671,7 +23698,7 @@
 
     // if the code generator has already been initialized,
     // we need to also register the function with it
-    if (codeGenerator) codeGenerator.functions[name] = thisPrefix + name;
+    codeGenerator.functions[name] = thisPrefix + name;
     return this;
   }
 
@@ -26632,6 +26659,8 @@
   const GuideTitleStyle = 'guide-title';
   const GroupTitleStyle = 'group-title';
   const GroupSubtitleStyle = 'group-subtitle';
+
+  /** All values of LegendType */
   const Symbols = 'symbol';
   const Gradient = 'gradient';
   const Discrete = 'discrete';
