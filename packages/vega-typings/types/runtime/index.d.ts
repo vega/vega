@@ -32,7 +32,7 @@ type BaseLoaderOptions = {
   /** Allows caller to explicitly set loading mode (local or network request). File mode only applies to server-side rendering. */
   mode: 'file' | 'http';
   /** Default protocol for protocol-relative URIs, defaults to HTTP */
-  defaultProtocol: string;
+  defaultProtocol: 'file' | 'http' | string;
   /** browser `target` attribute for hyperlinks. Only used when sanitizing URI values for use as hyperlink */
   target: string;
   /** browser `rel` attribute for hyperlinks. Only used when sanitizing URI values for use as hyperlink */
@@ -49,7 +49,7 @@ type BaseLoaderOptions = {
 /**
  * Informs loader which context the URI will be used in.
  */
-type OptionsWithContext =
+type LoaderOptionsWithContext =
   | (Partial<BaseLoaderOptions> & {
       /**
        * Describes context in which the URI will be used.
@@ -74,8 +74,8 @@ type OptionsWithContext =
  * https://github.com/vega/vega/tree/main/packages/vega-loader
  */
 export interface Loader {
-  load: (uri: string, options?: OptionsWithContext) => Promise<string>;
-  sanitize: (uri: string, options: OptionsWithContext) => Promise<{ href: string }>;
+  load: (uri: string, options?: LoaderOptionsWithContext) => Promise<string>;
+  sanitize: (uri: string, options: LoaderOptionsWithContext) => Promise<{ href: string }>;
   http: (uri: string, options: Partial<RequestInit>) => Promise<string>;
   file: (filename: string) => Promise<string>;
 }
