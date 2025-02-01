@@ -36,7 +36,7 @@ Represents a [normal (Gaussian) probability distribution](https://en.wikipedia.o
 <a name="uniform" href="#uniform">#</a>
 <b>uniform</b>
 
-Represents a [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval _[min, max)_.
+Represents a [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution) over the interval _[min, max)_.
 
 | Property            | Type                           | Description   |
 | :------------------ | :----------------------------: | :------------ |
