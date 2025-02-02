@@ -25,10 +25,58 @@ export function timeFormatLocale(definition: object): void;
 // Parser
 export function parse(spec: Spec, config?: Config, opt?: { ast?: boolean }): Runtime;
 
+/** Types documented in vega-loader's README.md */
+type BaseLoaderOptions = {
+  /** Base URL prefix prepended to provided URI */
+  baseUrl: string;
+  /** Allows caller to explicitly set loading mode (local or network request). File mode only applies to server-side rendering. */
+  mode: 'file' | 'http';
+  /** Default protocol for protocol-relative URIs, defaults to HTTP */
+  defaultProtocol: 'file' | 'http' | string;
+  /** browser `target` attribute for hyperlinks. Only used when sanitizing URI values for use as hyperlink */
+  target: string;
+  /** browser `rel` attribute for hyperlinks. Only used when sanitizing URI values for use as hyperlink */
+  rel: string;
+  /** http request parameters passed to underlying [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) */
+  http: RequestInit;
+  /**
+   * Specify a [crossOrigin](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) attribute for images. Only used when sanitizing URI values with option context: "image"
+   * If this property is defined and maps to a value of `null` or `undefined`, then a `no-cors` fetch will be performed for the `Image`. This property can be used to override Vega's default behavior of using `crossOrigin="anonymous"`, which allows images loaded from a different host to be included in exported visualization images (and thereby avoid "tainted canvas errors"), so long as the server provides permission via proper CORS headers.
+   */
+  crossOrigin: 'anonymous' | 'use-credentials' | '' | undefined;
+};
+
+/**
+ * Informs loader which context the URI will be used in.
+ */
+type LoaderOptionsWithContext =
+  | (Partial<BaseLoaderOptions> & {
+      /**
+       * Describes context in which the URI will be used.
+       */
+      context: 'href' | 'image';
+    })
+  | {
+      /**
+       * context:dataflow is used when loader is used for getting data into vega-dataflow
+       * https://vega.github.io/vega/docs/data/
+       */
+      context: 'dataflow';
+      /**
+       * File formats supported by vega-loader
+       * https://vega.github.io/vega-lite/docs/data.html#format
+       */
+      response: 'json' | 'csv' | 'tsv' | 'dsv' | 'topojson';
+    };
+
+/**
+ * Loader object is used for loading data, images, and links (hrefs) from a Uniform Resource Identifier (URI)
+ * https://github.com/vega/vega/tree/main/packages/vega-loader
+ */
 export interface Loader {
-  load: (uri: string, options?: any) => Promise<string>;
-  sanitize: (uri: string, options: any) => Promise<{ href: string }>;
-  http: (uri: string, options: any) => Promise<string>;
+  load: (uri: string, options?: LoaderOptionsWithContext) => Promise<string>;
+  sanitize: (uri: string, options: LoaderOptionsWithContext) => Promise<{ href: string }>;
+  http: (uri: string, options: Partial<RequestInit>) => Promise<string>;
   file: (filename: string) => Promise<string>;
 }
 
