@@ -10,12 +10,11 @@ To report a security issue privately, please use the GitHub Security Advisory ["
 
 A Vega maintainer will send a response indicating next steps in handling your report. After the initial reply, the team will keep you informed of the progress towards a fix and announcement, and may ask for additional information or guidance.
 
-You can also report a vulnerability through the [npm contact form](https://www.npmjs.com/support) by selecting "I'm reporting a security vulnerability".
 
-## Preferred Languages
+## Further reading
 
-We prefer communications to be in English.
+To learn more about security measures in Vega, see our docs on
 
-## Learning More About Security
-
-To learn more about security measures in Vega, see the documentation on using an expression [`interpreter`](https://vega.github.io/vega/usage/interpreter/) for [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) compliance, or [`loader`](https://github.com/vega/vega/tree/main/packages/vega-loader) for opening network or filesystem resources.
+- Using an expression [`interpreter`](https://vega.github.io/vega/usage/interpreter/) for [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) compliance, or
+- Use a [`loader`](https://github.com/vega/vega/tree/main/packages/vega-loader) for opening network or filesystem resources.
+- Organization-wide security [guidelines](https://github.com/vega/.github/blob/main/SECURITY.md)

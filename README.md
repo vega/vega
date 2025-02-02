@@ -4,23 +4,14 @@
 <img src="https://vega.github.io/vega/assets/banner.png" alt="Vega Examples" width="900"></img>
 </a>
 
-**Vega** is a *visualization grammar*, a declarative format for creating, saving, and sharing interactive visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using either HTML5 Canvas or SVG.
+**Vega** is a *visualization grammar*, a declarative format for creating, saving, and sharing interactive visualization designs. With Vega you can describe data visualizations in a JSON format, and generate interactive views using HTML5 Canvas or SVG.
 
-For documentation, tutorials, and examples, see the [Vega website](https://vega.github.io/vega). For a description of changes between Vega 2 and later versions, please refer to the [Vega Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
+For [documentation](https://vega.github.io/vega/docs/), [tutorials](https://vega.github.io/vega/tutorials/), and [examples](https://vega.github.io/vega/examples/), see the [Vega website](https://vega.github.io/vega). For a description of changes between Vega 2 and later versions, please refer to the [Vega Porting Guide](https://vega.github.io/vega/docs/porting-guide/).
 
-## Build Instructions
-
-For a basic setup allowing you to build Vega and run examples:
-
-- Clone `https://github.com/vega/vega`.
-- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install. We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
-- Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
-- After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
-
-This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `yarn docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+Try using Vega in the online [Vega Editor](https://vega.github.io/editor/#/examples/vega/bar-chart).
 
 ## Internet Explorer Support
-For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) IE-compatible version of the code in the `packages/vega/build-es5` directory. Older browser would also require several polyfill libraries:
+For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) IE-compatible version of the code in the `packages/vega/build-es5` directory. Older browsers also require these polyfill libraries:
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.4/polyfill.min.js"></script>
@@ -35,3 +26,7 @@ Interested in contributing to Vega? Please see our [contribution and development
 Looking for support, or interested in sharing examples and tips? Post to the [Vega discussion forum](https://groups.google.com/forum/#!forum/vega-js) or join the [Vega slack organization](https://bit.ly/join-vega-slack-2020)! We also have examples available as [Observable notebooks](https://observablehq.com/@vega).
 
 If you're curious about system performance, see some [in-browser benchmarks](https://observablehq.com/@vega/vega-performance-tests). Read about future plans in [our roadmap](https://github.com/orgs/vega/projects/9/views/3?pane=info).
+
+## Security
+
+Please see our [guidelines](./SECURITY.md) for reporting vulnerabilities.
