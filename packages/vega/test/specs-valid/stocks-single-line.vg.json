@@ -1,0 +1,109 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "padding": 5,
+  "width": 650,
+  "height": 300,
+  "data": [
+    {
+      "name": "stocks",
+      "url": "data/stocks.csv",
+      "format": {
+        "type": "csv",
+        "parse": { "price": "number", "date": "date" }
+      },
+      "transform": [{ "type": "filter", "expr": "datum.symbol==='GOOG'" }]
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "line",
+      "style": ["line"],
+      "sort": { "field": "x" },
+      "from": { "data": "stocks" },
+      "encode": {
+        "update": {
+          "stroke": { "value": "#4c78a8" },
+          "description": {
+            "signal": "'date: ' + (timeFormat(datum['date'], '%b %d, %Y')) + '; price: ' + (format(datum['price'], ''))"
+          },
+          "x": { "scale": "x", "field": "date" },
+          "y": { "scale": "y", "field": "price" },
+          "defined": {
+            "signal": "isValid(datum['date']) && isFinite(+datum['date']) && isValid(datum['price']) && isFinite(+datum['price'])"
+          }
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {
+        "fields": [
+          { "signal": "{data: datetime('2004-08-01T00:00:00')}" },
+          { "signal": "{data: datetime('2010-08-01T00:00:00')}" }
+        ]
+      },
+      "range": [0, { "signal": "width" }]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": { "data": "stocks", "field": "price" },
+      "range": [{ "signal": "height" }, 0],
+      "nice": true,
+      "zero": true
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": { "signal": "ceil(width/40)" },
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": { "signal": "ceil(height/40)" },
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "date",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": { "signal": "ceil(width/40)" },
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "price",
+      "labelOverlap": true,
+      "tickCount": { "signal": "ceil(height/40)" },
+      "zindex": 0
+    }
+  ]
+}
