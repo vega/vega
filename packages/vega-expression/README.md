@@ -140,9 +140,11 @@ This package provides the following constants and functions:
 - [`split`](https://vega.github.io/vega/docs/expressions/#split)
 - [`substring`](https://vega.github.io/vega/docs/expressions/#substring)
 - [`trim`](https://vega.github.io/vega/docs/expressions/#trim)
+- [`atob`](https://vega.github.io/vega/docs/expressions/#atob)
+- [`btoa`](https://vega.github.io/vega/docs/expressions/#btoa)
+
 
 **RegExp Functions**
 
 - [`regexp`](https://vega.github.io/vega/docs/expressions/#regexp)
 - [`test`](https://vega.github.io/vega/docs/expressions/#test)
-
