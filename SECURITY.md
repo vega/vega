@@ -8,13 +8,4 @@ The Vega team and community take security bugs in Vega seriously. We appreciate 
 
 To report a security issue privately, please use the GitHub Security Advisory ["Report a Vulnerability"](https://github.com/vega/vega/security/advisories/new) tab.
 
-A Vega maintainer will send a response indicating next steps in handling your report. After the initial reply, the team will keep you informed of the progress towards a fix and announcement, and may ask for additional information or guidance.
-
-
-## Further reading
-
-To learn more about security measures in Vega, see our docs on
-
-- Using an expression [`interpreter`](https://vega.github.io/vega/usage/interpreter/) for [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) compliance, or
-- Use a [`loader`](https://github.com/vega/vega/tree/main/packages/vega-loader) for opening network or filesystem resources.
-- Organization-wide security [guidelines](https://github.com/vega/.github/blob/main/SECURITY.md)
+See the Vega organization-wide [guidelines](https://github.com/vega/.github/blob/main/SECURITY.md) for more information on security policy and protections.
