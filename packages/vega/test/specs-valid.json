@@ -63,6 +63,7 @@
   "legends-discrete",
   "legends-ordinal",
   "legends-symbol",
+  "legends-empty",
   "lifelines",
   "map",
   "map-area-compare",
