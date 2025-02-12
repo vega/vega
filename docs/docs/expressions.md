@@ -593,6 +593,15 @@ Truncates an input _string_ to a target _length_. The optional _align_ argument 
 <b>upper</b>(<i>string</i>)<br/>
 Transforms _string_ to upper-case letters.
 
+<a name="btoa" href="#btoa">#</a>
+<b>btoa</b>(<i>string</i>) {% include tag ver="5.3x" %}<br/>
+Creates a [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64)-encoded [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string. Same as JavaScript's [Window.btoa()](https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa).
+
+<a name="atob" href="#atob">#</a>
+<b>atob</b>(<i>string</i>) {% include tag ver="5.3x" %}<br/>
+Decodes an [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string that was encoded with [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64). Same as JavaScript's [Window.atob()](https://developer.mozilla.org/en-US/docs/Web/API/Window/atob).
+
+
 [Back to Top](#reference)
 
 
