@@ -75,6 +75,11 @@ export default {
   split:        function() { return apply('split', arguments, String); },
   replace:      function() { return apply('replace', arguments, String); },
   trim:         x => String(x).trim(),
+  // Base64 encode/decode
+  // Convert binary string to base64-encoded ascii
+  btoa:         x => btoa(x),
+  // Convert base64-encoded ascii to binary string
+  atob:         x => atob(x),
 
   // regexp functions
   regexp:       RegExp,

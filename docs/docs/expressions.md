@@ -523,7 +523,7 @@ Returns an array containing an arithmetic sequence of numbers. If _step_ is omit
 Returns a section of _array_ between the _start_ and _end_ indices. If the _end_ argument is negative, it is treated as an offset from the end of the array (_length(array) + end_).
 
 <a name="sort" href="#sort">#</a>
-<b>sort</b>(<i>array</i>)<br/>
+<b>sort</b>(<i>array</i>)<br/>{% include tag ver="5.31" %}<br/>
 Sorts the array in natural order using [ascending from Vega Utils](https://vega.github.io/vega/docs/api/util/#ascending).
 
 <a name="span" href="#span">#</a>
@@ -593,6 +593,15 @@ Truncates an input _string_ to a target _length_. The optional _align_ argument 
 <b>upper</b>(<i>string</i>)<br/>
 Transforms _string_ to upper-case letters.
 
+<a name="btoa" href="#btoa">#</a>
+<b>btoa</b>(<i>string</i>) {% include tag ver="5.3x" %}<br/>
+Creates a [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64)-encoded [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string. Same as JavaScript's [Window.btoa()](https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa).
+
+<a name="atob" href="#atob">#</a>
+<b>atob</b>(<i>string</i>) {% include tag ver="5.3x" %}<br/>
+Decodes an [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string that was encoded with [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64). Same as JavaScript's [Window.atob()](https://developer.mozilla.org/en-US/docs/Web/API/Window/atob).
+
+
 [Back to Top](#reference)
 
 
@@ -622,7 +631,7 @@ Formats a (0-6) _weekday_ number as an abbreviated week day name, according to t
 <a name="format" href="#format">#</a>
 <b>format</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a numeric _value_ as a string. The _specifier_ must be a valid [d3-format specifier](https://github.com/d3/d3-format/) (e.g., `format(value, ',.2f')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="monthFormat" href="#monthFormat">#</a>
 <b>monthFormat</b>(<i>month</i>)<br/>
@@ -639,7 +648,7 @@ Returns a time format specifier string for the given time [_units_](../api/time/
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -648,7 +657,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>
