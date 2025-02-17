@@ -7,13 +7,11 @@ const apply = (m, args, cast) => {
   return obj[m].apply(obj, slice.call(args, 1));
 };
 
-const datetime = (...args) => {
-  if (typeof args[0] === 'string') {
-    return new Date(args[0]);
-  }
-  const [y, m = 0, d = 1, H = 0, M = 0, S = 0, ms = 0] = args;
-  return new Date(y, m, d, H, M, S, ms);
-};
+const datetime = (yearOrTimestring, m = 0, d = 1, H = 0, M = 0, S = 0, ms = 0) =>
+  typeof yearOrTimestring === 'string'
+    ? new Date(yearOrTimestring)
+    : new Date(yearOrTimestring, m, d, H, M, S, ms);
+
 
 export default {
   // math functions

@@ -1,17 +1,24 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Google's stock price over in the second half of 2004.",
+  "background": "white",
   "padding": 5,
-  "width": 650,
-  "height": 300,
+  "width": 200,
+  "height": 200,
+  "style": "cell",
   "data": [
     {
       "name": "stocks",
       "url": "data/stocks.csv",
       "format": {
         "type": "csv",
-        "parse": { "price": "number", "date": "date" }
+        "parse": { "date": "date" },
+        "delimiter": ","
       },
-      "transform": [{ "type": "filter", "expr": "datum.symbol==='GOOG'" }]
+      "transform": [
+        { "type": "filter", "expr": "datum.symbol==='GOOG'" },
+        { "type": "filter", "expr": "year(datum.date) === 2005" }
+      ]
     }
   ],
   "marks": [
@@ -21,6 +28,7 @@
       "style": ["line"],
       "sort": { "field": "x" },
       "from": { "data": "stocks" },
+      "clip": true,
       "encode": {
         "update": {
           "stroke": { "value": "#4c78a8" },
@@ -42,8 +50,8 @@
       "type": "time",
       "domain": {
         "fields": [
-          { "signal": "{data: datetime('2004-08-01T00:00:00')}" },
-          { "signal": "{data: datetime('2010-08-01T00:00:00')}" }
+          { "signal": "{data: datetime('2005-08-01T00:00:00')}" },
+          { "signal": "{data: datetime('2005-12-01T00:00:00')}" }
         ]
       },
       "range": [0, { "signal": "width" }]
