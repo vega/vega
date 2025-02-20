@@ -300,6 +300,8 @@ export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
 export const transforms: { [name: string]: Transform };
 
+export function resetSVGDefIds(): void;
+
 export { parseSelector } from 'vega-event-selector';
 export { codegenExpression, parseExpression } from 'vega-expression';
 export * from 'vega-util';
