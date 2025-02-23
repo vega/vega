@@ -98,7 +98,7 @@ tape('CanvasHandler should add/remove event callbacks', t => {
   t.end();
 });
 
-tape('CanvasHandler should handle input events ', t => {
+tape('CanvasHandler should handle input events', t => {
   const scene = loadScene('scenegraph-rect.json');
   const handler = new Handler()
     .initialize(render(scene, 400, 200))
