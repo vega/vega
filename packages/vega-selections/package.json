@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "5.5.0",
+  "version": "5.6.0",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "d3-array": "3.2.4",
-    "vega-expression": "^5.1.2",
+    "vega-expression": "^5.2.0",
     "vega-util": "^1.17.3"
   }
 }

@@ -21098,7 +21098,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.31.0";
+  var version = "5.32.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
