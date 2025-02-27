@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 tape('extend extends objects with other object properties', t => {
-  var grandparent = {p2_1: 'vp2_1', p2_2: 'vp2_2'},
-      parent = Object.create(grandparent),
-      object1 = Object.create(parent),
-      object2 = {o2_1: 'vo2_1', override_1: 'overridden'};
+  const grandparent = {p2_1: 'vp2_1', p2_2: 'vp2_2'};
+  const parent = Object.create(grandparent);
+  const object1 = Object.create(parent);
+  const object2 = {o2_1: 'vo2_1', override_1: 'overridden'};
 
   object1.o1_1 = 'vo1_1';
   object1.o1_2 = 'vo1_2';

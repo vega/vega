@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+const tape = require('tape');
+const vega = require('../');
 
 tape('splitAccessPath parses field accessor paths', t => {
   t.deepEqual(vega.splitAccessPath('x'), ['x']);
