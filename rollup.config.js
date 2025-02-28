@@ -118,8 +118,8 @@ export default function(commandLineArgs) {
     external: dependencies.filter(dep => !esmDeps.includes(dep)),
     onwarn,
     output: {
-      file: pkg.main,
-      format: pkg.main.includes('-node') ? 'esm' : 'umd',
+      file: pkg.exports.node,
+      format: 'esm',
       globals,
       sourcemap: false,
       name
@@ -130,7 +130,7 @@ export default function(commandLineArgs) {
     external: dependencies,
     onwarn,
     output: {
-      file: pkg.module,
+      file: pkg.exports.default,
       format: 'esm',
       sourcemap: false
     },
