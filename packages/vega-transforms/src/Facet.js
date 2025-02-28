@@ -1,4 +1,4 @@
-import Subflow from './Subflow';
+import Subflow from './Subflow.js';
 import {Transform, tupleid} from 'vega-dataflow';
 import {fastmap, hasOwnProperty, inherits} from 'vega-util';
 

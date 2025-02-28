@@ -1,4 +1,4 @@
-import has from './hasOwnProperty';
+import has from './hasOwnProperty.js';
 
 const DEFAULT_MAX_SIZE = 10000;
 

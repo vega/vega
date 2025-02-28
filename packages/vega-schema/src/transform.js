@@ -1,7 +1,7 @@
 import {
   anyOf, array, booleanType, def, enums, nullType, numberType,
   object, oneOf, signalRef, stringType
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const compareRef = def('compare');

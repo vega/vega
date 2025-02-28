@@ -2,7 +2,7 @@ import {
   booleanOrSignal, booleanType, enums, nullType,
   numberOrSignal, numberType, object, oneOf,
   orSignal, signalRef
-} from './util';
+} from './util.js';
 
 const layoutAlignEnum = ['all', 'each', 'none'];
 

@@ -1,4 +1,4 @@
-import color from './color';
+import color from './color.js';
 
 export default function(context, item, opacity) {
   opacity *= (item.fillOpacity==null ? 1 : item.fillOpacity);

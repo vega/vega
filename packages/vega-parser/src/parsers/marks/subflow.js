@@ -1,4 +1,4 @@
-import {PreFacet, Sieve} from '../../transforms';
+import {PreFacet, Sieve} from '../../transforms.js';
 
 export default function(spec, scope, input) {
   const op = scope.add(PreFacet({pulse: input.pulse})),

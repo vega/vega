@@ -1,5 +1,5 @@
-import {domCreate} from './util/dom';
-import resolveItem from './util/resolveItem';
+import {domCreate} from './util/dom.js';
+import resolveItem from './util/resolveItem.js';
 import {loader} from 'vega-loader';
 
 export default class Handler {

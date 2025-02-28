@@ -1,4 +1,4 @@
-import {random} from './random';
+import {random} from './random.js';
 
 export default function(dists, weights) {
   let m = 0, w;

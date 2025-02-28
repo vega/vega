@@ -1,4 +1,4 @@
-import lookup from './lookup';
+import lookup from './lookup.js';
 import {Transform} from 'vega-dataflow';
 import {error, inherits, truthy} from 'vega-util';
 import {stratify} from 'd3-hierarchy';

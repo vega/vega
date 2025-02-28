@@ -1,5 +1,5 @@
-import Operator from '../Operator';
-import {isChangeSet} from '../ChangeSet';
+import Operator from '../Operator.js';
+import {isChangeSet} from '../ChangeSet.js';
 import {constant, extend, isFunction} from 'vega-util';
 
 const SKIP = {skip: true};

@@ -2,16 +2,16 @@ export {
   numberFormatDefaultLocale,
   numberFormatLocale,
   resetNumberFormatDefaultLocale
-} from './src/number';
+} from './src/number.js';
 
 export {
   timeFormatDefaultLocale,
   timeFormatLocale,
   resetTimeFormatDefaultLocale
-} from './src/time';
+} from './src/time.js';
 
 export {
   locale,
   defaultLocale,
   resetDefaultLocale
-} from './src/locale';
+} from './src/locale.js';

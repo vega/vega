@@ -1,4 +1,4 @@
-import { Expr, MarkType } from '.';
+import { Expr, MarkType } from '..js';
 
 export type EventSource = EventStream['source'] & {};
 export type EventType =

@@ -1,7 +1,7 @@
-import blend from './blend';
-import fill from './fill';
-import stroke from './stroke';
-import {visit} from '../visit';
+import blend from './blend.js';
+import fill from './fill.js';
+import stroke from './stroke.js';
+import {visit} from '../visit.js';
 
 export function drawAll(path) {
   return function(context, scene, bounds) {

@@ -1,6 +1,6 @@
-import {identity} from './accessors';
-import peek from './peek';
-import toNumber from './toNumber';
+import {identity} from './accessors.js';
+import peek from './peek.js';
+import toNumber from './toNumber.js';
 
 const exp = sign =>
   x => sign * Math.exp(x);
