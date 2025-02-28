@@ -13,19 +13,19 @@ export {
   MILLISECONDS,
   timeUnitSpecifier,
   timeUnits
-} from './src/units';
+} from './src/units.js';
 
 export {
   dayofyear,
   week,
   utcdayofyear,
   utcweek
-} from './src/util';
+} from './src/util.js';
 
 export {
   timeFloor,
   utcFloor
-} from './src/floor';
+} from './src/floor.js';
 
 export {
   timeInterval,
@@ -34,8 +34,8 @@ export {
   utcInterval,
   utcOffset,
   utcSequence
-} from './src/interval';
+} from './src/interval.js';
 
 export {
   default as timeBin
-} from './src/bin';
+} from './src/bin.js';

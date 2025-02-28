@@ -1,5 +1,5 @@
-import Constants from './constants';
-import Functions from './functions';
+import Constants from './constants.js';
+import Functions from './functions.js';
 import {error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {

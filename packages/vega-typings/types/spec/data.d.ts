@@ -1,4 +1,4 @@
-import { OnTrigger, SignalRef, Transforms } from '.';
+import { OnTrigger, SignalRef, Transforms } from '..js';
 
 export type DataType = 'boolean' | 'number' | 'date' | 'string';
 export type Parse =

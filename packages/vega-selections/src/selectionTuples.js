@@ -1,5 +1,5 @@
 import {extend} from 'vega-util';
-import {$selectionId, SelectionId, getter} from './util';
+import {$selectionId, SelectionId, getter} from './util.js';
 
 /**
  * Maps an array of scene graph items to an array of selection tuples.

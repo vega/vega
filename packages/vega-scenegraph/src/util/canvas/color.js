@@ -1,5 +1,5 @@
-import {isGradient} from '../../Gradient';
-import gradient from './gradient';
+import {isGradient} from '../../Gradient.js';
+import gradient from './gradient.js';
 
 export default function(context, item, value) {
   return isGradient(value)

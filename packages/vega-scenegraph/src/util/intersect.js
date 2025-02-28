@@ -1,5 +1,5 @@
-import {context} from './canvas/context';
-import Bounds from '../Bounds';
+import {context} from './canvas/context.js';
+import Bounds from '../Bounds.js';
 
 const b = new Bounds();
 

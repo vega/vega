@@ -1,4 +1,4 @@
-import SortedList from './util/SortedList';
+import SortedList from './util/SortedList.js';
 import {Transform, stableCompare, tupleid} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 

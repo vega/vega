@@ -1,6 +1,6 @@
-import Bitmaps from './Bitmaps';
-import Dimension from './Dimension';
-import SortedIndex from './SortedIndex';
+import Bitmaps from './Bitmaps.js';
+import Dimension from './Dimension.js';
+import SortedIndex from './SortedIndex.js';
 import {Transform} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 

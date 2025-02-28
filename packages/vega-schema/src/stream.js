@@ -1,7 +1,7 @@
 import {
   allOf, array, booleanType, def, numberType, object,
   oneOf, stringType
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const exprStringRef = def('exprString');

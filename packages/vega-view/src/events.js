@@ -1,4 +1,4 @@
-import eventExtend from './events-extend';
+import eventExtend from './events-extend.js';
 import {EventStream} from 'vega-dataflow';
 import {array, extend, isArray, isObject, toSet} from 'vega-util';
 

@@ -1,13 +1,13 @@
-import Bounds from '../Bounds';
-import {DegToRad, HalfPi} from '../util/constants';
-import {font, lineHeight, offset, textLines, textMetrics, textValue} from '../util/text';
-import {intersectBoxLine} from '../util/intersect';
-import {visit} from '../util/visit';
-import blend from '../util/canvas/blend';
-import fill from '../util/canvas/fill';
-import {pick} from '../util/canvas/pick';
-import stroke from '../util/canvas/stroke';
-import {rotate, translate} from '../util/svg/transform';
+import Bounds from '../Bounds.js';
+import {DegToRad, HalfPi} from '../util/constants.js';
+import {font, lineHeight, offset, textLines, textMetrics, textValue} from '../util/text.js';
+import {intersectBoxLine} from '../util/intersect.js';
+import {visit} from '../util/visit.js';
+import blend from '../util/canvas/blend.js';
+import fill from '../util/canvas/fill.js';
+import {pick} from '../util/canvas/pick.js';
+import stroke from '../util/canvas/stroke.js';
+import {rotate, translate} from '../util/svg/transform.js';
 import {isArray} from 'vega-util';
 
 const textAlign = {

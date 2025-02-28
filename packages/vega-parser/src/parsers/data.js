@@ -1,7 +1,7 @@
-import parseTransform from './transform';
-import parseTrigger from './trigger';
-import {Collect, Load, Relay, Sieve} from '../transforms';
-import {hasSignal, isSignal, ref} from '../util';
+import parseTransform from './transform.js';
+import parseTrigger from './trigger.js';
+import {Collect, Load, Relay, Sieve} from '../transforms.js';
+import {hasSignal, isSignal, ref} from '../util.js';
 import {array} from 'vega-util';
 
 export default function parseData(data, scope) {

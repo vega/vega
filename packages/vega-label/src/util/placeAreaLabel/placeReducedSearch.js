@@ -1,5 +1,5 @@
 import {textMetrics} from 'vega-scenegraph';
-import {collision, outOfBounds} from './common';
+import {collision, outOfBounds} from './common.js';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
   const width = $.width,

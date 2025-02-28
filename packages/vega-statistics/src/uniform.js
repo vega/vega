@@ -1,4 +1,4 @@
-import {random} from './random';
+import {random} from './random.js';
 
 export function sampleUniform(min, max) {
   if (max == null) {

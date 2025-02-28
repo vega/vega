@@ -1,5 +1,5 @@
-import {cumulativeNormal, quantileNormal, sampleNormal} from './normal';
-import {SQRT2PI} from './constants';
+import {cumulativeNormal, quantileNormal, sampleNormal} from './normal.js';
+import {SQRT2PI} from './constants.js';
 
 export function sampleLogNormal(mean, stdev) {
   mean = mean || 0;

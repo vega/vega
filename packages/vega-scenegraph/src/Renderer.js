@@ -1,4 +1,4 @@
-import ResourceLoader from './ResourceLoader';
+import ResourceLoader from './ResourceLoader.js';
 
 export default class Renderer {
   /**

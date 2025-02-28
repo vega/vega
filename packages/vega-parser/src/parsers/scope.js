@@ -1,12 +1,12 @@
-import parseSignalUpdates from './signal-updates';
-import {initScale, parseScale} from './scale';
-import parseProjection from './projection';
-import parseLegend from './legend';
-import parseSignal from './signal';
-import parseTitle from './title';
-import parseData from './data';
-import parseMark from './mark';
-import parseAxis from './axis';
+import parseSignalUpdates from './signal-updates.js';
+import {initScale, parseScale} from './scale.js';
+import parseProjection from './projection.js';
+import parseLegend from './legend.js';
+import parseSignal from './signal.js';
+import parseTitle from './title.js';
+import parseData from './data.js';
+import parseMark from './mark.js';
+import parseAxis from './axis.js';
 import {array} from 'vega-util';
 
 export default function(spec, scope, preprocessed) {

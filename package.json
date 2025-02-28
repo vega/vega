@@ -3,6 +3,7 @@
   "license": "BSD-3-Clause",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "repository": "vega/vega",
+  "type": "module",
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
     "build-editor-preview": "scripts/build-editor-preview.sh",
@@ -15,7 +16,7 @@
     "serve": "serve packages/vega/ -l 8080",
     "test": "yarn test:no-lint && yarn lint",
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
-    "lint": "ESLINT_USE_FLAT_CONFIG=true yarn eslint -c eslint.config.mjs .",
+    "lint": "eslint -c eslint.config.js .",
     "format": "yarn lint --fix",
     "postinstall": "scripts/postinstall.sh"
   },
@@ -38,7 +39,7 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^2.1.1",
     "canvas": "^2.11.2",
-    "eslint": "^8.53.0",
+    "eslint": "^9.21.0",
     "globals": "^15.14.0",
     "jsdom": "^24.1.0",
     "lerna": "^7.4.2",

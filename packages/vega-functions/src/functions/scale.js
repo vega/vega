@@ -1,4 +1,4 @@
-import {getScale} from '../scales';
+import {getScale} from '../scales.js';
 import {bandSpace} from 'vega-scale';
 import {isArray} from 'vega-util';
 

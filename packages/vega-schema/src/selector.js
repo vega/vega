@@ -1,4 +1,4 @@
-import { stringType } from './util';
+import { stringType } from './util.js';
 
 const selector = stringType;
 

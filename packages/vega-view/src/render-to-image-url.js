@@ -1,4 +1,4 @@
-import renderHeadless from './render-headless';
+import renderHeadless from './render-headless.js';
 import {RenderType as Type} from 'vega-scenegraph';
 import {error} from 'vega-util';
 

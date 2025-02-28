@@ -1,4 +1,4 @@
-import bandSpace from './bandSpace';
+import bandSpace from './bandSpace.js';
 import {bisectRight, range as sequence} from 'd3-array';
 import {scaleOrdinal as ordinal} from 'd3-scale';
 

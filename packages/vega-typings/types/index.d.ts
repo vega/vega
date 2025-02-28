@@ -1,2 +1,2 @@
-export * from './spec';
-export * from './runtime';
+export * from './spec.js';
+export * from './runtime.js';

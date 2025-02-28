@@ -1,8 +1,8 @@
-import {groupkey} from './util/AggregateKeys';
-import {ValidAggregateOps} from './util/AggregateOps';
-import SortedList from './util/SortedList';
-import {ValidWindowOps} from './util/WindowOps';
-import WindowState from './util/WindowState';
+import {groupkey} from './util/AggregateKeys.js';
+import {ValidAggregateOps} from './util/AggregateOps.js';
+import SortedList from './util/SortedList.js';
+import {ValidWindowOps} from './util/WindowOps.js';
+import WindowState from './util/WindowState.js';
 import {Transform, stableCompare, tupleid} from 'vega-dataflow';
 import {constant, inherits} from 'vega-util';
 import {bisector} from 'd3-array';

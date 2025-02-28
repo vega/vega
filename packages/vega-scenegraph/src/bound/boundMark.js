@@ -1,6 +1,6 @@
-import Bounds from '../Bounds';
-import boundItem from './boundItem';
-import marks from '../marks/index';
+import Bounds from '../Bounds.js';
+import boundItem from './boundItem.js';
+import marks from '../marks/index.js';
 
 var DUMMY = {mark: null};
 

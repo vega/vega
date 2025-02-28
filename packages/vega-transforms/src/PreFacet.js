@@ -1,4 +1,4 @@
-import Facet from './Facet';
+import Facet from './Facet.js';
 import {ingest, tupleid} from 'vega-dataflow';
 import {accessorFields, error, inherits} from 'vega-util';
 

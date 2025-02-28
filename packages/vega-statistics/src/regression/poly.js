@@ -1,8 +1,8 @@
-import constant from './constant';
-import linear from './linear';
-import {points} from './points';
-import quad from './quad';
-import rSquared from './r-squared';
+import constant from './constant.js';
+import linear from './linear.js';
+import {points} from './points.js';
+import quad from './quad.js';
+import rSquared from './r-squared.js';
 
 // Adapted from d3-regression by Harry Stevens
 // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE

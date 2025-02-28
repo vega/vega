@@ -1,6 +1,6 @@
 import {bisector} from 'd3-array';
 import {inrange, isArray, isDate, toNumber} from 'vega-util';
-import {$selectionId, Intersect, getter} from './util';
+import {$selectionId, Intersect, getter} from './util.js';
 
 const TYPE_ENUM = 'E',
     TYPE_RANGE_INC = 'R',

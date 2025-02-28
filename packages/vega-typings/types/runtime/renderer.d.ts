@@ -1,4 +1,4 @@
-import { Loader } from '.';
+import { Loader } from '..js';
 
 export type Renderers = 'canvas' | 'svg' | 'hybrid' | 'none';
 

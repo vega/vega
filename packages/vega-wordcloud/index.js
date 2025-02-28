@@ -1,1 +1,1 @@
-export {default as wordcloud} from './src/Wordcloud';
+export {default as wordcloud} from './src/Wordcloud.js';

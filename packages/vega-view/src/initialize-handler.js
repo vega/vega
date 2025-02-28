@@ -1,5 +1,5 @@
-import {offset} from './render-size';
-import trap from './trap';
+import {offset} from './render-size.js';
+import trap from './trap.js';
 
 export default function(view, prevHandler, el, constructor) {
   // instantiate scenegraph handler
