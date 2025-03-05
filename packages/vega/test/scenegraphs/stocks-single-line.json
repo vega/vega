@@ -1,0 +1,614 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "group",
+          "role": "axis",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "axis-grid",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": -200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    },
+                    {
+                      "x": 51,
+                      "y": -200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    },
+                    {
+                      "x": 100,
+                      "y": -200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    },
+                    {
+                      "x": 151,
+                      "y": -200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    },
+                    {
+                      "x": 200,
+                      "y": -200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0.5,
+              "y": 200.5,
+              "orient": "bottom"
+            }
+          ],
+          "zindex": 0,
+          "aria": false
+        },
+        {
+          "marktype": "group",
+          "role": "axis",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "axis-grid",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 200,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    },
+                    {
+                      "x": 0,
+                      "y": 156,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    },
+                    {
+                      "x": 0,
+                      "y": 111,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    },
+                    {
+                      "x": 0,
+                      "y": 67,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    },
+                    {
+                      "x": 0,
+                      "y": 22,
+                      "opacity": 1,
+                      "stroke": "#ddd",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0.5,
+              "y": 0.5,
+              "orient": "left"
+            }
+          ],
+          "zindex": 0,
+          "aria": false
+        },
+        {
+          "marktype": "group",
+          "role": "axis",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "axis-tick",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 5
+                    },
+                    {
+                      "x": 51,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 5
+                    },
+                    {
+                      "x": 100,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 5
+                    },
+                    {
+                      "x": 151,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 5
+                    },
+                    {
+                      "x": 200,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 5
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "axis-label",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 7,
+                      "align": "left",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "August",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": 50.80232161147149,
+                      "y": 7,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 0,
+                      "text": "September",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": 99.965858654831,
+                      "y": 7,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "October",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": 150.83646295664047,
+                      "y": 7,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 0,
+                      "text": "November",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": 200,
+                      "y": 7,
+                      "align": "right",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "December",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rule",
+                  "role": "axis-domain",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 0,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": 200
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "axis-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 100,
+                      "y": 21,
+                      "align": "center",
+                      "baseline": "top",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "date",
+                      "angle": 0,
+                      "font": "sans-serif",
+                      "fontSize": 11,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0.5,
+              "y": 200.5,
+              "orient": "bottom"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "axis",
+          "interactive": false,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rule",
+                  "role": "axis-tick",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 200,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": -5
+                    },
+                    {
+                      "x": 0,
+                      "y": 156,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": -5
+                    },
+                    {
+                      "x": 0,
+                      "y": 111,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": -5
+                    },
+                    {
+                      "x": 0,
+                      "y": 67,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": -5
+                    },
+                    {
+                      "x": 0,
+                      "y": 22,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "x2": -5
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "axis-label",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -7,
+                      "y": 200,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "0",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": -7,
+                      "y": 155.55555555555557,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "100",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": -7,
+                      "y": 111.11111111111111,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "200",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": -7,
+                      "y": 66.66666666666667,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "300",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    },
+                    {
+                      "x": -7,
+                      "y": 22.222222222222232,
+                      "align": "right",
+                      "baseline": "middle",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "400",
+                      "angle": 0,
+                      "limit": 180,
+                      "font": "sans-serif",
+                      "fontSize": 10
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rule",
+                  "role": "axis-domain",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 0,
+                      "y": 200,
+                      "opacity": 1,
+                      "stroke": "#888",
+                      "strokeWidth": 1,
+                      "y2": 0
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "axis-title",
+                  "interactive": false,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": -35,
+                      "y": 100,
+                      "align": "center",
+                      "baseline": "bottom",
+                      "fill": "#000",
+                      "opacity": 1,
+                      "text": "price",
+                      "angle": -90,
+                      "font": "sans-serif",
+                      "fontSize": 11,
+                      "fontWeight": "bold"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 0.5,
+              "y": 0.5,
+              "orient": "left"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "line",
+          "name": "marks",
+          "role": "mark",
+          "interactive": true,
+          "clip": true,
+          "items": [
+            {
+              "x": -347.35404574940253,
+              "y": 113.05777777777779,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Jan 01, 2005; price: 195.62"
+            },
+            {
+              "x": -296.55172413793105,
+              "y": 116.44888888888887,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Feb 01, 2005; price: 187.99"
+            },
+            {
+              "x": -250.6657562307955,
+              "y": 119.77333333333333,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Mar 01, 2005; price: 180.51"
+            },
+            {
+              "x": -199.863434619324,
+              "y": 102.22222222222221,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Apr 01, 2005; price: 220"
+            },
+            {
+              "x": -150.7681802663025,
+              "y": 76.76888888888888,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: May 01, 2005; price: 277.27"
+            },
+            {
+              "x": -99.965858654831,
+              "y": 69.26666666666668,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Jun 01, 2005; price: 294.15"
+            },
+            {
+              "x": -50.80232161147149,
+              "y": 72.10666666666667,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Jul 01, 2005; price: 287.76"
+            },
+            {
+              "x": 0,
+              "y": 72.88888888888889,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Aug 01, 2005; price: 286"
+            },
+            {
+              "x": 50.80232161147149,
+              "y": 59.35111111111111,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Sep 01, 2005; price: 316.46"
+            },
+            {
+              "x": 99.965858654831,
+              "y": 34.60444444444446,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Oct 01, 2005; price: 372.14"
+            },
+            {
+              "x": 150.83646295664047,
+              "y": 20.039999999999992,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Nov 01, 2005; price: 404.91"
+            },
+            {
+              "x": 200,
+              "y": 15.617777777777775,
+              "stroke": "#4c78a8",
+              "strokeWidth": 2,
+              "defined": true,
+              "description": "date: Dec 01, 2005; price: 414.86"
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 200,
+      "height": 200,
+      "fill": "transparent",
+      "stroke": "#ddd"
+    }
+  ],
+  "zindex": 0
+}
