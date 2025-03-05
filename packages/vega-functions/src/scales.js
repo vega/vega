@@ -1,17 +1,20 @@
 import {ScalePrefix} from './constants';
 import {scaleVisitor} from './visitors';
 import {Literal} from 'vega-expression';
-import {isString, stringValue} from 'vega-util';
+import {isFunction, isString, stringValue} from 'vega-util';
 import {isRegisteredScale} from 'vega-scale';
 
 /**
- * Name must be a string. Return undefined if the scale is not registered.
+ * nameOrFunction must be a string or function that was registered.
+ * Return undefined if scale is not recognized.
  */
-export function getScale(name, ctx) {
+export function getScale(nameOrFunction, ctx) {
 
-  if (isString(name)) {
-    const maybeScale = ctx.scales[name];
+  if (isString(nameOrFunction)) {
+    const maybeScale = ctx.scales[nameOrFunction];
     return (maybeScale && isRegisteredScale(maybeScale.value)) ? maybeScale.value : undefined;
+  } else if (isFunction(nameOrFunction)) {
+    return isRegisteredScale(nameOrFunction) ? nameOrFunction : undefined;
   }
 
   return undefined;
