@@ -10,7 +10,7 @@ This transform supports parametric models for the following functional forms:
 
 * linear (`linear`): _y = a + b * x_
 * logarithmic (`log`): _y = a + b * log(x)_
-* exponential (`exp`): _y = a + e<sup>b * x</sup>_
+* exponential (`exp`): _y = a * e<sup>b * x</sup>_
 * power (`pow`): _y = a * x<sup>b</sup>_
 * quadratic (`quad`): _y = a + b * x + c * x<sup>2</sup>_
 * polynomial (`poly`): _y = a + b * x + ... + k * x<sup>order</sup>_
