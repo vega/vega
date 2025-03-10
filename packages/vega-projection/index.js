@@ -2,4 +2,4 @@ export {
   projection,
   projectionProperties,
   getProjectionPath
-} from './src/projections';
+} from './src/projections.js';

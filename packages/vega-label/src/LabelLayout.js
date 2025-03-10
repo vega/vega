@@ -1,10 +1,10 @@
 import {textMetrics} from 'vega-scenegraph';
-import {baseBitmaps, markBitmaps} from './util/markBitmaps';
-import scaler from './util/scaler';
-import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive';
-import placeAreaLabelReducedSearch from './util/placeAreaLabel/placeReducedSearch';
-import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill';
-import placeMarkLabel from './util/placeMarkLabel';
+import {baseBitmaps, markBitmaps} from './util/markBitmaps.js';
+import scaler from './util/scaler.js';
+import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive.js';
+import placeAreaLabelReducedSearch from './util/placeAreaLabel/placeReducedSearch.js';
+import placeAreaLabelFloodFill from './util/placeAreaLabel/placeFloodFill.js';
+import placeMarkLabel from './util/placeMarkLabel.js';
 
 // 8-bit representation of anchors
 const TOP    = 0x0,

@@ -1,12 +1,12 @@
-import boundStroke from '../bound/boundStroke';
-import context from '../bound/boundContext';
-import pathParse from '../path/parse';
-import pathRender from '../path/render';
-import {intersectPath} from '../util/intersect';
-import {drawAll} from '../util/canvas/draw';
-import {pickPath} from '../util/canvas/pick';
-import {transformItem} from '../util/svg/transform';
-import {DegToRad} from '../util/constants';
+import boundStroke from '../bound/boundStroke.js';
+import context from '../bound/boundContext.js';
+import pathParse from '../path/parse.js';
+import pathRender from '../path/render.js';
+import {intersectPath} from '../util/intersect.js';
+import {drawAll} from '../util/canvas/draw.js';
+import {pickPath} from '../util/canvas/pick.js';
+import {transformItem} from '../util/svg/transform.js';
+import {DegToRad} from '../util/constants.js';
 
 function attr(emit, item) {
   var sx = item.scaleX || 1,

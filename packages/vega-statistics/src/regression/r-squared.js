@@ -1,4 +1,4 @@
-import {visitPoints} from './points';
+import {visitPoints} from './points.js';
 
 // Adapted from d3-regression by Harry Stevens
 // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE

@@ -1,4 +1,4 @@
-import color from './color';
+import color from './color.js';
 
 var Empty = [];
 

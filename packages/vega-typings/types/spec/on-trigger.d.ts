@@ -1,4 +1,4 @@
-import { Expr } from '.';
+import { Expr } from '..js';
 
 export interface OnTrigger {
   trigger: Expr;

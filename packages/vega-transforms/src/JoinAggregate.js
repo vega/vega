@@ -1,5 +1,5 @@
-import Aggregate from './Aggregate';
-import {ValidAggregateOps} from './util/AggregateOps';
+import Aggregate from './Aggregate.js';
+import {ValidAggregateOps} from './util/AggregateOps.js';
 import {extend, inherits} from 'vega-util';
 
 /**

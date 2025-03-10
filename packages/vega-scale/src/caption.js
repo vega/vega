@@ -1,6 +1,6 @@
-import {labelFormat, labelValues} from './labels';
-import {Time, UTC} from './scales/types';
-import {isDiscrete, isDiscretizing, isTemporal} from './scales';
+import {labelFormat, labelValues} from './labels.js';
+import {Time, UTC} from './scales/types.js';
+import {isDiscrete, isDiscretizing, isTemporal} from './scales.js';
 import {isString, peek} from 'vega-util';
 
 function format(locale, scale, specifier, formatType) {

@@ -1,4 +1,4 @@
-import pathParse from '../path/parse';
+import pathParse from '../path/parse.js';
 import {isNumber, isObject} from 'vega-util';
 
 const TOLERANCE = 1e-9;

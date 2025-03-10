@@ -2,7 +2,7 @@ import {
   allOf, anyOf, array, booleanType, def, enums, nullType, numberType, numberValue,
   object, oneOf, pattern, required, signalRef,
   stringType, textType, type
-} from './util';
+} from './util.js';
 
 export const blendEnum = [
   null, 'multiply', 'screen', 'overlay', 'darken', 'lighten',

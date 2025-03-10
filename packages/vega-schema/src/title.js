@@ -5,7 +5,7 @@ import {
   numberOrSignal, numberType, numberValue,
   object, oneOf, orSignal, pattern,
   stringType, stringValue, textOrSignal
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const guideEncodeRef = def('guideEncode');

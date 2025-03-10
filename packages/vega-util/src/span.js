@@ -1,4 +1,4 @@
-import peek from './peek';
+import peek from './peek.js';
 
 /**
  * Return the numerical span of an array: the difference between

@@ -20,9 +20,9 @@
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "bundle": "rollup -c rollup.config.mjs --config-bundle",
-    "prebuild": "rimraf build && rimraf build-es5",
-    "build": "rollup -c rollup.config.mjs --config-core --config-bundle --config-ie",
+    "bundle": "rollup -c rollup.config.js --config-bundle",
+    "prebuild": "rimraf build",
+    "build": "rollup -c rollup.config.js --config-core --config-bundle",
     "postbuild": "node schema-copy",
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",

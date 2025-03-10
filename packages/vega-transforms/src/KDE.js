@@ -1,4 +1,4 @@
-import {partition} from './util/util';
+import {partition} from './util/util.js';
 import {randomKDE} from 'vega-statistics';
 import {Transform, ingest} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';

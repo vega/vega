@@ -1,4 +1,4 @@
-import parseUpdate from './update';
+import parseUpdate from './update.js';
 import {parseExpression} from 'vega-functions';
 import {error} from 'vega-util';
 

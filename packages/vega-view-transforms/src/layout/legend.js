@@ -2,7 +2,7 @@ import {
   Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
   None, Right, Start, Symbols, Top,
   TopLeft, TopRight
-} from '../constants';
+} from '../constants.js';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 // utility for looking up legend layout configuration

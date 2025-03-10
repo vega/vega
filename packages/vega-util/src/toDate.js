@@ -1,5 +1,5 @@
-import isDate from './isDate';
-import isNumber from './isNumber';
+import isDate from './isDate.js';
+import isNumber from './isNumber.js';
 
 const defaultParser = _ =>
   isNumber(_) ? _ : isDate(_) ? _ : Date.parse(_);

@@ -1,5 +1,5 @@
 var tape = require('tape'),
-    vega = require('../'), // eslint-disable-line no-unused-vars
+    vega = require('../'),
     ajv = require('ajv'),
     fs = require('fs'),
     schema = require('../build/vega-schema.json'),

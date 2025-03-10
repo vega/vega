@@ -1,4 +1,4 @@
-import {entry} from './util';
+import {entry} from './util.js';
 
 const transform = name => (params, value, parent) =>
   entry(name, value, params || undefined, parent);

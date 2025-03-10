@@ -1,7 +1,7 @@
-import { SignalRef } from '.';
-import { Color } from './color';
-import { Cursor, StrokeCap, StrokeJoin } from './config.d';
-import { TitleAnchor } from './title';
+import { SignalRef } from '..js';
+import { Color } from './color.js';
+import { Cursor, StrokeCap, StrokeJoin } from './config.d.js';
+import { TitleAnchor } from './title.js';
 
 export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 

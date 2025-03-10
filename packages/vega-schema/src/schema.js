@@ -1,27 +1,27 @@
-import {def, numberOrSignal, objectType, stringType, type} from './util';
+import {def, numberOrSignal, objectType, stringType, type} from './util.js';
 
-import autosize from './autosize';
-import axis from './axis';
-import background from './background';
-import bind from './bind';
-import data from './data';
-import encode from './encode';
-import expr from './expr';
-import layout from './layout';
-import legend from './legend';
-import mark from './mark';
-import marktype from './marktype';
-import onEvents from './on-events';
-import onTrigger from './on-trigger';
-import padding from './padding';
-import projection from './projection';
-import scale from './scale';
-import scope from './scope';
-import selector from './selector';
-import signal from './signal';
-import stream from './stream';
-import title from './title';
-import transform from './transform';
+import autosize from './autosize.js';
+import axis from './axis.js';
+import background from './background.js';
+import bind from './bind.js';
+import data from './data.js';
+import encode from './encode.js';
+import expr from './expr.js';
+import layout from './layout.js';
+import legend from './legend.js';
+import mark from './mark.js';
+import marktype from './marktype.js';
+import onEvents from './on-events.js';
+import onTrigger from './on-trigger.js';
+import padding from './padding.js';
+import projection from './projection.js';
+import scale from './scale.js';
+import scope from './scope.js';
+import selector from './selector.js';
+import signal from './signal.js';
+import stream from './stream.js';
+import title from './title.js';
+import transform from './transform.js';
 
 function extend(target, source) {
   for (const key in source) {

@@ -11,7 +11,7 @@
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "build": "rollup -c rollup.config.js",
     "postbuild": "yarn schema",
     "pretest": "yarn build --config-test",
     "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",

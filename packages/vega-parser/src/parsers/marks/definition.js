@@ -1,4 +1,4 @@
-import role from './role';
+import role from './role.js';
 
 export default function(spec) {
   return {

@@ -1,4 +1,4 @@
-import { array, def, object, objectType, oneOf } from './util';
+import { array, def, object, objectType, oneOf } from './util.js';
 
 const scope = object({
   encode:      def('encode'),

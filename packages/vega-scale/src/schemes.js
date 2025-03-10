@@ -1,5 +1,5 @@
-import {continuous, discrete} from './palettes';
-import {interpolateColors} from './interpolate';
+import {continuous, discrete} from './palettes.js';
+import {interpolateColors} from './interpolate.js';
 import {isArray} from 'vega-util';
 
 function colors(palette) {
