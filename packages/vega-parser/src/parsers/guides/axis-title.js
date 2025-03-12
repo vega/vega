@@ -1,4 +1,4 @@
-import {getSign, ifTop, ifX, ifY, mult, patch} from './axis-util';
+import {ifTop, ifX, ifY, ifRight, patch} from './axis-util';
 import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
 import guideMark from './guide-mark';
 import {alignExpr, anchorExpr, lookup} from './guide-util';
@@ -9,8 +9,7 @@ import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
   const _ = lookup(spec, config),
-        orient = spec.orient,
-        sign = getSign(orient, -1, 1);
+    orient = spec.orient;
 
   let enter, update;
   const encode = {
@@ -34,8 +33,8 @@ export default function(spec, config, userEncode, dataRef) {
 
   update.x = ifX(orient, titlePos);
   update.y = ifY(orient, titlePos);
-  enter.angle = ifX(orient, zero, mult(sign, 90));
-  enter.baseline = ifX(orient, ifTop(orient, Bottom, Top), {value: Bottom});
+  enter.angle = ifX(orient, zero, {value: -90});
+  enter.baseline = ifX(orient, ifTop(orient, Bottom, Top), ifRight(orient, Top, Bottom));
   update.angle = enter.angle;
   update.baseline = enter.baseline;
 
