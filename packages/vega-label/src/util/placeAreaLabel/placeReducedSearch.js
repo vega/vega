@@ -6,7 +6,7 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
       height = $.height,
       bm0 = bitmaps[0], // where labels have been placed
       bm1 = bitmaps[1]; // area outlines
-  
+
   function tryLabel(_x, _y, maxSize, textWidth, textHeight) {
     const x = $.invert(_x),
           y = $.invert(_y);

@@ -75,4 +75,3 @@ function intersectItem(item, box, test) {
   const bounds = item.bounds;
   return box.encloses(bounds) || (box.intersects(bounds) && test(item, box));
 }
-

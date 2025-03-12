@@ -3,7 +3,7 @@ import {textMetrics} from 'vega-scenegraph';
 export default function($, bitmaps, avoidBaseMark, markIndex) {
   const width = $.width,
       height = $.height;
-  
+
   // try to place a label within an input area mark
   return function(d) {
     const items = d.datum.datum.items[markIndex].items, // area points

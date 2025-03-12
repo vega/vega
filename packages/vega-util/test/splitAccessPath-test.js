@@ -21,4 +21,3 @@ tape('splitAccessPath parses field accessor paths', t => {
   t.deepEqual(vega.splitAccessPath('\\a\\b\\c'), ['abc']);
   t.end();
 });
-

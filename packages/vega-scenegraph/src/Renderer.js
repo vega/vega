@@ -185,4 +185,3 @@ export default class Renderer {
     return this._load('loadImage', uri);
   }
 }
-

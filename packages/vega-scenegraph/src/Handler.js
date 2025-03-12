@@ -194,5 +194,3 @@ export default class Handler {
 function defaultTooltip(handler, event, item, value) {
   handler.element().setAttribute('title', value || '');
 }
-
-

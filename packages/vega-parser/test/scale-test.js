@@ -144,4 +144,3 @@ tape('Parser parses Vega specs with multi-domain scales', t => {
 
   t.end();
 });
-

@@ -24,4 +24,3 @@ tape('default projections are registered', t => {
 
   t.end();
 });
-

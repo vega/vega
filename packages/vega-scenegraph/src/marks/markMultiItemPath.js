@@ -54,5 +54,3 @@ export default function(type, shape, tip) {
   };
 
 }
-
-
