@@ -1,6 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    MultiExtent = require('../').multiextent;
+import tape from "tape";
+import vega from "vega-dataflow";
+import { multiextent } from "../index.js";
+var MultiExtent = { multiextent }.multiextent;
 
 tape('MultiExtent combines extents', t => {
   var df = new vega.Dataflow(),

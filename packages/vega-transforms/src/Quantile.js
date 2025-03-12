@@ -1,4 +1,4 @@
-import {partition} from './util/util';
+import {partition} from './util/util.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {quantiles} from 'vega-statistics';
 import {accessorName, inherits} from 'vega-util';

@@ -1,15 +1,15 @@
-import {hasCornerRadius, rectangle} from '../path/shapes';
-import boundStroke from '../bound/boundStroke';
-import {intersectRect} from '../util/intersect';
-import value from '../util/value';
-import {pickVisit, visit} from '../util/visit';
-import blend from '../util/canvas/blend';
-import {clipGroup} from '../util/canvas/clip';
-import fill from '../util/canvas/fill';
-import stroke from '../util/canvas/stroke';
-import {hitPath} from '../util/canvas/pick';
-import clip from '../util/svg/clip';
-import {translateItem} from '../util/svg/transform';
+import {hasCornerRadius, rectangle} from '../path/shapes.js';
+import boundStroke from '../bound/boundStroke.js';
+import {intersectRect} from '../util/intersect.js';
+import value from '../util/value.js';
+import {pickVisit, visit} from '../util/visit.js';
+import blend from '../util/canvas/blend.js';
+import {clipGroup} from '../util/canvas/clip.js';
+import fill from '../util/canvas/fill.js';
+import stroke from '../util/canvas/stroke.js';
+import {hitPath} from '../util/canvas/pick.js';
+import clip from '../util/svg/clip.js';
+import {translateItem} from '../util/svg/transform.js';
 
 function offset(item) {
   const sw = value(item.strokeWidth, 1);

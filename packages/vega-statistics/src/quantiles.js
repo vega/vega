@@ -1,4 +1,4 @@
-import numbers from './numbers';
+import numbers from './numbers.js';
 import {ascending, quantileSorted} from 'd3-array';
 
 export default function(array, p, f) {

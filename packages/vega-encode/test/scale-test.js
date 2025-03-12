@@ -1,9 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    vs = require('vega-scale'),
-    encode = require('../');
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import vs from "vega-scale";
+import * as encode from "../index.js";
 function scale(params) {
   var df = new vega.Dataflow(),
       s = df.add(encode.scale, params),

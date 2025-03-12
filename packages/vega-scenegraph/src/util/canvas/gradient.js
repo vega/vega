@@ -1,4 +1,4 @@
-import value from '../value';
+import value from '../value.js';
 import {canvas} from 'vega-canvas';
 
 function addStops(gradient, stops) {

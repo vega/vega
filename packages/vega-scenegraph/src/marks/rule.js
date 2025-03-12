@@ -1,10 +1,10 @@
-import boundStroke from '../bound/boundStroke';
-import {intersectRule} from '../util/intersect';
-import {visit} from '../util/visit';
-import blend from '../util/canvas/blend';
-import {pick} from '../util/canvas/pick';
-import stroke from '../util/canvas/stroke';
-import {translateItem} from '../util/svg/transform';
+import boundStroke from '../bound/boundStroke.js';
+import {intersectRule} from '../util/intersect.js';
+import {visit} from '../util/visit.js';
+import blend from '../util/canvas/blend.js';
+import {pick} from '../util/canvas/pick.js';
+import stroke from '../util/canvas/stroke.js';
+import {translateItem} from '../util/svg/transform.js';
 
 function attr(emit, item) {
   emit('transform', translateItem(item));

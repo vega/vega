@@ -1,5 +1,5 @@
-import {inferTypes, typeParsers} from './type';
-import {formats} from './formats/index';
+import {inferTypes, typeParsers} from './type.js';
+import {formats} from './formats/index.js';
 import {timeFormatDefaultLocale} from 'vega-format';
 import {error, hasOwnProperty} from 'vega-util';
 

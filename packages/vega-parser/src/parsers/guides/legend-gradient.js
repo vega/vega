@@ -1,9 +1,9 @@
-import {one, zero} from './constants';
-import guideMark from './guide-mark';
-import {lookup} from './guide-util';
-import {addEncoders, encoder} from '../encode/util';
-import {RectMark} from '../marks/marktypes';
-import {LegendGradientRole} from '../marks/roles';
+import {one, zero} from './constants.js';
+import guideMark from './guide-mark.js';
+import {lookup} from './guide-util.js';
+import {addEncoders, encoder} from '../encode/util.js';
+import {RectMark} from '../marks/marktypes.js';
+import {LegendGradientRole} from '../marks/roles.js';
 import {extend} from 'vega-util';
 
 export default function(spec, scale, config, userEncode) {

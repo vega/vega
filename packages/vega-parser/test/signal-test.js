@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 function parseSignal(spec, scope) {
   vega.signal(spec, scope);
   vega.signalUpdates(spec, scope);

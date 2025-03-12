@@ -1,5 +1,5 @@
-import {Bottom, Left, Right, Top} from '../constants';
-import {set, tempBounds} from './util';
+import {Bottom, Left, Right, Top} from '../constants.js';
+import {set, tempBounds} from './util.js';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 export function isYAxis(mark) {
@@ -16,7 +16,7 @@ function axisIndices(datum) {
   ];
 }
 
-export function axisLayout(view, axis, width, height) {  
+export function axisLayout(view, axis, width, height) {
   var item = axis.items[0],
       datum = item.datum,
       delta = item.translate != null ? item.translate : 0.5,

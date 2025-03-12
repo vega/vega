@@ -1,15 +1,15 @@
-import arc from './arc';
-import area from './area';
-import group from './group';
-import image from './image';
-import line from './line';
-import path from './path';
-import rect from './rect';
-import rule from './rule';
-import shape from './shape';
-import symbol from './symbol';
-import text from './text';
-import trail from './trail';
+import arc from './arc.js';
+import area from './area.js';
+import group from './group.js';
+import image from './image.js';
+import line from './line.js';
+import path from './path.js';
+import rect from './rect.js';
+import rule from './rule.js';
+import shape from './shape.js';
+import symbol from './symbol.js';
+import text from './text.js';
+import trail from './trail.js';
 
 export default {
   arc:     arc,

@@ -1,19 +1,19 @@
-import parseEncode from './encode';
-import clip from './marks/clip';
-import definition from './marks/definition';
-import interactive from './marks/interactive';
-import parseData from './marks/data';
-import parseFacet from './marks/facet';
-import parseSubflow from './marks/subflow';
-import getRole from './marks/role';
-import {GroupMark} from './marks/marktypes';
-import {FrameRole, MarkRole, ScopeRole} from './marks/roles';
-import parseTransform from './transform';
-import parseTrigger from './trigger';
-import DataScope from '../DataScope';
-import {fieldRef, isSignal, ref} from '../util';
+import parseEncode from './encode.js';
+import clip from './marks/clip.js';
+import definition from './marks/definition.js';
+import interactive from './marks/interactive.js';
+import parseData from './marks/data.js';
+import parseFacet from './marks/facet.js';
+import parseSubflow from './marks/subflow.js';
+import getRole from './marks/role.js';
+import {GroupMark} from './marks/marktypes.js';
+import {FrameRole, MarkRole, ScopeRole} from './marks/roles.js';
+import parseTransform from './transform.js';
+import parseTrigger from './trigger.js';
+import DataScope from '../DataScope.js';
+import {fieldRef, isSignal, ref} from '../util.js';
 import {error} from 'vega-util';
-import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms';
+import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms.js';
 
 export default function(spec, scope) {
   const role = getRole(spec),

@@ -1,16 +1,20 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    PNG = require('pngjs').PNG,
-    pixelmatch = require('pixelmatch'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
+import tape from "tape";
+import fs from "fs";
+import pngjs from "pngjs";
+import pixelmatch from "pixelmatch";
+import vegaLoader from "vega-loader";
+import * as vega from "../index.js";
+import GENERATE from "./resources/generate-tests.js";
+import jsdom from "jsdom";
 
-const GENERATE = require('./resources/generate-tests');
+const PNG = pngjs.PNG;
+const loader = vegaLoader.loader;
+const Bounds = vega.Bounds;
+const Renderer = vega.CanvasRenderer;
+const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json', 'utf-8'));
+
 for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, image) {
@@ -65,7 +69,6 @@ tape('CanvasRenderer should support argument free constructor', t => {
 });
 
 tape('CanvasRenderer should use DOM if available', t => {
-  const jsdom = require('jsdom');
   global.document = (new jsdom.JSDOM()).window.document;
 
   const r = new Renderer().initialize(document.body, 100, 100);

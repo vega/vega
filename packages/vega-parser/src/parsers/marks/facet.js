@@ -1,7 +1,7 @@
-import {getDataRef} from './data';
-import DataScope from '../../DataScope';
-import {Collect, Facet, PreFacet, Sieve} from '../../transforms';
-import {ref} from '../../util';
+import {getDataRef} from './data.js';
+import DataScope from '../../DataScope.js';
+import {Collect, Facet, PreFacet, Sieve} from '../../transforms.js';
+import {ref} from '../../util.js';
 import {error, stringValue} from 'vega-util';
 
 export default function(spec, scope, group) {

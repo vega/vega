@@ -1,8 +1,8 @@
-import boundStroke from '../bound/boundStroke';
-import context from '../bound/boundContext';
-import {intersectPoint} from '../util/intersect';
-import {drawOne} from '../util/canvas/draw';
-import {hitPath} from '../util/canvas/pick';
+import boundStroke from '../bound/boundStroke.js';
+import context from '../bound/boundContext.js';
+import {intersectPoint} from '../util/intersect.js';
+import {drawOne} from '../util/canvas/draw.js';
+import {hitPath} from '../util/canvas/pick.js';
 
 export default function(type, shape, tip) {
 
@@ -54,5 +54,3 @@ export default function(type, shape, tip) {
   };
 
 }
-
-

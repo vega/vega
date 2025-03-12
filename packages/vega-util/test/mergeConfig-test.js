@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../index.js';
 
 tape('mergeConfig merges configuration objects', t => {
   t.deepEqual(

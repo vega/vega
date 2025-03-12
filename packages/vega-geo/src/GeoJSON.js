@@ -1,4 +1,4 @@
-import {Feature, FeatureCollection, MultiPoint} from './constants';
+import {Feature, FeatureCollection, MultiPoint} from './constants.js';
 import {Transform} from 'vega-dataflow';
 import {accessorFields, identity, inherits} from 'vega-util';
 

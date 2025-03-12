@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../index.js';
 
 tape('compare compares numbers', t => {
   const c = vega.compare('x');

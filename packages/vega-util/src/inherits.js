@@ -1,4 +1,4 @@
-import extend from './extend';
+import extend from './extend.js';
 
 export default function(child, parent, members) {
   const proto = (child.prototype = Object.create(parent.prototype));

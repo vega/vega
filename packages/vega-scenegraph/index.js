@@ -1,43 +1,43 @@
-import {resetSVGGradientId} from './src/Gradient';
-import {resetSVGClipId} from './src/util/svg/clip';
+import {resetSVGGradientId} from './src/Gradient.js';
+import {resetSVGClipId} from './src/util/svg/clip.js';
 
-export {default as Bounds} from './src/Bounds';
-export {default as Gradient} from './src/Gradient';
-export {default as GroupItem} from './src/GroupItem';
-export {default as ResourceLoader} from './src/ResourceLoader';
-export {default as Item} from './src/Item';
-export {default as Scenegraph} from './src/Scenegraph';
+export {default as Bounds} from './src/Bounds.js';
+export {default as Gradient} from './src/Gradient.js';
+export {default as GroupItem} from './src/GroupItem.js';
+export {default as ResourceLoader} from './src/ResourceLoader.js';
+export {default as Item} from './src/Item.js';
+export {default as Scenegraph} from './src/Scenegraph.js';
 
-export {default as Handler} from './src/Handler';
-export {default as Renderer} from './src/Renderer';
-export {default as CanvasHandler} from './src/CanvasHandler';
-export {default as CanvasRenderer} from './src/CanvasRenderer';
-export {default as SVGHandler} from './src/SVGHandler';
-export {default as SVGRenderer} from './src/SVGRenderer';
-export {default as SVGStringRenderer} from './src/SVGStringRenderer';
-export {default as HybridRenderer, setHybridRendererOptions} from './src/HybridRenderer';
-export {default as HybridHandler} from './src/HybridHandler';
-export {RenderType, renderModule} from './src/modules';
-export {intersect} from './src/intersect';
+export {default as Handler} from './src/Handler.js';
+export {default as Renderer} from './src/Renderer.js';
+export {default as CanvasHandler} from './src/CanvasHandler.js';
+export {default as CanvasRenderer} from './src/CanvasRenderer.js';
+export {default as SVGHandler} from './src/SVGHandler.js';
+export {default as SVGRenderer} from './src/SVGRenderer.js';
+export {default as SVGStringRenderer} from './src/SVGStringRenderer.js';
+export {default as HybridRenderer, setHybridRendererOptions} from './src/HybridRenderer.js';
+export {default as HybridHandler} from './src/HybridHandler.js';
+export {RenderType, renderModule} from './src/modules.js';
+export {intersect} from './src/intersect.js';
 
-export {default as Marks} from './src/marks/index';
+export {default as Marks} from './src/marks/index.js';
 
-export {default as boundClip} from './src/bound/boundClip';
-export {default as boundContext} from './src/bound/boundContext';
-export {default as boundStroke} from './src/bound/boundStroke';
-export {default as boundItem} from './src/bound/boundItem';
-export {default as boundMark} from './src/bound/boundMark';
+export {default as boundClip} from './src/bound/boundClip.js';
+export {default as boundContext} from './src/bound/boundContext.js';
+export {default as boundStroke} from './src/bound/boundStroke.js';
+export {default as boundItem} from './src/bound/boundItem.js';
+export {default as boundMark} from './src/bound/boundMark.js';
 
-export {default as pathCurves} from './src/path/curves';
-export {default as pathSymbols} from './src/path/symbols';
-export {default as pathRectangle} from './src/path/rectangle';
-export {default as pathTrail} from './src/path/trail';
-export {default as pathParse} from './src/path/parse';
-export {default as pathRender} from './src/path/render';
+export {default as pathCurves} from './src/path/curves.js';
+export {default as pathSymbols} from './src/path/symbols.js';
+export {default as pathRectangle} from './src/path/rectangle.js';
+export {default as pathTrail} from './src/path/trail.js';
+export {default as pathParse} from './src/path/parse.js';
+export {default as pathRender} from './src/path/render.js';
 
-export {default as point} from './src/util/point';
-export {domCreate, domFind, domChild, domClear} from './src/util/dom';
-export {markup, serializeXML} from './src/util/markup';
+export {default as point} from './src/util/point.js';
+export {domCreate, domFind, domChild, domClear} from './src/util/dom.js';
+export {markup, serializeXML} from './src/util/markup.js';
 export {
   font,
   fontFamily,
@@ -45,27 +45,27 @@ export {
   lineHeight,
   multiLineOffset,
   textMetrics
-} from './src/util/text';
+} from './src/util/text.js';
 
-export {sceneEqual, pathEqual} from './src/util/equal';
-export {sceneToJSON, sceneFromJSON} from './src/util/serialize';
+export {sceneEqual, pathEqual} from './src/util/equal.js';
+export {sceneToJSON, sceneFromJSON} from './src/util/serialize.js';
 export {
   intersectPath,
   intersectPoint,
   intersectRule,
   intersectBoxLine
-} from './src/util/intersect';
+} from './src/util/intersect.js';
 export {
   zorder as sceneZOrder,
   visit as sceneVisit,
   pickVisit as scenePickVisit
-} from './src/util/visit';
+} from './src/util/visit.js';
 
 // for testing purposes
 export {path} from 'd3-path';
 
 // deprecated, remove in next major version
-export {resetSVGClipId} from './src/util/svg/clip';
+export {resetSVGClipId} from './src/util/svg/clip.js';
 
 export function resetSVGDefIds() {
   resetSVGClipId();

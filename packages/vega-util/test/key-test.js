@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../index.js';
 
 tape('key creates a key accessor', t => {
   var _ = {a:1, b:2, c:3, d:{0:5, e:4}}, k;

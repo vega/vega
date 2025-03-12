@@ -1,16 +1,16 @@
 // Utilities
-export {default as UniqueList} from './src/util/UniqueList';
-export {default as asyncCallback} from './src/util/asyncCallback';
+export {default as UniqueList} from './src/util/UniqueList.js';
+export {default as asyncCallback} from './src/util/asyncCallback.js';
 
 // Core Runtime
-export {default as changeset, isChangeSet} from './src/ChangeSet';
-export {default as Dataflow} from './src/dataflow/Dataflow';
-export {default as EventStream} from './src/EventStream';
-export {default as Parameters} from './src/Parameters';
-export {default as Pulse} from './src/Pulse';
-export {default as MultiPulse} from './src/MultiPulse';
-export {default as Operator} from './src/Operator';
-export {default as Transform} from './src/Transform';
+export {default as changeset, isChangeSet} from './src/ChangeSet.js';
+export {default as Dataflow} from './src/dataflow/Dataflow.js';
+export {default as EventStream} from './src/EventStream.js';
+export {default as Parameters} from './src/Parameters.js';
+export {default as Pulse} from './src/Pulse.js';
+export {default as MultiPulse} from './src/MultiPulse.js';
+export {default as Operator} from './src/Operator.js';
+export {default as Transform} from './src/Transform.js';
 
 // Tuple Methods
 export {
@@ -21,11 +21,11 @@ export {
   replace,
   stableCompare,
   tupleid
-} from './src/Tuple';
+} from './src/Tuple.js';
 
 // Transform Registry
 export {
   definition,
   transform,
   transforms
-} from './src/register';
+} from './src/register.js';

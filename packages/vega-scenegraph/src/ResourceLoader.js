@@ -76,4 +76,3 @@ function increment(loader) {
 function decrement(loader) {
   loader._pending -= 1;
 }
-

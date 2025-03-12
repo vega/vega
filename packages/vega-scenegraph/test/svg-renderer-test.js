@@ -1,12 +1,9 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.SVGRenderer,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
-
+import tape from "tape";
+import fs from "fs";
+import vegaLoader from "vega-loader";
+import * as vega from "../index.js";
+import jsdom from "jsdom";
+var loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGRenderer, doc = (new jsdom.JSDOM()).window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));

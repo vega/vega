@@ -1,10 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Bounds = require('vega-scenegraph').Bounds,
-    Collect = require('vega-transforms').collect,
-    tx = require('../'),
-    Overlap = tx.overlap;
-
+import tape from "tape";
+import vega from "vega-dataflow";
+import vegaScenegraph from "vega-scenegraph";
+import vegaTransforms from "vega-transforms";
+import * as tx from "../index.js";
+var Bounds = vegaScenegraph.Bounds, Collect = vegaTransforms.collect, Overlap = tx.overlap;
 function items() {
   const mark = {bounds: new Bounds(0, 0, 20, 10)};
   return [

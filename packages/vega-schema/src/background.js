@@ -1,4 +1,4 @@
-import { stringOrSignal } from './util';
+import { stringOrSignal } from './util.js';
 
 const background = stringOrSignal;
 

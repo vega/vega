@@ -11,6 +11,7 @@
     "typings"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "format-tests": "prettier --write 'tests/**/*.ts'",

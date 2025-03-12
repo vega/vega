@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    util = require('vega-util'),
-    GeoJSON = require('../').geojson,
-    Collect = require('vega-transforms').collect;
-
+import tape from "tape";
+import vega from "vega-dataflow";
+import util from "vega-util";
+import { geojson } from "../index.js";
+import vegaTransforms from "vega-transforms";
+var GeoJSON = { geojson }.geojson, Collect = vegaTransforms.collect;
 function geodata() {
   return [
     {lon: 0, lat: 1, geo: {type: 'Feature', id: 0}},

@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Nest = require('../').nest;
-
+import tape from "tape";
+import vegaUtil from "vega-util";
+import vega from "vega-dataflow";
+import vegaTransforms from "vega-transforms";
+import { nest } from "../index.js";
+var field = vegaUtil.field, Collect = vegaTransforms.collect, Nest = { nest }.nest;
 function toObject(value) {
   return JSON.parse(JSON.stringify(value));
 }

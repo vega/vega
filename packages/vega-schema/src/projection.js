@@ -1,7 +1,7 @@
 import {
   array, arrayType, numberOrSignal, object,
   objectType, oneOf, orSignal, stringOrSignal, stringType
-} from './util';
+} from './util.js';
 
 const array2 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 2}));
 const array3 = orSignal(array(numberOrSignal, {minItems: 2, maxItems: 3}));
