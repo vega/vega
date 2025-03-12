@@ -1,6 +1,5 @@
 import tape from "tape";
-import { quartiles as quartiles$0 } from "../index.js";
-var quartiles = { quartiles: quartiles$0 }.quartiles;
+import { quartiles } from "../index.js";
 
 tape('quartiles calculates quartile values', t => {
   // unsorted

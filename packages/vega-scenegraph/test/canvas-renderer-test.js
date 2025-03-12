@@ -6,8 +6,15 @@ import vegaLoader from "vega-loader";
 import * as vega from "../index.js";
 import GENERATE from "./resources/generate-tests.js";
 import jsdom from "jsdom";
-var PNG = pngjs.PNG, loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.CanvasRenderer, res = './test/resources/';
+
+const PNG = pngjs.PNG;
+const loader = vegaLoader.loader;
+const Bounds = vega.Bounds;
+const Renderer = vega.CanvasRenderer;
+const res = './test/resources/';
+
 const marks = JSON.parse(load('marks.json', 'utf-8'));
+
 for (const name in marks) { vega.sceneFromJSON(marks[name]); }
 
 function generate(path, image) {
@@ -62,7 +69,6 @@ tape('CanvasRenderer should support argument free constructor', t => {
 });
 
 tape('CanvasRenderer should use DOM if available', t => {
-  const jsdom = require('jsdom');
   global.document = (new jsdom.JSDOM()).window.document;
 
   const r = new Renderer().initialize(document.body, 100, 100);

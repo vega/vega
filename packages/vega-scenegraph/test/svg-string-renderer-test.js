@@ -3,9 +3,9 @@ import fs from "fs";
 import vegaLoader from "vega-loader";
 import * as vega from "../index.js";
 import GENERATE from "./resources/generate-tests.js";
-var loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGStringRenderer;
+
+const loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGStringRenderer;
 const res = './test/resources/';
-const GENERATE = require('./resources/generate-tests');
 
 const marks = JSON.parse(load('marks.json'));
 for (const name in marks) { vega.sceneFromJSON(marks[name]); }

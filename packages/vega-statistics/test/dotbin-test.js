@@ -1,6 +1,5 @@
 import tape from "tape";
-import { dotbin as dotbin$0 } from "../index.js";
-var dotbin = { dotbin: dotbin$0 }.dotbin;
+import { dotbin } from "../index.js";
 
 tape('dotbin calculates dot plot bin positions', t => {
   const data = [1, 1, 2, 3, 4, 5, 6];

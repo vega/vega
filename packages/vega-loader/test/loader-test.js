@@ -1,7 +1,9 @@
 import tape from "tape";
 import * as vega from "../index.js";
 import { readFileSync } from "fs";
-var loader = vega.loader();
+
+const loader = vega.loader();
+
 const host = 'vega.github.io';
 const dir = '/datalib/';
 const base = 'http://' + host + dir;
@@ -11,6 +13,7 @@ const rel = '//' + host + dir + uri;
 const file = './test/' + uri;
 const fake = 'https://vega.github.io/vega/dne.html';
 const text = { readFileSync }.readFileSync(file, 'utf8');
+
 function testSanitize(t, uri, options, result) {
   if (result != null) {
     return loader.sanitize(uri, options)

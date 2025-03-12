@@ -7,7 +7,7 @@ import { appendFileSync } from 'fs';
 
 const specPath = process.argv[2];
 const outputPath = process.argv[3];
-const spec = require(specPath);
+const spec = await import(specPath);
 const dataflow = parse(spec);
 const dataflowStr = JSON.stringify(dataflow);
 appendFileSync(outputPath, dataflowStr + ';\n');

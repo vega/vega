@@ -1,8 +1,7 @@
 import tape from "tape";
-import { validTicks as validTicks$0 } from "../index.js";
-import { tickValues as tickValues$0 } from "../index.js";
-import vegaTime from "vega-time";
-var validTicks = { validTicks: validTicks$0 }.validTicks, tickValues = { tickValues: tickValues$0 }.tickValues, timeInterval = vegaTime.timeInterval;
+import { validTicks } from "../index.js";
+import { tickValues } from "../index.js";
+import {timeInterval} from "vega-time";
 
 tape('validTicks uses count correctly', t => {
   const data = [0, 1, 2, 3, 4, 5, 6, 7];

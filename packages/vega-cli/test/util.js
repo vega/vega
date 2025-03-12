@@ -2,9 +2,12 @@ import { exec } from "child_process";
 import pngjs from "pngjs";
 import pixelmatch from "pixelmatch";
 import { readFileSync } from "fs";
-import rimraf$0 from "rimraf";
-const PNG = pngjs.PNG, { rimraf } = rimraf$0, res = 'test/resources/';
+import rimraf from "rimraf";
+
+const PNG = pngjs.PNG
+const res = 'test/resources/';
 const GENERATE = false;
+
 export default (function test(t, cmd, file, png = false) {
     const output = GENERATE ? res + file : file;
     exec(`${cmd} ${output}`, error => {

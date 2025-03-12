@@ -1,8 +1,8 @@
 import tape from "tape";
 import topojson from "topojson-client";
-import * as vega from "../index.js";
+import { read } from "../index.js";
 import { readFileSync } from "fs";
-var read = vega.read;
+
 const fields = ['a', 'b', 'c', 'd', 'e'];
 
 const data = [
@@ -291,7 +291,7 @@ tape('DSV reader should auto-parse dsv fields', t => {
 
 // TopoJSON
 
-const worldText = require('fs').readFileSync('./test/data/world-110m.json', 'utf8');
+const worldText = readFileSync('./test/data/world-110m.json', 'utf8');
 const world = JSON.parse(worldText);
 
 tape('TopoJSON reader should read TopoJSON mesh', t => {

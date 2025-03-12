@@ -1,7 +1,5 @@
 import tape from "tape";
-import { Bounds as Bounds$0 } from "../index.js";
-
-var Bounds = { Bounds: Bounds$0 }.Bounds;
+import { Bounds } from "../index.js";
 
 tape('Bounds should support constructor without arguments', t => {
   const b = new Bounds();

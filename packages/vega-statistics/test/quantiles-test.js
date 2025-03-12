@@ -1,6 +1,5 @@
 import tape from "tape";
-import { quantiles as quantiles$0 } from "../index.js";
-var quantiles = { quantiles: quantiles$0 }.quantiles;
+import { quantiles } from "../index.js";
 
 tape('quantiles calculates quantile values', t => {
   // unsorted
