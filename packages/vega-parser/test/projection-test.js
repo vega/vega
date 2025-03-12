@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    parse = require('../').parse;
-
+import tape from "tape";
+import { parse as parse$0 } from "../index.js";
+var parse = { parse: parse$0 }.parse;
 const geojson = {
   'type': 'FeatureCollection',
   'features': [

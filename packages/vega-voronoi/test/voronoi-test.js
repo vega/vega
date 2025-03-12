@@ -1,10 +1,9 @@
-const tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Voronoi = require('../').voronoi,
-    Collect = require('vega-transforms').collect,
-    changeset = vega.changeset;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import { voronoi } from "../index.js";
+import vegaTransforms from "vega-transforms";
+const Voronoi = { voronoi }.voronoi, Collect = vegaTransforms.collect, changeset = vega.changeset;
 tape('Voronoi generates voronoi cell paths', t => {
   const data = [
     {x: 10, y: 10},

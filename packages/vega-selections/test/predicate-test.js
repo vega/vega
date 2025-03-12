@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('selectionTest TYPE_ENUM predicate type', t => {
   const NAME = 'test_store';
   const selection_store = [{unit: '', fields:[{field: 'a', channel: 'x', type: 'E'}], values: [200]}];

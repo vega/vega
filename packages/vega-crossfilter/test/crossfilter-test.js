@@ -1,12 +1,9 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    xf = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    CrossFilter = xf.crossfilter,
-    ResolveFilter = xf.resolvefilter;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as xf from "../index.js";
+import vegaTransforms from "vega-transforms";
+var changeset = vega.changeset, Collect = vegaTransforms.collect, CrossFilter = xf.crossfilter, ResolveFilter = xf.resolvefilter;
 tape('Crossfilter filters tuples', t => {
   const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},

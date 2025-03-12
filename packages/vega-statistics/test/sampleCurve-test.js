@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    sampleCurve = require('../').sampleCurve;
-
+import tape from "tape";
+import { sampleCurve as sampleCurve$0 } from "../index.js";
+var sampleCurve = { sampleCurve: sampleCurve$0 }.sampleCurve;
 function matches(t, v, x, f) {
   t.deepEqual(v, [x, f(x)]);
 }

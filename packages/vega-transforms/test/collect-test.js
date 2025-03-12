@@ -1,9 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('../').collect,
-    changeset = vega.changeset;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import { collect } from "../index.js";
+var Collect = { collect }.collect, changeset = vega.changeset;
 tape('Collect collects tuples', t => {
   const data = [
     {'id': 1, 'value': 'foo'},

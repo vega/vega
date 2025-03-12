@@ -1,9 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    inferType = vega.inferType,
-    inferTypes = vega.inferTypes,
-    typeParsers = vega.typeParsers;
-
+import tape from "tape";
+import * as vega from "../index.js";
+var inferType = vega.inferType, inferTypes = vega.inferTypes, typeParsers = vega.typeParsers;
 const fields = ['a', 'b', 'c', 'd', 'e'];
 
 const data = [

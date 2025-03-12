@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    quantiles = require('../').quantiles;
-
+import tape from "tape";
+import { quantiles as quantiles$0 } from "../index.js";
+var quantiles = { quantiles: quantiles$0 }.quantiles;
 tape('quantiles calculates quantile values', t => {
   // unsorted
   const a = [9, 7, 8, 1, 2, 3, 4, 5, 6];

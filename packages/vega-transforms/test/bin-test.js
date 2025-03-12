@@ -1,11 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Bin = tx.bin,
-    Collect = tx.collect;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var changeset = vega.changeset, Bin = tx.bin, Collect = tx.collect;
 const TOLERANCE = 2e-14;
 
 tape('Bin discretizes values', t => {

@@ -1,10 +1,9 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stratify = require('../').stratify;
-
+import tape from "tape";
+import vegaUtil from "vega-util";
+import vega from "vega-dataflow";
+import vegaTransforms from "vega-transforms";
+import { stratify } from "../index.js";
+var field = vegaUtil.field, changeset = vega.changeset, Collect = vegaTransforms.collect, Stratify = { stratify }.stratify;
 tape('Stratify tuples', t => {
   const data = [
     {id: 'a'},

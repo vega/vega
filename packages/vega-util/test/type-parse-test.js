@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('toBoolean parses booleans', t => {
   t.equal(vega.toBoolean(null), null);
   t.equal(vega.toBoolean(undefined), null);

@@ -1,10 +1,9 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.SVGStringRenderer;
-
+import tape from "tape";
+import fs from "fs";
+import vegaLoader from "vega-loader";
+import * as vega from "../index.js";
+import GENERATE from "./resources/generate-tests.js";
+var loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGStringRenderer;
 const res = './test/resources/';
 const GENERATE = require('./resources/generate-tests');
 

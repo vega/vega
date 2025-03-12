@@ -1,11 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('../'),
-    changeset = vega.changeset,
-    Collect = transforms.collect,
-    DotBin = transforms.dotbin;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as transforms from "../index.js";
+var changeset = vega.changeset, Collect = transforms.collect, DotBin = transforms.dotbin;
 tape('DotBin assigns dot plot bin positions', t => {
   const data = [
     {key: 'a', value: 1},

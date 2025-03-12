@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    {scale} = require('vega-scale'),
-    {scaleGradient} = require('../');
-
+import tape from "tape";
+import vegaScale from "vega-scale";
+import { scaleGradient } from "../index.js";
+var { scale } = vegaScale;
 tape('scaleGradient handles zero-span domain', t => {
   const s = scale('linear')().range(['#f00', '#00f']);
 

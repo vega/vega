@@ -1,8 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
-
+import tape from "tape";
+import vega from "vega-dataflow";
+import transforms from "vega-transforms";
+import * as runtime from "../index.js";
 tape('Parser parses faceted dataflow specs', t => {
   const values = [
     {'k': 'a', 'x': 1,  'y': 28},

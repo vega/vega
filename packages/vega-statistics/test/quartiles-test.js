@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    quartiles = require('../').quartiles;
-
+import tape from "tape";
+import { quartiles as quartiles$0 } from "../index.js";
+var quartiles = { quartiles: quartiles$0 }.quartiles;
 tape('quartiles calculates quartile values', t => {
   // unsorted
   const a = [9, 7, 8, 1, 2, 3, 4, 5, 6];

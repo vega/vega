@@ -1,12 +1,9 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    {canvas} = require('vega-canvas'),
-    vega = require('../'),
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
-
-const GENERATE = require('./resources/generate-tests');
-
+import tape from "tape";
+import fs from "fs";
+import vegaCanvas from "vega-canvas";
+import * as vega from "../index.js";
+import GENERATE from "./resources/generate-tests.js";
+var { canvas } = vegaCanvas, Renderer = vega.CanvasRenderer, res = './test/resources/';
 function generate(path, image) {
   if (GENERATE) fs.writeFileSync(res + path, image);
 }

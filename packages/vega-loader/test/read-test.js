@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    topojson = require('topojson-client'),
-    vega = require('../'),
-    read = vega.read;
-
+import tape from "tape";
+import topojson from "topojson-client";
+import * as vega from "../index.js";
+import { readFileSync } from "fs";
+var read = vega.read;
 const fields = ['a', 'b', 'c', 'd', 'e'];
 
 const data = [

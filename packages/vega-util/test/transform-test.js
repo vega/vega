@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 function equal(a1, a2) {
   return a1.length === a2.length &&
     a1.every((d, i) => Math.abs(d - a2[i]) < 1e-10);

@@ -1,11 +1,9 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stack = encode.stack;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as encode from "../index.js";
+import vegaTransforms from "vega-transforms";
+var changeset = vega.changeset, Collect = vegaTransforms.collect, Stack = encode.stack;
 tape('Stack stacks numeric values', t => {
   const data = [
     {key: 'a', value: 1},

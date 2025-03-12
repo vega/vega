@@ -1,11 +1,8 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    Renderer = vega.SVGRenderer,
-    Handler = vega.SVGHandler,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
-
+import tape from "tape";
+import fs from "fs";
+import * as vega from "../index.js";
+import jsdom from "jsdom";
+var Renderer = vega.SVGRenderer, Handler = vega.SVGHandler, doc = (new jsdom.JSDOM()).window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));

@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Expr = require('../').expression;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import { expression } from "../index.js";
+var Expr = { expression }.expression;
 tape('Expression wraps expression functions', t => {
   var df = new vega.Dataflow(),
       f = util.accessor(

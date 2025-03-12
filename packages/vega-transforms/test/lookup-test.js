@@ -1,12 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Lookup = tx.lookup,
-    TupleIndex = tx.tupleindex;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var changeset = vega.changeset, Collect = tx.collect, Lookup = tx.lookup, TupleIndex = tx.tupleindex;
 tape('Lookup looks up matching tuples', t => {
   const lut = [
     {'id': 1, 'value': 'foo'},

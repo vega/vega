@@ -1,10 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    context = vega.path,
-    Bounds = vega.Bounds,
-    pathParse = vega.pathParse,
-    pathRender = vega.pathRender;
-
+import tape from "tape";
+import * as vega from "../index.js";
+var context = vega.path, Bounds = vega.Bounds, pathParse = vega.pathParse, pathRender = vega.pathRender;
 function bound(path, bounds) {
   pathRender(vega.boundContext(bounds), path, 0, 0);
   return bounds;

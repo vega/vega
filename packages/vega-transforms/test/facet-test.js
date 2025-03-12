@@ -1,11 +1,8 @@
-var tape = require('tape'),
-    {field, truthy} = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Facet = tx.facet;
-
+import tape from "tape";
+import vegaUtil from "vega-util";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var { field, truthy } = vegaUtil, changeset = vega.changeset, Collect = tx.collect, Facet = tx.facet;
 tape('Facet facets tuples', t => {
   const data = [
     {k:'a', v:5}, {k:'b', v:7}, {k:'c', v:9},

@@ -1,9 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import transforms from "vega-transforms";
+import * as runtime from "../index.js";
 tape('Parser parses expressions', t => {
   const values = [
     {'x': 1,  'y': 28},

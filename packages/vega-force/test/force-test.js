@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Force = require('../').force;
-
+import tape from "tape";
+import vega from "vega-dataflow";
+import vegaTransforms from "vega-transforms";
+import { force } from "../index.js";
+var Collect = vegaTransforms.collect, Force = { force }.force;
 tape('Force places points', t => {
   const data = [
     {label: 'a'},

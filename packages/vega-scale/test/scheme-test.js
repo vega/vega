@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('scheme registers a single color scheme', t => {
   var name = 'rgb',
       colors = ['#f00', '#0f0', '#00f'];

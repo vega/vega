@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('truncate truncates strings', t => {
   // should reduce string length
   t.equal(vega.truncate('123456789', 5), '1234…');

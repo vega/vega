@@ -1,11 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    tupleid = vega.tupleid,
-    Collect = tx.collect,
-    Sample = tx.sample;
-
+import tape from "tape";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var changeset = vega.changeset, tupleid = vega.tupleid, Collect = tx.collect, Sample = tx.sample;
 tape('Sample samples tuples without backing source', t => {
   var n = 100,
       ns = 20,

@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('pad pads strings', t => {
   // should increase string length
   t.equal(vega.pad('12345', 8), '12345   ');

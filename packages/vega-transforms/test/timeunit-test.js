@@ -1,12 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    field = util.field,
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    TimeUnit = tx.timeunit;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var field = util.field, changeset = vega.changeset, Collect = tx.collect, TimeUnit = tx.timeunit;
 const UNITS = [
   'year',
   'quarter',

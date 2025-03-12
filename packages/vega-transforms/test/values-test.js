@@ -1,12 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Aggregate = tx.aggregate,
-    Collect = tx.collect,
-    Values = tx.values;
-
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import * as tx from "../index.js";
+var changeset = vega.changeset, Aggregate = tx.aggregate, Collect = tx.collect, Values = tx.values;
 tape('Values extracts values', t => {
   const data = [
     {k:'a', v:1}, {k:'b', v:3},

@@ -1,11 +1,10 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Loess = require('../').loess,
-    changeset = vega.changeset;
-
-  tape('Loess handles repeated x-values', t => {
+import tape from "tape";
+import util from "vega-util";
+import vega from "vega-dataflow";
+import vegaTransforms from "vega-transforms";
+import { loess } from "../index.js";
+var Collect = vegaTransforms.collect, Loess = { loess }.loess, changeset = vega.changeset;
+tape('Loess handles repeated x-values', t => {
     const data = [
       {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
       {k: 'b', u: 1, v: 3}, {k: 'b', u: 2, v: 6}, {k: 'b', u: 3, v: 7}

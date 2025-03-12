@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
-
+import tape from 'tape';
+import * as vega from '../index.js';
 tape('extentIndex calculates array extent indices', t => {
   t.deepEqual(vega.extentIndex([0, 0, 0]), [0, 0]);
   t.deepEqual(vega.extentIndex([4, -1, 2]), [1, 0]);
