@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('default projections are registered', t => {
   [
     'albers',

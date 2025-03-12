@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Extent = tx.extent;
+
 tape('Extent computes extents', t => {
   const data = [
     {'x': 0, 'y': 28}, {'x': 1, 'y': 43},

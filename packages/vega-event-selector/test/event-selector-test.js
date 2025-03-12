@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('Parser parses event parseSelector strings', t => {
   let events;
 

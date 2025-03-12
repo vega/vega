@@ -1,6 +1,7 @@
 import tape from "tape";
 import { parse as parse$0 } from "../index.js";
 var parse = { parse: parse$0 }.parse;
+
 tape('Parser parses Vega specs with axes', t => {
   const spec = {
     'scales': [

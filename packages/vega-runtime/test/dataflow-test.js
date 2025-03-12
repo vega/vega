@@ -5,6 +5,7 @@ import vegaTransforms from "vega-transforms";
 import vegaEncode from "vega-encode";
 import * as runtime from "../index.js";
 var transforms = util.extend({}, vegaTransforms, vegaEncode);
+
 tape('Parser parses dataflow specs', t => {
   const values = [
     {'x': 1,  'y': 28},

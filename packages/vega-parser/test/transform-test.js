@@ -5,6 +5,7 @@ import { parse as parse$0 } from "../index.js";
 import vegaTransforms from "vega-transforms";
 var parse = { parse: parse$0 }.parse;
 util.extend(vega.transforms, vegaTransforms);
+
 tape('Parser parses Vega specs with data transforms', t => {
   const spec = {
     'signals': [

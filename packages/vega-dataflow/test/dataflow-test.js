@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('Dataflow propagates values (run)', t => {
   var df = new vega.Dataflow(),
       s1 = df.add(10),

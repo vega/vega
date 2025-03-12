@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Impute = tx.impute;
+
 tape('Impute imputes missing tuples', t => {
   const data = [
     {'x': 0, 'y': 28, 'c':0},

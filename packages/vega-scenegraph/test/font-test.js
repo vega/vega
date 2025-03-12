@@ -1,6 +1,7 @@
 import tape from "tape";
 import * as vega from "../index.js";
 var font = vega.font;
+
 tape('font should produce default font string', t => {
   t.equal(font({}), '11px sans-serif');
   t.end();

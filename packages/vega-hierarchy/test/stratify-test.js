@@ -4,6 +4,7 @@ import vega from "vega-dataflow";
 import vegaTransforms from "vega-transforms";
 import { stratify } from "../index.js";
 var field = vegaUtil.field, changeset = vega.changeset, Collect = vegaTransforms.collect, Stratify = { stratify }.stratify;
+
 tape('Stratify tuples', t => {
   const data = [
     {id: 'a'},

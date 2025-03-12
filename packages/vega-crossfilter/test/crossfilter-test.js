@@ -4,6 +4,7 @@ import vega from "vega-dataflow";
 import * as xf from "../index.js";
 import vegaTransforms from "vega-transforms";
 var changeset = vega.changeset, Collect = vegaTransforms.collect, CrossFilter = xf.crossfilter, ResolveFilter = xf.resolvefilter;
+
 tape('Crossfilter filters tuples', t => {
   const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},

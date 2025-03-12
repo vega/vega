@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Flatten = tx.flatten;
+
 tape('Flatten flattens arrays', t => {
   const data = [
     { k: 'a', v: [ 1, 2 ] },

@@ -1,6 +1,7 @@
 import tape from "tape";
 import * as vega from "../index.js";
 import { local, utc } from "./util.js";
+
 tape('dayofyear extracts day of year from datetime', t => {
   t.equal(vega.dayofyear(local(2012, 0, 1)), 1);
   t.equal(vega.dayofyear(local(2012, 11, 31)), 366);

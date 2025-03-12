@@ -4,6 +4,7 @@ import vega from "vega-dataflow";
 import { voronoi } from "../index.js";
 import vegaTransforms from "vega-transforms";
 const Voronoi = { voronoi }.voronoi, Collect = vegaTransforms.collect, changeset = vega.changeset;
+
 tape('Voronoi generates voronoi cell paths', t => {
   const data = [
     {x: 10, y: 10},

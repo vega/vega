@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('lerp linearly interpolates numbers', t => {
   const a = [0, 100],
         b = [100, 0];

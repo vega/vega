@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('extent calculates array extents', t => {
   t.deepEqual(vega.extent([0, 0, 0]), [0, 0]);
   t.deepEqual(vega.extent([4, -1, 2]), [-1, 4]);

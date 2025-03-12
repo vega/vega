@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('compare compares numbers', t => {
   const c = vega.compare('x');
   t.equal(c({x:1}, {x:0}), 1);

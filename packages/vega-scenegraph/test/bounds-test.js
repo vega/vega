@@ -1,6 +1,8 @@
 import tape from "tape";
 import { Bounds as Bounds$0 } from "../index.js";
+
 var Bounds = { Bounds: Bounds$0 }.Bounds;
+
 tape('Bounds should support constructor without arguments', t => {
   const b = new Bounds();
   t.equal(b.x1, +Number.MAX_VALUE);

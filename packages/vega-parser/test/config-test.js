@@ -2,6 +2,7 @@ import tape from "tape";
 import util from "vega-util";
 import { config as config$0 } from "../index.js";
 var config = { config: config$0 }.config;
+
 tape('Config generates defaults', t => {
   const c = config();
 

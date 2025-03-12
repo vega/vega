@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('array wraps values in an array', t => {
   // should return an empty array for null argument
   t.deepEqual(vega.array(null), []);

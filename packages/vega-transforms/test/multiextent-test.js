@@ -2,6 +2,7 @@ import tape from "tape";
 import vega from "vega-dataflow";
 import { multiextent } from "../index.js";
 var MultiExtent = { multiextent }.multiextent;
+
 tape('MultiExtent combines extents', t => {
   var df = new vega.Dataflow(),
       e = df.add([10, 50]),

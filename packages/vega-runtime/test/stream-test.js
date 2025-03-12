@@ -2,6 +2,7 @@ import tape from "tape";
 import vega from "vega-dataflow";
 import * as runtime from "../index.js";
 import events from "./events.js";
+
 tape('Parser parses event streams', t => {
 
   const spec = {

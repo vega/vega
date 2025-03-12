@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Formula = tx.formula, Collect = tx.collect;
+
 tape('Formula extends tuples', t => {
   const data = [
     {'id': 1, 'value': 'foo'},

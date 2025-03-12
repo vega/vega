@@ -2,6 +2,7 @@ import tape from "tape";
 import vega from "vega-dataflow";
 import { compare } from "../index.js";
 var Compare = { compare }.compare;
+
 tape('Compare generates comparator functions', t => {
   var df = new vega.Dataflow(),
       c = df.add('foo'),

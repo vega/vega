@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as transforms from "../index.js";
 var changeset = vega.changeset, Collect = transforms.collect, DotBin = transforms.dotbin;
+
 tape('DotBin assigns dot plot bin positions', t => {
   const data = [
     {key: 'a', value: 1},

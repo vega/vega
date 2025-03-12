@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Lookup = tx.lookup, TupleIndex = tx.tupleindex;
+
 tape('Lookup looks up matching tuples', t => {
   const lut = [
     {'id': 1, 'value': 'foo'},

@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, TupleIndex = tx.tupleindex;
+
 tape('TupleIndex maintains an index of tuples', t => {
   const data = [
     {'id': 1, 'value': 'foo'},

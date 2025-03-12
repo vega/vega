@@ -1,6 +1,18 @@
 import tape from "tape";
 import * as vega from "../index.js";
-const Bounds = vega.Bounds, boundContext = vega.boundContext, EPSILON = 1e-10, x = 0, y = 0, r = 1, rh = Math.SQRT1_2, tau = 2 * Math.PI, rotate = tau / 8, b = new Bounds(), angles = [
+
+const Bounds = vega.Bounds;
+const boundContext = vega.boundContext;
+const EPSILON = 1e-10;
+const x = 0;
+const y = 0;
+const r = 1;
+const rh = Math.SQRT1_2;
+const tau = 2 * Math.PI;
+const rotate = tau / 8;
+const b = new Bounds();
+
+const angles = [
     {
         angle: 0,
         bounds: [1, 0, 1, 0],
@@ -27,6 +39,7 @@ const Bounds = vega.Bounds, boundContext = vega.boundContext, EPSILON = 1e-10, x
         rotate: [-1, -1, 1, 1]
     }
 ];
+
 function boundEqual(b, array) {
   return Math.abs(b.x1 - array[0]) < EPSILON
       && Math.abs(b.y1 - array[1]) < EPSILON

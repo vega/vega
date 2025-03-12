@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('ChangeSet adds/removes/modifies tuples', t => {
   const data = [
     {key: 'a', value: 1},

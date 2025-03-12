@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('Parameters handles parameter values', t => {
   const p = new vega.Parameters;
 

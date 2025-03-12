@@ -4,6 +4,7 @@ import vega from "vega-dataflow";
 import vegaTransforms from "vega-transforms";
 import { wordcloud } from "../index.js";
 var Collect = vegaTransforms.collect, Wordcloud = { wordcloud }.wordcloud;
+
 tape('Wordcloud generates wordcloud layout', t => {
   const data = [
     {text: 'foo', size: 49, index: 0},

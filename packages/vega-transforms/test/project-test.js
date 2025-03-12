@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Project = tx.project;
+
 tape('Project copies tuples', t => {
   const data = [{'id': 0}, {'id': 1}];
 

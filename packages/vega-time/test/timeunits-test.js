@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('timeUnits standardizes time units', t => {
   t.deepEqual(vega.timeUnits('year'), ['year']);
   t.deepEqual(vega.timeUnits(['year']), ['year']);

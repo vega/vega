@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('mergeConfig merges configuration objects', t => {
   t.deepEqual(
     vega.mergeConfig(

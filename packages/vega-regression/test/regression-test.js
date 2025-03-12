@@ -4,6 +4,7 @@ import vega from "vega-dataflow";
 import vegaTransforms from "vega-transforms";
 import { regression } from "../index.js";
 var Collect = vegaTransforms.collect, Regression = { regression }.regression, changeset = vega.changeset;
+
 tape('Regression fits constant regression model', t => {
   const data = [
     {k: 'a', u: 2, v: 2}, {k: 'a', u: 1, v: 1},

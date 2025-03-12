@@ -1,6 +1,7 @@
 import tape from "tape";
 import { randomInteger } from "../index.js";
 var integer = { randomInteger }.randomInteger;
+
 tape('integer generates random values', t => {
   let s = integer(10).sample();
   t.ok(0 <= s && s < 10);

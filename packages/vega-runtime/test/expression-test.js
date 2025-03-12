@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import transforms from "vega-transforms";
 import * as runtime from "../index.js";
+
 tape('Parser parses expressions', t => {
   const values = [
     {'x': 1,  'y': 28},

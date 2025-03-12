@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Filter = tx.filter;
+
 tape('Filter filters tuples', t => {
   const lt3 = util.accessor(d => d.id < 3, ['id']);
   const baz = util.accessor(d => d.value === 'baz', ['value']);

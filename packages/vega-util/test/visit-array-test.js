@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('visitArray should visit arrays', t => {
   // check visited item count
   function run(array, filter) {

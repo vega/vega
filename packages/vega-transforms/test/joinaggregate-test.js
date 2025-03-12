@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, JoinAggregate = tx.joinaggregate;
+
 tape('JoinAggregate extends tuples with aggregate values', t => {
   const data = [
     {k:'a', v:1}, {k:'b', v:3},

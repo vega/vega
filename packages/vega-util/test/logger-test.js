@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('logger calls a custom log handler', t => {
   let called = false;
   function log() {

@@ -1,6 +1,7 @@
 import tape from "tape";
 import { randomUniform } from "../index.js";
 var uniform = { randomUniform }.randomUniform;
+
 tape('uniform generates random values', t => {
   let s = uniform().sample();
   t.ok(s >= 0 && s < 1);

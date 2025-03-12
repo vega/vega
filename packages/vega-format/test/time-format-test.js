@@ -2,6 +2,7 @@ import tape from "tape";
 import * as vega from "../index.js";
 import { deDE, local, utc } from "./util.js";
 var locale = vega.timeFormatDefaultLocale();
+
 tape('timeParse supports specifier strings', t => {
   const d = local(2001, 2, 1);
   t.equal(+locale.timeParse('%Y-%m-%d')('2001-03-01'), +d);

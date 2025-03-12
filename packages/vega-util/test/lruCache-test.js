@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('lruCache should cache items', t => {
   const cache = vega.lruCache();
 

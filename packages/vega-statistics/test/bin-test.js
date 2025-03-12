@@ -1,6 +1,7 @@
 import tape from "tape";
 import { bin as bin$0 } from "../index.js";
 var bin = { bin: bin$0 }.bin;
+
 tape('bin generates boundaries for exact step size', t => {
   let b = bin({extent:[1.3, 10.2], step:1, nice:false});
   t.equal(b.start, 1.3);

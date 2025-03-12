@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Pivot = tx.pivot;
+
 tape('Pivot pivots values', t => {
   const data = [
     {a:'A', b:'u', c:1},

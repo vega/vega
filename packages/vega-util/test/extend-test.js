@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('extend extends objects with other object properties', t => {
   var grandparent = {p2_1: 'vp2_1', p2_2: 'vp2_2'},
       parent = Object.create(grandparent),

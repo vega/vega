@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('isArray tests arrays', t => {
   t.equal(vega.isArray([]), true);
   t.equal(vega.isArray({}), false);

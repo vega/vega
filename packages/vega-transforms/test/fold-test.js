@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Fold = tx.fold;
+
 tape('Fold folds tuples', t => {
   const data = [
     {a:'!', b:5, c:7},

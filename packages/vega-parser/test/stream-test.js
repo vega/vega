@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 tape('Parser parses stream definitions', t => {
   var scope = new vega.Scope(),
       dom, view, between, merge, nested, timer;

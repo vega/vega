@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import { field } from "../index.js";
 var Field = { field }.field;
+
 tape('Field generates field accessors', t => {
   var df = new vega.Dataflow(),
       n = df.add('foo'),

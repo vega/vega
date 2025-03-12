@@ -1,5 +1,6 @@
 import test from "./util.js";
 import tape from "tape";
+
 tape('vg2svg generates SVG output', t => {
   const cmd = './bin/vg2svg test/resources/bar.vg.json';
   test(t, cmd, 'vg2svg-test.svg');

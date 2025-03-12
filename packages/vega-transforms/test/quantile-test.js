@@ -3,6 +3,7 @@ import util from "vega-util";
 import vega from "vega-dataflow";
 import * as tx from "../index.js";
 var changeset = vega.changeset, Collect = tx.collect, Quantile = tx.quantile;
+
 tape('Quantile transform calculates empirical quantiles', t => {
   var data = [9, 8, 7, 1, 2, 3, 6, 5, 4].map(_ => ({v: _})),
       prob = [0.25, 0.50, 0.75];
