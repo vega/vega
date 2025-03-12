@@ -9,8 +9,10 @@
   ],
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
-  "main": "build/vega-functions.js",
-  "module": "build/vega-functions.module.js",
+  "type": "module",
+  "exports": {
+    "default": "./build/vega-functions.module.js"
+  },
   "unpkg": "build/vega-functions.min.js",
   "repository": "vega/vega",
   "scripts": {

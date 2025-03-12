@@ -63,6 +63,7 @@ export default function(commandLineArgs) {
   }
 
   const browser = !!pkg.browser;
+  const node = !!pkg.exports?.node;
   const bundle = !!commandLineArgs['config-bundle'];
   const test = !!commandLineArgs['config-test'];
 
@@ -115,18 +116,6 @@ export default function(commandLineArgs) {
 
   const outputs = [{
     input: './index.js',
-    external: dependencies.filter(dep => !esmDeps.includes(dep)),
-    onwarn,
-    output: {
-      file: pkg.exports.node,
-      format: 'esm',
-      globals,
-      sourcemap: false,
-      name
-    },
-    plugins: [nodePlugin(false), ...commonPlugins({node: true})]
-  }, {
-    input: './index.js',
     external: dependencies,
     onwarn,
     output: {
@@ -136,6 +125,22 @@ export default function(commandLineArgs) {
     },
     plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
   }];
+
+  if (node) {
+    outputs.push({
+      input: './index.js',
+      external: dependencies.filter(dep => !esmDeps.includes(dep)),
+      onwarn,
+      output: {
+        file: pkg.exports.node,
+        format: 'esm',
+        globals,
+        sourcemap: false,
+        name
+      },
+      plugins: [nodePlugin(false), ...commonPlugins({node: true})]
+    });
+  }
 
   if (browser) {
     outputs.push(

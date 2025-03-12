@@ -9,9 +9,11 @@
     "palette"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-scale.js",
-  "module": "build/vega-scale.module.js",
+  "exports": {
+    "default": "./build/vega-scale.module.js"
+  },
   "unpkg": "build/vega-scale.min.js",
   "repository": "vega/vega",
   "scripts": {

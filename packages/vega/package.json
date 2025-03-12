@@ -12,6 +12,7 @@
     "d3"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "exports": {
     "types": "./index.d.ts",

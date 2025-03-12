@@ -9,9 +9,11 @@
     "reactive"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-runtime.js",
-  "module": "build/vega-runtime.module.js",
+  "exports": {
+    "default": "./build/vega-runtime.module.js"
+  },
   "unpkg": "build/vega-runtime.min.js",
   "repository": "vega/vega",
   "scripts": {

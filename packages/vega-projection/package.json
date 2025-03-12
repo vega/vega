@@ -8,9 +8,11 @@
     "projection"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-projection.js",
-  "module": "build/vega-projection.module.js",
+  "exports": {
+    "default": "./build/vega-projection.module.js"
+  },
   "unpkg": "build/vega-projection.min.js",
   "repository": "vega/vega",
   "scripts": {

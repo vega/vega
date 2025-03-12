@@ -7,9 +7,11 @@
     "voronoi"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-voronoi.js",
-  "module": "build/vega-voronoi.module.js",
+  "exports": {
+    "default": "./build/vega-voronoi.module.js"
+  },
   "unpkg": "build/vega-voronoi.min.js",
   "repository": "vega/vega",
   "scripts": {

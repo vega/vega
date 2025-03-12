@@ -21,7 +21,7 @@ extend(
 
 // -- Exports -----
 
-export {version} from './package.json.js';
+export {version} from './package.json';
 
 export * from 'vega-statistics';
 

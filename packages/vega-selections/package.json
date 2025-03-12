@@ -9,8 +9,10 @@
   ],
   "author": "Arvind Satyanarayan (http://arvindsatya.com)",
   "license": "BSD-3-Clause",
-  "main": "build/vega-selection.js",
-  "module": "build/vega-selection.module.js",
+  "type": "module",
+  "exports": {
+    "default": "./build/vega-selection.module.js"
+  },
   "unpkg": "build/vega-selection.min.js",
   "repository": "vega/vega",
   "scripts": {

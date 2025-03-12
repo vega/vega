@@ -1,9 +1,9 @@
 {
   "private": true,
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "repository": "vega/vega",
-  "type": "module",
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
     "build-editor-preview": "scripts/build-editor-preview.sh",

@@ -7,9 +7,11 @@
     "crossfilter"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-crossfilter.js",
-  "module": "build/vega-crossfilter.module.js",
+  "exports": {
+    "default": "./build/vega-crossfilter.module.js"
+  },
   "unpkg": "build/vega-crossfilter.min.js",
   "repository": "vega/vega",
   "scripts": {

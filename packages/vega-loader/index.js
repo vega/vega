@@ -1,8 +1,10 @@
+import fetch from 'node-fetch';
+import { promises as fs } from 'fs';
 import loaderFactory from './src/loader.js';
 
 export const loader = loaderFactory(
-  require('node-fetch'),
-  require('fs')
+  fetch,
+  fs
 );
 
 export {

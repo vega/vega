@@ -8,9 +8,11 @@
     "loess"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-regression.js",
-  "module": "build/vega-regression.module.js",
+  "exports": {
+    "default": "./build/vega-regression.module.js"
+  },
   "unpkg": "build/vega-regression.min.js",
   "repository": "vega/vega",
   "scripts": {

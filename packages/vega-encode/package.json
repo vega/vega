@@ -9,9 +9,11 @@
     "legends"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-encode.js",
-  "module": "build/vega-encode.module.js",
+  "exports": {
+    "default": "./build/vega-encode.module.js"
+  },
   "unpkg": "build/vega-encode.min.js",
   "repository": "vega/vega",
   "scripts": {

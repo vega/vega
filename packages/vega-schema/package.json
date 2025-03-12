@@ -8,9 +8,11 @@
     "schema"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-schema.js",
-  "module": "build/vega-schema.module.js",
+  "exports": {
+    "default": "./build/vega-schema.module.js"
+  },
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",

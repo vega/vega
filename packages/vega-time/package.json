@@ -9,9 +9,11 @@
     "utilities"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-time.js",
-  "module": "build/vega-time.module.js",
+  "exports": {
+    "default": "./build/vega-time.module.js"
+  },
   "unpkg": "build/vega-time.min.js",
   "repository": "vega/vega",
   "scripts": {

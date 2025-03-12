@@ -9,9 +9,11 @@
     "distribution"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-statistics.js",
-  "module": "build/vega-statistics.module.js",
+  "exports": {
+    "default": "./build/vega-statistics.module.js"
+  },
   "unpkg": "build/vega-statistics.min.js",
   "repository": "vega/vega",
   "scripts": {

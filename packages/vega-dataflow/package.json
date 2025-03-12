@@ -10,9 +10,11 @@
     "data"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-dataflow.js",
-  "module": "build/vega-dataflow.module.js",
+  "exports": {
+    "default": "./build/vega-dataflow.module.js"
+  },
   "unpkg": "build/vega-dataflow.min.js",
   "repository": "vega/vega",
   "scripts": {

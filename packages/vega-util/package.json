@@ -7,11 +7,13 @@
     "utilities"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-util.js",
-  "module": "build/vega-util.module.js",
+  "exports": {
+    "types": "./index.d.ts",
+    "default": "./build/vega-util.module.js"
+  },
   "unpkg": "build/vega-util.min.js",
-  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "rimraf build",

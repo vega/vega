@@ -8,9 +8,11 @@
     "layout"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-wordcloud.js",
-  "module": "build/vega-wordcloud.module.js",
+  "exports": {
+    "default": "./build/vega-wordcloud.module.js"
+  },
   "unpkg": "build/vega-wordcloud.min.js",
   "repository": "vega/vega",
   "scripts": {

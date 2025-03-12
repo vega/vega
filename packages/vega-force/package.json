@@ -7,9 +7,11 @@
     "force"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-force.js",
-  "module": "build/vega-force.module.js",
+  "exports": {
+    "default": "./build/vega-force.module.js"
+  },
   "unpkg": "build/vega-force.min.js",
   "repository": "vega/vega",
   "scripts": {
