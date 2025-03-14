@@ -1,9 +1,9 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import vegaTransforms from "vega-transforms";
-import vegaEncode from "vega-encode";
-import * as runtime from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import vegaTransforms from 'vega-transforms';
+import vegaEncode from 'vega-encode';
+import * as runtime from '../index.js';
 var transforms = util.extend({}, vegaTransforms, vegaEncode);
 
 tape('Parser parses dataflow specs', t => {

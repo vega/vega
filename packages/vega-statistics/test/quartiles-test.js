@@ -1,5 +1,5 @@
-import tape from "tape";
-import { quartiles } from "../index.js";
+import tape from 'tape';
+import { quartiles } from '../index.js';
 
 tape('quartiles calculates quartile values', t => {
   // unsorted

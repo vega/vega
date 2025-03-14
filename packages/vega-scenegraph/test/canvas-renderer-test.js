@@ -1,11 +1,11 @@
-import tape from "tape";
-import fs from "fs";
-import pngjs from "pngjs";
-import pixelmatch from "pixelmatch";
-import vegaLoader from "vega-loader";
-import * as vega from "../index.js";
-import GENERATE from "./resources/generate-tests.js";
-import jsdom from "jsdom";
+import tape from 'tape';
+import fs from 'fs';
+import pngjs from 'pngjs';
+import pixelmatch from 'pixelmatch';
+import vegaLoader from 'vega-loader';
+import * as vega from '../index.js';
+import GENERATE from './resources/generate-tests.js';
+import jsdom from 'jsdom';
 
 const PNG = pngjs.PNG;
 const loader = vegaLoader.loader;

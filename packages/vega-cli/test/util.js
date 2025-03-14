@@ -1,10 +1,10 @@
-import { exec } from "child_process";
-import pngjs from "pngjs";
-import pixelmatch from "pixelmatch";
-import { readFileSync } from "fs";
-import rimraf from "rimraf";
+import { exec } from 'child_process';
+import pngjs from 'pngjs';
+import pixelmatch from 'pixelmatch';
+import { readFileSync } from 'fs';
+import rimraf from 'rimraf';
 
-const PNG = pngjs.PNG
+const PNG = pngjs.PNG;
 const res = 'test/resources/';
 const GENERATE = false;
 

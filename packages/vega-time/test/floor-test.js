@@ -1,6 +1,6 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import { local, utc } from "./util.js";
+import tape from 'tape';
+import * as vega from '../index.js';
+import { local, utc } from './util.js';
 const UNITS = [
   'year',
   'quarter',

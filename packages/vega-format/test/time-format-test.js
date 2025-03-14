@@ -1,6 +1,6 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import { deDE, local, utc } from "./util.js";
+import tape from 'tape';
+import * as vega from '../index.js';
+import { deDE, local, utc } from './util.js';
 var locale = vega.timeFormatDefaultLocale();
 
 tape('timeParse supports specifier strings', t => {

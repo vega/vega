@@ -1,6 +1,6 @@
-import tape from "tape";
-import format from "vega-format";
-import { monthAbbrevFormat } from "../index.js";
+import tape from 'tape';
+import format from 'vega-format';
+import { monthAbbrevFormat } from '../index.js';
 
 tape('monthAbbrevFormat returns empty string for non-integer values', t => {
   const locale = format.defaultLocale(),

@@ -1,5 +1,5 @@
-import tape from "tape";
-import { randomUniform } from "../index.js";
+import tape from 'tape';
+import { randomUniform } from '../index.js';
 var uniform = { randomUniform }.randomUniform;
 
 tape('uniform generates random values', t => {

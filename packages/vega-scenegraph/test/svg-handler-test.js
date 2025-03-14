@@ -1,7 +1,7 @@
-import tape from "tape";
-import fs from "fs";
-import * as vega from "../index.js";
-import jsdom from "jsdom";
+import tape from 'tape';
+import fs from 'fs';
+import * as vega from '../index.js';
+import jsdom from 'jsdom';
 var Renderer = vega.SVGRenderer, Handler = vega.SVGHandler, doc = (new jsdom.JSDOM()).window.document;
 const res = './test/resources/';
 

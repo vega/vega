@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import { expression } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import { expression } from '../index.js';
 var Expr = { expression }.expression;
 
 tape('Expression wraps expression functions', t => {

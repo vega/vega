@@ -1,8 +1,8 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import vegaTransforms from "vega-transforms";
-import { wordcloud } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import vegaTransforms from 'vega-transforms';
+import { wordcloud } from '../index.js';
 var Collect = vegaTransforms.collect, Wordcloud = { wordcloud }.wordcloud;
 
 tape('Wordcloud generates wordcloud layout', t => {

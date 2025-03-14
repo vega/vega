@@ -1,6 +1,6 @@
-import tape from "tape";
-import util from "vega-util";
-import { config } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import { config } from '../index.js';
 
 tape('Config generates defaults', t => {
   const c = config();

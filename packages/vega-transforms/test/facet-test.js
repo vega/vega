@@ -1,7 +1,7 @@
-import tape from "tape";
-import vegaUtil from "vega-util";
-import vega from "vega-dataflow";
-import * as tx from "../index.js";
+import tape from 'tape';
+import vegaUtil from 'vega-util';
+import vega from 'vega-dataflow';
+import * as tx from '../index.js';
 var { field, truthy } = vegaUtil, changeset = vega.changeset, Collect = tx.collect, Facet = tx.facet;
 
 tape('Facet facets tuples', t => {

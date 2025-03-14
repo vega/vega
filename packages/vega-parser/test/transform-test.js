@@ -1,8 +1,8 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import { parse } from "../index.js";
-import vegaTransforms from "vega-transforms";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import { parse } from '../index.js';
+import vegaTransforms from 'vega-transforms';
 
 util.extend(vega.transforms, vegaTransforms);
 

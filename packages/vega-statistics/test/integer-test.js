@@ -1,5 +1,5 @@
-import tape from "tape";
-import { randomInteger } from "../index.js";
+import tape from 'tape';
+import { randomInteger } from '../index.js';
 var integer = { randomInteger }.randomInteger;
 
 tape('integer generates random values', t => {

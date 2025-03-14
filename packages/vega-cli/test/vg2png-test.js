@@ -1,5 +1,5 @@
-import test from "./util.js";
-import tape from "tape";
+import test from './util.js';
+import tape from 'tape';
 
 tape('vg2png generates PNG output', t => {
   const cmd = './bin/vg2png test/resources/bar.vg.json';

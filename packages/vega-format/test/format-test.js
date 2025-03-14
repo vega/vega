@@ -1,6 +1,6 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import { deDE } from "./util.js";
+import tape from 'tape';
+import * as vega from '../index.js';
+import { deDE } from './util.js';
 var locale = vega.numberFormatDefaultLocale();
 
 tape('format formats numbers', t => {

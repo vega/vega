@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import * as tx from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import * as tx from '../index.js';
 var field = util.field, changeset = vega.changeset, Collect = tx.collect, TimeUnit = tx.timeunit;
 const UNITS = [
   'year',

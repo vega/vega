@@ -1,5 +1,5 @@
-import tape from "tape";
-import {inferType, inferTypes, typeParsers} from "../index.js";
+import tape from 'tape';
+import {inferType, inferTypes, typeParsers} from '../index.js';
 
 const fields = ['a', 'b', 'c', 'd', 'e'];
 

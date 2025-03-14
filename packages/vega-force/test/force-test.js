@@ -1,7 +1,7 @@
-import tape from "tape";
-import vega from "vega-dataflow";
-import vegaTransforms from "vega-transforms";
-import { force } from "../index.js";
+import tape from 'tape';
+import vega from 'vega-dataflow';
+import vegaTransforms from 'vega-transforms';
+import { force } from '../index.js';
 var Collect = vegaTransforms.collect, Force = { force }.force;
 
 tape('Force places points', t => {

@@ -1,4 +1,4 @@
-import * as vega from "../index.js";
+import * as vega from '../index.js';
 
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);

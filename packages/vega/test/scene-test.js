@@ -1,7 +1,7 @@
-import fs from "fs";
-import tape from "tape";
-import * as vega from "../index.js";
-import specsValid from "./specs-valid.json" with { type: "json" };
+import fs from 'fs';
+import tape from 'tape';
+import * as vega from '../index.js';
+import specsValid from './specs-valid.json' with { type: 'json' };
 const GENERATE_SCENES = false, // flag to generate test scenes
 OUTPUT_FAILURES = false, // flag to write scenes upon test failure
 specdir = process.cwd() + '/test/specs-valid/', testdir = process.cwd() + '/test/scenegraphs/', loader = vega.loader({ baseURL: 'test/' }), specs = specsValid.filter(spec => // filter wordcloud due to cross-platform canvas issues

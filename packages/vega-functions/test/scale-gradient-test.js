@@ -1,6 +1,6 @@
-import tape from "tape";
-import vegaScale from "vega-scale";
-import { scaleGradient } from "../index.js";
+import tape from 'tape';
+import vegaScale from 'vega-scale';
+import { scaleGradient } from '../index.js';
 var { scale } = vegaScale;
 
 tape('scaleGradient handles zero-span domain', t => {

@@ -1,8 +1,8 @@
-import tape from "tape";
-import vega from "vega-dataflow";
-import util from "vega-util";
-import { geojson } from "../index.js";
-import vegaTransforms from "vega-transforms";
+import tape from 'tape';
+import vega from 'vega-dataflow';
+import util from 'vega-util';
+import { geojson } from '../index.js';
+import vegaTransforms from 'vega-transforms';
 var GeoJSON = { geojson }.geojson, Collect = vegaTransforms.collect;
 function geodata() {
   return [

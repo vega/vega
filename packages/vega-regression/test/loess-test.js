@@ -1,8 +1,8 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import vegaTransforms from "vega-transforms";
-import { loess } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import vegaTransforms from 'vega-transforms';
+import { loess } from '../index.js';
 var Collect = vegaTransforms.collect, Loess = { loess }.loess, changeset = vega.changeset;
 
 tape('Loess handles repeated x-values', t => {

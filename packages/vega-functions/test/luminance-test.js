@@ -1,5 +1,5 @@
-import tape from "tape";
-import { luminance, contrast } from "../index.js";
+import tape from 'tape';
+import { contrast, luminance } from '../index.js';
 
 tape('luminance calculation extremes', t => {
   t.equal(luminance('#000000'), 0);

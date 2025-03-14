@@ -1,8 +1,8 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import vegaTransforms from "vega-transforms";
-import { regression } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import vegaTransforms from 'vega-transforms';
+import { regression } from '../index.js';
 var Collect = vegaTransforms.collect, Regression = { regression }.regression, changeset = vega.changeset;
 
 tape('Regression fits constant regression model', t => {

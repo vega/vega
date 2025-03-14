@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import * as tx from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import * as tx from '../index.js';
 var changeset = vega.changeset, Aggregate = tx.aggregate, Collect = tx.collect, Values = tx.values;
 
 tape('Values extracts values', t => {

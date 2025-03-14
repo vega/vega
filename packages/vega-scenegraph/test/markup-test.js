@@ -1,5 +1,5 @@
-import tape from "tape";
-import { markup } from "../index.js";
+import tape from 'tape';
+import { markup } from '../index.js';
 
 tape('markup should generate empty tag', t => {
   t.equal(

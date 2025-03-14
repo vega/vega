@@ -1,7 +1,7 @@
-import vega from "vega";
-import path from "path";
-import args from "./args.js";
-import read from "./read.js";
+import vega from 'vega';
+import path from 'path';
+import args from './args.js';
+import read from './read.js';
 function load(file) {
 }
 const Levels = {

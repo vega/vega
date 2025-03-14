@@ -1,5 +1,5 @@
-import tape from "tape";
-import { pluck } from "../index.js";
+import tape from 'tape';
+import { pluck } from '../index.js';
 
 tape('pluck plucks values from an array', t => {
   const data = [

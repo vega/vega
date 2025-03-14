@@ -1,8 +1,8 @@
-import tape from "tape";
-import fs from "fs";
-import * as vega from "../index.js";
-import vegaLoader from "vega-loader";
-import jsdom from "jsdom";
+import tape from 'tape';
+import fs from 'fs';
+import * as vega from '../index.js';
+import vegaLoader from 'vega-loader';
+import jsdom from 'jsdom';
 var loader = vegaLoader.loader, Renderer = vega.CanvasRenderer, Handler = vega.CanvasHandler, win = (new jsdom.JSDOM()).window, doc = win.document;
 const res = './test/resources/';
 

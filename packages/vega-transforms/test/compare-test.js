@@ -1,6 +1,6 @@
-import tape from "tape";
-import vega from "vega-dataflow";
-import { compare } from "../index.js";
+import tape from 'tape';
+import vega from 'vega-dataflow';
+import { compare } from '../index.js';
 var Compare = { compare }.compare;
 
 tape('Compare generates comparator functions', t => {

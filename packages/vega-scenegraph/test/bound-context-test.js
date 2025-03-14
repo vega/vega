@@ -1,5 +1,5 @@
-import tape from "tape";
-import * as vega from "../index.js";
+import tape from 'tape';
+import * as vega from '../index.js';
 
 const Bounds = vega.Bounds;
 const boundContext = vega.boundContext;

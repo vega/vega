@@ -1,1 +1,1 @@
-export { default } from "vega";
+export { default } from 'vega';

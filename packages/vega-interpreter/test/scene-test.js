@@ -1,8 +1,8 @@
-import fs from "fs";
-import tape from "tape";
-import vega from "vega";
-import * as interp from "../index.js";
-import specsValid from "../../vega/test/specs-valid.json" with { type: "json" };
+import fs from 'fs';
+import tape from 'tape';
+import vega from 'vega';
+import * as interp from '../index.js';
+import specsValid from '../../vega/test/specs-valid.json' with { type: 'json' };
 
 const OUTPUT_FAILURES = false; // flag to write scenes upon test failure
 const specdir = process.cwd() + '/../vega/test/specs-valid/';

@@ -1,5 +1,5 @@
-import tape from "tape";
-import { parse } from "../index.js";
+import tape from 'tape';
+import { parse } from '../index.js';
 
 const geojson = {
   'type': 'FeatureCollection',

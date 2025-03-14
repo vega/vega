@@ -1,5 +1,5 @@
-import tape from "tape";
-import * as vega from "../index.js";
+import tape from 'tape';
+import * as vega from '../index.js';
 var Renderer = vega.Renderer;
 
 tape('Renderer should support argument free constructor', t => {

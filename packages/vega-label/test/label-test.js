@@ -1,9 +1,9 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import vegaScenegraph from "vega-scenegraph";
-import vegaTransforms from "vega-transforms";
-import { label } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import vegaScenegraph from 'vega-scenegraph';
+import vegaTransforms from 'vega-transforms';
+import { label } from '../index.js';
 var Bounds = vegaScenegraph.Bounds, Collect = vegaTransforms.collect, Label = { label }.label;
 function closeTo(t, a, b) {
   t.equal(a && a.toFixed(14), b && b.toFixed(14));

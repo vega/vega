@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import * as tx from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Window = tx.window;
 function match(t, actual, expect) {
   for (const k in expect) {

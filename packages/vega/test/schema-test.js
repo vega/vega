@@ -1,11 +1,11 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import * as ajv from "ajv";
-import fs from "fs";
-import schema from "../build/vega-schema.json" with { type: "json" };
-import validSpecs from "./specs-valid.json" with { type: "json" };
-import invalidSpecs from "./specs-invalid.json" with { type: "json" };
-import * as addFormats from "ajv-formats";
+import tape from 'tape';
+import * as vega from '../index.js';
+import * as ajv from 'ajv';
+import fs from 'fs';
+import schema from '../build/vega-schema.json' with { type: 'json' };
+import validSpecs from './specs-valid.json' with { type: 'json' };
+import invalidSpecs from './specs-invalid.json' with { type: 'json' };
+import * as addFormats from 'ajv-formats';
 const validator = new ajv.default({
     allErrors: true,
     verbose: true

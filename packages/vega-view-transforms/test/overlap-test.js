@@ -1,8 +1,8 @@
-import tape from "tape";
-import vega from "vega-dataflow";
-import vegaScenegraph from "vega-scenegraph";
-import vegaTransforms from "vega-transforms";
-import * as tx from "../index.js";
+import tape from 'tape';
+import vega from 'vega-dataflow';
+import vegaScenegraph from 'vega-scenegraph';
+import vegaTransforms from 'vega-transforms';
+import * as tx from '../index.js';
 var Bounds = vegaScenegraph.Bounds, Collect = vegaTransforms.collect, Overlap = tx.overlap;
 function items() {
   const mark = {bounds: new Bounds(0, 0, 20, 10)};

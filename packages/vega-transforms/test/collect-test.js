@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import { collect } from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import { collect } from '../index.js';
 var Collect = { collect }.collect, changeset = vega.changeset;
 
 tape('Collect collects tuples', t => {

@@ -1,4 +1,4 @@
-import yargs from "yargs";
+import yargs from 'yargs';
 export default (function (type) {
     const helpText = `Render a Vega specification to ${type.toUpperCase()}.
 Usage: vg2${type} [vega_json_spec_file] [output_${type}_file]

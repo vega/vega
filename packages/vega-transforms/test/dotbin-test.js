@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import * as transforms from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import * as transforms from '../index.js';
 var changeset = vega.changeset, Collect = transforms.collect, DotBin = transforms.dotbin;
 
 tape('DotBin assigns dot plot bin positions', t => {

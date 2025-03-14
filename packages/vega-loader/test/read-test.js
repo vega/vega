@@ -1,7 +1,7 @@
-import tape from "tape";
-import topojson from "topojson-client";
-import { read } from "../index.js";
-import { readFileSync } from "fs";
+import tape from 'tape';
+import topojson from 'topojson-client';
+import { read } from '../index.js';
+import { readFileSync } from 'fs';
 
 const fields = ['a', 'b', 'c', 'd', 'e'];
 

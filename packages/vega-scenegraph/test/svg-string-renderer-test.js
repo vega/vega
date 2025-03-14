@@ -1,8 +1,8 @@
-import tape from "tape";
-import fs from "fs";
-import vegaLoader from "vega-loader";
-import * as vega from "../index.js";
-import GENERATE from "./resources/generate-tests.js";
+import tape from 'tape';
+import fs from 'fs';
+import vegaLoader from 'vega-loader';
+import * as vega from '../index.js';
+import GENERATE from './resources/generate-tests.js';
 
 const loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGStringRenderer;
 const res = './test/resources/';

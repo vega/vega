@@ -1,6 +1,6 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import { local, utc } from "./util.js";
+import tape from 'tape';
+import * as vega from '../index.js';
+import { local, utc } from './util.js';
 
 tape('timeOffset computes local date offsets', t => {
   t.equal(+vega.timeOffset('year', local(2012)), +local(2013));

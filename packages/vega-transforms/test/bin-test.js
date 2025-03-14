@@ -1,7 +1,7 @@
-import tape from "tape";
-import util from "vega-util";
-import vega from "vega-dataflow";
-import * as tx from "../index.js";
+import tape from 'tape';
+import util from 'vega-util';
+import vega from 'vega-dataflow';
+import * as tx from '../index.js';
 var changeset = vega.changeset, Bin = tx.bin, Collect = tx.collect;
 const TOLERANCE = 2e-14;
 
