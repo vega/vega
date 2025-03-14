@@ -1,6 +1,6 @@
-import tape from "tape";
-import * as vega from "../index.js";
-import { readFileSync } from "fs";
+import tape from 'tape';
+import * as vega from '../index.js';
+import { readFileSync } from 'fs';
 
 const loader = vega.loader();
 
