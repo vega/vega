@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 function draw(context) {
   context.beginPath();
   context.moveTo(  0,   0);

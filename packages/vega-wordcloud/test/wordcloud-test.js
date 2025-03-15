@@ -1,9 +1,8 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
-import vegaTransforms from 'vega-transforms';
-import { wordcloud } from '../index.js';
-var Collect = vegaTransforms.collect, Wordcloud = { wordcloud }.wordcloud;
+import { field } from 'vega-util';
+import * as vega from 'vega-dataflow';
+import {collect as Collect} from 'vega-transforms';
+import { wordcloud as Wordcloud } from '../index.js';
 
 tape('Wordcloud generates wordcloud layout', t => {
   const data = [
@@ -13,8 +12,8 @@ tape('Wordcloud generates wordcloud layout', t => {
     {text: 'abc', size:  1, index: 3}
   ];
 
-  var text = util.field('text'),
-      size = util.field('size'),
+  var text = field('text'),
+      size = field('size'),
       df = new vega.Dataflow(),
       rot = df.add(null),
       c0 = df.add(Collect),

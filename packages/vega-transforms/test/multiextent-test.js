@@ -1,5 +1,5 @@
 import tape from 'tape';
-import vega from 'vega-dataflow';
+import * as vega from 'vega-dataflow';
 import { multiextent } from '../index.js';
 var MultiExtent = { multiextent }.multiextent;
 

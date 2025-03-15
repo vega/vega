@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 function regexEqual(x, y) {
   return (x instanceof RegExp) && (y instanceof RegExp) &&
     (x.source === y.source) && (x.global === y.global) &&

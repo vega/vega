@@ -1,13 +1,13 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Project = tx.project;
 
 tape('Project copies tuples', t => {
   const data = [{'id': 0}, {'id': 1}];
 
-  var id = util.field('id'),
+  var id = field('id'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
       r = df.add(Project, {pulse:c}),
@@ -70,7 +70,7 @@ tape('Project copies tuples', t => {
 tape('Project projects tuples', t => {
   const data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
 
-  var id = util.field('id'),
+  var id = field('id'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
       r = df.add(Project, {
@@ -136,9 +136,9 @@ tape('Project projects tuples', t => {
 tape('Project aliases tuples', t => {
   const data = [{'id': 0, 'foo': 'a'}, {'id': 1, 'foo': 'b'}];
 
-  var id = util.field('id'),
-      foo = util.field('foo'),
-      key = util.field('key'),
+  var id = field('id'),
+      foo = field('foo'),
+      key = field('key'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
       r = df.add(Project, {
@@ -211,9 +211,9 @@ tape('Project projects tuples with nested properties', t => {
     {'id': 1, 'obj': {'foo': {'bar': 'b'}}}
   ];
 
-  var id = util.field('id'),
-      foo = util.field('foo'),
-      obj = util.field('obj.foo.bar'),
+  var id = field('id'),
+      foo = field('foo'),
+      obj = field('obj.foo.bar'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
       r = df.add(Project, {

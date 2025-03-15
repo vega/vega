@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Fold = tx.fold;
 
@@ -10,7 +10,7 @@ tape('Fold folds tuples', t => {
     {a:'?', b:2, c:4}
   ];
 
-  var fields = ['b', 'c'].map(k => util.field(k)),
+  var fields = ['b', 'c'].map(k => field(k)),
       df = new vega.Dataflow(),
       c0 = df.add(Collect),
       fd = df.add(Fold, {fields: fields, pulse: c0}),

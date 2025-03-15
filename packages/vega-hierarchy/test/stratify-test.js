@@ -1,9 +1,8 @@
 import tape from 'tape';
-import vegaUtil from 'vega-util';
-import vega from 'vega-dataflow';
-import vegaTransforms from 'vega-transforms';
-import { stratify } from '../index.js';
-var field = vegaUtil.field, changeset = vega.changeset, Collect = vegaTransforms.collect, Stratify = { stratify }.stratify;
+import {field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect} from 'vega-transforms';
+import { stratify as Stratify } from '../index.js';
 
 tape('Stratify tuples', t => {
   const data = [
@@ -14,7 +13,7 @@ tape('Stratify tuples', t => {
   ];
 
   // Setup tree stratification
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       collect = df.add(Collect),
       nest = df.add(Stratify, {
         key: field('id'),
@@ -38,7 +37,7 @@ tape('Stratify tuples', t => {
 
 tape('Stratify empty data', t => {
   // Setup tree stratification
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       collect = df.add(Collect),
       nest = df.add(Stratify, {
         key: field('id'),

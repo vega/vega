@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {compare} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import { collect } from '../index.js';
 var Collect = { collect }.collect, changeset = vega.changeset;
 
@@ -28,7 +28,7 @@ tape('Collect collects tuples', t => {
   t.equal(!!c0.modified(), true);
 
   // sort data
-  df.update(so, util.compare('value')).run();
+  df.update(so, compare('value')).run();
   t.equal(c0.value.length, 3);
   t.equal(c0.value[0], data[1]);
   t.equal(c0.value[1], data[2]);

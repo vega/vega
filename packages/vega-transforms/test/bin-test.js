@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field, isFunction} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Bin = tx.bin, Collect = tx.collect;
 const TOLERANCE = 2e-14;
@@ -10,7 +10,7 @@ tape('Bin discretizes values', t => {
       extent = df.add([0, 10]),
       step = df.add(10 / 20),
       bin = df.add(Bin, {
-        field:  util.field('v'),
+        field:  field('v'),
         extent: extent,
         step:   step,
         nice:   false
@@ -43,7 +43,7 @@ tape('Bin discretizes values', t => {
 });
 
 function testBin(t, b, extent, step) {
-  t.ok(util.isFunction(b));
+  t.ok(isFunction(b));
   t.equal(b.start, extent[0]);
   t.equal(b.stop, extent[1]);
   t.equal(b.step, step);
@@ -74,7 +74,7 @@ function testBin(t, b, extent, step) {
 tape('Bin handles tail aggregation for last bin', t => {
   var df = new vega.Dataflow(),
       bin = df.add(Bin, {
-        field:   util.field('v'),
+        field:   field('v'),
         extent:  [0, 29],
         maxbins: 10,
         nice:    false
@@ -98,7 +98,7 @@ tape('Bin supports point output', t => {
   var df = new vega.Dataflow(),
       c = df.add(Collect),
       b = df.add(Bin, {
-        field:    util.field('v'),
+        field:    field('v'),
         interval: false,
         extent:   [0, 10],
         step:     1,
@@ -123,7 +123,7 @@ tape('Bin ignores invalid values', t => {
       extent = df.add([0, 10]),
       step = df.add(10 / 20),
       bin = df.add(Bin, {
-        field:  util.field('v'),
+        field:  field('v'),
         extent: extent,
         step:   step,
         nice:   false

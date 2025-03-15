@@ -1,8 +1,7 @@
 import tape from 'tape';
-import vegaUtil from 'vega-util';
-import vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var { field, truthy } = vegaUtil, changeset = vega.changeset, Collect = tx.collect, Facet = tx.facet;
+import {field, truthy} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, facet as Facet} from '../index.js';
 
 tape('Facet facets tuples', t => {
   const data = [
@@ -27,7 +26,7 @@ tape('Facet facets tuples', t => {
   }
 
   var key = field('k'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       source = df.add(Collect),
       facet = df.add(Facet, {subflow:subflow, key:key, pulse:source});
 
@@ -133,7 +132,7 @@ tape('Facet handles key parameter change', t => {
 
   var key1 = field('k1'),
       key2 = field('k2'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       source = df.add(Collect),
       facet = df.add(Facet, {subflow:subflow, key:key1, pulse:source});
 
@@ -150,7 +149,7 @@ tape('Facet handles key parameter change', t => {
 });
 
 tape('Facet key cache does not leak memory', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
       ft = df.add(Facet, {subflow:subflow, key:field('key'), pulse:c0}),
       N = df.cleanThreshold + 1;

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import util from 'vega-util';
-import vega from 'vega-dataflow';
+import * as vega from 'vega-dataflow';
 import { parse } from '../index.js';
 import vegaTransforms from 'vega-transforms';
 

@@ -1,14 +1,13 @@
-import tape from 'tape';
 import fs from 'fs';
-import vegaLoader from 'vega-loader';
-import * as vega from '../index.js';
+import tape from 'tape';
+import { loader } from 'vega-loader';
+import { Bounds, SVGStringRenderer as Renderer, markup, resetSVGDefIds, sceneFromJSON, sceneToJSON } from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 
-const loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGStringRenderer;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 function generate(path, str) {
   if (GENERATE) fs.writeFileSync(res + path, str);
@@ -19,11 +18,11 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file));
+  return sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
   return new Renderer()
     .initialize(null, w, h)
     .render(scene)
@@ -31,7 +30,7 @@ function render(scene, w, h) {
 }
 
 function renderAsync(scene, w, h, callback) {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
@@ -40,7 +39,7 @@ function renderAsync(scene, w, h, callback) {
 
 tape('SVGStringRenderer should build empty group for item-less area mark', t => {
   const r = new Renderer();
-  const str = r.mark(vega.markup(), {marktype: 'area', items:[]}) + '';
+  const str = r.mark(markup(), {marktype: 'area', items:[]}) + '';
   generate('svg/marks-itemless-area.svg', str);
   const file = load('svg/marks-itemless-area.svg');
   t.equal(str, file);
@@ -49,7 +48,7 @@ tape('SVGStringRenderer should build empty group for item-less area mark', t => 
 
 tape('SVGStringRenderer should build empty group for item-less line mark', t => {
   const r = new Renderer();
-  const str = r.mark(vega.markup(), {marktype: 'line', items:[]}) + '';
+  const str = r.mark(markup(), {marktype: 'line', items:[]}) + '';
   generate('svg/marks-itemless-line.svg', str);
   const file = load('svg/marks-itemless-line.svg');
   t.equal(str, file);
@@ -102,7 +101,7 @@ tape('SVGStringRenderer should support axes, legends and sub-groups', t => {
 });
 
 tape('SVGStringRenderer should support full redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -134,7 +133,7 @@ tape('SVGStringRenderer should support full redraw', t => {
 });
 
 tape('SVGStringRenderer should support enter-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -163,7 +162,7 @@ tape('SVGStringRenderer should support enter-item redraw', t => {
 });
 
 tape('SVGStringRenderer should support exit-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -184,7 +183,7 @@ tape('SVGStringRenderer should support exit-item redraw', t => {
 });
 
 tape('SVGStringRenderer should support single-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -206,9 +205,9 @@ tape('SVGStringRenderer should support single-item redraw', t => {
 });
 
 tape('SVGStringRenderer should support multi-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
-  const scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
+  const scene = sceneFromJSON(sceneToJSON(marks['line-1']));
   const r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
@@ -228,7 +227,7 @@ tape('SVGStringRenderer should support multi-item redraw', t => {
 });
 
 tape('SVGStringRenderer should support enter-group redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-barley.json');
   const r = new Renderer()
@@ -236,7 +235,7 @@ tape('SVGStringRenderer should support enter-group redraw', t => {
     .background('white')
     .render(scene);
 
-  const group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
+  const group = sceneFromJSON(sceneToJSON(scene.items[0]));
   group.x = 200;
   group.mark = scene;
   scene.items.push(group);

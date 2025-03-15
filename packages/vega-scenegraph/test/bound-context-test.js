@@ -1,8 +1,6 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import {Bounds, boundContext} from '../index.js';
 
-const Bounds = vega.Bounds;
-const boundContext = vega.boundContext;
 const EPSILON = 1e-10;
 const x = 0;
 const y = 0;

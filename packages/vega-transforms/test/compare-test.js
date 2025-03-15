@@ -1,5 +1,5 @@
 import tape from 'tape';
-import vega from 'vega-dataflow';
+import * as vega from 'vega-dataflow';
 import { compare } from '../index.js';
 var Compare = { compare }.compare;
 

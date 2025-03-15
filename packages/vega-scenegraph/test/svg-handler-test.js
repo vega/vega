@@ -1,12 +1,13 @@
 import tape from 'tape';
 import fs from 'fs';
-import * as vega from '../index.js';
+import {SVGHandler as Handler, SVGRenderer as Renderer, sceneFromJSON} from '../index.js';
 import jsdom from 'jsdom';
-var Renderer = vega.SVGRenderer, Handler = vega.SVGHandler, doc = (new jsdom.JSDOM()).window.document;
+
+const doc = (new jsdom.JSDOM()).window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 const events = [
   'keydown',
@@ -39,7 +40,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file));
+  return sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {

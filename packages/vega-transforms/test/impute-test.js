@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Impute = tx.impute;
 
@@ -11,9 +11,9 @@ tape('Impute imputes missing tuples', t => {
     {'x': 1, 'y': 43, 'c':0}
   ];
 
-  var x = util.field('x'),
-      y = util.field('y'),
-      c = util.field('c'),
+  var x = field('x'),
+      y = field('y'),
+      c = field('c'),
       df = new vega.Dataflow(),
       m  = df.add('value'),
       co = df.add(Collect),
@@ -59,9 +59,9 @@ tape('Impute imputes missing tuples for provided domain', t => {
     {c: 1, x: 1, y: -1}
   ];
 
-  var x = util.field('x'),
-      y = util.field('y'),
-      c = util.field('c'),
+  var x = field('x'),
+      y = field('y'),
+      c = field('c'),
       df = new vega.Dataflow(),
       m  = df.add('value'),
       co = df.add(Collect),
@@ -96,8 +96,8 @@ tape('Impute imputes missing tuples without groupby', t => {
     {x: 3, y: -1}
   ];
 
-  var x = util.field('x'),
-      y = util.field('y'),
+  var x = field('x'),
+      y = field('y'),
       df = new vega.Dataflow(),
       m  = df.add('value'),
       co = df.add(Collect),

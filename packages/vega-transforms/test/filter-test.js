@@ -1,12 +1,12 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {accessor, field, truthy, falsy} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Filter = tx.filter;
 
 tape('Filter filters tuples', t => {
-  const lt3 = util.accessor(d => d.id < 3, ['id']);
-  const baz = util.accessor(d => d.value === 'baz', ['value']);
+  const lt3 = accessor(d => d.id < 3, ['id']);
+  const baz = accessor(d => d.value === 'baz', ['value']);
 
   const data = [
     {'id': 1, 'value': 'foo'},
@@ -21,10 +21,10 @@ tape('Filter filters tuples', t => {
       c1 = df.add(Collect, {pulse: f0});
 
   df.pulse(c0, changeset().insert(data));
-  df.update(e0, util.truthy).run();
+  df.update(e0, truthy).run();
   t.deepEqual(c1.value, data);
 
-  df.update(e0, util.falsy).run();
+  df.update(e0, falsy).run();
   t.equal(c1.value.length, 0);
 
   df.update(e0, lt3).run();
@@ -48,7 +48,7 @@ tape('Filter filters tuples', t => {
 tape('Filter does not leak memory', t => {
   var df = new vega.Dataflow(),
       c0 = df.add(Collect),
-      f0 = df.add(Filter, {expr: util.field('value'), pulse: c0}),
+      f0 = df.add(Filter, {expr: field('value'), pulse: c0}),
       n = df.cleanThreshold + 1;
 
   function generate() {
@@ -60,7 +60,7 @@ tape('Filter does not leak memory', t => {
 
   // burn in by filling up to threshold, then remove all
   df.pulse(c0, changeset().insert(generate())).run();
-  df.pulse(c0, changeset().remove(util.truthy)).run();
+  df.pulse(c0, changeset().remove(truthy)).run();
   t.equal(f0.value.empty, 0, 'Zero empty map entries');
 
   t.end();

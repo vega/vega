@@ -1,9 +1,8 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
-import { voronoi } from '../index.js';
-import vegaTransforms from 'vega-transforms';
-const Voronoi = { voronoi }.voronoi, Collect = vegaTransforms.collect, changeset = vega.changeset;
+import {field} from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { voronoi as Voronoi } from '../index.js';
+import {collect as Collect} from 'vega-transforms';
 
 tape('Voronoi generates voronoi cell paths', t => {
   const data = [
@@ -12,9 +11,9 @@ tape('Voronoi generates voronoi cell paths', t => {
     {x: 10, y: 20}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
+  const x = field('x'),
+      y = field('y'),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       vo = df.add(Voronoi, {
         x: x,
@@ -36,9 +35,9 @@ tape('Voronoi generates voronoi cell paths with 1 input point', t => {
     {x: 10, y: 10}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
+  const x = field('x'),
+      y = field('y'),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       vo = df.add(Voronoi, {
         x: x,
@@ -59,9 +58,9 @@ tape('Voronoi generates voronoi cell paths with 2 input points', t => {
     {x: 20, y: 10}
   ];
 
-  const x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
+  const x = field('x'),
+      y = field('y'),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       vo = df.add(Voronoi, {
         x: x,

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import util from 'vega-util';
-import vega from 'vega-dataflow';
+import * as vega from 'vega-dataflow';
 import vegaScenegraph from 'vega-scenegraph';
 import vegaTransforms from 'vega-transforms';
 import { label } from '../index.js';

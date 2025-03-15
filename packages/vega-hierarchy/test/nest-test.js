@@ -1,9 +1,9 @@
 import tape from 'tape';
-import vegaUtil from 'vega-util';
-import vega from 'vega-dataflow';
-import vegaTransforms from 'vega-transforms';
-import { nest } from '../index.js';
-var field = vegaUtil.field, Collect = vegaTransforms.collect, Nest = { nest }.nest;
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
+import {collect as Collect} from 'vega-transforms';
+import { nest as Nest } from '../index.js';
+
 function toObject(value) {
   return JSON.parse(JSON.stringify(value));
 }

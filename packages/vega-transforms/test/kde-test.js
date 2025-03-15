@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, KDE = tx.kde;
 
@@ -10,8 +10,8 @@ tape('KDE computes kernel density estimates', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
+  var key = field('k'),
+      val = field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       kde = df.add(KDE, {
@@ -43,8 +43,8 @@ tape('KDE computes estimates with shared configurations', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
+  var key = field('k'),
+      val = field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       kde = df.add(KDE, {
@@ -73,8 +73,8 @@ tape('KDE computes unnormalized kernel density estimates', t => {
     {k:'b', v:1}, {k:'b', v:1}, {k:'b', v:2}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
+  var key = field('k'),
+      val = field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       kde = df.add(KDE, {

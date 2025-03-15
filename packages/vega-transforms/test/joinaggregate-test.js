@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, JoinAggregate = tx.joinaggregate;
 
@@ -10,8 +10,8 @@ tape('JoinAggregate extends tuples with aggregate values', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
+  var key = field('k'),
+      val = field('v'),
       df = new vega.Dataflow(),
       col = df.add(Collect),
       agg = df.add(JoinAggregate, {
@@ -101,8 +101,8 @@ tape('JoinAggregate handles count aggregates', t => {
     {foo:4, bar:5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
+  var foo = field('foo'),
+      bar = field('bar'),
       df, col, agg, out, d;
 
   // counts only
@@ -189,7 +189,7 @@ tape('JoinAggregate handles distinct aggregates', t => {
     {foo:0}
   ];
 
-  var foo = util.field('foo'),
+  var foo = field('foo'),
       df, col, agg, out, d, i, n;
 
   // counts only

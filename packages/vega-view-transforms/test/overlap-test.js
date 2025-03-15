@@ -1,9 +1,9 @@
 import tape from 'tape';
-import vega from 'vega-dataflow';
-import vegaScenegraph from 'vega-scenegraph';
-import vegaTransforms from 'vega-transforms';
-import * as tx from '../index.js';
-var Bounds = vegaScenegraph.Bounds, Collect = vegaTransforms.collect, Overlap = tx.overlap;
+import {Dataflow} from 'vega-dataflow';
+import {Bounds} from 'vega-scenegraph';
+import {collect as Collect} from 'vega-transforms';
+import {overlap as Overlap} from '../index.js';
+
 function items() {
   const mark = {bounds: new Bounds(0, 0, 20, 10)};
   return [
@@ -19,7 +19,7 @@ function toObject(value) {
 
 tape('Overlap removes overlapping items (parity)', t => {
   var data = items(),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       co = df.add(Collect),
       ov = df.add(Overlap, {method: 'parity', pulse: co});
 
@@ -42,7 +42,7 @@ tape('Overlap removes overlapping items (parity)', t => {
 
 tape('Overlap removes overlapping items (greedy)', t => {
   var data = items(),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       co = df.add(Collect),
       ov = df.add(Overlap, {method: 'greedy', pulse: co});
 

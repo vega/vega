@@ -1,8 +1,7 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Aggregate = tx.aggregate, Collect = tx.collect, Values = tx.values;
+import { Dataflow, changeset } from 'vega-dataflow';
+import { compare, field } from 'vega-util';
+import { aggregate as Aggregate, collect as Collect, values as Values } from '../index.js';
 
 tape('Values extracts values', t => {
   const data = [
@@ -10,8 +9,8 @@ tape('Values extracts values', t => {
     {k:'c', v:2}, {k:'d', v:4}
   ];
 
-  var key = util.field('k'),
-      df = new vega.Dataflow(),
+  var key = field('k'),
+      df = new Dataflow(),
       srt = df.add(null),
       col = df.add(Collect),
       val = df.add(Values, {field:key, sort:srt, pulse:col});
@@ -23,16 +22,16 @@ tape('Values extracts values', t => {
   df.touch(val).run(); // no-op pulse
   t.equal(val.value, values); // no change!
 
-  df.update(srt, util.compare('v', 'descending')).run();
+  df.update(srt, compare('v', 'descending')).run();
   t.deepEqual(val.value, ['d', 'b', 'c', 'a']);
 
   t.end();
 });
 
 tape('Values extracts sorted domain values', t => {
-  var byCount = util.compare('count', 'descending'),
-      key = util.field('k'),
-      df = new vega.Dataflow(),
+  var byCount = compare('count', 'descending'),
+      key = field('k'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {groupby:key, pulse:col}),
       out = df.add(Collect, {pulse:agg}),
@@ -54,12 +53,12 @@ tape('Values extracts sorted domain values', t => {
 });
 
 tape('Values extracts multi-domain values', t => {
-  var byCount = util.compare('count', 'descending'),
-      count = util.field('count'),
-      key = util.field('key'),
-      k1 = util.field('k1', 'key'),
-      k2 = util.field('k2', 'key'),
-      df = new vega.Dataflow(),
+  var byCount = compare('count', 'descending'),
+      count = field('count'),
+      key = field('key'),
+      k1 = field('k1', 'key'),
+      k2 = field('k2', 'key'),
+      df = new Dataflow(),
       col = df.add(Collect),
       ag1 = df.add(Aggregate, {groupby:k1, pulse:col}),
       ca1 = df.add(Collect, {pulse:ag1}),

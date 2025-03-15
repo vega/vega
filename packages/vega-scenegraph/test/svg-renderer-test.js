@@ -1,20 +1,21 @@
 import tape from 'tape';
 import fs from 'fs';
-import vegaLoader from 'vega-loader';
-import * as vega from '../index.js';
+import {loader } from 'vega-loader';
+import {Bounds, SVGRenderer as Renderer, resetSVGDefIds, sceneFromJSON, sceneToJSON} from '../index.js';
 import jsdom from 'jsdom';
-var loader = vegaLoader.loader, Bounds = vega.Bounds, Renderer = vega.SVGRenderer, doc = (new jsdom.JSDOM()).window.document;
+
+const doc = (new jsdom.JSDOM()).window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file));
+  return sceneFromJSON(load(file));
 }
 
 function compensate(svg) {
@@ -38,7 +39,7 @@ function render(scene, w, h) {
   }
 
   // reset clip id counter
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   // then render svg
   return compensate(new Renderer()
@@ -54,7 +55,7 @@ function renderAsync(scene, w, h, callback) {
   }
 
   // reset clip id counter
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   // then render svg
   new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
@@ -109,7 +110,7 @@ tape('SVGRenderer should support clipping and gradients', t => {
   const r = new Renderer()
     .initialize(doc.body, 102, 102);
 
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
   let scene = loadScene('scenegraph-defs.json');
   var svg = compensate(r.render(scene).svg());
   let file = load('svg/scenegraph-defs.svg');
@@ -118,7 +119,7 @@ tape('SVGRenderer should support clipping and gradients', t => {
   svg = compensate(r.render(scene).svg());
   t.equal(svg, file);
 
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
   scene = loadScene('scenegraph-defs.json');
   scene.items[0].clip = false;
   scene.items[0].fill = 'red';
@@ -137,7 +138,7 @@ tape('SVGRenderer should support axes, legends and sub-groups', t => {
 });
 
 tape('SVGRenderer should support full redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -166,7 +167,7 @@ tape('SVGRenderer should support full redraw', t => {
 });
 
 tape('SVGRenderer should support enter-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -192,7 +193,7 @@ tape('SVGRenderer should support enter-item redraw', t => {
 });
 
 tape('SVGRenderer should support exit-item redraw', function(t) {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -214,7 +215,7 @@ tape('SVGRenderer should support exit-item redraw', function(t) {
 });
 
 tape('SVGRenderer should support single-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-rect.json');
   const r = new Renderer()
@@ -235,9 +236,9 @@ tape('SVGRenderer should support single-item redraw', t => {
 });
 
 tape('SVGRenderer should support multi-item redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
-  const scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
+  const scene = sceneFromJSON(sceneToJSON(marks['line-1']));
   const r = new Renderer()
     .initialize(doc.body, 400, 400)
     .background('white')
@@ -255,7 +256,7 @@ tape('SVGRenderer should support multi-item redraw', t => {
 });
 
 tape('SVGRenderer should support enter-group redraw', t => {
-  vega.resetSVGDefIds();
+  resetSVGDefIds();
 
   const scene = loadScene('scenegraph-barley.json');
   const r = new Renderer()
@@ -263,7 +264,7 @@ tape('SVGRenderer should support enter-group redraw', t => {
     .background('white')
     .render(scene);
 
-  const group = vega.sceneFromJSON(vega.sceneToJSON(scene.items[0]));
+  const group = sceneFromJSON(sceneToJSON(scene.items[0]));
   group.x = 200;
   group.mark = scene;
   scene.items.push(group);

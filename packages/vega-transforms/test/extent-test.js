@@ -1,6 +1,6 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var changeset = vega.changeset, Collect = tx.collect, Extent = tx.extent;
 
@@ -10,8 +10,8 @@ tape('Extent computes extents', t => {
     {'x': 0, 'y': 55}, {'x': 1, 'y': 72}
   ];
 
-  var x = util.field('x'),
-      y = util.field('y'),
+  var x = field('x'),
+      y = field('y'),
       df = new vega.Dataflow(),
       f = df.add(null),
       c = df.add(Collect),
@@ -32,7 +32,7 @@ tape('Extent computes extents', t => {
 });
 
 tape('Extent handles empty and invalid data', t => {
-  var x = util.field('x'),
+  var x = field('x'),
       df = new vega.Dataflow(),
       c = df.add(Collect),
       e = df.add(Extent, {field:x, pulse:c});

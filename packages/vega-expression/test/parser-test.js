@@ -1,5 +1,6 @@
 import tape from 'tape';
 import * as vega from '../index.js';
+
 function parse(str) {
   return function() {
     return JSON.parse(JSON.stringify(vega.parseExpression(str)));

@@ -1,8 +1,7 @@
 import tape from 'tape';
-import vegaUtil from 'vega-util';
-import vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var field = vegaUtil.field, Sequence = tx.sequence;
+import {field} from 'vega-util';
+import * as vega from 'vega-dataflow';
+import {sequence as Sequence} from '../index.js';
 
 tape('Sequence generates sequences', t => {
   var df = new vega.Dataflow(),

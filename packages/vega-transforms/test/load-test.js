@@ -1,5 +1,5 @@
 import tape from 'tape';
-import vega from 'vega-dataflow';
+import * as vega from 'vega-dataflow';
 import * as tx from '../index.js';
 var Load = tx.load;
 

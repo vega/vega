@@ -1,8 +1,8 @@
 import tape from 'tape';
-import util from 'vega-util';
-import vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var field = util.field, changeset = vega.changeset, Collect = tx.collect, TimeUnit = tx.timeunit;
+import { Dataflow, changeset } from 'vega-dataflow';
+import { extent, field } from 'vega-util';
+import { collect as Collect, timeunit as TimeUnit } from '../index.js';
+
 const UNITS = [
   'year',
   'quarter',
@@ -85,7 +85,7 @@ tape('TimeUnit truncates dates to time units', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
@@ -116,7 +116,7 @@ tape('TimeUnit truncates UTC dates to time units', t => {
   ];
   data.forEach(o => o.date = new Date(Date.UTC(o.y, o.m, o.d)));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
@@ -147,7 +147,7 @@ tape('TimeUnit supports unit steps', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year', 'month']),
       step = df.add(1),
@@ -180,7 +180,7 @@ tape('TimeUnit supports unit inference', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       bins = df.add(12),
       c = df.add(Collect),
@@ -230,10 +230,10 @@ tape('TimeUnit supports unit inference with extent', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       bins = df.add(12),
-      ext = df.add(util.extent(data, date)),
+      ext = df.add(extent(data, date)),
       c = df.add(Collect),
       s = df.add(TimeUnit, {
         field: date,
@@ -264,7 +264,7 @@ tape('TimeUnit supports unit inference with extent', t => {
 tape('TimeUnit supports point output', t => {
   const data = [{date: new Date(2012, 0, 1)}];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
