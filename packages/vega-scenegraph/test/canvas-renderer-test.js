@@ -6,6 +6,7 @@ import {loader} from 'vega-loader';
 import {Bounds, CanvasRenderer as Renderer, sceneFromJSON, sceneToJSON} from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 import jsdom from 'jsdom';
+import './__init__.js';
 
 const res = './test/resources/';
 

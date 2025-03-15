@@ -3,6 +3,7 @@ import tape from 'tape';
 import { loader } from 'vega-loader';
 import { Bounds, SVGStringRenderer as Renderer, markup, resetSVGDefIds, sceneFromJSON, sceneToJSON } from '../index.js';
 import GENERATE from './resources/generate-tests.js';
+import './__init__.js';
 
 const res = './test/resources/';
 

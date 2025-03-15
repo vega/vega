@@ -1,9 +1,10 @@
 import tape from 'tape';
 import fs from 'fs';
 import {SVGHandler as Handler, SVGRenderer as Renderer, sceneFromJSON} from '../index.js';
-import jsdom from 'jsdom';
+import {JSDOM} from 'jsdom';
 
-const doc = (new jsdom.JSDOM()).window.document;
+const dom = new JSDOM();
+const doc = dom.window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
@@ -53,11 +54,12 @@ function render(scene, w, h) {
 }
 
 function event(name, x, y) {
-  const evt = doc.createEvent('MouseEvents');
-  evt.initEvent(name, false, true);
-  evt.clientX = x || 0;
-  evt.clientY = y || 0;
-  return evt;
+  return new dom.window.MouseEvent(name, {
+    clientX: x || 0,
+    clientY: y || 0,
+    bubbles: true,
+    cancelable: true
+  });
 }
 
 tape('SVGHandler should add/remove event callbacks', t => {
