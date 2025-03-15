@@ -1,7 +1,7 @@
 import tape from 'tape';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, tupleid = vega.tupleid, Collect = tx.collect, Sample = tx.sample;
+import { tupleid } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect, sample as Sample } from '../index.js';
 
 tape('Sample samples tuples without backing source', t => {
   var n = 100,
@@ -12,7 +12,7 @@ tape('Sample samples tuples without backing source', t => {
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       s = df.add(Sample, {size:ns});
 
   // -- initial sample
@@ -56,7 +56,7 @@ tape('Sample samples tuples with backing source', t => {
 
   for (i=0; i<n; ++i) data[i] = {v:Math.random()};
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c = df.add(Collect),
       s = df.add(Sample, {size:ns, pulse:c});
 

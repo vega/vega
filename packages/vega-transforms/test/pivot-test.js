@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {field} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Collect = tx.collect, Pivot = tx.pivot;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, pivot as Pivot} from '../index.js';
 
 tape('Pivot pivots values', t => {
   const data = [
@@ -17,7 +16,7 @@ tape('Pivot pivots values', t => {
   var a = field('a'),
       b = field('b'),
       c = field('c'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       pd = df.add(Pivot, {groupby: [a], field: b, value: c, pulse: c0}),
       out = df.add(Collect, {pulse: pd}),
@@ -82,7 +81,7 @@ tape('Pivot pivots values within limit', t => {
   var a = field('a'),
       b = field('b'),
       c = field('c'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       pd = df.add(Pivot, {groupby: [a], field: b, value: c, limit: 2, pulse: c0}),
       out = df.add(Collect, {pulse: pd}),
@@ -117,7 +116,7 @@ tape('Pivot handles count aggregate', t => {
   var a = field('a'),
       b = field('b'),
       c = field('c'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       pd = df.add(Pivot, {groupby: [a], field: b, op: 'count', value: c, pulse: c0}),
       out = df.add(Collect, {pulse: pd}),

@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {field} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as transforms from '../index.js';
-var changeset = vega.changeset, Collect = transforms.collect, DotBin = transforms.dotbin;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, dotbin as DotBin} from '../index.js';
 
 tape('DotBin assigns dot plot bin positions', t => {
   const data = [
@@ -15,7 +14,7 @@ tape('DotBin assigns dot plot bin positions', t => {
     {key: 'b', value: 5.5}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gb = df.add([]),
       c0 = df.add(Collect),
       db = df.add(DotBin, {

@@ -1,8 +1,7 @@
 import tape from 'tape';
-import {field, truthy} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, tupleid = vega.tupleid, Collect = tx.collect, PreFacet = tx.prefacet;
+import {field, truthy, tupleid} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, prefacet as PreFacet} from '../index.js';
 
 tape('PreFacet partitions pre-faceted tuple sets', t => {
   const data = [
@@ -24,7 +23,7 @@ tape('PreFacet partitions pre-faceted tuple sets', t => {
   }
 
   var tuples = field('tuples'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       source = df.add(Collect),
       facet = df.add(PreFacet, {subflow:subflow, field:tuples, pulse:source});
 
@@ -108,7 +107,7 @@ tape('PreFacet raises error if tuple sets are modified', t => {
   }
 
   var tuples = field('tuples'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       source = df.add(Collect);
 
   df.error = function(e) { throw e; };

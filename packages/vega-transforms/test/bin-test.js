@@ -1,12 +1,11 @@
 import tape from 'tape';
 import {field, isFunction} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Bin = tx.bin, Collect = tx.collect;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {bin as Bin, collect as Collect} from '../index.js';
 const TOLERANCE = 2e-14;
 
 tape('Bin discretizes values', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       extent = df.add([0, 10]),
       step = df.add(10 / 20),
       bin = df.add(Bin, {
@@ -72,7 +71,7 @@ function testBin(t, b, extent, step) {
 }
 
 tape('Bin handles tail aggregation for last bin', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       bin = df.add(Bin, {
         field:   field('v'),
         extent:  [0, 29],
@@ -95,7 +94,7 @@ tape('Bin handles tail aggregation for last bin', t => {
 tape('Bin supports point output', t => {
   const data = [{v: 5.5}];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c = df.add(Collect),
       b = df.add(Bin, {
         field:    field('v'),
@@ -119,7 +118,7 @@ tape('Bin supports point output', t => {
 });
 
 tape('Bin ignores invalid values', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       extent = df.add([0, 10]),
       step = df.add(10 / 20),
       bin = df.add(Bin, {

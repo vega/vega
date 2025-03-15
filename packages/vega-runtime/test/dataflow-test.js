@@ -1,10 +1,11 @@
 import tape from 'tape';
-import util from 'vega-util';
-import * as vega from 'vega-dataflow';
+import { Dataflow } from 'vega-dataflow';
+import { extend } from 'vega-util';
 import vegaTransforms from 'vega-transforms';
 import vegaEncode from 'vega-encode';
 import * as runtime from '../index.js';
-var transforms = util.extend({}, vegaTransforms, vegaEncode);
+
+const transforms = extend({}, vegaTransforms, vegaEncode);
 
 tape('Parser parses dataflow specs', t => {
   const values = [
@@ -26,10 +27,10 @@ tape('Parser parses dataflow specs', t => {
     {id:8, type:'Scale', params:{type:'linear', range:[{$ref:1},0], zero:false, domain:{$ref:7}}}
   ]};
 
-  var df  = new vega.Dataflow(),
-      ctx = runtime.context(df, transforms).parse(spec),
-      ops = ctx.nodes,
-      ids = Object.keys(ops);
+  const df = new Dataflow(),
+        ctx = runtime.context(df, transforms).parse(spec),
+        ops = ctx.nodes,
+        ids = Object.keys(ops);
 
   t.equal(Object.keys(ctx.fn).length, 2);
   t.equal(ids.length, spec.operators.length);

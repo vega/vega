@@ -1,10 +1,10 @@
 import tape from 'tape';
-import util from 'vega-util';
+import {extend} from 'vega-util';
 import * as vega from 'vega-dataflow';
 import { parse } from '../index.js';
 import vegaTransforms from 'vega-transforms';
 
-util.extend(vega.transforms, vegaTransforms);
+extend(vega.transforms, vegaTransforms);
 
 tape('Parser parses Vega specs with data transforms', t => {
   const spec = {

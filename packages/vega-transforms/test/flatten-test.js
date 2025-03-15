@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {field} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Collect = tx.collect, Flatten = tx.flatten;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, flatten as Flatten} from '../index.js';
 
 tape('Flatten flattens arrays', t => {
   const data = [
@@ -11,7 +10,7 @@ tape('Flatten flattens arrays', t => {
   ];
 
   var v = field('v'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       fl = df.add(Flatten, {fields: [v], pulse: c0}),
       out = df.add(Collect, {pulse: fl}),
@@ -57,7 +56,7 @@ tape('Flatten flattens parallel arrays', t => {
 
   var a = field('a'),
       b = field('b'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       fl = df.add(Flatten, {fields: [a, b], pulse: c0}),
       out = df.add(Collect, {pulse: fl}),
@@ -102,7 +101,7 @@ tape('Flatten flattens and adds index field', t => {
   ];
 
   var v = field('v'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       fl = df.add(Flatten, {fields: [v], pulse: c0, index: 'foo'}),
       out = df.add(Collect, {pulse: fl}),

@@ -1,8 +1,7 @@
 import tape from 'tape';
-import {accessor, field, truthy, falsy} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Collect = tx.collect, Filter = tx.filter;
+import {accessor, falsy, field, truthy} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, filter as Filter} from '../index.js';
 
 tape('Filter filters tuples', t => {
   const lt3 = accessor(d => d.id < 3, ['id']);
@@ -14,7 +13,7 @@ tape('Filter filters tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       e0 = df.add(null),
       c0 = df.add(Collect),
       f0 = df.add(Filter, {expr: e0, pulse: c0}),
@@ -46,7 +45,7 @@ tape('Filter filters tuples', t => {
 });
 
 tape('Filter does not leak memory', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
       f0 = df.add(Filter, {expr: field('value'), pulse: c0}),
       n = df.cleanThreshold + 1;

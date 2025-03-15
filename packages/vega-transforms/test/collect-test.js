@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {compare} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import { collect } from '../index.js';
-var Collect = { collect }.collect, changeset = vega.changeset;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect} from '../index.js';
 
 tape('Collect collects tuples', t => {
   const data = [
@@ -11,7 +10,7 @@ tape('Collect collects tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       so = df.add(null),
       c0 = df.add(Collect, {sort:so});
 

@@ -1,10 +1,10 @@
 import tape from 'tape';
 import {field} from 'vega-util';
-import * as vega from 'vega-dataflow';
+import { Dataflow } from 'vega-dataflow';
 import {sequence as Sequence} from '../index.js';
 
 tape('Sequence generates sequences', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       start = df.add(0),
       stop = df.add(11),
       step = df.add(null),

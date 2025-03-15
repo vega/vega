@@ -1,13 +1,12 @@
 import tape from 'tape';
-import {field, truthy} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Collect = tx.collect, Relay = tx.relay;
+import { field, truthy } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect, relay as Relay } from '../index.js';
 
 tape('Relay propagates pulse', t => {
   const data = [{'id': 0}, {'id': 1}];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c = df.add(Collect),
       n = df.add(Relay, {derive: false, pulse:c}),
       p;
@@ -27,7 +26,7 @@ tape('Relay relays derived tuples', t => {
   const data = [{'id': 0}, {'id': 1}];
 
   var id = field('id'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c = df.add(Collect),
       r = df.add(Relay, {derive: true, pulse:c}),
       p;
@@ -91,7 +90,7 @@ tape('Relay flags modified fields and handles multi-pulse', t => {
       data2 = [{id: 4, bar: 3}, {id: 5, bar: 4}];
 
   var id = field('id'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c1 = df.add(Collect),
       c2 = df.add(Collect),
       r = df.add(Relay, {derive: true, pulse:[c1, c2]}),

@@ -1,9 +1,9 @@
 import tape from 'tape';
-import format from 'vega-format';
+import { defaultLocale } from 'vega-format';
 import { monthAbbrevFormat } from '../index.js';
 
 tape('monthAbbrevFormat returns empty string for non-integer values', t => {
-  const locale = format.defaultLocale(),
+  const locale = defaultLocale(),
         self = { context: { dataflow: { locale: () => locale } } },
         abbrev = monthAbbrevFormat.bind(self);
 

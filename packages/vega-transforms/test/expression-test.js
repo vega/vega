@@ -1,11 +1,10 @@
 import tape from 'tape';
 import { accessor, accessorFields, accessorName } from 'vega-util';
-import * as vega from 'vega-dataflow';
-import { expression } from '../index.js';
-var Expr = { expression }.expression;
+import { Dataflow } from 'vega-dataflow';
+import { expression as Expr } from '../index.js';
 
 tape('Expression wraps expression functions', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       f = accessor(
             (d, _) => d.value + _.offset,
             ['value'], 'shift'

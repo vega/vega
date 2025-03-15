@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {field} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var changeset = vega.changeset, Collect = tx.collect, Fold = tx.fold;
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, fold as Fold} from '../index.js';
 
 tape('Fold folds tuples', t => {
   const data = [
@@ -11,7 +10,7 @@ tape('Fold folds tuples', t => {
   ];
 
   var fields = ['b', 'c'].map(k => field(k)),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       fd = df.add(Fold, {fields: fields, pulse: c0}),
       out = df.add(Collect, {pulse: fd}),

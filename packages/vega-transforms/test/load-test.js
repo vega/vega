@@ -1,10 +1,9 @@
 import tape from 'tape';
-import * as vega from 'vega-dataflow';
-import * as tx from '../index.js';
-var Load = tx.load;
+import {Dataflow} from 'vega-dataflow';
+import {load as Load} from '../index.js';
 
 tape('Load requests external data', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       u = df.add('url'),
       f = df.add('format'),
       count = 0;

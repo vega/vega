@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { field } from 'vega-util';
-import * as vega from 'vega-dataflow';
-import {collect as Collect} from 'vega-transforms';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
 import { wordcloud as Wordcloud } from '../index.js';
 
 tape('Wordcloud generates wordcloud layout', t => {
@@ -14,7 +14,7 @@ tape('Wordcloud generates wordcloud layout', t => {
 
   var text = field('text'),
       size = field('size'),
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       rot = df.add(null),
       c0 = df.add(Collect),
       wc = df.add(Wordcloud, {
@@ -29,7 +29,7 @@ tape('Wordcloud generates wordcloud layout', t => {
   const angles = [0, 30, 60, 90];
   rot.set(t => angles[t.index]);
 
-  df.pulse(c0, vega.changeset().insert(data)).run();
+  df.pulse(c0, changeset().insert(data)).run();
   t.equal(c0.value.length, data.length);
   t.equal(wc.stamp, df.stamp());
 

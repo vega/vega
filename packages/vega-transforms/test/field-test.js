@@ -1,11 +1,10 @@
 import tape from 'tape';
-import {accessorName, accessorFields} from 'vega-util';
-import * as vega from 'vega-dataflow';
-import { field } from '../index.js';
-var Field = { field }.field;
+import {accessorFields, accessorName} from 'vega-util';
+import {Dataflow} from 'vega-dataflow';
+import {field as Field} from '../index.js';
 
 tape('Field generates field accessors', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       n = df.add('foo'),
       a = df.add(null),
       f = df.add(Field, {name:n, as:a});
