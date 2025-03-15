@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { field } from 'vega-util';
 import { Dataflow } from 'vega-dataflow';
-import transforms from 'vega-transforms';
+import * as transforms from 'vega-transforms';
 import * as runtime from '../index.js';
 
 tape('Parser parses expressions', t => {

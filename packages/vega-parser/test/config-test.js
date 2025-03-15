@@ -1,5 +1,5 @@
 import tape from 'tape';
-import util from 'vega-util';
+import { mergeConfig } from 'vega-util';
 import { config } from '../index.js';
 
 tape('Config generates defaults', t => {
@@ -14,7 +14,7 @@ tape('Config generates defaults', t => {
 tape('Config overrides with extended defaults', t => {
   const as = {type: 'pad', resize: 'true'};
 
-  const c = util.mergeConfig(
+  const c = mergeConfig(
     config(),
     {autosize: as},
     {style: {point: {shape: 'triangle-right'}}},

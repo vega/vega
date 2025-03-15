@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field, truthy, tupleid} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field, truthy} from 'vega-util';
+import {Dataflow, changeset, tupleid} from 'vega-dataflow';
 import {collect as Collect, prefacet as PreFacet} from '../index.js';
 
 tape('PreFacet partitions pre-faceted tuple sets', t => {

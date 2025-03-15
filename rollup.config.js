@@ -100,7 +100,8 @@ export default function(commandLineArgs) {
           }
         ]],
         babelHelpers: 'bundled',
-        extensions: ['.js', '.ts']
+        extensions: ['.js', '.ts'],
+        generatorOpts: { 'importAttributesKeyword': 'with' }
       }),
       bundleSize()
     ];

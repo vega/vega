@@ -1,7 +1,7 @@
 import tape from 'tape';
-import {Dataflow} from 'vega-dataflow';
+import { Dataflow } from 'vega-dataflow';
 import * as runtime from '../index.js';
-import events from './events.js';
+import { events, fire } from './events.js';
 
 tape('Parser parses event-driven operator updates', t => {
 
@@ -28,8 +28,8 @@ tape('Parser parses event-driven operator updates', t => {
   };
 
   const df = new Dataflow();
-  df.events = events.events;
-  df.fire = events.fire;
+  df.events = events;
+  df.fire = fire;
 
   var ctx = runtime.context(df, {}).parse(spec),
       ops = ctx.nodes;

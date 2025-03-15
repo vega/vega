@@ -1,6 +1,5 @@
 import tape from 'tape';
-import { tupleid } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
+import { Dataflow, changeset, tupleid } from 'vega-dataflow';
 import { collect as Collect, sample as Sample } from '../index.js';
 
 tape('Sample samples tuples without backing source', t => {

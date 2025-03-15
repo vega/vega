@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { field, tupleid } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
+import { field } from 'vega-util';
+import { Dataflow, changeset, tupleid } from 'vega-dataflow';
 import { collect as Collect } from 'vega-transforms';
 import { nest as Nest } from '../index.js';
 
