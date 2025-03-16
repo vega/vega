@@ -11,7 +11,7 @@ const exprStringRef = def('exprString');
 const exprRef = def('expr');
 
 function req(key) {
-  return '_' + key + '_';
+  return `_${key}_`;
 }
 
 function transformSchema(name, def) {
