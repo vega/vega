@@ -1,4 +1,4 @@
-import memoize from './memoize';
+import memoize from './memoize.js';
 import {
   DATE, DAY, HOURS, MILLISECONDS, MINUTES, MONTH, QUARTER,
   SECONDS, WEEK, YEAR, timeInterval, utcInterval

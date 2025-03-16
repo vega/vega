@@ -1,5 +1,5 @@
-import parseStream from './stream';
-import {Scope, View} from '../util';
+import parseStream from './stream.js';
+import {Scope, View} from '../util.js';
 import {parseSelector} from 'vega-event-selector';
 import {parseExpression} from 'vega-functions';
 import {array, error, extend, isString, stringValue} from 'vega-util';

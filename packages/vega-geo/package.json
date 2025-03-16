@@ -9,14 +9,16 @@
     "graticule"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-geo.js",
-  "module": "build/vega-geo.module.js",
+  "exports": {
+    "default": "./build/vega-geo.module.js"
+  },
   "unpkg": "build/vega-geo.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --config-transform",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

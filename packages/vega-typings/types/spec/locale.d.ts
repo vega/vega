@@ -1,4 +1,4 @@
-import { Vector10, Vector12, Vector2, Vector7 } from '.';
+import { Vector10, Vector12, Vector2, Vector7 } from '../index.js';
 
 export interface Locale {
   number?: NumberLocale;

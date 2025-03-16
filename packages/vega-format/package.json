@@ -10,14 +10,16 @@
     "time"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-format.js",
-  "module": "build/vega-format.module.js",
+  "exports": {
+    "default": "./build/vega-format.module.js"
+  },
   "unpkg": "build/vega-format.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

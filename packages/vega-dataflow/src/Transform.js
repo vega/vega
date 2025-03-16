@@ -1,4 +1,4 @@
-import Operator from './Operator';
+import Operator from './Operator.js';
 import {inherits} from 'vega-util';
 
 /**

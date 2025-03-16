@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Aggregate = tx.aggregate;
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { aggregate as Aggregate, collect as Collect } from '../index.js';
 
 tape('Aggregate aggregates tuples', t => {
   const data = [
@@ -12,9 +9,9 @@ tape('Aggregate aggregates tuples', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
+  var key = field('k'),
+      val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
@@ -99,12 +96,12 @@ tape('Aggregate handles count aggregates', t => {
     {foo:4, bar:5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
+  var foo = field('foo'),
+      bar = field('bar'),
       df, col, agg, out, d;
 
   // counts only
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(Aggregate, {
     fields: [null, foo, bar],
@@ -122,7 +119,7 @@ tape('Aggregate handles count aggregates', t => {
   t.equal(d[0].count_bar, 3);
 
   // multiple counts plus other measures
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(Aggregate, {
     fields: [null, foo, bar, bar],
@@ -149,9 +146,9 @@ tape('Aggregate properly handles empty aggregation cells', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
+  var key = field('k'),
+      val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [key],
@@ -197,11 +194,11 @@ tape('Aggregate handles distinct aggregates', t => {
     {foo:0}
   ];
 
-  var foo = util.field('foo'),
+  var foo = field('foo'),
       df, col, agg, out, d;
 
   // counts only
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(Aggregate, {
     fields: [foo],
@@ -234,9 +231,9 @@ tape('Aggregate handles cross-product', t => {
     {a: 1, b: 3}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      df = new vega.Dataflow(),
+  var a = field('a'),
+      b = field('b'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         groupby: [a, b],
@@ -332,8 +329,8 @@ tape('Aggregate handles empty/invalid data', t => {
   ];
   const res = [4, 3, 0]; // higher indices 'undefined'
 
-  var v = util.field('v'),
-      df = new vega.Dataflow(),
+  var v = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Aggregate, {
         fields: ops.map(() => v),

@@ -1,4 +1,4 @@
-import {Tau} from '../util/constants';
+import {Tau} from '../util/constants.js';
 import {path} from 'd3-path';
 
 export default function() {

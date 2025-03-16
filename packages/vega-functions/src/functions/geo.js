@@ -1,4 +1,4 @@
-import {getScale} from '../scales';
+import {getScale} from '../scales.js';
 import {
   geoArea as area,
   geoBounds as bounds,

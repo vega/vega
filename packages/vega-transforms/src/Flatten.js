@@ -1,4 +1,4 @@
-import {fieldNames} from './util/util';
+import {fieldNames} from './util/util.js';
 import {Transform, derive} from 'vega-dataflow';
 import {inherits} from 'vega-util';
 

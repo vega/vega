@@ -1,5 +1,5 @@
-import accessor from './accessor';
-import field from './field';
+import accessor from './accessor.js';
+import field from './field.js';
 
 export const id = field('id');
 

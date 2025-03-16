@@ -1,4 +1,4 @@
-import quartiles from './quartiles';
+import quartiles from './quartiles.js';
 import {deviation} from 'd3-array';
 
 // Scott, D. W. (1992) Multivariate Density Estimation:

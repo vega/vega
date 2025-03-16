@@ -1,4 +1,4 @@
-import {timeIntervals} from './scale';
+import {timeIntervals} from './scale.js';
 import {
   alignValue, anchorValue, arrayOrSignal, baselineValue,
   booleanOrNumberOrSignal, booleanOrSignal, booleanType, booleanValue,
@@ -6,7 +6,7 @@ import {
   fontWeightValue, formatTypeOrSignal, formatTypeType,
   numberOrSignal, numberType, numberValue, object, oneOf, orSignal,
   signalRef, stringType, stringValue, textOrSignal
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const guideEncodeRef = def('guideEncode');

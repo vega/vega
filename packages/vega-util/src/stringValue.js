@@ -1,6 +1,6 @@
-import isArray from './isArray';
-import isObject from './isObject';
-import isString from './isString';
+import isArray from './isArray.js';
+import isObject from './isObject.js';
+import isString from './isString.js';
 
 export default function $(x) {
   return isArray(x) ? '[' + x.map($) + ']'

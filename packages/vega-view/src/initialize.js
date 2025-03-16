@@ -1,8 +1,8 @@
-import {initializeAria} from './aria';
-import bind from './bind';
-import element from './element';
-import initializeRenderer from './initialize-renderer';
-import initializeHandler from './initialize-handler';
+import {initializeAria} from './aria.js';
+import bind from './bind.js';
+import element from './element.js';
+import initializeRenderer from './initialize-renderer.js';
+import initializeHandler from './initialize-handler.js';
 import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
 export default function(el, elBind) {

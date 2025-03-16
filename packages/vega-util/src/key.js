@@ -1,7 +1,7 @@
-import accessor from './accessor';
-import array from './array';
-import getter from './getter';
-import splitAccessPath from './splitAccessPath';
+import accessor from './accessor.js';
+import array from './array.js';
+import getter from './getter.js';
+import splitAccessPath from './splitAccessPath.js';
 
 export default function(fields, flat, opt) {
   if (fields) {

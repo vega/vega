@@ -7,14 +7,16 @@
     "force"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-force.js",
-  "module": "build/vega-force.module.js",
+  "exports": {
+    "default": "./build/vega-force.module.js"
+  },
   "unpkg": "build/vega-force.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --config-transform",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

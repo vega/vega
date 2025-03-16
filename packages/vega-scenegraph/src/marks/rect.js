@@ -1,8 +1,8 @@
-import boundStroke from '../bound/boundStroke';
-import {rectangle} from '../path/shapes';
-import {intersectRect} from '../util/intersect';
-import {drawAll} from '../util/canvas/draw';
-import {pickPath} from '../util/canvas/pick';
+import boundStroke from '../bound/boundStroke.js';
+import {rectangle} from '../path/shapes.js';
+import {intersectRect} from '../util/intersect.js';
+import {drawAll} from '../util/canvas/draw.js';
+import {pickPath} from '../util/canvas/pick.js';
 
 function attr(emit, item) {
   emit('d', rectangle(null, item));

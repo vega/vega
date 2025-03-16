@@ -1,4 +1,4 @@
-import intersect from './intersect';
+import intersect from './intersect.js';
 import {Bounds} from 'vega-scenegraph';
 import {array} from 'vega-util';
 

@@ -1,1 +1,1 @@
-module.exports = require('vega');
+export { default } from 'vega';

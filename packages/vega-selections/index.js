@@ -1,4 +1,4 @@
-export {selectionTest, selectionIdTest} from './src/selectionTest';
-export {selectionTuples} from './src/selectionTuples';
-export {selectionResolve} from './src/selectionResolve';
-export {selectionVisitor} from './src/selectionVisitor';
+export {selectionTest, selectionIdTest} from './src/selectionTest.js';
+export {selectionTuples} from './src/selectionTuples.js';
+export {selectionResolve} from './src/selectionResolve.js';
+export {selectionVisitor} from './src/selectionVisitor.js';

@@ -1,4 +1,4 @@
-import {array32} from './arrays';
+import {array32} from './arrays.js';
 import {bisectLeft, bisectRight, permute} from 'd3-array';
 
 /**

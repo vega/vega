@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "5.14.0",
+  "version": "5.16.0",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -8,14 +8,16 @@
     "layout"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-view.js",
-  "module": "build/vega-view.module.js",
+  "exports": {
+    "default": "./build/vega-view.module.js"
+  },
   "unpkg": "build/vega-view.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"
@@ -25,7 +27,7 @@
     "d3-timer": "^3.0.1",
     "vega-dataflow": "^5.7.7",
     "vega-format": "^1.1.3",
-    "vega-functions": "^5.16.0",
+    "vega-functions": "^5.18.0",
     "vega-runtime": "^6.2.1",
     "vega-scenegraph": "^4.13.1",
     "vega-util": "^1.17.3"

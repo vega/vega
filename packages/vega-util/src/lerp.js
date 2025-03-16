@@ -1,4 +1,4 @@
-import peek from './peek';
+import peek from './peek.js';
 
 export default function(array, frac) {
   const lo = array[0],

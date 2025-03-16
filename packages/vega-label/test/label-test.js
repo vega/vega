@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Bounds = require('vega-scenegraph').Bounds,
-    Collect = require('vega-transforms').collect,
-    Label = require('../').label;
+import tape from 'tape';
+import { truthy } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import {Bounds} from 'vega-scenegraph';
+import {collect as Collect} from 'vega-transforms';
+import { label as Label } from '../index.js';
 
 function closeTo(t, a, b) {
   t.equal(a && a.toFixed(14), b && b.toFixed(14));
@@ -17,18 +17,18 @@ tape('Label performs label layout over input points', t => {
     ];
   }
 
-  var df = new vega.Dataflow(),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      lb = df.add(Label, {
-        size: [50, 30],
-        anchor: [an],
-        offset: [2],
-        pulse: c0
-      });
+  const df = new Dataflow(),
+        an = df.add('left'),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [50, 30],
+          anchor: [an],
+          offset: [2],
+          pulse: c0
+        });
 
   df.update(an, 'left')
-    .pulse(c0, vega.changeset().insert(data()))
+    .pulse(c0, changeset().insert(data()))
     .run();
   t.equal(lb.stamp, df.stamp());
   let out = c0.value;
@@ -41,7 +41,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out[0].opacity, 0);
@@ -52,7 +52,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 1);
 
   df.update(an, 'top')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20);
@@ -63,7 +63,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20);
@@ -74,7 +74,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'top-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
@@ -85,7 +85,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'top-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 + 2 * Math.SQRT1_2);
@@ -96,7 +96,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
@@ -107,7 +107,7 @@ tape('Label performs label layout over input points', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 + 2 * Math.SQRT1_2);
@@ -142,20 +142,20 @@ tape('Label performs label layout with base mark reactive geometry', t => {
     ];
   }
 
-  var df = new vega.Dataflow(),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      avoidBaseMark = df.add(true),
-      lb = df.add(Label, {
-        size: [50, 30],
-        anchor: [an],
-        offset: [2],
-        pulse: c0,
-        avoidBaseMark
-      });
+  const df = new Dataflow(),
+        an = df.add('left'),
+        c0 = df.add(Collect),
+        avoidBaseMark = df.add(true),
+        lb = df.add(Label, {
+          size: [50, 30],
+          anchor: [an],
+          offset: [2],
+          pulse: c0,
+          avoidBaseMark
+        });
 
   df.update(an, 'left')
-    .pulse(c0, vega.changeset().insert(data()))
+    .pulse(c0, changeset().insert(data()))
     .run();
   t.equal(lb.stamp, df.stamp());
   let out = c0.value;
@@ -168,7 +168,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out[0].opacity, 0);
@@ -179,7 +179,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 1);
 
   df.update(an, 'top')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 21);
@@ -190,7 +190,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 21);
@@ -201,7 +201,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'top-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
@@ -212,7 +212,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'top-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 22 + 2 * Math.SQRT1_2);
@@ -223,7 +223,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom-left')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 20 - 2 * Math.SQRT1_2);
@@ -234,7 +234,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
   t.equal(out[1].opacity, 0);
 
   df.update(an, 'bottom-right')
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 22 + 2 * Math.SQRT1_2);
@@ -246,7 +246,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
 
   df.update(an, 'middle')
     .update(avoidBaseMark, true)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out[0].opacity, 0);
@@ -254,7 +254,7 @@ tape('Label performs label layout with base mark reactive geometry', t => {
 
   df.update(an, 'middle')
     .update(avoidBaseMark, false)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   closeTo(t, out[0].x, 21);
@@ -274,21 +274,21 @@ tape('Label performs label layout over input point with infinity padding', t => 
     ];
   }
 
-  var df = new vega.Dataflow(),
-      pd = df.add(Infinity),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      lb = df.add(Label, {
-        size: [10, 10],
-        anchor: [an],
-        offset: [2],
-        padding: pd,
-        pulse: c0
-      });
+  const df = new Dataflow(),
+        pd = df.add(Infinity),
+        an = df.add('left'),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [10, 10],
+          anchor: [an],
+          offset: [2],
+          padding: pd,
+          pulse: c0
+        });
 
   df.update(an, 'left')
     .update(pd, Infinity)
-    .pulse(c0, vega.changeset().insert(data()))
+    .pulse(c0, changeset().insert(data()))
     .run();
   t.equal(lb.stamp, df.stamp());
   let out = c0.value;
@@ -301,7 +301,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'right')
     .update(pd, Infinity)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -313,7 +313,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'left')
     .update(pd, 0)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -321,7 +321,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'right')
     .update(pd, 0)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -329,7 +329,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'left')
     .update(pd, null)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -341,7 +341,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'right')
     .update(pd, null)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -353,7 +353,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'left')
     .update(pd, 5)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -361,7 +361,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'right')
     .update(pd, 5)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -369,7 +369,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'left')
     .update(pd, 100)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -381,7 +381,7 @@ tape('Label performs label layout over input point with infinity padding', t => 
 
   df.update(an, 'right')
     .update(pd, 100)
-    .pulse(c0, vega.changeset().remove(util.truthy).insert(data()))
+    .pulse(c0, changeset().remove(truthy).insert(data()))
     .run();
   out = c0.value;
   t.equal(out.length, data().length);
@@ -402,21 +402,21 @@ tape('Label performs label layout over input multiple points outside of chart\'s
     ];
   }
 
-  var df = new vega.Dataflow(),
-      pd = df.add(Infinity),
-      an = df.add('left'),
-      c0 = df.add(Collect),
-      lb = df.add(Label, {
-        size: [10, 10],
-        anchor: [an],
-        offset: [10],
-        padding: pd,
-        pulse: c0
-      });
+  const df = new Dataflow(),
+        pd = df.add(Infinity),
+        an = df.add('left'),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [10, 10],
+          anchor: [an],
+          offset: [10],
+          padding: pd,
+          pulse: c0
+        });
 
   df.update(an, 'left')
     .update(pd, Infinity)
-    .pulse(c0, vega.changeset().insert(data()))
+    .pulse(c0, changeset().insert(data()))
     .run();
 
   t.equal(lb.stamp, df.stamp());

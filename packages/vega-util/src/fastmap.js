@@ -1,4 +1,4 @@
-import hasOwnProperty from './hasOwnProperty';
+import hasOwnProperty from './hasOwnProperty.js';
 
 const NULL = {};
 

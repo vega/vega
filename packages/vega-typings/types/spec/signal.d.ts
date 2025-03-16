@@ -1,4 +1,4 @@
-import { Binding, Expr, OnEvent } from '.';
+import { Binding, Expr, OnEvent } from '../index.js';
 
 // Hide from Vega-Lite schema (Since @hidden isn't used by Vega, we can just add it here for now.)
 /**

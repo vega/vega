@@ -1,7 +1,6 @@
-var tape = require('tape'),
-    stats = require('../'),
-    normal = stats.randomNormal;
-
+import tape from 'tape';
+import * as stats from '../index.js';
+var normal = stats.randomNormal;
 // seeded RNG for deterministic tests
 stats.setRandom(stats.randomLCG(123456789));
 

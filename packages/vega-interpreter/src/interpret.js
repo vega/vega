@@ -1,7 +1,7 @@
-import Constants from './constants';
-import Ops from './ops-binary';
-import Unary from './ops-unary';
-import Functions from './functions';
+import Constants from './constants.js';
+import Ops from './ops-binary.js';
+import Unary from './ops-unary.js';
+import Functions from './functions.js';
 
 const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
 const DisallowedMethods = new Set([

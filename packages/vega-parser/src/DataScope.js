@@ -1,5 +1,5 @@
-import {Aggregate, Collect} from './transforms';
-import {aggrField, entry, keyFieldRef, ref, sortKey} from './util';
+import {Aggregate, Collect} from './transforms.js';
+import {aggrField, entry, keyFieldRef, ref, sortKey} from './util.js';
 import {isString} from 'vega-util';
 
 export default function DataScope(scope, input, output, values, aggr) {

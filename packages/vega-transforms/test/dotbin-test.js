@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('../'),
-    changeset = vega.changeset,
-    Collect = transforms.collect,
-    DotBin = transforms.dotbin;
+import tape from 'tape';
+import {field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, dotbin as DotBin} from '../index.js';
 
 tape('DotBin assigns dot plot bin positions', t => {
   const data = [
@@ -17,11 +14,11 @@ tape('DotBin assigns dot plot bin positions', t => {
     {key: 'b', value: 5.5}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gb = df.add([]),
       c0 = df.add(Collect),
       db = df.add(DotBin, {
-        field: util.field('value'),
+        field: field('value'),
         groupby: gb,
         step: 1.5,
         pulse: c0,
@@ -44,7 +41,7 @@ tape('DotBin assigns dot plot bin positions', t => {
   t.deepEqual(d[6], {key: 'b', value: 5.5, x: 5.25});
 
   // Add groupby field
-  df.update(gb, [util.field('key')]).run();
+  df.update(gb, [field('key')]).run();
   t.equal(db.pulse.add.length, 0);
   t.equal(db.pulse.rem.length, 0);
   t.equal(db.pulse.mod.length, 7);

@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$1, $$1$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
+})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$2, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
 
   function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -21,8 +21,8 @@
     return Object.freeze(n);
   }
 
-  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
-  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1$1);
+  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$2);
+  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -1232,7 +1232,7 @@
       sanitize: sanitize,
       load: load$1,
       fileAccess: false,
-      file: fileLoader(fs),
+      file: fileLoader(),
       http: httpLoader(fetch)
     });
   }
@@ -1338,11 +1338,7 @@
    *   return {Promise} A promise that resolves to the file contents.
    */
   function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
+    return fileReject;
   }
 
   /**
@@ -1533,10 +1529,7 @@
       }
     }
   }
-  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch,
-  // use built-in fetch API
-  null // no file system access
-  );
+  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch);
 
   function UniqueList(idFunc) {
     const $ = idFunc || identity,
@@ -8613,7 +8606,7 @@
     };
   }
   function band() {
-    const scale = $$1.scaleOrdinal().unknown(undefined),
+    const scale = $$2.scaleOrdinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range;
     let range$1 = [0, 1],
@@ -8797,7 +8790,7 @@
       }
     };
     scale.tickFormat = function (count, specifier) {
-      return $$1.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
+      return $$2.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
     };
     scale.copy = function () {
       return scaleBinOrdinal().domain(scale.domain()).range(scale.range());
@@ -16111,7 +16104,7 @@
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
     if (type === Ordinal) {
-      scale.unknown(_.domainImplicit ? $$1.scaleImplicit : undefined);
+      scale.unknown(_.domainImplicit ? $$2.scaleImplicit : undefined);
     }
 
     // perform 'nice' adjustment as requested
@@ -16221,7 +16214,7 @@
     } else if (isFunction(scale.round)) {
       scale.round(round);
     } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? $$1$1.interpolateRound : $$1$1.interpolate);
+      scale.interpolate(round ? $$1.interpolateRound : $$1.interpolate);
     }
     if (range) scale.range(flip(range, _.reverse));
   }
@@ -21098,7 +21091,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.31.0";
+  var version = "5.33.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22576,6 +22569,9 @@
       substring: fn('substring', STRING),
       split: fn('split', STRING),
       trim: fn('trim', STRING, 0),
+      // base64 encode/decode
+      btoa: 'btoa',
+      atob: 'atob',
       // REGEXP functions
       regexp: REGEXP,
       test: fn('test', REGEXP),
@@ -23112,12 +23108,15 @@
   }
 
   /**
-   * Name must be a string. Return undefined if the scale is not registered.
+   * nameOrFunction must be a string or function that was registered.
+   * Return undefined if scale is not recognized.
    */
-  function getScale(name, ctx) {
-    if (isString(name)) {
-      const maybeScale = ctx.scales[name];
+  function getScale(nameOrFunction, ctx) {
+    if (isString(nameOrFunction)) {
+      const maybeScale = ctx.scales[nameOrFunction];
       return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
+    } else if (isFunction(nameOrFunction)) {
+      return isRegisteredScale(nameOrFunction) ? nameOrFunction : undefined;
     }
     return undefined;
   }
@@ -23328,6 +23327,7 @@
   }
   function replace(str, pattern, repl) {
     if (isFunction(repl)) error('Function argument passed to replace.');
+    if (!isString(pattern) && !isRegExp(pattern)) error('Please pass a string or RegExp argument to replace.');
     return String(str).replace(pattern, repl);
   }
   function reverse(seq) {
@@ -23363,13 +23363,8 @@
     const s = getScale(name, (group || this).context);
     return s ? s(value) : undefined;
   }
-
-  /**
-   * Passing a function is only used for for testing.
-   * Outside of tests, the first argument should be a string.
-   */
-  function scaleGradient(scaleOrFunction, p0, p1, count, group) {
-    let scale = typeof scaleOrFunction === 'string' ? getScale(scaleOrFunction, (group || this).context) : scaleOrFunction;
+  function scaleGradient(scale, p0, p1, count, group) {
+    scale = getScale(scale, (group || this).context);
     const gradient = Gradient$1(p0, p1);
     let stops = scale.domain(),
       min = stops[0],
@@ -23698,7 +23693,7 @@
 
     // if the code generator has already been initialized,
     // we need to also register the function with it
-    codeGenerator.functions[name] = thisPrefix + name;
+    if (codeGenerator) codeGenerator.functions[name] = thisPrefix + name;
     return this;
   }
 

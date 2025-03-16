@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "5.31.0",
+  "version": "5.33.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
@@ -8,6 +8,7 @@
     "server"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "main": "index.js",
   "bin": {
@@ -21,7 +22,7 @@
   },
   "dependencies": {
     "canvas": "^2.11.2",
-    "vega": "5.31.0",
+    "vega": "5.33.0",
     "yargs": "17"
   }
 }

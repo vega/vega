@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    bin = require('../').bin;
+import tape from 'tape';
+import { bin } from '../index.js';
 
 tape('bin generates boundaries for exact step size', t => {
   let b = bin({extent:[1.3, 10.2], step:1, nice:false});

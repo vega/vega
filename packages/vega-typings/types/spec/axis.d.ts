@@ -5,9 +5,9 @@ import {
   SignalRef,
   TextEncodeEntry,
   TimeInterval
-} from '.';
-import { Text } from './encode';
-import { TimeIntervalStep } from './scale';
+} from '../index.js';
+import { Text } from './encode.js';
+import { TimeIntervalStep } from './scale.js';
 import {
   AlignValue,
   AnchorValue,
@@ -20,7 +20,7 @@ import {
   StringValue,
   StrokeCapValue,
   TextBaselineValue
-} from './values';
+} from './values.js';
 
 export type AxisOrient = 'top' | 'bottom' | 'left' | 'right';
 

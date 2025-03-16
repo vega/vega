@@ -17,9 +17,11 @@
     "inference"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-loader.node.js",
-  "module": "build/vega-loader.node.module.js",
+  "exports": {
+    "default": "./build/vega-loader.node.module.js"
+  },
   "unpkg": "build/vega-loader.min.js",
   "jsdelivr": "build/vega-loader.min.js",
   "repository": "vega/vega",
@@ -28,8 +30,8 @@
     "./build/vega-loader.node.module.js": "./build/vega-loader.browser.module.js"
   },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

@@ -1,5 +1,5 @@
-import { SignalRef } from '.';
-import { ColorScheme } from './scheme';
+import { SignalRef } from '../index.js';
+import { ColorScheme } from './scheme.js';
 
 export type RangeEnum =
   | 'width'

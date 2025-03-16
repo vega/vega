@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
@@ -11,6 +11,7 @@
     "typings"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "scripts": {
     "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "format-tests": "prettier --write 'tests/**/*.ts'",
@@ -21,7 +22,7 @@
   "dependencies": {
     "@types/geojson": "7946.0.4",
     "vega-event-selector": "^3.0.1",
-    "vega-expression": "^5.1.2",
+    "vega-expression": "^5.2.0",
     "vega-util": "^1.17.3"
   },
   "devDependencies": {

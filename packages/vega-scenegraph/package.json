@@ -3,18 +3,20 @@
   "version": "4.13.1",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-scenegraph.js",
-  "module": "build/vega-scenegraph.module.js",
+  "exports": {
+    "default": "./build/vega-scenegraph.module.js"
+  },
   "unpkg": "build/vega-scenegraph.min.js",
   "repository": "vega/vega",
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
     "postbuild": "yarn schema",
     "pretest": "yarn build --config-test",
-    "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
+    "test": "tape 'test/**/*-test.js' && yarn xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
     "prepublishOnly": "yarn test && yarn build"
   },

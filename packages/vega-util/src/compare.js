@@ -1,7 +1,7 @@
-import {default as accessor, accessorFields} from './accessor';
-import array from './array';
-import field from './field';
-import isFunction from './isFunction';
+import {default as accessor, accessorFields} from './accessor.js';
+import array from './array.js';
+import field from './field.js';
+import isFunction from './isFunction.js';
 
 const DESCENDING = 'descending';
 

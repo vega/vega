@@ -1,15 +1,17 @@
-const OUTPUT_FAILURES = false, // flag to write scenes upon test failure
-      specdir = process.cwd() + '/../vega/test/specs-valid/',
-      testdir = process.cwd() + '/../vega/test/scenegraphs/',
-      fs = require('fs'),
-      tape = require('tape'),
-      vega = require('vega'),
-      interp = require('../'),
-      loader = vega.loader({baseURL: '../vega/test/'}),
-      specs = require('../../vega/test/specs-valid.json').filter(spec => {
-        // filter wordcloud due to cross-platform canvas issues
-        return spec !== 'wordcloud';
-      });
+import fs from 'fs';
+import tape from 'tape';
+import * as vega from 'vega';
+import * as interp from '../index.js';
+import specsValid from '../../vega/test/specs-valid.json' with { type: 'json' };
+
+const OUTPUT_FAILURES = false; // flag to write scenes upon test failure
+const specdir = process.cwd() + '/../vega/test/specs-valid/';
+const testdir = process.cwd() + '/../vega/test/scenegraphs/';
+const loader = vega.loader({baseURL: '../vega/test/'});
+const specs = specsValid.filter(spec => {
+  // filter wordcloud due to cross-platform canvas issues
+  return spec !== 'wordcloud';
+});
 
 // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));

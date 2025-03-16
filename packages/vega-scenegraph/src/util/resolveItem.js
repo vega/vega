@@ -1,5 +1,5 @@
-import marks from '../marks/index';
-import point from './point';
+import marks from '../marks/index.js';
+import point from './point.js';
 
 export default function(item, event, el, origin) {
   var mark = item && item.mark,

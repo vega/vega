@@ -1,4 +1,4 @@
-import {DegToRad, Epsilon, HalfPi, Tau} from '../util/constants';
+import {DegToRad, Epsilon, HalfPi, Tau} from '../util/constants.js';
 
 const circleThreshold = Tau - 1e-8;
 let bounds, lx, ly, rot, ma, mb, mc, md;

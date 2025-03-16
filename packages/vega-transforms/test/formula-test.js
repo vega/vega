@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Formula = tx.formula,
-    Collect = tx.collect;
+import tape from 'tape';
+import {accessor, field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, formula as Formula} from '../index.js';
 
 tape('Formula extends tuples', t => {
   const data = [
@@ -13,11 +10,11 @@ tape('Formula extends tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var df = new vega.Dataflow(),
-      x  = util.field('x'),
-      y  = util.field('y'),
-      f0 = util.accessor(t => t.id * 2, ['id']),
-      f1 = util.accessor(t => t.value[0], ['value']),
+  var df = new Dataflow(),
+      x  = field('x'),
+      y  = field('y'),
+      f0 = accessor(t => t.id * 2, ['id']),
+      f1 = accessor(t => t.value[0], ['value']),
       c0 = df.add(Collect),
       fa = df.add(Formula, {expr:f0, as:'x', pulse:c0}),
       fb = df.add(Formula, {expr:f1, as:'y', pulse:fa});

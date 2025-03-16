@@ -1,12 +1,8 @@
-var tape = require('tape'),
-    vega = require('../'),
-    context = vega.path,
-    Bounds = vega.Bounds,
-    pathParse = vega.pathParse,
-    pathRender = vega.pathRender;
+import tape from 'tape';
+import {Bounds, boundContext, path as context, pathEqual, pathParse, pathRender} from '../index.js';
 
 function bound(path, bounds) {
-  pathRender(vega.boundContext(bounds), path, 0, 0);
+  pathRender(boundContext(bounds), path, 0, 0);
   return bounds;
 }
 
@@ -176,7 +172,7 @@ tape('pathRender should render paths', t => {
   for (let i=0; i<paths.length; ++i) {
     p = pathParse(paths[i]);
     pathRender(ctx = context(), p, 0, 0);
-    t.ok(vega.pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
+    t.ok(pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
   }
   t.end();
 });

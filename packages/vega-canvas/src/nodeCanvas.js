@@ -1,7 +1,7 @@
 let NodeCanvas;
 
 try {
-  NodeCanvas = require('canvas');
+  NodeCanvas = await import('canvas');
   if (!(NodeCanvas && NodeCanvas.createCanvas)) {
     NodeCanvas = null;
   }
