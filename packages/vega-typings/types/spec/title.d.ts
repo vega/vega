@@ -1,4 +1,4 @@
-import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '..js';
+import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '../index.js';
 import { Encode, Text } from './encode.js';
 import {
   AlignValue,

@@ -1,4 +1,4 @@
-import { SignalRef, Vector2, Vector3 } from '..js';
+import { SignalRef, Vector2, Vector3 } from '../index.js';
 import { Feature, FeatureCollection } from 'geojson';
 
 export type GeoJsonFeature = Feature;

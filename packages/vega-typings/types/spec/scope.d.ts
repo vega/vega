@@ -1,4 +1,4 @@
-import { Axis, Data, Layout, Legend, Mark, Projection, Scale, Signal, Title } from '..js';
+import { Axis, Data, Layout, Legend, Mark, Projection, Scale, Signal, Title } from '../index.js';
 
 export interface Scope {
   title?: string | Title;

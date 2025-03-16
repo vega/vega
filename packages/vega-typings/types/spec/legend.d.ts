@@ -5,7 +5,7 @@ import {
   SignalRef,
   SymbolEncodeEntry,
   TextEncodeEntry
-} from '..js';
+} from '../index.js';
 import { FormatType, LabelOverlap, TickCount, TimeFormatSpecifier } from './axis.js';
 import { Text } from './encode.js';
 import { LayoutAlign } from './layout.js';

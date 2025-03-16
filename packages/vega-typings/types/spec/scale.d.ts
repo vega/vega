@@ -1,4 +1,4 @@
-import { SignalRef } from '..js';
+import { SignalRef } from '../index.js';
 import { ColorScheme } from './scheme.js';
 
 export type RangeEnum =

@@ -8,7 +8,7 @@ import {
   Padding,
   SignalValue,
   Spec
-} from '../spec.js';
+} from '../spec/index.js';
 import { Changeset, Transform } from './dataflow.js';
 import { Renderers } from './renderer.js';
 import { Scene } from './scene.js';

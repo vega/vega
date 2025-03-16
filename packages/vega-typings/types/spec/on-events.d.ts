@@ -1,4 +1,4 @@
-import { EventSelector, Expr, ExprRef, SignalRef, SignalValue, Stream } from '..js';
+import { EventSelector, Expr, ExprRef, SignalRef, SignalValue, Stream } from '../index.js';
 
 export type EventListener =
   | SignalRef

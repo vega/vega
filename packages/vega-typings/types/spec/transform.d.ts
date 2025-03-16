@@ -9,7 +9,7 @@ import {
   Vector5,
   Vector6,
   Vector7
-} from '..js';
+} from '../index.js';
 
 export type DataName = string;
 

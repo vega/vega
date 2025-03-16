@@ -1,4 +1,4 @@
-import { SignalRef } from '..js';
+import { SignalRef } from '../index.js';
 import { Color } from './color.js';
 import { Cursor, StrokeCap, StrokeJoin } from './config.d.js';
 import { TitleAnchor } from './title.js';

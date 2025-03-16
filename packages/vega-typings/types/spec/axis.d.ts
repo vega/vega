@@ -5,7 +5,7 @@ import {
   SignalRef,
   TextEncodeEntry,
   TimeInterval
-} from '..js';
+} from '../index.js';
 import { Text } from './encode.js';
 import { TimeIntervalStep } from './scale.js';
 import {

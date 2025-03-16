@@ -1,4 +1,4 @@
-import { SignalRef } from '..js';
+import { SignalRef } from '../index.js';
 
 export type LayoutAlign = 'all' | 'each' | 'none';
 export type LayoutTitleAnchor = 'start' | 'end';

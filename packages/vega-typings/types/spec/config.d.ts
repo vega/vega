@@ -11,7 +11,7 @@ import {
   RangeScheme,
   SymbolShape,
   TextBaseline
-} from '..js';
+} from '../index.js';
 import { BaseAxis } from './axis.js';
 import { Color } from './color.js';
 import { URI } from './data.js';
