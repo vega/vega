@@ -3375,7 +3375,7 @@
       sanitize: sanitize,
       load: load$1,
       fileAccess: false,
-      file: fileLoader(fs),
+      file: fileLoader(),
       http: httpLoader(fetch)
     });
   }
@@ -3481,11 +3481,7 @@
    *   return {Promise} A promise that resolves to the file contents.
    */
   function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
+    return fileReject;
   }
 
   /**
@@ -3676,10 +3672,7 @@
       }
     }
   }
-  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch,
-  // use built-in fetch API
-  null // no file system access
-  );
+  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch);
 
   function UniqueList(idFunc) {
     const $ = idFunc || identity$6,
@@ -35666,7 +35659,7 @@
 
     // if the code generator has already been initialized,
     // we need to also register the function with it
-    codeGenerator.functions[name] = thisPrefix + name;
+    if (codeGenerator) codeGenerator.functions[name] = thisPrefix + name;
     return this;
   }
 
