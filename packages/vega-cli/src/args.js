@@ -1,5 +1,7 @@
 import yargs from 'yargs';
-export default (function (type) {
+import { hideBin } from 'yargs/helpers';
+
+export default function (type) {
     const helpText = `Render a Vega specification to ${type.toUpperCase()}.
 Usage: vg2${type} [vega_json_spec_file] [output_${type}_file]
   If no arguments are provided, reads from stdin.
@@ -9,7 +11,7 @@ Usage: vg2${type} [vega_json_spec_file] [output_${type}_file]
 To load data, you may need to set a base directory:
   For web retrieval, use '-b http://host/data/'.
   For files, use '-b file:///dir/data/' (absolute) or '-b data/' (relative).`;
-    const args = yargs.usage(helpText)
+    const args = yargs(hideBin(process.argv)).usage(helpText)
         .demand(0);
     args.string('b')
         .alias('b', 'base')
@@ -45,4 +47,4 @@ To load data, you may need to set a base directory:
         args.number('ppi').describe('ppi', 'Resolution in ppi.');
     }
     return args.help().version().argv;
-});
+};

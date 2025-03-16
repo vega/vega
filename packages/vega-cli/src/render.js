@@ -1,16 +1,18 @@
-import vega from 'vega';
+import * as vega from 'vega';
 import path from 'path';
 import args from './args.js';
 import read from './read.js';
-function load(file) {
-}
+
+function load(file) {}
+
 const Levels = {
     error: vega.Error,
     warn: vega.Warn,
     info: vega.Info,
     debug: vega.Debug
 };
-export default (function (type, callback, opt) {
+
+export default function(type, callback, opt) {
     // parse command line arguments
     const arg = args(type);
     // set baseURL, if specified. default to input spec directory
@@ -50,4 +52,4 @@ export default (function (type, callback, opt) {
     read(arg._[0] || null)
         .then(text => render(JSON.parse(text)))
         .catch(err => { process.exitCode = 1; console.error(err); }); // eslint-disable-line no-console
-});
+};

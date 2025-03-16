@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render a Vega specification to PNG, using node canvas
 import { createWriteStream } from 'fs';
-import { render } from '../src/render';
+import render from '../src/render.js';
 
 render('png', function(canvas, arg) {
   const file = arg._[1] || null,
