@@ -24,7 +24,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-time": "^3.1.0",
     "vega-util": "^1.17.3"
   }

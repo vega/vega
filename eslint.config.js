@@ -8,7 +8,10 @@ import globals from 'globals';
 const legacyRules = {
   '@typescript-eslint/no-var-requires': 'off',
   '@typescript-eslint/no-this-alias': 'off',
-  '@typescript-eslint/no-unused-vars': 'off'
+  '@typescript-eslint/no-unused-vars': 'off',
+  '@typescript-eslint/no-empty-object-type': 'off',
+  '@typescript-eslint/no-unused-expressions': 'off',
+  '@typescript-eslint/no-unsafe-function-type': 'off'
 };
 
 const rules = {
@@ -33,7 +36,7 @@ export default [
   js.configs.recommended,
   ...ts.configs.recommended,
   {
-    files: ['**/*.js', '**/*.mjs'],
+    files: ['**/*.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -58,8 +61,7 @@ export default [
       ...rules,
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-unused-vars': 'off'
+      '@typescript-eslint/ban-ts-comment': 'off'
     }
   },
   {

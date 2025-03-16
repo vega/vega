@@ -23,7 +23,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-geo": "^3.1.0",
+    "d3-geo": "^3.1.1",
     "d3-geo-projection": "^4.0.0",
     "vega-scale": "^7.4.2"
   }

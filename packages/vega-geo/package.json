@@ -24,9 +24,9 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-color": "^3.1.0",
-    "d3-geo": "^3.1.0",
+    "d3-geo": "^3.1.1",
     "vega-canvas": "^1.2.7",
     "vega-dataflow": "^5.7.7",
     "vega-projection": "^1.6.2",
