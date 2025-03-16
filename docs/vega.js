@@ -33064,7 +33064,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.32.0";
+  var version = "5.33.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -34542,6 +34542,9 @@
       substring: fn('substring', STRING),
       split: fn('split', STRING),
       trim: fn('trim', STRING, 0),
+      // base64 encode/decode
+      btoa: 'btoa',
+      atob: 'atob',
       // REGEXP functions
       regexp: REGEXP,
       test: fn('test', REGEXP),
@@ -35078,12 +35081,15 @@
   }
 
   /**
-   * Name must be a string. Return undefined if the scale is not registered.
+   * nameOrFunction must be a string or function that was registered.
+   * Return undefined if scale is not recognized.
    */
-  function getScale(name, ctx) {
-    if (isString(name)) {
-      const maybeScale = ctx.scales[name];
+  function getScale(nameOrFunction, ctx) {
+    if (isString(nameOrFunction)) {
+      const maybeScale = ctx.scales[nameOrFunction];
       return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
+    } else if (isFunction(nameOrFunction)) {
+      return isRegisteredScale(nameOrFunction) ? nameOrFunction : undefined;
     }
     return undefined;
   }
@@ -35294,6 +35300,7 @@
   }
   function replace(str, pattern, repl) {
     if (isFunction(repl)) error('Function argument passed to replace.');
+    if (!isString(pattern) && !isRegExp(pattern)) error('Please pass a string or RegExp argument to replace.');
     return String(str).replace(pattern, repl);
   }
   function reverse(seq) {
@@ -35329,13 +35336,8 @@
     const s = getScale(name, (group || this).context);
     return s ? s(value) : undefined;
   }
-
-  /**
-   * Passing a function is only used for for testing.
-   * Outside of tests, the first argument should be a string.
-   */
-  function scaleGradient(scaleOrFunction, p0, p1, count, group) {
-    let scale = typeof scaleOrFunction === 'string' ? getScale(scaleOrFunction, (group || this).context) : scaleOrFunction;
+  function scaleGradient(scale, p0, p1, count, group) {
+    scale = getScale(scale, (group || this).context);
     const gradient = Gradient$1(p0, p1);
     let stops = scale.domain(),
       min = stops[0],
