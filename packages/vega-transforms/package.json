@@ -30,7 +30,7 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "vega-dataflow": "^5.7.7",
     "vega-statistics": "^1.9.0",
     "vega-time": "^2.1.3",

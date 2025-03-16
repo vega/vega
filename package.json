@@ -27,32 +27,32 @@
     "@babel/eslint-parser": "^7.26.10",
     "@babel/plugin-transform-runtime": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
-    "@definitelytyped/dtslint": "0.0.159",
+    "@definitelytyped/dtslint": "0.2.29",
     "@eslint/js": "^9.22.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@types/node": "^20.14.2",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@types/node": "^22.13.10",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
-    "canvas": "^2.11.2",
-    "eslint": "^9.21.0",
-    "globals": "^15.14.0",
-    "jsdom": "^24.1.0",
-    "lerna": "^7.4.2",
+    "canvas": "^3.1.0",
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
+    "jsdom": "^26.0.0",
+    "lerna": "^8.2.1",
     "pixelmatch": "^7.1.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.5.3",
     "del-cli": "^6.0.0",
     "rollup": "^4.35.0",
     "rollup-plugin-bundle-size": "^1.0.3",
     "serve": "^14.2.4",
     "tape": "^5.9.0",
     "typescript": "~5.8.2",
-    "typescript-eslint": "^7.13.0",
-    "vega-datasets": "^2.8.1"
+    "typescript-eslint": "^8.26.1",
+    "vega-datasets": "^2.11.0"
   },
   "workspaces": [
     "packages/*"
@@ -60,5 +60,5 @@
   "engines": {
     "node": ">=18.18.0"
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.22"
 }

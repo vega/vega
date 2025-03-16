@@ -20,13 +20,13 @@
     "test": "yarn format && yarn tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
-    "@types/geojson": "7946.0.4",
+    "@types/geojson": "7946.0.16",
     "vega-event-selector": "^3.0.1",
     "vega-expression": "^5.2.0",
     "vega-util": "^1.17.3"
   },
   "devDependencies": {
-    "ts-json-schema-generator": "^1.4.0",
-    "tsd": "^0.31.0"
+    "ts-json-schema-generator": "^2.3.0",
+    "tsd": "^0.31.2"
   }
 }
