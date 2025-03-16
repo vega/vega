@@ -43,7 +43,7 @@
     "globals": "^15.14.0",
     "jsdom": "^24.1.0",
     "lerna": "^7.4.2",
-    "pixelmatch": "^5.3.0",
+    "pixelmatch": "^7.1.0",
     "prettier": "^2.8.8",
     "del-cli": "^6.0.0",
     "rollup": "^4.35.0",
