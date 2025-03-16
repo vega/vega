@@ -21,7 +21,7 @@
     "./build/vega-canvas.node.module.js": "./build/vega-canvas.browser.module.js"
   },
   "scripts": {
-    "prebuild": "rimraf build",
+    "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",

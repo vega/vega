@@ -19,7 +19,7 @@
   "unpkg": "build/vega-label.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
+    "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",

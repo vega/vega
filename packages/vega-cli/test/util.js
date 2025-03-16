@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import pngjs from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import { readFileSync } from 'fs';
-import rimraf from 'rimraf';
+import { deleteAsync } from 'del';
 
 const PNG = pngjs.PNG;
 const res = 'test/resources/';
@@ -25,7 +25,7 @@ export default (function test(t, cmd, file, png = false) {
             else {
                 t.ok(expectImg.equals(actualImg));
             }
-            rimraf(output).catch(error => t.fail(error));
+            deleteAsync(output).catch(error => t.fail(error));
         }
         t.end();
     });

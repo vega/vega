@@ -19,7 +19,7 @@
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
+    "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",

@@ -18,7 +18,7 @@
   "jsdelivr": "build/vega-projections.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
+    "prebuild": "del-cli build",
     "build": "rollup -c  rollup.config.js --config-core",
     "pretest": "yarn build --config-test",
     "prepublishOnly": "yarn build"

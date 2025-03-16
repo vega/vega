@@ -24,7 +24,7 @@
   "repository": "vega/vega",
   "scripts": {
     "bundle": "rollup -c rollup.config.js --config-bundle",
-    "prebuild": "rimraf build",
+    "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js --config-core --config-bundle",
     "postbuild": "node schema-copy",
     "pretest": "yarn build --config-test",

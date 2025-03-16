@@ -7,7 +7,7 @@
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
     "build-editor-preview": "scripts/build-editor-preview.sh",
-    "clean": "lerna clean --yes && lerna exec -- rimraf build && lerna exec -- rimraf LICENSE && rimraf node_modules yarn.lock",
+    "clean": "lerna clean --yes && lerna exec -- del-cli build && lerna exec -- del-cli LICENSE && del-cli node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
     "docsbuild": "cd packages/vega/build && cp vega.js vega.min.js* vega-core.js vega-core.min.js* vega-schema.json ../../../docs/",
@@ -45,7 +45,7 @@
     "lerna": "^7.4.2",
     "pixelmatch": "^5.3.0",
     "prettier": "^2.8.8",
-    "rimraf": "^5.0.7",
+    "del-cli": "^6.0.0",
     "rollup": "^4.31.0",
     "rollup-plugin-bundle-size": "^1.0.3",
     "serve": "^14.2.4",
