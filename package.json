@@ -37,7 +37,7 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "ajv": "^8.17.1",
-    "ajv-formats": "^2.1.1",
+    "ajv-formats": "^3.0.1",
     "canvas": "^2.11.2",
     "eslint": "^9.21.0",
     "globals": "^15.14.0",
