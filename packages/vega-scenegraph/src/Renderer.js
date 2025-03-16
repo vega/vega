@@ -1,4 +1,4 @@
-import ResourceLoader from './ResourceLoader';
+import ResourceLoader from './ResourceLoader.js';
 
 export default class Renderer {
   /**
@@ -185,4 +185,3 @@ export default class Renderer {
     return this._load('loadImage', uri);
   }
 }
-

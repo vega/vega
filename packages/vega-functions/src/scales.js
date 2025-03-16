@@ -1,5 +1,5 @@
-import {ScalePrefix} from './constants';
-import {scaleVisitor} from './visitors';
+import {ScalePrefix} from './constants.js';
+import {scaleVisitor} from './visitors.js';
 import {Literal} from 'vega-expression';
 import {isFunction, isString, stringValue} from 'vega-util';
 import {isRegisteredScale} from 'vega-scale';

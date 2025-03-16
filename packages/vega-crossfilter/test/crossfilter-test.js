@@ -1,11 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    xf = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    CrossFilter = xf.crossfilter,
-    ResolveFilter = xf.resolvefilter;
+import tape from 'tape';
+import {field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {crossfilter as CrossFilter, resolvefilter as ResolveFilter} from '../index.js';
+import {collect as Collect} from 'vega-transforms';
 
 tape('Crossfilter filters tuples', t => {
   const data = [
@@ -13,9 +10,9 @@ tape('Crossfilter filters tuples', t => {
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      df = new vega.Dataflow(),
+  var a = field('a'),
+      b = field('b'),
+      df = new Dataflow(),
       r1 = df.add([0, 5]),
       r2 = df.add([0, 5]),
       c0 = df.add(Collect),
@@ -85,9 +82,9 @@ tape('Crossfilter consolidates after remove', t => {
     {a: 4, b: 4, c:2}, {a: 3, b: 3, c:3}
   ];
 
-  var a = util.field('a'),
-      b = util.field('b'),
-      df = new vega.Dataflow(),
+  var a = field('a'),
+      b = field('b'),
+      df = new Dataflow(),
       r1 = df.add([0, 3]),
       r2 = df.add([0, 3]),
       c0 = df.add(Collect),

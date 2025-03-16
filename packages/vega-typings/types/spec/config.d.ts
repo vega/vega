@@ -11,10 +11,10 @@ import {
   RangeScheme,
   SymbolShape,
   TextBaseline
-} from '.';
-import { BaseAxis } from './axis';
-import { Color } from './color';
-import { URI } from './data';
+} from '../index.js';
+import { BaseAxis } from './axis.js';
+import { Color } from './color.js';
+import { URI } from './data.js';
 import {
   Blend,
   ColorValueRef,
@@ -23,13 +23,13 @@ import {
   ScaledValueRef,
   Text,
   TextDirection
-} from './encode.d';
-import { LayoutBounds } from './layout';
-import { BaseLegend } from './legend';
-import { Locale } from './locale';
-import { BaseProjection } from './projection';
-import { InitSignal, NewSignal, SignalRef } from './signal';
-import { BaseTitle, TitleAnchor } from './title';
+} from './encode.d.js';
+import { LayoutBounds } from './layout.js';
+import { BaseLegend } from './legend.js';
+import { Locale } from './locale.js';
+import { BaseProjection } from './projection.js';
+import { InitSignal, NewSignal, SignalRef } from './signal.js';
+import { BaseTitle, TitleAnchor } from './title.js';
 
 export type KeepSignal<T> = T extends SignalRef ? SignalRef : never;
 

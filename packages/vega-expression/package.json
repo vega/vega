@@ -10,14 +10,17 @@
   ],
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
   "license": "BSD-3-Clause",
-  "main": "build/vega-expression.js",
-  "module": "build/vega-expression.module.js",
+  "type": "module",
+  "exports": {
+    "types": "./index.d.ts",
+    "default": "./build/vega-expression.module.js"
+  },
   "unpkg": "build/vega-expression.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

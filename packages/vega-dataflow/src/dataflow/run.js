@@ -1,8 +1,7 @@
-/* eslint-disable require-atomic-updates */
-import {default as Pulse, StopPropagation} from '../Pulse';
-import MultiPulse from '../MultiPulse';
-import asyncCallback from '../util/asyncCallback';
-import UniqueList from '../util/UniqueList';
+import {default as Pulse, StopPropagation} from '../Pulse.js';
+import MultiPulse from '../MultiPulse.js';
+import asyncCallback from '../util/asyncCallback.js';
+import UniqueList from '../util/UniqueList.js';
 import {id, isArray} from 'vega-util';
 
 /**

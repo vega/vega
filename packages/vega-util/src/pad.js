@@ -1,4 +1,4 @@
-import repeat from './repeat';
+import repeat from './repeat.js';
 
 export default function(str, length, padchar, align) {
   const c = padchar || ' ',

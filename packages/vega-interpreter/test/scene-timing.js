@@ -1,12 +1,8 @@
-const specdir = process.cwd() + '/../vega/test/specs-valid/',
-      fs = require('fs'),
-      vega = require('vega'),
-      interp = require('../'),
-      loader = vega.loader({baseURL: '../vega/test/'}),
-      renderer = 'none',
-      expr = interp.expressionInterpreter,
-      specs = require('../../vega/test/specs-valid.json');
-
+import fs from 'fs';
+import vega from 'vega';
+import * as interp from '../index.js';
+import specs from '../../vega/test/specs-valid.json' with { type: 'json' };
+const specdir = process.cwd() + '/../vega/test/specs-valid/', loader = vega.loader({ baseURL: '../vega/test/' }), renderer = 'none', expr = interp.expressionInterpreter;
 // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));
 

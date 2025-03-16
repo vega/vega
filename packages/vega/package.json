@@ -12,17 +12,20 @@
     "d3"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
-  "main": "build/vega-node.js",
-  "module": "build/vega.module.js",
+  "exports": {
+    "types": "./index.d.ts",
+    "node": "./build/vega-node.js",
+    "default": "./build/vega.module.js"
+  },
   "unpkg": "build/vega.min.js",
   "jsdelivr": "build/vega.min.js",
-  "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "bundle": "rollup -c rollup.config.mjs --config-bundle",
-    "prebuild": "rimraf build && rimraf build-es5",
-    "build": "rollup -c rollup.config.mjs --config-core --config-bundle --config-ie",
+    "bundle": "rollup -c rollup.config.js --config-bundle",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --config-core --config-bundle",
     "postbuild": "node schema-copy",
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",

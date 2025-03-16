@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render a Vega specification to SVG
-const {writeFile} = require('fs'),
-      render = require('../src/render');
+import { writeFile } from 'fs';
+import render from '../src/render.js';
 
 const svgHeader =
   '<?xml version="1.0" encoding="utf-8"?>\n' +

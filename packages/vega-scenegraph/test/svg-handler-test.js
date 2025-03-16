@@ -1,15 +1,14 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    Renderer = vega.SVGRenderer,
-    Handler = vega.SVGHandler,
-    jsdom = require('jsdom'),
-    doc = (new jsdom.JSDOM()).window.document;
+import tape from 'tape';
+import fs from 'fs';
+import {SVGHandler as Handler, SVGRenderer as Renderer, sceneFromJSON} from '../index.js';
+import {JSDOM} from 'jsdom';
 
+const dom = new JSDOM();
+const doc = dom.window.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 const events = [
   'keydown',
@@ -42,7 +41,7 @@ function load(file) {
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file));
+  return sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {
@@ -55,11 +54,12 @@ function render(scene, w, h) {
 }
 
 function event(name, x, y) {
-  const evt = doc.createEvent('MouseEvents');
-  evt.initEvent(name, false, true);
-  evt.clientX = x || 0;
-  evt.clientY = y || 0;
-  return evt;
+  return new dom.window.MouseEvent(name, {
+    clientX: x || 0,
+    clientY: y || 0,
+    bubbles: true,
+    cancelable: true
+  });
 }
 
 tape('SVGHandler should add/remove event callbacks', t => {

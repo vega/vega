@@ -9,15 +9,17 @@
     "extended"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-projections.js",
-  "module": "build/vega-projections.module.js",
+  "exports": {
+    "default": "./build/vega-projections.module.js"
+  },
   "unpkg": "build/vega-projections.min.js",
   "jsdelivr": "build/vega-projections.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c  rollup.config.mjs --config-core",
+    "prebuild": "del-cli build",
+    "build": "rollup -c  rollup.config.js --config-core",
     "pretest": "yarn build --config-test",
     "prepublishOnly": "yarn build"
   },

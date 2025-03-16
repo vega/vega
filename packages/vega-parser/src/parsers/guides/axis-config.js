@@ -1,6 +1,6 @@
-import {ifOrient, ifX} from './axis-util';
-import {Bottom, GuideLabelStyle, GuideTitleStyle, Top} from './constants';
-import {isSignal} from '../../util';
+import {ifOrient, ifX} from './axis-util.js';
+import {Bottom, GuideLabelStyle, GuideTitleStyle, Top} from './constants.js';
+import {isSignal} from '../../util.js';
 import {extend, hasOwnProperty} from 'vega-util';
 
 function fallback(prop, config, axisConfig, style) {

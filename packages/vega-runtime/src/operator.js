@@ -1,4 +1,4 @@
-import {isOperator} from './util';
+import {isOperator} from './util.js';
 import {error} from 'vega-util';
 
 /**

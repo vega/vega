@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Window = tx.window;
+import tape from 'tape';
+import {compare, field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, window as Window} from '../index.js';
 
 function match(t, actual, expect) {
   for (const k in expect) {
@@ -21,11 +18,11 @@ tape('Window processes single partition', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
+  var val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         frame: [null, 0],
         ignorePeers: true,
         fields: [
@@ -128,11 +125,11 @@ tape('Window processes peers correctly', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
+  var val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         frame: [null, 0],
         ignorePeers: false,
         fields: [null, val],
@@ -172,12 +169,12 @@ tape('Window processes multiple partitions', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
+  var val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
-        sort: util.compare('key'),
-        groupby: [util.field('k')],
+        sort: compare('key'),
+        groupby: [field('k')],
         frame: [null, 0],
         ignorePeers: true,
         fields: [
@@ -204,7 +201,7 @@ tape('Window processes multiple partitions', t => {
 
   // -- test add
   df.pulse(col, changeset().insert(data)).run();
-  const d = out.value.sort(util.compare('k', 'key'));
+  const d = out.value.sort(compare('k', 'key'));
   t.equal(d.length, data.length);
   match(t, d[0], {
     k: 'a', v: 1, key: 0,
@@ -254,11 +251,11 @@ tape('Window processes range frames', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
+  var val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         frame: [0, null],
         ignorePeers: false,
         fields: [null, val, val, val, val, val],
@@ -339,11 +336,11 @@ tape('Window processes row frames', t => {
     {k:'a', v:3, key:3}
   ];
 
-  var val = util.field('v'),
-      df = new vega.Dataflow(),
+  var val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         frame: [-1, 1],
         ignorePeers: true,
         fields: [null, val, val, null],
@@ -385,7 +382,7 @@ tape('Window processes unsorted values', t => {
     {key:0}, {key:1}, {key:2}, {key:3}, {key:4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(Window, {
         ops: ['rank', 'dense_rank'],
@@ -413,13 +410,13 @@ tape('Window processes fill operations', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
+  var u = field('u'),
+      v = field('v'),
+      x = field('x'),
+      df = new Dataflow(),
       col = df.add(Collect),
       win = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         ignorePeers: true,
         fields: [u, u, v, v, x, x],
         ops: [
@@ -464,13 +461,13 @@ tape('Window handles next_value with overwrite', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
+  var u = field('u'),
+      v = field('v'),
+      x = field('x'),
+      df = new Dataflow(),
       col = df.add(Collect),
       win = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         ignorePeers: true,
         fields: [u, v, x],
         ops: ['next_value', 'next_value', 'next_value'],
@@ -499,13 +496,13 @@ tape('Window handles prev_value with overwrite', t => {
     {u: 'b',  v:4, x: undefined, key:3}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      x = util.field('x'),
-      df = new vega.Dataflow(),
+  var u = field('u'),
+      v = field('v'),
+      x = field('x'),
+      df = new Dataflow(),
       col = df.add(Collect),
       win = df.add(Window, {
-        sort: util.compare('key'),
+        sort: compare('key'),
         ignorePeers: true,
         fields: [u, v, x],
         ops: ['prev_value', 'prev_value', 'prev_value'],
@@ -532,13 +529,13 @@ tape('Window fill operations handle partition state', t => {
     {u: null, v: 'b',  key:1, idx:0}
   ];
 
-  var u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
+  var u = field('u'),
+      v = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       win = df.add(Window, {
-        groupby: [util.field('key')],
-        sort: util.compare('idx'),
+        groupby: [field('key')],
+        sort: compare('idx'),
         fields: [u, u, v, v],
         ops: [
           'next_value', 'prev_value',

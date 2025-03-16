@@ -1,24 +1,21 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    vega = require('../'),
-    loader = require('vega-loader').loader,
-    Renderer = vega.CanvasRenderer,
-    Handler = vega.CanvasHandler,
-    jsdom = require('jsdom'),
-    win = (new jsdom.JSDOM()).window,
-    doc = win.document;
+import tape from 'tape';
+import fs from 'fs';
+import {CanvasHandler as Handler, CanvasRenderer as Renderer, sceneFromJSON} from '../index.js';
+import {loader} from 'vega-loader';
+import jsdom from 'jsdom';
 
+const win = (new jsdom.JSDOM()).window, doc = win.document;
 const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 function load(file) {
   return fs.readFileSync(res + file, 'utf8');
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file));
+  return sceneFromJSON(load(file));
 }
 
 function render(scene, w, h) {

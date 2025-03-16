@@ -1,15 +1,12 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Relay = tx.relay;
+import tape from 'tape';
+import { field, truthy } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect, relay as Relay } from '../index.js';
 
 tape('Relay propagates pulse', t => {
   const data = [{'id': 0}, {'id': 1}];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c = df.add(Collect),
       n = df.add(Relay, {derive: false, pulse:c}),
       p;
@@ -28,8 +25,8 @@ tape('Relay propagates pulse', t => {
 tape('Relay relays derived tuples', t => {
   const data = [{'id': 0}, {'id': 1}];
 
-  var id = util.field('id'),
-      df = new vega.Dataflow(),
+  var id = field('id'),
+      df = new Dataflow(),
       c = df.add(Collect),
       r = df.add(Relay, {derive: true, pulse:c}),
       p;
@@ -92,8 +89,8 @@ tape('Relay flags modified fields and handles multi-pulse', t => {
   var data1 = [{id: 0, foo: 1}, {id: 1, foo: 2}],
       data2 = [{id: 4, bar: 3}, {id: 5, bar: 4}];
 
-  var id = util.field('id'),
-      df = new vega.Dataflow(),
+  var id = field('id'),
+      df = new Dataflow(),
       c1 = df.add(Collect),
       c2 = df.add(Collect),
       r = df.add(Relay, {derive: true, pulse:[c1, c2]}),
@@ -113,7 +110,7 @@ tape('Relay flags modified fields and handles multi-pulse', t => {
 
   // test tuple modification
   df.pulse(c1, changeset()
-    .modify(util.truthy, 'id', t => t.id + 2))
+    .modify(truthy, 'id', t => t.id + 2))
     .run();
   p = r.pulse;
   t.ok(p.modified('id'));

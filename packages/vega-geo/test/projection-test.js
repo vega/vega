@@ -1,11 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    geo = require('../'),
-    Graticule = geo.graticule,
-    Projection = geo.projection;
+import tape from 'tape';
+import { Dataflow } from 'vega-dataflow';
+import { graticule as Graticule, projection as Projection } from '../index.js';
 
 tape('Projection transform fits parameters to GeoJSON data', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gr = df.add(Graticule),
       pr = df.add(Projection, {
         type: 'orthographic',
@@ -24,7 +22,7 @@ tape('Projection transform fits parameters to GeoJSON data', t => {
 });
 
 tape('Projection transform handles fit input with null data', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gr = df.add(Graticule),
       pr = df.add(Projection, {
         type: 'orthographic',

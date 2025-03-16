@@ -1,5 +1,5 @@
-import { Config, Format } from '../spec';
-import { EventType, Binding as SpecBinding, Transforms, WindowEventType } from '..';
+import { Config, Format } from '../spec/index.js';
+import { EventType, Binding as SpecBinding, Transforms, WindowEventType } from '../index.js';
 // All references to source code are from the vega-parser package
 
 export interface Runtime {

@@ -1,4 +1,4 @@
-import peek from './peek';
+import peek from './peek.js';
 
 export default function(range, value, threshold, left, right, center) {
   if (!threshold && threshold !== 0) return center;

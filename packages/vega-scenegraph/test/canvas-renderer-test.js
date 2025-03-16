@@ -1,17 +1,18 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    PNG = require('pngjs').PNG,
-    pixelmatch = require('pixelmatch'),
-    loader = require('vega-loader').loader,
-    vega = require('../'),
-    Bounds = vega.Bounds,
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
+import tape from 'tape';
+import fs from 'fs';
+import {PNG} from 'pngjs';
+import pixelmatch from 'pixelmatch';
+import {loader} from 'vega-loader';
+import {Bounds, CanvasRenderer as Renderer, sceneFromJSON, sceneToJSON} from '../index.js';
+import GENERATE from './resources/generate-tests.js';
+import jsdom from 'jsdom';
+import './__init__.js';
 
-const GENERATE = require('./resources/generate-tests');
+const res = './test/resources/';
 
 const marks = JSON.parse(load('marks.json', 'utf-8'));
-for (const name in marks) { vega.sceneFromJSON(marks[name]); }
+
+for (const name in marks) { sceneFromJSON(marks[name]); }
 
 function generate(path, image) {
   if (GENERATE) fs.writeFileSync(res + path, image);
@@ -22,7 +23,7 @@ function load(file, encoding=null) {
 }
 
 function loadScene(file) {
-  return vega.sceneFromJSON(load(file, 'utf-8'));
+  return sceneFromJSON(load(file, 'utf-8'));
 }
 
 function comparePNGs(png1, png2) {
@@ -65,7 +66,6 @@ tape('CanvasRenderer should support argument free constructor', t => {
 });
 
 tape('CanvasRenderer should use DOM if available', t => {
-  const jsdom = require('jsdom');
   global.document = (new jsdom.JSDOM()).window.document;
 
   const r = new Renderer().initialize(document.body, 100, 100);
@@ -212,7 +212,7 @@ tape('CanvasRenderer should support single-item redraw', t => {
 });
 
 tape('CanvasRenderer should support multi-item redraw', t => {
-  const scene = vega.sceneFromJSON(vega.sceneToJSON(marks['line-1']));
+  const scene = sceneFromJSON(sceneToJSON(marks['line-1']));
   const r = new Renderer()
     .initialize(null, 400, 400)
     .background('white')
@@ -240,11 +240,11 @@ tape('CanvasRenderer should support enter-group redraw', t => {
     .background('white')
     .render(scene);
 
-  const group = JSON.parse(vega.sceneToJSON(scene.items[0]));
+  const group = JSON.parse(sceneToJSON(scene.items[0]));
   group.x = 200;
-  scene = JSON.parse(vega.sceneToJSON(scene));
+  scene = JSON.parse(sceneToJSON(scene));
   scene.items.push(group);
-  scene = vega.sceneFromJSON(scene);
+  scene = sceneFromJSON(scene);
 
   r.dirty(group);
   const image = r.render(scene).canvas().toBuffer();
@@ -344,7 +344,7 @@ tape('CanvasRenderer should render image mark', t => {
 });
 
 tape('CanvasRenderer should skip invalid image', t => {
-  const scene = vega.sceneFromJSON({
+  const scene = sceneFromJSON({
     marktype: 'image',
     items: [{url: 'does_not_exist.png'}]
   });

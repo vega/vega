@@ -2,11 +2,11 @@ export {
   data,
   indata,
   setdata
-} from './src/functions/data';
+} from './src/functions/data.js';
 
 export {
   default as encode
-} from './src/functions/encode';
+} from './src/functions/encode.js';
 
 export {
   format,
@@ -18,46 +18,46 @@ export {
   monthAbbrevFormat,
   dayFormat,
   dayAbbrevFormat
-} from './src/functions/format';
+} from './src/functions/format.js';
 
 export {
   geoArea,
   geoBounds,
   geoCentroid,
   geoScale
-} from './src/functions/geo';
+} from './src/functions/geo.js';
 
 export {
   default as inScope
-} from './src/functions/inscope';
+} from './src/functions/inscope.js';
 
 export {
   warn,
   info,
   debug
-} from './src/functions/log';
+} from './src/functions/log.js';
 
 export {
   luminance,
   contrast
-} from './src/functions/luminance';
+} from './src/functions/luminance.js';
 
 export {
   default as merge
-} from './src/functions/merge';
+} from './src/functions/merge.js';
 
 export {
   default as modify
-} from './src/functions/modify';
+} from './src/functions/modify.js';
 
 export {
   pinchDistance,
   pinchAngle
-} from './src/functions/pinch';
+} from './src/functions/pinch.js';
 
 export {
   default as pluck
-} from './src/functions/pluck';
+} from './src/functions/pluck.js';
 
 export {
   indexof,
@@ -67,7 +67,7 @@ export {
   reverse,
   slice,
   sort
-} from './src/functions/sequence';
+} from './src/functions/sequence.js';
 
 export {
   range,
@@ -77,34 +77,34 @@ export {
   copy,
   scale,
   invert
-} from './src/functions/scale';
+} from './src/functions/scale.js';
 
 export {
   default as scaleGradient
-} from './src/functions/scale-gradient';
+} from './src/functions/scale-gradient.js';
 
 export {
   geoShape,
   pathShape
-} from './src/functions/shape';
+} from './src/functions/shape.js';
 
 export {
   treePath,
   treeAncestors
-} from './src/functions/tree';
+} from './src/functions/tree.js';
 
 export {
   containerSize,
   screen,
   windowSize
-} from './src/functions/window';
+} from './src/functions/window.js';
 
 export {
   codegenParams,
   codeGenerator,
   expressionFunction,
   functionContext
-} from './src/codegen';
+} from './src/codegen.js';
 
 export {
   DataPrefix,
@@ -115,10 +115,10 @@ export {
 
 export {
   default as parseExpression
-} from './src/parser';
+} from './src/parser.js';
 
 export {
   dataVisitor,
   indataVisitor,
   scaleVisitor
-} from './src/visitors';
+} from './src/visitors.js';

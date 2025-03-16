@@ -1,5 +1,5 @@
-import {points} from './points';
-import rSquared from './r-squared';
+import {points} from './points.js';
+import rSquared from './r-squared.js';
 
 export default function(data, x, y) {
   const [xv, yv, ux, uy] = points(data, x, y),

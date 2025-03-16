@@ -1,4 +1,4 @@
-import UniqueList from './util/UniqueList';
+import UniqueList from './util/UniqueList.js';
 import {debounce, id, identity, truthy} from 'vega-util';
 
 let STREAM_ID = 0;

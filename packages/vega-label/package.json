@@ -8,17 +8,19 @@
     "layout"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "maintainers": [
     "Chanwut Kittivorawong"
   ],
-  "main": "build/vega-label.js",
-  "module": "build/vega-label.module.js",
+  "exports": {
+    "default": "./build/vega-label.module.js"
+  },
   "unpkg": "build/vega-label.min.js",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --config-transform",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --config-transform",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

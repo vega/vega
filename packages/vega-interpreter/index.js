@@ -1,1 +1,1 @@
-export {default as expressionInterpreter} from './src/expression';
+export {default as expressionInterpreter} from './src/expression.js';

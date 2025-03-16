@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    field = require('vega-util').field,
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Nest = require('../').nest;
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow, changeset, tupleid } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
+import { nest as Nest } from '../index.js';
 
 function toObject(value) {
   return JSON.parse(JSON.stringify(value));
@@ -18,13 +18,13 @@ tape('Nest tuples', t => {
       childB = {data: dataB, height: 0, depth: 2};
 
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  const df = new Dataflow(),
+        collect = df.add(Collect),
+        nest = df.add(Nest, { keys: [field('job')], pulse: collect }),
+        out = df.add(Collect, { pulse: nest });
 
   // -- test adds
-  df.pulse(collect, vega.changeset().insert([dataA, dataB])).run();
+  df.pulse(collect, changeset().insert([dataA, dataB])).run();
 
   let expected = [dataA, dataB];
   let expectedRoot = {
@@ -37,8 +37,8 @@ tape('Nest tuples', t => {
       {data: nodeB, height: 1, depth: 1, children: [childB]}
     ],
     lookup: {
-      [vega.tupleid(dataA)]: childA,
-      [vega.tupleid(dataB)]: childB
+      [tupleid(dataA)]: childA,
+      [tupleid(dataB)]: childB
     }
   };
 
@@ -56,7 +56,7 @@ tape('Nest tuples', t => {
   t.deepEqual(toObject(d.root), expectedRoot);
 
   // -- test data removals
-  df.pulse(collect, vega.changeset().remove([dataA])).run();
+  df.pulse(collect, changeset().remove([dataA])).run();
 
   expected = [dataB];
   expectedRoot = {
@@ -68,7 +68,7 @@ tape('Nest tuples', t => {
       {data: nodeB, height: 1, depth: 1, children: [childB]}
     ],
     lookup: {
-      [vega.tupleid(dataB)]: childB
+      [tupleid(dataB)]: childB
     }
   };
 
@@ -86,12 +86,12 @@ tape('Nest tuples', t => {
 
 tape('Nest empty data', t => {
   // Setup nest aggregation
-  var df = new vega.Dataflow(),
-      collect = df.add(Collect),
-      nest = df.add(Nest, {keys: [field('job')], pulse: collect}),
-      out = df.add(Collect, {pulse: nest});
+  const df = new Dataflow(),
+        collect = df.add(Collect),
+        nest = df.add(Nest, { keys: [field('job')], pulse: collect }),
+        out = df.add(Collect, { pulse: nest });
 
-  df.pulse(collect, vega.changeset().insert([])).run();
+  df.pulse(collect, changeset().insert([])).run();
   t.equal(out.value.length, 0);
   var root = out.value.root;
   t.equal(root.children, undefined);

@@ -1,10 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    DataJoin = encode.datajoin;
+import tape from 'tape';
+import { field, truthy } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
+import { datajoin as DataJoin } from '../index.js';
 
 tape('DataJoin joins tuples and items', t => {
   const data = [
@@ -13,9 +11,9 @@ tape('DataJoin joins tuples and items', t => {
     {key: 'c', value: 3}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
-      dj = df.add(DataJoin, {key:util.field('key'), pulse:c0});
+      dj = df.add(DataJoin, {key: field('key'), pulse: c0});
 
   // Insert data, check for resulting items
   df.pulse(c0, changeset().insert(data)).run();
@@ -64,13 +62,13 @@ tape('DataJoin joins tuples and items', t => {
 });
 
 tape('DataJoin garbage collects if requested', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
-      dj = df.add(DataJoin, {clean:true, pulse:c0}),
+      dj = df.add(DataJoin, {clean: true, pulse: c0}),
       n = df.cleanThreshold + 1;
 
   function generate() {
-    for (var data = [], i=0; i<n; ++i) {
+    for (var data = [], i = 0; i < n; ++i) {
       data.push({index: i});
     }
     return data;
@@ -78,7 +76,7 @@ tape('DataJoin garbage collects if requested', t => {
 
   // burn in by filling up to threshold, then remove all
   df.pulse(c0, changeset().insert(generate())).run();
-  df.pulse(c0, changeset().remove(util.truthy)).run();
+  df.pulse(c0, changeset().remove(truthy)).run();
   t.equal(dj.value.empty, 0, 'Zero empty map entries');
 
   t.end();

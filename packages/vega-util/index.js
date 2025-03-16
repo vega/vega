@@ -2,7 +2,7 @@ export {
   default as accessor,
   accessorName,
   accessorFields
-} from './src/accessor';
+} from './src/accessor.js';
 
 export {
   id,
@@ -11,7 +11,7 @@ export {
   one,
   truthy,
   falsy
-} from './src/accessors';
+} from './src/accessors.js';
 
 export {
   default as logger,
@@ -20,12 +20,12 @@ export {
   Warn,
   Info,
   Debug
-} from './src/logger';
+} from './src/logger.js';
 
 export {
   mergeConfig,
   writeConfig
-} from './src/mergeConfig';
+} from './src/mergeConfig.js';
 
 export {
   panLinear,
@@ -36,51 +36,51 @@ export {
   zoomLog,
   zoomPow,
   zoomSymlog
-} from './src/transform';
+} from './src/transform.js';
 
 export {
   quarter,
   utcquarter
-} from './src/quarter';
+} from './src/quarter.js';
 
-export {default as array} from './src/array';
-export {default as clampRange} from './src/clampRange';
-export {default as compare, ascending} from './src/compare';
-export {default as constant} from './src/constant';
-export {default as debounce} from './src/debounce';
-export {default as error} from './src/error';
-export {default as extend} from './src/extend';
-export {default as extent} from './src/extent';
-export {default as extentIndex} from './src/extentIndex';
-export {default as fastmap} from './src/fastmap';
-export {default as field} from './src/field';
-export {default as flush} from './src/flush';
-export {default as hasOwnProperty} from './src/hasOwnProperty';
-export {default as inherits} from './src/inherits';
-export {default as inrange} from './src/inrange';
-export {default as isArray} from './src/isArray';
-export {default as isBoolean} from './src/isBoolean';
-export {default as isDate} from './src/isDate';
-export {default as isFunction} from './src/isFunction';
-export {default as isIterable} from './src/isIterable';
-export {default as isNumber} from './src/isNumber';
-export {default as isObject} from './src/isObject';
-export {default as isRegExp} from './src/isRegExp';
-export {default as isString} from './src/isString';
-export {default as key} from './src/key';
-export {default as lerp} from './src/lerp';
-export {default as lruCache} from './src/lruCache';
-export {default as merge} from './src/merge';
-export {default as pad} from './src/pad';
-export {default as peek} from './src/peek';
-export {default as repeat} from './src/repeat';
-export {default as span} from './src/span';
-export {default as splitAccessPath} from './src/splitAccessPath';
-export {default as stringValue} from './src/stringValue';
-export {default as toBoolean} from './src/toBoolean';
-export {default as toDate} from './src/toDate';
-export {default as toNumber} from './src/toNumber';
-export {default as toString} from './src/toString';
-export {default as toSet} from './src/toSet';
-export {default as truncate} from './src/truncate';
-export {default as visitArray} from './src/visitArray';
+export {default as array} from './src/array.js';
+export {default as clampRange} from './src/clampRange.js';
+export {default as compare, ascending} from './src/compare.js';
+export {default as constant} from './src/constant.js';
+export {default as debounce} from './src/debounce.js';
+export {default as error} from './src/error.js';
+export {default as extend} from './src/extend.js';
+export {default as extent} from './src/extent.js';
+export {default as extentIndex} from './src/extentIndex.js';
+export {default as fastmap} from './src/fastmap.js';
+export {default as field} from './src/field.js';
+export {default as flush} from './src/flush.js';
+export {default as hasOwnProperty} from './src/hasOwnProperty.js';
+export {default as inherits} from './src/inherits.js';
+export {default as inrange} from './src/inrange.js';
+export {default as isArray} from './src/isArray.js';
+export {default as isBoolean} from './src/isBoolean.js';
+export {default as isDate} from './src/isDate.js';
+export {default as isFunction} from './src/isFunction.js';
+export {default as isIterable} from './src/isIterable.js';
+export {default as isNumber} from './src/isNumber.js';
+export {default as isObject} from './src/isObject.js';
+export {default as isRegExp} from './src/isRegExp.js';
+export {default as isString} from './src/isString.js';
+export {default as key} from './src/key.js';
+export {default as lerp} from './src/lerp.js';
+export {default as lruCache} from './src/lruCache.js';
+export {default as merge} from './src/merge.js';
+export {default as pad} from './src/pad.js';
+export {default as peek} from './src/peek.js';
+export {default as repeat} from './src/repeat.js';
+export {default as span} from './src/span.js';
+export {default as splitAccessPath} from './src/splitAccessPath.js';
+export {default as stringValue} from './src/stringValue.js';
+export {default as toBoolean} from './src/toBoolean.js';
+export {default as toDate} from './src/toDate.js';
+export {default as toNumber} from './src/toNumber.js';
+export {default as toString} from './src/toString.js';
+export {default as toSet} from './src/toSet.js';
+export {default as truncate} from './src/truncate.js';
+export {default as visitArray} from './src/visitArray.js';

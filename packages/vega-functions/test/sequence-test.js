@@ -1,13 +1,5 @@
-var tape = require('tape'),
-    {
-      indexof,
-      join,
-      lastindexof,
-      replace,
-      reverse,
-      slice,
-      sort
-    } = require('../');
+import tape from 'tape';
+import { indexof, join, lastindexof, replace, reverse, slice, sort } from '../index.js';
 
 tape('indexof finds first index', t => {
   t.deepEqual(indexof([1, 2, 2, 3], 2), [1, 2, 2, 3].indexOf(2));

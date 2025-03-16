@@ -1,6 +1,6 @@
 import {intersection, union} from 'd3-array';
 import {array, toNumber} from 'vega-util';
-import {$selectionId, And, Or, SelectionId, Union, VlMulti, VlPoint} from './util';
+import {$selectionId, And, Or, SelectionId, Union, VlMulti, VlPoint} from './util.js';
 
 /**
  * Resolves selection for use as a scale domain or reads via the API.

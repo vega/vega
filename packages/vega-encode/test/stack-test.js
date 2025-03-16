@@ -1,10 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    encode = require('../'),
-    changeset = vega.changeset,
-    Collect = require('vega-transforms').collect,
-    Stack = encode.stack;
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
+import { stack as Stack } from '../index.js';
 
 tape('Stack stacks numeric values', t => {
   const data = [
@@ -14,12 +12,12 @@ tape('Stack stacks numeric values', t => {
     {key: 'b', value: 4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gb = df.add([]),
       c0 = df.add(Collect),
       st = df.add(Stack, {
         groupby: gb,
-        field: util.field('value'),
+        field: field('value'),
         pulse: c0
       });
 
@@ -40,7 +38,7 @@ tape('Stack stacks numeric values', t => {
   t.equal(d[3].y1, 10);
 
   // Add groupby field
-  df.update(gb, [util.field('key')]).run();
+  df.update(gb, [field('key')]).run();
   t.equal(st.pulse.add.length, 0);
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 4);
@@ -66,12 +64,12 @@ tape('Stack stacks negative values', t => {
     {key: 'b', value: -4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gb = df.add([]),
       c0 = df.add(Collect),
       st = df.add(Stack, {
         groupby: gb,
-        field: util.field('value'),
+        field: field('value'),
         pulse: c0
       });
 
@@ -92,7 +90,7 @@ tape('Stack stacks negative values', t => {
   t.equal(d[3].y1, -5);
 
   // Add groupby field
-  df.update(gb, [util.field('key')]).run();
+  df.update(gb, [field('key')]).run();
   t.equal(st.pulse.add.length, 0);
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 4);
@@ -118,12 +116,12 @@ tape('Stack stacks coerced string values', t => {
     {key: 'b', value: '4'}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       gb = df.add([]),
       c0 = df.add(Collect),
       st = df.add(Stack, {
         groupby: gb,
-        field: util.field('value'),
+        field: field('value'),
         pulse: c0
       });
 
@@ -144,7 +142,7 @@ tape('Stack stacks coerced string values', t => {
   t.equal(d[3].y1, 10);
 
   // Add groupby field
-  df.update(gb, [util.field('key')]).run();
+  df.update(gb, [field('key')]).run();
   t.equal(st.pulse.add.length, 0);
   t.equal(st.pulse.rem.length, 0);
   t.equal(st.pulse.mod.length, 4);

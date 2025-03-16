@@ -3,12 +3,12 @@ import {
   Fit, FitX, FitY, FrameRole, Left, LegendRole,
   None, Pad, Padding, Right,
   RowFooter, RowHeader, RowTitle, ScopeRole, TitleRole, Top
-} from './constants';
+} from './constants.js';
 
-import {axisLayout, isYAxis} from './layout/axis';
-import {gridLayout, trellisLayout} from './layout/grid';
-import {legendLayout, legendParams} from './layout/legend';
-import {titleLayout} from './layout/title';
+import {axisLayout, isYAxis} from './layout/axis.js';
+import {gridLayout, trellisLayout} from './layout/grid.js';
+import {legendLayout, legendParams} from './layout/legend.js';
+import {titleLayout} from './layout/title.js';
 
 import {Transform} from 'vega-dataflow';
 import {Bounds} from 'vega-scenegraph';
@@ -113,8 +113,8 @@ function layoutGroup(view, group, _) {
         view.dirty(item);
       }
 
-      if (_.autosize && (_.autosize.type === Fit  || 
-                         _.autosize.type === FitX || 
+      if (_.autosize && (_.autosize.type === Fit  ||
+                         _.autosize.type === FitX ||
                          _.autosize.type === FitY )) {
         // For autosize fit, incorporate the orthogonal dimension only.
         // Legends that overrun the chart area will then be clipped;

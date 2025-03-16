@@ -1,4 +1,4 @@
-import cloud from './CloudLayout';
+import cloud from './CloudLayout.js';
 import {Transform} from 'vega-dataflow';
 import {constant, error, extent, inherits, isFunction} from 'vega-util';
 import {scale} from 'vega-scale';

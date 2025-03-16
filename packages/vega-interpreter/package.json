@@ -9,15 +9,18 @@
     "runtime"
   ],
   "license": "BSD-3-Clause",
+  "type": "module",
   "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-interpreter.js",
-  "module": "build/vega-interpreter.module.js",
+  "exports": {
+    "types": "./index.d.ts",
+    "default": "./build/vega-interpreter.module.js"
+  },
   "unpkg": "build/vega-interpreter.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --extend",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --extend",
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

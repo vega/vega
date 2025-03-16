@@ -1,4 +1,4 @@
-import lookup from './lookup';
+import lookup from './lookup.js';
 import {Transform, ingest, isTuple, tupleid} from 'vega-dataflow';
 import {array, error, inherits} from 'vega-util';
 import {hierarchy} from 'd3-hierarchy';

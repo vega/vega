@@ -1,4 +1,4 @@
-import density2D from './util/density2D';
+import density2D from './util/density2D.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, inherits} from 'vega-util';
 

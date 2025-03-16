@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    stats = require('../');
-
+import tape from 'tape';
+import * as stats from '../index.js';
 function closeTo(t, a, b, delta) {
   t.equal(Math.abs(a-b) < delta, true);
 }

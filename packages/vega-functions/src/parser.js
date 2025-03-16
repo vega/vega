@@ -1,5 +1,5 @@
-import {codeGenerator, codegenParams} from './codegen';
-import {SignalPrefix} from './constants';
+import {codeGenerator, codegenParams} from './codegen.js';
+import {SignalPrefix} from './constants.js';
 import {CallExpression, parseExpression} from 'vega-expression';
 import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
 

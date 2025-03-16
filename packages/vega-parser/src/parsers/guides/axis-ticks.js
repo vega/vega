@@ -1,10 +1,10 @@
-import {getSign, ifX, ifY} from './axis-util';
-import {Value, one, zero} from './constants';
-import guideMark from './guide-mark';
-import {lookup} from './guide-util';
-import {addEncoders, encoder} from '../encode/util';
-import {RuleMark} from '../marks/marktypes';
-import {AxisTickRole} from '../marks/roles';
+import {getSign, ifX, ifY} from './axis-util.js';
+import {Value, one, zero} from './constants.js';
+import guideMark from './guide-mark.js';
+import {lookup} from './guide-util.js';
+import {addEncoders, encoder} from '../encode/util.js';
+import {RuleMark} from '../marks/marktypes.js';
+import {AxisTickRole} from '../marks/roles.js';
 
 export default function(spec, config, userEncode, dataRef, size, band) {
   const _ = lookup(spec, config),
