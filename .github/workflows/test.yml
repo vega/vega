@@ -25,6 +25,9 @@ jobs:
       - name: Ensure apt-get is updated
         run: sudo apt-get update
 
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
       - name: Setup Node ${{ matrix.node }}
         uses: actions/setup-node@v4
         with:
