@@ -7,7 +7,10 @@
     "expression",
     "functions"
   ],
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
   "license": "BSD-3-Clause",
   "type": "module",
   "exports": {
