@@ -4,7 +4,10 @@
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "type": "module",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
   "exports": {
     "default": "./build/vega-scenegraph.module.js"
   },

@@ -9,7 +9,10 @@
   ],
   "license": "BSD-3-Clause",
   "type": "module",
-  "author": "Arvind Satyanarayan (http://arvindsatya.com)",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
   "exports": {
     "types": "./index.d.ts",
     "default": "./build/vega-event-selector.module.js"
