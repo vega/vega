@@ -8,7 +8,7 @@ export const spec: Spec = {
   data: [
     {
       name: 'weather',
-      url: 'data/weather.json'
+      url: 'data/weekly-weather.json'
     },
     {
       name: 'actual',

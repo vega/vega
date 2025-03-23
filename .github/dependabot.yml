@@ -7,7 +7,7 @@ updates:
     ignore:
       - dependency-name: 'vega'
   - package-ecosystem: bundler
-    directory: '/site'
+    directory: '/docs'
     schedule:
       interval: monthly
   - package-ecosystem: github-actions

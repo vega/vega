@@ -11,3 +11,4 @@
 /packages/*/node_modules
 /packages/*/build
 /packages/*/LICENSE
+/docs/data/*.parquet
