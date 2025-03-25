@@ -23,12 +23,15 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "node": "./build/vega-loader.node.module.js",
-    "default": "./build/vega-loader.browser.module.js"
+    "browser": "./build/vega-loader.browser.module.js",
+    "default": "./build/vega-loader.node.module.js"
   },
   "unpkg": "build/vega-loader.min.js",
   "jsdelivr": "build/vega-loader.min.js",
   "repository": "vega/vega",
+  "browser": {
+    "./build/vega-loader.node.module.js": "./build/vega-loader.browser.module.js"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
