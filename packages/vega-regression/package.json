@@ -14,9 +14,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-regression.module.js"
+    "default": "./build/vega-regression.js"
   },
-  "unpkg": "build/vega-regression.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

@@ -9,9 +9,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-scenegraph.module.js"
+    "default": "./build/vega-scenegraph.js"
   },
-  "unpkg": "build/vega-scenegraph.min.js",
   "repository": "vega/vega",
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",

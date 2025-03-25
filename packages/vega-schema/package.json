@@ -14,7 +14,7 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-schema.module.js"
+    "default": "./build/vega-schema.js"
   },
   "repository": "vega/vega",
   "scripts": {

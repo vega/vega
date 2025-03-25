@@ -14,15 +14,10 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-canvas.node.module.js"
+    "node": "./build/vega-canvas.node.js",
+    "default": "./build/vega-canvas.browser.js"
   },
-  "unpkg": "build/vega-canvas.min.js",
-  "jsdelivr": "build/vega-canvas.min.js",
   "repository": "vega/vega",
-  "browser": {
-    "./build/vega-canvas.node.js": "./build/vega-canvas.browser.js",
-    "./build/vega-canvas.node.module.js": "./build/vega-canvas.browser.module.js"
-  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

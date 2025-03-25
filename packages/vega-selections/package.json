@@ -11,9 +11,8 @@
   "license": "BSD-3-Clause",
   "type": "module",
   "exports": {
-    "default": "./build/vega-selection.module.js"
+    "default": "./build/vega-selection.js"
   },
-  "unpkg": "build/vega-selection.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

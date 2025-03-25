@@ -18,9 +18,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-hierarchy.module.js"
+    "default": "./build/vega-hierarchy.js"
   },
-  "unpkg": "build/vega-hierarchy.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

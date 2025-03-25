@@ -15,9 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-encode.module.js"
+    "default": "./build/vega-encode.js"
   },
-  "unpkg": "build/vega-encode.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

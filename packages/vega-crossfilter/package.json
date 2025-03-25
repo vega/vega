@@ -13,9 +13,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-crossfilter.module.js"
+    "default": "./build/vega-crossfilter.js"
   },
-  "unpkg": "build/vega-crossfilter.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

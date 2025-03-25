@@ -16,9 +16,8 @@
   "type": "module",
   "exports": {
     "types": "./index.d.ts",
-    "default": "./build/vega-expression.module.js"
+    "default": "./build/vega-expression.js"
   },
-  "unpkg": "build/vega-expression.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {

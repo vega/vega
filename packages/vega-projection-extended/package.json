@@ -15,14 +15,12 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-projections.module.js"
+    "default": "./build/vega-projections.js"
   },
-  "unpkg": "build/vega-projections.min.js",
-  "jsdelivr": "build/vega-projections.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c  rollup.config.js --config-core",
+    "build": "rollup -c  rollup.config.js",
     "pretest": "yarn build --config-test",
     "prepublishOnly": "yarn build"
   },

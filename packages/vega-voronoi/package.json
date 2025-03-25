@@ -13,13 +13,12 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-voronoi.module.js"
+    "default": "./build/vega-voronoi.js"
   },
-  "unpkg": "build/vega-voronoi.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c rollup.config.js --config-transform",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

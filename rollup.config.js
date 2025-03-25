@@ -27,12 +27,6 @@ const d3Deps = [
   'd3-delaunay'
 ];
 
-const esmDeps = [
-  ...d3Deps,
-  'd3-geo-projection',
-  'd3-scale-chromatic'
-];
-
 const d3CoreDeps = [
   ...d3Deps,
   'topojson-client'
@@ -47,10 +41,6 @@ function onwarn(warning, defaultHandler) {
 /**
  * Command line arguments:
  *  `config-debug`: print debug information about the build
- *  `config-browser`: the module has different inputs for browser and node
- *  `config-bundle`: bundle dependencies in browser output
- *  `config-transform`: the module is a Vega transform
- *  `config-core`: create a bundle without d3
  *  `config-node`: the module is only intended for node
  *  `config-test`: skip bundles not required for tests
  */
@@ -62,16 +52,12 @@ export default function(commandLineArgs) {
     console.info(commandLineArgs);
   }
 
-  const browser = !!pkg.browser;
-  const node = !!pkg.exports?.node;
-  const bundle = !!commandLineArgs['config-bundle'];
+  const bundle = !!pkg.jsdelivr; // we are building the bundle for vega core package
+  const browser = !!pkg.exports.node;  // if there is a node entry point, we need to create a browser bundle
+  const node = !!commandLineArgs['config-node'];
   const test = !!commandLineArgs['config-test'];
 
   const dependencies = Object.keys(pkg.dependencies || {});
-  const coreExternal = d3CoreDeps;
-  const vgDependencies = bundle ? [] : dependencies.filter(dep => dep.startsWith('vega-'));
-
-  const name = commandLineArgs['config-transform'] ? 'vega.transforms' : 'vega';
 
   const globals = {};
   for (const dep of [...dependencies, ...d3CoreDeps]) {
@@ -115,102 +101,79 @@ export default function(commandLineArgs) {
     });
   }
 
-  const outputs = [{
-    input: './index.js',
-    external: dependencies,
-    onwarn,
-    output: {
-      file: pkg.exports.default,
-      format: 'esm',
-      sourcemap: false
-    },
-    plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
-  }];
+  const outputs = [];
 
-  if (node) {
+  // unless we have a node-only package, output a browser bundle
+  if (!node) {
     outputs.push({
-      input: './index.js',
-      external: dependencies.filter(dep => !esmDeps.includes(dep)),
+      input: browser ? './index.browser.js' :  './index.js',
+      external: dependencies,
       onwarn,
       output: {
-        file: pkg.exports.node,
+        file: pkg.exports.default,
         format: 'esm',
-        globals,
-        sourcemap: false,
-        name
+        sourcemap: true
       },
-      plugins: [nodePlugin(false), ...commonPlugins({node: true})]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults')]
     });
   }
 
-  if (browser) {
-    outputs.push(
-      ...outputs.map(out => ({
-        ...out,
-        input: './index.browser.js',
-        output: {
-          ...out.output,
-          file: out.output.file.replace('node', 'browser')
-        }
-      }))
-    );
+  // if we need a node-only package or separate bundles for browser and node, create a node bundle
+  if (browser || node) {
+    outputs.push({
+      input: './index.js',
+      external: dependencies,
+      onwarn,
+      output: {
+        file: node ? pkg.exports.default : pkg.exports.node,
+        format: 'esm',
+        sourcemap: true
+      },
+      plugins: [nodePlugin(false), ...commonPlugins({node: true})]
+    });
   }
 
   if (test) {
     return outputs;
   }
 
-  /**
-   * If `config-bundle` is true, create minified and long outputs.
-   */
   function bundleOutputs(output) {
-    if (bundle) {
-      return [{
-        ...output,
-        plugins: [terser()]
-      }, {
-        ...output,
-        sourcemap: false,
-        file: output.file.replace('.min', '')
-      }];
-    } else {
-      return {
-        ...output,
-        plugins: [terser()]
-      };
-    }
+    return [{
+      ...output,
+      plugins: [terser()]
+    }, {
+      ...output,
+      file: output.file.replace('.min', '')
+    }];
   }
 
-  if (!commandLineArgs['config-node']) {
+  if (bundle) {
     outputs.push({
-      input: browser ? './index.browser.js' : './index.js',
-      external: vgDependencies,
+      input: './index.js',
       onwarn,
       output: bundleOutputs({
-        file: pkg.unpkg,
+        file: pkg.jsdelivr,
         format: 'umd',
         sourcemap: true,
         globals,
-        name
+        name: 'vega'
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults')]
     });
-  }
 
-  if (commandLineArgs['config-core']) {
-    // Create bundle without d3 (core bundle)
+    // Create UMD bundle without d3 (core bundle)
     outputs.push({
-      input: browser ? './index.browser.js' : './index.js',
-      external: [...vgDependencies, ...coreExternal],
+      input: './index.js',
+      external: d3CoreDeps,
       onwarn,
       output: bundleOutputs({
-        file: pkg.unpkg.replace('.min.js', '-core.min.js'),
+        file: pkg.jsdelivr.replace('.min.js', '-core.min.js'),
         format: 'umd',
         sourcemap: true,
         globals,
-        name
+        name: 'vega'
       }),
-      plugins: [nodePlugin(true), ...commonPlugins('defaults, last 1 node versions')]
+      plugins: [nodePlugin(true), ...commonPlugins('defaults')]
     });
   }
 

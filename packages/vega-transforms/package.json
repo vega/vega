@@ -21,9 +21,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-transforms.module.js"
+    "default": "./build/vega-transforms.js"
   },
-  "unpkg": "build/vega-transforms.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",
