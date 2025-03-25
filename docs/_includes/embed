@@ -21,8 +21,13 @@ function image(view, type) {
   };
 }
 
+
 var view = new vega.View(vega.parse(spec), {
+  {% if site.is_docset_build == true %}
+  loader: vega.loader({baseURL: 'https://vega.github.io/vega/'}),
+  {% else %}
   loader: vega.loader({baseURL: '{{ site.baseurl }}/'}),
+  {% endif %}
   logLevel: vega.Warn,
   renderer: '{{ include.renderer | default: "svg" }}'
 }).initialize('#{{id}}').hover().run();

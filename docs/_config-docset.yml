@@ -1,0 +1,24 @@
+# A "docset" is an offline-friendly version of the documentation page
+# It can be served from the filesystem without a live server.
+
+title: Vega
+description: SEO not needed for docset
+baseurl: "DOCSET_BASE_TO_REPLACE" # the subpath of your site, e.g. /blog
+url: "https://vega.github.io" # the base hostname & protocol for your site
+is_docset_build: true # if true, will make choices that assume the site is served from the filesystem instead of a webserver
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+twitter:
+  username: vega_vis
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  auto_id_stripping: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock

@@ -9,6 +9,7 @@
     "clean": "lerna clean --yes && lerna exec -- del-cli build && lerna exec -- del-cli LICENSE && del-cli node_modules yarn.lock",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
+    "docs:static": "pushd docs && bundle exec jekyll build -c _config-docset.yml && popd",
     "docsbuild": "cd packages/vega/build && cp vega.js vega.min.js* vega-core.js vega-core.min.js* vega-schema.json ../../../docs/",
     "license": "lerna exec -- cp ../../LICENSE .",
     "release": "yarn license && lerna publish from-package",
