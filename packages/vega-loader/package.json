@@ -23,8 +23,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "browser": "./build/vega-loader.browser.module.js",
-    "node": "./build/vega-loader.node.module.js"
+    "node": "./build/vega-loader.node.module.js",
+    "default": "./build/vega-loader.browser.module.js"
   },
   "unpkg": "build/vega-loader.min.js",
   "jsdelivr": "build/vega-loader.min.js",
