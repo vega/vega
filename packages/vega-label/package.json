@@ -1,6 +1,6 @@
 {
   "name": "vega-label",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "description": "Label layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -25,10 +25,10 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-canvas": "^1.2.7",
-    "vega-dataflow": "^5.7.7",
-    "vega-scenegraph": "^4.13.1",
-    "vega-util": "^1.17.3"
+    "vega-canvas": "^2.0.0",
+    "vega-dataflow": "^6.0.0",
+    "vega-scenegraph": "^5.0.0",
+    "vega-util": "^2.0.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

@@ -5120,8 +5120,6 @@
     }
   });
 
-  /* eslint-disable require-atomic-updates */
-
   /**
    * Evaluates the dataflow and returns a Promise that resolves when pulse
    * propagation completes. This method will increment the current timestamp
@@ -6501,7 +6499,6 @@
     };
   }
   function exp$1(data, x, y) {
-    // eslint-disable-next-line no-unused-vars
     const [xv, yv, ux, uy] = points(data, x, y);
     let YL = 0,
       XY = 0,
@@ -22893,7 +22890,7 @@
 
   function clipCircle (radius) {
     var cr = cos$1(radius),
-      delta = 6 * radians,
+      delta = 2 * radians,
       smallRadius = cr > 0,
       notHemisphere = abs$1(cr) > epsilon$3; // TODO optimise for this common case
 
@@ -30618,7 +30615,6 @@
     const detleft = (ay - cy) * (bx - cx);
     const detright = (ax - cx) * (by - cy);
     const det = detleft - detright;
-    if (detleft === 0 || detright === 0 || detleft > 0 !== detright > 0) return det;
     const detsum = Math.abs(detleft + detright);
     if (Math.abs(det) >= ccwerrboundA * detsum) return det;
     return -orient2dadapt(ax, ay, bx, by, cx, cy, detsum);
@@ -30654,7 +30650,7 @@
       this._hullPrev = new Uint32Array(n); // edge to prev edge
       this._hullNext = new Uint32Array(n); // edge to next edge
       this._hullTri = new Uint32Array(n); // edge to adjacent triangle
-      this._hullHash = new Int32Array(this._hashSize).fill(-1); // angular edge hash
+      this._hullHash = new Int32Array(this._hashSize); // angular edge hash
 
       // temporary arrays for sorting points
       this._ids = new Uint32Array(n);
@@ -30687,11 +30683,10 @@
       }
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
-      let minDist = Infinity;
       let i0, i1, i2;
 
       // pick a seed point close to the center
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         const d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist) {
           i0 = i;
@@ -30700,10 +30695,9 @@
       }
       const i0x = coords[2 * i0];
       const i0y = coords[2 * i0 + 1];
-      minDist = Infinity;
 
       // find the point closest to the seed
-      for (let i = 0; i < n; i++) {
+      for (let i = 0, minDist = Infinity; i < n; i++) {
         if (i === i0) continue;
         const d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
         if (d < minDist && d > 0) {
@@ -30737,9 +30731,10 @@
         let j = 0;
         for (let i = 0, d0 = -Infinity; i < n; i++) {
           const id = this._ids[i];
-          if (this._dists[id] > d0) {
+          const d = this._dists[id];
+          if (d > d0) {
             hull[j++] = id;
-            d0 = this._dists[id];
+            d0 = d;
           }
         }
         this.hull = hull.subarray(0, j);
@@ -33057,7 +33052,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.33.0";
+  var version$1 = "6.0.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -34958,13 +34953,9 @@
       field = 'unit',
       indexName = IndexPrefix$1 + field,
       dataName = DataPrefix$1 + data;
-
-    // eslint-disable-next-line no-prototype-builtins
     if (op === Intersect && !has$1(params, indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
-
-    // eslint-disable-next-line no-prototype-builtins
     if (!has$1(params, dataName)) {
       params[dataName] = scope.getData(data).tuplesRef();
     }
@@ -41504,6 +41495,7 @@
   // -- Transforms -----
 
   extend$1(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
+  const version = version$1;
 
   exports.Bounds = Bounds;
   exports.CanvasHandler = CanvasHandler;
@@ -41678,7 +41670,6 @@
   exports.renderModule = renderModule;
   exports.repeat = repeat;
   exports.resetDefaultLocale = resetDefaultLocale;
-  exports.resetSVGClipId = resetSVGClipId;
   exports.resetSVGDefIds = resetSVGDefIds;
   exports.responseType = responseType;
   exports.runtimeContext = context;
@@ -41738,3 +41729,4 @@
   exports.zoomSymlog = zoomSymlog;
 
 }));
+//# sourceMappingURL=vega.js.map

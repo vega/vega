@@ -1,6 +1,6 @@
 {
   "name": "vega-event-selector",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "A CSS-inspired language to select, sequence, and compose DOM events.",
   "keywords": [
     "vega",

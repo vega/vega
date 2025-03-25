@@ -2977,8 +2977,6 @@
     }
   });
 
-  /* eslint-disable require-atomic-updates */
-
   /**
    * Evaluates the dataflow and returns a Promise that resolves when pulse
    * propagation completes. This method will increment the current timestamp
@@ -4358,7 +4356,6 @@
     };
   }
   function exp(data, x, y) {
-    // eslint-disable-next-line no-unused-vars
     const [xv, yv, ux, uy] = points(data, x, y);
     let YL = 0,
       XY = 0,
@@ -21091,7 +21088,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.33.0";
+  var version$1 = "6.0.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22992,13 +22989,9 @@
       field = 'unit',
       indexName = IndexPrefix$1 + field,
       dataName = DataPrefix$1 + data;
-
-    // eslint-disable-next-line no-prototype-builtins
     if (op === Intersect && !has$1(params, indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
-
-    // eslint-disable-next-line no-prototype-builtins
     if (!has$1(params, dataName)) {
       params[dataName] = scope.getData(data).tuplesRef();
     }
@@ -29538,6 +29531,7 @@
   // -- Transforms -----
 
   extend(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
+  const version = version$1;
 
   Object.defineProperty(exports, "path", {
     enumerable: true,
@@ -29715,7 +29709,6 @@
   exports.renderModule = renderModule;
   exports.repeat = repeat;
   exports.resetDefaultLocale = resetDefaultLocale;
-  exports.resetSVGClipId = resetSVGClipId;
   exports.resetSVGDefIds = resetSVGDefIds;
   exports.responseType = responseType;
   exports.runtimeContext = context;
@@ -29775,3 +29768,4 @@
   exports.zoomSymlog = zoomSymlog;
 
 }));
+//# sourceMappingURL=vega-core.js.map

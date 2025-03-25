@@ -1,6 +1,6 @@
 {
   "name": "vega-voronoi",
-  "version": "4.2.4",
+  "version": "5.0.0",
   "description": "Voronoi diagram transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "d3-delaunay": "^6.0.4",
-    "vega-dataflow": "^5.7.7",
-    "vega-util": "^1.17.3"
+    "vega-dataflow": "^6.0.0",
+    "vega-util": "^2.0.0"
   },
   "devDependencies": {
     "vega-transforms": "*"
