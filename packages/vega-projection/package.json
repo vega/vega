@@ -14,9 +14,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-projection.module.js"
+    "default": "./build/vega-projection.js"
   },
-  "unpkg": "build/vega-projection.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

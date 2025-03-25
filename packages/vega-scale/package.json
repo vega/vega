@@ -15,9 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-scale.module.js"
+    "default": "./build/vega-scale.js"
   },
-  "unpkg": "build/vega-scale.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

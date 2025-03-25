@@ -14,9 +14,8 @@
   },
   "exports": {
     "types": "./index.d.ts",
-    "default": "./build/vega-util.module.js"
+    "default": "./build/vega-util.js"
   },
-  "unpkg": "build/vega-util.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

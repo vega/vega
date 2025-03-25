@@ -16,9 +16,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-format.module.js"
+    "default": "./build/vega-format.js"
   },
-  "unpkg": "build/vega-format.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

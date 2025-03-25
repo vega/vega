@@ -16,9 +16,8 @@
   },
   "exports": {
     "types": "./index.d.ts",
-    "default": "./build/vega-interpreter.module.js"
+    "default": "./build/vega-interpreter.js"
   },
-  "unpkg": "build/vega-interpreter.min.js",
   "types": "index.d.ts",
   "repository": "vega/vega",
   "scripts": {

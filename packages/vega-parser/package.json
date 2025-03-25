@@ -15,9 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-parser.module.js"
+    "default": "./build/vega-parser.js"
   },
-  "unpkg": "build/vega-parser.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

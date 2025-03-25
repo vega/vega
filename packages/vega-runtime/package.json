@@ -15,9 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-runtime.module.js"
+    "default": "./build/vega-runtime.js"
   },
-  "unpkg": "build/vega-runtime.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

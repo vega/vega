@@ -14,13 +14,12 @@
     "Chanwut Kittivorawong"
   ],
   "exports": {
-    "default": "./build/vega-label.module.js"
+    "default": "./build/vega-label.js"
   },
-  "unpkg": "build/vega-label.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c rollup.config.js --config-transform",
+    "build": "rollup -c rollup.config.js",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "yarn test && yarn build"

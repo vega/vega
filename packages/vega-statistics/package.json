@@ -15,9 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-statistics.module.js"
+    "default": "./build/vega-statistics.js"
   },
-  "unpkg": "build/vega-statistics.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

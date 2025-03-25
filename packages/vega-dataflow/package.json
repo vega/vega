@@ -16,9 +16,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-dataflow.module.js"
+    "default": "./build/vega-dataflow.js"
   },
-  "unpkg": "build/vega-dataflow.min.js",
   "repository": "vega/vega",
   "scripts": {
     "prebuild": "del-cli build",

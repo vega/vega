@@ -4,7 +4,10 @@
   "description": "Typings for Vega.",
   "types": "types",
   "repository": "vega/vega",
-  "author": "Dominik Moritz <domoritz@gmail.com>",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
   "keywords": [
     "vega",
     "typescript",
