@@ -1,6 +1,6 @@
 {
   "name": "vega-scenegraph",
-  "version": "4.13.1",
+  "version": "5.0.0",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
   "type": "module",
@@ -25,9 +25,9 @@
   "dependencies": {
     "d3-path": "^3.1.0",
     "d3-shape": "^3.2.0",
-    "vega-canvas": "^1.2.7",
-    "vega-loader": "^4.5.3",
-    "vega-scale": "^7.4.2",
-    "vega-util": "^1.17.3"
+    "vega-canvas": "^2.0.0",
+    "vega-loader": "^5.0.0",
+    "vega-scale": "^8.0.0",
+    "vega-util": "^2.0.0"
   }
 }
