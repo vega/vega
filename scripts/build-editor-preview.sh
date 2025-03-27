@@ -22,6 +22,8 @@ git clone https://github.com/vega/editor.git
 
 cd editor
 yarn --frozen-lockfile --ignore-scripts
+# Parcel 2.13.0 and later break the preview build when run in CI.
+yarn add parcel@2.12.0 @parcel/resolver-glob@2.12.0 @parcel/transformer-inline-string@2.12.0
 
 # HACK: Make sure we prefer the local version to the one from npm
 # Test if we can remove this after verifying that only 1 copy of every subpackage is used per repo
