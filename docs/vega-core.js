@@ -21088,7 +21088,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version$1 = "6.0.0";
+  var version$1 = "6.1.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
