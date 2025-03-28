@@ -103,6 +103,8 @@ export default function(commandLineArgs) {
 
   const outputs = [];
 
+  const defaultExport = pkg.exports.default || pkg.exports['.'].default;
+
   // unless we have a node-only package, output a browser bundle
   if (!node) {
     outputs.push({
@@ -110,7 +112,7 @@ export default function(commandLineArgs) {
       external: dependencies,
       onwarn,
       output: {
-        file: pkg.exports.default,
+        file: defaultExport,
         format: 'esm',
         sourcemap: true
       },
@@ -125,7 +127,7 @@ export default function(commandLineArgs) {
       external: dependencies,
       onwarn,
       output: {
-        file: node ? pkg.exports.default : pkg.exports.node,
+        file: node ? defaultExport : pkg.exports.node,
         format: 'esm',
         sourcemap: true
       },
