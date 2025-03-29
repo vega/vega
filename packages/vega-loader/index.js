@@ -2,7 +2,6 @@ import fs from 'fs';
 import loaderFactory from './src/loader.js';
 
 export const loader = loaderFactory(
-  fetch,
   fs
 );
 

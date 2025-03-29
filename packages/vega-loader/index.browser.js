@@ -1,7 +1,6 @@
 import loaderFactory from './src/loader.js';
 
 export const loader = loaderFactory(
-  fetch,
   null // no file system access
 );
 
