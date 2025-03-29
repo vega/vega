@@ -156,7 +156,6 @@ export default function(commandLineArgs) {
       output: bundleOutputs({
         file: pkg.jsdelivr,
         format: 'umd',
-        sourcemap: true,
         globals,
         name: 'vega'
       }),
@@ -171,7 +170,6 @@ export default function(commandLineArgs) {
       output: bundleOutputs({
         file: pkg.jsdelivr.replace('.min.js', '-core.min.js'),
         format: 'umd',
-        sourcemap: true,
         globals,
         name: 'vega'
       }),
