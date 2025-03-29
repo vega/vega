@@ -24,8 +24,8 @@
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js --config-node",
     "postbuild": "node schema > build/vega-schema.json",
-    "test": "yarn build",
-    "prepublishOnly": "yarn test"
+    "test": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "dependencies": {
     "vega-scale": "^8.0.0"

@@ -22,8 +22,8 @@
     "format": "prettier $([ \"$CI\" = true ] && echo --check || echo --write) './**/*.{ts,tsx,js,json,css}'",
     "format-tests": "prettier --write 'tests/**/*.ts'",
     "build-tests": "./build-tests.sh",
-    "pretest": "yarn build-tests",
-    "test": "yarn format && yarn tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
+    "pretest": "npm run build-tests",
+    "test": "npm run format && npx tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
     "@types/geojson": "7946.0.16",

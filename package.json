@@ -7,19 +7,19 @@
     "url": "git+https://github.com/vega/vega.git"
   },
   "scripts": {
-    "build": "lerna run build && yarn docsbuild",
+    "build": "lerna run build && npm run docsbuild",
     "build-editor-preview": "scripts/build-editor-preview.sh",
-    "clean": "lerna clean --yes && lerna exec -- del-cli build && lerna exec -- del-cli LICENSE && del-cli node_modules yarn.lock",
+    "clean": "lerna clean --yes && lerna exec -- del-cli build && lerna exec -- del-cli LICENSE && del-cli node_modules package-lock.json",
     "data": "rsync -r node_modules/vega-datasets/data/* docs/data",
     "docs": "cd docs && bundle exec jekyll serve -I -l",
     "docsbuild": "cd packages/vega/build && cp vega.js* vega.min.js* vega-core.js vega-core.min.js* vega-schema.json ../../../docs/",
     "license": "lerna exec -- cp ../../LICENSE .",
-    "release": "yarn license && lerna publish from-package",
+    "release": "npm run license && lerna publish from-package",
     "serve": "serve packages/vega/ -l 8080",
-    "test": "yarn test:no-lint && yarn lint",
+    "test": "npm run test:no-lint && npm run lint",
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
     "lint": "eslint -c eslint.config.js .",
-    "format": "yarn lint --fix",
+    "format": "npm run lint -- --fix",
     "postinstall": "scripts/postinstall.sh"
   },
   "dependencies": {},
@@ -36,8 +36,6 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^22.13.11",
-    "@typescript-eslint/eslint-plugin": "^8.27.0",
-    "@typescript-eslint/parser": "^8.27.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "canvas": "^3.1.0",
@@ -61,6 +59,5 @@
   ],
   "engines": {
     "node": ">=18.18.0"
-  },
-  "packageManager": "yarn@1.22.22"
+  }
 }
