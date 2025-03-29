@@ -1,7 +1,7 @@
 import loaderFactory from './src/loader.js';
 
 export const loader = loaderFactory(
-  typeof fetch !== 'undefined' && fetch, // use built-in fetch API
+  fetch,
   null // no file system access
 );
 
