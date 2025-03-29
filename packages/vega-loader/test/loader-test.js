@@ -28,9 +28,9 @@ function testSanitize(t, uri, options, result) {
 
 tape('loader should sanitize url', t => {
   Promise.all([
-      testSanitize(t, 'a.txt', {mode: 'file'}, 'a.txt'),
-      testSanitize(t, 'a.txt', {mode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
-      testSanitize(t, 'a.txt', {mode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
+      testSanitize(t, 'a.txt', {loaderMode: 'file'}, 'a.txt'),
+      testSanitize(t, 'a.txt', {loaderMode: 'http', baseURL: 'hostname'}, 'hostname/a.txt'),
+      testSanitize(t, 'a.txt', {loaderMode: 'http', baseURL: 'hostname/'}, 'hostname/a.txt'),
       testSanitize(t, '//h.com/a.txt', {}, 'http://h.com/a.txt'),
       testSanitize(t, '//h.com/a.txt', {defaultProtocol: 'https'}, 'https://h.com/a.txt'),
       testSanitize(t, undefined, {}, null),
@@ -105,7 +105,7 @@ tape('loader should resolve error with invalid url', t => {
 });
 
 tape('loader should load from http base url + uri', t => {
-  loader.load(uri, {mode: 'cors', baseURL: base})
+  loader.load(uri, {loaderMode: 'http', baseURL: base})
     .then(data => {
       t.equal(data+'', text);
       t.end();

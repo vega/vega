@@ -30,7 +30,7 @@ type BaseLoaderOptions = {
   /** Base URL prefix prepended to provided URI */
   baseUrl: string;
   /** Allows caller to explicitly set loading mode (local or network request). File mode only applies to server-side rendering. */
-  mode: 'file' | 'http';
+  loaderMode: 'file' | 'http';
   /** Default protocol for protocol-relative URIs, defaults to HTTP */
   defaultProtocol: 'file' | 'http' | string;
   /** browser `target` attribute for hyperlinks. Only used when sanitizing URI values for use as hyperlink */

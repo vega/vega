@@ -58,7 +58,7 @@ function renderAsync(scene, w, h, callback) {
   resetSVGDefIds();
 
   // then render svg
-  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
+  new Renderer(loader({loaderMode: 'http', baseURL: './test/resources/'}))
     .initialize(doc.body, w, h)
     .renderAsync(scene)
     .then(r => { callback(compensate(r.svg())); });

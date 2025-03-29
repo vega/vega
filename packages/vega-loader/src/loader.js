@@ -88,8 +88,8 @@ async function sanitize(uri, options) {
 
   // should we load from file system?
   loadFile = (isFile = uri.startsWith(fileProtocol))
-    || options.mode === 'file'
-    || (options.mode !== 'no-cors' && options.mode !== 'cors' && options.mode !== 'same-origin')
+    || options.loaderMode === 'file'
+    || (options.loaderMode !== 'http')
       && !hasProtocol && fileAccess;
 
   if (isFile) {
