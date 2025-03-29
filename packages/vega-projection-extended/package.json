@@ -24,8 +24,8 @@
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c  rollup.config.js",
-    "pretest": "yarn build --config-test",
-    "prepublishOnly": "yarn build"
+    "pretest": "npm run build -- --config-test",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "d3-geo-projection": "^4.0.0",

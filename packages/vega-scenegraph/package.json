@@ -19,11 +19,11 @@
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
-    "postbuild": "yarn schema",
-    "pretest": "yarn build --config-test",
-    "test": "tape 'test/**/*-test.js' && yarn xmllint",
+    "postbuild": "npm run schema",
+    "pretest": "npm run build -- --config-test",
+    "test": "tape 'test/**/*-test.js' && npx xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
     "d3-path": "^3.1.0",

@@ -22,15 +22,15 @@ The Vega project consists of a number of packages, organized into a single [mono
 
 For an overview of all packages, see the [vega `/packages` folder](/packages).
 
-To setup a development environment follow the [Build Instructions in README.md](#build-instructions). We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) and [lerna](https://github.com/lerna/lerna) to manage the monorepo packages.
+To setup a development environment follow the [Build Instructions in README.md](#build-instructions). We use [ workspaces](https://docs.npmjs.com/cli/v11/using-npm/workspaces) and [lerna](https://github.com/lerna/lerna) to manage the monorepo packages.
 
 ## Build Instructions
 
 For a basic setup allowing you to build Vega and run examples:
 
 - Clone `https://github.com/vega/vega`.
-- Run `yarn` to install dependencies for all packages. If you don't have yarn installed, see https://yarnpkg.com/en/docs/install. We use [Yarn workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
-- Once installation is complete, run `yarn test` to run test cases, or run `yarn build` to build output files for all packages.
-- After running either `yarn test` or `yarn build`, run `yarn serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
+- Run `npm install` to install dependencies for all packages. We use [workspaces](https://docs.npmjs.com/cli/v11/using-npm/workspaces) to manage multiple packages within this [monorepo](https://en.wikipedia.org/wiki/Monorepo).
+- Once installation is complete, run `npm test` to run test cases, or run `npm run build` to build output files for all packages.
+- After running either `npm test` or `npm run build`, run `npm run serve` to launch a local web server &mdash; your default browser will open and you can browse to the `"test"` folder to view test specifications.
 
-This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `yarn docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.
+This repository includes the Vega website and documentation in the `docs` folder. To launch the website locally, first run `bundle install` in the `docs` folder to install the necessary Jekyll libraries. Afterwards, use `npm run docs` to build the documentation and launch a local webserver. After launching, you can open [`http://127.0.0.1:4000/vega/`](http://127.0.0.1:4000/vega/) to see the website.

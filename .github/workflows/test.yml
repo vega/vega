@@ -34,10 +34,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install Node dependencies
-        run: yarn --frozen-lockfile
+        run: npm ci
 
       - name: Run tests
-        run: yarn test:no-lint
+        run: npm run test:no-lint
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint

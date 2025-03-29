@@ -9,26 +9,26 @@ echo "Installing Vega"
 for package in packages/*; do
   if [ -d "$package" ]; then
     cd $package
-    yarn link
+    npm link
     cd ../..
   fi
 done
 
 # Build - assumes lerna handles the topological sort
-yarn lerna run build
+npx lerna run build
 
 echo "Installing vega editor"
 git clone https://github.com/vega/editor.git
 
 cd editor
-yarn --frozen-lockfile --ignore-scripts
+npm ci
 
 # HACK: Make sure we prefer the local version to the one from npm
 # Test if we can remove this after verifying that only 1 copy of every subpackage is used per repo
 for package in ../packages/*; do
   if [ -d "$package" ]; then
     package_name=$(basename $package)
-    yarn link $package_name
+    npm link $package_name
   fi
 done
 
@@ -50,4 +50,4 @@ EOF
 # Build the editor site in the dist folder
 # Disable minification to make it easier to debug, and because sourcemaps
 # exceed 25 MB limit on cloudflare
-yarn run build:only --public-url / --no-optimize --no-source-maps
+npm run build:only -- --public-url / --no-optimize --no-source-maps

@@ -23,9 +23,9 @@
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
-    "pretest": "yarn build --config-test",
+    "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
     "d3-array": "^3.2.4",
