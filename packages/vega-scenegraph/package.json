@@ -11,7 +11,10 @@
   "exports": {
     "default": "./build/vega-scenegraph.js"
   },
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "del-cli build",

@@ -19,7 +19,10 @@
     "default": "./build/vega-expression.js"
   },
   "types": "index.d.ts",
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

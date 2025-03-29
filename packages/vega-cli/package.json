@@ -20,11 +20,14 @@
     "default": "./build/index.js"
   },
   "bin": {
-    "vg2pdf": "./bin/vg2pdf",
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
+    "vg2pdf": "bin/vg2pdf",
+    "vg2png": "bin/vg2png",
+    "vg2svg": "bin/vg2svg"
   },
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "test": "tape 'test/**/*-test.js'"
   },

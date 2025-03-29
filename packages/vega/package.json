@@ -29,7 +29,10 @@
   },
   "unpkg": "build/vega.min.js",
   "jsdelivr": "build/vega.min.js",
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

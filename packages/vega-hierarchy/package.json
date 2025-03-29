@@ -20,7 +20,10 @@
   "exports": {
     "default": "./build/vega-hierarchy.js"
   },
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

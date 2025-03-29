@@ -17,7 +17,10 @@
     "node": "./build/vega-canvas.node.js",
     "default": "./build/vega-canvas.browser.js"
   },
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

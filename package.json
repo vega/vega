@@ -2,7 +2,10 @@
   "private": true,
   "license": "BSD-3-Clause",
   "type": "module",
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
   "scripts": {
     "build": "lerna run build && yarn docsbuild",
     "build-editor-preview": "scripts/build-editor-preview.sh",
@@ -59,5 +62,5 @@
   "engines": {
     "node": ">=18.18.0"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@1.22.22",
 }
