@@ -154,10 +154,20 @@
     }
   ],
 
+  "config": {
+    "legend": {
+      "layout": {
+        "top": { "container": true }
+      }
+    }
+  },
+
   "legends": [
     {
       "stroke": "color",
       "title": "Origin",
+      "direction": "horizontal",
+      "orient": "top",
       "encode": {
         "symbols": {
           "name": "legendSymbol",

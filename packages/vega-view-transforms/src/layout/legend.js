@@ -1,9 +1,9 @@
+import { boundStroke, multiLineOffset } from 'vega-scenegraph';
 import {
   Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
   None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
-import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 // utility for looking up legend layout configuration
 function lookup(config, orient) {
@@ -26,6 +26,7 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
   const _ = lookup(config, orient),
         offset = offsets(g, _('offset', 0)),
         anchor = _('anchor', Start),
+        container = _('container', false),
         mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
 
   const p = {
@@ -53,13 +54,15 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     case Top:
       p.anchor = {
         y: Math.floor(yb.y1) - offset, row: End,
-        x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        x: anchor === Start && container ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        column: anchor
       };
       break;
     case Bottom:
       p.anchor = {
         y: Math.ceil(yb.y2) + offset,
-        x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        x: anchor === Start && container ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        column: anchor
       };
       break;
     case TopLeft:
