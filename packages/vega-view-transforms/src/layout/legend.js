@@ -1,7 +1,7 @@
 import { boundStroke, multiLineOffset } from 'vega-scenegraph';
 import {
-  Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
-  None, Right, Start, Symbols, Top,
+  Axis, Bottom, BottomLeft, BottomRight, Chart, Each, End, Flush,
+  Left, Middle, None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
 
@@ -26,7 +26,7 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
   const _ = lookup(config, orient),
         offset = offsets(g, _('offset', 0)),
         anchor = _('anchor', Start),
-        container = _('container', false),
+        align = _('align', Axis),
         mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
 
   const p = {
@@ -54,14 +54,14 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     case Top:
       p.anchor = {
         y: Math.floor(yb.y1) - offset, row: End,
-        x: anchor === Start && container ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        x: anchor === Start && align === Chart ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
         column: anchor
       };
       break;
     case Bottom:
       p.anchor = {
         y: Math.ceil(yb.y2) + offset,
-        x: anchor === Start && container ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        x: anchor === Start && align === Chart ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
         column: anchor
       };
       break;

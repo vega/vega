@@ -44,5 +44,8 @@ export const All = 'all';
 export const Each = 'each';
 export const Flush = 'flush';
 
+export const Axis = "axis";
+export const Chart = "chart";
+
 export const Column = 'column';
 export const Row = 'row';
