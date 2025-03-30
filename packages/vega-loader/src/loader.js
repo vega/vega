@@ -48,7 +48,7 @@ async function load(uri, options) {
 
   return opt.localFile
     ? this.file(url)
-    : this.http(url, options);
+    : this.http(url, options.http);
 }
 
 /**
@@ -161,7 +161,7 @@ async function fileReject() {
 /**
  * An http loader.
  * @param {string} url - The url to request.
- * @param {object} options - An options hash.
+ * @param {Partial<RequestInit>} options - An options hash.
  * @return {Promise} - A promise that resolves to the file contents.
  */
 async function httpLoader(url, options) {
