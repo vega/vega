@@ -157,7 +157,7 @@
   "config": {
     "legend": {
       "layout": {
-        "top": { "container": true }
+        "align": "chart"
       }
     }
   },
