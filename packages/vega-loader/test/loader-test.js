@@ -105,7 +105,7 @@ tape('loader should resolve error with invalid url', t => {
 });
 
 tape('loader should load from http base url + uri', t => {
-  loader.load(uri, {mode: 'cors', baseURL: base})
+  loader.load(uri, {mode: 'http', baseURL: base})
     .then(data => {
       t.equal(data+'', text);
       t.end();
