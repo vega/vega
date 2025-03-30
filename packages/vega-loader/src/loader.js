@@ -48,7 +48,7 @@ async function load(uri, options) {
 
   return opt.localFile
     ? this.file(url)
-    : this.http(url, options.http);
+    : this.http(url, options?.http);
 }
 
 /**
@@ -88,8 +88,8 @@ async function sanitize(uri, options) {
 
   // should we load from file system?
   loadFile = (isFile = uri.startsWith(fileProtocol))
-    || options.loaderMode === 'file'
-    || (options.loaderMode !== 'http')
+    || options.mode === 'file'
+    || (options.mode !== 'http')
       && !hasProtocol && fileAccess;
 
   if (isFile) {

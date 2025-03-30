@@ -32,7 +32,7 @@ function render(scene, w, h) {
 
 function renderAsync(scene, w, h, callback) {
   resetSVGDefIds();
-  new Renderer(loader({loaderMode: 'http', baseURL: './test/resources/'}))
+  new Renderer(loader({mode: 'http', baseURL: './test/resources/'}))
     .initialize(null, w, h)
     .renderAsync(scene)
     .then(r => { callback(r.svg()); });

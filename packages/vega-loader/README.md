@@ -19,7 +19,7 @@ The *options* object can include the following entries:
 
 - *baseURL*: A base URL prefix to append to provided *uri* values. This can
 be useful for applications that load multiple data sets from the same domain.
-- *loaderMode*: A string explicitly indicating the loading mode. One of `'file'` (server-side only) or `'http'`. If set to `'file'` mode, later *uri* parameters may safely omit a `'file://'` prefix.
+- *mode*: A string explicitly indicating the loading mode. One of `'file'` (server-side only) or `'http'`. If set to `'file'` mode, later *uri* parameters may safely omit a `'file://'` prefix.
 - *defaultProtocol*: The default protocol to use for protocol-relative *uri* values (e.g., `'//vega.github.io'`). Defaults to `'http'`.
 - *target*: The browser `target` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
 - *rel*: The browser `rel` attribute for hyperlinks. Only applies when sanitizing *uri* values for use as a hyperlink.
