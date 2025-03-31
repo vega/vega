@@ -157,7 +157,7 @@
   "config": {
     "legend": {
       "layout": {
-        "align": "chart"
+        "frame": "group"
       }
     }
   },

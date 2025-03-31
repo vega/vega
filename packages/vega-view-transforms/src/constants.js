@@ -16,6 +16,7 @@ export const X = 'x';
 export const Y = 'y';
 
 export const Group = 'group';
+export const Bounds = "bounds";
 
 export const AxisRole = 'axis';
 export const TitleRole = 'title';
