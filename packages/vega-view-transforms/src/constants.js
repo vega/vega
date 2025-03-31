@@ -16,7 +16,7 @@ export const X = 'x';
 export const Y = 'y';
 
 export const Group = 'group';
-export const Bounds = "bounds";
+export const Bounds = 'bounds';
 
 export const AxisRole = 'axis';
 export const TitleRole = 'title';
@@ -44,9 +44,6 @@ export const None = 'none';
 export const All = 'all';
 export const Each = 'each';
 export const Flush = 'flush';
-
-export const Axis = "axis";
-export const Chart = "chart";
 
 export const Column = 'column';
 export const Row = 'row';

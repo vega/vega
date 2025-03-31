@@ -1,6 +1,6 @@
 import { boundStroke, multiLineOffset } from 'vega-scenegraph';
 import {
-  Bounds, Bottom, BottomLeft, BottomRight, Each, End, Flush,
+  Bottom, BottomLeft, BottomRight, Bounds, Each, End, Flush,
   Group, Left, Middle, None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
