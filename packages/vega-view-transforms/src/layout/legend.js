@@ -124,6 +124,11 @@ function legendBounds(item, b) {
   // aggregate item bounds
   item.items.forEach(_ => b.union(_.bounds));
 
+  if (b.empty()) {
+    b.x2 = item.padding;
+    b.y2 = item.padding;
+  }
+
   // anchor to legend origin
   b.x1 = item.padding;
   b.y1 = item.padding;
