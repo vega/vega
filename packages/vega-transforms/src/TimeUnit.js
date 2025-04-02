@@ -36,18 +36,18 @@ TimeUnit.Definition = {
 inherits(TimeUnit, Transform, {
   transform(_, pulse) {
     const field = _.field,
-      band = _.interval !== false,
-      utc = _.timezone === 'utc',
-      floor = this._floor(_, pulse),
-      offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
-      as = _.as || OUTPUT,
-      u0 = as[0],
-      u1 = as[1],
-      step = floor.step;
+          band = _.interval !== false,
+          utc = _.timezone === 'utc',
+          floor = this._floor(_, pulse),
+          offset = (utc ? utcInterval : timeInterval)(floor.unit).offset,
+          as = _.as || OUTPUT,
+          u0 = as[0],
+          u1 = as[1],
+          step = floor.step;
 
     let min = floor.start || Infinity,
-      max = floor.stop || -Infinity,
-      flag = pulse.ADD;
+        max = floor.stop || -Infinity,
+        flag = pulse.ADD;
 
     if (
       _.modified() ||
@@ -89,14 +89,14 @@ inherits(TimeUnit, Transform, {
       : _.units
         ? {units: _.units, step: _.step || 1}
         : timeBin({
-        extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
+          extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
           maxbins: _.maxbins
         });
 
     // check / standardize time units
     const tunits = timeUnits(units),
-      prev = this.value || {},
-      floor = (utc ? utcFloor : timeFloor)(tunits, step);
+          prev = this.value || {},
+          floor = (utc ? utcFloor : timeFloor)(tunits, step);
 
     floor.unit = peek(tunits);
     floor.units = tunits;
