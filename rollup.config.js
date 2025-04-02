@@ -27,6 +27,13 @@ const d3Deps = [
   'd3-delaunay'
 ];
 
+const esmDeps = [
+  ...d3Deps,
+  'd3-geo-projection',
+  'd3-scale-chromatic',
+  'time-grain-detector'
+];
+
 const d3CoreDeps = [
   ...d3Deps,
   'topojson-client'
