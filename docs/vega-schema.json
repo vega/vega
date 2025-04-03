@@ -15615,6 +15615,16 @@
             }
           ]
         },
+        "inferUnits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
         "step": {
           "anyOf": [
             {
