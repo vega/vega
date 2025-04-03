@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    { utc } = require('./util');
+import tape from 'tape';
+import * as vega from '../index.js';
+import { utc } from './util.js';
 
 
 tape('detectTimeUnits works for all units', t => {

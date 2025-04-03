@@ -8,7 +8,7 @@ import {
     MONTH,
     SECONDS,
     YEAR
-} from './units';
+} from './units.js';
 
 const allowedUnits = [YEAR, MONTH, DATE, HOURS, MINUTES, SECONDS, MILLISECONDS];
 const unitNameConversion = {
