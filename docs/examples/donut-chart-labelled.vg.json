@@ -138,27 +138,27 @@
         {
           "type": "formula",
           "as": "x1",
-          "expr": " (outerRadius*cos(datum.middleAngle))+outerRadius "
+          "expr": " (outerRadius *cos(datum.middleAngle))+width/2 "
         },
         {
           "type": "formula",
           "as": "y1",
-          "expr": " (outerRadius*sin(datum.middleAngle))+outerRadius "
+          "expr": " (outerRadius*sin(datum.middleAngle))+width/2 "
         },
         {
           "type": "formula",
           "as": "x2",
-          "expr": " ((outerRadius+10)*cos(datum.middleAngle))+outerRadius "
+          "expr": " ((outerRadius+10)*cos(datum.middleAngle))+width/2 "
         },
         {
           "type": "formula",
           "as": "y2",
-          "expr": " ((outerRadius+10)*sin(datum.middleAngle))+outerRadius "
+          "expr": " ((outerRadius+10)*sin(datum.middleAngle))+width/2 "
         },
         {
           "type": "formula",
           "as": "x3",
-          "expr": "datum.side== 'right'?width+20:-20"
+          "expr": "datum.side== 'right'?outerRadius+(width/2)+20:(width/2)-outerRadius-20"
         },
         {"type": "formula", "as": "bin", "expr": "0"}
       ]
@@ -327,7 +327,7 @@
         {
           "type": "formula",
           "as": "x4",
-          "expr": "datum.side== 'right'?width+25:-25"
+          "expr": "datum.side== 'right'?outerRadius+(width/2)+25:(width/2)-outerRadius-25"
         },
         {
           "type": "window",
