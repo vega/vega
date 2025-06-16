@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A contour plot of the Maungawhau volcano in New Zealand.",
   "width": 960,
   "autosize": "none",

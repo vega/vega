@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A flow map of wind direction and speed over northwest Europe.",
   "width": 800,
   "height": 600,
