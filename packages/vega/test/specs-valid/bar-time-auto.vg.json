@@ -1,0 +1,123 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 500,
+  "height": 200,
+  "data": [
+    {
+      "name": "data",
+      "values": [
+        {
+          "t": "2020-01-01",
+          "value": 1
+        },
+        {
+          "t": "2021-01-01",
+          "value": 2
+        },
+        {
+          "t": "2022-01-01",
+          "value": 3
+        },
+        {
+          "t": "2023-01-01",
+          "value": 4
+        }
+      ],
+      "format": {
+        "type": "json",
+        "parse": {
+          "t": "date"
+        }
+      },
+      "transform": [
+        {
+          "type": "timeunit",
+          "field": "t",
+          "inferUnits": true
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "rect",
+      "from": {
+        "data": "data"
+      },
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#4c78a8"
+          },
+          "x": {
+            "scale": "x",
+            "field": "unit0"
+          },
+          "x2": {
+            "scale": "x",
+            "field": "unit1"
+          },
+          "y": {
+            "signal": "height"
+          },
+          "y2": {
+            "scale": "y",
+            "field": "value"
+          }
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {
+        "data": "data",
+        "fields": [
+          "unit0",
+          "unit1"
+        ]
+      },
+      "range": [
+        0,
+        {
+          "signal": "width"
+        }
+      ]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {
+        "data": "data",
+        "field": "value"
+      },
+      "range": [
+        {
+          "signal": "height"
+        },
+        0
+      ],
+      "zero": true
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "labelAlign": "right",
+      "labelAngle": 270,
+      "labelBaseline": "middle"
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "title": "value",
+      "tickCount": {
+        "signal": "ceil(height/40)"
+      }
+    }
+  ]
+}

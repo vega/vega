@@ -1,7 +1,7 @@
 import {Transform} from 'vega-dataflow';
 import {
   TIME_UNITS, timeBin, timeFloor, timeInterval, timeUnits,
-  utcFloor, utcInterval
+  utcFloor, utcInterval, detectTimeUnits
 } from 'vega-time';
 import {accessorFields, extent, inherits, peek} from 'vega-util';
 
@@ -27,6 +27,7 @@ TimeUnit.Definition = {
     { 'name': 'step', 'type': 'number', 'default': 1 },
     { 'name': 'maxbins', 'type': 'number', 'default': 40 },
     { 'name': 'extent', 'type': 'date', 'array': true},
+    { 'name': 'inferUnits', 'type': 'boolean', 'default': false },
     { 'name': 'timezone', 'type': 'enum', 'default': 'local', 'values': ['local', 'utc'] },
     { 'name': 'as', 'type': 'string', 'array': true, 'length': 2, 'default': OUTPUT }
   ]
@@ -83,12 +84,14 @@ inherits(TimeUnit, Transform, {
     const utc = _.timezone === 'utc';
 
     // get parameters
-    const {units, step} = _.units
-      ? {units: _.units, step: _.step || 1}
-      : timeBin({
-        extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
-        maxbins: _.maxbins
-      });
+    const {units, step} = _.inferUnits
+      ? detectTimeUnits(pulse.materialize(pulse.SOURCE).source, _.field)
+      : _.units
+        ? {units: _.units, step: _.step || 1}
+        : timeBin({
+          extent:  _.extent || extent(pulse.materialize(pulse.SOURCE).source, _.field),
+          maxbins: _.maxbins
+        });
 
     // check / standardize time units
     const tunits = timeUnits(units),
