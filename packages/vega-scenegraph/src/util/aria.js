@@ -100,12 +100,11 @@ function ariaMark(mark) {
 
 function ariaGuide(mark, opt) {
   try {
-    const item = mark.items[0],
-          caption = opt.caption || (() => '');
+    const caption = opt.caption || (() => '');
     return bundle(
       opt.role || GRAPHICS_SYMBOL,
       opt.desc,
-      item.description || caption(item)
+      mark.description || caption(mark)
     );
   } catch (err) {
     return null;
