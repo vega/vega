@@ -122,6 +122,14 @@ prototype.q3 = function(get) {
   return this.quartile(get)[2];
 };
 
+prototype.p95 = function(get) {
+  return this.quartile(get)[3];
+};
+
+prototype.p99 = function(get) {
+  return this.quartile(get)[4];
+};
+
 prototype.ci = function(get) {
   if (this._get !== get || !this._ci) {
     this._ci = bootstrapCI(this.values(), 1000, 0.05, get);
