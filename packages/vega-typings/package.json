@@ -33,6 +33,6 @@
   },
   "devDependencies": {
     "ts-json-schema-generator": "^2.4.0",
-    "tsd": "^0.32.0"
+    "tsd": "^0.33.0"
   }
 }
