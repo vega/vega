@@ -21,7 +21,14 @@ export default function(opt) {
         fieldvar = opt.fieldvar,
         outputGlobal = isFunction(globalvar)
           ? globalvar
-          : id => `${globalvar}["${id}"]`;
+          : id => `${globalvar}["${id}"]`,
+        // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
+        forbiddenProperties = new Set(
+          [...Object.getOwnPropertyNames(Object.prototype)
+            .filter(name => typeof Object.prototype[name] === 'function'),
+          '__proto__'
+          ]
+        );
 
   let globals = {},
       fields = {},
@@ -97,8 +104,18 @@ export default function(opt) {
     LogicalExpression: n =>
         '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-    ObjectExpression: n =>
-        '{' + n.properties.map(visit).join(',') + '}',
+    ObjectExpression: n => {
+      // If any keys would override Object prototype methods, throw error
+      for (const prop of n.properties) {
+        const keyName = prop.key.name;
+
+        if (blockedPropertyNames.has(keyName)) {
+          error('Illegal property: ' + keyName);
+        }
+      }
+
+      return '{' + n.properties.map(visit).join(',') + '}';
+    },
 
     Property: n => {
         memberDepth += 1;
