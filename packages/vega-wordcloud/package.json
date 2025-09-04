@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "vega-canvas": "^2.0.0",
-    "vega-dataflow": "^6.0.0",
+    "vega-dataflow": "^6.1.0",
     "vega-scale": "^8.0.0",
     "vega-statistics": "^2.0.0",
     "vega-util": "^2.0.0"

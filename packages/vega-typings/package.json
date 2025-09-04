@@ -1,6 +1,6 @@
 {
   "name": "vega-typings",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": {
@@ -28,7 +28,7 @@
   "dependencies": {
     "@types/geojson": "7946.0.16",
     "vega-event-selector": "^4.0.0",
-    "vega-expression": "^6.0.0",
+    "vega-expression": "^6.1.0",
     "vega-util": "^2.0.0"
   },
   "devDependencies": {

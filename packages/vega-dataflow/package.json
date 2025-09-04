@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "vega-format": "^2.0.0",
-    "vega-loader": "^5.0.0",
+    "vega-loader": "^5.1.0",
     "vega-util": "^2.0.0"
   }
 }
