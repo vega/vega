@@ -100,6 +100,14 @@ export const AggregateOps = {
     value: m => m.cell.data.q3(m.get),
     req:  ['values'], idx: 3
   },
+  p95: {
+    value: m => m.cell.data.p95(m.get),
+    req:  ['values'], idx: 3
+  },
+  p99: {
+    value: m => m.cell.data.p99(m.get),
+    req:  ['values'], idx: 3
+  },
   min: {
     init:  m => m.min = undefined,
     value: m => m.min = (Number.isNaN(m.min) ? m.cell.data.min(m.get) : m.min),
