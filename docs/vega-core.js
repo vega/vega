@@ -129,8 +129,7 @@
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
-  function logger(_, method) {
-    let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
+  function logger(_, method, handler = log$1$1) {
     let level = _ || None$2;
     return {
       level(_) {
@@ -164,10 +163,7 @@
     return _ === Object(_);
   }
   const isLegalKey = key => key !== '__proto__';
-  function mergeConfig() {
-    for (var _len = arguments.length, configs = new Array(_len), _key = 0; _key < _len; _key++) {
-      configs[_key] = arguments[_key];
-    }
+  function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (const key in source) {
         if (key === 'signals') {
@@ -12870,12 +12866,9 @@
         return m;
       },
       m = {
-        open(tag) {
+        open(tag, ...attrs) {
           push(tag);
           outer = '<' + tag;
-          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            attrs[_key - 1] = arguments[_key];
-          }
           for (const set of attrs) {
             for (const key in set) attr(key, set[key]);
           }
@@ -23292,28 +23285,16 @@
   function sequence(seq) {
     return array(seq) || (isString(seq) ? seq : null);
   }
-  function join(seq) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  function join(seq, ...args) {
     return array(seq).join(...args);
   }
-  function indexof(seq) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  function indexof(seq, ...args) {
     return sequence(seq).indexOf(...args);
   }
-  function lastindexof(seq) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
-    }
+  function lastindexof(seq, ...args) {
     return sequence(seq).lastIndexOf(...args);
   }
-  function slice(seq) {
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
-    }
+  function slice(seq, ...args) {
     return sequence(seq).slice(...args);
   }
   function replace(str, pattern, repl) {
@@ -23442,8 +23423,7 @@
    * @param {*} minDist the minimum distance, in pixels, that thenew point needs to be apart from the last point
    * @returns a new array containing the lasso with the new point
    */
-  function lassoAppend(lasso, x, y) {
-    let minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
+  function lassoAppend(lasso, x, y, minDist = 5) {
     lasso = array$2(lasso);
     const last = lasso[lasso.length - 1];
 
@@ -23458,8 +23438,7 @@
    * @returns the svg path command that draws the lasso
    */
   function lassoPath(lasso) {
-    return array$2(lasso).reduce((svg, _ref, i) => {
-      let [x, y] = _ref;
+    return array$2(lasso).reduce((svg, [x, y], i) => {
       return svg += i == 0 ? `M ${x},${y} ` : i === lasso.length - 1 ? ' Z' : `L ${x},${y} `;
     }, '');
   }

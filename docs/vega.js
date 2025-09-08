@@ -109,8 +109,7 @@
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
-  function logger(_, method) {
-    let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
+  function logger(_, method, handler = log$1$1) {
     let level = _ || None$2;
     return {
       level(_) {
@@ -144,10 +143,7 @@
     return _ === Object(_);
   }
   const isLegalKey = key => key !== '__proto__';
-  function mergeConfig() {
-    for (var _len = arguments.length, configs = new Array(_len), _key = 0; _key < _len; _key++) {
-      configs[_key] = arguments[_key];
-    }
+  function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (const key in source) {
         if (key === 'signals') {
@@ -1145,9 +1141,7 @@
       compare2 = f;
       delta = f;
     }
-    function left(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
+    function left(a, x, lo = 0, hi = a.length) {
       if (lo < hi) {
         if (compare1(x, x) !== 0) return hi;
         do {
@@ -1157,9 +1151,7 @@
       }
       return lo;
     }
-    function right(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
+    function right(a, x, lo = 0, hi = a.length) {
       if (lo < hi) {
         if (compare1(x, x) !== 0) return hi;
         do {
@@ -1169,9 +1161,7 @@
       }
       return lo;
     }
-    function center(a, x) {
-      let lo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      let hi = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : a.length;
+    function center(a, x, lo = 0, hi = a.length) {
       const i = left(a, x, lo, hi - 1);
       return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
     }
@@ -1288,8 +1278,7 @@
   }
 
   class InternMap extends Map {
-    constructor(entries) {
-      let key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : keyof;
+    constructor(entries, key = keyof) {
       super();
       Object.defineProperties(this, {
         _intern: {
@@ -1315,8 +1304,7 @@
     }
   }
   class InternSet extends Set {
-    constructor(values) {
-      let key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : keyof;
+    constructor(values, key = keyof) {
       super();
       Object.defineProperties(this, {
         _intern: {
@@ -1338,29 +1326,26 @@
       return super.delete(intern_delete(this, value));
     }
   }
-  function intern_get(_ref, value) {
-    let {
-      _intern,
-      _key
-    } = _ref;
+  function intern_get({
+    _intern,
+    _key
+  }, value) {
     const key = _key(value);
     return _intern.has(key) ? _intern.get(key) : value;
   }
-  function intern_set(_ref2, value) {
-    let {
-      _intern,
-      _key
-    } = _ref2;
+  function intern_set({
+    _intern,
+    _key
+  }, value) {
     const key = _key(value);
     if (_intern.has(key)) return _intern.get(key);
     _intern.set(key, value);
     return value;
   }
-  function intern_delete(_ref3, value) {
-    let {
-      _intern,
-      _key
-    } = _ref3;
+  function intern_delete({
+    _intern,
+    _key
+  }, value) {
     const key = _key(value);
     if (_intern.has(key)) {
       value = _intern.get(key);
@@ -1376,8 +1361,7 @@
     return Array.from(keys, key => source[key]);
   }
 
-  function compareDefined() {
-    let compare = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ascending$1;
+  function compareDefined(compare = ascending$1) {
     if (compare === ascending$1) return ascendingDefined;
     if (typeof compare !== "function") throw new TypeError("compare is not a function");
     return (a, b) => {
@@ -1483,10 +1467,7 @@
 
   // Based on https://github.com/mourner/quickselect
   // ISC license, Copyright 2018 Vladimir Agafonkin.
-  function quickselect(array, k) {
-    let left = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    let right = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : Infinity;
-    let compare = arguments.length > 4 ? arguments[4] : undefined;
+  function quickselect(array, k, left = 0, right = Infinity, compare) {
     k = Math.floor(k);
     left = Math.floor(Math.max(0, left));
     right = Math.floor(Math.min(array.length - 1, right));
@@ -1537,8 +1518,7 @@
       value1 = min$2(values.subarray(i0 + 1));
     return value0 + (value1 - value0) * (i - i0);
   }
-  function quantileSorted(values, p) {
-    let valueof = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : number$6;
+  function quantileSorted(values, p, valueof = number$6) {
     if (!(n = values.length) || isNaN(p = +p)) return;
     if (p <= 0 || n < 2) return +valueof(values[0], 0, values);
     if (p >= 1) return +valueof(values[n - 1], n - 1, values);
@@ -1606,10 +1586,7 @@
     return sum;
   }
 
-  function intersection(values) {
-    for (var _len = arguments.length, others = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      others[_key - 1] = arguments[_key];
-    }
+  function intersection(values, ...others) {
     values = new InternSet(values);
     others = others.map(set$4);
     out: for (const value of values) {
@@ -1626,11 +1603,8 @@
     return values instanceof InternSet ? values : new InternSet(values);
   }
 
-  function union() {
+  function union(...others) {
     const set = new InternSet();
-    for (var _len = arguments.length, others = new Array(_len), _key = 0; _key < _len; _key++) {
-      others[_key] = arguments[_key];
-    }
     for (const other of others) {
       for (const o of other) {
         set.add(o);
@@ -2237,10 +2211,7 @@
     }
     function tickInterval(start, stop, count) {
       const target = Math.abs(stop - start) / count;
-      const i = bisector(_ref => {
-        let [,, step] = _ref;
-        return step;
-      }).right(tickIntervals, target);
+      const i = bisector(([,, step]) => step).right(tickIntervals, target);
       if (i === tickIntervals.length) return year.every(tickStep(start / durationYear$1, stop / durationYear$1, count));
       if (i === 0) return millisecond.every(Math.max(tickStep(start, stop, count), 1));
       const [t, step] = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
@@ -18359,12 +18330,9 @@
         return m;
       },
       m = {
-        open(tag) {
+        open(tag, ...attrs) {
           push(tag);
           outer = '<' + tag;
-          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            attrs[_key - 1] = arguments[_key];
-          }
           for (const set of attrs) {
             for (const key in set) attr(key, set[key]);
           }
@@ -22142,7 +22110,7 @@
       boundsStream$1.point = boundsPoint$1;
       boundsStream$1.lineStart = boundsLineStart;
       boundsStream$1.lineEnd = boundsLineEnd;
-      if (areaRingSum$1 < 0) lambda0 = -(lambda1 = 180), phi0 = -(phi1 = 90);else if (deltaSum > epsilon$3) phi1 = 90;else if (deltaSum < -1e-6) phi0 = -90;
+      if (areaRingSum$1 < 0) lambda0 = -(lambda1 = 180), phi0 = -(phi1 = 90);else if (deltaSum > epsilon$3) phi1 = 90;else if (deltaSum < -epsilon$3) phi0 = -90;
       range$2[0] = lambda0, range$2[1] = lambda1;
     },
     sphere: function () {
@@ -22676,7 +22644,7 @@
     // from the point to the South pole.  If it is zero, then the point is the
     // same side as the South pole.
 
-    return (angle < -1e-6 || angle < epsilon$3 && sum < -1e-12) ^ winding & 1;
+    return (angle < -epsilon$3 || angle < epsilon$3 && sum < -epsilon2) ^ winding & 1;
   }
 
   function clip$1 (pointVisible, clipLine, interpolate, start) {
@@ -23093,7 +23061,7 @@
   }
 
   var clipMax = 1e9,
-    clipMin = -1e9;
+    clipMin = -clipMax;
 
   // TODO Use d3-polygon’s polygonContains here for the ring check?
   // TODO Eliminate duplicate buffering in clipBuffer and polygon.push?
@@ -30610,9 +30578,7 @@
   const EPSILON = Math.pow(2, -52);
   const EDGE_STACK = new Uint32Array(512);
   class Delaunator {
-    static from(points) {
-      let getX = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : defaultGetX;
-      let getY = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : defaultGetY;
+    static from(points, getX = defaultGetX, getY = defaultGetY) {
       const n = points.length;
       const coords = new Float64Array(n * 2);
       for (let i = 0; i < n; i++) {
@@ -31098,8 +31064,7 @@
   }
 
   let Voronoi$1 = class Voronoi {
-    constructor(delaunay) {
-      let [xmin, ymin, xmax, ymax] = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0, 960, 500];
+    constructor(delaunay, [xmin, ymin, xmax, ymax] = [0, 0, 960, 500]) {
       if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
       this.delaunay = delaunay;
       this._circumcenters = new Float64Array(delaunay.points.length * 2);
@@ -31507,10 +31472,7 @@
     return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
   }
   class Delaunay {
-    static from(points) {
-      let fx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : pointX;
-      let fy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : pointY;
-      let that = arguments.length > 3 ? arguments[3] : undefined;
+    static from(points, fx = pointX, fy = pointY, that) {
       return new Delaunay("length" in points ? flatArray(points, fx, fy, that) : Float64Array.from(flatIterable(points, fx, fy, that)));
     }
     constructor(points) {
@@ -31613,8 +31575,7 @@
         }
       } while (e !== e0);
     }
-    find(x, y) {
-      let i = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    find(x, y, i = 0) {
       if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
       const i0 = i;
       let c;
@@ -35256,28 +35217,16 @@
   function sequence(seq) {
     return array(seq) || (isString(seq) ? seq : null);
   }
-  function join(seq) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  function join(seq, ...args) {
     return array(seq).join(...args);
   }
-  function indexof(seq) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  function indexof(seq, ...args) {
     return sequence(seq).indexOf(...args);
   }
-  function lastindexof(seq) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
-    }
+  function lastindexof(seq, ...args) {
     return sequence(seq).lastIndexOf(...args);
   }
-  function slice(seq) {
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
-    }
+  function slice(seq, ...args) {
     return sequence(seq).slice(...args);
   }
   function replace(str, pattern, repl) {
@@ -35406,8 +35355,7 @@
    * @param {*} minDist the minimum distance, in pixels, that thenew point needs to be apart from the last point
    * @returns a new array containing the lasso with the new point
    */
-  function lassoAppend(lasso, x, y) {
-    let minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
+  function lassoAppend(lasso, x, y, minDist = 5) {
     lasso = array$5(lasso);
     const last = lasso[lasso.length - 1];
 
@@ -35422,8 +35370,7 @@
    * @returns the svg path command that draws the lasso
    */
   function lassoPath(lasso) {
-    return array$5(lasso).reduce((svg, _ref, i) => {
-      let [x, y] = _ref;
+    return array$5(lasso).reduce((svg, [x, y], i) => {
       return svg += i == 0 ? `M ${x},${y} ` : i === lasso.length - 1 ? ' Z' : `L ${x},${y} `;
     }, '');
   }
