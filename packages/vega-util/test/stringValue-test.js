@@ -12,6 +12,9 @@ tape('stringValue maps values', t => {
   t.equal(vega.stringValue(true), true);
   t.equal(vega.stringValue(false), false);
 
+  // should handle null
+  t.equal(vega.stringValue(null), null);
+
   // should return number arguments as they are
   t.equal(vega.stringValue(2), 2);
   t.equal(vega.stringValue(-2), -2);
@@ -29,6 +32,10 @@ tape('stringValue maps values', t => {
   tests.forEach(s => {
     t.equal(s, eval(vega.stringValue(s)));
   });
+
+  // should handle arrays and nulls
+  const a = [123, 'hello', null];
+  t.equal(JSON.stringify(a), vega.stringValue(a));
 
   // should handle special characters in strings
   tests = ['\ntest', // newline
