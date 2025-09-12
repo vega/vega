@@ -109,7 +109,7 @@ export default function(opt) {
       for (const prop of n.properties) {
         const keyName = prop.key.name;
 
-        if (blockedPropertyNames.has(keyName)) {
+        if (forbiddenProperties.has(keyName)) {
           error('Illegal property: ' + keyName);
         }
       }
