@@ -3,7 +3,7 @@ import isObject from './isObject.js';
 import isString from './isString.js';
 
 export default function $(x) {
-  return isArray(x) ? '[' + x.map($) + ']'
+  return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]`
     : isObject(x) || isString(x) ?
       // Output valid JSON and JS source strings.
       // See http://timelessrepo.com/json-isnt-a-javascript-subset
