@@ -1,0 +1,201 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "background": "white",
+  "padding": 5,
+  "width": 300,
+  "height": 300,
+  "style": "cell",
+  "data": [
+    { "name": "animation_frame_store" },
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/gapminder.json",
+      "format": { "type": "json" },
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"fertility\"]) && isFinite(+datum[\"fertility\"]) && isValid(datum[\"life_expect\"]) && isFinite(+datum[\"life_expect\"])"
+        }
+      ]
+    },
+    {
+      "name": "source_0_curr",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "!length(data(\"animation_frame_store\")) || vlSelectionTest(\"animation_frame_store\", datum)"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {
+          "events": "pointermove",
+          "update": "isTuple(group()) ? group() : unit"
+        }
+      ]
+    },
+    {
+      "name": "animation_frame",
+      "update": "vlSelectionResolve(\"animation_frame_store\", \"union\", true, true)"
+    },
+    {
+      "name": "anim_clock",
+      "init": "0",
+      "on": [
+        {
+          "events": { "type": "timer", "throttle": 16.666666666666668 },
+          "update": "is_playing ? (anim_clock + (now() - last_tick_at) > max_range_extent ? 0 : anim_clock + (now() - last_tick_at)) : anim_clock"
+        }
+      ]
+    },
+    {
+      "name": "last_tick_at",
+      "init": "now()",
+      "on": [
+        {
+          "events": [{ "signal": "anim_clock" }, { "signal": "is_playing" }],
+          "update": "now()"
+        }
+      ]
+    },
+    { "name": "is_playing", "init": "true" },
+    { "name": "eased_anim_clock", "update": "anim_clock" },
+    { "name": "animation_frame_domain", "init": "domain('time')" },
+    { "name": "min_extent", "init": "extent(animation_frame_domain)[0]" },
+    { "name": "max_range_extent", "init": "extent(range('time'))[1]" },
+    { "name": "anim_value", "update": "invert('time', eased_anim_clock)" },
+    {
+      "name": "animation_frame_tuple",
+      "on": [
+        {
+          "events": [
+            { "signal": "eased_anim_clock" },
+            { "signal": "anim_value" }
+          ],
+          "update": "{unit: \"\", fields: animation_frame_tuple_fields, values: [anim_value ? anim_value : min_extent]}",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "animation_frame_tuple_fields",
+      "value": [{ "type": "E", "field": "year" }]
+    },
+    {
+      "name": "animation_frame_modify",
+      "on": [
+        {
+          "events": { "signal": "animation_frame_tuple" },
+          "update": "modify(\"animation_frame_store\", animation_frame_tuple, true)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "symbol",
+      "style": ["point"],
+      "interactive": true,
+      "from": { "data": "source_0_curr" },
+      "encode": {
+        "update": {
+          "opacity": { "value": 0.7 },
+          "fill": { "value": "transparent" },
+          "stroke": { "scale": "color", "field": "country" },
+          "ariaRoleDescription": { "value": "point" },
+          "description": {
+            "signal": "\"fertility: \" + (format(datum[\"fertility\"], \"\")) + \"; life_expect: \" + (format(datum[\"life_expect\"], \"\")) + \"; country: \" + (isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"]) + \"; year: \" + (isValid(datum[\"year\"]) ? datum[\"year\"] : \"\"+datum[\"year\"])"
+          },
+          "x": { "scale": "x", "field": "fertility" },
+          "y": { "scale": "y", "field": "life_expect" }
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": { "data": "source_0", "field": "fertility" },
+      "range": [0, { "signal": "width" }],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": { "data": "source_0", "field": "life_expect" },
+      "range": [{ "signal": "height" }, 0],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": { "data": "source_0", "field": "country", "sort": true },
+      "range": "category"
+    },
+    {
+      "name": "time",
+      "type": "band",
+      "domain": { "data": "source_0", "field": "year", "sort": true },
+      "range": { "step": 500 }
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": { "signal": "ceil(width/40)" },
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": { "signal": "ceil(height/40)" },
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "fertility",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": { "signal": "ceil(width/40)" },
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "life_expect",
+      "labelOverlap": true,
+      "tickCount": { "signal": "ceil(height/40)" },
+      "zindex": 0
+    }
+  ]
+}
