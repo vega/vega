@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "vega-dataflow": "^6.1.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-encode": "*",

@@ -34,7 +34,7 @@
   "dependencies": {
     "d3-hierarchy": "^3.1.2",
     "vega-dataflow": "^6.1.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

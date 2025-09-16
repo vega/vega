@@ -34,9 +34,9 @@
     "d3-geo": "^3.1.1",
     "vega-canvas": "^2.0.0",
     "vega-dataflow": "^6.1.0",
-    "vega-projection": "^2.0.0",
+    "vega-projection": "^2.1.0",
     "vega-statistics": "^2.0.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

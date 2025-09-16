@@ -31,10 +31,10 @@
     "d3-array": "^3.2.4",
     "d3-timer": "^3.0.1",
     "vega-dataflow": "^6.1.0",
-    "vega-format": "^2.0.0",
+    "vega-format": "^2.1.0",
     "vega-functions": "^6.1.0",
     "vega-runtime": "^7.1.0",
     "vega-scenegraph": "^5.1.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   }
 }

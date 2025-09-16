@@ -28,7 +28,7 @@
     "prepublishOnly": "npm test"
   },
   "dependencies": {
-    "vega-scale": "^8.0.0"
+    "vega-scale": "^8.1.0"
   },
   "devDependencies": {
     "vega-crossfilter": "*",

@@ -40,7 +40,7 @@
   "dependencies": {
     "d3-dsv": "^3.0.1",
     "topojson-client": "^3.1.0",
-    "vega-format": "^2.0.0",
-    "vega-util": "^2.0.0"
+    "vega-format": "^2.1.0",
+    "vega-util": "^2.1.0"
   }
 }
