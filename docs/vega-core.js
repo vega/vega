@@ -120,6 +120,11 @@
   const one$1 = accessor(() => 1, [], 'one');
   const truthy = accessor(() => true, [], 'true');
   const falsy = accessor(() => false, [], 'false');
+
+  /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
+
+  /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
+  const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
   function log$1$1(method, level, input) {
     const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
@@ -685,10 +690,10 @@
     return array && peek$1(array) - array[0] || 0;
   }
   function $(x) {
-    return isArray(x) ? '[' + x.map($) + ']' : isObject(x) || isString(x) ?
+    return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]` : isObject(x) || isString(x) ?
     // Output valid JSON and JS source strings.
-    // See http://timelessrepo.com/json-isnt-a-javascript-subset
-    JSON.stringify(x).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029') : x;
+    // See https://github.com/judofyr/timeless/blob/master/posts/json-isnt-a-javascript-subset.md
+    JSON.stringify(x).replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029') : x;
   }
   function toBoolean(_) {
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
@@ -22633,7 +22638,7 @@
         // If any keys would override Object prototype methods, throw error
         for (const prop of n.properties) {
           const keyName = prop.key.name;
-          if (blockedPropertyNames.has(keyName)) {
+          if (DisallowedObjectProperties.has(keyName)) {
             error('Illegal property: ' + keyName);
           }
         }
@@ -29522,6 +29527,7 @@
   exports.DAYOFYEAR = DAYOFYEAR;
   exports.Dataflow = Dataflow;
   exports.Debug = Debug;
+  exports.DisallowedObjectProperties = DisallowedObjectProperties;
   exports.Error = Error$1;
   exports.EventStream = EventStream;
   exports.Gradient = Gradient$1;
