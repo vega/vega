@@ -1,6 +1,6 @@
 import Constants from './constants.js';
 import Functions from './functions.js';
-import {error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
+import {DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
   const n = s && s.length - 1;
@@ -109,7 +109,7 @@ export default function(opt) {
       for (const prop of n.properties) {
         const keyName = prop.key.name;
 
-        if (forbiddenProperties.has(keyName)) {
+        if (DisallowedObjectProperties.has(keyName)) {
           error('Illegal property: ' + keyName);
         }
       }
