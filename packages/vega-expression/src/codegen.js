@@ -21,14 +21,7 @@ export default function(opt) {
         fieldvar = opt.fieldvar,
         outputGlobal = isFunction(globalvar)
           ? globalvar
-          : id => `${globalvar}["${id}"]`,
-        // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
-        forbiddenProperties = new Set(
-          [...Object.getOwnPropertyNames(Object.prototype)
-            .filter(name => typeof Object.prototype[name] === 'function'),
-          '__proto__'
-          ]
-        );
+          : id => `${globalvar}["${id}"]`;
 
   let globals = {},
       fields = {},

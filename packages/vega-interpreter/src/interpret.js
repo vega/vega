@@ -73,12 +73,14 @@ const Visitors = {
   ObjectExpression: ($, n) => n.properties.reduce((o, p) => {
     $.memberDepth += 1;
     const k = $(p.key);
+    const v = $(p.value);
     $.memberDepth -= 1;
-    if (DisallowedObjectProperties.has($(p.value))) {
-      // eslint-disable-next-line no-console
+    if (DisallowedObjectProperties.has(k)) {      // eslint-disable-next-line no-console
       console.error(`Prevented interpretation of property "${k}" which could lead to insecure code execution`);
+    } else if (DisallowedMethods.has(v)) { // eslint-disable-next-line no-console
+      console.error(`Prevented interpretation of method "${v}" which could lead to insecure code execution`);
     } else {
-      o[k] = $(p.value);
+      o[k] = v;
     }
     return o;
   }, {})
