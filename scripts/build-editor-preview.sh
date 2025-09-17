@@ -21,7 +21,7 @@ echo "Installing vega editor"
 git clone https://github.com/vega/editor.git
 
 cd editor
-npm ci
+npm ci --ignore-scripts
 
 # HACK: Make sure we prefer the local version to the one from npm
 # Test if we can remove this after verifying that only 1 copy of every subpackage is used per repo
