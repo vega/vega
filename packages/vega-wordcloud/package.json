@@ -25,7 +25,7 @@
     "vega-dataflow": "^5.7.7",
     "vega-scale": "^7.4.2",
     "vega-statistics": "^1.9.0",
-    "vega-util": "^1.17.3"
+    "vega-util": "^1.17.4"
   },
   "devDependencies": {
     "vega-transforms": "*"

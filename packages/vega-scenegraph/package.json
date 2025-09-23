@@ -24,6 +24,6 @@
     "vega-canvas": "^1.2.7",
     "vega-loader": "^4.5.3",
     "vega-scale": "^7.4.2",
-    "vega-util": "^1.17.3"
+    "vega-util": "^1.17.4"
   }
 }

@@ -28,6 +28,6 @@
     "vega-functions": "^5.18.0",
     "vega-runtime": "^6.2.1",
     "vega-scenegraph": "^4.13.1",
-    "vega-util": "^1.17.3"
+    "vega-util": "^1.17.4"
   }
 }

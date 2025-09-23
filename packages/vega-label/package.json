@@ -27,7 +27,7 @@
     "vega-canvas": "^1.2.7",
     "vega-dataflow": "^5.7.7",
     "vega-scenegraph": "^4.13.1",
-    "vega-util": "^1.17.3"
+    "vega-util": "^1.17.4"
   },
   "devDependencies": {
     "vega-transforms": "*"
