@@ -9,6 +9,7 @@ import {
   Orientation,
   Padding,
   RangeScheme,
+  StringValue,
   SymbolShape,
   TextBaseline
 } from '../index.js';
@@ -29,7 +30,7 @@ import { BaseLegend } from './legend.js';
 import { Locale } from './locale.js';
 import { BaseProjection } from './projection.js';
 import { InitSignal, NewSignal, SignalRef } from './signal.js';
-import { BaseTitle, TitleAnchor } from './title.js';
+import { BaseTitle, TitleAnchor, TitleFrame } from './title.js';
 
 export type KeepSignal<T> = T extends SignalRef ? SignalRef : never;
 
@@ -593,6 +594,11 @@ export interface BaseLegendLayout {
    * The bounds calculation to use for legend orient group layout.
    */
   bounds?: LayoutBounds;
+
+  /**
+   * The reference frame for the anchor position, one of `"group"` (the default, to anchor relative to the group width or height) or `"bounds"` (to anchor relative to the full bounding box).
+   */
+  frame?: TitleFrame | StringValue;
 
   /**
    * A flag to center legends within a shared orient group.
