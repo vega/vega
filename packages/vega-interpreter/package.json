@@ -1,6 +1,6 @@
 {
   "name": "vega-interpreter",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CSP-compliant interpreter for Vega expressions.",
   "keywords": [
     "vega",
@@ -23,9 +23,9 @@
     "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "vega-util": "^1.17.3"
+    "vega-util": "^1.17.4"
   },
   "devDependencies": {
-    "vega": "*"
+    "vega": "5.33.1"
   }
 }

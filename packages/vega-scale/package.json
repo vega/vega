@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "7.4.2",
+  "version": "7.4.3",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -26,7 +26,7 @@
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
-    "vega-time": "^2.1.3",
-    "vega-util": "^1.17.3"
+    "vega-time": "^2.1.4",
+    "vega-util": "^1.17.4"
   }
 }
