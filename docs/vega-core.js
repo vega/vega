@@ -16070,7 +16070,12 @@
       if (_.domainMid != null) {
         mid = _.domainMid;
         const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
-        if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+        df.warn('Scale domainMid exceeds domain min or max.', mid);
+        // If the domainMid exceeds the domain min or max, insert two midpoints to ensure the domainMid is within the domain
+        // insert two midpoints to ensure the domainMid is within the domain
+        domain.splice(i, 0, mid, mid);
+      } else {
+        // If the domainMid is within the domain, insert one midpoint is sufficient.
         domain.splice(i, 0, mid);
       }
     }
@@ -22579,8 +22584,6 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
-    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
-    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
