@@ -561,3 +561,40 @@ tape('Window fill operations handle partition state', t => {
 
   t.end();
 });
+
+
+tape('Window handles negative frame offsets correctly', t => {
+  const data = [
+    {value: 1}, {value: 2}, {value: 3}, {value: 4}, {value: 5}
+  ];
+
+  const df = new Dataflow();
+  const val = field('value');
+  const col = df.add(Collect);
+  const win = df.add(Window, {
+    sort: compare('value'),
+    frame: [null, -1],
+    ignorePeers: true,
+    fields: [val],
+    ops: ['sum'],
+    as: ['sum_prev'],
+    pulse: col
+  });
+  const out = df.add(Collect, {pulse: win});
+
+  df.pulse(col, changeset().insert(data)).run();
+  const d = out.value;
+
+  // For frame [null, -1], each row’s sum should be the cumulative sum up to (but not including) the current row.
+  // Example: input [1, 2, 3, 4, 5] → expected [0, 1, 3, 6, 10].
+  // Note: For the first row, the window is empty, so Vega emits `undefined` (not 0).
+  //       This is expected behavior for empty aggregate windows; we normalize it to 0 for comparison.
+  const expected = [0, 1, 3, 6, 10];
+  t.equal(d.length, data.length, 'output row count');
+  d.forEach((row, i) => {
+    const actual = row.sum_prev == null ? 0 : row.sum_prev;
+    t.equal(actual, expected[i], `row ${i} sum_prev`);
+  });
+
+  t.end();
+});
