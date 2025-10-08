@@ -14,6 +14,10 @@ export {
 } from './src/accessors';
 
 export {
+  DisallowedObjectProperties
+} from './src/interpreter.js';
+
+export {
   default as logger,
   None,
   Error,
