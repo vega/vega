@@ -59,7 +59,7 @@ export function sortKey(sort) {
 }
 
 export function aggrField(op, field) {
-  return (op && op.signal ? '$' + op.signal : op || '') 
+  return (op && op.signal ? '$' + op.signal : op || '')
     + (op && field ? '_' : '')
     + (field && field.signal 
         ? '$' + field.signal 
