@@ -59,9 +59,15 @@ export function sortKey(sort) {
 }
 
 export function aggrField(op, field) {
-  return (op && op.signal ? '$' + op.signal : op || '')
+  return (op && op.signal ? '$' + op.signal : op || '') 
     + (op && field ? '_' : '')
-    + (field && field.signal ? '$' + field.signal : field || '');
+    + (field && field.signal 
+        ? '$' + field.signal 
+        // replace dots with underscores in aggregated fields to prevent incorrect path extraction
+        // "op": "sum", "field": "[a.b]" => 'sum_a_b' 
+        // "op": "mean", "field": "a\\.b" => 'mean_a_b
+        // "op": "max", "field": "a.b" => 'max_a_b
+        : field?.replace(/[.[\]\\]/g, '_') || '');
 }
 
 // -----
