@@ -61,13 +61,12 @@ export function sortKey(sort) {
 export function aggrField(op, field) {
   return (op && op.signal ? '$' + op.signal : op || '')
     + (op && field ? '_' : '')
-    + (field && field.signal 
-        ? '$' + field.signal 
-        // replace dots with underscores in aggregated fields to prevent incorrect path extraction
-        // "op": "sum", "field": "[a.b]" => 'sum_a_b' 
-        // "op": "mean", "field": "a\\.b" => 'mean_a_b
-        // "op": "max", "field": "a.b" => 'max_a_b
-        : field?.replace(/[.[\]\\]/g, '_') || '');
+    + (field && field.signal
+        ? '$' + field.signal
+        // Replace non-alphanumeric character sequences with underscores and trim leading/trailing underscores
+        // to prevent incorrect path extraction for nested target fields or target fields with (escaped) dots. 
+        // example: 'a\\.b[c.d]' => 'a_b_c_d'
+        : field?.replace(/\W+/g, '_').replace(/^_+|_+$/g, '') || '');
 }
 
 // -----
