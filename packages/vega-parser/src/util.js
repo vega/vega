@@ -65,7 +65,9 @@ export function aggrField(op, field) {
         ? '$' + field.signal
         // Replace non-alphanumeric character sequences with underscores and trim leading/trailing underscores
         // to prevent incorrect path extraction for nested target fields or target fields with (escaped) dots. 
-        // example: 'a\\.b[c.d]' => 'a_b_c_d'
+        // Example: 'a\\.b[c.d]' => 'a_b_c_d'. 
+        // Note: aggregating both a nested field and a field with a dot could lead to conflicting names: 
+        // with data like [{ a: {b: 1}, 'a.b': 1 }], summing 'a.b' and 'a\\.b' would both result in a field 'sum_a_b'   
         : field?.replace(/\W+/g, '_').replace(/^_+|_+$/g, '') || '');
 }
 
