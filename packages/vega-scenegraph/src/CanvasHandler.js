@@ -35,14 +35,28 @@ export default class CanvasHandler extends Handler {
   }
 
   initialize(el, origin, obj) {
-    this._canvas = el && domFind(el, 'canvas');
+    // Support three modes for canvas initialization:
+    // 1. OffscreenCanvas passed directly via obj.canvas
+    // 2. DOM element search for HTMLCanvasElement
+    // 3. No canvas (headless or external context only)
+    const isOffscreen = obj && obj.canvas
+      && typeof OffscreenCanvas !== 'undefined'
+      && obj.canvas instanceof OffscreenCanvas;
 
-    // add minimal events required for proper state management
-    [
-      ClickEvent, MouseDownEvent,
-      PointerDownEvent, PointerMoveEvent, PointerOutEvent,
-      DragLeaveEvent
-    ].forEach(type => eventListenerCheck(this, type));
+    this._canvas = isOffscreen
+      ? obj.canvas
+      : (el && domFind(el, 'canvas'));
+
+    // Only add event listeners for DOM-based canvases
+    // OffscreenCanvas in Web Workers doesn't support DOM events
+    if (this._canvas && !isOffscreen) {
+      // add minimal events required for proper state management
+      [
+        ClickEvent, MouseDownEvent,
+        PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+        DragLeaveEvent
+      ].forEach(type => eventListenerCheck(this, type));
+    }
 
     return super.initialize(el, origin, obj);
   }
