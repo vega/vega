@@ -69,6 +69,9 @@ export default function View(spec, options) {
   view._eventListeners = [];
   view._resizeListeners = [];
 
+  // store external canvas if provided (e.g., OffscreenCanvas)
+  view.canvas = options.canvas || null;
+
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
   view.globalCursor(view._eventConfig.globalCursor);
