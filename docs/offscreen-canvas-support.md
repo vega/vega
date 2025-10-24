@@ -80,12 +80,12 @@ worker.postMessage({
 - `toImageURL()` method supports OffscreenCanvas via `convertToBlob()`
 - Returns blob URL instead of data URL for OffscreenCanvas
 
-### vega-label (v1.3.0+)
+### vega-label (v2.1.0+)
 
 **Label Transform:**
-- New `canvasFactory` parameter for custom canvas creation
-- Enables label layout in Web Workers with OffscreenCanvas
-- Internal bitmap canvases use provided factory
+- Works automatically with OffscreenCanvas in Web Workers
+- Internal bitmap canvases use `vega-canvas` fallback (domCanvas → OffscreenCanvas → nodeCanvas)
+- No configuration needed - collision detection works out of the box
 
 ## API Documentation
 
@@ -126,28 +126,31 @@ renderer.initialize(null, 800, 600, [0, 0], 1.0, {
 
 ### Label Transform with OffscreenCanvas
 
+The label transform works automatically with OffscreenCanvas - no special configuration needed:
+
 ```json
 {
-  "type": "label",
-  "size": [800, 600],
-  "canvasFactory": {"expr": "offscreenCanvas"},
-  "anchor": ["top", "bottom"],
-  "offset": [1]
+  "type": "text",
+  "from": {"data": "points"},
+  "encode": {
+    "enter": {
+      "text": {"field": "datum.label"},
+      "fontSize": {"value": 9}
+    }
+  },
+  "transform": [
+    {
+      "type": "label",
+      "size": [800, 600],
+      "anchor": ["top", "bottom", "left", "right"],
+      "offset": [1],
+      "avoidMarks": ["trend"]
+    }
+  ]
 }
 ```
 
-Then register the factory in View:
-
-```javascript
-import { offscreenCanvas } from 'vega-canvas';
-
-const view = new vega.View(runtime, {
-  canvas: myOffscreenCanvas,
-  expr: vega.expressionInterpreter({
-    offscreenCanvas: offscreenCanvas
-  })
-});
-```
+**Important**: Text marks should read `from: {"data": "symbolMarkName"}` to inherit positions from symbol marks, then the label transform adjusts for collision avoidance.
 
 ## Migration Guide
 
@@ -225,9 +228,7 @@ if (typeof OffscreenCanvas !== 'undefined') {
 
 ## Examples
 
-- [Basic OffscreenCanvas Example](./examples/offscreen-canvas-worker.md)
-- [Multiple Workers Example](./examples/offscreen-canvas-pool.md)
-- [Interactive Charts with Workers](./examples/offscreen-canvas-interactive.md)
+- [Labeled Line Chart with Worker](./examples/offscreen-canvas/README.md) - Complete working example with label transform and collision detection
 
 ## Testing
 
