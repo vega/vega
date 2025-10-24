@@ -7,7 +7,7 @@ export {nodeCanvas} from './src/nodeCanvas.js';
 export {offscreenCanvas} from './src/offscreenCanvas.js';
 
 export function canvas(w, h, type) {
-  return domCanvas(w, h) || nodeCanvas(w, h, type) || null;
+  return domCanvas(w, h) || offscreenCanvas(w, h) || nodeCanvas(w, h, type) || null;
 }
 
 export function image() {
