@@ -154,15 +154,39 @@ async function runTest() {
     document.getElementById("status").textContent =
       "Worker created, sending canvas and spec...";
 
-    // Send canvas and spec to worker
+    // Send canvas, spec, and pixel ratio to worker
     worker.postMessage(
       {
         canvas: offscreen,
         spec: spec,
         vegaPath: vegaPath,
+        pixelRatio: window.devicePixelRatio || 1,
       },
       [offscreen],
     );
+
+    // Watch for pixel ratio changes (e.g., when moving between displays)
+    // Based on: https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
+    let cleanupPixelRatioListener = null;
+    const updatePixelRatio = () => {
+      if (cleanupPixelRatioListener != null) {
+        cleanupPixelRatioListener();
+      }
+      const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+      const handleChange = () => {
+        console.log(`Pixel ratio changed to ${window.devicePixelRatio}`);
+        worker.postMessage({
+          type: 'pixelRatio',
+          pixelRatio: window.devicePixelRatio || 1,
+        });
+        updatePixelRatio();
+      };
+      media.addEventListener('change', handleChange);
+      cleanupPixelRatioListener = () => {
+        media.removeEventListener('change', handleChange);
+      };
+    };
+    updatePixelRatio();
 
     // Listen for messages from worker
     worker.addEventListener("message", (event) => {

@@ -9,7 +9,12 @@ export default function(view, r, el, constructor, scaleFactor, opt) {
     ? extend({canvas: view.canvas}, opt)
     : opt;
 
+  // Use custom scale factor if provided (for OffscreenCanvas pixel ratio)
+  const scale = view._customScaleFactor !== null
+    ? view._customScaleFactor
+    : scaleFactor;
+
   return r
-    .initialize(el, width(view), height(view), offset(view), scaleFactor, options)
+    .initialize(el, width(view), height(view), offset(view), scale, options)
     .background(view.background());
 }

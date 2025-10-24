@@ -1,8 +1,20 @@
 // Web Worker that renders Vega visualizations using OffscreenCanvas
 
+// Store view reference for pixel ratio updates
+let view = null;
+
 self.addEventListener("message", async (event) => {
   try {
-    const { canvas, spec, vegaPath } = event.data;
+    // Handle pixel ratio updates
+    if (event.data.type === 'pixelRatio' && view) {
+      console.log(`Worker received pixel ratio update: ${event.data.pixelRatio}`);
+      // Update scale factor and trigger resize
+      view.scaleFactor(event.data.pixelRatio);
+      await view.resize().runAsync();
+      return;
+    }
+
+    const { canvas, spec, vegaPath, pixelRatio } = event.data;
 
     // Report progress
     self.postMessage({
@@ -13,7 +25,6 @@ self.addEventListener("message", async (event) => {
     // Import Vega in the worker
     // Imports with side-effects
     await import(vegaPath);
-    // await import("https://cdn.jsdelivr.net/npm/vega-interpreter@1");
     const vega = self.vega;
 
     self.postMessage({
@@ -30,12 +41,11 @@ self.addEventListener("message", async (event) => {
     });
 
     // Create a View with the OffscreenCanvas
-    // Note: View automatically:
-    // 1. Calls initialize() when canvas option is provided
-    // 2. Injects offscreenCanvas factory for label transforms when using OffscreenCanvas
-    const view = new vega.View(runtime, {
-      canvas: canvas, // Pass OffscreenCanvas directly
-      renderer: "canvas"
+    // Pass pixelRatio from main thread to ensure correct resolution
+    view = new vega.View(runtime, {
+      canvas: canvas,
+      renderer: "canvas",
+      scaleFactor: pixelRatio  // Set pixel ratio for high-DPI displays
     });
 
     self.postMessage({
