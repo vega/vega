@@ -1,6 +1,6 @@
 import Bitmap from './Bitmap.js';
 
-export default function(width, height, padding, canvasFactory) {
+export default function(width, height, padding) {
   const ratio = Math.max(1, Math.sqrt((width * height) / 1e6)),
         w = ~~((width + 2 * padding + ratio) / ratio),
         h = ~~((height + 2 * padding + ratio) / ratio),
@@ -12,7 +12,6 @@ export default function(width, height, padding, canvasFactory) {
   scale.padding = padding;
   scale.width = width;
   scale.height = height;
-  scale.canvasFactory = canvasFactory; // optional canvas factory for OffscreenCanvas support
 
   return scale;
 }

@@ -34,7 +34,7 @@ const placeAreaLabel = {
 };
 
 export default function(texts, size, compare, offset, anchor,
-  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method, canvasFactory)
+  avoidMarks, avoidBaseMark, lineAnchor, markIndex, padding, method)
 {
   // early exit for empty data
   if (!texts.length) return texts;
@@ -73,7 +73,7 @@ export default function(texts, size, compare, offset, anchor,
   padding = (padding === null || padding === Infinity)
     ? Math.max(maxTextWidth, maxTextHeight) + Math.max(...offset)
     : padding;
-  const $ = scaler(size[0], size[1], padding, canvasFactory);
+  const $ = scaler(size[0], size[1], padding);
 
   let bitmaps;
   if (!isNaiveGroupArea) {

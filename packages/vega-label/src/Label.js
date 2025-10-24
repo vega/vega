@@ -66,8 +66,7 @@ Label.Definition = {
     { name: 'avoidBaseMark', type: 'boolean', default: true },
     { name: 'avoidMarks', type: 'data', array: true },
     { name: 'method', type: 'string', default: 'naive'},
-    { name: 'as', type: 'string', array: true, length: Output.length, default: Output },
-    { name: 'canvasFactory', type: 'expr' }
+    { name: 'as', type: 'string', array: true, length: Output.length, default: Output }
   ]
 };
 
@@ -98,8 +97,8 @@ inherits(Label, Transform, {
       _.lineAnchor || 'end',
       _.markIndex || 0,
       _.padding === undefined ? 0 : _.padding,
-      _.method || 'naive',
-      _.canvasFactory
+      _.method || 'naive'
+      // canvasFactory removed - markBitmaps will use default canvas() which now supports OffscreenCanvas
     ).forEach(l => {
       // write layout results to data stream
       const t = l.datum;

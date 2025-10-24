@@ -13,15 +13,13 @@ export function baseBitmaps($, data) {
 }
 
 export function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
-  // create canvas using provided factory or default canvas function
-  // allows use of OffscreenCanvas in Web Worker contexts
-  const canvasFactory = $.canvasFactory || canvas;
+  // canvas() automatically uses OffscreenCanvas in Web Workers when available
   const width = $.width,
         height = $.height,
         border = labelInside || isGroupArea,
-        context = canvasFactory(width, height).getContext('2d'),
-        baseMarkContext = canvasFactory(width, height).getContext('2d'),
-        strokeContext = border && canvasFactory(width, height).getContext('2d');
+        context = canvas(width, height).getContext('2d'),
+        baseMarkContext = canvas(width, height).getContext('2d'),
+        strokeContext = border && canvas(width, height).getContext('2d');
 
   // render all marks to be avoided into canvas
   avoidMarks.forEach(items => draw(context, items, false));
