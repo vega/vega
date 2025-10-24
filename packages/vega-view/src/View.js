@@ -116,7 +116,12 @@ export default function View(spec, options) {
   if (options.hover) view.hover();
 
   // initialize DOM container(s) and renderer
-  if (options.container) view.initialize(options.container, options.bind);
+  if (options.container) {
+    view.initialize(options.container, options.bind);
+  } else if (options.canvas) {
+    // auto-initialize renderer when canvas is provided (e.g., OffscreenCanvas)
+    view.initialize(null);
+  }
 
   if (options.watchPixelRatio) view._watchPixelRatio();
 }
