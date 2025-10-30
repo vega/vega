@@ -73,7 +73,7 @@ export default function View(spec, options) {
   view.canvas = options.canvas || null;
 
   // store scale factor (pixel ratio) for OffscreenCanvas rendering
-  view._customScaleFactor = options.scaleFactor || null;
+  view._customScaleFactor = options.scaleFactor ?? null;
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);

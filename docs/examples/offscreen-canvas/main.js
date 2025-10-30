@@ -148,6 +148,15 @@ async function runTest() {
     };
 
     const canvas = document.getElementById("myCanvas");
+    const pixelRatio = window.devicePixelRatio || 1;
+
+    // Set canvas backing store size based on pixel ratio
+    // CSS size is 700x400 (set in HTML), but backing store should be scaled
+    canvas.width = 700 * pixelRatio;
+    canvas.height = 400 * pixelRatio;
+
+    console.log(`Setting up canvas: CSS=700x400, Backing=${canvas.width}x${canvas.height}, Ratio=${pixelRatio}`);
+
     const offscreen = canvas.transferControlToOffscreen();
     const worker = new Worker("worker.js", { type: "module" });
 
@@ -160,7 +169,7 @@ async function runTest() {
         canvas: offscreen,
         spec: spec,
         vegaPath: vegaPath,
-        pixelRatio: window.devicePixelRatio || 1,
+        pixelRatio: pixelRatio,
       },
       [offscreen],
     );

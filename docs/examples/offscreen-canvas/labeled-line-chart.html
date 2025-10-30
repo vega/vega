@@ -13,6 +13,8 @@
       border: 2px solid #333;
       display: block;
       margin: 20px 0;
+      width: 700px;
+      height: 400px;
     }
     #status {
       padding: 10px;
@@ -48,7 +50,8 @@
     <br>The canvas below should display a temporal chart with intelligent label placement if everything works correctly.
   </div>
 
-  <canvas id="myCanvas" width="700" height="400"></canvas>
+  <!-- Canvas backing store size will be set by JavaScript based on devicePixelRatio -->
+  <canvas id="myCanvas"></canvas>
 
   <div id="status" class="loading">Initializing worker...</div>
 

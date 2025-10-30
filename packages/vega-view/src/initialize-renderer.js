@@ -10,9 +10,8 @@ export default function(view, r, el, constructor, scaleFactor, opt) {
     : opt;
 
   // Use custom scale factor if provided (for OffscreenCanvas pixel ratio)
-  const scale = view._customScaleFactor !== null
-    ? view._customScaleFactor
-    : scaleFactor;
+  // Prefer view's custom scale factor, then parameter, then undefined (will default to 1 in renderer)
+  const scale = view._customScaleFactor ?? scaleFactor;
 
   return r
     .initialize(el, width(view), height(view), offset(view), scale, options)
