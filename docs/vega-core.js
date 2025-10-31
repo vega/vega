@@ -24484,7 +24484,8 @@
       w = width(view),
       h = height(view);
     view._renderer.background(view.background());
-    view._renderer.resize(w, h, origin);
+    // Preserve the scale factor (pixel ratio) when resizing
+    view._renderer.resize(w, h, origin, view._customScaleFactor ?? view._renderer._scale);
     view._handler.origin(origin);
     view._resizeListeners.forEach(handler => {
       try {
@@ -24988,7 +24989,11 @@
     const options = view.canvas ? extend({
       canvas: view.canvas
     }, opt) : opt;
-    return r.initialize(el, width(view), height(view), offset(view), scaleFactor, options).background(view.background());
+
+    // Use custom scale factor if provided (for OffscreenCanvas pixel ratio)
+    // Prefer view's custom scale factor, then parameter, then undefined (will default to 1 in renderer)
+    const scale = view._customScaleFactor ?? scaleFactor;
+    return r.initialize(el, width(view), height(view), offset(view), scale, options).background(view.background());
   }
   function trap(view, fn) {
     return !fn ? null : function () {
@@ -25399,6 +25404,9 @@
     // store external canvas if provided (e.g., OffscreenCanvas)
     view.canvas = options.canvas || null;
 
+    // store scale factor (pixel ratio) for OffscreenCanvas rendering
+    view._customScaleFactor = options.scaleFactor ?? null;
+
     // initialize event configuration
     view._eventConfig = initializeEventConfig(spec.eventConfig);
     view.globalCursor(view._eventConfig.globalCursor);
@@ -25568,6 +25576,15 @@
       this._autosize = 1;
       // touch autosize signal to ensure top-level ViewLayout runs
       return this.touch(lookupSignal(this, 'autosize'));
+    },
+    scaleFactor(_) {
+      if (!arguments.length) return this._customScaleFactor || this._renderer?._scale || 1;
+      this._customScaleFactor = _;
+      if (this._renderer) {
+        this._renderer._scale = _;
+        this._resize = 1;
+      }
+      return this;
     },
     _resetRenderer() {
       if (this._renderer) {
