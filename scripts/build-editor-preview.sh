@@ -21,7 +21,7 @@ echo "Installing vega editor"
 git clone https://github.com/vega/editor.git
 
 cd editor
-npm ci
+npm ci --ignore-scripts
 
 # HACK: Make sure we prefer the local version to the one from npm
 # Test if we can remove this after verifying that only 1 copy of every subpackage is used per repo
@@ -48,6 +48,6 @@ cat <<EOF > public/spec/vega/index.json
 EOF
 
 # Build the editor site in the dist folder
-# Disable minification to make it easier to debug, and because sourcemaps
-# exceed 25 MB limit on cloudflare
-npm run build:only -- --public-url / --no-optimize --no-source-maps
+# Build options for disabling sourcemaps/adjusting minification if we go over the 25MB limit on cloudflare
+# https://vite.dev/guide/cli.html#options-1
+npm run build:only -- --base /

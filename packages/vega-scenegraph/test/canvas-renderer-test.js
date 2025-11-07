@@ -1,7 +1,7 @@
 import tape from 'tape';
 import fs from 'fs';
 import {PNG} from 'pngjs';
-import pixelmatch from 'pixelmatch';
+import blazediff from '@blazediff/core';
 import {loader} from 'vega-loader';
 import {Bounds, CanvasRenderer as Renderer, sceneFromJSON, sceneToJSON} from '../index.js';
 import GENERATE from './resources/generate-tests.js';
@@ -32,7 +32,7 @@ function comparePNGs(png1, png2) {
 
   const {width, height} = img1;
 
-  return pixelmatch(img1.data, img2.data, null, width, height, {threshold: 0});
+  return blazediff(img1.data, img2.data, null, width, height, {threshold: 0});
 }
 
 function render(scene, w, h) {
