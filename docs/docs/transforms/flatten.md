@@ -54,7 +54,7 @@ Result:
 {"type": "flatten", "fields": ["foo"], "index": "idx"}
 ```
 
-This example adds an field containing the array index that each item originated from.
+This example adds a field containing the array index that each item originated from.
 
 ```json
 [
