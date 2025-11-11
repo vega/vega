@@ -2,10 +2,15 @@ function devicePixelRatio() {
   return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 }
 
+function isOffscreenCanvas(canvas) {
+  return typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas;
+}
+
 export default function(canvas, width, height, origin, scaleFactor, opt) {
   const inDOM = typeof HTMLElement !== 'undefined'
               && canvas instanceof HTMLElement
               && canvas.parentNode != null,
+        isOffscreen = isOffscreenCanvas(canvas),
         context = canvas.getContext('2d'),
         ratio = inDOM ? devicePixelRatio() : scaleFactor;
 
@@ -16,7 +21,8 @@ export default function(canvas, width, height, origin, scaleFactor, opt) {
     context[key] = opt[key];
   }
 
-  if (inDOM && ratio !== 1) {
+  // OffscreenCanvas doesn't have a style property
+  if (inDOM && !isOffscreen && ratio !== 1) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
   }
