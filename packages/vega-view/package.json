@@ -1,6 +1,6 @@
 {
   "name": "vega-view",
-  "version": "5.16.2",
+  "version": "5.16.1",
   "description": "View component and transforms for Vega visualizations.",
   "keywords": [
     "vega",
@@ -25,7 +25,7 @@
     "d3-timer": "^3.0.1",
     "vega-dataflow": "^5.7.8",
     "vega-format": "^1.1.4",
-    "vega-functions": "^5.18.2",
+    "vega-functions": "^5.18.1",
     "vega-runtime": "^6.2.2",
     "vega-scenegraph": "^4.13.2",
     "vega-util": "^1.17.4"
