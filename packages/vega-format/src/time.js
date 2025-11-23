@@ -2,8 +2,8 @@ import memoize from './memoize.js';
 import {
   DATE, DAY, HOURS, MILLISECONDS, MINUTES, MONTH, QUARTER,
   SECONDS, WEEK, YEAR, timeInterval, utcInterval
-} from 'vega-time';
-import {error, isObject, isString} from 'vega-util';
+} from '@omni-co/vega-time';
+import {error, isObject, isString} from '@omni-co/vega-util';
 
 import {
   timeFormat as d3_timeFormat,

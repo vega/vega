@@ -1,5 +1,5 @@
 import {context} from './canvas/context.js';
-import {isArray, lruCache} from 'vega-util';
+import {isArray, lruCache} from '@omni-co/vega-util';
 
 // memoize text width measurement
 const widthCache = lruCache();

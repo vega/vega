@@ -8,7 +8,7 @@ import fill from '../util/canvas/fill.js';
 import {pick} from '../util/canvas/pick.js';
 import stroke from '../util/canvas/stroke.js';
 import {rotate, translate} from '../util/svg/transform.js';
-import {isArray} from 'vega-util';
+import {isArray} from '@omni-co/vega-util';
 
 const textAlign = {
   'left':   'start',

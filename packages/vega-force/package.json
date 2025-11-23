@@ -1,5 +1,5 @@
 {
-  "name": "vega-force",
+  "name": "@omni-co/vega-force",
   "version": "5.1.0",
   "description": "Force simulation transform for Vega dataflows.",
   "keywords": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -28,10 +28,10 @@
   },
   "dependencies": {
     "d3-force": "^3.0.0",
-    "vega-dataflow": "^6.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-transforms": "*"
+    "@omni-co/vega-transforms": "*"
   }
 }

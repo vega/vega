@@ -9,7 +9,7 @@ import {visit} from './util/visit.js';
 import clip from './util/svg/clip.js';
 import metadata from './util/svg/metadata.js';
 import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles.js';
-import {extend, isArray} from 'vega-util';
+import {extend, isArray} from '@omni-co/vega-util';
 
 export default class SVGStringRenderer extends Renderer {
   constructor(loader) {

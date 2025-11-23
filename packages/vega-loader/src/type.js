@@ -1,4 +1,4 @@
-import {identity, toBoolean, toDate, toNumber, toString} from 'vega-util';
+import {identity, toBoolean, toDate, toNumber, toString} from '@omni-co/vega-util';
 
 const isValid = _ => _ != null && _ === _;
 

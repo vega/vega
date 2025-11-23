@@ -1,5 +1,5 @@
-import {read, responseType} from 'vega-loader';
-import {truthy} from 'vega-util';
+import {read, responseType} from '@omni-co/vega-loader';
+import {truthy} from '@omni-co/vega-util';
 
 export function parse(data, format) {
   const locale = this.locale();

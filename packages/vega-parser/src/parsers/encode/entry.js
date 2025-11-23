@@ -1,4 +1,4 @@
-import {error, isObject, isString, peek, splitAccessPath, stringValue} from 'vega-util';
+import {error, isObject, isString, peek, splitAccessPath, stringValue} from '@omni-co/vega-util';
 
 const scaleRef = scale => isString(scale) ? stringValue(scale)
   : scale.signal ? `(${scale.signal})`

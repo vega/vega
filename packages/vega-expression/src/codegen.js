@@ -1,6 +1,6 @@
 import Constants from './constants.js';
 import Functions from './functions.js';
-import {DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
+import {DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from '@omni-co/vega-util';
 
 function stripQuotes(s) {
   const n = s && s.length - 1;

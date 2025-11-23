@@ -1,7 +1,7 @@
 import {isLogarithmic} from './scales.js';
 import {Time, UTC} from './scales/types.js';
-import {timeInterval, utcInterval} from 'vega-time';
-import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
+import {timeInterval, utcInterval} from '@omni-co/vega-time';
+import {error, isArray, isNumber, isObject, isString, peek, span} from '@omni-co/vega-util';
 
 const defaultFormatter = value => isArray(value)
   ? value.map(v => String(v))

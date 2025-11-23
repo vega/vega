@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field, isFunction} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field, isFunction} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {bin as Bin, collect as Collect} from '../index.js';
 const TOLERANCE = 2e-14;
 

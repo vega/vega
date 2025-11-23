@@ -1,7 +1,7 @@
 import partition from './partition.js';
-import {regressionLoess} from 'vega-statistics';
-import {Transform, ingest} from 'vega-dataflow';
-import {accessorName, inherits} from 'vega-util';
+import {regressionLoess} from '@omni-co/vega-statistics';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {accessorName, inherits} from '@omni-co/vega-util';
 
 /**
  * Compute locally-weighted regression fits for one or more data groups.

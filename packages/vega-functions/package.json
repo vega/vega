@@ -1,5 +1,5 @@
 {
-  "name": "vega-functions",
+  "name": "@omni-co/vega-functions",
   "version": "6.1.0",
   "description": "Custom functions for the Vega expression language.",
   "keywords": [
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -31,16 +31,16 @@
     "d3-array": "^3.2.4",
     "d3-color": "^3.1.0",
     "d3-geo": "^3.1.1",
-    "vega-dataflow": "^6.1.0",
-    "vega-expression": "^6.1.0",
-    "vega-scale": "^8.1.0",
-    "vega-scenegraph": "^5.1.0",
-    "vega-selections": "^6.1.0",
-    "vega-statistics": "^2.0.0",
-    "vega-time": "^3.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-expression": "^6.1.0",
+    "@omni-co/vega-scale": "^8.1.0",
+    "@omni-co/vega-scenegraph": "^5.1.0",
+    "@omni-co/vega-selections": "^6.1.0",
+    "@omni-co/vega-statistics": "^2.0.0",
+    "@omni-co/vega-time": "^3.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-format": "^2.1.0"
+    "@omni-co/vega-format": "^2.1.0"
   }
 }

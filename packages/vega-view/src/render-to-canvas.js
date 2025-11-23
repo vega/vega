@@ -1,5 +1,5 @@
 import renderHeadless from './render-headless.js';
-import {RenderType} from 'vega-scenegraph';
+import {RenderType} from '@omni-co/vega-scenegraph';
 
 /**
  * Produce a Canvas instance containing a rendered visualization.

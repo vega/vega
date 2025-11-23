@@ -1,5 +1,5 @@
 import pathParse from '../path/parse.js';
-import {isNumber, isObject} from 'vega-util';
+import {isNumber, isObject} from '@omni-co/vega-util';
 
 const TOLERANCE = 1e-9;
 

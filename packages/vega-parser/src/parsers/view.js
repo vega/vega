@@ -9,7 +9,7 @@ import {FrameRole} from './marks/roles.js';
 import {operator, ref, value} from '../util.js';
 import DataScope from '../DataScope.js';
 import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms.js';
-import {array, extend, hasOwnProperty} from 'vega-util';
+import {array, extend, hasOwnProperty} from '@omni-co/vega-util';
 
 const rootEncode = spec => extendEncode(
   {

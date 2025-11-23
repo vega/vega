@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, pivot as Pivot} from '../index.js';
 
 tape('Pivot pivots values', t => {

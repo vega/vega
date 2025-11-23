@@ -1,6 +1,6 @@
 import {Center, End, Left, Right, Start, Vertical} from './constants.js';
 import {value} from '../../util.js';
-import {isObject, stringValue} from 'vega-util';
+import {isObject, stringValue} from '@omni-co/vega-util';
 
 export function lookup(spec, config) {
   const _ = (name, dflt) => value(spec[name], value(config[name], dflt));

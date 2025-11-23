@@ -1,7 +1,7 @@
 import {AxisRole, Group, LegendRole, TitleRole} from './constants.js';
-import {Transform} from 'vega-dataflow';
-import {Marks, boundClip} from 'vega-scenegraph';
-import {inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {Marks, boundClip} from '@omni-co/vega-scenegraph';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Calculate bounding boxes for scenegraph items.

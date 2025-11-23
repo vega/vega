@@ -1,5 +1,5 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {inherits, truthy} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {inherits, truthy} from '@omni-co/vega-util';
 
 /**
  * Perform a cross-product of a tuple stream with itself.

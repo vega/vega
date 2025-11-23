@@ -1,5 +1,5 @@
 import HierarchyLayout from './HierarchyLayout.js';
-import {inherits} from 'vega-util';
+import {inherits} from '@omni-co/vega-util';
 import {partition} from 'd3-hierarchy';
 
 const Output = ['x0', 'y0', 'x1', 'y1', 'depth', 'children'];

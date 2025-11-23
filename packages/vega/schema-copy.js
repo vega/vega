@@ -3,7 +3,7 @@ import { dirname } from 'path';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const dir = dirname(require.resolve('vega-schema'));
+const dir = dirname(require.resolve('@omni-co/vega-schema'));
 const name = '/vega-schema.json';
 const file = dir + name;
 

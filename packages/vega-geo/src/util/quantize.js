@@ -1,5 +1,5 @@
 import {range, tickStep} from 'd3-array';
-import {extent} from 'vega-util';
+import {extent} from '@omni-co/vega-util';
 
 export default function(k, nice, zero) {
   return function(values) {

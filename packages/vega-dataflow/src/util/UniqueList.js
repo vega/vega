@@ -1,4 +1,4 @@
-import {identity} from 'vega-util';
+import {identity} from '@omni-co/vega-util';
 
 export default function UniqueList(idFunc) {
   const $ = idFunc || identity,

@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {Dataflow} from 'vega-dataflow';
+import {Dataflow} from '@omni-co/vega-dataflow';
 import {load as Load} from '../index.js';
 
 tape('Load requests external data', t => {

@@ -1,5 +1,5 @@
-import {Transform, derive} from 'vega-dataflow';
-import {accessorName, inherits} from 'vega-util';
+import {Transform, derive} from '@omni-co/vega-dataflow';
+import {accessorName, inherits} from '@omni-co/vega-util';
 
 /**
  * Folds one more tuple fields into multiple tuples in which the field

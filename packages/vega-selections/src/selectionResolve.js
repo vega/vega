@@ -1,5 +1,5 @@
 import {intersection, union} from 'd3-array';
-import {array, toNumber} from 'vega-util';
+import {array, toNumber} from '@omni-co/vega-util';
 import {$selectionId, And, Or, SelectionId, Union, VlMulti, VlPoint} from './util.js';
 
 /**

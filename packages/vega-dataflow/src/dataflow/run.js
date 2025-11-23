@@ -2,7 +2,7 @@ import {default as Pulse, StopPropagation} from '../Pulse.js';
 import MultiPulse from '../MultiPulse.js';
 import asyncCallback from '../util/asyncCallback.js';
 import UniqueList from '../util/UniqueList.js';
-import {id, isArray} from 'vega-util';
+import {id, isArray} from '@omni-co/vega-util';
 
 /**
  * Evaluates the dataflow and returns a Promise that resolves when pulse

@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {accessorFields, accessorName} from 'vega-util';
-import {Dataflow} from 'vega-dataflow';
+import {accessorFields, accessorName} from '@omni-co/vega-util';
+import {Dataflow} from '@omni-co/vega-dataflow';
 import {field as Field} from '../index.js';
 
 tape('Field generates field accessors', t => {

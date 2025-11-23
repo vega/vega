@@ -1,5 +1,5 @@
 {
-  "name": "vega-crossfilter",
+  "name": "@omni-co/vega-crossfilter",
   "version": "5.1.0",
   "description": "Indexed cross-filtering for Vega dataflows.",
   "keywords": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -28,10 +28,10 @@
   },
   "dependencies": {
     "d3-array": "^3.2.4",
-    "vega-dataflow": "^6.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-transforms": "*"
+    "@omni-co/vega-transforms": "*"
   }
 }

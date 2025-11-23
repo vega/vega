@@ -24,7 +24,7 @@ import {
 
 import {
   registerScale
-} from 'vega-scale';
+} from '@omni-co/vega-scale';
 
 const defaultPath = geoPath();
 

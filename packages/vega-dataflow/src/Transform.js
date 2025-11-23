@@ -1,5 +1,5 @@
 import Operator from './Operator.js';
-import {inherits} from 'vega-util';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Abstract class for operators that process data tuples.

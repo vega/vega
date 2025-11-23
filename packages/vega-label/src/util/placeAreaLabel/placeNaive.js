@@ -1,4 +1,4 @@
-import {textMetrics} from 'vega-scenegraph';
+import {textMetrics} from '@omni-co/vega-scenegraph';
 
 export default function($, bitmaps, avoidBaseMark, markIndex) {
   const width = $.width,

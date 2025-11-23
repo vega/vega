@@ -8418,11 +8418,22 @@
       state.update(w, data[i]);
     }
   }
+  function clamp$1(x, lo, hi) {
+    return x < lo ? lo : x > hi ? hi : x;
+  }
   function setWindow(w, f, i, n) {
     w.p0 = w.i0;
     w.p1 = w.i1;
-    w.i0 = f[0] == null ? 0 : Math.max(0, i - Math.abs(f[0]));
-    w.i1 = f[1] == null ? n : Math.min(n, i + Math.abs(f[1]) + 1);
+
+    // f[0]: start offset (inclusive). null => unbounded (0)
+    // Use the SIGNED offset relative to i.
+    const start = f[0] == null ? 0 : i + f[0];
+
+    // f[1]: end offset (inclusive in “row terms”), so we +1 for exclusive bound.
+    // null => unbounded (n)
+    const endExclusive = f[1] == null ? n : i + f[1] + 1;
+    w.i0 = clamp$1(start, 0, n);
+    w.i1 = clamp$1(endExclusive, 0, n);
     w.index = i;
   }
 
@@ -22579,8 +22590,6 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
-    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
-    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
@@ -26133,7 +26142,13 @@
     return !isObject(sort) ? '' : (sort.order === Descending ? '-' : '+') + aggrField(sort.op, sort.field);
   }
   function aggrField(op, field) {
-    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal : field || '');
+    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal
+    // Replace non-alphanumeric character sequences with underscores and trim leading/trailing underscores
+    // to prevent incorrect path extraction for nested target fields or target fields with (escaped) dots. 
+    // Example: 'a\\.b[c.d]' => 'a_b_c_d'. 
+    // Note: aggregating both a nested field and a field with a dot could lead to conflicting names: 
+    // with data like [{ a: {b: 1}, 'a.b': 1 }], summing 'a.b' and 'a\\.b' would both result in a field 'sum_a_b'   
+    : field?.replace(/\W+/g, '_').replace(/^_+|_+$/g, '') || '');
   }
 
   // -----

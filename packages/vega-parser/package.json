@@ -1,5 +1,5 @@
 {
-  "name": "vega-parser",
+  "name": "@omni-co/vega-parser",
   "version": "7.1.0",
   "description": "Parse Vega specifications to runtime dataflows.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -29,10 +29,10 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-dataflow": "^6.1.0",
-    "vega-event-selector": "^4.0.0",
-    "vega-functions": "^6.1.0",
-    "vega-scale": "^8.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-event-selector": "^4.0.0",
+    "@omni-co/vega-functions": "^6.1.0",
+    "@omni-co/vega-scale": "^8.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   }
 }

@@ -1,6 +1,6 @@
 import {fieldNames} from './util/util.js';
-import {Transform, ingest, rederive, tupleid} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, ingest, rederive, tupleid} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Performs a relational projection, copying selected fields from source

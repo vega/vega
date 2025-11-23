@@ -1,5 +1,5 @@
 import {stream} from '../EventStream.js';
-import {array} from 'vega-util';
+import {array} from '@omni-co/vega-util';
 
 /**
  * Create a new event stream from an event source.

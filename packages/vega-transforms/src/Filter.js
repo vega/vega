@@ -1,5 +1,5 @@
-import {Transform, tupleid} from 'vega-dataflow';
-import {fastmap, inherits} from 'vega-util';
+import {Transform, tupleid} from '@omni-co/vega-dataflow';
+import {fastmap, inherits} from '@omni-co/vega-util';
 
 /**
  * Filters data tuples according to a predicate function.

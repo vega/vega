@@ -1,5 +1,5 @@
 import {isOperator} from './util.js';
-import {error} from 'vega-util';
+import {error} from '@omni-co/vega-util';
 
 /**
  * Parse a dataflow operator.

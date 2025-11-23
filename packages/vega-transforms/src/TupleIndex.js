@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {fastmap, inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {fastmap, inherits} from '@omni-co/vega-util';
 
 /**
  * An index that maps from unique, string-coerced, field values to tuples.

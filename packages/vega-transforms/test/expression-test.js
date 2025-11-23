@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { accessor, accessorFields, accessorName } from 'vega-util';
-import { Dataflow } from 'vega-dataflow';
+import { accessor, accessorFields, accessorName } from '@omni-co/vega-util';
+import { Dataflow } from '@omni-co/vega-dataflow';
 import { expression as Expr } from '../index.js';
 
 tape('Expression wraps expression functions', t => {

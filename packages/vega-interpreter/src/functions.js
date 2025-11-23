@@ -1,4 +1,4 @@
-import { ascending, isString } from 'vega-util';
+import { ascending, isString } from '@omni-co/vega-util';
 
 const slice = Array.prototype.slice;
 

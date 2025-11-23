@@ -1,6 +1,6 @@
-import {Transform} from 'vega-dataflow';
-import {getProjectionPath} from 'vega-projection';
-import {identity, inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {getProjectionPath} from '@omni-co/vega-projection';
+import {identity, inherits} from '@omni-co/vega-util';
 
 /**
  * Map GeoJSON data to an SVG path string.

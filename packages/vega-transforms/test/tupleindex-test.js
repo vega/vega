@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { field, truthy } from 'vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { field, truthy } from '@omni-co/vega-util';
 import { collect as Collect, tupleindex as TupleIndex } from '../index.js';
 
 tape('TupleIndex maintains an index of tuples', t => {

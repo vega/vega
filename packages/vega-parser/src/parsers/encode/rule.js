@@ -1,5 +1,5 @@
 import entry from './entry.js';
-import {peek} from 'vega-util';
+import {peek} from '@omni-co/vega-util';
 
 export default function(enc) {
   let code = '';

@@ -1,6 +1,6 @@
 import {Bottom, Left, Right, Top} from '../constants.js';
 import {set, tempBounds} from './util.js';
-import {boundStroke, multiLineOffset} from 'vega-scenegraph';
+import {boundStroke, multiLineOffset} from '@omni-co/vega-scenegraph';
 
 export function isYAxis(mark) {
   var orient = mark.items[0].orient;

@@ -1,6 +1,6 @@
 import initializeRenderer from './initialize-renderer.js';
-import {renderModule} from 'vega-scenegraph';
-import {error} from 'vega-util';
+import {renderModule} from '@omni-co/vega-scenegraph';
+import {error} from '@omni-co/vega-util';
 
 /**
  * Render the current scene in a headless fashion.

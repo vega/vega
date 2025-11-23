@@ -1,7 +1,7 @@
 import {Bottom, Top} from './constants.js';
-import {Transform} from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
-import {inherits, peek} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {Bounds} from '@omni-co/vega-scenegraph';
+import {inherits, peek} from '@omni-co/vega-util';
 
 /**
  * Analyze items for overlap, changing opacity to hide items with

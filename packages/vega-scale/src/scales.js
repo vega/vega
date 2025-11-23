@@ -1,4 +1,4 @@
-import { array, toSet } from 'vega-util';
+import { array, toSet } from '@omni-co/vega-util';
 import invertRange from './scales/invertRange.js';
 import invertRangeExtent from './scales/invertRangeExtent.js';
 

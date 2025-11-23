@@ -1,6 +1,6 @@
 import lookup from './lookup.js';
-import {Transform, ingest, isTuple, tupleid} from 'vega-dataflow';
-import {array, error, inherits} from 'vega-util';
+import {Transform, ingest, isTuple, tupleid} from '@omni-co/vega-dataflow';
+import {array, error, inherits} from '@omni-co/vega-util';
 import {hierarchy} from 'd3-hierarchy';
 
  /**

@@ -1,6 +1,6 @@
 import Aggregate from './Aggregate.js';
 import {ValidAggregateOps} from './util/AggregateOps.js';
-import {accessor, accessorFields, ascending, inherits} from 'vega-util';
+import {accessor, accessorFields, ascending, inherits} from '@omni-co/vega-util';
 
 /**
  * Aggregate and pivot selected field values to become new fields.

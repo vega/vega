@@ -1,4 +1,4 @@
-import {canvas} from 'vega-canvas';
+import {canvas} from '@omni-co/vega-canvas';
 
 export var context = (context = canvas(1,1))
   ? context.getContext('2d')

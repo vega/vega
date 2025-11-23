@@ -1,8 +1,8 @@
 import {ScalePrefix} from './constants.js';
 import {scaleVisitor} from './visitors.js';
-import {Literal} from 'vega-expression';
-import {isFunction, isString, stringValue} from 'vega-util';
-import {isRegisteredScale} from 'vega-scale';
+import {Literal} from '@omni-co/vega-expression';
+import {isFunction, isString, stringValue} from '@omni-co/vega-util';
+import {isRegisteredScale} from '@omni-co/vega-scale';
 
 /**
  * nameOrFunction must be a string or function that was registered.

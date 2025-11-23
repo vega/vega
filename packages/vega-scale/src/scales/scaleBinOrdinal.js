@@ -1,6 +1,6 @@
 import {bisect} from 'd3-array';
 import {tickFormat} from 'd3-scale';
-import {peek} from 'vega-util';
+import {peek} from '@omni-co/vega-util';
 import {numbers} from './numbers.js';
 import {slice} from './slice.js';
 

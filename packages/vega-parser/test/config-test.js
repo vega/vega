@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { mergeConfig } from 'vega-util';
+import { mergeConfig } from '@omni-co/vega-util';
 import { config } from '../index.js';
 
 tape('Config generates defaults', t => {

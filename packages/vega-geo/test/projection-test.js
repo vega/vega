@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { Dataflow } from 'vega-dataflow';
+import { Dataflow } from '@omni-co/vega-dataflow';
 import { graticule as Graticule, projection as Projection } from '../index.js';
 
 tape('Projection transform fits parameters to GeoJSON data', t => {

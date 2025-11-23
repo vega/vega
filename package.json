@@ -4,7 +4,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "build": "lerna run build && npm run docsbuild",

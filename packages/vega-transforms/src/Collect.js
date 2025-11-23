@@ -1,6 +1,6 @@
 import SortedList from './util/SortedList.js';
-import {Transform, stableCompare, tupleid} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, stableCompare, tupleid} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Collects all data tuples that pass through this operator.

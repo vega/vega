@@ -1,4 +1,4 @@
-import {toNumber} from 'vega-util';
+import {toNumber} from '@omni-co/vega-util';
 
 var map = Array.prototype.map;
 

@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {accessor, field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {accessor, field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, formula as Formula} from '../index.js';
 
 tape('Formula extends tuples', t => {

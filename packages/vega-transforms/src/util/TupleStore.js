@@ -1,6 +1,6 @@
-import {tupleid} from 'vega-dataflow';
-import {bootstrapCI, quartiles} from 'vega-statistics';
-import {extentIndex, field, hasOwnProperty} from 'vega-util';
+import {tupleid} from '@omni-co/vega-dataflow';
+import {bootstrapCI, quartiles} from '@omni-co/vega-statistics';
+import {extentIndex, field, hasOwnProperty} from '@omni-co/vega-util';
 
 export default function TupleStore(key) {
   this._key = key ? field(key) : tupleid;

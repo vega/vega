@@ -1,6 +1,6 @@
 import {continuous, discrete} from './palettes.js';
 import {interpolateColors} from './interpolate.js';
-import {isArray} from 'vega-util';
+import {isArray} from '@omni-co/vega-util';
 
 function colors(palette) {
   if (isArray(palette)) return palette;

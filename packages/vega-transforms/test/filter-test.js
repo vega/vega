@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {accessor, falsy, field, truthy} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {accessor, falsy, field, truthy} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, filter as Filter} from '../index.js';
 
 tape('Filter filters tuples', t => {

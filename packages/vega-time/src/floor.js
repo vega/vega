@@ -15,7 +15,7 @@ import {
   localDate, localDayOfYear, localFirst, localWeekNum,
   utcDate, utcDayOfYear, utcFirst, utcWeekNum
 } from './util.js';
-import {constant, one, peek, toSet, zero} from 'vega-util';
+import {constant, one, peek, toSet, zero} from '@omni-co/vega-util';
 
 function floor(units, step, get, inv, newDate) {
   const s = step || 1,

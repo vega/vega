@@ -5,7 +5,7 @@ import {alignExpr, anchorExpr, lookup} from './guide-util.js';
 import {addEncoders, encoder, has} from '../encode/util.js';
 import {TextMark} from '../marks/marktypes.js';
 import {AxisTitleRole} from '../marks/roles.js';
-import {extend} from 'vega-util';
+import {extend} from '@omni-co/vega-util';
 
 export default function(spec, config, userEncode, dataRef) {
   const _ = lookup(spec, config),

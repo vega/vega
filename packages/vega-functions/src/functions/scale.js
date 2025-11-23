@@ -1,6 +1,6 @@
 import {getScale} from '../scales.js';
-import {bandSpace} from 'vega-scale';
-import {isArray} from 'vega-util';
+import {bandSpace} from '@omni-co/vega-scale';
+import {isArray} from '@omni-co/vega-util';
 
 export function bandspace(count, paddingInner, paddingOuter) {
   return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);

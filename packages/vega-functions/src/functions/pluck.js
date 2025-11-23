@@ -1,4 +1,4 @@
-import {field, isArray} from 'vega-util';
+import {field, isArray} from '@omni-co/vega-util';
 
 // memoize accessor functions
 const accessors = {};

@@ -1,8 +1,8 @@
-import {tupleid} from 'vega-dataflow';
+import {tupleid} from '@omni-co/vega-dataflow';
 import {
   accessor, array, compare, error, field,
   hasOwnProperty, isArray, isObject, key
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 /**
  * Parse a set of operator parameters.

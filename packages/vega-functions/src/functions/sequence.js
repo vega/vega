@@ -1,4 +1,4 @@
-import { ascending, error, isArray, isFunction, isRegExp, isString } from 'vega-util';
+import { ascending, error, isArray, isFunction, isRegExp, isString } from '@omni-co/vega-util';
 
 function array(seq) {
   return isArray(seq) || ArrayBuffer.isView(seq) ? seq : null;

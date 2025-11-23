@@ -1,5 +1,5 @@
-import {Transform, derive, tupleid} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, derive, tupleid} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Relays a data stream between data processing pipelines.

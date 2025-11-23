@@ -3,7 +3,7 @@ import blend from '../util/canvas/blend.js';
 import {pick} from '../util/canvas/pick.js';
 import metadata from '../util/svg/metadata.js';
 import {translate} from '../util/svg/transform.js';
-import {truthy} from 'vega-util';
+import {truthy} from '@omni-co/vega-util';
 
 function getImage(item, renderer) {
   var image = item.image;

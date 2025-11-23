@@ -1,4 +1,4 @@
-import * as vega from 'vega-dataflow';
+import * as vega from '@omni-co/vega-dataflow';
 const registry = {};
 
 export function events(source, type, filter) {

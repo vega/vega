@@ -1,7 +1,7 @@
 import {getScale} from '../scales.js';
-import {scale as get, scaleFraction} from 'vega-scale';
-import {Gradient} from 'vega-scenegraph';
-import {identity, peek} from 'vega-util';
+import {scale as get, scaleFraction} from '@omni-co/vega-scale';
+import {Gradient} from '@omni-co/vega-scenegraph';
+import {identity, peek} from '@omni-co/vega-util';
 
 
 export default function(scale, p0, p1, count, group) {

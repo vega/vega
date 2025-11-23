@@ -1,4 +1,4 @@
-import {hasOwnProperty} from 'vega-util';
+import {hasOwnProperty} from '@omni-co/vega-util';
 
 import {
   curveBasis,

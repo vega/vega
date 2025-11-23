@@ -1,6 +1,6 @@
 import Subflow from './Subflow.js';
-import {Transform, tupleid} from 'vega-dataflow';
-import {fastmap, hasOwnProperty, inherits} from 'vega-util';
+import {Transform, tupleid} from '@omni-co/vega-dataflow';
+import {fastmap, hasOwnProperty, inherits} from '@omni-co/vega-util';
 
 /**
  * Facets a dataflow into a set of subflows based on a key.

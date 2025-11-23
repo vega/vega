@@ -1,7 +1,7 @@
 import parseView from './parsers/view.js';
 import Scope from './Scope.js';
 import defaults from './config.js';
-import {error, isObject, mergeConfig} from 'vega-util';
+import {error, isObject, mergeConfig} from '@omni-co/vega-util';
 
 export default function(spec, config, options) {
   if (!isObject(spec)) {

@@ -3,8 +3,8 @@ import {ValidAggregateOps} from './util/AggregateOps.js';
 import SortedList from './util/SortedList.js';
 import {ValidWindowOps} from './util/WindowOps.js';
 import WindowState from './util/WindowState.js';
-import {Transform, stableCompare, tupleid} from 'vega-dataflow';
-import {constant, inherits} from 'vega-util';
+import {Transform, stableCompare, tupleid} from '@omni-co/vega-dataflow';
+import {constant, inherits} from '@omni-co/vega-util';
 import {bisector} from 'd3-array';
 
 /**

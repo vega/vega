@@ -1,5 +1,5 @@
 {
-  "name": "vega-scenegraph",
+  "name": "@omni-co/vega-scenegraph",
   "version": "5.1.0",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
@@ -28,9 +28,9 @@
   "dependencies": {
     "d3-path": "^3.1.0",
     "d3-shape": "^3.2.0",
-    "vega-canvas": "^2.0.0",
-    "vega-loader": "^5.1.0",
-    "vega-scale": "^8.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-canvas": "^2.0.0",
+    "@omni-co/vega-loader": "^5.1.0",
+    "@omni-co/vega-scale": "^8.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   }
 }

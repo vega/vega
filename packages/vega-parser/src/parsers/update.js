@@ -1,8 +1,8 @@
 import parseStream from './stream.js';
 import {Scope, View} from '../util.js';
-import {parseSelector} from 'vega-event-selector';
-import {parseExpression} from 'vega-functions';
-import {array, error, extend, isString, stringValue} from 'vega-util';
+import {parseSelector} from '@omni-co/vega-event-selector';
+import {parseExpression} from '@omni-co/vega-functions';
+import {array, error, extend, isString, stringValue} from '@omni-co/vega-util';
 
 // bypass expression parser for internal operator references
 const OP_VALUE_EXPR = {

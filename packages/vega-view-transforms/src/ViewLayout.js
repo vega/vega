@@ -10,9 +10,9 @@ import {gridLayout, trellisLayout} from './layout/grid.js';
 import {legendLayout, legendParams} from './layout/legend.js';
 import {titleLayout} from './layout/title.js';
 
-import {Transform} from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
-import {inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {Bounds} from '@omni-co/vega-scenegraph';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Layout view elements such as axes and legends.

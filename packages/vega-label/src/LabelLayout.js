@@ -1,4 +1,4 @@
-import {textMetrics} from 'vega-scenegraph';
+import {textMetrics} from '@omni-co/vega-scenegraph';
 import {baseBitmaps, markBitmaps} from './util/markBitmaps.js';
 import scaler from './util/scaler.js';
 import placeAreaLabelNaive from './util/placeAreaLabel/placeNaive.js';

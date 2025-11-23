@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { Dataflow } from 'vega-dataflow';
+import { Dataflow } from '@omni-co/vega-dataflow';
 import * as runtime from '../index.js';
 import {events, fire} from './events.js';
 

@@ -9,9 +9,9 @@ import {pulse, touch, update} from './update.js';
 import changeset from '../ChangeSet.js';
 import Heap from '../util/Heap.js';
 import UniqueList from '../util/UniqueList.js';
-import {defaultLocale} from 'vega-format';
-import {loader} from 'vega-loader';
-import {Error, id, logger} from 'vega-util';
+import {defaultLocale} from '@omni-co/vega-format';
+import {loader} from '@omni-co/vega-loader';
+import {Error, id, logger} from '@omni-co/vega-util';
 
 /**
  * A dataflow graph for reactive processing of data streams.

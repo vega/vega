@@ -1,5 +1,5 @@
-import {Transform, stableCompare} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, stableCompare} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Sorts scenegraph items in the pulse source array.

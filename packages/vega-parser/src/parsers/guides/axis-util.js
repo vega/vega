@@ -1,4 +1,4 @@
-import {extend, stringValue} from 'vega-util';
+import {extend, stringValue} from '@omni-co/vega-util';
 import {Bottom, Left, Right, Top} from './constants.js';
 import {encoder} from '../encode/util.js';
 import {isSignal} from '../../util.js';

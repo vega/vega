@@ -1,5 +1,5 @@
-import {Transform, ingest, replace} from 'vega-dataflow';
-import {inherits, isFunction} from 'vega-util';
+import {Transform, ingest, replace} from '@omni-co/vega-dataflow';
+import {inherits, isFunction} from '@omni-co/vega-util';
 import {geoGraticule} from 'd3-geo';
 
 /**

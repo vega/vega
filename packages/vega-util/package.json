@@ -1,5 +1,5 @@
 {
-  "name": "vega-util",
+  "name": "@omni-co/vega-util",
   "version": "2.1.0",
   "description": "JavaScript utilities for Vega.",
   "keywords": [
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",

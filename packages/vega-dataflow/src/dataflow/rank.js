@@ -1,4 +1,4 @@
-import {error} from 'vega-util';
+import {error} from '@omni-co/vega-util';
 
 /**
  * Assigns a rank to an operator. Ranks are assigned in increasing order

@@ -1,5 +1,5 @@
-import {Operator} from 'vega-dataflow';
-import {array, field, inherits, isArray} from 'vega-util';
+import {Operator} from '@omni-co/vega-dataflow';
+import {array, field, inherits, isArray} from '@omni-co/vega-util';
 
 /**
  * Generates one or more field accessor functions.

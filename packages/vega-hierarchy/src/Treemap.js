@@ -1,5 +1,5 @@
 import HierarchyLayout from './HierarchyLayout.js';
-import {error, hasOwnProperty, inherits} from 'vega-util';
+import {error, hasOwnProperty, inherits} from '@omni-co/vega-util';
 import {
   treemap,
   treemapBinary,

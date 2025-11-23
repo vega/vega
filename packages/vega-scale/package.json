@@ -1,5 +1,5 @@
 {
-  "name": "vega-scale",
+  "name": "@omni-co/vega-scale",
   "version": "8.1.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -33,7 +33,7 @@
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
-    "vega-time": "^3.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-time": "^3.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "vega-loader",
+  "name": "@omni-co/vega-loader",
   "version": "5.1.0",
   "description": "Network request and file loading utilities.",
   "keywords": [
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -40,7 +40,7 @@
   "dependencies": {
     "d3-dsv": "^3.0.1",
     "topojson-client": "^3.1.0",
-    "vega-format": "^2.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-format": "^2.1.0",
+    "@omni-co/vega-util": "^2.1.0"
   }
 }

@@ -1,5 +1,5 @@
 import value from '../value.js';
-import {canvas} from 'vega-canvas';
+import {canvas} from '@omni-co/vega-canvas';
 
 function addStops(gradient, stops) {
   const n = stops.length;

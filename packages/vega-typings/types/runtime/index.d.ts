@@ -1,4 +1,4 @@
-import { LoggerInterface } from 'vega-util';
+import { LoggerInterface } from '@omni-co/vega-util';
 import {
   Color,
   Config,
@@ -302,9 +302,9 @@ export const transforms: { [name: string]: Transform };
 
 export function resetSVGDefIds(): void;
 
-export { parseSelector } from 'vega-event-selector';
-export { codegenExpression, parseExpression } from 'vega-expression';
-export * from 'vega-util';
+export { parseSelector } from '@omni-co/vega-event-selector';
+export { codegenExpression, parseExpression } from '@omni-co/vega-expression';
+export * from '@omni-co/vega-util';
 export * from './dataflow.js';
 export * from './renderer.js';
 export * from './scene.js';

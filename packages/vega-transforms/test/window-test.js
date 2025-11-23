@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {compare, field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {compare, field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, window as Window} from '../index.js';
 
 function match(t, actual, expect) {

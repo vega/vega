@@ -1,5 +1,5 @@
-import {transforms} from 'vega-dataflow';
-import {isArray} from 'vega-util';
+import {transforms} from '@omni-co/vega-dataflow';
+import {isArray} from '@omni-co/vega-util';
 
 /**
  * Get the current view state, consisting of signal values and/or data sets.

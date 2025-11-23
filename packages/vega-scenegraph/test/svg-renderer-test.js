@@ -1,6 +1,6 @@
 import tape from 'tape';
 import fs from 'fs';
-import {loader } from 'vega-loader';
+import {loader } from '@omni-co/vega-loader';
 import {Bounds, SVGRenderer as Renderer, resetSVGDefIds, sceneFromJSON, sceneToJSON} from '../index.js';
 import jsdom from 'jsdom';
 

@@ -1,7 +1,7 @@
 import {labelFormat, labelValues} from './labels.js';
 import {Time, UTC} from './scales/types.js';
 import {isDiscrete, isDiscretizing, isTemporal} from './scales.js';
-import {isString, peek} from 'vega-util';
+import {isString, peek} from '@omni-co/vega-util';
 
 function format(locale, scale, specifier, formatType) {
   const type = formatType || scale.type;

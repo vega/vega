@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { collect as Collect } from 'vega-transforms';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { collect as Collect } from '@omni-co/vega-transforms';
 import { force as Force } from '../index.js';
 
 tape('Force places points', t => {

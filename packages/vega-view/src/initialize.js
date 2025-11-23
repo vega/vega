@@ -3,7 +3,7 @@ import bind from './bind.js';
 import element from './element.js';
 import initializeRenderer from './initialize-renderer.js';
 import initializeHandler from './initialize-handler.js';
-import {CanvasHandler, renderModule} from 'vega-scenegraph';
+import {CanvasHandler, renderModule} from '@omni-co/vega-scenegraph';
 
 export default function(el, elBind) {
   const view = this,

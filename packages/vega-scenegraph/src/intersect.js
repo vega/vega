@@ -1,5 +1,5 @@
 import Marks from './marks/index.js';
-import {error} from 'vega-util';
+import {error} from '@omni-co/vega-util';
 import Bounds from './Bounds.js';
 
 export function intersect(scene, bounds, filter) {

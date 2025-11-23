@@ -1,7 +1,7 @@
 import {compileMeasures, createMeasure, measureName} from './AggregateOps.js';
 import TupleStore from './TupleStore.js';
 import {WindowOp, WindowOps} from './WindowOps.js';
-import {accessorFields, accessorName, array, error, hasOwnProperty} from 'vega-util';
+import {accessorFields, accessorName, array, error, hasOwnProperty} from '@omni-co/vega-util';
 
 export default function WindowState(_) {
   const ops = array(_.ops),
