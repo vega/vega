@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vega OffscreenCanvas Examples</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+    }
+    .example {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      background: #f9f9f9;
+    }
+    .example h2 {
+      margin-top: 0;
+    }
+    .example a {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .example a:hover {
+      background: #0056b3;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .status.works { background: #d4edda; color: #155724; }
+    .status.no-support { background: #f8d7da; color: #721c24; }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    ul {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vega OffscreenCanvas Examples</h1>
+
+  <p>These examples demonstrate how to use Vega with OffscreenCanvas for rendering visualizations in Web Workers.</p>
+
+  <div id="compatibility"></div>
+
+  <div class="example">
+    <h2>Labeled Line Chart <span class="status works" id="status1">✓ Tested</span></h2>
+    <p>A complete example showing a 52-week timeline with intelligent label placement:</p>
+    <ul>
+      <li>Renders in a Web Worker using OffscreenCanvas</li>
+      <li>Label transform with collision detection</li>
+      <li>Avoids overlapping line and point marks</li>
+      <li>Multiple anchor points for optimal placement</li>
+    </ul>
+    <a href="labeled-line-chart.html">Run Example</a>
+    <a href="https://github.com/vega/vega/tree/main/docs/examples/offscreen-canvas" style="background: #6c757d;">View Source</a>
+  </div>
+
+  <div class="example">
+    <h2>Documentation</h2>
+    <p>For more information about OffscreenCanvas support in Vega:</p>
+    <a href="../../offscreen-canvas-support.html">OffscreenCanvas Support Docs</a>
+    <a href="README.md" style="background: #6c757d;">Example README</a>
+  </div>
+
+  <script>
+    const compatDiv = document.getElementById('compatibility');
+    if (typeof OffscreenCanvas === 'undefined') {
+      compatDiv.innerHTML = `
+        <div class="example" style="background: #fff3cd; border-color: #856404;">
+          <h2>⚠️ Browser Compatibility</h2>
+          <p><strong>OffscreenCanvas is not supported in your browser.</strong></p>
+          <p>These examples require a browser that supports OffscreenCanvas:</p>
+          <ul>
+            <li>Chrome 69+</li>
+            <li>Edge 79+</li>
+            <li>Firefox 105+</li>
+          </ul>
+          <p>Safari does not currently support OffscreenCanvas.</p>
+        </div>
+      `;
+      document.getElementById('status1').className = 'status no-support';
+      document.getElementById('status1').textContent = '❌ Not supported';
+    } else {
+      compatDiv.innerHTML = `
+        <div class="example" style="background: #d4edda; border-color: #155724;">
+          <h2>✓ Browser Compatible</h2>
+          <p>Your browser supports OffscreenCanvas! All examples should work.</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
