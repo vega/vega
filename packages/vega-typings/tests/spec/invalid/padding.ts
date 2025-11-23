@@ -1,4 +1,4 @@
-import { Padding } from 'vega';
+import { Padding } from '@omni-co/vega';
 
 let padding: Padding;
 

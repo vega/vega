@@ -1,4 +1,4 @@
-import { Spec } from 'vega';
+import { Spec } from '@omni-co/vega';
 
 let spec: Spec;
 

@@ -1,4 +1,4 @@
-import * as vega from 'vega';
+import * as vega from '@omni-co/vega';
 
 import { spec as histogram } from '../spec/valid/histogram.js';
 

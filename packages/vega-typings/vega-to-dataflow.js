@@ -2,7 +2,7 @@
 // Parses a vega spec file into a dataflow runtime
 // ./vega-to-dataflow path-to-vega-spec.json path-to-output.js
 
-import { parse } from 'vega';
+import { parse } from '@omni-co/vega';
 import { appendFileSync } from 'fs';
 
 const specPath = process.argv[2];

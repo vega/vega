@@ -1,5 +1,5 @@
 import fs from 'fs';
-import vega from 'vega';
+import vega from '@omni-co/vega';
 import * as interp from '../index.js';
 import specs from '../../vega/test/specs-valid.json' with { type: 'json' };
 

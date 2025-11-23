@@ -1,4 +1,4 @@
-import { AutoSizeType } from 'vega';
+import { AutoSizeType } from '@omni-co/vega';
 
 let autosize: AutoSizeType;
 

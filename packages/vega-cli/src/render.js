@@ -1,4 +1,4 @@
-import * as vega from 'vega';
+import * as vega from '@omni-co/vega';
 import path from 'path';
 import args from './args.js';
 import read from './read.js';

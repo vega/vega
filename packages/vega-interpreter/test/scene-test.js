@@ -1,6 +1,6 @@
 import fs from 'fs';
 import tape from 'tape';
-import * as vega from 'vega';
+import * as vega from '@omni-co/vega';
 import * as interp from '../index.js';
 import specsValid from '../../vega/test/specs-valid.json' with { type: 'json' };
 
