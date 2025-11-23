@@ -29,8 +29,11 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
+    "@omni-co/vega-util": "^2.1.0",
     "d3-array": "^3.2.4",
-    "d3-time": "^3.1.0",
-    "@omni-co/vega-util": "^2.1.0"
+    "d3-time": "^3.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

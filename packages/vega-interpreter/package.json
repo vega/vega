@@ -35,5 +35,8 @@
   },
   "devDependencies": {
     "@omni-co/vega": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

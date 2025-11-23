@@ -28,7 +28,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "d3-geo-projection": "^4.0.0",
-    "@omni-co/vega-projection": "^2.1.0"
+    "@omni-co/vega-projection": "^2.1.0",
+    "d3-geo-projection": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

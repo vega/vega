@@ -36,5 +36,8 @@
   },
   "devDependencies": {
     "@omni-co/vega-transforms": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

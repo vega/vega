@@ -21,6 +21,9 @@
     "type": "git",
     "url": "git+https://github.com/exploreomni/vega.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",

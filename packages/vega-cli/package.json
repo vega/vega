@@ -32,8 +32,11 @@
     "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
+    "@omni-co/vega": "6.2.0",
     "canvas": "^3.1.1",
-    "yargs": "18",
-    "@omni-co/vega": "6.2.0"
+    "yargs": "18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

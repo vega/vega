@@ -26,5 +26,8 @@
     "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
     "prepublishOnly": "npm test && npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

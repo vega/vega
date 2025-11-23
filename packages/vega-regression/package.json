@@ -28,12 +28,15 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-array": "^3.2.4",
     "@omni-co/vega-dataflow": "^6.1.0",
     "@omni-co/vega-statistics": "^2.0.0",
-    "@omni-co/vega-util": "^2.1.0"
+    "@omni-co/vega-util": "^2.1.0",
+    "d3-array": "^3.2.4"
   },
   "devDependencies": {
     "@omni-co/vega-transforms": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

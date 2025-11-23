@@ -34,5 +34,8 @@
     "@omni-co/vega-functions": "^6.1.0",
     "@omni-co/vega-scale": "^8.1.0",
     "@omni-co/vega-util": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

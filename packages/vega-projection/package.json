@@ -28,8 +28,11 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
+    "@omni-co/vega-scale": "^8.1.0",
     "d3-geo": "^3.1.1",
-    "d3-geo-projection": "^4.0.0",
-    "@omni-co/vega-scale": "^8.1.0"
+    "d3-geo-projection": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

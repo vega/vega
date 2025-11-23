@@ -42,5 +42,8 @@
     "@omni-co/vega-view-transforms": "*",
     "@omni-co/vega-voronoi": "*",
     "@omni-co/vega-wordcloud": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

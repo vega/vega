@@ -31,7 +31,10 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "@types/estree": "^1.0.8",
-    "@omni-co/vega-util": "^2.1.0"
+    "@omni-co/vega-util": "^2.1.0",
+    "@types/estree": "^1.0.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

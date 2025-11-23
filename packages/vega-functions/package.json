@@ -28,9 +28,6 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-array": "^3.2.4",
-    "d3-color": "^3.1.0",
-    "d3-geo": "^3.1.1",
     "@omni-co/vega-dataflow": "^6.1.0",
     "@omni-co/vega-expression": "^6.1.0",
     "@omni-co/vega-scale": "^8.1.0",
@@ -38,9 +35,15 @@
     "@omni-co/vega-selections": "^6.1.0",
     "@omni-co/vega-statistics": "^2.0.0",
     "@omni-co/vega-time": "^3.1.0",
-    "@omni-co/vega-util": "^2.1.0"
+    "@omni-co/vega-util": "^2.1.0",
+    "d3-array": "^3.2.4",
+    "d3-color": "^3.1.0",
+    "d3-geo": "^3.1.1"
   },
   "devDependencies": {
     "@omni-co/vega-format": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
