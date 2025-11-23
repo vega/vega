@@ -17,7 +17,7 @@
     "release": "npm run license && lerna publish from-package",
     "serve": "serve packages/vega/ -l 8080",
     "test": "npm run test:no-lint && npm run lint",
-    "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
+    "test:no-lint": "lerna run test --ignore @omni-co/vega-typings && lerna run test --scope @omni-co/vega-typings",
     "lint": "eslint -c eslint.config.js .",
     "format": "npm run lint -- --fix",
     "postinstall": "scripts/postinstall.sh"
