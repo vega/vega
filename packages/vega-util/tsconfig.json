@@ -9,6 +9,10 @@
     "outDir": "build/types"
   },
   "include": [
-      "src/truncate.js"
+      "src/truncate.js",
+      "src/pad.js",
+      "src/repeat.js",
+      "src/splitAccessPath.js",
+      "src/stringValue.js"
     ]
 }

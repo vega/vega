@@ -131,15 +131,10 @@ export function utcquarter(date: number): number;
 export function utcquarter(date: Date): number;
 
 // Strings
-
-export function pad(str: string, len: number,
-  char?: string, align?: 'left' | 'center' | 'right'): string;
-
-export function repeat(str: string, count: number): string;
-
-export function splitAccessPath(path: string): string[];
-export function stringValue(a: any): string;
-
+export { default as pad } from './build/types/pad.js';
+export { default as repeat } from './build/types/repeat.js';
+export { default as splitAccessPath } from './build/types/splitAccessPath.js';
+export { default as stringValue } from './build/types/stringValue.js';
 export { default as truncate } from './build/types/truncate.js';
 
 // Logging
