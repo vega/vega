@@ -140,8 +140,7 @@ export function repeat(str: string, count: number): string;
 export function splitAccessPath(path: string): string[];
 export function stringValue(a: any): string;
 
-export function truncate(a: string, length: number,
-  align?: 'left' | 'center' | 'right', ellipsis?: string): string;
+export { default as truncate } from './build/types/truncate.js';
 
 // Logging
 
