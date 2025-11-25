@@ -1,4 +1,4 @@
-name: Test
+name: Test, Typecheck, and Lint
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [20, 22]
+        node: [20, 22, 23]
 
     name: Node ${{ matrix.node }}
 
@@ -38,6 +38,9 @@ jobs:
 
       - name: Run tests
         run: npm run test:no-lint
+
+      - name: Run typecheck
+        run: npm run typecheck
 
       - name: Lint
         run: npm run lint
