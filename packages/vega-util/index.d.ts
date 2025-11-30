@@ -31,16 +31,15 @@ export function falsy(): false;
 
 // Type Checkers
 
-export function isArray<T>(a: any | T[]): a is T[];
-export function isArray<T>(a: any | readonly T[]): a is readonly T[];
-export function isBoolean(a: any): a is boolean;
-export function isDate(a: any): a is Date;
-export function isFunction(a: any): a is Function;
-export function isIterable(a: any): boolean;
-export function isNumber(a: any): a is number;
-export function isObject(a: any): a is object;
-export function isRegExp(a: any): a is RegExp;
-export function isString(a: any): a is string;
+export { default as isArray } from './build/types/isArray.js';
+export { default as isBoolean } from './build/types/isBoolean.js';
+export { default as isDate } from './build/types/isDate.js';
+export { default as isFunction } from './build/types/isFunction.js';
+export { default as isIterable } from './build/types/isIterable.js';
+export { default as isNumber } from './build/types/isNumber.js';
+export { default as isObject } from './build/types/isObject.js';
+export { default as isRegExp } from './build/types/isRegExp.js';
+export { default as isString } from './build/types/isString.js';
 
 // Type Coercion
 
