@@ -1,15 +1,18 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "lib": ["es6", "dom"],
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true
+    "checkJs": true,
+    "rootDir": "src",
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "build/types"
   },
-  "files": [
-    "index.d.ts"
-  ]
+  "include": [
+      "src/truncate.js",
+      "src/pad.js",
+      "src/repeat.js",
+      "src/splitAccessPath.js",
+      "src/stringValue.js"
+    ]
 }

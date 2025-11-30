@@ -21,10 +21,12 @@
     "url": "git+https://github.com/vega/vega.git"
   },
   "scripts": {
-    "prebuild": "del-cli build",
+    "prebuild": "del-cli build && npm run generate-types",
     "build": "rollup -c rollup.config.js",
     "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "generate-types": "tsc -p tsconfig.json",
     "prepublishOnly": "npm test && npm run build"
   }
 }

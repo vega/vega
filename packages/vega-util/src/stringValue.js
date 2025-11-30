@@ -2,6 +2,14 @@ import isArray from './isArray.js';
 import isObject from './isObject.js';
 import isString from './isString.js';
 
+/**
+ * Converts a value to its string representation.
+ * Arrays are formatted as comma-separated values in brackets.
+ * Objects and strings are converted to JSON format with Unicode line/paragraph
+ * separator characters properly escaped for JavaScript compatibility.
+ * @param {*} x - The value to convert to a string
+ * @returns {string} The string representation of the input value
+ */
 export default function $(x) {
   return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]`
     : isObject(x) || isString(x) ?
