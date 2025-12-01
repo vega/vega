@@ -10,6 +10,11 @@
   },
   "include": [
     "src/is*.js",
+    "src/toBoolean.js",
+    "src/toNumber.js",
+    "src/toString.js",
+    "src/toDate.js",
+    "src/toSet.js",
     "src/truncate.js",
     "src/pad.js",
     "src/repeat.js",

@@ -43,10 +43,10 @@ export { default as isString } from './build/types/isString.js';
 
 // Type Coercion
 
-export function toBoolean(a: any): boolean;
-export function toDate(a: any, parser?: (_: any) => number): number;
-export function toNumber(a: any): number;
-export function toString(a: any): string;
+export { default as toBoolean } from './build/types/toBoolean.js';
+export { default as toDate } from './build/types/toDate.js';
+export { default as toNumber } from './build/types/toNumber.js';
+export { default as toString } from './build/types/toString.js';
 
 // Objects
 
@@ -103,7 +103,7 @@ export function peek(array: readonly any[]): any;
 
 export function span(array: readonly number[]): number;
 
-export function toSet<T>(array: readonly T[]): { [T: string]: true }
+export { default as toSet } from './build/types/toSet.js';
 
 export function visitArray(array: readonly any[] | undefined,
   filter: (any: any) => boolean | undefined,
@@ -155,4 +155,4 @@ export const Debug: number;
 
 export function logger(_?: number, method?: string, handler?: typeof log): LoggerInterface;
 export function log(method: 'error' | 'warn' | 'log', level: 'ERROR' | 'WARN'| 'INFO' | 'DEBUG', input: readonly any[]): void;
-export function error(msg: string): Error;
+export function error(msg: string): never;
