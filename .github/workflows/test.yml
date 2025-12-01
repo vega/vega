@@ -20,7 +20,7 @@ jobs:
     name: Node ${{ matrix.node }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Ensure apt-get is updated
         run: sudo apt-get update
