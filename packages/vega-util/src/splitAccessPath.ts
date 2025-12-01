@@ -3,21 +3,17 @@ import error from './error.js';
 /**
  * Splits an access path string into its component parts.
  * Handles dot notation, bracket notation, and quoted strings.
- *
- * @param {string} p - The access path string to split
- * @returns {string[]} An array of path components
  */
-export default function(p) {
-  /** @type {string[]} */
-  const path = [],
+export default function splitAccessPath(p: string): string[] {
+  const path: string[] = [],
         n = p.length;
 
-  let q = null,
+  let q: string | null = null,
       b = 0,
       s = '';
-  /** @type {number} */ let i;
-  /** @type {number} */ let j;
-  /** @type {string} */ let c;
+  let i: number;
+  let j: number;
+  let c: string;
 
   p = p + '';
 

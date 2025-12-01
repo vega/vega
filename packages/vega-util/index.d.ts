@@ -155,4 +155,4 @@ export const Debug: number;
 
 export function logger(_?: number, method?: string, handler?: typeof log): LoggerInterface;
 export function log(method: 'error' | 'warn' | 'log', level: 'ERROR' | 'WARN'| 'INFO' | 'DEBUG', input: readonly any[]): void;
-export function error(msg: string): never;
+export { default as error } from './build/error.js';
