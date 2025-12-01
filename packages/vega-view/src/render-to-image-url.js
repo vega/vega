@@ -17,12 +17,22 @@ export default async function(type, scaleFactor) {
   }
 
   const r = await renderHeadless(this, type, scaleFactor);
-  return type === Type.SVG
-    ? toBlobURL(r.svg(), 'image/svg+xml')
-    : r.canvas().toDataURL('image/png');
+
+  if (type === Type.SVG) {
+    return toBlobURL(r.svg(), 'image/svg+xml');
+  } else {
+    const canvas = r.canvas();
+    // OffscreenCanvas uses convertToBlob(), HTMLCanvasElement uses toDataURL()
+    if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
+      const blob = await canvas.convertToBlob({type: 'image/png'});
+      return toBlobURL(blob, 'image/png');
+    } else {
+      return canvas.toDataURL('image/png');
+    }
+  }
 }
 
 function toBlobURL(data, mime) {
-  const blob = new Blob([data], {type: mime});
+  const blob = data instanceof Blob ? data : new Blob([data], {type: mime});
   return window.URL.createObjectURL(blob);
 }

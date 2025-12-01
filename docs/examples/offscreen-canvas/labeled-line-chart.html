@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vega OffscreenCanvas Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    canvas {
+      border: 2px solid #333;
+      display: block;
+      margin: 20px 0;
+      width: 700px;
+      height: 400px;
+    }
+    #status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .loading {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vega OffscreenCanvas Test</h1>
+
+  <div class="info">
+    <strong>Test Setup:</strong> This page tests Vega's OffscreenCanvas support with <strong>label transforms</strong> by rendering a line chart with text labels in a Web Worker.
+    <br>The canvas below should display a temporal chart with intelligent label placement if everything works correctly.
+  </div>
+
+  <!-- Canvas backing store size will be set by JavaScript based on devicePixelRatio -->
+  <canvas id="myCanvas"></canvas>
+
+  <div id="status" class="loading">Initializing worker...</div>
+
+  <h3>Expected Behavior:</h3>
+  <ul>
+    <li>Canvas should show a line chart with 52 weekly data points</li>
+    <li>Blue circles should mark each data point</li>
+    <li><strong>Text labels showing counts should appear above points (avoiding overlaps)</strong></li>
+    <li>This tests that the label transform's <code>markBitmaps.js</code> works with OffscreenCanvas</li>
+    <li>Status should show "✓ Rendered successfully!"</li>
+    <li>No errors in browser console</li>
+  </ul>
+
+  <h3>Browser Compatibility:</h3>
+  <div id="compatibility"></div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

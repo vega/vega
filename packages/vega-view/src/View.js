@@ -69,6 +69,12 @@ export default function View(spec, options) {
   view._eventListeners = [];
   view._resizeListeners = [];
 
+  // store external canvas if provided (e.g., OffscreenCanvas)
+  view.canvas = options.canvas || null;
+
+  // store scale factor (pixel ratio) for OffscreenCanvas rendering
+  view._customScaleFactor = options.scaleFactor ?? null;
+
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
   view.globalCursor(view._eventConfig.globalCursor);
@@ -113,7 +119,12 @@ export default function View(spec, options) {
   if (options.hover) view.hover();
 
   // initialize DOM container(s) and renderer
-  if (options.container) view.initialize(options.container, options.bind);
+  if (options.container) {
+    view.initialize(options.container, options.bind);
+  } else if (options.canvas) {
+    // auto-initialize renderer when canvas is provided (e.g., OffscreenCanvas)
+    view.initialize(null);
+  }
 
   if (options.watchPixelRatio) view._watchPixelRatio();
 }
@@ -265,6 +276,16 @@ inherits(View, Dataflow, {
     this._autosize = 1;
     // touch autosize signal to ensure top-level ViewLayout runs
     return this.touch(lookupSignal(this, 'autosize'));
+  },
+
+  scaleFactor(_) {
+    if (!arguments.length) return this._customScaleFactor || this._renderer?._scale || 1;
+    this._customScaleFactor = _;
+    if (this._renderer) {
+      this._renderer._scale = _;
+      this._resize = 1;
+    }
+    return this;
   },
 
   _resetRenderer() {

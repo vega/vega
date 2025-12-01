@@ -8418,11 +8418,22 @@
       state.update(w, data[i]);
     }
   }
+  function clamp$1(x, lo, hi) {
+    return x < lo ? lo : x > hi ? hi : x;
+  }
   function setWindow(w, f, i, n) {
     w.p0 = w.i0;
     w.p1 = w.i1;
-    w.i0 = f[0] == null ? 0 : Math.max(0, i - Math.abs(f[0]));
-    w.i1 = f[1] == null ? n : Math.min(n, i + Math.abs(f[1]) + 1);
+
+    // f[0]: start offset (inclusive). null => unbounded (0)
+    // Use the SIGNED offset relative to i.
+    const start = f[0] == null ? 0 : i + f[0];
+
+    // f[1]: end offset (inclusive in “row terms”), so we +1 for exclusive bound.
+    // null => unbounded (n)
+    const endExclusive = f[1] == null ? n : i + f[1] + 1;
+    w.i0 = clamp$1(start, 0, n);
+    w.i1 = clamp$1(endExclusive, 0, n);
     w.index = i;
   }
 
@@ -8493,6 +8504,34 @@
     return null;
   }
   const domImage = () => typeof Image !== 'undefined' ? Image : null;
+
+  /**
+   * Create an OffscreenCanvas instance if available.
+   * OffscreenCanvas is a browser API that provides a canvas which can be rendered
+   * off screen in Web Workers. It is not available in Node.js environments.
+   *
+   * @param {number} w - The canvas width in pixels
+   * @param {number} h - The canvas height in pixels
+   * @returns {OffscreenCanvas|null} An OffscreenCanvas instance, or null if unavailable
+   */
+  function offscreenCanvas(w, h) {
+    if (typeof OffscreenCanvas !== 'undefined') {
+      try {
+        return new OffscreenCanvas(w, h);
+      } catch (e) {
+        // OffscreenCanvas constructor may throw in some contexts
+      }
+    }
+    return null;
+  }
+
+  // Browser fallback: try domCanvas first, then OffscreenCanvas
+  function canvas(w, h) {
+    return domCanvas(w, h) || offscreenCanvas(w, h) || null;
+  }
+  function image$1() {
+    return domImage() || null;
+  }
 
   function colors$1 (specifier) {
     var n = specifier.length / 6 | 0,
@@ -10443,7 +10482,7 @@
     }
     loadImage(uri) {
       const loader = this,
-        Image = domImage();
+        Image = image$1();
       increment(loader);
       return loader._loader.sanitize(uri, {
         context: 'image'
@@ -10641,7 +10680,7 @@
       t2 = t * t;
     return s2 * s * x0 + 3 * s2 * t * x1 + 3 * s * t2 * x2 + t2 * t * x3;
   }
-  var context$2 = (context$2 = domCanvas(1, 1)) ? context$2.getContext('2d') : null;
+  var context$2 = (context$2 = canvas(1, 1)) ? context$2.getContext('2d') : null;
   const b = new Bounds();
   function intersectPath(draw) {
     return function (item, brush) {
@@ -10764,7 +10803,7 @@
       } else {
         // not axis aligned: render gradient into a pattern (#2365)
         // this allows us to use normalized bounding box coordinates
-        const image = domCanvas(Math.ceil(w), Math.ceil(h)),
+        const image = canvas(Math.ceil(w), Math.ceil(h)),
           ictx = image.getContext('2d');
         ictx.scale(w, h);
         ictx.fillStyle = addStops(ictx.createLinearGradient(x1, y1, x2, y2), spec.stops);
@@ -12377,10 +12416,19 @@
       this.dragleave = inactive([DragLeaveEvent]);
     }
     initialize(el, origin, obj) {
-      this._canvas = el && domFind(el, 'canvas');
+      // Support three modes for canvas initialization:
+      // 1. OffscreenCanvas passed directly via obj.canvas
+      // 2. DOM element search for HTMLCanvasElement
+      // 3. No canvas (headless or external context only)
+      const isOffscreen = obj && obj.canvas && typeof OffscreenCanvas !== 'undefined' && obj.canvas instanceof OffscreenCanvas;
+      this._canvas = isOffscreen ? obj.canvas : el && domFind(el, 'canvas');
 
-      // add minimal events required for proper state management
-      [ClickEvent, MouseDownEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      // Only add event listeners for DOM-based canvases
+      // OffscreenCanvas in Web Workers doesn't support DOM events
+      if (this._canvas && !isOffscreen) {
+        // add minimal events required for proper state management
+        [ClickEvent, MouseDownEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, DragLeaveEvent].forEach(type => eventListenerCheck(this, type));
+      }
       return super.initialize(el, origin, obj);
     }
 
@@ -12536,8 +12584,12 @@
   function devicePixelRatio() {
     return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   }
+  function isOffscreenCanvas(canvas) {
+    return typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas;
+  }
   function resize(canvas, width, height, origin, scaleFactor, opt) {
     const inDOM = typeof HTMLElement !== 'undefined' && canvas instanceof HTMLElement && canvas.parentNode != null,
+      isOffscreen = isOffscreenCanvas(canvas),
       context = canvas.getContext('2d'),
       ratio = inDOM ? devicePixelRatio() : scaleFactor;
     canvas.width = width * ratio;
@@ -12545,7 +12597,9 @@
     for (const key in opt) {
       context[key] = opt[key];
     }
-    if (inDOM && ratio !== 1) {
+
+    // OffscreenCanvas doesn't have a style property
+    if (inDOM && !isOffscreen && ratio !== 1) {
       canvas.style.width = width + 'px';
       canvas.style.height = height + 'px';
     }
@@ -12563,9 +12617,16 @@
     }
     initialize(el, width, height, origin, scaleFactor, options) {
       this._options = options || {};
-      this._canvas = this._options.externalContext ? null : domCanvas(1, 1, this._options.type); // instantiate a small canvas
 
-      if (el && this._canvas) {
+      // Support three modes:
+      // 1. External canvas element (OffscreenCanvas or HTMLCanvasElement)
+      // 2. External context (for backward compatibility)
+      // 3. Create new canvas
+      const externalCanvas = this._options.canvas;
+      this._canvas = this._options.externalContext || externalCanvas ? externalCanvas || null : canvas(1, 1, this._options.type); // instantiate a small canvas
+
+      // Only append to DOM if we have a DOM element and an HTMLCanvasElement
+      if (el && this._canvas && typeof HTMLElement !== 'undefined' && this._canvas instanceof HTMLElement) {
         domClear(el, 0).appendChild(this._canvas);
         this._canvas.setAttribute('class', 'marks');
       }
@@ -12592,6 +12653,7 @@
       return this._canvas;
     }
     context() {
+      // Return external context if provided, otherwise get context from canvas
       return this._options.externalContext || (this._canvas ? this._canvas.getContext('2d') : null);
     }
     dirty(item) {
@@ -17753,7 +17815,7 @@
       y2 = grid.y2 || m,
       val = grid.values,
       value = val ? i => val[i] : zero$1,
-      can = domCanvas(x2 - x1, y2 - y1),
+      can = canvas(x2 - x1, y2 - y1),
       ctx = can.getContext('2d'),
       img = ctx.getImageData(0, 0, x2 - x1, y2 - y1),
       pix = img.data;
@@ -18698,13 +18760,13 @@
     return [bitmap, undefined];
   }
   function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
-    // create canvas
+    // canvas() automatically uses OffscreenCanvas in Web Workers when available
     const width = $.width,
       height = $.height,
       border = labelInside || isGroupArea,
-      context = domCanvas(width, height).getContext('2d'),
-      baseMarkContext = domCanvas(width, height).getContext('2d'),
-      strokeContext = border && domCanvas(width, height).getContext('2d');
+      context = canvas(width, height).getContext('2d'),
+      baseMarkContext = canvas(width, height).getContext('2d'),
+      strokeContext = border && canvas(width, height).getContext('2d');
 
     // render all marks to be avoided into canvas
     avoidMarks.forEach(items => draw(context, items, false));
@@ -19537,7 +19599,9 @@
       const as = _.as || Output$1;
 
       // run label layout
-      labelLayout(pulse.materialize(pulse.SOURCE).source || [], _.size, _.sort, array$2(_.offset == null ? 1 : _.offset), array$2(_.anchor || Anchors), _.avoidMarks || [], _.avoidBaseMark !== false, _.lineAnchor || 'end', _.markIndex || 0, _.padding === undefined ? 0 : _.padding, _.method || 'naive').forEach(l => {
+      labelLayout(pulse.materialize(pulse.SOURCE).source || [], _.size, _.sort, array$2(_.offset == null ? 1 : _.offset), array$2(_.anchor || Anchors), _.avoidMarks || [], _.avoidBaseMark !== false, _.lineAnchor || 'end', _.markIndex || 0, _.padding === undefined ? 0 : _.padding, _.method || 'naive'
+      // canvasFactory removed - markBitmaps will use default canvas() which now supports OffscreenCanvas
+      ).forEach(l => {
         // write layout results to data stream
         const t = l.datum;
         t[as[0]] = l.x;
@@ -19915,7 +19979,7 @@
       random = Math.random,
       cloud = {};
     cloud.layout = function () {
-      var contextAndRatio = getContext(domCanvas()),
+      var contextAndRatio = getContext(canvas()),
         board = zeroArray((size[0] >> 5) * size[1]),
         bounds = null,
         n = words.length,
@@ -22579,8 +22643,6 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
-    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
-    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
@@ -24422,7 +24484,8 @@
       w = width(view),
       h = height(view);
     view._renderer.background(view.background());
-    view._renderer.resize(w, h, origin);
+    // Preserve the scale factor (pixel ratio) when resizing
+    view._renderer.resize(w, h, origin, view._customScaleFactor ?? view._renderer._scale);
     view._handler.origin(origin);
     view._resizeListeners.forEach(handler => {
       try {
@@ -24921,7 +24984,16 @@
   }
   function initializeRenderer(view, r, el, constructor, scaleFactor, opt) {
     r = r || new constructor(view.loader());
-    return r.initialize(el, width(view), height(view), offset(view), scaleFactor, opt).background(view.background());
+
+    // Include canvas from view options if provided
+    const options = view.canvas ? extend({
+      canvas: view.canvas
+    }, opt) : opt;
+
+    // Use custom scale factor if provided (for OffscreenCanvas pixel ratio)
+    // Prefer view's custom scale factor, then parameter, then undefined (will default to 1 in renderer)
+    const scale = view._customScaleFactor ?? scaleFactor;
+    return r.initialize(el, width(view), height(view), offset(view), scale, options).background(view.background());
   }
   function trap(view, fn) {
     return !fn ? null : function () {
@@ -25048,10 +25120,23 @@
       error('Unrecognized image type: ' + type);
     }
     const r = await renderHeadless(this, type, scaleFactor);
-    return type === RenderType.SVG ? toBlobURL(r.svg(), 'image/svg+xml') : r.canvas().toDataURL('image/png');
+    if (type === RenderType.SVG) {
+      return toBlobURL(r.svg(), 'image/svg+xml');
+    } else {
+      const canvas = r.canvas();
+      // OffscreenCanvas uses convertToBlob(), HTMLCanvasElement uses toDataURL()
+      if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
+        const blob = await canvas.convertToBlob({
+          type: 'image/png'
+        });
+        return toBlobURL(blob, 'image/png');
+      } else {
+        return canvas.toDataURL('image/png');
+      }
+    }
   }
   function toBlobURL(data, mime) {
-    const blob = new Blob([data], {
+    const blob = data instanceof Blob ? data : new Blob([data], {
       type: mime
     });
     return window.URL.createObjectURL(blob);
@@ -25316,6 +25401,12 @@
     view._eventListeners = [];
     view._resizeListeners = [];
 
+    // store external canvas if provided (e.g., OffscreenCanvas)
+    view.canvas = options.canvas || null;
+
+    // store scale factor (pixel ratio) for OffscreenCanvas rendering
+    view._customScaleFactor = options.scaleFactor ?? null;
+
     // initialize event configuration
     view._eventConfig = initializeEventConfig(spec.eventConfig);
     view.globalCursor(view._eventConfig.globalCursor);
@@ -25357,7 +25448,12 @@
     if (options.hover) view.hover();
 
     // initialize DOM container(s) and renderer
-    if (options.container) view.initialize(options.container, options.bind);
+    if (options.container) {
+      view.initialize(options.container, options.bind);
+    } else if (options.canvas) {
+      // auto-initialize renderer when canvas is provided (e.g., OffscreenCanvas)
+      view.initialize(null);
+    }
     if (options.watchPixelRatio) view._watchPixelRatio();
   }
   function lookupSignal(view, name) {
@@ -25480,6 +25576,15 @@
       this._autosize = 1;
       // touch autosize signal to ensure top-level ViewLayout runs
       return this.touch(lookupSignal(this, 'autosize'));
+    },
+    scaleFactor(_) {
+      if (!arguments.length) return this._customScaleFactor || this._renderer?._scale || 1;
+      this._customScaleFactor = _;
+      if (this._renderer) {
+        this._renderer._scale = _;
+        this._resize = 1;
+      }
+      return this;
     },
     _resetRenderer() {
       if (this._renderer) {
