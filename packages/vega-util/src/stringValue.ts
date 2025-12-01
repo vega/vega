@@ -7,11 +7,9 @@ import isString from './isString.js';
  * Arrays are formatted as comma-separated values in brackets.
  * Objects and strings are converted to JSON format with Unicode line/paragraph
  * separator characters properly escaped for JavaScript compatibility.
- * @param {*} x - The value to convert to a string
- * @returns {string} The string representation of the input value
  */
-export default function $(x) {
-  return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]`
+export default function stringValue(x: any): string {
+  return isArray(x) ? `[${x.map(v => v === null ? 'null' : stringValue(v))}]`
     : isObject(x) || isString(x) ?
       // Output valid JSON and JS source strings.
       // See https://github.com/judofyr/timeless/blob/master/posts/json-isnt-a-javascript-subset.md

@@ -1,8 +1,6 @@
 /**
  * Check if the value is an actual Date object.
- * @param {unknown} value
- * @returns {value is Date}
  */
-export default function isDate(value) {
+export default function isDate(value: unknown): value is Date {
   return Object.prototype.toString.call(value) === '[object Date]';
 }

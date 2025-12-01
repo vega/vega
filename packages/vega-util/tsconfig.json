@@ -1,24 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "checkJs": true,
-    "rootDir": "src",
+    "checkJs": false,
+    "allowJs": true,
     "noEmit": false,
+    "rootDir": "src",
+    "outDir": "build",
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "build/types"
+    "declarationMap": true,
+    "sourceMap": true
   },
-  "include": [
-    "src/is*.js",
-    "src/toBoolean.js",
-    "src/toNumber.js",
-    "src/toString.js",
-    "src/toDate.js",
-    "src/toSet.js",
-    "src/truncate.js",
-    "src/pad.js",
-    "src/repeat.js",
-    "src/splitAccessPath.js",
-    "src/stringValue.js"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.js"]
 }
