@@ -90,7 +90,7 @@ export default function(codegen) {
     btoa:        'btoa',
     atob:        'atob',
     // URI encoding
-    encodeUriComponent: 'encodeURIComponent',
+    encodeURIComponent: 'encodeURIComponent',
 
     // REGEXP functions
     regexp:  REGEXP,

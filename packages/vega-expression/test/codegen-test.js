@@ -214,8 +214,8 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('parseInt("42")'),parseInt('42'));
   t.equal(evaluate('btoa("a")'),  btoa('a'));
   t.equal(evaluate('atob("YQ==")'), atob('YQ=='));
-  t.equal(evaluate('encodeUriComponent("hello world")'), encodeURIComponent('hello world'));
-  t.equal(evaluate('encodeUriComponent("a=b&c=d")'), encodeURIComponent('a=b&c=d'));
+  t.equal(evaluate('encodeURIComponent("hello world")'), encodeURIComponent('hello world'));
+  t.equal(evaluate('encodeURIComponent("a=b&c=d")'), encodeURIComponent('a=b&c=d'));
 
   // should eval regular expression functions
   t.equal(evaluate('test(/ain/, "spain")'), /ain/.test('spain'));

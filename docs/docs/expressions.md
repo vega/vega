@@ -601,8 +601,8 @@ Creates a [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64)-enc
 <b>atob</b>(<i>string</i>) {% include tag ver="5.32.0" %}<br/>
 Decodes an [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string that was encoded with [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64). Same as JavaScript's [Window.atob()](https://developer.mozilla.org/en-US/docs/Web/API/Window/atob).
 
-<a name="encodeUriComponent" href="#encodeUriComponent">#</a>
-<b>encodeUriComponent</b>(<i>string</i>)<br/>
+<a name="encodeURIComponent" href="#encodeURIComponent">#</a>
+<b>encodeURIComponent</b>(<i>string</i>)<br/>
 Encodes a URI component by replacing each instance of certain characters with UTF-8 encoding. Same as JavaScript's [encodeURIComponent()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent).
 
 
