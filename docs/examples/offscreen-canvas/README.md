@@ -51,7 +51,7 @@ Then open: `http://localhost:8080/labeled-line-chart.html`
 | Chrome  | 69+     | ✅ Full |
 | Edge    | 79+     | ✅ Full |
 | Firefox | 105+    | ✅ Full |
-| Safari  | -       | ❌ Not yet |
+| Safari  | 16.4+   | ✅ Full |
 
 ### Label Transform Usage
 

@@ -181,12 +181,7 @@ await view.runAsync();
 
 ### Image Export
 
-**Before:**
-```javascript
-const url = await view.toImageURL('png');
-```
-
-**After (works with both):**
+Image export works the same way for both canvas types:
 ```javascript
 // Automatically handles OffscreenCanvas.convertToBlob()
 // or HTMLCanvasElement.toDataURL()
@@ -200,7 +195,7 @@ const url = await view.toImageURL('png');
 | Chrome  | 69+     | ✅ Full |
 | Edge    | 79+     | ✅ Full |
 | Firefox | 105+    | ✅ Full |
-| Safari  | -       | ❌ Not yet |
+| Safari  | 16.4+   | ✅ Full |
 
 **Feature Detection:**
 ```javascript
@@ -223,7 +218,7 @@ if (typeof OffscreenCanvas !== 'undefined') {
 
 1. **No DOM access**: Workers can't access document or window
 2. **Event handling**: Mouse/touch events must be proxied from main thread
-3. **Browser support**: Not available in Safari (as of 2025)
+3. **Browser support**: Requires Safari 16.4+ for full support
 4. **Debugging**: Worker debugging can be more complex
 
 ## Examples

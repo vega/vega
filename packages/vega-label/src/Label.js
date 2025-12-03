@@ -98,7 +98,6 @@ inherits(Label, Transform, {
       _.markIndex || 0,
       _.padding === undefined ? 0 : _.padding,
       _.method || 'naive'
-      // canvasFactory removed - markBitmaps will use default canvas() which now supports OffscreenCanvas
     ).forEach(l => {
       // write layout results to data stream
       const t = l.datum;

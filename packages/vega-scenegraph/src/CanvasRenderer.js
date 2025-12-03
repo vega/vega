@@ -20,16 +20,12 @@ export default class CanvasRenderer extends Renderer {
   initialize(el, width, height, origin, scaleFactor, options) {
     this._options = options || {};
 
-    // Support three modes:
-    // 1. External canvas element (OffscreenCanvas or HTMLCanvasElement)
-    // 2. External context (for backward compatibility)
-    // 3. Create new canvas
-    const externalCanvas = this._options.canvas;
-    this._canvas = this._options.externalContext || externalCanvas
-      ? externalCanvas || null
-      : canvas(1, 1, this._options.type); // instantiate a small canvas
+    const { canvas: externalCanvas, externalContext } = this._options;
+    this._canvas = externalContext ? null
+      : externalCanvas || canvas(1, 1, this._options.type);
 
-    // Only append to DOM if we have a DOM element and an HTMLCanvasElement
+    // Only append to DOM if we have a DOM element and an HTMLCanvasElement.
+    // This ensures we don't attempt to append an OffscreenCanvas to the DOM.
     if (el && this._canvas && typeof HTMLElement !== 'undefined'
         && this._canvas instanceof HTMLElement) {
       domClear(el, 0).appendChild(this._canvas);

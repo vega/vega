@@ -155,8 +155,6 @@ async function runTest() {
     canvas.width = 700 * pixelRatio;
     canvas.height = 400 * pixelRatio;
 
-    console.log(`Setting up canvas: CSS=700x400, Backing=${canvas.width}x${canvas.height}, Ratio=${pixelRatio}`);
-
     const offscreen = canvas.transferControlToOffscreen();
     const worker = new Worker("worker.js", { type: "module" });
 
@@ -183,7 +181,6 @@ async function runTest() {
       }
       const media = matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
       const handleChange = () => {
-        console.log(`Pixel ratio changed to ${window.devicePixelRatio}`);
         worker.postMessage({
           type: 'pixelRatio',
           pixelRatio: window.devicePixelRatio || 1,
@@ -199,7 +196,6 @@ async function runTest() {
 
     // Listen for messages from worker
     worker.addEventListener("message", (event) => {
-      console.log("Main received message:", event.data);
       const statusEl = document.getElementById("status");
 
       if (event.data.type === "progress") {
@@ -211,7 +207,6 @@ async function runTest() {
       } else if (event.data.type === "error") {
         statusEl.className = "error";
         statusEl.textContent = "❌ " + event.data.message;
-        console.error("Worker error:", event.data.error);
       }
     });
 
@@ -219,12 +214,10 @@ async function runTest() {
       const statusEl = document.getElementById("status");
       statusEl.className = "error";
       statusEl.textContent = "❌ Worker error: " + error.message;
-      console.error("Worker error:", error);
     });
   } catch (error) {
     document.getElementById("status").className = "error";
     document.getElementById("status").textContent =
       "❌ Failed to load Vega: " + error.message;
-    console.error("Error:", error);
   }
 }
