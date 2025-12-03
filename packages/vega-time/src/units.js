@@ -1,4 +1,4 @@
-import {array, error, extend, hasOwnProperty} from 'vega-util';
+import {array, error, extend, hasOwnProperty} from '@omni-co/vega-util';
 
 export const YEAR = 'year';
 export const QUARTER = 'quarter';

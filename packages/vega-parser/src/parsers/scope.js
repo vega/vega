@@ -7,7 +7,7 @@ import parseTitle from './title.js';
 import parseData from './data.js';
 import parseMark from './mark.js';
 import parseAxis from './axis.js';
-import {array} from 'vega-util';
+import {array} from '@omni-co/vega-util';
 
 export default function(spec, scope, preprocessed) {
   const signals = array(spec.signals),

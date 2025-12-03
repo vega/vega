@@ -1,4 +1,4 @@
-import {isObject, stringValue} from 'vega-util';
+import {isObject, stringValue} from '@omni-co/vega-util';
 
 export default function(clip, scope) {
   let expr;

@@ -3,10 +3,10 @@ import {
 } from '../transforms.js';
 import {aggrField, keyFieldRef, ref} from '../util.js';
 
-import {isDiscrete, isQuantile, isValidScaleType} from 'vega-scale';
+import {isDiscrete, isQuantile, isValidScaleType} from '@omni-co/vega-scale';
 import {
   error, extend, hasOwnProperty, isArray, isObject, isString, stringValue
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 let FIELD_REF_ID = 0;
 

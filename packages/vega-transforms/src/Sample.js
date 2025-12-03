@@ -1,6 +1,6 @@
-import {Transform, tupleid} from 'vega-dataflow';
-import {random} from 'vega-statistics';
-import {inherits} from 'vega-util';
+import {Transform, tupleid} from '@omni-co/vega-dataflow';
+import {random} from '@omni-co/vega-statistics';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Samples tuples passing through this operator.

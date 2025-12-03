@@ -1,5 +1,5 @@
 {
-  "name": "vega-schema",
+  "name": "@omni-co/vega-schema",
   "version": "6.2.0",
   "description": "Generate the Vega JSON schema.",
   "keywords": [
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -28,19 +28,22 @@
     "prepublishOnly": "npm test"
   },
   "dependencies": {
-    "vega-scale": "^8.1.0"
+    "@omni-co/vega-scale": "^8.1.0"
   },
   "devDependencies": {
-    "vega-crossfilter": "*",
-    "vega-encode": "*",
-    "vega-force": "*",
-    "vega-geo": "*",
-    "vega-hierarchy": "*",
-    "vega-label": "*",
-    "vega-regression": "*",
-    "vega-transforms": "*",
-    "vega-view-transforms": "*",
-    "vega-voronoi": "*",
-    "vega-wordcloud": "*"
+    "@omni-co/vega-crossfilter": "*",
+    "@omni-co/vega-encode": "*",
+    "@omni-co/vega-force": "*",
+    "@omni-co/vega-geo": "*",
+    "@omni-co/vega-hierarchy": "*",
+    "@omni-co/vega-label": "*",
+    "@omni-co/vega-regression": "*",
+    "@omni-co/vega-transforms": "*",
+    "@omni-co/vega-view-transforms": "*",
+    "@omni-co/vega-voronoi": "*",
+    "@omni-co/vega-wordcloud": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

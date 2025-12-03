@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, joinaggregate as JoinAggregate} from '../index.js';
 
 tape('JoinAggregate extends tuples with aggregate values', t => {

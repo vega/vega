@@ -1,5 +1,5 @@
 import {scale as getScale} from './scales.js';
-import {constant, peek} from 'vega-util';
+import {constant, peek} from '@omni-co/vega-util';
 import * as $ from 'd3-interpolate';
 
 const scaleProps = ['clamp', 'base', 'constant', 'exponent'];

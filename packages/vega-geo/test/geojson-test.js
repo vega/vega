@@ -1,8 +1,8 @@
 import tape from 'tape';
-import {Dataflow} from 'vega-dataflow';
-import { field } from 'vega-util';
+import {Dataflow} from '@omni-co/vega-dataflow';
+import { field } from '@omni-co/vega-util';
 import { geojson as GeoJSON } from '../index.js';
-import { collect as Collect } from 'vega-transforms';
+import { collect as Collect } from '@omni-co/vega-transforms';
 
 function geodata() {
   return [

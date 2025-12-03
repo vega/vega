@@ -2,8 +2,8 @@ import applyDefaults from './encode/defaults.js';
 import entry from './encode/entry.js';
 import rule from './encode/rule.js';
 
-import {parseExpression} from 'vega-functions';
-import {extend, isArray} from 'vega-util';
+import {parseExpression} from '@omni-co/vega-functions';
+import {extend, isArray} from '@omni-co/vega-util';
 
 export default function(encode, type, role, style, scope, params) {
   const enc = {};

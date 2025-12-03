@@ -1,5 +1,5 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {inherits, isArray} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {inherits, isArray} from '@omni-co/vega-util';
 import {transform} from './Isocontour.js';
 import {params} from './KDE2D.js';
 import contours from './util/contours.js';

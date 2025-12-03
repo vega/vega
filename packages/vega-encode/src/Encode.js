@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {falsy, inherits, isArray} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {falsy, inherits, isArray} from '@omni-co/vega-util';
 
 /**
  * Invokes encoding functions for visual items.

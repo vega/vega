@@ -1,5 +1,5 @@
 {
-  "name": "vega-format",
+  "name": "@omni-co/vega-format",
   "version": "2.1.0",
   "description": "JavaScript string formatting utilities for Vega.",
   "keywords": [
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -30,10 +30,13 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
+    "@omni-co/vega-time": "^3.1.0",
+    "@omni-co/vega-util": "^2.1.0",
     "d3-array": "^3.2.4",
     "d3-format": "^3.1.0",
-    "d3-time-format": "^4.1.0",
-    "vega-time": "^3.1.0",
-    "vega-util": "^2.1.0"
+    "d3-time-format": "^4.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

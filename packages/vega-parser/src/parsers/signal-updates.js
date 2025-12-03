@@ -1,6 +1,6 @@
 import parseUpdate from './update.js';
-import {parseExpression} from 'vega-functions';
-import {error} from 'vega-util';
+import {parseExpression} from '@omni-co/vega-functions';
+import {error} from '@omni-co/vega-util';
 
 export default function(signal, scope) {
   const op = scope.getSignal(signal.name);

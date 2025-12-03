@@ -1,5 +1,5 @@
 {
-  "name": "vega-encode",
+  "name": "@omni-co/vega-encode",
   "version": "5.1.0",
   "description": "Visual encoding transforms for Vega dataflows.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -29,13 +29,16 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-scale": "^8.1.0",
+    "@omni-co/vega-util": "^2.1.0",
     "d3-array": "^3.2.4",
-    "d3-interpolate": "^3.0.1",
-    "vega-dataflow": "^6.1.0",
-    "vega-scale": "^8.1.0",
-    "vega-util": "^2.1.0"
+    "d3-interpolate": "^3.0.1"
   },
   "devDependencies": {
-    "vega-transforms": "*"
+    "@omni-co/vega-transforms": "*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

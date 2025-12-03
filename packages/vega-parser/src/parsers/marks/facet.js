@@ -2,7 +2,7 @@ import {getDataRef} from './data.js';
 import DataScope from '../../DataScope.js';
 import {Collect, Facet, PreFacet, Sieve} from '../../transforms.js';
 import {ref} from '../../util.js';
-import {error, stringValue} from 'vega-util';
+import {error, stringValue} from '@omni-co/vega-util';
 
 export default function(spec, scope, group) {
   const facet = spec.from.facet,

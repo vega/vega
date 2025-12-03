@@ -1,4 +1,4 @@
-import {merge} from 'vega-util';
+import {merge} from '@omni-co/vega-util';
 
 export default function(idFunc, source, input) {
   const $ = idFunc;

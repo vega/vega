@@ -1,7 +1,7 @@
 import parseTransform from '../transform.js';
 import {Collect} from '../../transforms.js';
 import {ref} from '../../util.js';
-import {array, error, extend} from 'vega-util';
+import {array, error, extend} from '@omni-co/vega-util';
 
 export default function(from, group, scope) {
   let facet, key, op, dataRef, parent;

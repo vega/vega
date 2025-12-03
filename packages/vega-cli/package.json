@@ -1,5 +1,5 @@
 {
-  "name": "vega-cli",
+  "name": "@omni-co/vega-cli",
   "version": "6.2.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
@@ -26,14 +26,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
+    "@omni-co/vega": "6.2.0",
     "canvas": "^3.1.1",
-    "vega": "6.2.0",
     "yargs": "18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,5 +1,5 @@
 import {operator} from '../util.js';
-import {parseExpression} from 'vega-functions';
+import {parseExpression} from '@omni-co/vega-functions';
 
 export default function(spec, scope, name) {
   const remove = spec.remove,

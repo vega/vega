@@ -1,4 +1,4 @@
-import {toSet} from 'vega-util';
+import {toSet} from '@omni-co/vega-util';
 
 const Skip = toSet(['rule']),
       Swap = toSet(['group', 'image', 'rect']);

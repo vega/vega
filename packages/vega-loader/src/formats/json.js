@@ -1,6 +1,6 @@
 import {
   field, identity, isArray, isFunction, isIterable, isObject
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 function isBuffer(_) {
   return (typeof Buffer === 'function' && isFunction(Buffer.isBuffer))

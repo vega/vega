@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { extent, field } from 'vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { extent, field } from '@omni-co/vega-util';
 import { collect as Collect, timeunit as TimeUnit } from '../index.js';
 
 const UNITS = [

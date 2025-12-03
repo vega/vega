@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field, truthy} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field, truthy} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, facet as Facet} from '../index.js';
 
 tape('Facet facets tuples', t => {

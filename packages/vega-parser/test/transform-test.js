@@ -1,8 +1,9 @@
 import tape from 'tape';
-import {extend} from 'vega-util';
-import * as vega from 'vega-dataflow';
+import {extend} from '@omni-co/vega-util';
+import * as vega from '@omni-co/vega-dataflow';
 import { parse } from '../index.js';
-import * as vegaTransforms from 'vega-transforms';
+import { aggrField } from '../src/util.js';
+import * as vegaTransforms from '@omni-co/vega-transforms';
 
 extend(vega.transforms, vegaTransforms);
 
@@ -50,5 +51,19 @@ tape('Parser parses Vega specs with data transforms', t => {
 
   t.equal(dfs.operators.length, 33);
 
+  t.end();
+});
+
+tape('Parser replaces non-alphanumeric characters with underscores in aggregated fields', t => {
+  // example data: [{ a: { b: 1 }, 'c.d': 1, 'e.f': { g: 1, 'h.i': 1} }]
+  t.deepEqual(aggrField('sum', 'a.b'), 'sum_a_b');
+  t.deepEqual(aggrField('mean', 'c\\.d'), 'mean_c_d');
+  t.deepEqual(aggrField('max', '[c.d]'), 'max_c_d');
+  t.deepEqual(aggrField('min', 'e\\.f.g'), 'min_e_f_g'); 
+  t.deepEqual(aggrField('min', "e\\.f['g']"), 'min_e_f_g'); 
+  t.deepEqual(aggrField('min', "[e.f]['g']"), 'min_e_f_g'); 
+  t.deepEqual(aggrField('min', '[e.f][h.i]'), 'min_e_f_h_i'); 
+  t.deepEqual(aggrField('min', 'e\\.f.h\\.i'), 'min_e_f_h_i'); 
+  t.deepEqual(aggrField('min', 'e\\.f[h.i]'), 'min_e_f_h_i'); 
   t.end();
 });

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import tape from 'tape';
-import { loader } from 'vega-loader';
+import { loader } from '@omni-co/vega-loader';
 import { Bounds, SVGStringRenderer as Renderer, markup, resetSVGDefIds, sceneFromJSON, sceneToJSON } from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 import './__init__.js';

@@ -1,5 +1,5 @@
 {
-  "name": "vega-projection-extended",
+  "name": "@omni-co/vega-projection-extended",
   "version": "3.1.0",
   "description": "Extended projections for cartographic mapping.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -28,7 +28,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "d3-geo-projection": "^4.0.0",
-    "vega-projection": "^2.1.0"
+    "@omni-co/vega-projection": "^2.1.0",
+    "d3-geo-projection": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

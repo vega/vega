@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}));
-})(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vega-util')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'vega-util'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.vegaUtil));
+})(this, (function (exports, vegaUtil) { 'use strict';
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -33069,7 +33069,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version$1 = "6.2.0";
+  var version$1 = "6.2.3";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -36918,7 +36918,7 @@
     r = r || new constructor(view.loader());
 
     // Include canvas from view options if provided
-    const options = view.canvas ? extend$1({
+    const options = view.canvas ? vegaUtil.extend({
       canvas: view.canvas
     }, opt) : opt;
 
@@ -38170,7 +38170,13 @@
     return !isObject(sort) ? '' : (sort.order === Descending ? '-' : '+') + aggrField(sort.op, sort.field);
   }
   function aggrField(op, field) {
-    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal : field || '');
+    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal
+    // Replace non-alphanumeric character sequences with underscores and trim leading/trailing underscores
+    // to prevent incorrect path extraction for nested target fields or target fields with (escaped) dots. 
+    // Example: 'a\\.b[c.d]' => 'a_b_c_d'. 
+    // Note: aggregating both a nested field and a field with a dot could lead to conflicting names: 
+    // with data like [{ a: {b: 1}, 'a.b': 1 }], summing 'a.b' and 'a\\.b' would both result in a field 'sum_a_b'   
+    : field?.replace(/\W+/g, '_').replace(/^_+|_+$/g, '') || '');
   }
 
   // -----

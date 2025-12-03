@@ -1,6 +1,6 @@
 import labelLayout from './LabelLayout.js';
-import {Transform} from 'vega-dataflow';
-import {array, error, inherits, isFunction} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {array, error, inherits, isFunction} from '@omni-co/vega-util';
 
 const Output = [
   'x',

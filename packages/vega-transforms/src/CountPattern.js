@@ -1,5 +1,5 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Count regexp-defined pattern occurrences in a text field.

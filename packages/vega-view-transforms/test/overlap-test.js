@@ -1,7 +1,7 @@
 import tape from 'tape';
-import {Dataflow} from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
-import {collect as Collect} from 'vega-transforms';
+import {Dataflow} from '@omni-co/vega-dataflow';
+import {Bounds} from '@omni-co/vega-scenegraph';
+import {collect as Collect} from '@omni-co/vega-transforms';
 import {overlap as Overlap} from '../index.js';
 
 function items() {

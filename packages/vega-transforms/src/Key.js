@@ -1,5 +1,5 @@
-import {Operator} from 'vega-dataflow';
-import {inherits, key} from 'vega-util';
+import {Operator} from '@omni-co/vega-dataflow';
+import {inherits, key} from '@omni-co/vega-util';
 
 /**
  * Generates a key function.

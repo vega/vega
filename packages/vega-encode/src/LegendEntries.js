@@ -1,10 +1,10 @@
-import {Transform, ingest} from 'vega-dataflow';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
 import {
   GradientLegend, SymbolLegend,
   labelFormat, labelFraction, labelValues,
   scaleFraction, tickCount
-} from 'vega-scale';
-import {constant, inherits, isFunction, peek} from 'vega-util';
+} from '@omni-co/vega-scale';
+import {constant, inherits, isFunction, peek} from '@omni-co/vega-util';
 
 /**
  * Generates legend entries for visualizing a scale.

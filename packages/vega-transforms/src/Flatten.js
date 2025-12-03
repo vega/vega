@@ -1,6 +1,6 @@
 import {fieldNames} from './util/util.js';
-import {Transform, derive} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, derive} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Flattens array-typed field values into new data objects.

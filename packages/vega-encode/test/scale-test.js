@@ -1,7 +1,7 @@
 import tape from 'tape';
-import { error, extend } from 'vega-util';
-import { Dataflow } from 'vega-dataflow';
-import * as vs from 'vega-scale';
+import { error, extend } from '@omni-co/vega-util';
+import { Dataflow } from '@omni-co/vega-dataflow';
+import * as vs from '@omni-co/vega-scale';
 import * as encode from '../index.js';
 
 function scale(params) {

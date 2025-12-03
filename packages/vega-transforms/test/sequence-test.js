@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field} from 'vega-util';
-import { Dataflow } from 'vega-dataflow';
+import {field} from '@omni-co/vega-util';
+import { Dataflow } from '@omni-co/vega-dataflow';
 import {sequence as Sequence} from '../index.js';
 
 tape('Sequence generates sequences', t => {

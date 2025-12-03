@@ -85,7 +85,7 @@ tape('Dataflow loads external data', t => {
     })
     .then(() => {
       t.equal(op.pulse.add.length, 1);
-      t.equal(op.pulse.add[0].name, 'vega-dataflow');
+      t.equal(op.pulse.add[0].name, '@omni-co/vega-dataflow');
       t.end();
     });
 });

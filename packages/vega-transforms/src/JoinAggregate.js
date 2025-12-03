@@ -1,6 +1,6 @@
 import Aggregate from './Aggregate.js';
 import {ValidAggregateOps} from './util/AggregateOps.js';
-import {extend, inherits} from 'vega-util';
+import {extend, inherits} from '@omni-co/vega-util';
 
 /**
  * Extend input tuples with aggregate values.

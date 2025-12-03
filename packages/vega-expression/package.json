@@ -1,5 +1,5 @@
 {
-  "name": "vega-expression",
+  "name": "@omni-co/vega-expression",
   "version": "6.1.0",
   "description": "Vega expression parser and code generator.",
   "keywords": [
@@ -21,7 +21,7 @@
   "types": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -31,7 +31,10 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-util": "^2.1.0",
+    "@omni-co/vega-util": "^2.1.0",
     "@types/estree": "^1.0.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

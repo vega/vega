@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { Dataflow } from 'vega-dataflow';
+import { Dataflow } from '@omni-co/vega-dataflow';
 import { compare as Compare } from '../index.js';
 
 tape('Compare generates comparator functions', t => {

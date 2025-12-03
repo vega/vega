@@ -1,7 +1,7 @@
 import {partition} from './util/util.js';
-import {Transform, ingest} from 'vega-dataflow';
-import {quantiles} from 'vega-statistics';
-import {accessorName, inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {quantiles} from '@omni-co/vega-statistics';
+import {accessorName, inherits} from '@omni-co/vega-util';
 import {range} from 'd3-array';
 
 /**

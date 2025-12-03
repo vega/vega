@@ -2,7 +2,7 @@ import tape from 'tape';
 import fs from 'fs';
 import {PNG} from 'pngjs';
 import blazediff from '@blazediff/core';
-import {loader} from 'vega-loader';
+import {loader} from '@omni-co/vega-loader';
 import {Bounds, CanvasRenderer as Renderer, sceneFromJSON, sceneToJSON} from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 import jsdom from 'jsdom';

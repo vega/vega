@@ -8,7 +8,7 @@ import {TextMark} from './marks/marktypes.js';
 import {TitleRole, TitleSubtitleRole, TitleTextRole} from './marks/roles.js';
 import {Collect} from '../transforms.js';
 import {ref} from '../util.js';
-import {extend, isString} from 'vega-util';
+import {extend, isString} from '@omni-co/vega-util';
 
 const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;
 

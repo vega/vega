@@ -12,7 +12,7 @@ import parseTransform from './transform.js';
 import parseTrigger from './trigger.js';
 import DataScope from '../DataScope.js';
 import {fieldRef, isSignal, ref} from '../util.js';
-import {error} from 'vega-util';
+import {error} from '@omni-co/vega-util';
 import {Bound, Collect, DataJoin, Encode, Mark, Overlap, Render, Sieve, SortItems, ViewLayout} from '../transforms.js';
 
 export default function(spec, scope) {

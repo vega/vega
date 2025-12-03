@@ -1,11 +1,11 @@
 {
-  "name": "vega-typings",
+  "name": "@omni-co/vega-typings",
   "version": "2.1.0",
   "description": "Typings for Vega.",
   "types": "types",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "author": {
     "name": "Vega",
@@ -26,13 +26,16 @@
     "test": "npm run format && npx tsd . && ts-json-schema-generator -p types/index.d.ts --type Spec > /dev/null"
   },
   "dependencies": {
-    "@types/geojson": "7946.0.16",
-    "vega-event-selector": "^4.0.0",
-    "vega-expression": "^6.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-event-selector": "^4.0.0",
+    "@omni-co/vega-expression": "^6.1.0",
+    "@omni-co/vega-util": "^2.1.0",
+    "@types/geojson": "7946.0.16"
   },
   "devDependencies": {
     "ts-json-schema-generator": "^2.4.0",
     "tsd": "^0.33.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

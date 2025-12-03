@@ -1,11 +1,11 @@
 import {max} from 'd3-array';
 import {rgb} from 'd3-color';
-import {canvas} from 'vega-canvas';
-import {Transform} from 'vega-dataflow';
+import {canvas} from '@omni-co/vega-canvas';
+import {Transform} from '@omni-co/vega-dataflow';
 import {
   accessorFields, constant, extend, identity,
   inherits, isFunction, toSet, zero
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 /**
  * Render a heatmap image for input raster grid data.

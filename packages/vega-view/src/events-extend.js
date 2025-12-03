@@ -1,6 +1,6 @@
 import {offset} from './render-size.js';
-import {constant, isString} from 'vega-util';
-import {point} from 'vega-scenegraph';
+import {constant, isString} from '@omni-co/vega-util';
+import {point} from '@omni-co/vega-scenegraph';
 
 /**
  * Extend an event with additional view-specific methods.

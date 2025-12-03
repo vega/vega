@@ -1,7 +1,7 @@
 import tape from 'tape';
 import fs from 'fs';
 import {CanvasHandler as Handler, CanvasRenderer as Renderer, sceneFromJSON} from '../index.js';
-import {loader} from 'vega-loader';
+import {loader} from '@omni-co/vega-loader';
 import jsdom from 'jsdom';
 
 const win = (new jsdom.JSDOM()).window, doc = win.document;

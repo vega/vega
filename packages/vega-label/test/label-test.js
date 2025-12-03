@@ -1,8 +1,8 @@
 import tape from 'tape';
-import { truthy } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
-import {collect as Collect} from 'vega-transforms';
+import { truthy } from '@omni-co/vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import {Bounds} from '@omni-co/vega-scenegraph';
+import {collect as Collect} from '@omni-co/vega-transforms';
 import { label as Label } from '../index.js';
 
 function closeTo(t, a, b) {

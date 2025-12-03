@@ -1,6 +1,6 @@
 import {has} from './util.js';
 import {FrameRole, MarkRole} from '../marks/roles.js';
-import {array, extend} from 'vega-util';
+import {array, extend} from '@omni-co/vega-util';
 
 export default function(encode, type, role, style, config) {
   const defaults = {}, enter = {};

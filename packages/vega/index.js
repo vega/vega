@@ -1,18 +1,18 @@
 // -- Transforms -----
 
-import {extend} from 'vega-util';
-import {transforms} from 'vega-dataflow';
-import * as tx from 'vega-transforms';
-import * as vtx from 'vega-view-transforms';
-import * as encode from 'vega-encode';
-import * as geo from 'vega-geo';
-import * as force from 'vega-force';
-import * as tree from 'vega-hierarchy';
-import * as label from 'vega-label';
-import * as reg from 'vega-regression';
-import * as voronoi from 'vega-voronoi';
-import * as wordcloud from 'vega-wordcloud';
-import * as xf from 'vega-crossfilter';
+import {extend} from '@omni-co/vega-util';
+import {transforms} from '@omni-co/vega-dataflow';
+import * as tx from '@omni-co/vega-transforms';
+import * as vtx from '@omni-co/vega-view-transforms';
+import * as encode from '@omni-co/vega-encode';
+import * as geo from '@omni-co/vega-geo';
+import * as force from '@omni-co/vega-force';
+import * as tree from '@omni-co/vega-hierarchy';
+import * as label from '@omni-co/vega-label';
+import * as reg from '@omni-co/vega-regression';
+import * as voronoi from '@omni-co/vega-voronoi';
+import * as wordcloud from '@omni-co/vega-wordcloud';
+import * as xf from '@omni-co/vega-crossfilter';
 extend(
   transforms,
   tx, vtx, encode, geo, force, label, tree, reg, voronoi, wordcloud, xf
@@ -24,15 +24,15 @@ extend(
 import * as pkg from './package.json' with { type: 'json' };
 export const version = pkg.version;
 
-export * from 'vega-statistics';
+export * from '@omni-co/vega-statistics';
 
-export * from 'vega-time';
+export * from '@omni-co/vega-time';
 
-export * from 'vega-util';
+export * from '@omni-co/vega-util';
 
-export * from 'vega-loader';
+export * from '@omni-co/vega-loader';
 
-export * from 'vega-scenegraph';
+export * from '@omni-co/vega-scenegraph';
 
 export {
   Dataflow,
@@ -49,7 +49,7 @@ export {
   transform,
   transforms,
   tupleid
-} from 'vega-dataflow';
+} from '@omni-co/vega-dataflow';
 
 export {
   scale,
@@ -58,15 +58,15 @@ export {
   interpolateColors,
   interpolateRange,
   quantizeInterpolator
-} from 'vega-scale';
+} from '@omni-co/vega-scale';
 
 export {
   projection
-} from 'vega-projection';
+} from '@omni-co/vega-projection';
 
 export {
   View
-} from 'vega-view';
+} from '@omni-co/vega-view';
 
 export {
   numberFormatDefaultLocale as formatLocale,
@@ -74,25 +74,25 @@ export {
   locale,
   defaultLocale,
   resetDefaultLocale
-} from 'vega-format';
+} from '@omni-co/vega-format';
 
 export {
   expressionFunction
-} from 'vega-functions';
+} from '@omni-co/vega-functions';
 
 export {
   parse
-} from 'vega-parser';
+} from '@omni-co/vega-parser';
 
 export {
   context as runtimeContext
-} from 'vega-runtime';
+} from '@omni-co/vega-runtime';
 
 export {
   codegenExpression,
   parseExpression
-} from 'vega-expression';
+} from '@omni-co/vega-expression';
 
 export {
   parseSelector
-} from 'vega-event-selector';
+} from '@omni-co/vega-event-selector';

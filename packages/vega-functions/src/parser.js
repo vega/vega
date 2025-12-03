@@ -1,7 +1,7 @@
 import {codeGenerator, codegenParams} from './codegen.js';
 import {SignalPrefix} from './constants.js';
-import {CallExpression, parseExpression} from 'vega-expression';
-import {error, extend, hasOwnProperty, isString, stringValue} from 'vega-util';
+import {CallExpression, parseExpression} from '@omni-co/vega-expression';
+import {error, extend, hasOwnProperty, isString, stringValue} from '@omni-co/vega-util';
 
 export default function(expr, scope) {
   const params = {};

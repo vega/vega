@@ -1,8 +1,8 @@
 import Bitmaps from './Bitmaps.js';
 import Dimension from './Dimension.js';
 import SortedIndex from './SortedIndex.js';
-import {Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * An indexed multi-dimensional filter.

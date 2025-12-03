@@ -1,10 +1,10 @@
 import partition from './partition.js';
-import {Transform, ingest} from 'vega-dataflow';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
 import {
   regressionConstant, regressionExp, regressionLinear, regressionLog,
   regressionPoly, regressionPow, regressionQuad, sampleCurve
-} from 'vega-statistics';
-import {accessorName, error, extent, hasOwnProperty, inherits} from 'vega-util';
+} from '@omni-co/vega-statistics';
+import {accessorName, error, extent, hasOwnProperty, inherits} from '@omni-co/vega-util';
 
 const Methods = {
   constant: regressionConstant,

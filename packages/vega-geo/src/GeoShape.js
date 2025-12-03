@@ -1,6 +1,6 @@
-import {Transform} from 'vega-dataflow';
-import {getProjectionPath} from 'vega-projection';
-import {field, inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {getProjectionPath} from '@omni-co/vega-projection';
+import {field, inherits} from '@omni-co/vega-util';
 
 /**
  * Annotate items with a geopath shape generator.

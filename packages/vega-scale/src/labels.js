@@ -1,7 +1,7 @@
 import {DiscreteLegend, SymbolLegend} from './legend-types.js';
 import {Log, Quantile, Quantize, Threshold, Time, UTC} from './scales/types.js';
 import {tickFormat, tickLog, tickValues} from './ticks.js';
-import {peek} from 'vega-util';
+import {peek} from '@omni-co/vega-util';
 
 const symbols = {
   [Quantile]:  'quantiles',

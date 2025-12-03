@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { scale } from 'vega-scale';
+import { scale } from '@omni-co/vega-scale';
 import { scaleGradient } from '../index.js';
 
 tape('scaleGradient handles zero-span domain', t => {

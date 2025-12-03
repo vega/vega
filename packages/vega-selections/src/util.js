@@ -1,4 +1,4 @@
-import {field} from 'vega-util';
+import {field} from '@omni-co/vega-util';
 
 // Registers vega-util field accessors to protect against XSS attacks
 const SELECTION_GETTER = Symbol('vega_selection_getter');

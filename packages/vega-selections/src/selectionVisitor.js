@@ -1,5 +1,5 @@
-import {Literal} from 'vega-expression';
-import {error, hasOwnProperty, peek} from 'vega-util';
+import {Literal} from '@omni-co/vega-expression';
+import {error, hasOwnProperty, peek} from '@omni-co/vega-util';
 import {Intersect} from './util.js';
 
 const DataPrefix = ':',

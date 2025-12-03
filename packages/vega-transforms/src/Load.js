@@ -1,5 +1,5 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {array, inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {array, inherits} from '@omni-co/vega-util';
 
 /**
  * Load and parse data from an external source. Marshalls parameter

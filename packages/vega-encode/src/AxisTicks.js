@@ -1,6 +1,6 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {tickCount, tickFormat, tickValues, validTicks} from 'vega-scale';
-import {inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {tickCount, tickFormat, tickValues, validTicks} from '@omni-co/vega-scale';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Generates axis ticks for visualizing a spatial scale.

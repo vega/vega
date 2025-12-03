@@ -1,4 +1,4 @@
-import {textMetrics} from 'vega-scenegraph';
+import {textMetrics} from '@omni-co/vega-scenegraph';
 
 const Aligns = ['right', 'center', 'left'],
       Baselines = ['bottom', 'middle', 'top'];

@@ -1,7 +1,7 @@
 import parseDist from './util/Distributions.js';
-import {Transform, ingest} from 'vega-dataflow';
-import {sampleCurve} from 'vega-statistics';
-import {error, extent, inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {sampleCurve} from '@omni-co/vega-statistics';
+import {error, extent, inherits} from '@omni-co/vega-util';
 
 /**
  * Grid sample points for a probability density. Given a distribution and

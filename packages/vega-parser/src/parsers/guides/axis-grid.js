@@ -6,7 +6,7 @@ import {addEncoders} from '../encode/util.js';
 import {RuleMark} from '../marks/marktypes.js';
 import {AxisGridRole} from '../marks/roles.js';
 import {isSignal} from '../../util.js';
-import {extend, isObject} from 'vega-util';
+import {extend, isObject} from '@omni-co/vega-util';
 
 export default function(spec, config, userEncode, dataRef, band) {
   const _ = lookup(spec, config),

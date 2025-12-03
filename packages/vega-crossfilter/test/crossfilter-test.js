@@ -1,8 +1,8 @@
 import tape from 'tape';
-import {field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {crossfilter as CrossFilter, resolvefilter as ResolveFilter} from '../index.js';
-import {collect as Collect} from 'vega-transforms';
+import {collect as Collect} from '@omni-co/vega-transforms';
 
 tape('Crossfilter filters tuples', t => {
   const data = [

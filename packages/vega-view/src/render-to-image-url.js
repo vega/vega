@@ -1,6 +1,6 @@
 import renderHeadless from './render-headless.js';
-import {RenderType as Type} from 'vega-scenegraph';
-import {error} from 'vega-util';
+import {RenderType as Type} from '@omni-co/vega-scenegraph';
+import {error} from '@omni-co/vega-util';
 
 /**
  * Produce an image URL for the visualization. Depending on the type

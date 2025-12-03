@@ -1,7 +1,7 @@
 import {Feature, FeatureCollection} from './constants.js';
-import {Transform} from 'vega-dataflow';
-import {projection, projectionProperties} from 'vega-projection';
-import {array, error, inherits, isFunction} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {projection, projectionProperties} from '@omni-co/vega-projection';
+import {array, error, inherits, isFunction} from '@omni-co/vega-util';
 
 /**
  * Maintains a cartographic projection.

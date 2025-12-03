@@ -1,6 +1,6 @@
 import density2D from './util/density2D.js';
-import {Transform, ingest} from 'vega-dataflow';
-import {accessorName, inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {accessorName, inherits} from '@omni-co/vega-util';
 
 /**
  * Perform 2D kernel-density estimation of point data.

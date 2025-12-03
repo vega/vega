@@ -1,7 +1,7 @@
 import tape from 'tape';
-import { field } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { collect as Collect } from 'vega-transforms';
+import { field } from '@omni-co/vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { collect as Collect } from '@omni-co/vega-transforms';
 import { loess as Loess } from '../index.js';
 
 tape('Loess handles repeated x-values', t => {

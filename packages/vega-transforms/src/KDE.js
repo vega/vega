@@ -1,8 +1,8 @@
 import {partition} from './util/util.js';
-import {randomKDE} from 'vega-statistics';
-import {Transform, ingest} from 'vega-dataflow';
-import {sampleCurve} from 'vega-statistics';
-import {accessorName, error, extent, inherits} from 'vega-util';
+import {randomKDE} from '@omni-co/vega-statistics';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {sampleCurve} from '@omni-co/vega-statistics';
+import {accessorName, error, extent, inherits} from '@omni-co/vega-util';
 
 /**
  * Compute kernel density estimates (KDE) for one or more data groups.

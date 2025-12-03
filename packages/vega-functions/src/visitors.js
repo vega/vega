@@ -1,6 +1,6 @@
 import {DataPrefix, IndexPrefix, ScalePrefix} from './constants.js';
-import {Literal} from 'vega-expression';
-import {error, hasOwnProperty} from 'vega-util';
+import {Literal} from '@omni-co/vega-expression';
+import {error, hasOwnProperty} from '@omni-co/vega-util';
 
 export function dataVisitor(name, args, scope, params) {
   if (args[0].type !== Literal) {

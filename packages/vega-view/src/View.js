@@ -20,14 +20,14 @@ import defaultTooltip from './tooltip.js';
 import trap from './trap.js';
 import watchPixelRatio from './watchPixelRatio.js';
 
-import {Dataflow, asyncCallback} from 'vega-dataflow';
-import {locale} from 'vega-format';
+import {Dataflow, asyncCallback} from '@omni-co/vega-dataflow';
+import {locale} from '@omni-co/vega-format';
 import {
   CanvasHandler, RenderType, Scenegraph, renderModule
-} from 'vega-scenegraph';
+} from '@omni-co/vega-scenegraph';
 import {
   error, extend, hasOwnProperty, inherits, stringValue
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 /**
  * Create a new View instance from a Vega dataflow runtime specification.

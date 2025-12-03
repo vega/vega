@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Geo-code a longitude/latitude point to an x/y coordinate.

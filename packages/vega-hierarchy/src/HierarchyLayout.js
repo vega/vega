@@ -1,5 +1,5 @@
-import {Transform, stableCompare} from 'vega-dataflow';
-import {error, inherits, one} from 'vega-util';
+import {Transform, stableCompare} from '@omni-co/vega-dataflow';
+import {error, inherits, one} from '@omni-co/vega-util';
 
 /**
  * Abstract class for tree layout.

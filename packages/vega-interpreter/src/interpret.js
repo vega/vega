@@ -2,7 +2,7 @@ import Constants from './constants.js';
 import Ops from './ops-binary.js';
 import Unary from './ops-unary.js';
 import Functions from './functions.js';
-import {DisallowedObjectProperties} from 'vega-util';
+import {DisallowedObjectProperties} from '@omni-co/vega-util';
 
 const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
 const DisallowedMethods = new Set([

@@ -1,6 +1,6 @@
 import tape from 'tape';
 import fs from 'fs';
-import {canvas} from 'vega-canvas';
+import {canvas} from '@omni-co/vega-canvas';
 import {CanvasRenderer as Renderer, sceneFromJSON} from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 import './__init__.js';

@@ -1,6 +1,6 @@
 import {Feature, FeatureCollection, MultiPoint} from './constants.js';
-import {Transform} from 'vega-dataflow';
-import {accessorFields, identity, inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {accessorFields, identity, inherits} from '@omni-co/vega-util';
 
 /**
  * Consolidate an array of [longitude, latitude] points or GeoJSON features

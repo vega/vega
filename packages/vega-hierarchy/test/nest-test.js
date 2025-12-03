@@ -1,7 +1,7 @@
 import tape from 'tape';
-import { field } from 'vega-util';
-import { Dataflow, changeset, tupleid } from 'vega-dataflow';
-import { collect as Collect } from 'vega-transforms';
+import { field } from '@omni-co/vega-util';
+import { Dataflow, changeset, tupleid } from '@omni-co/vega-dataflow';
+import { collect as Collect } from '@omni-co/vega-transforms';
 import { nest as Nest } from '../index.js';
 
 function toObject(value) {

@@ -3,7 +3,7 @@ import {
   None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
-import {boundStroke, multiLineOffset} from 'vega-scenegraph';
+import {boundStroke, multiLineOffset} from '@omni-co/vega-scenegraph';
 
 // utility for looking up legend layout configuration
 function lookup(config, orient) {

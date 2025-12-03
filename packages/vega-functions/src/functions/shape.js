@@ -1,5 +1,5 @@
 import {getScale} from '../scales.js';
-import {pathParse, pathRender} from 'vega-scenegraph';
+import {pathParse, pathRender} from '@omni-co/vega-scenegraph';
 
 export function geoShape(projection, geojson, group) {
   const p = getScale(projection, (group || this).context);

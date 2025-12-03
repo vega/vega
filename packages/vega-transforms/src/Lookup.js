@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {accessorName, error, inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {accessorName, error, inherits} from '@omni-co/vega-util';
 
 /**
  * Extend tuples by joining them with values from a lookup table.

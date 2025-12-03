@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {compare} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {compare} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect} from '../index.js';
 
 tape('Collect collects tuples', t => {

@@ -1,6 +1,6 @@
 import json from './json.js';
 import {feature, mesh} from 'topojson-client';
-import {error} from 'vega-util';
+import {error} from '@omni-co/vega-util';
 
 const filters = {
   interior: (a, b) => a !== b,

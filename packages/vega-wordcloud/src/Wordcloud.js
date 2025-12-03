@@ -1,8 +1,8 @@
 import cloud from './CloudLayout.js';
-import {Transform} from 'vega-dataflow';
-import {constant, error, extent, inherits, isFunction} from 'vega-util';
-import {scale} from 'vega-scale';
-import {random} from 'vega-statistics';
+import {Transform} from '@omni-co/vega-dataflow';
+import {constant, error, extent, inherits, isFunction} from '@omni-co/vega-util';
+import {scale} from '@omni-co/vega-scale';
+import {random} from '@omni-co/vega-statistics';
 
 const Output = ['x', 'y', 'font', 'fontSize', 'fontStyle', 'fontWeight', 'angle'];
 

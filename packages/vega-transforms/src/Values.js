@@ -1,5 +1,5 @@
-import {Transform, stableCompare} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, stableCompare} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Extracts an array of values. Assumes the source data has already been

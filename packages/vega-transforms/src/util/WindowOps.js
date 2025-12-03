@@ -1,4 +1,4 @@
-import {error, zero} from 'vega-util';
+import {error, zero} from '@omni-co/vega-util';
 
 export function WindowOp(op, field, param, as) {
   const fn = WindowOps[op](field, param);

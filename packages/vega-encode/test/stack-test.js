@@ -1,7 +1,7 @@
 import tape from 'tape';
-import { field } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { collect as Collect } from 'vega-transforms';
+import { field } from '@omni-co/vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { collect as Collect } from '@omni-co/vega-transforms';
 import { stack as Stack } from '../index.js';
 
 tape('Stack stacks numeric values', t => {

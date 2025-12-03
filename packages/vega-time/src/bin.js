@@ -1,5 +1,5 @@
 import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, WEEK, YEAR} from './units.js';
-import {span} from 'vega-util';
+import {span} from '@omni-co/vega-util';
 import {bisector, tickStep} from 'd3-array';
 
 const durationSecond = 1000,

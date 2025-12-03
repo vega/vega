@@ -1,6 +1,6 @@
 import {domCreate} from './util/dom.js';
 import resolveItem from './util/resolveItem.js';
-import {loader} from 'vega-loader';
+import {loader} from '@omni-co/vega-loader';
 
 export default class Handler {
   /**

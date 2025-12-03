@@ -4,7 +4,7 @@ import {lookup} from './guide-util.js';
 import {addEncoders, encoder} from '../encode/util.js';
 import {RectMark} from '../marks/marktypes.js';
 import {LegendBandRole} from '../marks/roles.js';
-import {extend} from 'vega-util';
+import {extend} from '@omni-co/vega-util';
 
 export default function(spec, scale, config, userEncode, dataRef) {
   const _ = lookup(spec, config),

@@ -1,6 +1,6 @@
 import tape from 'tape';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { compare, field } from 'vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { compare, field } from '@omni-co/vega-util';
 import { aggregate as Aggregate, collect as Collect, values as Values } from '../index.js';
 
 tape('Values extracts values', t => {

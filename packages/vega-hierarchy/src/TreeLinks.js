@@ -1,5 +1,5 @@
-import {Transform, ingest, tupleid} from 'vega-dataflow';
-import {error, inherits} from 'vega-util';
+import {Transform, ingest, tupleid} from '@omni-co/vega-dataflow';
+import {error, inherits} from '@omni-co/vega-util';
 
  /**
   * Generate tuples representing links between tree nodes.

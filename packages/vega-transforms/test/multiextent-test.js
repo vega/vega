@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {Dataflow} from 'vega-dataflow';
+import {Dataflow} from '@omni-co/vega-dataflow';
 import {multiextent as MultiExtent} from '../index.js';
 
 tape('MultiExtent combines extents', t => {

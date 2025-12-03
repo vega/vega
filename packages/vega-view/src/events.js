@@ -1,6 +1,6 @@
 import eventExtend from './events-extend.js';
-import {EventStream} from 'vega-dataflow';
-import {array, extend, isArray, isObject, toSet} from 'vega-util';
+import {EventStream} from '@omni-co/vega-dataflow';
+import {array, extend, isArray, isObject, toSet} from '@omni-co/vega-util';
 
 const VIEW = 'view',
       TIMER = 'timer',

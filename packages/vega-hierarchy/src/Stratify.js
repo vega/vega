@@ -1,6 +1,6 @@
 import lookup from './lookup.js';
-import {Transform} from 'vega-dataflow';
-import {error, inherits, truthy} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {error, inherits, truthy} from '@omni-co/vega-util';
 import {stratify} from 'd3-hierarchy';
 
  /**

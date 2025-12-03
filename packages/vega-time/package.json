@@ -1,5 +1,5 @@
 {
-  "name": "vega-time",
+  "name": "@omni-co/vega-time",
   "version": "3.1.0",
   "description": "JavaScript date/time utilities for Vega.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -29,8 +29,11 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
+    "@omni-co/vega-util": "^2.1.0",
     "d3-array": "^3.2.4",
-    "d3-time": "^3.1.0",
-    "vega-util": "^2.1.0"
+    "d3-time": "^3.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

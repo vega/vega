@@ -1,7 +1,7 @@
 import pathParse from './parse.js';
 import pathRender from './render.js';
 import {HalfSqrt3, Tau} from '../util/constants.js';
-import {hasOwnProperty} from 'vega-util';
+import {hasOwnProperty} from '@omni-co/vega-util';
 
 const Tan30 = 0.5773502691896257;
 

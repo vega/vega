@@ -1,5 +1,5 @@
-import {domainCaption, isDiscrete} from 'vega-scale';
-import {array, peek, toSet} from 'vega-util';
+import {domainCaption, isDiscrete} from '@omni-co/vega-scale';
+import {array, peek, toSet} from '@omni-co/vega-util';
 
 const ARIA_HIDDEN = 'aria-hidden';
 const ARIA_LABEL = 'aria-label';

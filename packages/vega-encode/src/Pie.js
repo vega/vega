@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {inherits, one} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {inherits, one} from '@omni-co/vega-util';
 import {range, sum} from 'd3-array';
 
 /**

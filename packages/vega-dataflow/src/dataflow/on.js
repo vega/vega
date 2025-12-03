@@ -1,6 +1,6 @@
 import Operator from '../Operator.js';
 import {isChangeSet} from '../ChangeSet.js';
-import {constant, extend, isFunction} from 'vega-util';
+import {constant, extend, isFunction} from '@omni-co/vega-util';
 
 const SKIP = {skip: true};
 

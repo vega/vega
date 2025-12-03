@@ -1,7 +1,7 @@
 import tape from 'tape';
-import { field, truthy } from 'vega-util';
-import { Dataflow, changeset } from 'vega-dataflow';
-import { collect as Collect } from 'vega-transforms';
+import { field, truthy } from '@omni-co/vega-util';
+import { Dataflow, changeset } from '@omni-co/vega-dataflow';
+import { collect as Collect } from '@omni-co/vega-transforms';
 import { datajoin as DataJoin } from '../index.js';
 
 tape('DataJoin joins tuples and items', t => {

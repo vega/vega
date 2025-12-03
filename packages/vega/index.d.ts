@@ -1,3 +1,3 @@
-declare module 'vega' {
-  export * from 'vega-typings';
+declare module '@omni-co/vega' {
+  export * from '@omni-co/vega-typings';
 }

@@ -1,6 +1,6 @@
 import Parameters from './Parameters.js';
 import UniqueList from './util/UniqueList.js';
-import {array, error, id, isArray} from 'vega-util';
+import {array, error, id, isArray} from '@omni-co/vega-util';
 
 let OP_ID = 0;
 

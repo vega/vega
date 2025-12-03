@@ -1,5 +1,5 @@
-import {Operator} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Operator} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Provides a bridge between a parent transform and a target subflow that

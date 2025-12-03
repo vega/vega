@@ -13,7 +13,7 @@ import {
   View,
   renderModule,
   sceneVisit
-} from 'vega';
+} from '@omni-co/vega';
 
 type SceneRenderer = (scene: Scene) => void;
 

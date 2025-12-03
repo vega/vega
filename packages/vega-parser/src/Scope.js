@@ -10,12 +10,12 @@ import {
 } from './util.js';
 
 import parseScope from './parsers/scope.js';
-import {parseExpression} from 'vega-functions';
+import {parseExpression} from '@omni-co/vega-functions';
 
 import {
   array, error, extend, hasOwnProperty,
   isArray, isObject, isString, peek, stringValue
-} from 'vega-util';
+} from '@omni-co/vega-util';
 
 export default function Scope(config, options) {
   this.config = config || {};

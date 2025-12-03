@@ -8,7 +8,7 @@ import {
   Band, BinOrdinal, Identity, Linear, Log, Ordinal, Point, Pow,
   Quantile, Quantize, Sequential, Sqrt,
   Symlog, Threshold, Time, UTC
-} from 'vega-scale';
+} from '@omni-co/vega-scale';
 
 export const timeIntervals = [
   'millisecond',

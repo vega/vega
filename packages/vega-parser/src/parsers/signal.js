@@ -1,4 +1,4 @@
-import {error, stringValue} from 'vega-util';
+import {error, stringValue} from '@omni-co/vega-util';
 
 const OUTER = 'outer',
       OUTER_INVALID = ['value', 'update', 'init', 'react', 'bind'];

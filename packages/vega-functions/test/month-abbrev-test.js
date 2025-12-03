@@ -1,5 +1,5 @@
 import tape from 'tape';
-import { defaultLocale } from 'vega-format';
+import { defaultLocale } from '@omni-co/vega-format';
 import { monthAbbrevFormat } from '../index.js';
 
 tape('monthAbbrevFormat returns empty string for non-integer values', t => {

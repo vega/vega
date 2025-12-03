@@ -9,7 +9,7 @@ import {visit} from './util/visit.js';
 import clip from './util/svg/clip.js';
 import metadata from './util/svg/metadata.js';
 import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles.js';
-import {isArray} from 'vega-util';
+import {isArray} from '@omni-co/vega-util';
 
 const RootIndex = 0,
       xmlns = 'http://www.w3.org/2000/xmlns/',

@@ -1,7 +1,7 @@
 import {partition} from './util/util.js';
-import {Transform, stableCompare} from 'vega-dataflow';
-import {dotbin} from 'vega-statistics';
-import {extent, identity, inherits, span} from 'vega-util';
+import {Transform, stableCompare} from '@omni-co/vega-dataflow';
+import {dotbin} from '@omni-co/vega-statistics';
+import {extent, identity, inherits, span} from '@omni-co/vega-util';
 
 const Output = 'bin';
 

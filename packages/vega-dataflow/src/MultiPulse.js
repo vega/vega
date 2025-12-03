@@ -1,5 +1,5 @@
 import Pulse from './Pulse.js';
-import {error, inherits, isArray} from 'vega-util';
+import {error, inherits, isArray} from '@omni-co/vega-util';
 
 /**
  * Represents a set of multiple pulses. Used as input for operators

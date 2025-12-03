@@ -1,6 +1,6 @@
-import {canvas} from 'vega-canvas';
-import {rederive} from 'vega-dataflow';
-import {Marks} from 'vega-scenegraph';
+import {canvas} from '@omni-co/vega-canvas';
+import {rederive} from '@omni-co/vega-dataflow';
+import {Marks} from '@omni-co/vega-scenegraph';
 
 // bit mask for getting first 2 bytes of alpha value
 const ALPHA_MASK = 0xff000000;

@@ -1,6 +1,6 @@
 import tape from 'tape';
-import {field} from 'vega-util';
-import {Dataflow, changeset} from 'vega-dataflow';
+import {field} from '@omni-co/vega-util';
+import {Dataflow, changeset} from '@omni-co/vega-dataflow';
 import {collect as Collect, dotbin as DotBin} from '../index.js';
 
 tape('DotBin assigns dot plot bin positions', t => {

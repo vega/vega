@@ -1,7 +1,7 @@
 import {inferTypes, typeParsers} from './type.js';
 import {formats} from './formats/index.js';
-import {timeFormatDefaultLocale} from 'vega-format';
-import {error, hasOwnProperty} from 'vega-util';
+import {timeFormatDefaultLocale} from '@omni-co/vega-format';
+import {error, hasOwnProperty} from '@omni-co/vega-util';
 
 export default function(data, schema, timeParser, utcParser) {
   schema = schema || {};

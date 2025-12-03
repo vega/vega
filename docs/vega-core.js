@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$2, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('vega-util'), require('d3-timer')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'vega-util', 'd3-timer'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.vegaUtil, global.d3));
+})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$2, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, vegaUtil, d3Timer) { 'use strict';
 
   function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -21137,7 +21137,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version$1 = "6.2.0";
+  var version$1 = "6.2.3";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -24986,7 +24986,7 @@
     r = r || new constructor(view.loader());
 
     // Include canvas from view options if provided
-    const options = view.canvas ? extend({
+    const options = view.canvas ? vegaUtil.extend({
       canvas: view.canvas
     }, opt) : opt;
 
@@ -26238,7 +26238,13 @@
     return !isObject(sort) ? '' : (sort.order === Descending ? '-' : '+') + aggrField(sort.op, sort.field);
   }
   function aggrField(op, field) {
-    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal : field || '');
+    return (op && op.signal ? '$' + op.signal : op || '') + (op && field ? '_' : '') + (field && field.signal ? '$' + field.signal
+    // Replace non-alphanumeric character sequences with underscores and trim leading/trailing underscores
+    // to prevent incorrect path extraction for nested target fields or target fields with (escaped) dots. 
+    // Example: 'a\\.b[c.d]' => 'a_b_c_d'. 
+    // Note: aggregating both a nested field and a field with a dot could lead to conflicting names: 
+    // with data like [{ a: {b: 1}, 'a.b': 1 }], summing 'a.b' and 'a\\.b' would both result in a field 'sum_a_b'   
+    : field?.replace(/\W+/g, '_').replace(/^_+|_+$/g, '') || '');
   }
 
   // -----

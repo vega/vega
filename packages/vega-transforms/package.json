@@ -1,5 +1,5 @@
 {
-  "name": "vega-transforms",
+  "name": "@omni-co/vega-transforms",
   "version": "5.1.0",
   "description": "Data processing transforms for Vega dataflows.",
   "keywords": [
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -35,10 +35,13 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-array": "^3.2.4",
-    "vega-dataflow": "^6.1.0",
-    "vega-statistics": "^2.0.0",
-    "vega-time": "^3.1.0",
-    "vega-util": "^2.1.0"
+    "@omni-co/vega-dataflow": "^6.1.0",
+    "@omni-co/vega-statistics": "^2.0.0",
+    "@omni-co/vega-time": "^3.1.0",
+    "@omni-co/vega-util": "^2.1.0",
+    "d3-array": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,5 +1,5 @@
-import {Transform} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Invokes a function for each data tuple and saves the results as a new field.

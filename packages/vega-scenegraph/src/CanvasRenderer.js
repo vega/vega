@@ -5,8 +5,8 @@ import marks from './marks/index.js';
 import {domClear} from './util/dom.js';
 import clip from './util/canvas/clip.js';
 import resize from './util/canvas/resize.js';
-import {canvas} from 'vega-canvas';
-import {error} from 'vega-util';
+import {canvas} from '@omni-co/vega-canvas';
+import {error} from '@omni-co/vega-util';
 
 export default class CanvasRenderer extends Renderer {
   constructor(loader) {

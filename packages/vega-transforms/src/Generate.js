@@ -1,5 +1,5 @@
-import {Transform, ingest} from 'vega-dataflow';
-import {inherits} from 'vega-util';
+import {Transform, ingest} from '@omni-co/vega-dataflow';
+import {inherits} from '@omni-co/vega-util';
 
 /**
  * Generates data tuples using a provided generator function.

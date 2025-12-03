@@ -1,4 +1,4 @@
-import {Bounds} from 'vega-scenegraph';
+import {Bounds} from '@omni-co/vega-scenegraph';
 
 export const tempBounds = new Bounds();
 

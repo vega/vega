@@ -1,5 +1,5 @@
 {
-  "name": "vega-statistics",
+  "name": "@omni-co/vega-statistics",
   "version": "2.0.0",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vega/vega.git"
+    "url": "git+https://github.com/exploreomni/vega.git"
   },
   "scripts": {
     "prebuild": "del-cli build",
@@ -30,5 +30,8 @@
   },
   "dependencies": {
     "d3-array": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
