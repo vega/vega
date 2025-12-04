@@ -30,6 +30,7 @@
   "driving",
   "dynamic-format",
   "dynamic-url",
+  "encode-uri-component-test",
   "error",
   "falkensee",
   "flush-axis-labels",
