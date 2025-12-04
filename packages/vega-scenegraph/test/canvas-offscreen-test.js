@@ -19,11 +19,23 @@ class MockOffscreenCanvas {
         strokeStyle: '',
         lineWidth: 1,
         globalAlpha: 1,
+        lineCap: 'butt',
+        lineJoin: 'miter',
+        miterLimit: 10,
+        lineDashOffset: 0,
+        font: '10px sans-serif',
+        textAlign: 'start',
+        textBaseline: 'alphabetic',
+        direction: 'ltr',
+        imageSmoothingEnabled: true,
         setTransform: () => {},
+        resetTransform: () => {},
         save: () => {},
         restore: () => {},
         scale: () => {},
         translate: () => {},
+        rotate: () => {},
+        transform: () => {},
         beginPath: () => {},
         moveTo: () => {},
         lineTo: () => {},
@@ -35,7 +47,28 @@ class MockOffscreenCanvas {
         clearRect: () => {},
         rect: () => {},
         arc: () => {},
+        arcTo: () => {},
+        ellipse: () => {},
+        bezierCurveTo: () => {},
+        quadraticCurveTo: () => {},
         clip: () => {},
+        isPointInPath: () => false,
+        isPointInStroke: () => false,
+        fillText: () => {},
+        strokeText: () => {},
+        measureText: (text) => ({ width: text.length * 6 }),
+        getLineDash: () => [],
+        setLineDash: () => {},
+        drawImage: () => {},
+        createLinearGradient: () => ({
+          addColorStop: () => {}
+        }),
+        createRadialGradient: () => ({
+          addColorStop: () => {}
+        }),
+        createPattern: () => null,
+        getImageData: () => ({ data: new Uint8ClampedArray(0), width: 0, height: 0 }),
+        putImageData: () => {},
         // Add pixelRatio property that will be set by resize
         pixelRatio: 1
       };
@@ -112,6 +145,63 @@ tape('CanvasRenderer resize should handle OffscreenCanvas without style property
     // Verify resize worked
     t.equal(offscreenCanvas.width, 1600, 'canvas width should be scaled');
     t.equal(offscreenCanvas.height, 1200, 'canvas height should be scaled');
+
+    t.end();
+  } finally {
+    global.OffscreenCanvas = originalOffscreenCanvas;
+  }
+});
+
+tape('CanvasRenderer should render scene to OffscreenCanvas', t => {
+  global.OffscreenCanvas = MockOffscreenCanvas;
+
+  try {
+    const offscreenCanvas = new MockOffscreenCanvas(400, 400);
+    const cr = new Renderer();
+
+    // Create a simple scene with a rectangle
+    const scene = sceneFromJSON({
+      marktype: 'rect',
+      items: [
+        {x: 0, y: 0, width: 100, height: 50, fill: 'steelblue'}
+      ]
+    });
+
+    cr.initialize(null, 400, 200, [0, 0], 1.0, { canvas: offscreenCanvas });
+
+    // Render should not throw
+    t.doesNotThrow(() => {
+      cr.render(scene);
+    }, 'render should not throw on OffscreenCanvas');
+
+    t.end();
+  } finally {
+    global.OffscreenCanvas = originalOffscreenCanvas;
+  }
+});
+
+tape('CanvasRenderer should handle dirty rendering with OffscreenCanvas', t => {
+  global.OffscreenCanvas = MockOffscreenCanvas;
+
+  try {
+    const offscreenCanvas = new MockOffscreenCanvas(400, 400);
+    const cr = new Renderer();
+
+    const scene = sceneFromJSON({
+      marktype: 'rect',
+      items: [
+        {x: 0, y: 0, width: 100, height: 50, fill: 'steelblue'}
+      ]
+    });
+
+    cr.initialize(null, 400, 200, [0, 0], 1.0, { canvas: offscreenCanvas });
+    cr.render(scene);
+
+    // Mark a region as dirty using a Bounds-like object and re-render
+    t.doesNotThrow(() => {
+      cr.dirty(scene.items[0]);
+      cr.render(scene);
+    }, 'dirty re-render should not throw on OffscreenCanvas');
 
     t.end();
   } finally {

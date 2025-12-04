@@ -55,9 +55,9 @@ self.addEventListener('message', async (event) => {
     const runtime = vega.parse(spec);
 
     // Create a View with the OffscreenCanvas
+    // renderer defaults to 'canvas' when a canvas is provided
     const view = new vega.View(runtime, {
-      canvas: canvas,  // Pass OffscreenCanvas directly
-      renderer: 'canvas'
+      canvas: canvas  // Pass OffscreenCanvas directly
     });
 
     // Run the visualization
@@ -106,7 +106,6 @@ import { offscreenCanvas } from 'vega-canvas';
 // Create View with custom expression functions
 const view = new vega.View(runtime, {
   canvas: canvas,
-  renderer: 'canvas',
   expr: vega.expressionInterpreter({
     offscreenCanvas: offscreenCanvas
   })

@@ -42,9 +42,9 @@ self.addEventListener("message", async (event) => {
 
     // Create a View with the OffscreenCanvas
     // Pass pixelRatio from main thread to ensure correct resolution
+    // Note: renderer defaults to 'canvas' when a canvas is provided
     view = new vega.View(runtime, {
       canvas: canvas,
-      renderer: "canvas",
       scaleFactor: pixelRatio  // Set pixel ratio for high-DPI displays
     });
 

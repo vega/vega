@@ -27,9 +27,9 @@ self.addEventListener('message', async (event) => {
   const { canvas, spec } = event.data;
 
   const runtime = vega.parse(spec);
+  // renderer defaults to 'canvas' when a canvas is provided
   const view = new vega.View(runtime, {
-    canvas: canvas,  // OffscreenCanvas instance
-    renderer: 'canvas'
+    canvas: canvas  // OffscreenCanvas instance
   });
 
   await view.runAsync();
@@ -101,9 +101,9 @@ interface ViewOptions {
 
 **Example:**
 ```javascript
+// renderer defaults to 'canvas' when a canvas is provided
 const view = new vega.View(runtime, {
-  canvas: myOffscreenCanvas,
-  renderer: 'canvas'
+  canvas: myOffscreenCanvas
 });
 ```
 
@@ -172,9 +172,9 @@ const offscreen = canvas.transferControlToOffscreen();
 worker.postMessage({ canvas: offscreen, spec }, [offscreen]);
 
 // Worker thread
+// renderer defaults to 'canvas' when a canvas is provided
 const view = new vega.View(runtime, {
-  canvas: event.data.canvas,
-  renderer: 'canvas'
+  canvas: event.data.canvas
 });
 await view.runAsync();
 ```

@@ -1,5 +1,5 @@
 import {height, offset, width} from './render-size.js';
-import {extend} from 'vega-util';
+import {extend} from '@omni-co/vega-util';
 
 export default function(view, r, el, constructor, scaleFactor, opt) {
   r = r || new constructor(view.loader());
