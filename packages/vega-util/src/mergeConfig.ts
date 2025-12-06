@@ -9,7 +9,7 @@ export function mergeConfig(...configs: any[]): any {
       if (key === 'signals') {
         out.signals = mergeNamed(out.signals, source.signals);
       } else {
-        const r = key === 'legend' ? {layout: 1 as 1}
+        const r = key === 'legend' ? {layout: 1 as const}
           : key === 'style' ? true
           : null;
         writeConfig(out, key, source[key], r);
