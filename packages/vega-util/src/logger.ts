@@ -4,7 +4,7 @@ type LogHandler = (method: LogMethod, level: string, args: IArguments) => void;
 
 function log(method: LogMethod, level: string, input: IArguments): void {
   const args = [level].concat([].slice.call(input));
-  console[method].apply(console, args); // eslint-disable-line no-console
+  console[method](...args); // eslint-disable-line no-console
 }
 
 export const None  = 0;
@@ -33,20 +33,20 @@ export default function logger(_?: number, method?: LogMethod, handler: LogHandl
         return level;
       }
     },
-    error(): Logger {
-      if (level >= Error) handler(method || 'error', 'ERROR', arguments);
+    error(...args: any[]): Logger {
+      if (level >= Error) handler(method || 'error', 'ERROR', args as any);
       return this;
     },
-    warn(): Logger {
-      if (level >= Warn) handler(method || 'warn', 'WARN', arguments);
+    warn(...args: any[]): Logger {
+      if (level >= Warn) handler(method || 'warn', 'WARN', args as any);
       return this;
     },
-    info(): Logger {
-      if (level >= Info) handler(method || 'log', 'INFO', arguments);
+    info(...args: any[]): Logger {
+      if (level >= Info) handler(method || 'log', 'INFO', args as any);
       return this;
     },
-    debug(): Logger {
-      if (level >= Debug) handler(method || 'log', 'DEBUG', arguments);
+    debug(...args: any[]): Logger {
+      if (level >= Debug) handler(method || 'log', 'DEBUG', args as any);
       return this;
     }
   };
