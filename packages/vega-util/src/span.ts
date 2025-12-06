@@ -5,5 +5,5 @@ import peek from './peek.js';
  * the last and first values.
  */
 export default function(array: readonly number[] | null | undefined): number {
-  return array && (peek(array) - array[0]) || 0;
+  return array && (peek(array)! - array[0]) || 0;
 }
