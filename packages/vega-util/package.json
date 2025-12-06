@@ -13,8 +13,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "types": "./index.d.ts",
-    "default": "./index.js"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "repository": {
     "type": "git",
