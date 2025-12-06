@@ -9,14 +9,14 @@ export function mergeConfig(...configs: any[]): any {
       if (key === 'signals') {
         out.signals = mergeNamed(out.signals, source.signals);
       } else {
-        const r = key === 'legend' ? {layout: 1}
+        const r = key === 'legend' ? {layout: 1 as 1}
           : key === 'style' ? true
           : null;
         writeConfig(out, key, source[key], r);
       }
     }
     return out;
-  }, {});
+  }, {} as any);
 }
 
 export function writeConfig(
@@ -30,11 +30,11 @@ export function writeConfig(
   let k: string, o: any;
   if (isObject(value) && !isArray(value)) {
     o = isObject(output[key]) ? output[key] : (output[key] = {});
-    for (k in value) {
-      if (recurse && (recurse === true || recurse[k])) {
-        writeConfig(o, k, value[k]);
+    for (k in value as any) {
+      if (recurse && (recurse === true || (recurse as any)[k])) {
+        writeConfig(o, k, (value as any)[k]);
       } else if (isLegalKey(k)) {
-        o[k] = value[k];
+        o[k] = (value as any)[k];
       }
     }
   } else {
