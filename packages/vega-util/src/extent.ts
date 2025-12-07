@@ -1,8 +1,16 @@
 export default function extent<T>(
   array: readonly T[],
-  f?: (value: T) => any
-): [any, any] {
-  let i = 0, n: number, v: any, min: any, max: any;
+  f?: undefined
+): [T | undefined, T | undefined];
+export default function extent<T, R>(
+  array: readonly T[],
+  f: (value: T) => R
+): [R | undefined, R | undefined];
+export default function extent<T, R = T>(
+  array: readonly T[],
+  f?: (value: T) => R
+): [T | R | undefined, T | R | undefined] {
+  let i = 0, n: number, v: T | R, min: T | R | undefined, max: T | R | undefined;
 
   if (array && (n = array.length)) {
     if (f == null) {

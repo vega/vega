@@ -1,9 +1,17 @@
 export default function extentIndex<T>(
   array: readonly T[],
-  f?: (value: T, index: number, array: readonly T[]) => any
+  f?: undefined
+): [number, number];
+export default function extentIndex<T, R>(
+  array: readonly T[],
+  f: (value: T, index: number, array: readonly T[]) => R
+): [number, number];
+export default function extentIndex<T, R = T>(
+  array: readonly T[],
+  f?: (value: T, index: number, array: readonly T[]) => R
 ): [number, number] {
   const n = array.length;
-  let i = -1, a: any, b: any, c: any, u: number, v: number;
+  let i = -1, a: T | R | undefined, b: T | R, c: T | R | undefined, u: number, v: number;
 
   if (f == null) {
     while (++i < n) {
@@ -18,11 +26,12 @@ export default function extentIndex<T>(
     while (++i < n) {
       b = array[i];
       if (b != null) {
-        if (a > b) {
+        // a and c are guaranteed to be assigned by the first loop above
+        if (a! > b) {
           a = b;
           u = i;
         }
-        if (c < b) {
+        if (c! < b) {
           c = b;
           v = i;
         }
@@ -41,11 +50,12 @@ export default function extentIndex<T>(
     while (++i < n) {
       b = f(array[i], i, array);
       if (b != null) {
-        if (a > b) {
+        // a and c are guaranteed to be assigned by the first loop above
+        if (a! > b) {
           a = b;
           u = i;
         }
-        if (c < b) {
+        if (c! < b) {
           c = b;
           v = i;
         }

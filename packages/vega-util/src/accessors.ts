@@ -3,12 +3,12 @@ import field from './field.js';
 
 export const id: Accessor = field('id');
 
-export const identity: Accessor<any, any> = accessor(_ => _, [], 'identity');
+export const identity: Accessor<unknown, unknown> = accessor(_ => _, [], 'identity');
 
-export const zero: Accessor<any, number> = accessor(() => 0, [], 'zero');
+export const zero: Accessor<unknown, number> = accessor(() => 0, [], 'zero');
 
-export const one: Accessor<any, number> = accessor(() => 1, [], 'one');
+export const one: Accessor<unknown, number> = accessor(() => 1, [], 'one');
 
-export const truthy: Accessor<any, boolean> = accessor(() => true, [], 'true');
+export const truthy: Accessor<unknown, boolean> = accessor(() => true, [], 'true');
 
-export const falsy: Accessor<any, boolean> = accessor(() => false, [], 'false');
+export const falsy: Accessor<unknown, boolean> = accessor(() => false, [], 'false');

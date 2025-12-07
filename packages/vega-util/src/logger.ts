@@ -1,9 +1,9 @@
 type LogMethod = 'log' | 'warn' | 'error';
 
-type LogHandler = (method: LogMethod, level: string, args: IArguments) => void;
+type LogHandler = (method: LogMethod, level: string, args: unknown[]) => void;
 
-function log(method: LogMethod, level: string, input: IArguments): void {
-  const args = [level].concat([].slice.call(input));
+function log(method: LogMethod, level: string, input: unknown[]): void {
+  const args = [level, ...input];
   console[method](...args); // eslint-disable-line no-console
 }
 
@@ -14,18 +14,17 @@ export const Info  = 3;
 export const Debug = 4;
 
 export interface Logger {
-  level(): number;
-  level(level: number): this;
-  error(...args: any[]): this;
-  warn(...args: any[]): this;
-  info(...args: any[]): this;
-  debug(...args: any[]): this;
+  level(level?: number): number | this;
+  error(...args: unknown[]): this;
+  warn(...args: unknown[]): this;
+  info(...args: unknown[]): this;
+  debug(...args: unknown[]): this;
 }
 
 export default function logger(_?: number, method?: LogMethod, handler: LogHandler = log): Logger {
   let level = _ || None;
   return {
-    level(_?: number): any {
+    level(_?: number) {
       if (arguments.length) {
         level = +_!;
         return this;
@@ -33,20 +32,20 @@ export default function logger(_?: number, method?: LogMethod, handler: LogHandl
         return level;
       }
     },
-    error(...args: any[]): Logger {
-      if (level >= Error) handler(method || 'error', 'ERROR', args as any);
+    error(...args: unknown[]) {
+      if (level >= Error) handler(method || 'error', 'ERROR', args);
       return this;
     },
-    warn(...args: any[]): Logger {
-      if (level >= Warn) handler(method || 'warn', 'WARN', args as any);
+    warn(...args: unknown[]) {
+      if (level >= Warn) handler(method || 'warn', 'WARN', args);
       return this;
     },
-    info(...args: any[]): Logger {
-      if (level >= Info) handler(method || 'log', 'INFO', args as any);
+    info(...args: unknown[]) {
+      if (level >= Info) handler(method || 'log', 'INFO', args);
       return this;
     },
-    debug(...args: any[]): Logger {
-      if (level >= Debug) handler(method || 'log', 'DEBUG', args as any);
+    debug(...args: unknown[]) {
+      if (level >= Debug) handler(method || 'log', 'DEBUG', args);
       return this;
     }
   };

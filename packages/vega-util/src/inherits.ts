@@ -1,10 +1,10 @@
 import extend from './extend.js';
 
-export default function(
-  child: new (...args: any[]) => any,
-  parent: new (...args: any[]) => any,
+export default function<C extends new (...args: any[]) => any, P extends new (...args: any[]) => any>(
+  child: C,
+  parent: P,
   members?: object
-): any {
+): object {
   const proto = (child.prototype = Object.create(parent.prototype));
   Object.defineProperty(proto, 'constructor', {
     value: child,

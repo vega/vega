@@ -4,14 +4,14 @@ import getter from './getter.js';
 import splitAccessPath from './splitAccessPath.js';
 
 export interface KeyOptions {
-  get?: (path: string[]) => (obj: any) => any;
+  get?: (path: string[]) => (obj: unknown) => unknown;
 }
 
 export default function key(
   fields?: string | string[] | null,
   flat?: boolean,
   opt?: KeyOptions
-): Accessor<any, string> {
+): Accessor<unknown, string> {
   let processedFields: string[] | undefined;
 
   if (fields) {
@@ -24,7 +24,7 @@ export default function key(
   const len = processedFields && processedFields.length;
   const gen = opt && opt.get || getter;
   const map = (f: string) => gen(flat ? [f] : splitAccessPath(f));
-  let fn: (obj: any) => string;
+  let fn: (obj: unknown) => string;
 
   if (!len) {
     fn = function() { return ''; };

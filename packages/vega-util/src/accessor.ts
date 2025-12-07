@@ -9,10 +9,10 @@ export default function accessor<T = any, R = any>(
   fields?: string[],
   name?: string
 ): Accessor<T, R> {
-  const accessorFn = fn as Accessor<T, R>;
-  accessorFn.fields = fields || [];
-  accessorFn.fname = name;
-  return accessorFn;
+  return Object.assign(fn, {
+    fields: fields || [],
+    fname: name
+  });
 }
 
 export function accessorName(fn: Accessor | null | undefined): string | null | undefined {

@@ -3,7 +3,7 @@ import getter from './getter.js';
 import splitAccessPath from './splitAccessPath.js';
 
 export interface FieldOptions {
-  get?: (path: string[]) => (obj: any) => any;
+  get?: (path: string[]) => (obj: unknown) => unknown;
 }
 
 export default function field(

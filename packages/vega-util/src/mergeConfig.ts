@@ -1,13 +1,25 @@
-import isArray from './isArray.js';
+import {isArray} from './isArray.js';
 import isObject from './isObject.js';
 
 const isLegalKey = (key: string) => key !== '__proto__';
 
-export function mergeConfig(...configs: any[]): any {
+type Config = Record<string, unknown>;
+
+// Named items have a 'name' property used for deduplication
+interface NamedItem {
+  name: string;
+  [key: string]: unknown;
+}
+
+export function mergeConfig(...configs: Config[]): Config {
   return configs.reduce((out, source) => {
     for (const key in source) {
       if (key === 'signals') {
-        out.signals = mergeNamed(out.signals, source.signals);
+        // signals is an array that needs special merging logic
+        out.signals = mergeNamed(
+          out.signals as NamedItem[] | null | undefined,
+          source.signals as NamedItem[]
+        );
       } else {
         const r = key === 'legend' ? {layout: 1 as const}
           : key === 'style' ? true
@@ -16,25 +28,36 @@ export function mergeConfig(...configs: any[]): any {
       }
     }
     return out;
-  }, {} as any);
+  }, {} as Config);
 }
 
 export function writeConfig(
-  output: any,
+  output: Config,
   key: string,
-  value: any,
+  value: unknown,
   recurse?: Record<string, 1> | boolean | null
 ): void {
   if (!isLegalKey(key)) return;
 
-  let k: string, o: any;
   if (isObject(value) && !isArray(value)) {
-    o = isObject(output[key]) ? output[key] : (output[key] = {});
-    for (k in value as any) {
-      if (recurse && (recurse === true || (recurse as any)[k])) {
-        writeConfig(o, k, (value as any)[k]);
+    // After isObject check, we know value is a non-array object
+    // TypeScript doesn't narrow unknown with isObject, so we assert to Config
+    const valueAsConfig = value as Config;
+
+    // Ensure output[key] is an object, creating it if needed
+    let o: Config;
+    if (isObject(output[key])) {
+      o = output[key] as Config;
+    } else {
+      o = {};
+      output[key] = o;
+    }
+
+    for (const k in valueAsConfig) {
+      if (recurse && (recurse === true || (recurse as Record<string, unknown>)[k])) {
+        writeConfig(o, k, valueAsConfig[k]);
       } else if (isLegalKey(k)) {
-        o[k] = (value as any)[k];
+        o[k] = valueAsConfig[k];
       }
     }
   } else {
@@ -42,15 +65,19 @@ export function writeConfig(
   }
 }
 
-function mergeNamed(a: any[] | null | undefined, b: any[]): any[] {
+function mergeNamed(
+  a: NamedItem[] | null | undefined,
+  b: NamedItem[]
+): NamedItem[] {
   if (a == null) return b;
 
-  const map: Record<string, 1> = {}, out: any[] = [];
+  const map: Record<string, 1> = {};
+  const out: NamedItem[] = [];
 
-  function add(_: any) {
-    if (!map[_.name]) {
-      map[_.name] = 1;
-      out.push(_);
+  function add(item: NamedItem) {
+    if (!map[item.name]) {
+      map[item.name] = 1;
+      out.push(item);
     }
   }
 

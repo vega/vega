@@ -1,9 +1,12 @@
-import {identity} from './accessors.js';
 import peek from './peek.js';
-import toNumber from './toNumber.js';
 
 type Domain = number[] | readonly number[];
 type TransformFunction = (x: number) => number;
+
+// Local number-specific helpers for domain transformations
+// These have stricter signatures than the general utility versions
+const numberIdentity: TransformFunction = (x: number) => x;
+const toNumberStrict: TransformFunction = (x: number) => x;
 
 const exp = (sign: number): TransformFunction =>
   x => sign * Math.exp(x);
@@ -37,7 +40,7 @@ function pan(
 }
 
 export function panLinear(domain: Domain, delta: number): [number, number] {
-  return pan(domain, delta, toNumber as (x: number) => number, identity);
+  return pan(domain, delta, toNumberStrict, numberIdentity);
 }
 
 export function panLog(domain: Domain, delta: number): [number, number] {
@@ -75,7 +78,7 @@ export function zoomLinear(
   anchor: number | null | undefined,
   scale: number
 ): [number, number] {
-  return zoom(domain, anchor, scale, toNumber as (x: number) => number, identity);
+  return zoom(domain, anchor, scale, toNumberStrict, numberIdentity);
 }
 
 export function zoomLog(

@@ -24,13 +24,33 @@ export default function<T>(input?: Record<string, T>): FastMap<T> {
     return hasOwnProperty(obj, key) && obj[key] !== NULL;
   }
 
+  // Type guard to narrow T | typeof NULL to T
+  function isValue(value: T | typeof NULL): value is T {
+    return value !== NULL;
+  }
+
+  // Implement test method separately to handle overloads properly
+  function testMethod(): ((value: T) => boolean) | undefined;
+  function testMethod(testFn: (value: T) => boolean): FastMap<T>;
+  function testMethod(testFn?: (value: T) => boolean): FastMap<T> | ((value: T) => boolean) | undefined {
+    if (arguments.length) {
+      test = testFn;
+      return map;
+    } else {
+      return test;
+    }
+  }
+
   const map: FastMap<T> = {
     size: 0,
     empty: 0,
     object: obj,
     has: has,
     get(key: string) {
-      return has(key) ? obj[key] as T : undefined;
+      if (!has(key)) return undefined;
+      const value = obj[key];
+      // Type guard: has(key) ensures value !== NULL, so value must be T
+      return isValue(value) ? value : undefined;
     },
     set(key: string, value: T) {
       if (!has(key)) {
@@ -52,20 +72,14 @@ export default function<T>(input?: Record<string, T>): FastMap<T> {
       map.size = map.empty = 0;
       map.object = obj = {};
     },
-    test(testFn?: (value: T) => boolean): any {
-      if (arguments.length) {
-        test = testFn;
-        return map;
-      } else {
-        return test;
-      }
-    },
+    test: testMethod,
     clean() {
       const next: Record<string, T | typeof NULL> = {};
       let size = 0;
       for (const key in obj) {
         const value = obj[key];
-        if (value !== NULL && (!test || !test(value as T))) {
+        // Type guard: isValue(value) narrows type from T | typeof NULL to T
+        if (isValue(value) && (!test || !test(value))) {
           next[key] = value;
           ++size;
         }
