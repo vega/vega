@@ -31,7 +31,7 @@ export function falsy(): false;
 
 // Type Checkers
 
-export { default as isArray } from './build/isArray.js';
+export { isArray } from './build/isArray.js';
 export { default as isBoolean } from './build/isBoolean.js';
 export { default as isDate } from './build/isDate.js';
 export { default as isFunction } from './build/isFunction.js';
