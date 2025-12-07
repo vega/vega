@@ -62,7 +62,7 @@ export {default as flush} from './flush.js';
 export {default as hasOwnProperty} from './hasOwnProperty.js';
 export {default as inherits} from './inherits.js';
 export {default as inrange} from './inrange.js';
-export {default as isArray} from './isArray.js';
+export {isArray} from './isArray.js';
 export {default as isBoolean} from './isBoolean.js';
 export {default as isDate} from './isDate.js';
 export {default as isFunction} from './isFunction.js';
