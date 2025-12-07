@@ -9,6 +9,12 @@ export type Order = 'ascending' | 'descending';
 export type ComparatorFunction<T = any> = (a: T, b: T) => number;
 export type FieldSpec<T = any> = string | Accessor<T> | null;
 
+// A comparator with attached fields metadata
+export interface ComparatorWithFields<T = any> extends ComparatorFunction<T> {
+  fields?: string[];
+  fname?: string;
+}
+
 // Type guard to narrow FieldSpec to Accessor<T>
 function isAccessorFunction<T>(f: FieldSpec<T>): f is Accessor<T> {
   return isFunction(f);
@@ -22,7 +28,7 @@ export default function compare<T = any>(
   fields?: FieldSpec<T> | FieldSpec<T>[],
   orders?: Order | Order[],
   opt?: CompareOptions
-): Accessor<[T, T], number> | null {
+): ComparatorWithFields<T> | null {
   const options = opt || {};
   const orderArray = array(orders) || [];
 
@@ -43,10 +49,11 @@ export default function compare<T = any>(
     return null;
   }
 
-  const compareFn = gen(get, ord);
-  // Wrap the comparator to match Accessor signature: (value: [T, T]) => number
-  const wrappedFn = (tuple: [T, T]): number => compareFn(tuple[0], tuple[1]);
-  return accessor(wrappedFn, Object.keys(fmap));
+  const cmp = gen(get, ord);
+  const fieldList = Object.keys(fmap);
+
+  // Manually attach fields metadata to the comparator function
+  return Object.assign(cmp, { fields: fieldList, fname: undefined });
 }
 
 export const ascending = (u: unknown, v: unknown): number => {
