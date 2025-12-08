@@ -1,7 +1,8 @@
 export {
   default as accessor,
   accessorName,
-  accessorFields
+  accessorFields,
+  Accessor
 } from './accessor.js';
 
 export {
@@ -57,7 +58,7 @@ export {default as extend} from './extend.js';
 export {default as extent} from './extent.js';
 export {default as extentIndex} from './extentIndex.js';
 export {default as fastmap} from './fastmap.js';
-export {default as field} from './field.js';
+export {default as field, FieldOptions} from './field.js';
 export {default as flush} from './flush.js';
 export {default as hasOwnProperty} from './hasOwnProperty.js';
 export {default as inherits} from './inherits.js';

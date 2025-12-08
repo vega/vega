@@ -1,22 +1,26 @@
 import peek from './peek.js';
 
-export default function(range, value, threshold, left, right, center) {
+export default function<T>(
+  range: readonly number[],
+  value: number,
+  threshold: number | null | undefined,
+  left: T,
+  right: T,
+  center: T
+): T {
   if (!threshold && threshold !== 0) return center;
 
   const t = +threshold;
   let a = range[0],
-      b = peek(range),
-      l;
+      b = peek(range)!,
+      l: number;
 
-  // swap endpoints if range is reversed
   if (b < a) {
     l = a; a = b; b = l;
   }
 
-  // compare value to endpoints
   l = Math.abs(value - a);
   const r = Math.abs(b - value);
 
-  // adjust if value is within threshold distance of endpoint
   return l < r && l <= t ? left : r <= t ? right : center;
 }

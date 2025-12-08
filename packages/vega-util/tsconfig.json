@@ -1,8 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "checkJs": false,
-    "allowJs": true,
     "noEmit": false,
     "rootDir": "src",
     "outDir": "build",

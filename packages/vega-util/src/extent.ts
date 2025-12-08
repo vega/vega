@@ -1,0 +1,42 @@
+export default function extent<T>(
+  array: readonly T[],
+  f?: undefined
+): [T | undefined, T | undefined];
+export default function extent<T, R>(
+  array: readonly T[],
+  f: (value: T) => R
+): [R | undefined, R | undefined];
+export default function extent<T, R = T>(
+  array: readonly T[],
+  f?: (value: T) => R
+): [T | R | undefined, T | R | undefined] {
+  let i = 0, n: number, v: T | R, min: T | R | undefined, max: T | R | undefined;
+
+  if (array && (n = array.length)) {
+    if (f == null) {
+      for (v = array[i]; i < n && (v == null || v !== v); v = array[++i]);
+      min = max = v;
+
+      for (; i<n; ++i) {
+        v = array[i];
+        if (v != null) {
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+      }
+    } else {
+      for (v = f(array[i]); i < n && (v == null || v !== v); v = f(array[++i]));
+      min = max = v;
+
+      for (; i<n; ++i) {
+        v = f(array[i]);
+        if (v != null) {
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+      }
+    }
+  }
+
+  return [min, max];
+}
