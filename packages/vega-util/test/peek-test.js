@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('peek returns last element of a sequence', t => {
   t.equal(vega.peek([1]), 1);

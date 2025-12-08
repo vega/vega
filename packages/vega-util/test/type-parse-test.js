@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('toBoolean parses booleans', t => {
   t.equal(vega.toBoolean(null), null);

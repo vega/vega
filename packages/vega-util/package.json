@@ -13,20 +13,19 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "types": "./index.d.ts",
-    "default": "./build/vega-util.js"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
   "scripts": {
-    "prebuild": "del-cli build && npm run generate-types",
-    "build": "rollup -c rollup.config.js",
-    "pretest": "npm run build -- --config-test",
+    "prebuild": "del-cli build",
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "tape 'test/**/*-test.js'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "generate-types": "tsc -p tsconfig.json",
     "prepublishOnly": "npm test && npm run build"
   }
 }

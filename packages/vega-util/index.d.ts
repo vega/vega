@@ -31,22 +31,22 @@ export function falsy(): false;
 
 // Type Checkers
 
-export { default as isArray } from './build/types/isArray.js';
-export { default as isBoolean } from './build/types/isBoolean.js';
-export { default as isDate } from './build/types/isDate.js';
-export { default as isFunction } from './build/types/isFunction.js';
-export { default as isIterable } from './build/types/isIterable.js';
-export { default as isNumber } from './build/types/isNumber.js';
-export { default as isObject } from './build/types/isObject.js';
-export { default as isRegExp } from './build/types/isRegExp.js';
-export { default as isString } from './build/types/isString.js';
+export { isArray } from './build/isArray.js';
+export { default as isBoolean } from './build/isBoolean.js';
+export { default as isDate } from './build/isDate.js';
+export { default as isFunction } from './build/isFunction.js';
+export { default as isIterable } from './build/isIterable.js';
+export { default as isNumber } from './build/isNumber.js';
+export { default as isObject } from './build/isObject.js';
+export { default as isRegExp } from './build/isRegExp.js';
+export { default as isString } from './build/isString.js';
 
 // Type Coercion
 
-export { default as toBoolean } from './build/types/toBoolean.js';
-export { default as toDate } from './build/types/toDate.js';
-export { default as toNumber } from './build/types/toNumber.js';
-export { default as toString } from './build/types/toString.js';
+export { default as toBoolean } from './build/toBoolean.js';
+export { default as toDate } from './build/toDate.js';
+export { default as toNumber } from './build/toNumber.js';
+export { default as toString } from './build/toString.js';
 
 // Objects
 
@@ -103,7 +103,7 @@ export function peek(array: readonly any[]): any;
 
 export function span(array: readonly number[]): number;
 
-export { default as toSet } from './build/types/toSet.js';
+export { default as toSet } from './build/toSet.js';
 
 export function visitArray(array: readonly any[] | undefined,
   filter: (any: any) => boolean | undefined,
@@ -130,11 +130,11 @@ export function utcquarter(date: number): number;
 export function utcquarter(date: Date): number;
 
 // Strings
-export { default as pad } from './build/types/pad.js';
-export { default as repeat } from './build/types/repeat.js';
-export { default as splitAccessPath } from './build/types/splitAccessPath.js';
-export { default as stringValue } from './build/types/stringValue.js';
-export { default as truncate } from './build/types/truncate.js';
+export { default as pad } from './build/pad.js';
+export { default as repeat } from './build/repeat.js';
+export { default as splitAccessPath } from './build/splitAccessPath.js';
+export { default as stringValue } from './build/stringValue.js';
+export { default as truncate } from './build/truncate.js';
 
 // Logging
 
@@ -155,4 +155,4 @@ export const Debug: number;
 
 export function logger(_?: number, method?: string, handler?: typeof log): LoggerInterface;
 export function log(method: 'error' | 'warn' | 'log', level: 'ERROR' | 'WARN'| 'INFO' | 'DEBUG', input: readonly any[]): void;
-export function error(msg: string): never;
+export { default as error } from './build/error.js';
