@@ -20,7 +20,6 @@ export default function<T>(
       b = peek(range),
       l: number;
 
-  // TODO: Check in PRV: behavior change to handle empty b
   if (b === undefined) return center;
 
   // swap endpoints if range is reversed
