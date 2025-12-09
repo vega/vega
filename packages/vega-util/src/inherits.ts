@@ -1,6 +1,12 @@
 import extend from './extend.js';
 
-export default function(child, parent, members) {
+type Constructor = new (...args: never[]) => unknown;
+
+export default function<C extends Constructor, P extends Constructor>(
+  child: C,
+  parent: P,
+  members?: object
+): object {
   const proto = (child.prototype = Object.create(parent.prototype));
   Object.defineProperty(proto, 'constructor', {
     value: child,
@@ -8,5 +14,5 @@ export default function(child, parent, members) {
     enumerable: true,
     configurable: true
   });
-  return extend(proto, members);
+  return extend(proto, members || {});
 }

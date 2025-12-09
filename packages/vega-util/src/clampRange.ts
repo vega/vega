@@ -5,10 +5,10 @@
  * endpoint touches the boundary of the min/max range.
  * If the span exceeds (max - min), the range [min, max] is returned.
  */
-export default function(range, min, max) {
+export default function clampRange(range: number[], min: number, max: number): number[] {
   let lo = range[0],
       hi = range[1],
-      span;
+      span: number;
 
   if (hi < lo) {
     span = hi;
