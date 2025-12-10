@@ -1,4 +1,5 @@
 import extend from './extend.js';
+import type { Writable } from './extend.js';
 
 type Constructor = new (...args: never[]) => unknown;
 
@@ -14,5 +15,5 @@ export default function<C extends Constructor, P extends Constructor>(
     enumerable: true,
     configurable: true
   });
-  return extend(proto, members || {});
+  return extend(proto, members as Writable);
 }
