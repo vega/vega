@@ -3,8 +3,13 @@
  * of the given range. The left and right flags control the use
  * of inclusive (true) or exclusive (false) comparisons.
  */
-export default function(value, range, left, right) {
-  let r0 = range[0], r1 = range[range.length-1], t;
+export default function inrange(
+  value: number,
+  range: readonly number[],
+  left?: boolean,
+  right?: boolean
+): boolean {
+  let r0 = range[0], r1 = range[range.length-1], t: number;
   if (r0 > r1) {
     t = r0;
     r0 = r1;
