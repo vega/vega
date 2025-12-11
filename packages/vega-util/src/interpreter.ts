@@ -3,7 +3,7 @@
 /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
 export const DisallowedObjectProperties = new Set(
   [...Object.getOwnPropertyNames(Object.prototype)
-    .filter(name => typeof Object.prototype[name] === 'function'),
+    .filter(name => typeof Object.prototype[name as keyof typeof Object.prototype] === 'function'),
   '__proto__'
   ]
 );
