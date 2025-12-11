@@ -4681,7 +4681,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 62,
+                              "width": 38,
                               "height": 11,
                               "opacity": 1
                             },
@@ -4730,9 +4730,9 @@
                                   "zindex": 0
                                 }
                               ],
-                              "x": 0,
-                              "y": 14,
-                              "width": 62,
+                              "x": 49,
+                              "y": 0,
+                              "width": 54,
                               "height": 11,
                               "opacity": 1
                             },
@@ -4781,8 +4781,8 @@
                                   "zindex": 0
                                 }
                               ],
-                              "x": 0,
-                              "y": 28,
+                              "x": 114,
+                              "y": 0,
                               "width": 62,
                               "height": 11,
                               "opacity": 1
@@ -4822,11 +4822,11 @@
                   "zindex": 0
                 }
               ],
-              "x": 418,
-              "y": 0,
-              "width": 62,
-              "height": 55,
-              "orient": "right"
+              "x": -39,
+              "y": -45,
+              "width": 176,
+              "height": 27,
+              "orient": "top"
             }
           ],
           "zindex": 0
