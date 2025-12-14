@@ -1,4 +1,4 @@
-import hasOwnProperty from './hasOwnProperty.js';
+import hasOwnProperty from "./hasOwnProperty.js";
 
 const NULL = {};
 
@@ -11,13 +11,16 @@ export interface FastMap<T = unknown> {
   set(key: string, value: T): FastMap<T>;
   delete(key: string): FastMap<T>;
   clear(): void;
-  test(fn?: (value: unknown) => boolean): ((value: T) => boolean) | undefined | FastMap<T>;
+  test(): ((value: T) => boolean) | undefined;
+  test(fn: (value: unknown) => boolean): FastMap<T>;
   clean(): void;
 }
 
-export default function fastmap<T = unknown>(input?: Record<string, T>): FastMap<T> {
+export default function fastmap<T = unknown>(
+  input?: Record<string, T>,
+): FastMap<T> {
   let obj: Record<string, T | typeof NULL> = {},
-      test: ((value: T) => boolean) | undefined;
+    test: ((value: T) => boolean) | undefined;
 
   function has(key: string): boolean {
     return hasOwnProperty(obj, key) && obj[key] !== NULL;
@@ -29,7 +32,7 @@ export default function fastmap<T = unknown>(input?: Record<string, T>): FastMap
     object: obj,
     has: has,
     get(key: string): T | undefined {
-      return has(key) ? obj[key] as T : undefined;
+      return has(key) ? (obj[key] as T) : undefined;
     },
     set(key: string, value: T): FastMap<T> {
       if (!has(key)) {
@@ -51,7 +54,7 @@ export default function fastmap<T = unknown>(input?: Record<string, T>): FastMap
       map.size = map.empty = 0;
       map.object = obj = {};
     },
-    test(fn?: (value: unknown) => boolean): ((value: T) => boolean) | undefined | FastMap<T> {
+    test(fn?: (value: unknown) => boolean): any {
       if (arguments.length) {
         test = fn;
         return map;
@@ -71,13 +74,14 @@ export default function fastmap<T = unknown>(input?: Record<string, T>): FastMap
       }
       map.size = size;
       map.empty = 0;
-      map.object = (obj = next);
-    }
+      map.object = obj = next;
+    },
   };
 
-  if (input) Object.keys(input).forEach(key => {
-    map.set(key, input[key]);
-  });
+  if (input)
+    Object.keys(input).forEach((key) => {
+      map.set(key, input[key]);
+    });
 
   return map;
 }
