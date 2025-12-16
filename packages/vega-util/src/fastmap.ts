@@ -1,4 +1,4 @@
-import hasOwnProperty from "./hasOwnProperty.js";
+import hasOwnProperty from './hasOwnProperty.js';
 
 const NULL = {};
 
@@ -11,13 +11,15 @@ export interface FastMap<T = unknown> {
   set(key: string, value: T): FastMap<T>;
   delete(key: string): FastMap<T>;
   clear(): void;
+  /** Use the test */
   test(): ((value: T) => boolean) | undefined;
-  test(fn: (value: unknown) => boolean): FastMap<T>;
+  /** Set test function */
+  test(fn: (value: T) => boolean): FastMap<T> | undefined;
   clean(): void;
 }
 
 export default function fastmap<T = unknown>(
-  input?: Record<string, T>,
+  input?: Record<string, T>
 ): FastMap<T> {
   let obj: Record<string, T | typeof NULL> = {},
     test: ((value: T) => boolean) | undefined;
@@ -54,7 +56,8 @@ export default function fastmap<T = unknown>(
       map.size = map.empty = 0;
       map.object = obj = {};
     },
-    test(fn?: (value: unknown) => boolean): any {
+    /** See the FastMap interface for the expected return type, which depends on whether a function is provided */
+    test(fn?: (value: T) => boolean): any {
       if (arguments.length) {
         test = fn;
         return map;
@@ -75,7 +78,7 @@ export default function fastmap<T = unknown>(
       map.size = size;
       map.empty = 0;
       map.object = obj = next;
-    },
+    }
   };
 
   if (input)
