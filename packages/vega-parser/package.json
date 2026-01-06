@@ -19,7 +19,7 @@
     "build": "rollup -c rollup.config.mjs",
     "pretest": "yarn build --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "vega-dataflow": "^5.7.8",

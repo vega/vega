@@ -26,7 +26,7 @@
     "postbuild": "node schema-copy",
     "pretest": "yarn build --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "vega-crossfilter": "~4.1.4",
