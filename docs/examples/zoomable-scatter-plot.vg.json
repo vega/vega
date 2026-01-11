@@ -123,10 +123,6 @@
         {
           "events": {"type": "touchstart", "filter": "event.touches.length===2"},
           "update": "pinchDistance(event)"
-        },
-        {
-          "events": {"signal": "dist2"},
-          "update": "dist2"
         }
       ]
     },
