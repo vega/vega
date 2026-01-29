@@ -99,3 +99,55 @@ tape('compare supports accessor functions', t => {
   t.deepEqual(vega.accessorFields(c), ['x', 'y']);
   t.end();
 });
+
+tape('compare returns null for empty or null fields', t => {
+  t.equal(vega.compare(null), null);
+  t.equal(vega.compare(undefined), null);
+  t.equal(vega.compare([]), null);
+  t.equal(vega.compare([null]), null);
+  t.equal(vega.compare([null, undefined]), null);
+  t.end();
+});
+
+tape('compare compares booleans', t => {
+  const c = vega.compare('x');
+  t.equal(c({x:true}, {x:false}), 1);
+  t.equal(c({x:false}, {x:true}), -1);
+  t.equal(c({x:true}, {x:true}), 0);
+  t.equal(c({x:false}, {x:false}), 0);
+  t.equal(c({x:false}, {x:null}), 1);
+  t.equal(c({x:null}, {x:false}), -1);
+  t.equal(c({x:true}, {x:null}), 1);
+  t.equal(c({x:null}, {x:true}), -1);
+  t.end();
+});
+
+tape('compare supports raw function accessors', t => {
+  const c = vega.compare([d => d.x, d => d.y], ['ascending', 'descending']);
+  t.equal(c({x:1,y:0}, {x:0,y:1}), 1);
+  t.equal(c({x:0,y:1}, {x:1,y:0}), -1);
+  t.equal(c({x:0,y:0}, {x:0,y:1}), 1);
+  t.equal(c({x:0,y:1}, {x:0,y:0}), -1);
+  t.equal(c({x:0,y:0}, {x:0,y:0}), 0);
+  // raw functions have no field metadata
+  t.deepEqual(vega.accessorFields(c), []);
+  t.end();
+});
+
+tape('compare supports custom comparator generator', t => {
+  // custom comparator that reverses the default behavior
+  const customComparator = (fields, orders) => {
+    return (a, b) => {
+      const va = fields[0](a);
+      const vb = fields[0](b);
+      // simple reverse comparison
+      return va < vb ? 1 : va > vb ? -1 : 0;
+    };
+  };
+  const c = vega.compare('x', 'ascending', { comparator: customComparator });
+  // with custom comparator, order is reversed
+  t.equal(c({x:1}, {x:0}), -1);
+  t.equal(c({x:0}, {x:1}), 1);
+  t.equal(c({x:1}, {x:1}), 0);
+  t.end();
+});
