@@ -65,3 +65,13 @@ tape('zoomSymlog zooms a domain along a symlog scale', t => {
   t.ok(equal(vega.zoomSymlog([-1, 3], null, 1/3, 1), [ 0, 1]));
   t.end();
 });
+
+tape('panLinear throws error for empty domain', t => {
+  t.throws(() => vega.panLinear([], 0.5), /Domain array must not be empty/);
+  t.end();
+});
+
+tape('zoomLinear throws error for empty domain', t => {
+  t.throws(() => vega.zoomLinear([], null, 2.0), /Domain array must not be empty/);
+  t.end();
+});
