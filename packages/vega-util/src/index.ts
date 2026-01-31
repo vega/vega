@@ -23,7 +23,8 @@ export {
   Error,
   Warn,
   Info,
-  Debug
+  Debug,
+  type LoggerInterface
 } from './logger.js';
 
 export {

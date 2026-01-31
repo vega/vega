@@ -13,18 +13,18 @@ export const Warn  = 2;
 export const Info  = 3;
 export const Debug = 4;
 
-export interface Logger {
-  level(_?: number): number | Logger;
+export interface LoggerInterface {
+  level(_?: number): number | LoggerInterface;
   error(...args: unknown[]): this;
   warn(...args: unknown[]): this;
   info(...args: unknown[]): this;
   debug(...args: unknown[]): this;
 }
 
-export default function(_?: number, method?: LogMethod, handler: LogHandler = log): Logger {
+export default function(_?: number, method?: LogMethod, handler: LogHandler = log): LoggerInterface {
   let level = _ || None;
   return {
-    level(_?: number): number | Logger {
+    level(_?: number): number | LoggerInterface {
       if (arguments.length) {
         level = +_!;
         return this;
