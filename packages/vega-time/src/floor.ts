@@ -18,25 +18,12 @@ import {
 } from './util.js';
 import {constant, one, peek, toSet, zero} from 'vega-util';
 
-/** A function that creates a Date from year, month, day, hours, minutes, seconds, milliseconds */
 type DateFactory = (y: number, m: number, d: number, H: number, M: number, S: number, L: number) => Date;
-
-/** A function that gets a value from a Date, optionally using the year */
 type GetterFn = (d: Date, y?: number) => number;
-
-/** A record mapping time unit keys to getter functions */
 type GetterRecord = Record<string, GetterFn>;
-
-/** A function that inverts a value, optionally using the year */
 type InverterFn = (v: number, y?: number) => number;
-
-/** A record mapping time unit keys to inverter functions */
 type InverterRecord = Record<string, InverterFn>;
-
-/** A floor function that takes a Date and returns a floored Date */
 type FloorFn = (date: Date) => Date;
-
-/** A unit extractor function */
 type UnitFn = (d: Date, y?: number) => number;
 
 function floor(

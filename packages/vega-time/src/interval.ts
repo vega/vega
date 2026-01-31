@@ -8,9 +8,9 @@ import {
   MONTH,
   QUARTER,
   SECONDS,
+  TimeUnit,
   WEEK,
-  YEAR,
-  TimeUnit
+  YEAR
 } from './units.js';
 
 import {

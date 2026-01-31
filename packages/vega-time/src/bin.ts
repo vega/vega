@@ -1,4 +1,4 @@
-import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, WEEK, YEAR, TimeUnit} from './units.js';
+import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, type TimeUnit, WEEK, YEAR} from './units.js';
 import {span} from 'vega-util';
 import {bisector, tickStep} from 'd3-array';
 
@@ -50,11 +50,8 @@ export interface TimeBinOptions {
   maxbins?: number;
 }
 
-/** Result of time binning */
 export interface TimeBinResult {
-  /** Time units for the bin */
   units: TimeUnit[];
-  /** Step size for the bin */
   step: number;
 }
 
@@ -63,8 +60,8 @@ export default function timeBin(opt: TimeBinOptions): TimeBinResult {
         max = opt.maxbins || 40,
         target = Math.abs(span(ext)) / max;
 
-  let i = bisector((interval: Interval) => interval[2]).right(intervals, target),
-      units: TimeUnit[],
+  const i = bisector((interval: Interval) => interval[2]).right(intervals, target);
+  let units: TimeUnit[],
       step: number;
 
   if (i === intervals.length) {
