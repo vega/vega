@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('timeUnitSpecifier produces specifier for single time units', t => {
   t.equal(vega.timeUnitSpecifier('year'), '%Y');
