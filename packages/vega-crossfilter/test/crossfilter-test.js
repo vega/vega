@@ -76,6 +76,22 @@ tape('Crossfilter filters tuples', t => {
   t.end();
 });
 
+tape('Crossfilter range is half-open [min, max)', t => {
+  const data = [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}];
+
+  var df = new Dataflow(),
+      range = df.add([2, 4]),
+      c0 = df.add(Collect),
+      cf = df.add(CrossFilter, {fields:[field('x')], query:[range], pulse:c0}),
+      out = df.add(Collect, {pulse: df.add(ResolveFilter, {ignore:0, filter:cf, pulse:cf})});
+
+  // -- range [2, 4) includes min=2, excludes max=4
+  df.pulse(c0, changeset().insert(data)).run();
+  t.deepEqual(out.value.map(d => d.x).sort(), [2, 3]);
+
+  t.end();
+});
+
 tape('Crossfilter consolidates after remove', t => {
   const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
