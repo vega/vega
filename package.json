@@ -30,7 +30,7 @@
     "@babel/plugin-transform-runtime": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
     "@blazediff/core": "^1.7.0",
-    "@definitelytyped/dtslint": "0.2.34",
+    "@definitelytyped/dtslint": "0.2.35",
     "@eslint/js": "^9.34.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
