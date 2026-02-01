@@ -31,14 +31,14 @@ tape('Crossfilter filters tuples', t => {
   t.equal(on.value.length, 4);
 
   // -- update single query
-  df.update(r2, [1,2]).run();
+  df.update(r2, [1,3]).run();
   t.equal(o1.value.length, 4);
   t.equal(o2.value.length, 2);
   t.equal(on.value.length, 2);
 
   // -- update multiple queries
-  df.update(r1, [1,3])
-    .update(r2, [3,4])
+  df.update(r1, [1,4])
+    .update(r2, [3,5])
     .run();
   t.equal(o1.value.length, 3);
   t.equal(o2.value.length, 2);
@@ -101,8 +101,8 @@ tape('Crossfilter consolidates after remove', t => {
   var a = field('a'),
       b = field('b'),
       df = new Dataflow(),
-      r1 = df.add([0, 3]),
-      r2 = df.add([0, 3]),
+      r1 = df.add([0, 4]),
+      r2 = df.add([0, 4]),
       c0 = df.add(Collect),
       cf = df.add(CrossFilter, {fields:[a,b], query:[r1,r2], pulse:c0});
 
