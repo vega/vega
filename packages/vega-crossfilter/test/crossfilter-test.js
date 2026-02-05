@@ -31,14 +31,14 @@ tape('Crossfilter filters tuples', t => {
   t.equal(on.value.length, 4);
 
   // -- update single query
-  df.update(r2, [1,2]).run();
+  df.update(r2, [1,3]).run();
   t.equal(o1.value.length, 4);
   t.equal(o2.value.length, 2);
   t.equal(on.value.length, 2);
 
   // -- update multiple queries
-  df.update(r1, [1,3])
-    .update(r2, [3,4])
+  df.update(r1, [1,4])
+    .update(r2, [3,5])
     .run();
   t.equal(o1.value.length, 3);
   t.equal(o2.value.length, 2);
@@ -76,6 +76,22 @@ tape('Crossfilter filters tuples', t => {
   t.end();
 });
 
+tape('Crossfilter range is half-open [min, max)', t => {
+  const data = [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}];
+
+  var df = new Dataflow(),
+      range = df.add([2, 4]),
+      c0 = df.add(Collect),
+      cf = df.add(CrossFilter, {fields:[field('x')], query:[range], pulse:c0}),
+      out = df.add(Collect, {pulse: df.add(ResolveFilter, {ignore:0, filter:cf, pulse:cf})});
+
+  // -- range [2, 4) includes min=2, excludes max=4
+  df.pulse(c0, changeset().insert(data)).run();
+  t.deepEqual(out.value.map(d => d.x).sort(), [2, 3]);
+
+  t.end();
+});
+
 tape('Crossfilter consolidates after remove', t => {
   const data = [
     {a: 1, b: 1, c:0}, {a: 2, b: 2, c:1},
@@ -85,8 +101,8 @@ tape('Crossfilter consolidates after remove', t => {
   var a = field('a'),
       b = field('b'),
       df = new Dataflow(),
-      r1 = df.add([0, 3]),
-      r2 = df.add([0, 3]),
+      r1 = df.add([0, 4]),
+      r2 = df.add([0, 4]),
       c0 = df.add(Collect),
       cf = df.add(CrossFilter, {fields:[a,b], query:[r1,r2], pulse:c0});
 
