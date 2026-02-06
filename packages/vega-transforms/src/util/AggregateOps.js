@@ -61,7 +61,7 @@ export const AggregateOps = {
     req:  ['mean'], idx: 1
   },
   variancep: {
-    value: m => m.valid > 1 ? m.dev / m.valid : undefined,
+    value: m => m.dev / m.valid,
     req:  ['variance'], idx: 2
   },
   stdev: {
@@ -69,7 +69,7 @@ export const AggregateOps = {
     req:  ['variance'], idx: 2
   },
   stdevp: {
-    value: m => m.valid > 1 ? Math.sqrt(m.dev / m.valid) : undefined,
+    value: m => Math.sqrt(m.dev / m.valid),
     req:  ['variance'], idx: 2
   },
   stderr: {
