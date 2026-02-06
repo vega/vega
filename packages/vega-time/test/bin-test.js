@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('timeBin determines time unit bins', t => {
   const extent = [new Date(2000, 0, 1), new Date(2001, 0, 1)];

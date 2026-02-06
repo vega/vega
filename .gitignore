@@ -12,3 +12,4 @@
 /packages/*/build
 /packages/*/LICENSE
 /docs/data/*.parquet
+.claude/
