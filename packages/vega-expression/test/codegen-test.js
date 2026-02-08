@@ -317,3 +317,33 @@ tape('Evaluate expressions with white list', t => {
 
   t.end();
 });
+
+tape('Block DOM property access (non-datum objects only)', t => {
+  const codegen = vega.codegenExpression({
+    allowed: ['datum', 'event'],
+    globalvar: 'global'
+  });
+
+  function evaluate(str, datum = {}, event = {}) {
+    const value = codegen(vega.parseExpression(str));
+    const fn = Function('datum', 'event', 'return (' + value.code + ')');
+    return fn(datum, event);
+  }
+
+  // Block non-computed access on non-datum objects
+  t.throws(() => evaluate('event.window'), 'blocks restricted property via dot notation');
+  t.throws(() => evaluate('event.document'), 'blocks restricted property via dot notation');
+
+  // Block computed access on non-datum objects
+  const event = {window: 'test', cookie: 'test'};
+  t.equal(evaluate('event["window"]', {}, event), undefined, 'blocks restricted property via bracket notation');
+  t.equal(evaluate('event["cookie"]', {}, event), undefined, 'blocks restricted property via bracket notation');
+
+  // Allow datum access to any property (user data should be unrestricted)
+  const datum = {window: 'value1', document: 'value2', cookie: 'value3'};
+  t.equal(evaluate('datum.window', datum), 'value1', 'allows datum property access');
+  t.equal(evaluate('datum.document', datum), 'value2', 'allows datum property access');
+  t.equal(evaluate('datum["cookie"]', datum), 'value3', 'allows computed datum property access');
+
+  t.end();
+});

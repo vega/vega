@@ -14,7 +14,9 @@ export {
 } from './accessors.js';
 
 export {
-  DisallowedObjectProperties
+  DisallowedObjectProperties,
+  DisallowedMemberProperties,
+  shouldBlockMember
 } from './interpreter.js';
 
 export {

@@ -1,6 +1,6 @@
 import Constants from './constants.js';
 import Functions from './functions.js';
-import {DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
+import {DisallowedMemberProperties, DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
   const n = s && s.length - 1;
@@ -58,11 +58,29 @@ export default function(opt) {
               o = visit(n.object);
         if (d) memberDepth += 1;
         const p = visit(n.property);
+
+        // Check if this is a datum access (user data should be unrestricted)
+        const isDatumAccess = n.object.type === 'Identifier' && n.object.name === 'datum';
+
+        // Restrict certain property access for non-computed member expressions on non-datum objects
+        if (d && !isDatumAccess && DisallowedMemberProperties.has(p)) {
+          return error('Illegal property access: ' + p);
+        }
+
         if (o === fieldvar) {
           // strip quotes to sanitize field name (#1653)
           fields[stripQuotes(p)] = 1;
         }
         if (d) memberDepth -= 1;
+
+        // For computed access on non-datum objects, generate inline guard at runtime
+        if (!d && !isDatumAccess) {
+          const blockedProps = Array.from(DisallowedMemberProperties)
+            .map(prop => `${p}==="${prop}"`)
+            .join('||');
+          return `((${blockedProps})?void 0:${o}[${p}])`;
+        }
+
         return o + (d ? '.'+p : '['+p+']');
       },
 
