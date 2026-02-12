@@ -40,6 +40,8 @@ All valid aggregate operations.
 | median    | The median field value.|
 | q1        | The lower quartile boundary of field values.|
 | q3        | The upper quartile boundary of field values.|
+| p95       | The 95th percentile of field values.|
+| p99       | The 99th percentile of field values.|
 | ci0       | The lower boundary of the bootstrapped 95% confidence interval of the mean field value.|
 | ci1       | The upper boundary of the bootstrapped 95% confidence interval of the mean field value.|
 | min       | The minimum field value.|

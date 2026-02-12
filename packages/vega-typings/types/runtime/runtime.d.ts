@@ -186,6 +186,8 @@ export type AggregateOps =
   | 'median'
   | 'q1'
   | 'q3'
+  | 'p95'
+  | 'p99'
   | 'min'
   | 'max'
   | 'argmin'
