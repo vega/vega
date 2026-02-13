@@ -149,7 +149,13 @@ function configureDomain(scale, _, df) {
     if (_.domainMid != null) {
       mid = _.domainMid;
       const i = mid > domain[n] ? n + 1 : mid < domain[0] ? 0 : n;
-      if (i !== n) df.warn('Scale domainMid exceeds domain min or max.', mid);
+      
+      df.warn('Scale domainMid exceeds domain min or max.', mid);
+      // If the domainMid exceeds the domain min or max, insert two midpoints to ensure the domainMid is within the domain
+      // insert two midpoints to ensure the domainMid is within the domain
+      domain.splice(i, 0, mid, mid);
+    } else {
+      // If the domainMid is within the domain, insert one midpoint is sufficient.
       domain.splice(i, 0, mid);
     }
   }
