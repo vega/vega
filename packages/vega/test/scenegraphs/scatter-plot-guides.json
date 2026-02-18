@@ -4682,7 +4682,7 @@
                               "x": 0,
                               "y": 0,
                               "width": 62,
-                              "height": 11,
+                              "height": 10,
                               "opacity": 1
                             },
                             {
@@ -4731,9 +4731,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 14,
+                              "y": 12,
                               "width": 62,
-                              "height": 11,
+                              "height": 10,
                               "opacity": 1
                             },
                             {
@@ -4782,9 +4782,9 @@
                                 }
                               ],
                               "x": 0,
-                              "y": 28,
+                              "y": 24,
                               "width": 62,
-                              "height": 11,
+                              "height": 10,
                               "opacity": 1
                             }
                           ],
@@ -4825,7 +4825,7 @@
               "x": 418,
               "y": 0,
               "width": 62,
-              "height": 55,
+              "height": 50,
               "orient": "right"
             }
           ],
