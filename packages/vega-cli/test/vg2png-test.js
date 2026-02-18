@@ -10,3 +10,8 @@ tape('vg2png generates scaled PNG output', t => {
   const cmd = './bin/vg2png --scale 2 test/resources/bar.vg.json';
   test(t, cmd, 'vg2png-test-scaled.png', true);
 });
+
+tape('vg2png generates first frame of compiled animated vega-lite spec', t => {
+  const cmd = './bin/vg2png test/resources/animated_gapminder.vg.json';
+  test(t, cmd, 'vg2png-test-animated_gapminder.png', true);
+});
