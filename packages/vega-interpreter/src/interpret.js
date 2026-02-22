@@ -2,7 +2,7 @@ import Constants from './constants.js';
 import Ops from './ops-binary.js';
 import Unary from './ops-unary.js';
 import Functions from './functions.js';
-import {DisallowedMemberProperties, DisallowedObjectProperties} from 'vega-util';
+import {AllowedEventProperties, DisallowedObjectProperties} from 'vega-util';
 
 const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
 const DisallowedMethods = new Set([
@@ -33,10 +33,10 @@ const Visitors = {
     const p = $(n.property);
     if (d) $.memberDepth -= 1;
 
-    // Restrict certain property names, but only on non-datum objects
-    // This allows user data to have any field names
+    // Allow all property access on datum (user data is unrestricted).
+    // For all other objects, only allow properties on the allowlist.
     const isDatum = o === $.datum;
-    if (!isDatum && DisallowedMemberProperties.has(p)) {
+    if (!isDatum && !AllowedEventProperties.has(p)) {
       // eslint-disable-next-line no-console
       console.error(`Property access not allowed: "${p}"`);
       return;

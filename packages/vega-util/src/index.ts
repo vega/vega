@@ -15,8 +15,7 @@ export {
 
 export {
   DisallowedObjectProperties,
-  DisallowedMemberProperties,
-  shouldBlockMember
+  AllowedEventProperties
 } from './interpreter.js';
 
 export {

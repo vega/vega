@@ -8,49 +8,30 @@ export const DisallowedObjectProperties = new Set(
   ]
 );
 
-// Read-side guard for member access (contrasts with write-side DisallowedObjectProperties).
-export const DisallowedMemberProperties = new Set([
-  // DOM entry points
-  'ownerDocument',
-  'defaultView',
-  'document',
-  'window',
-  'cookie',
-  'localStorage',
-  'sessionStorage',
-
-  // Internal implementation properties
-  '_el',
-  '_elBind',
-  '_renderer',
-  '_handler',
-  '_bind',
-
-  // DOM traversal and content access
-  'parentNode',
-  'parentElement',
-  'innerHTML',
-  'outerHTML',
-  'textContent',
-  'innerText',
-
-  // Listener collections that can include DOM/window/document
-  '_eventListeners',
-  '_resizeListeners'
+// Allowlist of event properties that expressions may access.
+// Properties NOT on this list are blocked when accessed on non-datum objects.
+// This is a default-deny approach: new browser APIs are blocked automatically.
+export const AllowedEventProperties = new Set([
+  // Mouse/touch position
+  'clientX', 'clientY', 'pageX', 'pageY', 'screenX', 'screenY',
+  'offsetX', 'offsetY', 'movementX', 'movementY',
+  // Keyboard
+  'key', 'code', 'keyCode', 'charCode',
+  // Modifier keys
+  'altKey', 'ctrlKey', 'shiftKey', 'metaKey',
+  // Mouse buttons
+  'button', 'buttons', 'detail', 'which',
+  // Wheel/scroll
+  'deltaX', 'deltaY', 'deltaZ', 'deltaMode',
+  'wheelDelta', 'wheelDeltaX', 'wheelDeltaY',
+  // Touch events
+  'touches', 'changedTouches', 'targetTouches',
+  // Pointer events
+  'pointerId', 'pointerType', 'pressure', 'width', 'height',
+  'tiltX', 'tiltY', 'twist', 'isPrimary',
+  // Event metadata
+  'type', 'timeStamp', 'bubbles', 'cancelable', 'composed',
+  'eventPhase', 'isTrusted', 'repeat',
+  // Vega-specific extensions (added by events-extend.js)
+  'vega', 'item', 'dataflow',
 ]);
-
-/**
- * Check if a member property access should be blocked for security reasons.
- * Returns the property value if allowed, or undefined if blocked.
- * @param obj The object being accessed
- * @param prop The property name being accessed
- * @returns The property value if allowed, undefined if blocked
- */
-export function shouldBlockMember(obj: any, prop: string): any {
-  if (DisallowedMemberProperties.has(prop)) {
-    // eslint-disable-next-line no-console
-    console.error(`Property access not allowed: "${prop}"`);
-    return undefined;
-  }
-  return obj?.[prop];
-}

@@ -1,6 +1,6 @@
 import Constants from './constants.js';
 import Functions from './functions.js';
-import {DisallowedMemberProperties, DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
+import {AllowedEventProperties, DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
   const n = s && s.length - 1;
@@ -59,11 +59,13 @@ export default function(opt) {
         if (d) memberDepth += 1;
         const p = visit(n.property);
 
-        // Check if this is a datum access (user data should be unrestricted)
-        const isDatumAccess = n.object.type === 'Identifier' && n.object.name === 'datum';
+        // Only apply allowlist guard when fieldvar is configured (Vega expression context).
+        // Check if this is a datum access (user data should be unrestricted).
+        const isDatumAccess = n.object.type === 'Identifier' && n.object.name === fieldvar;
+        const applyGuard = fieldvar && !isDatumAccess;
 
-        // Restrict certain property access for non-computed member expressions on non-datum objects
-        if (d && !isDatumAccess && DisallowedMemberProperties.has(p)) {
+        // Block property access not on the allowlist for non-datum objects
+        if (d && applyGuard && !AllowedEventProperties.has(p)) {
           return error('Illegal property access: ' + p);
         }
 
@@ -73,12 +75,12 @@ export default function(opt) {
         }
         if (d) memberDepth -= 1;
 
-        // For computed access on non-datum objects, generate inline guard at runtime
-        if (!d && !isDatumAccess) {
-          const blockedProps = Array.from(DisallowedMemberProperties)
-            .map(prop => `${p}==="${prop}"`)
+        // For computed access on non-datum objects, generate inline allowlist guard
+        if (!d && applyGuard) {
+          const allowedProps = Array.from(AllowedEventProperties)
+            .map(prop => `_p===${JSON.stringify(prop)}`)
             .join('||');
-          return `((${blockedProps})?void 0:${o}[${p}])`;
+          return `(((_o,_p)=>((${allowedProps})?_o[_p]:void 0))(${o},${p}))`;
         }
 
         return o + (d ? '.'+p : '['+p+']');
