@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 import { local, utc } from './util.js';
 
 function test(t, sequence, offset, unit, start, steps) {
