@@ -21,7 +21,8 @@
     "typecheck": "tsc",
     "lint": "eslint -c eslint.config.js .",
     "format": "npm run lint -- --fix",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "scripts/postinstall.sh",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -43,8 +44,10 @@
     "del-cli": "^7.0.0",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
+    "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "lerna": "^9.0.1",
+    "lint-staged": "^16.2.7",
     "pngjs": "^7.0.0",
     "prettier": "^3.6.2",
     "rollup": "^4.50.0",
@@ -60,5 +63,8 @@
   ],
   "engines": {
     "node": ">=22.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,mjs,cjs}": "eslint --fix"
   }
 }
