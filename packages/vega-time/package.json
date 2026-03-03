@@ -15,7 +15,8 @@
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-time.js"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,14 +24,19 @@
   },
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c rollup.config.js",
-    "pretest": "npm run build -- --config-test",
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "tape 'test/**/*-test.js'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
     "d3-array": "^3.2.4",
     "d3-time": "^3.1.0",
     "vega-util": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.2",
+    "@types/d3-time": "^3.0.4"
   }
 }
