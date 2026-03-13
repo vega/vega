@@ -12,7 +12,21 @@ export const MINUTES = 'minutes';
 export const SECONDS = 'seconds';
 export const MILLISECONDS = 'milliseconds';
 
-export const TIME_UNITS = [
+/** Time unit string literal type */
+export type TimeUnit =
+  | typeof YEAR
+  | typeof QUARTER
+  | typeof MONTH
+  | typeof WEEK
+  | typeof DATE
+  | typeof DAY
+  | typeof DAYOFYEAR
+  | typeof HOURS
+  | typeof MINUTES
+  | typeof SECONDS
+  | typeof MILLISECONDS;
+
+export const TIME_UNITS: readonly TimeUnit[] = [
   YEAR,
   QUARTER,
   MONTH,
@@ -26,16 +40,22 @@ export const TIME_UNITS = [
   MILLISECONDS
 ];
 
-const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
+const UNITS: Record<TimeUnit, number> = TIME_UNITS.reduce(
+  (o, u, i) => ((o[u] = 1 + i), o),
+  {} as Record<TimeUnit, number>
+);
 
-export function timeUnits(units) {
-  const u = array(units).slice(),
-        m = {};
+/** Input type for time units - can be a single unit or array of units */
+export type TimeUnitsInput = TimeUnit | readonly TimeUnit[];
+
+export function timeUnits(units: TimeUnitsInput): TimeUnit[] {
+  const u = array(units).slice() as TimeUnit[],
+    m: Partial<Record<TimeUnit, number>> = {};
 
   // check validity
   if (!u.length) error('Missing time unit.');
 
-  u.forEach(unit => {
+  u.forEach((unit) => {
     if (hasOwnProperty(UNITS, unit)) {
       m[unit] = 1;
     } else {
@@ -43,11 +63,10 @@ export function timeUnits(units) {
     }
   });
 
-  const numTypes = (
+  const numTypes =
     (m[WEEK] || m[DAY] ? 1 : 0) +
     (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) +
-    (m[DAYOFYEAR] ? 1 : 0)
-  );
+    (m[DAYOFYEAR] ? 1 : 0);
 
   if (numTypes > 1) {
     error(`Incompatible time units: ${units}`);
@@ -59,7 +78,10 @@ export function timeUnits(units) {
   return u;
 }
 
-const defaultSpecifiers = {
+/** Format specifiers mapping time unit keys to format strings */
+export type TimeUnitSpecifiers = Partial<Record<string, string>>;
+
+const defaultSpecifiers: TimeUnitSpecifiers = {
   [YEAR]: '%Y ',
   [QUARTER]: 'Q%q ',
   [MONTH]: '%b ',
@@ -76,15 +98,21 @@ const defaultSpecifiers = {
   [`${HOURS}-${MINUTES}`]: '%H:%M'
 };
 
-export function timeUnitSpecifier(units, specifiers) {
-  const s = extend({}, defaultSpecifiers, specifiers),
-        u = timeUnits(units),
-        n = u.length;
+export function timeUnitSpecifier(
+  units: TimeUnitsInput,
+  specifiers?: TimeUnitSpecifiers
+): string {
+  const s = extend({}, defaultSpecifiers, specifiers ?? {}) as TimeUnitSpecifiers,
+    u = timeUnits(units),
+    n = u.length;
 
-  let fmt = '', start = 0, end, key;
+  let fmt = '',
+    start = 0,
+    end: number,
+    key: string;
 
-  for (start=0; start<n; ) {
-    for (end=u.length; end > start; --end) {
+  for (start = 0; start < n; ) {
+    for (end = u.length; end > start; --end) {
       key = u.slice(start, end).join('-');
       if (s[key] != null) {
         fmt += s[key];
