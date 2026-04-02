@@ -3,14 +3,14 @@ updates:
   - package-ecosystem: npm
     directory: '/'
     schedule:
-      interval: monthly
+      interval: quarterly
     ignore:
       - dependency-name: 'vega'
   - package-ecosystem: bundler
     directory: '/docs'
     schedule:
-      interval: monthly
+      interval: quarterly
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: monthly
+      interval: quarterly
