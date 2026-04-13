@@ -29,7 +29,7 @@ jobs:
           git checkout 40795c2f -- docs/releases/
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
