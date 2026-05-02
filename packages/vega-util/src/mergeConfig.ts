@@ -2,7 +2,7 @@ import {isArray} from './isArray.js';
 import isObject from './isObject.js';
 
 
-const isLegalKey = (key: string) => key !== '__proto__';
+const isLegalKey = (key: string) => key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
 
 /** Represents any valid configuration value (primitives, arrays, or nested config objects). */
 type ConfigValue =
