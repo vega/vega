@@ -6,7 +6,7 @@
       "es2022",
       "dom"
     ],
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
