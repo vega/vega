@@ -645,6 +645,7 @@ const mark_extras = {
     setAttribute(el, 'font-style', item.fontStyle);
     setAttribute(el, 'font-variant', item.fontVariant);
     setAttribute(el, 'font-weight', item.fontWeight);
+    setAttribute(el, 'text-decoration', item.textDecoration);
   }
 };
 
