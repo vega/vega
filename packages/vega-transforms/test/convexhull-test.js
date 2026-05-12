@@ -1,8 +1,7 @@
 import tape from 'tape';
 import {field} from 'vega-util';
 import {Dataflow, changeset} from 'vega-dataflow';
-import {convexhull as ConvexHull} from '../index.js';
-import {collect as Collect} from 'vega-transforms';
+import {collect as Collect, convexhull as ConvexHull} from '../index.js';
 
 tape('ConvexHull generates grouped hull points', t => {
   const data = [
