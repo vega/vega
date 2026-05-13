@@ -154,10 +154,20 @@
     }
   ],
 
+  "config": {
+    "legend": {
+      "layout": {
+        "frame": "bounds"
+      }
+    }
+  },
+
   "legends": [
     {
       "stroke": "color",
       "title": "Origin",
+      "direction": "horizontal",
+      "orient": "top",
       "encode": {
         "symbols": {
           "name": "legendSymbol",
