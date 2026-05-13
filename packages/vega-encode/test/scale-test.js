@@ -221,11 +221,15 @@ tape('Scale respects range color schemes', t => {
   // fallback ordinal scheme count for initially empty implicit domain
   s = scale({type: 'ordinal', scheme: 'blues', domain: [], domainImplicit: true});
   v = s.range();
-  t.ok(v.length > 0);
+  t.equal(v.length, 5);
   t.notEqual(s('foo'), undefined);
 
+  // quantize ordinal schemes to the explicit domain cardinality
+  s = scale({type: 'ordinal', scheme: 'blues', domain: ['a', 'b'], domainImplicit: true});
+  t.equal(s.range().length, 2);
+
   // respect explicit schemeCount override for ordinal schemes
-  s = scale({type: 'ordinal', scheme: 'blues', domain: [], domainImplicit: true, schemeCount: 3});
+  s = scale({type: 'ordinal', scheme: 'blues', domain: ['a', 'b'], domainImplicit: true, schemeCount: 3});
   t.equal(s.range().length, 3);
 
   t.end();
