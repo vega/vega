@@ -16,7 +16,7 @@
       "name": "aggregate", "value": "sum",
       "bind": {
         "input": "select",
-        "options": ["sum", "count", "average", "median", "stdev"]
+        "options": ["sum", "count", "average", "median", "stdev", "p95", "p99"]
       }
     },
     {
