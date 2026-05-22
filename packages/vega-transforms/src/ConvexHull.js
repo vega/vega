@@ -1,3 +1,4 @@
+import {Delaunay} from 'd3-delaunay';
 import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, inherits} from 'vega-util';
 
@@ -68,34 +69,20 @@ function partition(data, groupby, x, y) {
 }
 
 function convexHull(points) {
-  const sorted = dedupe(points).sort(comparePoints);
+  const unique = dedupe(points);
 
-  if (sorted.length <= 2) {
-    return sorted.map(point);
+  if (unique.length <= 2) {
+    return unique.sort(comparePoints).map(point);
   }
 
-  const lower = [],
-        upper = [];
+  const delaunay = Delaunay.from(unique, p => p.x, p => p.y);
 
-  for (let i=0, n=sorted.length; i<n; ++i) {
-    scan(lower, sorted[i]);
+  if (delaunay.collinear) {
+    const collinear = Array.from(delaunay.collinear, i => unique[i]);
+    return [collinear[0], collinear[collinear.length - 1]].map(point);
   }
 
-  for (let i=sorted.length - 1; i>=0; --i) {
-    scan(upper, sorted[i]);
-  }
-
-  lower.pop();
-  upper.pop();
-
-  return lower.concat(upper).map(point);
-}
-
-function scan(hull, p) {
-  while (hull.length >= 2 && cross(hull[hull.length - 2], hull[hull.length - 1], p) <= 0) {
-    hull.pop();
-  }
-  hull.push(p);
+  return rotateHull(Array.from(delaunay.hull, i => unique[i]).reverse()).map(point);
 }
 
 function dedupe(points) {
@@ -118,8 +105,16 @@ function comparePoints(a, b) {
   return a.x - b.x || a.y - b.y;
 }
 
-function cross(a, b, c) {
-  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+function rotateHull(points) {
+  let start = 0;
+
+  for (let i=1, n=points.length; i<n; ++i) {
+    if (comparePoints(points[i], points[start]) < 0) {
+      start = i;
+    }
+  }
+
+  return points.slice(start).concat(points.slice(0, start));
 }
 
 function point(p, i, points) {
