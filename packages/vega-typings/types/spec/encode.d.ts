@@ -47,7 +47,7 @@ export type ScaledValueRef<T> =
       range: number | boolean;
     };
 
-export type NumericValueRef = (ScaledValueRef<number> | {}) & {
+export type NumericValueRef = (ScaledValueRef<number> | { offset: number | NumericValueRef }) & {
   exponent?: number | NumericValueRef;
   mult?: number | NumericValueRef;
   offset?: number | NumericValueRef;

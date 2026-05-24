@@ -21,22 +21,33 @@ interface ConfigObject {
 /** A signal object with a required name property; compatible with vega-typings InitSignal | NewSignal. */
 interface NamedSignal {
   name: string;
-  [key: string]: ConfigValue;
 }
 
-/** Represents top-level Vega configuration object; compatible with vega-typings Config. */
-interface VegaConfig extends ConfigObject {
+/**
+ * Internal top-level Vega configuration object used for merging.
+ * Does not extend ConfigObject directly so that signals can be typed as NamedSignal[]
+ * without requiring every signal property to conform to ConfigValue.
+ */
+interface VegaConfig {
   signals?: NamedSignal[];
+  [key: string]: NamedSignal[] | ConfigValue | undefined;
 }
 
 /** Internal type used to determine which properties should be recursively merged. Currently only supports legend layout and style blocks */
 type RecurseStrategy = Record<string, unknown> | boolean | null;
 
 
-/** Merges Vega config objects. Signals merged by name (source takes precedence),
+/**
+ * Merges Vega config objects. Signals merged by name (source takes precedence),
  * legend.layout recursively merged, style fully recursive, others shallow.
- * Return type is compatible with vega-typings Config. */
-export function mergeConfig(...configs: Partial<VegaConfig>[]): VegaConfig {
+ *
+ * Accepts any object type (including vega-typings `Config`) and returns the same type.
+ */
+export function mergeConfig<T extends object>(...configs: Partial<T>[]): T {
+  return mergeConfigInternal(...(configs as unknown as Partial<VegaConfig>[]))  as unknown as T;
+}
+
+function mergeConfigInternal(...configs: Partial<VegaConfig>[]): VegaConfig {
   return configs.reduce((out, source) => {
     for (const key in source) {
       if (key === 'signals') {
@@ -52,7 +63,7 @@ export function mergeConfig(...configs: Partial<VegaConfig>[]): VegaConfig {
         const r: RecurseStrategy = key === 'legend' ? {layout: 1}
           : key === 'style' ? true
           : null;
-        writeConfig(out, key, source[key], r);
+        writeConfig(out as unknown as ConfigObject, key, source[key] as ConfigValue, r);
       }
     }
     return out;
