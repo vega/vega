@@ -44,6 +44,9 @@ type RecurseStrategy = Record<string, unknown> | boolean | null;
  * Accepts any object type (including vega-typings `Config`) and returns the same type.
  */
 export function mergeConfig<T extends object>(...configs: Partial<T>[]): T {
+  // vega-typings Config has no index signature, so T is not assignable to VegaConfig
+  // without a cast. The merge logic only reads string-keyed properties and never
+  // introduces values outside of what was already present in T.
   return mergeConfigInternal(...(configs as unknown as Partial<VegaConfig>[]))  as unknown as T;
 }
 

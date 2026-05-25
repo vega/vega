@@ -47,6 +47,7 @@ export type ScaledValueRef<T> =
       range: number | boolean;
     };
 
+// `{ offset }` matches the JSON Schema `required:["offset"]` branch; `offset` in the intersection allows modifiers on other base forms.
 export type NumericValueRef = (ScaledValueRef<number> | { offset: number | NumericValueRef }) & {
   exponent?: number | NumericValueRef;
   mult?: number | NumericValueRef;
