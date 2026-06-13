@@ -1,6 +1,10 @@
 {
   "name": "vega-time",
   "version": "3.1.0",
+  "homepage": "https://github.com/vega/vega",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "description": "JavaScript date/time utilities for Vega.",
   "keywords": [
     "vega",
