@@ -325,6 +325,7 @@ function configureScheme(type, _, count) {
   // determine size for potential discrete range
   count = (type === Threshold) ? count + 1
     : (type === BinOrdinal) ? count - 1
+    : (type === Ordinal) ? (+_.schemeCount || count || DEFAULT_COUNT)
     : (type === Quantile || type === Quantize) ? (+_.schemeCount || DEFAULT_COUNT)
     : count;
 
