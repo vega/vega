@@ -7,6 +7,7 @@ This package provides the following Vega data transforms:
 - [**Aggregate**](https://vega.github.io/vega/docs/transforms/aggregate/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Aggregate.js "Source")
 - [**Bin**](https://vega.github.io/vega/docs/transforms/bin/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Bin.js "Source")
 - [**Collect**](https://vega.github.io/vega/docs/transforms/collect/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Collect.js "Source")
+- [**ConvexHull**](https://vega.github.io/vega/docs/transforms/convexhull/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/ConvexHull.js "Source")
 - [**CountPattern**](https://vega.github.io/vega/docs/transforms/countpattern/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/CountPattern.js "Source")
 - [**Cross**](https://vega.github.io/vega/docs/transforms/cross/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Cross.js "Source")
 - [**Density**](https://vega.github.io/vega/docs/transforms/density/) [&lt;&gt;](https://github.com/vega/vega/blob/master/packages/vega-transforms/src/Density.js "Source")
