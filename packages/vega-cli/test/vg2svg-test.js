@@ -15,3 +15,8 @@ tape('vg2svg generates scaled SVG output', t => {
   const cmd = './bin/vg2svg --scale 2 test/resources/bar.vg.json';
   test(t, cmd, 'vg2svg-test-scaled.svg');
 });
+
+tape('vg2svg generates first frame of compiled animated vega-lite spec', t => {
+  const cmd = './bin/vg2svg test/resources/animated_gapminder.vg.json';
+  test(t, cmd, 'vg2svg-test-animated_gapminder.svg');
+});
