@@ -2,6 +2,7 @@ import tape from 'tape';
 import { validTicks } from '../index.js';
 import { tickValues } from '../index.js';
 import {timeInterval} from 'vega-time';
+import { tickCount } from '../src/ticks.js';
 
 tape('validTicks uses count correctly', t => {
   const data = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -63,4 +64,12 @@ tape('tickValues uses scale and count correctly', t => {
   t.deepEqual(t4, data);
 
   t.end();
+});
+
+tape('tickCount handles minStep correctly', t => {
+  const c1 = tickCount({domain: () => [0, 1]}, 10, {minStep: 1});
+  t.equal(c1, 2);
+
+  const c2 = tickCount({domain: () => [0, 10]}, 10, {minStep: 3});
+  t.equal(c2, 4);
 });
