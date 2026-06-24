@@ -15,6 +15,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-scenegraph#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
     "prebuild": "del-cli build",
