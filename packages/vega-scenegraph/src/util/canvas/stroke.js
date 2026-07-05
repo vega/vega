@@ -2,7 +2,7 @@ import color from './color.js';
 
 var Empty = [];
 
-export default function(context, item, opacity) {
+export default function(context, item, opacity, renderer) {
   var lw = (lw = item.strokeWidth) != null ? lw : 1;
 
   if (lw <= 0) return false;
@@ -10,7 +10,7 @@ export default function(context, item, opacity) {
   opacity *= (item.strokeOpacity==null ? 1 : item.strokeOpacity);
   if (opacity > 0) {
     context.globalAlpha = opacity;
-    context.strokeStyle = color(context, item, item.stroke);
+    context.strokeStyle = color(context, item, item.stroke, renderer);
 
     context.lineWidth = lw;
     context.lineCap = item.strokeCap || 'butt';

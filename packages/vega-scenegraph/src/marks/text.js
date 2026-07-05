@@ -94,6 +94,7 @@ function bound(bounds, item, mode) {
 }
 
 function draw(context, scene, bounds) {
+  const renderer = this;
   visit(scene, item => {
     var opacity = item.opacity == null ? 1 : item.opacity,
         p, x, y, i, lh, tl, str;
@@ -124,20 +125,20 @@ function draw(context, scene, bounds) {
       lh = lineHeight(item);
       for (i=0; i<tl.length; ++i) {
         str = textValue(item, tl[i]);
-        if (item.fill && fill(context, item, opacity)) {
+        if (item.fill && fill(context, item, opacity, renderer)) {
           context.fillText(str, x, y);
         }
-        if (item.stroke && stroke(context, item, opacity)) {
+        if (item.stroke && stroke(context, item, opacity, renderer)) {
           context.strokeText(str, x, y);
         }
         y += lh;
       }
     } else {
       str = textValue(item, tl);
-      if (item.fill && fill(context, item, opacity)) {
+      if (item.fill && fill(context, item, opacity, renderer)) {
         context.fillText(str, x, y);
       }
-      if (item.stroke && stroke(context, item, opacity)) {
+      if (item.stroke && stroke(context, item, opacity, renderer)) {
         context.strokeText(str, x, y);
       }
     }

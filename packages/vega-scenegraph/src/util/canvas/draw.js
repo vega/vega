@@ -5,9 +5,10 @@ import {visit} from '../visit.js';
 
 export function drawAll(path) {
   return function(context, scene, bounds) {
+    const renderer = this;
     visit(scene, item => {
       if (!bounds || bounds.intersects(item.bounds)) {
-        drawPath(path, context, item, item);
+        drawPath(path, context, item, item, renderer);
       }
     });
   };
@@ -15,13 +16,14 @@ export function drawAll(path) {
 
 export function drawOne(path) {
   return function(context, scene, bounds) {
+    const renderer = this;
     if (scene.items.length && (!bounds || bounds.intersects(scene.bounds))) {
-      drawPath(path, context, scene.items[0], scene.items);
+      drawPath(path, context, scene.items[0], scene.items, renderer);
     }
   };
 }
 
-function drawPath(path, context, item, items) {
+function drawPath(path, context, item, items, renderer) {
   var opacity = item.opacity == null ? 1 : item.opacity;
   if (opacity === 0) return;
 
@@ -29,11 +31,11 @@ function drawPath(path, context, item, items) {
 
   blend(context, item);
 
-  if (item.fill && fill(context, item, opacity)) {
+  if (item.fill && fill(context, item, opacity, renderer)) {
     context.fill();
   }
 
-  if (item.stroke && stroke(context, item, opacity)) {
+  if (item.stroke && stroke(context, item, opacity, renderer)) {
     context.stroke();
   }
 }

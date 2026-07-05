@@ -22,10 +22,10 @@ function bound(bounds, item) {
   ), item);
 }
 
-function path(context, item, opacity) {
+function path(context, item, opacity, renderer) {
   var x1, y1, x2, y2;
 
-  if (item.stroke && stroke(context, item, opacity)) {
+  if (item.stroke && stroke(context, item, opacity, renderer)) {
     x1 = item.x || 0;
     y1 = item.y || 0;
     x2 = item.x2 != null ? item.x2 : x1;
@@ -39,10 +39,11 @@ function path(context, item, opacity) {
 }
 
 function draw(context, scene, bounds) {
+  const renderer = this;
   visit(scene, item => {
     if (bounds && !bounds.intersects(item.bounds)) return; // bounds check
     var opacity = item.opacity == null ? 1 : item.opacity;
-    if (opacity && path(context, item, opacity)) {
+    if (opacity && path(context, item, opacity, renderer)) {
       blend(context, item);
       context.stroke();
     }
@@ -51,7 +52,7 @@ function draw(context, scene, bounds) {
 
 function hit(context, item, x, y) {
   if (!context.isPointInStroke) return false;
-  return path(context, item, 1) && context.isPointInStroke(x, y);
+  return path(context, item, 1, null) && context.isPointInStroke(x, y);
 }
 
 export default {
