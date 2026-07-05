@@ -9,10 +9,30 @@ tape('normalizeRepeat maps canonical repeat values', t => {
   t.end();
 });
 
-tape('computeContainRect centers and preserves aspect', t => {
+tape('computeContainRect centers and preserves aspect (wide box)', t => {
   const r = computeContainRect(100, 50, 10, 10);
   t.ok(Math.abs(r.width - r.height) < 1e-6, 'square tile stays square');
   t.ok(r.x > 0, 'centered horizontally in wide box');
+  t.end();
+});
+
+tape('computeContainRect letterboxes top/bottom in a tall box', t => {
+  // box (50x100) is taller relative to its width than the tile (10x10),
+  // so height is constrained by width and the rect is centered vertically.
+  const r = computeContainRect(50, 100, 10, 10);
+  t.deepEqual(r, {x: 0, y: 25, width: 50, height: 50}, 'exact letterboxed rect');
+  t.end();
+});
+
+tape('computeContainRect exact values when box and tile aspect match', t => {
+  const r = computeContainRect(200, 100, 20, 10);
+  t.deepEqual(r, {x: 0, y: 0, width: 200, height: 100}, 'fills the box exactly');
+  t.end();
+});
+
+tape('computeContainRect pad shrinks and re-centers the rect', t => {
+  const r = computeContainRect(100, 100, 10, 10, 0.9);
+  t.deepEqual(r, {x: 5, y: 5, width: 90, height: 90}, 'pad applied uniformly and re-centered');
   t.end();
 });
 
@@ -22,5 +42,12 @@ tape('resolveItemPattern marks legend swatches, passes others through', t => {
   const plainItem = {mark: {role: 'mark'}};
   t.equal(resolveItemPattern(legendItem, spec).fit, 'swatch');
   t.equal(resolveItemPattern(plainItem, spec), spec, 'no clone when not a swatch');
+  t.end();
+});
+
+tape('resolveItemPattern is idempotent once fit is already swatch', t => {
+  const spec = {type: 'symbol', shape: 'M0,0', fit: 'swatch'};
+  const legendItem = {mark: {role: 'legend-symbol'}};
+  t.equal(resolveItemPattern(legendItem, spec), spec, 'no re-clone when already swatch');
   t.end();
 });
