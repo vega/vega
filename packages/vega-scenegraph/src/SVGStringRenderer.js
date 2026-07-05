@@ -215,7 +215,7 @@ export default class SVGStringRenderer extends Renderer {
 
     // apply style attributes
     if (tag) {
-      style(object, item, scene, tag, this._defs);
+      style(object, item, scene, tag, this._defs, this);
     }
 
     return object;
@@ -320,7 +320,7 @@ export default class SVGStringRenderer extends Renderer {
 }
 
 // Helper function for attr for style presentation attributes
-function style(s, item, scene, tag, defs) {
+function style(s, item, scene, tag, defs, renderer) {
   let styleList;
   if (item == null) return s;
 
@@ -362,7 +362,7 @@ function style(s, item, scene, tag, defs) {
       if (isGradient(value)) {
         value = gradientRef(value, defs.gradient, '');
       } else if (isPattern(value)) {
-        value = patternRef(value, defs.pattern, '', item);
+        value = patternRef(value, defs.pattern, '', item, renderer);
       }
       if (value != null) s[name] = value;
     }

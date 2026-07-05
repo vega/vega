@@ -353,7 +353,7 @@ export default class SVGRenderer extends Renderer {
         if (isGradient(value)) {
           value = gradientRef(value, this._defs.gradient, href());
         } else if (isPattern(value)) {
-          value = patternRef(value, this._defs.pattern, href(), item);
+          value = patternRef(value, this._defs.pattern, href(), item, this);
           if (value == null) {
             el.removeAttribute(name);
             values[prop] = value;

@@ -32,10 +32,18 @@ export function resetSVGPatternId() {
 // environment.
 const NO_REPEAT_EXTENT = 8192;
 
-// user-facing pattern wrapper -> normalized canonical spec (or null for
-// invalid/unrecognized input). Memoized so repeated lookups against the
-// same wrapper object skip re-normalizing.
-const specCache = new WeakMap();
+// Renderer-side pattern state, keyed by the user-facing pattern wrapper
+// object so nothing is ever written onto user specs (the same discipline
+// as util/canvas/pattern.js's stateCache). Each entry holds:
+// - spec:  the normalized canonical spec (or null for invalid input),
+// - ids:   full-def-key -> assigned element id. Ids must stay stable
+//          across render passes -- SVGRenderer clears its def registry on
+//          every full render, and an image def emitted as a loading shell
+//          must keep its id on the loaded re-render -- so id assignment
+//          lives here rather than in the per-pass registry.
+// - image: async image-load state, {url, image|null}, requested at most
+//          once per state (see getPatternImage).
+const stateCache = new WeakMap();
 
 // Mark-origin anchor for non-text/rule marks: the mark's own top-left
 // corner, min(x, x2) / min(y, y2), falling back to item bounds. This
@@ -62,6 +70,28 @@ function round(v) {
   return Math.round(v * 1e3) / 1e3;
 }
 
+// Request the pattern's image through the renderer's ResourceLoader,
+// mirroring marks/image.js's getImage: track the requested url in the
+// wrapper's state, kick off a load, and return null until it resolves.
+// Renderer#loadImage (Renderer.js#_load) captures the in-flight render
+// call and re-invokes it once loading settles, so the next render pass
+// re-enters patternRef with the loaded image available -- no explicit
+// redraw scheduling is needed here. Requested at most once per state;
+// failed loads resolve to {complete: false} and are not retried.
+function getPatternImage(renderer, state) {
+  const url = state.spec.url;
+  const cached = state.image;
+  if (cached && cached.url === url) return cached.image;
+
+  if (renderer && renderer.loadImage) {
+    const entry = state.image = {url, image: null};
+    renderer.loadImage(url).then(image => {
+      if (state.image === entry) entry.image = image;
+    });
+  }
+  return null;
+}
+
 /**
  * Resolve a fill/stroke pattern spec to a `url(#id)` reference, minting
  * (and content-keying) an SVG <pattern> def as needed. Equal canonical
@@ -72,17 +102,20 @@ function round(v) {
  * @param {object} defs - the renderer's pattern def registry (key -> def).
  * @param {string} base - base href to prefix the fragment reference with.
  * @param {object} item - the scenegraph item being filled/stroked.
+ * @param {object} [renderer] - the active renderer; supplies loadImage
+ *   for image patterns whose def geometry needs the image's natural
+ *   dimensions (intrinsic tile sizing, bounding-box contain fits).
  * @return {string|null} a url(#id) reference, or null if unresolvable.
  */
-export function patternRef(value, defs, base, item) {
-  let spec = specCache.has(value) ? specCache.get(value) : undefined;
-  if (spec === undefined) {
-    spec = normalizePatternSpec(value);
-    specCache.set(value, spec);
+export function patternRef(value, defs, base, item, renderer) {
+  let state = stateCache.get(value);
+  if (!state) {
+    state = {spec: normalizePatternSpec(value), ids: {}, image: null};
+    stateCache.set(value, state);
   }
-  if (!spec) return null;
+  if (!state.spec) return null;
 
-  spec = resolveItemPattern(item, spec);
+  const spec = resolveItemPattern(item, state.spec);
 
   let key = patternKey(spec);
 
@@ -100,9 +133,25 @@ export function patternRef(value, defs, base, item) {
     key += '|#' + round(boxWidth) + 'x' + round(boxHeight);
   }
 
+  // Image dims are needed when the tile is intrinsically sized or when a
+  // bounding-box contain fit requires the natural aspect. The load is
+  // requested here, during the render pass, so the base Renderer's
+  // pending-load redraw can pick it up; the def key already includes the
+  // url (via patternKey), so same-styled patterns of different images
+  // can never share a def. Dims are NOT part of the key: they derive
+  // deterministically from the url, letting the loading shell and the
+  // loaded def share one key (and, via state.ids, one stable id).
+  let img = null;
+  if (spec.type === 'image' &&
+      (typeof spec.tileSize !== 'number' ||
+        spec.fit === 'swatch' || spec.tileSize === 'bounds')) {
+    img = getPatternImage(renderer, state);
+  }
+
   let def = defs[key];
   if (!def) {
-    def = defs[key] = {spec, id: 'pattern_' + (pattern_id++)};
+    const id = state.ids[key] || (state.ids[key] = 'pattern_' + (pattern_id++));
+    def = defs[key] = {spec, id};
     if (anchor) {
       def.x = anchor.x;
       def.y = anchor.y;
@@ -111,6 +160,15 @@ export function patternRef(value, defs, base, item) {
       def.boxWidth = boxWidth;
       def.boxHeight = boxHeight;
     }
+  }
+
+  // stash loaded image dims on the def -- including a def minted as a
+  // loading shell on an earlier pass (SVGStringRenderer's def registry
+  // persists across renders, so the shell def object itself is updated
+  // in place on the pending-load redraw)
+  if (img && img.complete !== false && (img.naturalWidth || img.width)) {
+    def.imgWidth = img.naturalWidth || img.width;
+    def.imgHeight = img.naturalHeight || img.height;
   }
 
   return 'url(' + (base || '') + '#' + def.id + ')';
@@ -231,23 +289,35 @@ function buildSymbolDef(def) {
 
 // -- image tile def -------------------------------------------------------
 
-// A numeric tileSize sizes the image tile directly (square); an
-// intrinsic (undefined) tileSize needs the image's loaded dimensions,
-// which Task 17's async load/redraw flow supplies. Until then, emit the
-// pattern shell without an <image> child (deferred).
+// A numeric tileSize sizes the image tile directly (square, synchronous:
+// the browser loads the emitted href itself); an intrinsic (undefined)
+// tileSize sizes the cell by the image's natural dimensions, loaded
+// asynchronously through the renderer (patternRef stashes them on the
+// def as imgWidth/imgHeight once available). While the load is in
+// flight, the def is emitted as a shell: correct id, placeholder cell,
+// background painted (an immediate loading placeholder), no <image>
+// child yet -- the pending-load redraw fills it in.
 function buildImageDef(def) {
   const spec = def.spec;
   const rep = normalizeRepeat(spec.repeat);
   const size = typeof spec.tileSize === 'number' ? spec.tileSize : null;
+  const w = size != null ? size : def.imgWidth > 0 ? def.imgWidth : null;
+  const h = size != null ? size : def.imgHeight > 0 ? def.imgHeight : null;
 
   const children = [];
-  if (spec.background && spec.background !== 'transparent' && size) {
-    children.push({tag: 'rect', attrs: {width: size, height: size, fill: spec.background}});
+  if (spec.background && spec.background !== 'transparent') {
+    // span the tile cell once dims are known; until then span the
+    // enlarged placeholder cell so the background paints immediately
+    children.push({tag: 'rect', attrs: {
+      width: w != null ? w : NO_REPEAT_EXTENT,
+      height: h != null ? h : NO_REPEAT_EXTENT,
+      fill: spec.background
+    }});
   }
-  if (spec.url && size) {
+  if (spec.url && w != null && h != null) {
     children.push({
       tag: 'image',
-      attrs: {href: spec.url, preserveAspectRatio: 'none', width: size, height: size}
+      attrs: {href: spec.url, preserveAspectRatio: 'none', width: w, height: h}
     });
   }
 
@@ -257,8 +327,8 @@ function buildImageDef(def) {
       patternUnits: 'userSpaceOnUse',
       x: def.x || 0,
       y: def.y || 0,
-      width: rep.x && size ? size : NO_REPEAT_EXTENT,
-      height: rep.y && size ? size : NO_REPEAT_EXTENT
+      width: rep.x && w != null ? w : NO_REPEAT_EXTENT,
+      height: rep.y && h != null ? h : NO_REPEAT_EXTENT
     },
     children
   };
@@ -279,8 +349,13 @@ function buildSwatchDef(def) {
   const boxH = def.boxHeight > 0 ? def.boxHeight : 1;
   const pad = spec.fit === 'swatch' ? 0.9 : 1;
 
-  const {w: cw, h: ch} = tileAspect(spec);
-  const rect = computeContainRect(1, 1, cw / boxW, ch / boxH, pad);
+  const {w: cw, h: ch} = tileAspect(def);
+  const fit = computeContainRect(1, 1, cw / boxW, ch / boxH, pad);
+
+  // round away floating-point dust in the emitted 0..1 fractions
+  // (1e-6 of the box is far below visual significance)
+  const frac = v => Math.round(v * 1e6) / 1e6;
+  const rect = {x: frac(fit.x), y: frac(fit.y), width: frac(fit.width), height: frac(fit.height)};
 
   const children = [];
   if (spec.background && spec.background !== 'transparent') {
@@ -291,7 +366,10 @@ function buildSwatchDef(def) {
   }
 
   if (spec.type === 'image') {
-    if (spec.url) {
+    // the contain fit needs the image's natural aspect (matching canvas's
+    // box layout), so the <image> child is deferred until the async load
+    // resolves; the background above paints immediately as a placeholder
+    if (spec.url && def.imgWidth > 0 && def.imgHeight > 0) {
       children.push({
         tag: 'image',
         attrs: {
@@ -324,13 +402,19 @@ function buildSwatchDef(def) {
 
 // Real-unit tile dimensions used only to derive an aspect ratio for
 // contain-fitting within a (possibly non-square) bounding box. Symbol
-// tiles are square (tileSize * scale); image aspect requires the loaded
-// image's intrinsic size, which Task 17 wires up asynchronously -- until
-// then, images are treated as square tiles.
-function tileAspect(spec) {
-  const c = spec.type === 'symbol'
-    ? spec.tileSize * (spec.scale || 1)
-    : typeof spec.tileSize === 'number' ? spec.tileSize : 1;
+// tiles are square (tileSize * scale); images use their natural
+// dimensions once the async load resolves (matching canvas's box
+// layout), with a square placeholder while loading -- the <image> child
+// itself is deferred until the aspect is known, so the placeholder only
+// affects the interim background rect.
+function tileAspect(def) {
+  const spec = def.spec;
+  if (spec.type === 'image') {
+    return def.imgWidth > 0 && def.imgHeight > 0
+      ? {w: def.imgWidth, h: def.imgHeight}
+      : {w: 1, h: 1};
+  }
+  const c = spec.tileSize * (spec.scale || 1);
   return {w: c, h: c};
 }
 
