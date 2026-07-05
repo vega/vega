@@ -14,12 +14,23 @@ export function resetSVGPatternId() {
 // Enlargement applied to the non-repeating axis (axes) of a pattern cell
 // to emulate repeat: false / 'x' / 'y'. SVG <pattern> elements always
 // tile; to suppress visible repeats along an axis we grow that axis's
-// cell to a size comfortably larger than any realistic chart, so the
-// next tiled copy lands outside the paintable area. This is a fixed
-// constant (not derived from item bounds) so def content-keying stays
-// independent of any one item's geometry -- the same wrapper spec always
-// shares one def regardless of which items reference it.
-const NO_REPEAT_EXTENT = 1e5;
+// cell so the next tiled copy lands outside the paintable area. This is
+// a fixed constant (not derived from item bounds) so def content-keying
+// stays independent of any one item's geometry -- the same wrapper spec
+// always shares one def regardless of which items reference it.
+//
+// Size trade-off: browsers rasterize the entire pattern cell to an
+// offscreen surface, so an over-large extent (e.g. 1e5) risks exceeding
+// surface caps -- forcing a blurry downsample-then-upscale of the cell
+// content -- or triggering very large allocations. 8192 stays within
+// common browser surface limits while exceeding realistic chart sizes.
+// The cost: a chart larger than 8192 CSS px along a non-repeating axis
+// may show a duplicate tile copy. That failure mode is comparable to
+// canvas's emulation (padding the raster to the item's bounds extent),
+// which is also finite. The constant is centralized here for later
+// tuning; it has not been empirically browser-tested in this
+// environment.
+const NO_REPEAT_EXTENT = 8192;
 
 // user-facing pattern wrapper -> normalized canonical spec (or null for
 // invalid/unrecognized input). Memoized so repeated lookups against the
@@ -175,10 +186,20 @@ function applyChildrenMarkup(m, children) {
 // -- symbol (shape) tile def --------------------------------------------
 
 // Tile cell size rule: a symbol tile cell is tileSize * scale user-space
-// units (must match util/canvas/pattern.js's rasterizeSymbolTile rule).
+// units, the same rule as util/canvas/pattern.js's rasterizeSymbolTile.
 // Content is authored in tile space (0..tileSize) and scaled up to the
 // cell via a wrapping <g transform="scale(scale)">, keeping shape
 // geometry identical to the registry-authored path data.
+//
+// Fractional-scale caveat: canvas rounds the cell to whole pixels
+// (Math.round(tileSize * scale) -- rasters need integer dimensions),
+// while SVG keeps the exact product (vectors don't). At e.g. scale 1.27
+// on a 10-unit tile that's a 13px canvas cell vs a 12.7-unit SVG cell,
+// ~0.3px of phase drift per tile between the two renderers. The outputs
+// are exactly aligned whenever tileSize * scale is an integer; at
+// fractional products they agree in tile content but drift slightly in
+// tiling phase. This is an inherent raster-vs-vector tension, not a rule
+// mismatch.
 function buildSymbolDef(def) {
   const spec = def.spec;
   const scale = spec.scale || 1;

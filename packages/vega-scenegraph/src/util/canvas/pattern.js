@@ -231,9 +231,12 @@ function drawShape(tctx, spec, ox, oy, scale) {
 
 // Tile cell size rule: a symbol tile cell is tileSize * scale pixels
 // (scale is baked into the raster for crisp output at high scale factors,
-// rather than applied via pattern transform). The SVG task's pattern
-// element must use the same rule (tile cell size = tileSize * scale) so
-// canvas and SVG output match.
+// rather than applied via pattern transform). SVG's PatternFill.js uses
+// the same rule, except rasters need integer dimensions (the Math.round
+// below) while SVG keeps the exact product -- at fractional
+// tileSize * scale products the renderers drift slightly in tiling phase
+// (~sub-pixel per tile); they align exactly at integer products. See
+// buildSymbolDef in ../../PatternFill.js.
 function rasterizeSymbolTile(spec, layout, state) {
   const s = spec.scale || 1;
   const cell = Math.max(1, Math.round(spec.tileSize * s));
