@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {canvas} from 'vega-canvas';
+import {canvas, image} from 'vega-canvas';
 import patternFill from '../src/util/canvas/pattern.js';
 
 const ctx = () => canvas(100, 100).getContext('2d');
@@ -116,6 +116,104 @@ tape('patternFill phased tiles are translation-equivalent to the origin field', 
   }
   t.equal(structural, 0, 'no structural diffs between phased and shifted origin fields');
   t.ok(maxDelta <= 8, `pixel deltas within anti-aliasing tolerance (max ${maxDelta})`);
+  t.end();
+});
+
+// a 16x16 black/transparent checker (quadrants at 0,0 and 8,8) as a data URI
+function checkerURI() {
+  const c = canvas(16, 16);
+  const c2d = c.getContext('2d');
+  c2d.fillStyle = '#000';
+  c2d.fillRect(0, 0, 8, 8);
+  c2d.fillRect(8, 8, 8, 8);
+  return c.toDataURL();
+}
+
+// minimal renderer standing in for Renderer#loadImage
+function imageRenderer() {
+  const Image = image();
+  return {
+    loadImage: url => new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve({complete: false, width: 0, height: 0});
+      img.src = url;
+    })
+  };
+}
+
+tape('patternFill repeat:x + origin:mark image tiles with the cell period', t => {
+  const w = {pattern: {url: checkerURI(), tileSize: 16, repeat: 'x', origin: 'mark'}};
+  const r = imageRenderer();
+  const c2d = ctx();
+  const it = {x: 5, y: 0, bounds: {x1: 5, y1: 0, x2: 85, y2: 40}, mark: {role: 'mark'}};
+
+  t.equal(patternFill(r, c2d, it, w), null, 'null while the image loads');
+  setTimeout(() => {
+    const p = patternFill(r, c2d, it, w);
+    t.ok(p, 'pattern ready after image load');
+    c2d.fillStyle = p;
+    c2d.fillRect(5, 0, 80, 40); // the mark's own region, as real fills are
+    const d = c2d.getImageData(0, 0, 100, 100).data;
+    const col = x => {
+      let sig = '';
+      for (let y = 0; y < 40; ++y) sig += d[(y * 100 + x) * 4 + 3] > 0 ? 1 : 0;
+      return sig;
+    };
+    t.equal(col(8), col(24), 'column signature repeats at +16');
+    t.equal(col(30), col(46), 'column signature repeats at +16 (offset sample)');
+    t.notEqual(col(8), col(16), 'half-period columns differ (period is 16, not a multiple)');
+    const row = y => {
+      let n = 0;
+      for (let x = 5; x < 85; ++x) {
+        if (d[(y * 100 + x) * 4 + 3] > 0) ++n;
+      }
+      return n;
+    };
+    t.ok(row(4) > 0 && row(12) > 0, 'checker band at the mark top');
+    t.equal(row(20) + row(30) + row(39), 0, 'no band below one tile height inside the mark');
+    t.end();
+  }, 25);
+});
+
+tape('patternFill repeat:x + origin:mark image paints far from the view origin', t => {
+  const w = {pattern: {url: checkerURI(), tileSize: 16, repeat: 'x', origin: 'mark'}};
+  const r = imageRenderer();
+  const c2d = canvas(400, 100).getContext('2d');
+  const it = {x: 330, y: 10, bounds: {x1: 330, y1: 10, x2: 390, y2: 40}, mark: {role: 'mark'}};
+
+  patternFill(r, c2d, it, w); // kick off the image load
+  setTimeout(() => {
+    const p = patternFill(r, c2d, it, w);
+    t.ok(p, 'pattern ready after image load');
+    c2d.fillStyle = p;
+    c2d.fillRect(330, 10, 60, 30);
+    const d = c2d.getImageData(0, 0, 400, 100).data;
+    const row = y => {
+      let n = 0;
+      for (let x = 330; x < 390; ++x) {
+        if (d[(y * 400 + x) * 4 + 3] > 0) ++n;
+      }
+      return n;
+    };
+    t.ok(ink(c2d, 330, 10, 60, 30) > 0, 'ink inside a mark anchored far from the origin');
+    t.ok(row(12) > 0 && row(20) > 0, 'checker band at the mark top (y anchor)');
+    t.equal(row(30) + row(39), 0, 'no band below one tile height inside the mark');
+    t.end();
+  }, 25);
+});
+
+tape('patternFill repeat:x + origin:mark symbol pattern paints far from the origin', t => {
+  const w = {pattern: {name: 'crosshatch', foreground: '#000', repeat: 'x', origin: 'mark'}};
+  const c2d = canvas(400, 100).getContext('2d');
+  const it = {x: 330, y: 10, bounds: {x1: 330, y1: 10, x2: 390, y2: 40}, mark: {role: 'mark'}};
+
+  const p = patternFill({}, c2d, it, w);
+  t.ok(p, 'returns a fill style');
+  c2d.fillStyle = p;
+  c2d.fillRect(330, 10, 60, 30);
+  t.ok(ink(c2d, 330, 10, 60, 21) > 0, 'ink in the band at the mark top');
+  t.equal(ink(c2d, 330, 22, 60, 18), 0, 'no ink below one tile height inside the mark');
   t.end();
 });
 

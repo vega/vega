@@ -137,8 +137,22 @@ function tileLayout(spec, item) {
   }
 
   const r = normalizeRepeat(spec.repeat);
-  const mode = r.x && r.y ? 'repeat' : r.x ? 'repeat-x' : r.y ? 'repeat-y' : 'no-repeat';
   const [mx, my] = spec.origin === 'mark' ? markAnchor(item) : [0, 0];
+
+  // Per-axis rule: a REPEATING axis wraps the anchor to a phase mod the
+  // cell size (raster dimension = cell); a NON-REPEATING axis bakes the
+  // anchor offset into the raster (origin -> tile span). For MIXED
+  // repeat ('x'/'y') the single-axis createPattern modes cannot be used:
+  // node-canvas/cairo 'repeat-x'/'repeat-y' paint nothing when the fill
+  // region does not touch the origin-anchored tile strip (probed on
+  // node-canvas 3.x; browsers are fine). Instead, mixed modes use
+  // 'repeat' with the raster padded along the non-repeating axis to
+  // cover the item's bounds extent: the first spurious wrap copy then
+  // falls outside the item's fill region and is never visible, so
+  // browser and Node output are identical within the item.
+  const mode = r.x || r.y ? 'repeat' : 'no-repeat';
+  const extX = !r.x && r.y && b ? Math.max(0, Math.ceil(b.x2)) : 0;
+  const extY = r.x && !r.y && b ? Math.max(0, Math.ceil(b.y2)) : 0;
 
   // Symbol tiles are square with a known cell size, so the anchor can be
   // wrapped to a phase up front and items sharing a phase share a raster.
@@ -152,8 +166,8 @@ function tileLayout(spec, item) {
   const y = r.y && cell ? mod(my, cell) : my;
 
   return {
-    kind: 'tile', mode, repX: r.x, repY: r.y, x, y,
-    key: `|tile:${mode}:${Math.round(x)},${Math.round(y)}`
+    kind: 'tile', mode, repX: r.x, repY: r.y, x, y, extX, extY,
+    key: `|tile:${r.x}${r.y}:${Math.round(x)},${Math.round(y)}:${extX}x${extY}`
   };
 }
 
@@ -257,8 +271,8 @@ function rasterizeSymbolTile(spec, layout, state) {
   // that share a key also rasterize identically
   const ax = Math.round(layout.x);
   const ay = Math.round(layout.y);
-  const W = layout.repX ? cell : Math.max(1, Math.ceil(ax + cell));
-  const H = layout.repY ? cell : Math.max(1, Math.ceil(ay + cell));
+  const W = layout.repX ? cell : Math.max(1, Math.ceil(ax + cell), layout.extX);
+  const H = layout.repY ? cell : Math.max(1, Math.ceil(ay + cell), layout.extY);
   const ox = layout.repX ? mod(ax, cell) : ax;
   const oy = layout.repY ? mod(ay, cell) : ay;
 
@@ -347,10 +361,12 @@ function rasterizeImageTile(renderer, spec, state, layout) {
     ? Math.max(1, Math.round(spec.tileSize * naturalH / naturalW))
     : Math.max(1, Math.round(naturalH));
 
-  const W = layout.repX ? w : Math.max(1, Math.ceil(layout.x + w));
-  const H = layout.repY ? h : Math.max(1, Math.ceil(layout.y + h));
-  const ox = layout.repX ? mod(layout.x, w) : layout.x;
-  const oy = layout.repY ? mod(layout.y, h) : layout.y;
+  const ax = Math.round(layout.x);
+  const ay = Math.round(layout.y);
+  const W = layout.repX ? w : Math.max(1, Math.ceil(ax + w), layout.extX);
+  const H = layout.repY ? h : Math.max(1, Math.ceil(ay + h), layout.extY);
+  const ox = layout.repX ? mod(ax, w) : ax;
+  const oy = layout.repY ? mod(ay, h) : ay;
 
   const tile = canvas(W, H);
   const tctx = tile.getContext('2d');
