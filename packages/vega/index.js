@@ -19,6 +19,13 @@ extend(
 );
 
 
+// -- Schemes -----
+
+import {scheme} from 'vega-scale';
+import {patternScheme} from 'vega-pattern';
+scheme('patterns', patternScheme);
+
+
 // -- Exports -----
 
 import * as pkg from './package.json' with { type: 'json' };
