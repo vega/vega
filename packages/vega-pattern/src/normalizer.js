@@ -3,8 +3,10 @@ import {buildLinesPath} from './lines.js';
 
 // core geometry keys: locked once a named pattern is resolved from the
 // registry, since they define the tile-space drawing and must stay
-// consistent with the shape actually generated for that name.
-const CORE_KEYS = ['shape', 'url', 'rule', 'image'];
+// consistent with the shape actually generated for that name. tileSize
+// is locked too — geometry is authored against it at registration time;
+// use `scale` to resize a named pattern instead.
+const CORE_KEYS = ['shape', 'url', 'rule', 'image', 'tileSize'];
 const REPEATS = [true, false, 'x', 'y'];
 
 /**
@@ -33,10 +35,9 @@ export function normalizePatternSpec(input) {
   if (!isPattern(input)) return null;
   const def = input.pattern;
 
-  // Resolve the geometry source. A named pattern's core geometry
-  // (shape/url/rule/image) is locked to its registry definition; only
-  // style properties may be layered on top via override.
-  let source = def;
+  // Resolve the pattern definition. A named pattern's core geometry
+  // (shape/url/rule/image/tileSize) is locked to its registry
+  // definition; only style properties may be layered on top.
   let merged = def;
 
   if (def.name != null) {
@@ -45,25 +46,22 @@ export function normalizePatternSpec(input) {
     const overrides = {...def};
     delete overrides.name;
     CORE_KEYS.forEach(key => delete overrides[key]);
-    source = base;
     merged = {...base, ...overrides};
   }
 
-  const url = source.url || source.image;
+  const url = merged.url || merged.image;
   let shape;
   let isGenerated = false;
-  let geomTileSize;
+  let tileSize;
 
   if (!url) {
-    geomTileSize = +source.tileSize > 0 ? +source.tileSize : 10;
-    // geometry is generated against the source's own tileSize so that a
-    // style-only tileSize override never changes the locked geometry.
-    const gen = source.rule || (isLinesShape(source.shape) ? source.shape : null);
+    tileSize = +merged.tileSize > 0 ? +merged.tileSize : 10;
+    const gen = merged.rule || (isLinesShape(merged.shape) ? merged.shape : null);
     if (gen) {
-      shape = buildLinesPath(gen, geomTileSize);
+      shape = buildLinesPath(gen, tileSize);
       isGenerated = true;
-    } else if (typeof source.shape === 'string') {
-      shape = source.shape;
+    } else if (typeof merged.shape === 'string') {
+      shape = merged.shape;
     } else {
       return null; // no usable geometry
     }
@@ -91,7 +89,7 @@ export function normalizePatternSpec(input) {
     if (merged.tileSize != null) out.tileSize = merged.tileSize;
   } else {
     out.shape = shape;
-    out.tileSize = +merged.tileSize > 0 ? +merged.tileSize : geomTileSize;
+    out.tileSize = tileSize;
     if (isGenerated) {
       // rule/lines geometry is stroked, not filled; default a visible
       // stroke when the pattern (or its overrides) declared no color.

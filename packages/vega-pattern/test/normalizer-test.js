@@ -41,7 +41,8 @@ tape('named pattern locks core geometry, allows style overrides', t => {
   const s = normalizePatternSpec({pattern: {name: 'crosshatch', shape: 'M0,0Z', background: 'pink', tileSize: 20}});
   t.equal(s.shape, base.shape, 'shape override ignored');
   t.equal(s.background, 'pink', 'style override applied');
-  t.equal(s.tileSize, 20, 'tileSize override applied');
+  t.equal(s.tileSize, base.tileSize, 'tileSize override ignored (locked)');
+  t.equal(normalizePatternSpec({pattern: {name: 'crosshatch', scale: 2}}).scale, 2, 'scale is the resize control');
   t.end();
 });
 
