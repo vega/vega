@@ -56,6 +56,9 @@ export function parseScale(spec, scope) {
 function parseLiteral(v, scope) {
   return !isObject(v) ? v
     : v.signal ? scope.signalRef(v.signal)
+    // pattern fill wrappers ({pattern: {...}}) pass through as literal
+    // values, e.g. within scale range arrays
+    : isObject(v.pattern) ? v
     : error('Unsupported object: ' + stringValue(v));
 }
 

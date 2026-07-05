@@ -199,16 +199,51 @@ export interface RadialGradient extends BaseGradient {
 // geometry-defining properties (shape/url/rule/tileSize) differ per variant
 // and are locked (not overridable) once resolved from a named pattern.
 export interface PatternDefinitionBase {
+  /**
+   * The foreground color for the pattern geometry. Replaces whichever color(s)
+   * the resolved geometry declares (stroke and/or fill).
+   *
+   * __Default value:__ the color(s) declared by the pattern geometry, or `"#000"` if none.
+   */
   foreground?: string;
+  /**
+   * The background color painted behind the pattern tiles.
+   *
+   * __Default value:__ `undefined` (no background).
+   */
   background?: string;
+  /**
+   * The stroke width, in pixels, for stroked pattern geometry.
+   *
+   * __Default value:__ `1` for generated rule/lines geometry, otherwise `undefined`.
+   */
   strokeWidth?: number;
+  /**
+   * The coordinate system pattern tiles anchor to: `"view"` for a shared,
+   * view-wide tiling or `"mark"` to anchor tiles to each mark's bounds.
+   *
+   * __Default value:__ `"view"`
+   */
   origin?: 'view' | 'mark';
+  /**
+   * A scale factor applied to the pattern tiles; the resize control for
+   * named patterns, whose tileSize is locked.
+   *
+   * __Default value:__ `1`
+   */
   scale?: number;
+  /**
+   * The [shape-rendering hint](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering)
+   * for pattern geometry (e.g. `"crispEdges"`; SVG output only).
+   *
+   * __Default value:__ `undefined` (renderer default).
+   */
   shapeRendering?: string;
 }
 
 export interface PatternLinesShape {
   type: 'lines';
+  /** Angle in degrees, or array of angles for multi-directional lines (e.g. crosshatch). */
   angle?: number | number[];
   spacing?: number;
   bleed?: number;
@@ -221,6 +256,11 @@ export interface PatternNamed extends PatternDefinitionBase {
 
 export interface PatternSymbol extends PatternDefinitionBase {
   shape: string | PatternLinesShape;
+  /**
+   * The pattern tile size, in pixels.
+   *
+   * __Default value:__ `10`
+   */
   tileSize?: number;
   size?: number;
 }
@@ -233,13 +273,28 @@ export interface PatternRule extends PatternDefinitionBase {
     bleed?: number;
     phase?: number;
   };
+  /**
+   * The pattern tile size, in pixels.
+   *
+   * __Default value:__ `10`
+   */
   tileSize?: number;
 }
 
 export interface PatternImage extends PatternDefinitionBase {
   url: string;
+  /**
+   * The pattern tile size: a size in pixels, or `"bounds"` to fit the mark bounds.
+   *
+   * __Default value:__ `undefined` (the image's intrinsic size).
+   */
   tileSize?: number | 'bounds';
-  /** Repeat behavior limited to image patterns. */
+  /**
+   * Repeat behavior, limited to image patterns: `true` (both directions),
+   * `false` (no repetition), or repeat along `"x"` or `"y"` only.
+   *
+   * __Default value:__ `true`
+   */
   repeat?: boolean | 'x' | 'y';
 }
 

@@ -39,9 +39,19 @@ export const sortOrderEnum = [
 
 const rangeConstant = enums(rangeConstantEnum);
 
-// Allow range arrays to include primitive values, signals, numeric tuples,
-// or pattern fill definitions (unwrapped, as they appear in encoding values).
 const arrayAllTypes = array(oneOf(
+  nullType,
+  booleanType,
+  stringType,
+  numberType,
+  signalRef,
+  array(numberOrSignal)
+));
+
+// Range arrays additionally accept pattern fill wrappers ({pattern: {...}},
+// the same object used in encoding values, minus the {value: ...} layer).
+// Scale domains do not accept patterns, so this type is range-only.
+const rangeArrayTypes = array(oneOf(
   nullType,
   booleanType,
   stringType,
@@ -61,7 +71,7 @@ const scheme = object({
 
 const schemeRange = oneOf(
   rangeConstant,
-  arrayAllTypes,
+  rangeArrayTypes,
   scheme,
   signalRef
 );
@@ -72,7 +82,7 @@ const rangeStep = object({
 
 const bandRange = oneOf(
   rangeConstant,
-  arrayAllTypes,
+  rangeArrayTypes,
   rangeStep,
   signalRef
 );
@@ -196,7 +206,7 @@ const scale = oneOf(
   }),
   object({
     _type_: enums([Ordinal]),
-    range: oneOf(rangeConstant, arrayAllTypes, scheme, scaleData, signalRef),
+    range: oneOf(rangeConstant, rangeArrayTypes, scheme, scaleData, signalRef),
     interpolate: scaleInterpolateRef,
     domainImplicit: booleanOrSignal,
     ...scaleDomainProps

@@ -137,6 +137,16 @@
       "type": "linear",
       "domain": { "data": "trailData", "field": "v" },
       "range": [40, 120]
+    },
+    {
+      "name": "patternRange",
+      "type": "ordinal",
+      "domain": { "data": "barData", "field": "c" },
+      "range": [
+        { "pattern": { "name": "crosshatch", "foreground": "seagreen" } },
+        "goldenrod",
+        { "pattern": { "rule": { "angle": 45, "spacing": 5 }, "foreground": "navy" } }
+      ]
     }
   ],
   "marks": [
@@ -308,7 +318,7 @@
               "width": { "scale": "barX", "band": 1 },
               "stroke": { "value": "#333" }
             },
-            "update": { "fill": { "signal": "pat" } }
+            "update": { "fill": { "scale": "patternRange", "field": "c" } }
           }
         },
         {
@@ -459,7 +469,12 @@
               "y": { "value": 10 },
               "width": { "value": 60 },
               "height": { "value": 60 },
-              "stroke": { "value": "#333" },
+              "stroke": {
+                "value": {
+                  "pattern": { "name": "diagonal-stripe", "foreground": "navy" }
+                }
+              },
+              "strokeWidth": { "value": 6 },
               "fill": {
                 "value": {
                   "pattern": {
