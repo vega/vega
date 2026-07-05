@@ -16,6 +16,12 @@ const stateCache = new WeakMap();
 // a continuously-resizing item would otherwise accumulate canvases without
 // limit. Eviction is oldest-inserted (FIFO), which is sufficient here: the
 // common steady state is a handful of layouts reused across renders.
+// Note: many marks sharing one wrapper with distinct anchors mod cell
+// (e.g. a large origin:'mark' scatter plot) can cycle through more than
+// MAX_TILES layouts per render and thrash this cache. That is a perf
+// concern only — phased symbol tiles are cheap drawImage compositions of
+// the canonical cell raster (cached separately on state), so output
+// stays correct.
 const MAX_TILES = 8;
 
 // Positioning strategy: ALL pattern positioning (mark-origin phase,
@@ -49,7 +55,7 @@ export default function patternFill(renderer, context, item, value) {
   if (!state) {
     const spec = normalizePatternSpec(value);
     if (!spec) return null;
-    state = {spec, image: null, tiles: new Map()};
+    state = {spec, image: null, cell: null, tiles: new Map()};
     stateCache.set(value, state);
   }
 
@@ -154,7 +160,7 @@ function tileLayout(spec, item) {
 function rasterizeTile(renderer, spec, state, layout) {
   return spec.type === 'image'
     ? rasterizeImageTile(renderer, spec, state, layout)
-    : rasterizeSymbolTile(spec, layout);
+    : rasterizeSymbolTile(spec, layout, state);
 }
 
 function fillBackground(tctx, spec, x, y, w, h) {
@@ -214,7 +220,7 @@ function drawShape(tctx, spec, ox, oy, scale) {
 // rather than applied via pattern transform). The SVG task's pattern
 // element must use the same rule (tile cell size = tileSize * scale) so
 // canvas and SVG output match.
-function rasterizeSymbolTile(spec, layout) {
+function rasterizeSymbolTile(spec, layout, state) {
   const s = spec.scale || 1;
   const cell = Math.max(1, Math.round(spec.tileSize * s));
 
@@ -237,29 +243,52 @@ function rasterizeSymbolTile(spec, layout) {
     return tile;
   }
 
-  // cell tile; along repeating axes a mark-origin anchor becomes a phase
-  // shift of the tile content, drawn with a wrapped extra copy so the
-  // tile stays seamless; along non-repeating axes the anchor is baked by
+  // phased/anchored cell tile, composed from the canonical phase-0 cell
+  // raster via drawImage so the result is translation-equivalent to the
+  // canonical field BY CONSTRUCTION: path geometry (which may bleed past
+  // the cell for seamless tiling) is drawn and clipped exactly once, in
+  // the canonical raster, and can never leak into wrap bands. Along
+  // repeating axes a mark-origin anchor becomes a phase shift, drawn as
+  // two wrapped copies; along non-repeating axes the anchor is baked by
   // extending the raster from the canvas origin to the tile.
-  const W = layout.repX ? cell : Math.max(1, Math.ceil(layout.x + cell));
-  const H = layout.repY ? cell : Math.max(1, Math.ceil(layout.y + cell));
-  const ox = layout.repX ? mod(layout.x, cell) : layout.x;
-  const oy = layout.repY ? mod(layout.y, cell) : layout.y;
+  const cellCanvas = canonicalCell(spec, state, cell, s);
+
+  // use the same rounded anchor as the cache key, so near-phase siblings
+  // that share a key also rasterize identically
+  const ax = Math.round(layout.x);
+  const ay = Math.round(layout.y);
+  const W = layout.repX ? cell : Math.max(1, Math.ceil(ax + cell));
+  const H = layout.repY ? cell : Math.max(1, Math.ceil(ay + cell));
+  const ox = layout.repX ? mod(ax, cell) : ax;
+  const oy = layout.repY ? mod(ay, cell) : ay;
+
+  if (W === cell && H === cell && !ox && !oy) return cellCanvas;
 
   const tile = canvas(W, H);
   const tctx = tile.getContext('2d');
-  fillBackground(tctx, spec, layout.repX ? 0 : ox, layout.repY ? 0 : oy, cell, cell);
-  tctx.save();
-  clipCell(tctx, layout.repX ? 0 : ox, layout.repY ? 0 : oy, cell, cell);
-
   const xs = layout.repX && ox ? [ox, ox - cell] : [ox];
   const ys = layout.repY && oy ? [oy, oy - cell] : [oy];
   for (const x of xs) {
     for (const y of ys) {
-      drawShape(tctx, spec, x, y, s);
+      tctx.drawImage(cellCanvas, x, y);
     }
   }
+  return tile;
+}
+
+// Rasterize (once per pattern state) the canonical phase-0 cell tile:
+// background plus shape, clipped to the cell rect. All phased/anchored
+// tile layouts of the same wrapper are composed from this raster.
+function canonicalCell(spec, state, cell, s) {
+  if (state.cell && state.cell.size === cell) return state.cell.canvas;
+  const tile = canvas(cell, cell);
+  const tctx = tile.getContext('2d');
+  fillBackground(tctx, spec, 0, 0, cell, cell);
+  tctx.save();
+  clipCell(tctx, 0, 0, cell, cell);
+  drawShape(tctx, spec, 0, 0, s);
   tctx.restore();
+  state.cell = {size: cell, canvas: tile};
   return tile;
 }
 

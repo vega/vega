@@ -90,6 +90,35 @@ tape('patternFill phase-shifts origin:mark patterns per mark anchor', t => {
   t.end();
 });
 
+tape('patternFill phased tiles are translation-equivalent to the origin field', t => {
+  // crosshatch exercises the bleed geometry that must not leak into wrap bands
+  const w = {pattern: {name: 'crosshatch', foreground: '#000', origin: 'mark'}};
+  const paint = it => {
+    const c2d = ctx();
+    c2d.fillStyle = patternFill({}, c2d, it, w);
+    c2d.fillRect(0, 0, 100, 100);
+    return c2d.getImageData(0, 0, 100, 100).data;
+  };
+
+  const base = paint({x: 0, y: 0, bounds: {x1: 0, y1: 0, x2: 100, y2: 100}, mark: {role: 'mark'}});
+  const moved = paint({x: 3, y: 3, bounds: {x1: 3, y1: 3, x2: 103, y2: 103}, mark: {role: 'mark'}});
+
+  // the (3,3)-anchored field must equal the (0,0) field shifted by (3,3)
+  let maxDelta = 0, structural = 0;
+  for (let y = 3; y < 100; ++y) {
+    for (let x = 3; x < 100; ++x) {
+      for (let k = 0; k < 4; ++k) {
+        const d = Math.abs(moved[(y * 100 + x) * 4 + k] - base[((y - 3) * 100 + (x - 3)) * 4 + k]);
+        if (d > maxDelta) maxDelta = d;
+        if (d > 16) ++structural;
+      }
+    }
+  }
+  t.equal(structural, 0, 'no structural diffs between phased and shifted origin fields');
+  t.ok(maxDelta <= 8, `pixel deltas within anti-aliasing tolerance (max ${maxDelta})`);
+  t.end();
+});
+
 tape('patternFill bounds the per-pattern tile cache', t => {
   const w = wrapper(), c = ctx(), r = {};
   const mk = s => ({bounds: {x1: 0, y1: 0, x2: s, y2: s}, mark: {role: 'legend-symbol'}});
