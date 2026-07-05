@@ -40,7 +40,13 @@ const NO_REPEAT_EXTENT = 8192;
 //          across render passes -- SVGRenderer clears its def registry on
 //          every full render, and an image def emitted as a loading shell
 //          must keep its id on the loaded re-render -- so id assignment
-//          lives here rather than in the per-pass registry.
+//          lives here rather than in the per-pass registry. Note that
+//          this makes ids stable only for as long as the minting wrapper
+//          object stays in the scene: if the wrapper leaves and a
+//          content-equal one later re-enters, an equivalent def may mint
+//          a fresh id. Pattern ids are an internal wiring detail between
+//          a def and its url(#id) references within one document, not a
+//          stable external contract.
 // - image: async image-load state, {url, image|null}, requested at most
 //          once per state (see getPatternImage).
 const stateCache = new WeakMap();
@@ -68,6 +74,12 @@ function markAnchor(item) {
 
 function round(v) {
   return Math.round(v * 1e3) / 1e3;
+}
+
+// round away floating-point dust in emitted derived values
+// (1e-6 is far below visual significance in any unit space used here)
+function frac(v) {
+  return Math.round(v * 1e6) / 1e6;
 }
 
 // Request the pattern's image through the renderer's ResourceLoader,
@@ -103,8 +115,8 @@ function getPatternImage(renderer, state) {
  * @param {string} base - base href to prefix the fragment reference with.
  * @param {object} item - the scenegraph item being filled/stroked.
  * @param {object} [renderer] - the active renderer; supplies loadImage
- *   for image patterns whose def geometry needs the image's natural
- *   dimensions (intrinsic tile sizing, bounding-box contain fits).
+ *   for image patterns, whose def geometry needs the image's natural
+ *   dimensions (cell sizing, aspect-preserving heights, contain fits).
  * @return {string|null} a url(#id) reference, or null if unresolvable.
  */
 export function patternRef(value, defs, base, item, renderer) {
@@ -133,20 +145,20 @@ export function patternRef(value, defs, base, item, renderer) {
     key += '|#' + round(boxWidth) + 'x' + round(boxHeight);
   }
 
-  // Image dims are needed when the tile is intrinsically sized or when a
-  // bounding-box contain fit requires the natural aspect. The load is
-  // requested here, during the render pass, so the base Renderer's
-  // pending-load redraw can pick it up; the def key already includes the
-  // url (via patternKey), so same-styled patterns of different images
-  // can never share a def. Dims are NOT part of the key: they derive
-  // deterministically from the url, letting the loading shell and the
-  // loaded def share one key (and, via state.ids, one stable id).
-  let img = null;
-  if (spec.type === 'image' &&
-      (typeof spec.tileSize !== 'number' ||
-        spec.fit === 'swatch' || spec.tileSize === 'bounds')) {
-    img = getPatternImage(renderer, state);
-  }
+  // Every image pattern needs the image's natural dimensions: intrinsic
+  // tiles for both cell axes, numeric-tileSize tiles for the aspect-
+  // preserving cell height, bounding-box contain fits for the natural
+  // aspect. The load is requested here, during the render pass, so the
+  // base Renderer's pending-load redraw can pick it up; the def key
+  // already includes the url (via patternKey), so same-styled patterns
+  // of different images can never share a def. Dims are NOT part of the
+  // key: they derive deterministically from the url, letting the loading
+  // shell and the loaded def share one key (and, via state.ids, one
+  // stable id). Loads are tracked per wrapper object (not per url),
+  // matching marks/image.js's per-item image tracking; content-equal
+  // wrappers of the same url each request the load once, and the
+  // underlying loader handles any request-level coalescing/caching.
+  const img = spec.type === 'image' ? getPatternImage(renderer, state) : null;
 
   let def = defs[key];
   if (!def) {
@@ -289,32 +301,43 @@ function buildSymbolDef(def) {
 
 // -- image tile def -------------------------------------------------------
 
-// A numeric tileSize sizes the image tile directly (square, synchronous:
-// the browser loads the emitted href itself); an intrinsic (undefined)
-// tileSize sizes the cell by the image's natural dimensions, loaded
-// asynchronously through the renderer (patternRef stashes them on the
-// def as imgWidth/imgHeight once available). While the load is in
-// flight, the def is emitted as a shell: correct id, placeholder cell,
-// background painted (an immediate loading placeholder), no <image>
-// child yet -- the pending-load redraw fills it in.
+// Image tile cell rule, converged on canvas semantics
+// (util/canvas/pattern.js rasterizeImageTile): a numeric tileSize is the
+// tile WIDTH, with the height preserving the image's natural aspect
+// (tileSize * naturalH / naturalW); an intrinsic (undefined) tileSize
+// uses the natural dimensions for both axes. Either way the cell height
+// depends on the loaded image, so all image defs start as an async
+// shell: correct id, best-known placeholder cell (numeric tileSize gives
+// a known width and a square placeholder height; intrinsic knows
+// neither), background painted immediately as a loading placeholder, no
+// <image> child yet -- the pending-load redraw fills the dims in
+// (patternRef stashes them on the def as imgWidth/imgHeight).
+//
+// The <image> child keeps preserveAspectRatio 'none': the cell matches
+// the image's natural aspect by construction, so 'none' is a no-op that
+// also guards against letterboxing from sub-pixel rounding of the
+// derived cell height.
 function buildImageDef(def) {
   const spec = def.spec;
   const rep = normalizeRepeat(spec.repeat);
   const size = typeof spec.tileSize === 'number' ? spec.tileSize : null;
-  const w = size != null ? size : def.imgWidth > 0 ? def.imgWidth : null;
-  const h = size != null ? size : def.imgHeight > 0 ? def.imgHeight : null;
+  const dims = def.imgWidth > 0 && def.imgHeight > 0;
+  const w = size != null ? size : dims ? def.imgWidth : null;
+  const h = dims
+    ? (size != null ? frac(size * def.imgHeight / def.imgWidth) : def.imgHeight)
+    : size; // placeholder height (square) until the aspect loads; null if intrinsic
 
   const children = [];
   if (spec.background && spec.background !== 'transparent') {
     // span the tile cell once dims are known; until then span the
-    // enlarged placeholder cell so the background paints immediately
+    // best-known placeholder cell so the background paints immediately
     children.push({tag: 'rect', attrs: {
       width: w != null ? w : NO_REPEAT_EXTENT,
       height: h != null ? h : NO_REPEAT_EXTENT,
       fill: spec.background
     }});
   }
-  if (spec.url && w != null && h != null) {
+  if (spec.url && dims) {
     children.push({
       tag: 'image',
       attrs: {href: spec.url, preserveAspectRatio: 'none', width: w, height: h}
@@ -353,8 +376,6 @@ function buildSwatchDef(def) {
   const fit = computeContainRect(1, 1, cw / boxW, ch / boxH, pad);
 
   // round away floating-point dust in the emitted 0..1 fractions
-  // (1e-6 of the box is far below visual significance)
-  const frac = v => Math.round(v * 1e6) / 1e6;
   const rect = {x: frac(fit.x), y: frac(fit.y), width: frac(fit.width), height: frac(fit.height)};
 
   const children = [];

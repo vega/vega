@@ -93,20 +93,76 @@ tape('SVGRenderer emits intrinsic image pattern dims after load (DOM path)', t =
   });
 });
 
-tape('numeric tileSize image patterns emit synchronously, unchanged', t => {
-  const uri = pngURI(4, 3);
-  const scene = rectScene({pattern: {url: uri, tileSize: 16}});
+tape('numeric tileSize image patterns preserve the natural aspect (canvas semantics)', t => {
+  const uri = pngURI(4, 3); // 4:3 natural aspect
+  const scene = rectScene({pattern: {url: uri, tileSize: 8}});
 
   resetSVGDefIds();
   const r = new SVGStringRenderer().initialize(null, 50, 50);
   r.render(scene);
 
-  const svg = r.svg();
-  t.ok(/<pattern[^>]*id="pattern_0"[^>]*width="16"[^>]*height="16"/.test(svg),
-    'cell sized by numeric tileSize');
-  t.ok(/<image[^>]*width="16"[^>]*height="16"/.test(svg), 'image emitted immediately');
-  t.notOk(r._ready, 'no load requested for numeric tileSize tiles');
-  t.end();
+  // shell: tile width known upfront, square placeholder height, no image
+  const shell = r.svg();
+  t.ok(/<pattern[^>]*id="pattern_0"[^>]*width="8"[^>]*height="8"/.test(shell),
+    'shell cell: known width, square placeholder height');
+  t.notOk(shell.includes('<image'), 'no image child before the aspect loads');
+  t.ok(r._ready, 'a load-triggered redraw is pending');
+
+  ready(r).then(() => {
+    // loaded: tileSize = tile width; height = tileSize * naturalH/naturalW
+    const svg = r.svg();
+    t.ok(/<pattern[^>]*id="pattern_0"[^>]*width="8"[^>]*height="6"/.test(svg),
+      'cell 8x6: width = tileSize, height preserves the 4:3 aspect');
+    t.ok(/<image[^>]*width="8"[^>]*height="6"/.test(svg), 'image sized to the aspect-true cell');
+    t.end();
+  });
+});
+
+tape('failed image loads leave a bounded def shell (no throw, no image, no retry)', t => {
+  // passes the loader's sanitize step but is not a decodable image
+  const bogus = 'data:image/png;base64,AAAA';
+  const scene = rectScene({pattern: {url: bogus, background: 'white'}});
+
+  resetSVGDefIds();
+  const r = new SVGStringRenderer().initialize(null, 50, 50);
+  t.doesNotThrow(() => r.render(scene), 'render survives a bad image url');
+
+  ready(r).then(() => {
+    const svg = r.svg();
+    t.ok(/<pattern[^>]*id="pattern_0"/.test(svg), 'def shell present after the failed load');
+    t.ok(/<rect[^>]*fill="white"/.test(svg), 'background still paints');
+    t.notOk(svg.includes('<image'), 'no image child for a failed load');
+
+    // a subsequent render must not re-request the load (bounded)
+    r.render(scene);
+    t.notOk(r._ready, 'failed load is not retried on later renders');
+    t.notOk(r.svg().includes('<image'), 'still a shell on later renders');
+    t.end();
+  });
+});
+
+tape('distinct but content-equal wrappers share one def across items', t => {
+  const uri = pngURI(4, 3);
+  const scene = sceneFromJSON({
+    marktype: 'rect',
+    items: [
+      {x: 0, y: 0, width: 20, height: 20, fill: {pattern: {url: uri, tileSize: 8}}},
+      {x: 30, y: 0, width: 20, height: 20, fill: {pattern: {url: uri, tileSize: 8}}}
+    ]
+  });
+
+  resetSVGDefIds();
+  const r = new SVGStringRenderer().initialize(null, 60, 30);
+  r.render(scene);
+
+  ready(r).then(() => {
+    const svg = r.svg();
+    const defs = svg.match(/<pattern[^>]*id="pattern_\d+"/g) || [];
+    t.equal(defs.length, 1, 'exactly one pattern def for content-equal wrappers');
+    const refs = svg.match(/fill="url\(#pattern_0\)"/g) || [];
+    t.equal(refs.length, 2, 'both items reference the shared def');
+    t.end();
+  });
 });
 
 tape('bounds-fit image patterns contain-fit with the natural aspect after load', t => {
