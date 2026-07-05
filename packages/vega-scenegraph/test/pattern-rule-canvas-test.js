@@ -52,6 +52,9 @@ function diffShifted(imgA, imgB, dy) {
 }
 
 tape('rule stroke pattern is mark-anchored (rides with the item)', t => {
+  // discrimination guard: the dy between the two renders (3) must NOT be a
+  // multiple of the stripe tile period (horizontal-stripe: 20px), or a
+  // view-anchored pattern would coincidentally also pass the shift check.
   const base = {x: 10, x2: 190, strokeWidth: 16, stroke: stripeStroke()};
 
   const a = draw({...base, y: 40, y2: 40}).getImageData(0, 0, W, H).data;
@@ -105,12 +108,13 @@ tape('draw() balances save/restore around the pattern translate, only when patte
 // canvas-handler-test.js), so hit-testing correctness for real stroke
 // geometry cannot be exercised end-to-end in this environment. Instead,
 // fake isPointInStroke to record the coordinates it is called with, and
-// assert directly on the coordinate-space compensation math: the pattern
-// translate(x1, y1) becomes part of the CTM while isPointInStroke runs, so
-// its own (x, y) test-point argument must be counter-shifted by (-x1, -y1)
-// for the CTM to map it back to the original device-space location -- see
-// the comment on hit() in rule.js for the full derivation.
-tape('patterned rule hit-testing compensates the test point for the CTM translate', t => {
+// assert on the coordinate model: per the HTML spec, isPointInStroke's
+// point argument is in DEVICE space, unaffected by the current CTM (WPT
+// 2d.path.isPointInPath.transform.1) — the path is baked through the CTM
+// at construction. So the pattern-only translate in path() must NOT cause
+// any shift of the test point: patterned and solid rules alike pass the
+// raw point straight through.
+tape('patterned rule hit-testing passes the device-space point through unshifted', t => {
   const item = {
     x: 20, y: 30, x2: 120, y2: 30, strokeWidth: 4,
     stroke: stripeStroke(),
@@ -126,7 +130,7 @@ tape('patterned rule hit-testing compensates the test point for the CTM translat
   const hitItem = Rule.pick(c2d, {items: [item]}, 50, 30, 50, 30);
 
   t.equal(hitItem, item, 'reports a hit');
-  t.deepEqual(seen, [[30, 0]], 'isPointInStroke receives the point counter-shifted by (-x1, -y1)');
+  t.deepEqual(seen, [[50, 30]], 'isPointInStroke receives the raw device-space point, same as the non-pattern case');
   t.end();
 });
 

@@ -29,9 +29,10 @@ function bound(bounds, item) {
 // to the group frame (view-anchored). Frame-match Canvas to SVG by
 // translating to the rule's start point and drawing the segment relative
 // to it — the exact move text.js already makes for rotated text. Callers
-// (draw/hit) must wrap this in save/restore since the translate is not
-// undone here: it needs to still be active when the stroke/hit-test runs.
-function path(context, item, opacity, renderer) {
+// compute the `patterned` flag, pass it in, and wrap this in save/restore
+// since the translate is not undone here: it must still be active when the
+// stroke runs.
+function path(context, item, opacity, renderer, patterned) {
   var x1, y1, x2, y2;
 
   if (item.stroke && stroke(context, item, opacity, renderer)) {
@@ -40,7 +41,7 @@ function path(context, item, opacity, renderer) {
     x2 = item.x2 != null ? item.x2 : x1;
     y2 = item.y2 != null ? item.y2 : y1;
 
-    if (isPattern(item.stroke)) {
+    if (patterned) {
       context.translate(x1, y1);
       x2 -= x1;
       y2 -= y1;
@@ -64,7 +65,7 @@ function draw(context, scene, bounds) {
 
     const patterned = isPattern(item.stroke);
     if (patterned) context.save();
-    if (path(context, item, opacity, renderer)) {
+    if (path(context, item, opacity, renderer, patterned)) {
       blend(context, item);
       context.stroke();
     }
@@ -75,23 +76,22 @@ function draw(context, scene, bounds) {
 function hit(context, item, x, y) {
   if (!context.isPointInStroke) return false;
 
-  // hit() receives x, y already expressed in the same (untranslated) local
-  // space as item.x/item.y under the ambient (group) CTM — the space path()
-  // draws in when there is no pattern translate. When path() adds its
-  // pattern-only translate(x1, y1), that same translate becomes part of the
-  // CTM in effect when isPointInStroke runs; isPointInStroke maps its own
-  // (x, y) argument through the CURRENT CTM before comparing to the
-  // (already CTM-baked) path. So the test point must be counter-shifted by
-  // (-x1, -y1) here to land back on the original device-space test
-  // location once the CTM re-applies the translate. The save/restore must
-  // bracket both path() (which performs the translate) and the
-  // isPointInStroke call (which must run while that translate is active).
+  // Per the HTML spec, isPointInStroke's point argument is in DEVICE space:
+  // it is NOT transformed through the current CTM. The path itself was
+  // already baked through the CTM as each segment was constructed (see WPT
+  // 2d.path.isPointInPath.transform.1), so when path() adds its
+  // pattern-only translate(x1, y1) the baked path coordinates land at the
+  // same device positions as the untranslated form and the test point
+  // passes through unchanged — patterned and solid rules hit-test
+  // identically. (node-canvas is known to deviate by CTM-mapping the
+  // point, but that is moot here: node-canvas does not implement
+  // isPointInStroke at all, so this code path only runs in browsers.) The
+  // save/restore still brackets path() so the pattern translate cannot
+  // leak into the shared pick context's CTM.
   const patterned = isPattern(item.stroke);
   if (patterned) context.save();
 
-  const hx = patterned ? x - (item.x || 0) : x;
-  const hy = patterned ? y - (item.y || 0) : y;
-  const result = path(context, item, 1, null) && context.isPointInStroke(hx, hy);
+  const result = path(context, item, 1, null, patterned) && context.isPointInStroke(x, y);
 
   if (patterned) context.restore();
   return result;

@@ -52,6 +52,9 @@ function diffShifted(imgA, imgB, dy) {
 }
 
 tape('pattern phase rides with the text item (mark-anchored)', t => {
+  // discrimination guard: the dy between the two renders (3) must NOT be a
+  // multiple of the stripe tile period (horizontal-stripe: 20px), or a
+  // view-anchored pattern would coincidentally also pass the shift check.
   const base = {
     x: 10, text: 'MMM', font: 'Arial', fontSize: 40, fontWeight: 'bold',
     align: 'left', baseline: 'alphabetic', fill: stripeFill(),
