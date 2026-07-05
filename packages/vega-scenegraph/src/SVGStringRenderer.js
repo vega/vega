@@ -1,5 +1,7 @@
 import Renderer from './Renderer.js';
 import {gradientRef, isGradient, patternPrefix} from './Gradient.js';
+import {markupPattern, patternRef} from './PatternFill.js';
+import {isPattern} from 'vega-pattern';
 import Marks from './marks/index.js';
 import {ariaItemAttributes, ariaMarkAttributes} from './util/aria.js';
 import {cssClass} from './util/dom.js';
@@ -17,6 +19,7 @@ export default class SVGStringRenderer extends Renderer {
     this._text = null;
     this._defs = {
       gradient: {},
+      pattern: {},
       clipping: {}
     };
   }
@@ -226,8 +229,9 @@ export default class SVGStringRenderer extends Renderer {
    */
   defs(m) {
     const gradient = this._defs.gradient,
+          pattern = this._defs.pattern,
           clipping = this._defs.clipping,
-          count = Object.keys(gradient).length + Object.keys(clipping).length;
+          count = Object.keys(gradient).length + Object.keys(pattern).length + Object.keys(clipping).length;
 
     if (count === 0) return; // nothing to do
 
@@ -286,6 +290,10 @@ export default class SVGStringRenderer extends Renderer {
       }
 
       m.close();
+    }
+
+    for (const id in pattern) {
+      markupPattern(m, pattern[id]);
     }
 
     for (const id in clipping) {
@@ -353,8 +361,10 @@ function style(s, item, scene, tag, defs) {
     } else if (value != null) {
       if (isGradient(value)) {
         value = gradientRef(value, defs.gradient, '');
+      } else if (isPattern(value)) {
+        value = patternRef(value, defs.pattern, '', item);
       }
-      s[name] = value;
+      if (value != null) s[name] = value;
     }
   }
 

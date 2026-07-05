@@ -1,5 +1,7 @@
 import Renderer from './Renderer.js';
 import {gradientRef, isGradient, patternPrefix} from './Gradient.js';
+import {patternRef, updatePattern} from './PatternFill.js';
+import {isPattern} from 'vega-pattern';
 import marks from './marks/index.js';
 import {ariaItemAttributes, ariaMarkAttributes} from './util/aria.js';
 import {cssClass, domChild, domClear, domCreate} from './util/dom.js';
@@ -350,6 +352,13 @@ export default class SVGRenderer extends Renderer {
       } else {
         if (isGradient(value)) {
           value = gradientRef(value, this._defs.gradient, href());
+        } else if (isPattern(value)) {
+          value = patternRef(value, this._defs.pattern, href(), item);
+          if (value == null) {
+            el.removeAttribute(name);
+            values[prop] = value;
+            continue;
+          }
         }
         el.setAttribute(name, value + '');
       }
@@ -379,6 +388,11 @@ export default class SVGRenderer extends Renderer {
       index = updateGradient(el, defs.gradient[id], index);
     }
 
+    for (const id in defs.pattern) {
+      if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
+      index = updatePattern(el, defs.pattern[id], index);
+    }
+
     for (const id in defs.clipping) {
       if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
       index = updateClipping(el, defs.clipping[id], index);
@@ -398,6 +412,7 @@ export default class SVGRenderer extends Renderer {
   _clearDefs() {
     const def = this._defs;
     def.gradient = {};
+    def.pattern = {};
     def.clipping = {};
   }
 }

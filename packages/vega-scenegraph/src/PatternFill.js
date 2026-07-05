@@ -106,6 +106,23 @@ export function patternRef(value, defs, base, item) {
 }
 
 /**
+ * Build a renderer-agnostic description of a pattern def's DOM shape:
+ * {attrs, children}, children being an array of {tag, attrs, children?}
+ * nodes. Both the DOM-based SVGRenderer (via updatePattern) and the
+ * markup-based SVGStringRenderer (via markupPattern) render from this
+ * single source of geometry, so the two renderers can never drift apart.
+ *
+ * @param {object} def - a pattern def entry produced by patternRef.
+ * @return {object} {attrs, children}.
+ */
+export function buildPatternDef(def) {
+  const spec = def.spec;
+  return spec.fit === 'swatch' || spec.tileSize === 'bounds' ? buildSwatchDef(def)
+    : spec.type === 'image' ? buildImageDef(def)
+    : buildSymbolDef(def);
+}
+
+/**
  * Emit (or update) the SVG DOM for a pattern def entry produced by
  * patternRef, mirroring updateGradient's index-based domChild/domClear
  * lifecycle so unused defs are cleaned up by the caller.
@@ -116,10 +133,43 @@ export function patternRef(value, defs, base, item) {
  * @return {number} the updated index.
  */
 export function updatePattern(el, def, index) {
-  const spec = def.spec;
-  return spec.fit === 'swatch' || spec.tileSize === 'bounds' ? updateSwatchPattern(el, def, index)
-    : spec.type === 'image' ? updateImagePattern(el, def, index)
-    : updateSymbolPattern(el, def, index);
+  const {attrs, children} = buildPatternDef(def);
+  const pt = domChild(el, index++, 'pattern', svgns);
+  setAttributes(pt, attrs);
+  applyChildrenDOM(pt, children);
+  return index;
+}
+
+function applyChildrenDOM(parent, children) {
+  let i = 0;
+  for (const child of children) {
+    const node = domChild(parent, i++, child.tag, svgns);
+    setAttributes(node, child.attrs);
+    if (child.children) applyChildrenDOM(node, child.children);
+    else domClear(node, 0);
+  }
+  domClear(parent, i);
+}
+
+/**
+ * Emit a pattern def entry as markup, for the string-based SVG renderer.
+ *
+ * @param {object} m - a util/markup.js markup context.
+ * @param {object} def - a pattern def entry, as passed to updatePattern.
+ */
+export function markupPattern(m, def) {
+  const {attrs, children} = buildPatternDef(def);
+  m.open('pattern', attrs);
+  applyChildrenMarkup(m, children);
+  m.close();
+}
+
+function applyChildrenMarkup(m, children) {
+  for (const child of children) {
+    m.open(child.tag, child.attrs);
+    if (child.children) applyChildrenMarkup(m, child.children);
+    m.close();
+  }
 }
 
 // -- symbol (shape) tile def --------------------------------------------
@@ -129,36 +179,33 @@ export function updatePattern(el, def, index) {
 // Content is authored in tile space (0..tileSize) and scaled up to the
 // cell via a wrapping <g transform="scale(scale)">, keeping shape
 // geometry identical to the registry-authored path data.
-function updateSymbolPattern(el, def, index) {
+function buildSymbolDef(def) {
   const spec = def.spec;
   const scale = spec.scale || 1;
   const cell = spec.tileSize * scale;
   const rep = normalizeRepeat(spec.repeat);
 
-  const pt = domChild(el, index++, 'pattern', svgns);
-  setAttributes(pt, {
-    id: def.id,
-    patternUnits: 'userSpaceOnUse',
-    x: def.x || 0,
-    y: def.y || 0,
-    width: rep.x ? cell : NO_REPEAT_EXTENT,
-    height: rep.y ? cell : NO_REPEAT_EXTENT
+  const children = [];
+  if (spec.background && spec.background !== 'transparent') {
+    children.push({tag: 'rect', attrs: {width: cell, height: cell, fill: spec.background}});
+  }
+  children.push({
+    tag: 'g',
+    attrs: {transform: `scale(${scale})`},
+    children: [{tag: 'path', attrs: shapeAttrs(spec)}]
   });
 
-  let i = 0;
-  if (spec.background && spec.background !== 'transparent') {
-    const bg = domChild(pt, i++, 'rect', svgns);
-    setAttributes(bg, {width: cell, height: cell, fill: spec.background});
-  }
-
-  const g = domChild(pt, i++, 'g', svgns);
-  setAttributes(g, {transform: `scale(${scale})`});
-  const path = domChild(g, 0, 'path', svgns);
-  setAttributes(path, shapeAttrs(spec));
-  domClear(g, 1);
-
-  domClear(pt, i);
-  return index;
+  return {
+    attrs: {
+      id: def.id,
+      patternUnits: 'userSpaceOnUse',
+      x: def.x || 0,
+      y: def.y || 0,
+      width: rep.x ? cell : NO_REPEAT_EXTENT,
+      height: rep.y ? cell : NO_REPEAT_EXTENT
+    },
+    children
+  };
 }
 
 // -- image tile def -------------------------------------------------------
@@ -167,39 +214,33 @@ function updateSymbolPattern(el, def, index) {
 // intrinsic (undefined) tileSize needs the image's loaded dimensions,
 // which Task 17's async load/redraw flow supplies. Until then, emit the
 // pattern shell without an <image> child (deferred).
-function updateImagePattern(el, def, index) {
+function buildImageDef(def) {
   const spec = def.spec;
   const rep = normalizeRepeat(spec.repeat);
   const size = typeof spec.tileSize === 'number' ? spec.tileSize : null;
 
-  const pt = domChild(el, index++, 'pattern', svgns);
-  setAttributes(pt, {
-    id: def.id,
-    patternUnits: 'userSpaceOnUse',
-    x: def.x || 0,
-    y: def.y || 0,
-    width: rep.x && size ? size : NO_REPEAT_EXTENT,
-    height: rep.y && size ? size : NO_REPEAT_EXTENT
-  });
-
-  let i = 0;
+  const children = [];
   if (spec.background && spec.background !== 'transparent' && size) {
-    const bg = domChild(pt, i++, 'rect', svgns);
-    setAttributes(bg, {width: size, height: size, fill: spec.background});
+    children.push({tag: 'rect', attrs: {width: size, height: size, fill: spec.background}});
   }
-
   if (spec.url && size) {
-    const img = domChild(pt, i++, 'image', svgns);
-    setAttributes(img, {
-      href: spec.url,
-      preserveAspectRatio: 'none',
-      width: size,
-      height: size
+    children.push({
+      tag: 'image',
+      attrs: {href: spec.url, preserveAspectRatio: 'none', width: size, height: size}
     });
   }
 
-  domClear(pt, i);
-  return index;
+  return {
+    attrs: {
+      id: def.id,
+      patternUnits: 'userSpaceOnUse',
+      x: def.x || 0,
+      y: def.y || 0,
+      width: rep.x && size ? size : NO_REPEAT_EXTENT,
+      height: rep.y && size ? size : NO_REPEAT_EXTENT
+    },
+    children
+  };
 }
 
 // -- swatch / 'bounds' fit def --------------------------------------------
@@ -211,7 +252,7 @@ function updateImagePattern(el, def, index) {
 // the box's real aspect ratio, the tile's aspect must be pre-corrected by
 // the box's real pixel dimensions before calling computeContainRect --
 // see tileAspect below.
-function updateSwatchPattern(el, def, index) {
+function buildSwatchDef(def) {
   const spec = def.spec;
   const boxW = def.boxWidth > 0 ? def.boxWidth : 1;
   const boxH = def.boxHeight > 0 ? def.boxHeight : 1;
@@ -220,44 +261,44 @@ function updateSwatchPattern(el, def, index) {
   const {w: cw, h: ch} = tileAspect(spec);
   const rect = computeContainRect(1, 1, cw / boxW, ch / boxH, pad);
 
-  const pt = domChild(el, index++, 'pattern', svgns);
-  setAttributes(pt, {
-    id: def.id,
-    patternUnits: 'objectBoundingBox',
-    patternContentUnits: 'objectBoundingBox',
-    x: 0,
-    y: 0,
-    width: 1,
-    height: 1
-  });
-
-  let i = 0;
+  const children = [];
   if (spec.background && spec.background !== 'transparent') {
-    const bg = domChild(pt, i++, 'rect', svgns);
-    setAttributes(bg, {x: rect.x, y: rect.y, width: rect.width, height: rect.height, fill: spec.background});
+    children.push({
+      tag: 'rect',
+      attrs: {x: rect.x, y: rect.y, width: rect.width, height: rect.height, fill: spec.background}
+    });
   }
 
   if (spec.type === 'image') {
     if (spec.url) {
-      const img = domChild(pt, i++, 'image', svgns);
-      setAttributes(img, {
-        href: spec.url,
-        preserveAspectRatio: 'none',
-        x: rect.x, y: rect.y, width: rect.width, height: rect.height
+      children.push({
+        tag: 'image',
+        attrs: {
+          href: spec.url, preserveAspectRatio: 'none',
+          x: rect.x, y: rect.y, width: rect.width, height: rect.height
+        }
       });
     }
   } else {
-    const g = domChild(pt, i++, 'g', svgns);
-    setAttributes(g, {
-      transform: `translate(${rect.x},${rect.y}) scale(${rect.width / spec.tileSize},${rect.height / spec.tileSize})`
+    children.push({
+      tag: 'g',
+      attrs: {transform: `translate(${rect.x},${rect.y}) scale(${rect.width / spec.tileSize},${rect.height / spec.tileSize})`},
+      children: [{tag: 'path', attrs: shapeAttrs(spec)}]
     });
-    const path = domChild(g, 0, 'path', svgns);
-    setAttributes(path, shapeAttrs(spec));
-    domClear(g, 1);
   }
 
-  domClear(pt, i);
-  return index;
+  return {
+    attrs: {
+      id: def.id,
+      patternUnits: 'objectBoundingBox',
+      patternContentUnits: 'objectBoundingBox',
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1
+    },
+    children
+  };
 }
 
 // Real-unit tile dimensions used only to derive an aspect ratio for
