@@ -97,11 +97,27 @@ export function normalizePatternSpec(input) {
     out.tileSize = tileSize;
     out.fill = merged.fill;
     out.stroke = merged.stroke;
+
+    const hadFill = out.fill != null && out.fill !== 'transparent' && out.fill !== 'none';
+    const hadStroke = out.stroke != null;
+
+    // An inline (non-named) shape-string spec with an explicit, positive
+    // strokeWidth declares stroked line art (e.g. an 'X' made of open
+    // path segments): filling such geometry paints nothing meaningful, so
+    // foreground maps to stroke instead of fill. Named patterns are
+    // unaffected — their registry defs declare fill/stroke explicitly.
+    // Generated lines/rule geometry (isGenerated) already defaults to
+    // stroke below, so this only changes inline `shape`-string specs.
+    const inlineStroked = def.name == null && !isGenerated &&
+      !hadFill && !hadStroke && +merged.strokeWidth > 0;
+
     if (isGenerated) {
       // rule/lines geometry is stroked, not filled; default a visible
       // stroke when the pattern (or its overrides) declared no color.
       if (out.stroke == null) out.stroke = '#000';
       if (out.strokeWidth == null) out.strokeWidth = 1;
+    } else if (inlineStroked) {
+      out.stroke = '#000';
     }
 
     // foreground is the user-facing color knob: it replaces whichever
@@ -111,12 +127,11 @@ export function normalizePatternSpec(input) {
     // fill nor a stroke is declared, foreground (or the '#000' default)
     // becomes the fill.
     const fg = merged.foreground;
-    const hadFill = out.fill != null && out.fill !== 'transparent' && out.fill !== 'none';
-    const hadStroke = out.stroke != null;
+    const hadStrokeNow = out.stroke != null;
     if (fg != null) {
-      if (hadStroke) out.stroke = fg;
-      if (hadFill || !hadStroke) out.fill = fg;
-    } else if (!hadFill && !hadStroke) {
+      if (hadStrokeNow) out.stroke = fg;
+      if (hadFill || !hadStrokeNow) out.fill = fg;
+    } else if (!hadFill && !hadStrokeNow) {
       out.fill = '#000';
     }
   }

@@ -53,6 +53,22 @@ tape('foreground preserves transparent/none fills (outline-only shapes)', t => {
   t.end();
 });
 
+tape('inline shape-string specs: explicit strokeWidth declares stroked geometry', t => {
+  const s = normalizePatternSpec({pattern: {shape: 'M2,2 L8,8', strokeWidth: 2, foreground: 'teal'}});
+  t.equal(s.stroke, 'teal', 'foreground maps to stroke, not fill');
+  t.equal(s.strokeWidth, 2, 'declared strokeWidth is preserved');
+  t.equal(s.fill, undefined, 'fill stays undefined for stroked line art');
+
+  const s2 = normalizePatternSpec({pattern: {shape: 'M2,2 L8,8', strokeWidth: 2}});
+  t.equal(s2.stroke, '#000', 'no foreground: stroke defaults to #000');
+  t.equal(s2.fill, undefined, 'fill stays undefined');
+
+  const s3 = normalizePatternSpec({pattern: {shape: 'M2,2 h6 v6 h-6 Z', foreground: 'teal'}});
+  t.equal(s3.fill, 'teal', 'no strokeWidth: unchanged fill behavior');
+  t.equal(s3.stroke, undefined, 'no strokeWidth: no stroke declared');
+  t.end();
+});
+
 tape('named pattern locks core geometry, allows style overrides', t => {
   const base = normalizePatternSpec({pattern: {name: 'crosshatch'}});
   const s = normalizePatternSpec({pattern: {name: 'crosshatch', shape: 'M0,0Z', background: 'pink', tileSize: 20}});

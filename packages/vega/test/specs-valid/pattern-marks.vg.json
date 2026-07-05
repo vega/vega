@@ -412,6 +412,7 @@
                   "pattern": {
                     "shape": "M2,2 L8,8 M8,2 L2,8",
                     "tileSize": 10,
+                    "strokeWidth": 1.5,
                     "foreground": "teal"
                   }
                 }
