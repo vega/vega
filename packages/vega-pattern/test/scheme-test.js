@@ -6,3 +6,15 @@ tape('patternScheme is an ordered array of valid pattern wrappers', t => {
   patternScheme.forEach((p, i) => t.ok(normalizePatternSpec(p), `entry ${i} normalizes`));
   t.end();
 });
+
+tape('patternScheme maps to an exact, pinned pattern name sequence', t => {
+  t.deepEqual(
+    patternScheme.map(p => p.pattern.name),
+    [
+      'diagonal-stripe', 'circles', 'crosshatch', 'vertical-stripe',
+      'squares', 'horizontal-stripe', 'crosses', 'grid', 'caps', 'waves'
+    ],
+    'pattern names appear in the documented order'
+  );
+  t.end();
+});

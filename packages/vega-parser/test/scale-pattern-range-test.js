@@ -44,6 +44,32 @@ tape('Parser accepts pattern wrapper objects in ordinal scale range', t => {
   t.end();
 });
 
+tape('Parser accepts scheme: "patterns" for scale range', t => {
+  const spec = {
+    data: [{
+      name: 'table',
+      values: [
+        {c: 'A', v: 1},
+        {c: 'B', v: 2},
+        {c: 'C', v: 3}
+      ]
+    }],
+    scales: [{
+      name: 'c',
+      type: 'ordinal',
+      domain: {data: 'table', field: 'c'},
+      range: {scheme: 'patterns'}
+    }]
+  };
+
+  const dfs = parse(spec);
+  const scaleOps = dfs.operators.filter(o => o.type === 'scale');
+  const cScale = scaleOps.find(o => o.scale === 'c');
+  t.ok(cScale, 'found scale operator');
+  t.equal(cScale.params.scheme, 'patterns', 'scheme name passes through untouched');
+  t.end();
+});
+
 tape('Parser still rejects unsupported objects in scale parameters', t => {
   const spec = {
     data: [{name: 'table', values: [{c: 'A'}]}],
