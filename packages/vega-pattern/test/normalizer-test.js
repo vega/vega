@@ -34,9 +34,22 @@ tape('foreground maps onto resolved geometry colors', t => {
   const s2 = normalizePatternSpec({pattern: {name: 'diagonal-stripe', foreground: 'blue'}});
   t.equal(s2.stroke, 'blue', 'foreground replaces declared stroke');
   t.equal(s2.fill, undefined, 'undeclared fill stays undeclared');
-  const s3 = normalizePatternSpec({pattern: {name: 'squares', foreground: 'green'}});
-  t.equal(s3.fill, 'green', 'foreground replaces declared fill');
-  t.equal(s3.stroke, 'green', 'foreground replaces declared stroke too');
+  t.end();
+});
+
+tape('foreground preserves transparent/none fills (outline-only shapes)', t => {
+  const squares = normalizePatternSpec({pattern: {name: 'squares', foreground: 'red'}});
+  t.equal(squares.stroke, 'red', 'squares: foreground replaces stroke');
+  t.equal(squares.fill, 'transparent', 'squares: transparent fill preserved (hollow)');
+  const nylon = normalizePatternSpec({pattern: {name: 'nylon', foreground: 'red'}});
+  t.equal(nylon.stroke, 'red', 'nylon: foreground replaces stroke');
+  t.equal(nylon.fill, 'transparent', 'nylon: transparent fill preserved');
+  const circles = normalizePatternSpec({pattern: {name: 'circles', foreground: 'red'}});
+  t.equal(circles.fill, 'red', 'circles: solid fill replaced');
+  const hound = normalizePatternSpec({pattern: {name: 'houndstooth', foreground: 'red'}});
+  t.equal(hound.fill, 'red', 'houndstooth: solid fill replaced');
+  const inline = normalizePatternSpec({pattern: {shape: 'M0,0 L10,10', foreground: 'red'}});
+  t.equal(inline.fill, 'red', 'inline shape with no colors: foreground becomes fill');
   t.end();
 });
 

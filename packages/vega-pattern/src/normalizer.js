@@ -105,11 +105,13 @@ export function normalizePatternSpec(input) {
     }
 
     // foreground is the user-facing color knob: it replaces whichever
-    // color(s) the resolved geometry already declares. If neither a
+    // color(s) the resolved geometry already declares. Transparent/none
+    // fills are load-bearing design (outline-only shapes), not color
+    // choices, so they are preserved rather than replaced. If neither a
     // fill nor a stroke is declared, foreground (or the '#000' default)
     // becomes the fill.
     const fg = merged.foreground;
-    const hadFill = out.fill != null;
+    const hadFill = out.fill != null && out.fill !== 'transparent' && out.fill !== 'none';
     const hadStroke = out.stroke != null;
     if (fg != null) {
       if (hadStroke) out.stroke = fg;
