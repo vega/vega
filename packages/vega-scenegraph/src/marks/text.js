@@ -8,6 +8,7 @@ import fill from '../util/canvas/fill.js';
 import {pick} from '../util/canvas/pick.js';
 import stroke from '../util/canvas/stroke.js';
 import {rotate, translate} from '../util/svg/transform.js';
+import {isPattern} from 'vega-pattern';
 import {isArray} from 'vega-util';
 
 const textAlign = {
@@ -110,10 +111,20 @@ function draw(context, scene, bounds) {
     x = p.x1,
     y = p.y1;
 
-    if (item.angle) {
+    // Canvas draws unrotated text via fillText(x, y) at absolute coordinates,
+    // so a pattern fill/stroke's grid would otherwise sit in the group frame
+    // (view-anchored) rather than riding the item (mark-anchored), unlike
+    // SVG where userSpaceOnUse patterns resolve in the referencing element's
+    // own transformed space. Translating to the item's origin here — the
+    // same move already made for rotated text — puts Canvas and SVG back in
+    // the same frame. See pattern-common.js resolveItemPattern for the
+    // matching origin-neutralization on the fill-resolution side.
+    const patterned = isPattern(item.fill) || isPattern(item.stroke);
+
+    if (item.angle || patterned) {
       context.save();
       context.translate(x, y);
-      context.rotate(item.angle * DegToRad);
+      if (item.angle) context.rotate(item.angle * DegToRad);
       x = y = 0; // reset x, y
     }
     x += (item.dx || 0);
@@ -143,7 +154,7 @@ function draw(context, scene, bounds) {
       }
     }
 
-    if (item.angle) context.restore();
+    if (item.angle || patterned) context.restore();
   });
 }
 

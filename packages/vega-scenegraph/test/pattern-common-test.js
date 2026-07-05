@@ -51,3 +51,36 @@ tape('resolveItemPattern is idempotent once fit is already swatch', t => {
   t.equal(resolveItemPattern(legendItem, spec), spec, 'no re-clone when already swatch');
   t.end();
 });
+
+tape('resolveItemPattern forces origin:view for mark-anchored text/rule patterns', t => {
+  const spec = {type: 'symbol', shape: 'M0,0', origin: 'mark'};
+  const textItem = {mark: {marktype: 'text', role: 'mark'}};
+  const ruleItem = {mark: {marktype: 'rule', role: 'mark'}};
+
+  t.equal(resolveItemPattern(textItem, spec).origin, 'view', 'text marktype forces origin:view');
+  t.equal(resolveItemPattern(ruleItem, spec).origin, 'view', 'rule marktype forces origin:view');
+  t.end();
+});
+
+tape('resolveItemPattern leaves origin:view for text/rule untouched (no clone)', t => {
+  const spec = {type: 'symbol', shape: 'M0,0', origin: 'view'};
+  const textItem = {mark: {marktype: 'text', role: 'mark'}};
+  t.equal(resolveItemPattern(textItem, spec), spec, 'no clone when origin is already view');
+  t.end();
+});
+
+tape('resolveItemPattern leaves origin:mark alone for other marktypes', t => {
+  const spec = {type: 'symbol', shape: 'M0,0', origin: 'mark'};
+  const symbolItem = {mark: {marktype: 'symbol', role: 'mark'}};
+  t.equal(resolveItemPattern(symbolItem, spec), spec, 'non text/rule marktypes are unaffected');
+  t.end();
+});
+
+tape('resolveItemPattern composes the origin fix with the legend-swatch fix', t => {
+  const spec = {type: 'symbol', shape: 'M0,0', origin: 'mark', fit: undefined};
+  const legendTextItem = {mark: {marktype: 'text', role: 'legend-symbol'}};
+  const out = resolveItemPattern(legendTextItem, spec);
+  t.equal(out.origin, 'view', 'origin forced to view');
+  t.equal(out.fit, 'swatch', 'fit forced to swatch');
+  t.end();
+});

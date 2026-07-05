@@ -24,10 +24,32 @@ export function computeContainRect(boxW, boxH, tileW, tileH, pad = 1) {
   return {x, y, width: w, height: h};
 }
 
-// single decision point for swatch treatment (design spec §6): legend swatches get a
-// derived canonical spec with fit:'swatch'; paint code renders what it's told.
+// single decision point for both mark-driven pattern adjustments (design
+// spec §6): legend swatches get a derived canonical spec with fit:'swatch';
+// paint code renders what it's told.
+//
+// Text and rule marks are frame-matched on Canvas by translating the drawing
+// context to the item's own origin before painting (see marks/text.js,
+// marks/rule.js) — the same move SVG gets for free from userSpaceOnUse
+// pattern resolution in the referencing element's transformed space. That
+// translate already makes text/rule mark-anchored by construction, so a
+// spec with origin:'mark' would double-anchor: patternFill's mark-anchor
+// layout (computed from item.x/item.bounds) would apply on top of a frame
+// that is already local to the item, landing the anchor in the wrong space.
+// Forcing origin to 'view' (a no-op offset) for these two marktypes keeps
+// them mark-anchored via the translate alone, exactly once.
 export function resolveItemPattern(item, spec) {
-  return item && item.mark && item.mark.role === 'legend-symbol' && spec.fit !== 'swatch'
-    ? {...spec, fit: 'swatch'}
-    : spec;
+  const mark = item && item.mark;
+  let out = spec;
+
+  const marktype = mark && mark.marktype;
+  if ((marktype === 'text' || marktype === 'rule') && out.origin === 'mark') {
+    out = {...out, origin: 'view'};
+  }
+
+  if (mark && mark.role === 'legend-symbol' && out.fit !== 'swatch') {
+    out = {...out, fit: 'swatch'};
+  }
+
+  return out;
 }
