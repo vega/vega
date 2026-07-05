@@ -32,7 +32,11 @@ tape('foreground maps onto resolved geometry colors', t => {
   const s = normalizePatternSpec({pattern: {shape: 'M0,0 L10,10', foreground: 'red'}});
   t.equal(s.fill, 'red', 'no declared colors: foreground becomes fill');
   const s2 = normalizePatternSpec({pattern: {name: 'diagonal-stripe', foreground: 'blue'}});
-  t.ok(s2.fill === 'blue' || s2.stroke === 'blue', 'foreground replaces declared color');
+  t.equal(s2.stroke, 'blue', 'foreground replaces declared stroke');
+  t.equal(s2.fill, undefined, 'undeclared fill stays undeclared');
+  const s3 = normalizePatternSpec({pattern: {name: 'squares', foreground: 'green'}});
+  t.equal(s3.fill, 'green', 'foreground replaces declared fill');
+  t.equal(s3.stroke, 'green', 'foreground replaces declared stroke too');
   t.end();
 });
 
@@ -62,10 +66,36 @@ tape('inline symbol, rule, and image variants', t => {
   t.end();
 });
 
+tape('image tileSize is validated; fill/stroke do not apply to images', t => {
+  const bad = normalizePatternSpec({pattern: {url: 'x.png', tileSize: {}}});
+  t.equal(bad.tileSize, undefined, 'invalid image tileSize dropped');
+  const bounds = normalizePatternSpec({pattern: {url: 'x.png', tileSize: 'bounds'}});
+  t.equal(bounds.tileSize, 'bounds', 'bounds keyword accepted');
+  const num = normalizePatternSpec({pattern: {url: 'x.png', tileSize: 16}});
+  t.equal(num.tileSize, 16, 'positive number accepted');
+  const colored = normalizePatternSpec({pattern: {url: 'x.png', fill: 'red', stroke: 'blue'}});
+  t.equal(colored.fill, undefined, 'fill not carried on image specs');
+  t.equal(colored.stroke, undefined, 'stroke not carried on image specs');
+  t.end();
+});
+
+tape('common property hardening', t => {
+  t.ok(normalizePatternSpec({pattern: {name: 'Crosshatch'}}), 'name resolution is case-insensitive');
+  t.equal(normalizePatternSpec({pattern: {name: 'crosshatch', repeat: 'both'}}).repeat, true, 'invalid repeat falls back to true');
+  t.equal(normalizePatternSpec({pattern: {name: 'crosshatch', scale: -1}}).scale, 1, 'non-positive scale falls back to 1');
+  t.end();
+});
+
 tape('invalid inputs return null; unknown name returns null', t => {
   t.equal(normalizePatternSpec({pattern: {}}), null, 'no discriminator');
   t.equal(normalizePatternSpec({pattern: {name: 'zzz-unknown'}}), null);
   t.equal(normalizePatternSpec(null), null);
+  t.equal(normalizePatternSpec({pattern: {name: ''}}), null, 'empty name is invalid, not inline');
+  t.equal(normalizePatternSpec({pattern: {name: 0}}), null, 'numeric zero name is invalid');
+  t.equal(normalizePatternSpec({pattern: {name: {}}}), null, 'object name is invalid');
+  t.equal(normalizePatternSpec({pattern: {name: 42}}), null, 'non-string name is invalid');
+  t.equal(normalizePatternSpec({pattern: {shape: ''}}), null, 'empty shape path is degenerate');
+  t.equal(normalizePatternSpec({pattern: {rule: {spacing: 0}}}), null, 'rule expanding to empty path is degenerate');
   t.end();
 });
 

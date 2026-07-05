@@ -41,6 +41,8 @@ export function normalizePatternSpec(input) {
   let merged = def;
 
   if (def.name != null) {
+    // a malformed name is invalid input, not an inline pattern
+    if (typeof def.name !== 'string' || !def.name) return null;
     const base = getPattern(def.name);
     if (!base) return null;
     const overrides = {...def};
@@ -49,6 +51,7 @@ export function normalizePatternSpec(input) {
     merged = {...base, ...overrides};
   }
 
+  // discriminator precedence: url/image wins over shape/rule when both are present
   const url = merged.url || merged.image;
   let shape;
   let isGenerated = false;
@@ -62,9 +65,8 @@ export function normalizePatternSpec(input) {
       isGenerated = true;
     } else if (typeof merged.shape === 'string') {
       shape = merged.shape;
-    } else {
-      return null; // no usable geometry
     }
+    if (!shape) return null; // missing or degenerate (empty) geometry
   }
 
   const repeat = REPEATS.indexOf(merged.repeat) < 0 ? true : merged.repeat;
@@ -77,19 +79,24 @@ export function normalizePatternSpec(input) {
     scale,
     background: merged.background,
     strokeWidth: merged.strokeWidth,
-    shapeRendering: merged.shapeRendering,
-    fill: merged.fill,
-    stroke: merged.stroke
+    shapeRendering: merged.shapeRendering
   };
 
   if (url) {
     out.url = url;
-    // tileSize is a display hint for images: a number, 'bounds', or
-    // left undefined to use the image's intrinsic size.
-    if (merged.tileSize != null) out.tileSize = merged.tileSize;
+    // tileSize is a display hint for images: 'bounds', a positive
+    // number, or left undefined to use the image's intrinsic size.
+    const ts = merged.tileSize;
+    if (ts === 'bounds') {
+      out.tileSize = ts;
+    } else if (+ts > 0) {
+      out.tileSize = +ts;
+    }
   } else {
     out.shape = shape;
     out.tileSize = tileSize;
+    out.fill = merged.fill;
+    out.stroke = merged.stroke;
     if (isGenerated) {
       // rule/lines geometry is stroked, not filled; default a visible
       // stroke when the pattern (or its overrides) declared no color.
@@ -102,10 +109,12 @@ export function normalizePatternSpec(input) {
     // fill nor a stroke is declared, foreground (or the '#000' default)
     // becomes the fill.
     const fg = merged.foreground;
+    const hadFill = out.fill != null;
+    const hadStroke = out.stroke != null;
     if (fg != null) {
-      if (out.stroke != null) out.stroke = fg;
-      if (out.fill != null || out.stroke == null) out.fill = fg;
-    } else if (out.fill == null && out.stroke == null) {
+      if (hadStroke) out.stroke = fg;
+      if (hadFill || !hadStroke) out.fill = fg;
+    } else if (!hadFill && !hadStroke) {
       out.fill = '#000';
     }
   }
@@ -121,9 +130,11 @@ export function normalizePatternSpec(input) {
  * @return {string} a stable string key.
  */
 export function patternKey(spec) {
-  return [
+  // JSON-serialize the slots so values containing delimiter characters
+  // cannot collide, and undefined (-> null) stays distinct from ''.
+  return JSON.stringify([
     spec.type, spec.tileSize, spec.shape, spec.url, spec.fill, spec.stroke,
     spec.strokeWidth, spec.background, spec.origin, spec.repeat, spec.scale,
     spec.shapeRendering, spec.fit
-  ].join('|');
+  ]);
 }
