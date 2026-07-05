@@ -7,14 +7,33 @@ import pathRender from '../../path/render.js';
 // Renderer-side pattern state, keyed by the user-facing pattern wrapper
 // object so nothing is ever written onto user specs. Each entry holds the
 // normalized (renderer-agnostic) spec plus a cache of rasterized tiles,
-// keyed by patternKey(spec), one CanvasPattern per (spec, context) pair.
+// keyed by patternKey(spec) + layout, one CanvasPattern per (spec, layout,
+// context) triple.
 const stateCache = new WeakMap();
+
+// Per-pattern tile cache bound. Layout-dependent tiles (mark-anchored
+// phases, swatch/'bounds' box sizes) mint one raster per distinct layout;
+// a continuously-resizing item would otherwise accumulate canvases without
+// limit. Eviction is oldest-inserted (FIFO), which is sufficient here: the
+// common steady state is a handful of layouts reused across renders.
+const MAX_TILES = 8;
+
+// Positioning strategy: ALL pattern positioning (mark-origin phase,
+// legend-swatch fit, 'bounds' image fit) is baked into the rasterized
+// tile itself rather than applied via CanvasPattern.setTransform. Node
+// has no global DOMMatrix (and node-canvas requires a real DOMMatrix
+// instance for pattern.setTransform), so a transform-based path would
+// silently no-op positioning on every server-side render. Baking keeps a
+// single code path with identical output in browser and Node. The cost:
+// anchored (no-repeat) tiles far from the canvas origin rasterize a
+// canvas spanning from the origin to the tile, and each distinct
+// phase/box layout is a separate raster — both bounded by MAX_TILES.
 
 /**
  * Resolve a fill/stroke pattern spec into a CanvasPattern, rasterizing
  * (and caching) the tile as needed. Returns null when the pattern cannot
- * yet be resolved (invalid spec, image still loading, unsupported canvas
- * capability), in which case callers should fall back to 'transparent'.
+ * yet be resolved (invalid spec, image still loading, rasterization
+ * failure), in which case callers should fall back to 'transparent'.
  *
  * @param {object} renderer - the active renderer, used to load pattern
  *   images via renderer.loadImage. May be null for symbol-only patterns.
@@ -35,18 +54,14 @@ export default function patternFill(renderer, context, item, value) {
   }
 
   const spec = resolveItemPattern(item, state.spec);
-  // 'bounds'-fit image tiles are rasterized to the requesting item's box
-  // size, so fold that size into the cache key. This is a deliberate
-  // simplification: distinct items sharing one pattern value and a
-  // 'bounds' tileSize each get their own correctly-sized tile, but the
-  // tile is not shared across differently-sized boxes.
-  const key = patternKey(spec) + boundsSuffix(spec, item);
+  const layout = tileLayout(spec, item);
+  const key = patternKey(spec) + layout.key;
 
   let entry = state.tiles.get(key);
   if (!entry || entry.context !== context) {
     let tile;
     try {
-      tile = rasterizeTile(renderer, spec, item, state);
+      tile = rasterizeTile(renderer, spec, state, layout);
     } catch (e) {
       return null; // malformed geometry, etc.
     }
@@ -54,75 +69,132 @@ export default function patternFill(renderer, context, item, value) {
 
     let canvasPattern;
     try {
-      canvasPattern = context.createPattern(tile.canvas, repeatMode(spec));
+      canvasPattern = context.createPattern(tile, layout.mode);
     } catch (e) {
       canvasPattern = null;
     }
     if (!canvasPattern) return null;
 
-    entry = {canvasPattern, context, width: tile.width, height: tile.height};
+    entry = {canvasPattern, context};
+    state.tiles.delete(key); // refresh insertion order when replacing
     state.tiles.set(key, entry);
+    if (state.tiles.size > MAX_TILES) {
+      state.tiles.delete(state.tiles.keys().next().value);
+    }
   }
 
-  applyTransform(entry.canvasPattern, spec, item, entry.width, entry.height);
   return entry.canvasPattern;
 }
 
-function boundsSuffix(spec, item) {
-  if (spec.tileSize !== 'bounds' || !item || !item.bounds) return '';
-  const w = Math.round(item.bounds.x2 - item.bounds.x1);
-  const h = Math.round(item.bounds.y2 - item.bounds.y1);
-  return `|${w}x${h}`;
+const mod = (v, m) => ((v % m) + m) % m;
+
+// Anchor rule for origin:'mark': the mark's own top-left corner,
+// min(x, x2) / min(y, y2), falling back to item bounds. This anchor rule
+// must match the SVG task's pattern x/y positioning for origin:'mark'.
+function markAnchor(item) {
+  const b = item && item.bounds;
+  const x = !item ? 0
+    : item.x != null && item.x2 != null ? Math.min(item.x, item.x2)
+    : item.x != null ? item.x
+    : item.x2 != null ? item.x2
+    : b ? b.x1 : 0;
+  const y = !item ? 0
+    : item.y != null && item.y2 != null ? Math.min(item.y, item.y2)
+    : item.y != null ? item.y
+    : item.y2 != null ? item.y2
+    : b ? b.y1 : 0;
+  return [x, y];
 }
 
-function repeatMode(spec) {
-  // Single contain-fit tiles (legend swatches, 'bounds'-fit images) are
-  // always drawn once, regardless of the spec's own repeat setting.
-  if (spec.fit === 'swatch' || spec.tileSize === 'bounds') return 'no-repeat';
-  const r = normalizeRepeat(spec.repeat);
-  return r.x && r.y ? 'repeat' : r.x ? 'repeat-x' : r.y ? 'repeat-y' : 'no-repeat';
-}
+/**
+ * Compute how a pattern tile is positioned for a given item:
+ * - 'box': a single contain-fit tile inside the item's bounds box
+ *   (legend swatches at pad 0.9, 'bounds'-fit images at pad 1),
+ *   always no-repeat.
+ * - 'tile': a repeating (or single view/mark-anchored) cell tile;
+ *   origin:'mark' contributes a phase, wrapped to the cell size along
+ *   repeating axes so items sharing a phase share a raster.
+ * The layout's key slice is folded into the tile cache key.
+ */
+function tileLayout(spec, item) {
+  const b = item && item.bounds;
 
-function rasterizeTile(renderer, spec, item, state) {
-  return spec.type === 'image'
-    ? rasterizeImageTile(renderer, spec, item, state)
-    : rasterizeSymbolTile(spec);
-}
-
-// -- symbol tiles --------------------------------------------------------
-
-// Tile cell size rule: a symbol tile is rasterized at
-// tileSize * scale pixels (scale is baked into the raster for crisp
-// output at high scale factors, rather than applied via pattern
-// transform). The SVG task's pattern element must use the same rule
-// (tile cell size = tileSize * scale) so canvas and SVG output match.
-function rasterizeSymbolTile(spec) {
-  const s = spec.scale || 1;
-  const cell = Math.max(1, Math.round(spec.tileSize * s));
-  const tile = canvas(cell, cell);
-  const tctx = tile.getContext('2d');
-
-  if (spec.background && spec.background !== 'transparent') {
-    tctx.fillStyle = spec.background;
-    tctx.fillRect(0, 0, cell, cell);
+  if ((spec.fit === 'swatch' || spec.tileSize === 'bounds') && b) {
+    const pad = spec.fit === 'swatch' ? 0.9 : 1;
+    const w = Math.max(1, b.x2 - b.x1);
+    const h = Math.max(1, b.y2 - b.y1);
+    return {
+      kind: 'box', mode: 'no-repeat', pad,
+      x: b.x1, y: b.y1, w, h,
+      key: `|box:${Math.round(b.x1)},${Math.round(b.y1)},${Math.round(w)}x${Math.round(h)}:${pad}`
+    };
   }
 
-  const fill = spec.fill;
-  const stroke = spec.stroke;
-  const strokeWidth = spec.strokeWidth != null ? spec.strokeWidth : (stroke ? 1 : 0);
+  const r = normalizeRepeat(spec.repeat);
+  const mode = r.x && r.y ? 'repeat' : r.x ? 'repeat-x' : r.y ? 'repeat-y' : 'no-repeat';
+  const [mx, my] = spec.origin === 'mark' ? markAnchor(item) : [0, 0];
 
+  // Symbol tiles are square with a known cell size, so the anchor can be
+  // wrapped to a phase up front and items sharing a phase share a raster.
+  // Image cell sizes may depend on the loaded image's aspect ratio, so
+  // their anchor is wrapped at raster time and the raw anchor keys the
+  // cache instead (more cache entries, still correct).
+  const cell = spec.type === 'symbol'
+    ? Math.max(1, Math.round(spec.tileSize * (spec.scale || 1)))
+    : 0;
+  const x = r.x && cell ? mod(mx, cell) : mx;
+  const y = r.y && cell ? mod(my, cell) : my;
+
+  return {
+    kind: 'tile', mode, repX: r.x, repY: r.y, x, y,
+    key: `|tile:${mode}:${Math.round(x)},${Math.round(y)}`
+  };
+}
+
+function rasterizeTile(renderer, spec, state, layout) {
+  return spec.type === 'image'
+    ? rasterizeImageTile(renderer, spec, state, layout)
+    : rasterizeSymbolTile(spec, layout);
+}
+
+function fillBackground(tctx, spec, x, y, w, h) {
+  if (spec.background && spec.background !== 'transparent') {
+    tctx.fillStyle = spec.background;
+    tctx.fillRect(x, y, w, h);
+  }
+}
+
+// Clip drawing to the tile cell rect. Pattern geometry may intentionally
+// bleed past the cell (e.g. generated line patterns bleed 1 unit to stay
+// seamless); on a cell-sized canvas the canvas edge clips that bleed, but
+// box/anchored rasters are larger than the cell, so clip explicitly.
+function clipCell(tctx, x, y, w, h) {
+  tctx.beginPath();
+  tctx.rect(x, y, w, h);
+  tctx.clip();
+}
+
+// -- symbol tiles ------------------------------------------------------
+
+// Draw the spec's shape into a tile context at the given offset and
+// scale, via Path2D when available, else vega-scenegraph's own SVG path
+// parser/renderer (node-canvas and other environments lack Path2D).
+function drawShape(tctx, spec, ox, oy, scale) {
   tctx.save();
-  tctx.scale(s, s);
+  tctx.translate(ox, oy);
+  tctx.scale(scale, scale);
 
   let path = null;
   if (typeof Path2D !== 'undefined') {
     try { path = new Path2D(spec.shape); } catch (e) { path = null; }
   }
   if (!path) {
-    // node-canvas (and other environments without Path2D) fall back to
-    // vega-scenegraph's own SVG path parser/renderer.
     pathRender(tctx, pathParse(spec.shape));
   }
+
+  const fill = spec.fill;
+  const stroke = spec.stroke;
+  const strokeWidth = spec.strokeWidth != null ? spec.strokeWidth : (stroke ? 1 : 0);
 
   if (fill && fill !== 'none') {
     tctx.fillStyle = fill;
@@ -135,10 +207,63 @@ function rasterizeSymbolTile(spec) {
   }
 
   tctx.restore();
-  return {canvas: tile, width: cell, height: cell};
 }
 
-// -- image tiles -----------------------------------------------------------
+// Tile cell size rule: a symbol tile cell is tileSize * scale pixels
+// (scale is baked into the raster for crisp output at high scale factors,
+// rather than applied via pattern transform). The SVG task's pattern
+// element must use the same rule (tile cell size = tileSize * scale) so
+// canvas and SVG output match.
+function rasterizeSymbolTile(spec, layout) {
+  const s = spec.scale || 1;
+  const cell = Math.max(1, Math.round(spec.tileSize * s));
+
+  if (layout.kind === 'box') {
+    // single tile contain-fit into the item's bounds box, with the box
+    // anchor baked into the raster (pattern space is canvas space, so the
+    // raster spans from the canvas origin to the fitted tile).
+    const rect = computeContainRect(layout.w, layout.h, cell, cell, layout.pad);
+    const x0 = layout.x + rect.x, y0 = layout.y + rect.y;
+    const tile = canvas(
+      Math.max(1, Math.ceil(x0 + rect.width)),
+      Math.max(1, Math.ceil(y0 + rect.height))
+    );
+    const tctx = tile.getContext('2d');
+    fillBackground(tctx, spec, x0, y0, rect.width, rect.height);
+    tctx.save();
+    clipCell(tctx, x0, y0, rect.width, rect.height);
+    drawShape(tctx, spec, x0, y0, s * (rect.width / cell));
+    tctx.restore();
+    return tile;
+  }
+
+  // cell tile; along repeating axes a mark-origin anchor becomes a phase
+  // shift of the tile content, drawn with a wrapped extra copy so the
+  // tile stays seamless; along non-repeating axes the anchor is baked by
+  // extending the raster from the canvas origin to the tile.
+  const W = layout.repX ? cell : Math.max(1, Math.ceil(layout.x + cell));
+  const H = layout.repY ? cell : Math.max(1, Math.ceil(layout.y + cell));
+  const ox = layout.repX ? mod(layout.x, cell) : layout.x;
+  const oy = layout.repY ? mod(layout.y, cell) : layout.y;
+
+  const tile = canvas(W, H);
+  const tctx = tile.getContext('2d');
+  fillBackground(tctx, spec, layout.repX ? 0 : ox, layout.repY ? 0 : oy, cell, cell);
+  tctx.save();
+  clipCell(tctx, layout.repX ? 0 : ox, layout.repY ? 0 : oy, cell, cell);
+
+  const xs = layout.repX && ox ? [ox, ox - cell] : [ox];
+  const ys = layout.repY && oy ? [oy, oy - cell] : [oy];
+  for (const x of xs) {
+    for (const y of ys) {
+      drawShape(tctx, spec, x, y, s);
+    }
+  }
+  tctx.restore();
+  return tile;
+}
+
+// -- image tiles ---------------------------------------------------------
 
 function getPatternImage(renderer, spec, state) {
   const cached = state.image;
@@ -160,91 +285,54 @@ function getPatternImage(renderer, spec, state) {
   return null;
 }
 
-function rasterizeImageTile(renderer, spec, item, state) {
+function rasterizeImageTile(renderer, spec, state, layout) {
   if (!spec.url) return null;
   const img = getPatternImage(renderer, spec, state);
-  if (!img || (img.complete === false)) return null;
+  if (!img || img.complete === false) return null;
 
   const naturalW = img.naturalWidth || img.width || 1;
   const naturalH = img.naturalHeight || img.height || 1;
-  const aspect = naturalW / naturalH || 1;
 
-  let w, h, dx = 0, dy = 0, dw, dh;
-
-  if (spec.tileSize === 'bounds' && item && item.bounds) {
-    // Contain-fit the image into the requesting item's box, once,
-    // no-repeat. Full objectBoundingBox-style fitting is SVG/swatch
-    // territory (see resolveItemPattern); this canvas path keeps things
-    // simple: one raster per (spec, item box size).
-    w = Math.max(1, Math.round(item.bounds.x2 - item.bounds.x1));
-    h = Math.max(1, Math.round(item.bounds.y2 - item.bounds.y1));
-    const rect = computeContainRect(w, h, naturalW, naturalH, 1);
-    dx = rect.x; dy = rect.y; dw = rect.width; dh = rect.height;
-  } else if (typeof spec.tileSize === 'number') {
-    // A single tileSize number implies a tile that keeps the image's own
-    // aspect ratio (width = tileSize, height = tileSize / aspect), so
-    // drawing "stretched" to fill that tile does not distort the image.
-    w = Math.max(1, Math.round(spec.tileSize));
-    h = Math.max(1, Math.round(spec.tileSize / aspect));
-    dw = w; dh = h;
-  } else {
-    // undefined tileSize -> intrinsic image size
-    w = Math.max(1, Math.round(naturalW));
-    h = Math.max(1, Math.round(naturalH));
-    dw = w; dh = h;
+  if (layout.kind === 'box') {
+    // contain-fit into the item's bounds box (legend swatch at pad 0.9,
+    // 'bounds' tileSize at pad 1), anchor baked into the raster.
+    const rect = computeContainRect(layout.w, layout.h, naturalW, naturalH, layout.pad);
+    const x0 = layout.x + rect.x, y0 = layout.y + rect.y;
+    const tile = canvas(
+      Math.max(1, Math.ceil(x0 + rect.width)),
+      Math.max(1, Math.ceil(y0 + rect.height))
+    );
+    const tctx = tile.getContext('2d');
+    fillBackground(tctx, spec, x0, y0, rect.width, rect.height);
+    tctx.drawImage(img, x0, y0, rect.width, rect.height);
+    return tile;
   }
 
-  const tile = canvas(w, h);
+  // A single tileSize number implies a tile that keeps the image's own
+  // aspect ratio (width = tileSize, height = tileSize / aspect); an
+  // undefined tileSize uses the image's intrinsic size.
+  const w = typeof spec.tileSize === 'number'
+    ? Math.max(1, Math.round(spec.tileSize))
+    : Math.max(1, Math.round(naturalW));
+  const h = typeof spec.tileSize === 'number'
+    ? Math.max(1, Math.round(spec.tileSize * naturalH / naturalW))
+    : Math.max(1, Math.round(naturalH));
+
+  const W = layout.repX ? w : Math.max(1, Math.ceil(layout.x + w));
+  const H = layout.repY ? h : Math.max(1, Math.ceil(layout.y + h));
+  const ox = layout.repX ? mod(layout.x, w) : layout.x;
+  const oy = layout.repY ? mod(layout.y, h) : layout.y;
+
+  const tile = canvas(W, H);
   const tctx = tile.getContext('2d');
-  if (spec.background && spec.background !== 'transparent') {
-    tctx.fillStyle = spec.background;
-    tctx.fillRect(0, 0, w, h);
+  fillBackground(tctx, spec, layout.repX ? 0 : ox, layout.repY ? 0 : oy, w, h);
+
+  const xs = layout.repX && ox ? [ox, ox - w] : [ox];
+  const ys = layout.repY && oy ? [oy, oy - h] : [oy];
+  for (const x of xs) {
+    for (const y of ys) {
+      tctx.drawImage(img, x, y, w, h);
+    }
   }
-  tctx.drawImage(img, dx, dy, dw, dh);
-  return {canvas: tile, width: w, height: h};
-}
-
-// -- pattern transform -----------------------------------------------------
-
-function applyTransform(canvasPattern, spec, item, cellWidth, cellHeight) {
-  // Capability guard: some canvas environments (older node-canvas builds,
-  // certain headless setups) expose createPattern without a working
-  // setTransform/DOMMatrix pair. Rather than throw, skip transforming the
-  // pattern: origin:'view' (the default) is an identity transform anyway,
-  // so only mark-anchored, swatch-fit, and bounds-fit patterns lose their
-  // positioning in that environment.
-  if (!canvasPattern || !canvasPattern.setTransform || typeof DOMMatrix === 'undefined') return;
-
-  const m = new DOMMatrix();
-
-  if (spec.fit === 'swatch' && item && item.bounds) {
-    // Contain-fit the single rasterized tile into the legend swatch box.
-    const boxW = item.bounds.x2 - item.bounds.x1;
-    const boxH = item.bounds.y2 - item.bounds.y1;
-    const rect = computeContainRect(boxW, boxH, cellWidth, cellHeight, 0.9);
-    const sx = cellWidth ? rect.width / cellWidth : 1;
-    const sy = cellHeight ? rect.height / cellHeight : 1;
-    m.translateSelf(item.bounds.x1 + rect.x, item.bounds.y1 + rect.y);
-    m.scaleSelf(sx, sy);
-  } else if (spec.tileSize === 'bounds' && item && item.bounds) {
-    // The tile was rasterized to exactly fill item.bounds; anchor its
-    // origin there.
-    m.translateSelf(item.bounds.x1, item.bounds.y1);
-  } else if (spec.origin === 'mark' && item) {
-    // Anchor the (repeating) pattern's phase to the mark's own top-left
-    // corner rather than the view. This anchor rule must match the SVG
-    // task's pattern x/y positioning for origin:'mark'.
-    const mx = item.x != null && item.x2 != null ? Math.min(item.x, item.x2)
-      : item.x != null ? item.x
-      : item.x2 != null ? item.x2
-      : item.bounds ? item.bounds.x1 : 0;
-    const my = item.y != null && item.y2 != null ? Math.min(item.y, item.y2)
-      : item.y != null ? item.y
-      : item.y2 != null ? item.y2
-      : item.bounds ? item.bounds.y1 : 0;
-    m.translateSelf(mx, my);
-  }
-  // origin === 'view' (the default): identity, no translation.
-
-  canvasPattern.setTransform(m);
+  return tile;
 }
