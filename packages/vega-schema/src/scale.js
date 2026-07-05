@@ -39,13 +39,16 @@ export const sortOrderEnum = [
 
 const rangeConstant = enums(rangeConstantEnum);
 
+// Allow range arrays to include primitive values, signals, numeric tuples,
+// or pattern fill definitions (unwrapped, as they appear in encoding values).
 const arrayAllTypes = array(oneOf(
   nullType,
   booleanType,
   stringType,
   numberType,
   signalRef,
-  array(numberOrSignal)
+  array(numberOrSignal),
+  def('patternWrapper')
 ));
 
 const scheme = object({

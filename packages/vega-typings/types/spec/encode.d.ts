@@ -195,9 +195,65 @@ export interface RadialGradient extends BaseGradient {
   r2?: number;
 }
 
+// Pattern fill definitions. Common style properties shared by all variants;
+// geometry-defining properties (shape/url/rule/tileSize) differ per variant
+// and are locked (not overridable) once resolved from a named pattern.
+export interface PatternDefinitionBase {
+  foreground?: string;
+  background?: string;
+  strokeWidth?: number;
+  origin?: 'view' | 'mark';
+  scale?: number;
+  shapeRendering?: string;
+}
+
+export interface PatternLinesShape {
+  type: 'lines';
+  angle?: number | number[];
+  spacing?: number;
+  bleed?: number;
+  phase?: number;
+}
+
+export interface PatternNamed extends PatternDefinitionBase {
+  name: string;
+}
+
+export interface PatternSymbol extends PatternDefinitionBase {
+  shape: string | PatternLinesShape;
+  tileSize?: number;
+  size?: number;
+}
+
+export interface PatternRule extends PatternDefinitionBase {
+  rule: {
+    /** Angle in degrees, or array of angles for multi-directional lines (e.g. crosshatch). */
+    angle?: number | number[];
+    spacing?: number;
+    bleed?: number;
+    phase?: number;
+  };
+  tileSize?: number;
+}
+
+export interface PatternImage extends PatternDefinitionBase {
+  url: string;
+  tileSize?: number | 'bounds';
+  /** Repeat behavior limited to image patterns. */
+  repeat?: boolean | 'x' | 'y';
+}
+
+export type PatternDefinition = PatternNamed | PatternSymbol | PatternRule | PatternImage;
+
+// Wrapper used in encoding values: { value: { pattern: PatternDefinition } }
+export interface Pattern {
+  pattern: PatternDefinition;
+}
+
 export type ColorValueRef =
   | ScaledValueRef<Color>
   | { value: LinearGradient | RadialGradient }
+  | { value: Pattern }
   | {
       gradient: Field;
       start?: number[];

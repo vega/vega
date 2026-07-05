@@ -150,10 +150,73 @@ const radialGradient = object({
   _stops_: def('gradientStops')
 });
 
+// Pattern fill definitions. Common style properties shared by all variants;
+// geometry-defining properties (shape/url/rule/tileSize) differ per variant
+// and are locked (not overridable) once resolved from a named pattern.
+const patternDefinitionBase = {
+  foreground: stringType,
+  background: stringType,
+  strokeWidth: numberType,
+  origin: enums(['view', 'mark']),
+  scale: numberType,
+  shapeRendering: stringType
+};
+
+const patternLinesShape = object({
+  _type_: enums(['lines']),
+  angle: oneOf(numberType, array(numberType)),
+  spacing: numberType,
+  bleed: numberType,
+  phase: numberType
+});
+
+const patternNamed = object({
+  _name_: stringType,
+  ...patternDefinitionBase
+});
+
+const patternSymbol = object({
+  _shape_: oneOf(stringType, def('patternLinesShape')),
+  tileSize: numberType,
+  size: numberType,
+  ...patternDefinitionBase
+});
+
+const patternRule = object({
+  _rule_: object({
+    angle: oneOf(numberType, array(numberType)),
+    spacing: numberType,
+    bleed: numberType,
+    phase: numberType
+  }),
+  tileSize: numberType,
+  ...patternDefinitionBase
+});
+
+const patternImage = object({
+  _url_: stringType,
+  tileSize: oneOf(numberType, enums(['bounds'])),
+  repeat: oneOf(booleanType, enums(['x', 'y'])),
+  ...patternDefinitionBase
+});
+
+const patternSpec = oneOf(
+  def('patternNamed'),
+  def('patternSymbol'),
+  def('patternRule'),
+  def('patternImage')
+);
+
+// Wrapper used in encoding values: {value: {pattern: <patternSpec>}}
+const patternWrapper = object({
+  _pattern_: def('patternSpec')
+});
+
 const baseColorValue = oneOf(
   baseValueSchema('string', true),
   object({_value_: def('linearGradient')}),
   object({_value_: def('radialGradient')}),
+  object({_value_: def('patternWrapper')}),
   object({
     _gradient_: scaleRef,
     start: array(numberType, {minItems: 2, maxItems: 2}),
@@ -303,5 +366,12 @@ export default {
   colorValue,
   gradientStops,
   linearGradient,
-  radialGradient
+  radialGradient,
+  patternLinesShape,
+  patternNamed,
+  patternSymbol,
+  patternRule,
+  patternImage,
+  patternSpec,
+  patternWrapper
 };

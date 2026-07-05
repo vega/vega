@@ -1,0 +1,500 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Pattern fill consistency across mark types and small charts.",
+  "width": 900,
+  "height": 550,
+  "padding": 5,
+  "signals": [
+    {
+      "name": "patternNames",
+      "value": [
+        "diagonal-stripe",
+        "horizontal-stripe",
+        "vertical-stripe",
+        "caps",
+        "circles",
+        "crosses",
+        "crosshatch",
+        "grid",
+        "houndstooth",
+        "nylon",
+        "squares",
+        "waves",
+        "woven"
+      ]
+    },
+    {
+      "name": "patternName",
+      "value": "diagonal-stripe",
+      "bind": {
+        "input": "select",
+        "name": "pattern",
+        "options": [
+          "diagonal-stripe",
+          "horizontal-stripe",
+          "vertical-stripe",
+          "caps",
+          "circles",
+          "crosses",
+          "crosshatch",
+          "grid",
+          "houndstooth",
+          "nylon",
+          "squares",
+          "waves",
+          "woven"
+        ]
+      }
+    },
+    {
+      "name": "patternOrigin",
+      "value": "view",
+      "bind": {
+        "input": "select",
+        "name": "origin",
+        "options": ["view", "mark"]
+      }
+    },
+    {
+      "name": "pat",
+      "update": "{pattern:{name:patternName, origin: patternOrigin}}"
+    }
+  ],
+  "data": [
+    { "name": "single", "values": [1] },
+    {
+      "name": "barData",
+      "values": [
+        { "c": "A", "v": 10 },
+        { "c": "B", "v": 20 },
+        { "c": "C", "v": 30 }
+      ]
+    },
+    {
+      "name": "areaData",
+      "values": [
+        { "t": 0, "v": 5 },
+        { "t": 1, "v": 10 },
+        { "t": 2, "v": 7 },
+        { "t": 3, "v": 15 },
+        { "t": 4, "v": 12 }
+      ]
+    },
+    {
+      "name": "trailData",
+      "values": [
+        { "t": 0, "v": 2 },
+        { "t": 1, "v": 4 },
+        { "t": 2, "v": 6 },
+        { "t": 3, "v": 8 },
+        { "t": 4, "v": 10 }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "barX",
+      "type": "band",
+      "domain": { "data": "barData", "field": "c" },
+      "range": [0, 260],
+      "padding": 0.25
+    },
+    {
+      "name": "barY",
+      "type": "linear",
+      "domain": { "data": "barData", "field": "v" },
+      "range": [120, 0],
+      "nice": true
+    },
+    {
+      "name": "areaX",
+      "type": "linear",
+      "domain": { "data": "areaData", "field": "t" },
+      "range": [0, 260]
+    },
+    {
+      "name": "areaY",
+      "type": "linear",
+      "domain": { "data": "areaData", "field": "v" },
+      "range": [120, 0],
+      "nice": true
+    },
+    {
+      "name": "trailX",
+      "type": "linear",
+      "domain": { "data": "trailData", "field": "t" },
+      "range": [0, 260]
+    },
+    {
+      "name": "trailY",
+      "type": "linear",
+      "domain": { "data": "trailData", "field": "v" },
+      "range": [120, 0],
+      "nice": true
+    },
+    {
+      "name": "trailSize",
+      "type": "linear",
+      "domain": { "data": "trailData", "field": "v" },
+      "range": [40, 120]
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "encode": {
+        "enter": {
+          "x": { "value": 20 },
+          "y": { "value": 10 },
+          "width": { "value": 860 },
+          "height": { "value": 180 }
+        }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 10 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "symbol",
+          "encode": {
+            "enter": {
+              "x": { "value": 140 },
+              "y": { "value": 40 },
+              "size": { "value": 3000 },
+              "shape": { "value": "circle" },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "arc",
+          "encode": {
+            "enter": {
+              "x": { "value": 250 },
+              "y": { "value": 40 },
+              "outerRadius": { "value": 35 },
+              "startAngle": { "value": 0 },
+              "endAngle": { "value": 4.5 },
+              "padAngle": { "value": 0 },
+              "cornerRadius": { "value": 0 },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 450 },
+              "y": { "value": 40 },
+              "align": { "value": "center" },
+              "baseline": { "value": "middle" },
+              "fontSize": { "value": 80 },
+              "fontWeight": { "value": 900 },
+              "text": { "value": "Vega" },
+              "stroke": { "value": "#333" },
+              "strokeWidth": { "value": 1 }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "path",
+          "encode": {
+            "enter": {
+              "x": { "value": 620 },
+              "y": { "value": 10 },
+              "path": {
+                "value": "M30,0 L37,18 L57,18 L41,29 L48,46 L30,35 L12,46 L19,29 L3,18 L23,18 Z"
+              },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 40 },
+              "y": { "value": 105 },
+              "text": { "value": "rect" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 140 },
+              "y": { "value": 105 },
+              "text": { "value": "symbol" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 250 },
+              "y": { "value": 105 },
+              "text": { "value": "arc" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 450 },
+              "y": { "value": 105 },
+              "text": { "value": "text" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 650 },
+              "y": { "value": 105 },
+              "text": { "value": "path" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "encode": {
+        "enter": {
+          "x": { "value": 20 },
+          "y": { "value": 240 },
+          "width": { "value": 860 },
+          "height": { "value": 200 }
+        }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "from": { "data": "barData" },
+          "encode": {
+            "enter": {
+              "x": { "scale": "barX", "field": "c" },
+              "y": { "scale": "barY", "field": "v" },
+              "y2": { "scale": "barY", "value": 0 },
+              "width": { "scale": "barX", "band": 1 },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "area",
+          "from": { "data": "areaData" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "300 + scale('areaX', datum.t)" },
+              "y": { "scale": "areaY", "field": "v" },
+              "y2": { "scale": "areaY", "value": 0 },
+              "interpolate": { "value": "monotone" },
+              "stroke": { "value": "#333" }
+            },
+            "update": { "fill": { "signal": "pat" } }
+          }
+        },
+        {
+          "type": "trail",
+          "from": { "data": "trailData" },
+          "encode": {
+            "enter": {
+              "x": { "signal": "600 + scale('trailX', datum.t)" },
+              "y": { "scale": "trailY", "field": "v" }
+            },
+            "update": {
+              "size": { "scale": "trailSize", "field": "v" },
+              "fill": { "signal": "pat" }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 130 },
+              "y": { "value": 170 },
+              "text": { "value": "bar" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 430 },
+              "y": { "value": 170 },
+              "text": { "value": "area" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        },
+        {
+          "type": "text",
+          "encode": {
+            "enter": {
+              "x": { "value": 730 },
+              "y": { "value": 170 },
+              "text": { "value": "trail" },
+              "align": { "value": "center" },
+              "fontSize": { "value": 12 }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "encode": {
+        "enter": {
+          "x": { "value": 20 },
+          "y": { "value": 460 },
+          "width": { "value": 860 },
+          "height": { "value": 80 }
+        }
+      },
+      "marks": [
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 10 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" },
+              "fill": {
+                "value": {
+                  "pattern": {
+                    "shape": "M2,2 L8,8 M8,2 L2,8",
+                    "tileSize": 10,
+                    "foreground": "teal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 90 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" },
+              "fill": {
+                "value": {
+                  "pattern": {
+                    "rule": { "angle": [0, 90], "spacing": 6 },
+                    "tileSize": 12,
+                    "foreground": "purple"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 170 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" },
+              "fill": {
+                "value": {
+                  "pattern": {
+                    "shape": { "type": "lines", "angle": [30, 150], "spacing": 5 },
+                    "tileSize": 14,
+                    "foreground": "darkorange"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 250 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" },
+              "fill": {
+                "value": {
+                  "pattern": {
+                    "name": "circles",
+                    "foreground": "crimson",
+                    "background": "#eee",
+                    "scale": 1.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "encode": {
+            "enter": {
+              "x": { "value": 330 },
+              "y": { "value": 10 },
+              "width": { "value": 60 },
+              "height": { "value": 60 },
+              "stroke": { "value": "#333" },
+              "fill": {
+                "value": {
+                  "pattern": {
+                    "url": "https://vega.github.io/images/favicon.png",
+                    "tileSize": 16,
+                    "repeat": "x"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
