@@ -124,6 +124,6 @@ export function patternKey(spec) {
   return [
     spec.type, spec.tileSize, spec.shape, spec.url, spec.fill, spec.stroke,
     spec.strokeWidth, spec.background, spec.origin, spec.repeat, spec.scale,
-    spec.shapeRendering
+    spec.shapeRendering, spec.fit
   ].join('|');
 }

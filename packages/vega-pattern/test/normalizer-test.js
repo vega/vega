@@ -81,5 +81,6 @@ tape('patternKey is stable and distinguishes specs', t => {
   const c = normalizePatternSpec({pattern: {name: 'circles'}});
   t.equal(patternKey(a), patternKey(b), 'equal specs share a key');
   t.notEqual(patternKey(a), patternKey(c), 'different specs differ');
+  t.notEqual(patternKey(a), patternKey({...a, fit: 'swatch'}), 'fit differentiates keys');
   t.end();
 });
