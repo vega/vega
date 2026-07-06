@@ -285,6 +285,34 @@ tape('parity/text: SVG shares one def across positions; canvas anchors each item
   t.equal(pixelDiffCount(combo, soloB, W, 95, 150, 100, 135), 0,
     'PARITY: item 2 renders identically whether drawn alone or alongside item 1 (per-item anchor, no shared grid)');
 
+  // TRANSLATION-EQUIVARIANCE (discrimination guard): dy = 3 is NOT a
+  // multiple of horizontal-stripe's 10px ink period (nor its 20px cell),
+  // so a view-anchored pattern -- whose stripes stay put while the glyphs
+  // move -- cannot coincidentally pass this. The item rendered at y+3
+  // must equal the y render shifted down by 3, glyphs AND stripes as one
+  // unit (the same technique as pattern-text-canvas-test.js, restated
+  // here as the canvas half of SVG's element-transform anchoring).
+  const at = y => draw([{
+    x: 10, y, text: 'MMM', font: 'Arial', fontSize: 40, fontWeight: 'bold',
+    align: 'left', baseline: 'alphabetic', fill: wrapper,
+    mark: {marktype: 'text', role: 'mark'}
+  }]);
+  const base = at(60);
+  const moved = at(63);
+  t.ok(anyFg(base, W, 0, W, 0, H), 'equivariance base render produced ink');
+
+  let structural = 0;
+  for (let y = 3; y < H; ++y) {
+    for (let x = 0; x < W; ++x) {
+      for (let k = 0; k < 4; ++k) {
+        const diff = Math.abs(moved[(y * W + x) * 4 + k] - base[((y - 3) * W + x) * 4 + k]);
+        if (diff > 32) ++structural;
+      }
+    }
+  }
+  t.equal(structural, 0,
+    'PARITY: glyphs and pattern shift together as one unit (mark-anchored, matching SVG element transforms)');
+
   t.end();
 });
 
@@ -310,14 +338,21 @@ function stripeStroke() {
 }
 
 tape('parity/rule: vertical-stripe is mark-anchored on both renderers', t => {
-  const item = {x: 10, y: 30, x2: 70, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+  // ANCHOR CHOICE (discrimination guard): x1 = 13 is deliberately NOT
+  // congruent to 0 mod the ink period (10). Mark-anchored ink lands at
+  // x = 13, 23, 33, ...; a view-anchored field would instead land at
+  // x = 10, 20, 30, .... The assertions below pin the ABSOLUTE phase to
+  // the anchor -- both ink present at 13/23/33 and pure background at
+  // the view-grid columns 20/30/40 -- so a regression to view-anchoring
+  // (e.g. dropping rule.js's pattern translate) fails on both counts.
+  const item = {x: 13, y: 30, x2: 73, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
   const svg = renderSVG(ruleScene([item]), 90, 60);
   const {width} = patternAttrs(svg);
 
   t.equal(width, RULE_CELL, 'def cell equals the registry tileSize (20)');
   // CONTRACT: the <line> carries its own transform (mark anchor lives on
   // the referencing element, exactly as for text) and references the def.
-  t.ok(/<line[^>]*transform="translate\(10,30\)"[^>]*stroke="url\(#pattern_0\)"/.test(svg),
+  t.ok(/<line[^>]*transform="translate\(13,30\)"[^>]*stroke="url\(#pattern_0\)"/.test(svg),
     'line element is anchored via its own transform and references the def');
 
   const ctx = renderCanvas(ruleScene([item]), 90, 60);
@@ -325,15 +360,20 @@ tape('parity/rule: vertical-stripe is mark-anchored on both renderers', t => {
   const y0 = 30 - 4, y1 = 30 + 4; // strokeWidth 8, centered on y=30
 
   // PARITY: canvas mark-anchors the same stroke via a context.translate to
-  // the rule's start point (x1=10) before painting -- so ink phase repeats
+  // the rule's start point (x1=13) before painting -- so ink phase repeats
   // every RULE_INK_PERIOD starting at x1, matching the def's own geometry.
   for (const k of [0, 1, 2]) {
-    const x = 10 + k * RULE_INK_PERIOD;
+    const x = 13 + k * RULE_INK_PERIOD;
     t.ok(anyFg(d, 90, x - 1, x + 2, y0, y1), `ink at anchor-relative phase x=${x} (period ${RULE_INK_PERIOD})`);
   }
   for (const k of [0, 1]) {
-    const x = 10 + k * RULE_INK_PERIOD + RULE_INK_PERIOD / 2;
+    const x = 13 + k * RULE_INK_PERIOD + RULE_INK_PERIOD / 2;
     t.ok(allBackground(d, 90, x, y0, y1), `no ink at the mid-period gap x=${x}`);
+  }
+  // discriminator: the columns a VIEW-anchored field would ink (multiples
+  // of the period) must be pure background under mark-anchoring.
+  for (const x of [20, 30, 40]) {
+    t.ok(allBackground(d, 90, x, y0, y1), `no ink at view-grid column x=${x} (view-anchoring would ink it)`);
   }
 
   t.end();
@@ -346,49 +386,75 @@ tape('parity/rule: vertical-stripe is mark-anchored on both renderers', t => {
 tape('parity/rule-seam: two mark-anchored rules meet with no gap, and align when in-phase', t => {
   const y0 = 30 - 4, y1 = 30 + 4; // strokeWidth 8 band
 
-  // -- misaligned case: anchors 5 and 30 differ by 25 = 2*period + 5, so
-  // the two segments are deliberately OUT of phase at the joint (each is
-  // independently mark-anchored -- that is the design, not a bug).
+  // -- misaligned case: anchors 13 and 41 differ by 28, NOT a multiple of
+  // the ink period (10), so the two segments are deliberately OUT of phase
+  // at the joint (each is independently mark-anchored -- that is the
+  // design, not a bug). Both anchors are themselves non-multiples of the
+  // period (discrimination guard): the absolute-phase assertions below
+  // cannot be satisfied by a view-anchored field, whose ink would land on
+  // the 10/20/30/... grid instead.
   {
-    const segA = {x: 5, y: 30, x2: 30, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
-    const segB = {x: 30, y: 30, x2: 55, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segA = {x: 13, y: 30, x2: 41, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segB = {x: 41, y: 30, x2: 69, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
     const ctxCombo = renderCanvas(ruleScene([segA, segB]), 90, 60);
     const combo = ctxCombo.getImageData(0, 0, 90, 60).data;
 
-    // (a) no gap: the joint column is not entirely background.
-    t.ok(anyFg(combo, 90, 30, 30 + 1, y0, y1), 'no all-background column at the seam joint (x=30)');
+    // (a) no gap: the joint region is not entirely background (segment B's
+    // own anchor stripe starts exactly at the joint).
+    t.ok(anyFg(combo, 90, 40, 43, y0, y1), 'no all-background band at the seam joint (x=41)');
 
-    // (b) each side's phase matches ITS OWN anchor: comparing the combined
-    // render against each segment rendered alone (same coordinates) must
-    // be pixel-identical away from the joint -- proving the two segments
-    // do not interfere with each other's mark-anchored phase.
+    // (b) each side's ABSOLUTE phase is pinned to its own anchor.
+    // Segment A (anchor 13): ink at 13/23/33; background at its mid-period
+    // gaps 18/28 AND at the view-grid columns 20/30, which a view-anchored
+    // field would ink -- so this pins mark-anchoring, not merely
+    // self-consistency between two renders of the same implementation.
+    for (const x of [13, 23, 33]) {
+      t.ok(anyFg(combo, 90, x - 1, x + 2, y0, y1), `segment A ink at anchor-relative phase x=${x}`);
+    }
+    for (const x of [18, 28, 20, 30]) {
+      t.ok(allBackground(combo, 90, x, y0, y1), `segment A background at x=${x} (mid-gap / view-grid column)`);
+    }
+    // Segment B (anchor 41): ink at 41/51/61; background at its own
+    // mid-period gaps 46/56 -- a different phase than segment A's grid,
+    // proving the phase change at the seam is anchored per segment.
+    for (const x of [41, 51, 61]) {
+      t.ok(anyFg(combo, 90, x - 1, x + 2, y0, y1), `segment B ink at anchor-relative phase x=${x}`);
+    }
+    for (const x of [46, 56]) {
+      t.ok(allBackground(combo, 90, x, y0, y1), `segment B background at its mid-period gap x=${x}`);
+    }
+
+    // (c) no interference: the combined render must be pixel-identical to
+    // each segment rendered alone (same coordinates) away from the joint.
+    // (Regions stop 1px short of the joint: segment B's anchor stripe at
+    // x=41 spills antialiasing into column 40.)
     const ctxSoloA = renderCanvas(ruleScene([segA]), 90, 60);
     const soloA = ctxSoloA.getImageData(0, 0, 90, 60).data;
     const ctxSoloB = renderCanvas(ruleScene([segB]), 90, 60);
     const soloB = ctxSoloB.getImageData(0, 0, 90, 60).data;
 
-    t.equal(pixelDiffCount(combo, soloA, 90, 5, 29, y0 - 6, y1 + 6), 0,
-      'segment A (anchor 5) renders identically solo vs. combined');
-    t.equal(pixelDiffCount(combo, soloB, 90, 31, 55, y0 - 6, y1 + 6), 0,
-      'segment B (anchor 30) renders identically solo vs. combined');
+    t.equal(pixelDiffCount(combo, soloA, 90, 13, 40, y0 - 6, y1 + 6), 0,
+      'segment A (anchor 13) renders identically solo vs. combined');
+    t.equal(pixelDiffCount(combo, soloB, 90, 42, 69, y0 - 6, y1 + 6), 0,
+      'segment B (anchor 41) renders identically solo vs. combined');
   }
 
-  // -- aligned case: anchors 5 and 35 differ by 30 = 3*period, an exact
+  // -- aligned case: anchors 13 and 43 differ by 30 = 3*period, an exact
   // multiple of the ink period, so the field must be perfectly continuous
-  // across the joint: pixel-identical to one single 5..60 rule.
+  // across the joint: pixel-identical to one single 13..73 rule.
   {
-    const segA = {x: 5, y: 30, x2: 30, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
-    const segB = {x: 35, y: 30, x2: 60, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segA = {x: 13, y: 30, x2: 43, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segB = {x: 43, y: 30, x2: 73, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
     const ctxAligned = renderCanvas(ruleScene([segA, segB]), 90, 60);
     const aligned = ctxAligned.getImageData(0, 0, 90, 60).data;
 
-    const single = {x: 5, y: 30, x2: 60, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const single = {x: 13, y: 30, x2: 73, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
     const ctxRef = renderCanvas(ruleScene([single]), 90, 60);
     const ref = ctxRef.getImageData(0, 0, 90, 60).data;
 
     // PARITY: an in-phase two-segment seam is indistinguishable from one
     // continuous rule over their shared span.
-    t.equal(pixelDiffCount(aligned, ref, 90, 35, 60, y0 - 6, y1 + 6), 0,
+    t.equal(pixelDiffCount(aligned, ref, 90, 43, 73, y0 - 6, y1 + 6), 0,
       'in-phase seam is pixel-identical to a single continuous rule');
   }
 
@@ -396,13 +462,13 @@ tape('parity/rule-seam: two mark-anchored rules meet with no gap, and align when
   // patterns are origin-neutral, like text), each localized only by its
   // own <line transform>.
   {
-    const segA = {x: 5, y: 30, x2: 30, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
-    const segB = {x: 30, y: 30, x2: 55, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segA = {x: 13, y: 30, x2: 41, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
+    const segB = {x: 41, y: 30, x2: 69, y2: 30, strokeWidth: 8, stroke: stripeStroke()};
     const svg = renderSVG(ruleScene([segA, segB]), 90, 60);
     const defs = svg.match(/<pattern[^>]*id="pattern_\d+"/g) || [];
     t.equal(defs.length, 1, 'both seam segments share one pattern def');
-    t.ok(/<line[^>]*transform="translate\(5,30\)"/.test(svg), 'segment A has its own transform');
-    t.ok(/<line[^>]*transform="translate\(30,30\)"/.test(svg), 'segment B has its own transform');
+    t.ok(/<line[^>]*transform="translate\(13,30\)"/.test(svg), 'segment A has its own transform');
+    t.ok(/<line[^>]*transform="translate\(41,30\)"/.test(svg), 'segment B has its own transform');
   }
 
   t.end();
@@ -500,6 +566,14 @@ tape('parity/swatch: both renderers center the contain-fit tile in the item box'
   // SVG objectBoundingBox fractions do -- both land on the item box center.
   t.ok(Math.abs(cx - 30) <= 1, `canvas ink bbox center x (${cx}) matches the box center (30) within 1px`);
   t.ok(Math.abs(cy - 30) <= 1, `canvas ink bbox center y (${cy}) matches the box center (30) within 1px`);
+
+  // PARITY (extent): the canvas ink must span ~0.9 * the 40px box (the
+  // same pad-0.9 contain-fit fraction the SVG def emits) -- a regression
+  // that tiles the pattern across the box instead of fitting one padded
+  // tile would fill the whole 40px extent and fail here.
+  const inkW = maxX - minX + 1, inkH = maxY - minY + 1;
+  t.ok(Math.abs(inkW - 0.9 * 40) <= 1, `canvas ink width (${inkW}) is the pad-0.9 fit of the 40px box within 1px`);
+  t.ok(Math.abs(inkH - 0.9 * 40) <= 1, `canvas ink height (${inkH}) is the pad-0.9 fit of the 40px box within 1px`);
 
   t.end();
 });
