@@ -12,7 +12,12 @@ export type LinesOptions = PatternRuleSpec;
  * @param opts
  * @param opts.angle - line angle(s) in degrees (default 45).
  *   An array of angles unions multiple line sets (e.g., for crosshatch).
- * @param opts.spacing - spacing between parallel lines (default tileSize / 2).
+ * @param opts.spacing - spacing between parallel lines. Defaults per angle
+ *   to the largest value that tessellates seamlessly when tiled:
+ *   tileSize / 2 for axis-aligned angles, tileSize / √2 for the 45° family.
+ *   An explicit spacing tiles seamlessly only if the tile translations
+ *   projected onto the line normal (tileSize·|sin θ|, tileSize·|cos θ|)
+ *   are integer multiples of it.
  * @param opts.bleed - distance lines extend past the tile
  *   edge, to avoid seams when the pattern is tiled (default 1).
  * @param opts.phase - offset applied along the line normal (default 0).
@@ -22,7 +27,6 @@ export type LinesOptions = PatternRuleSpec;
  */
 export function buildLinesPath(opts: LinesOptions = {}, tileSize: number): string {
   const angle = opts.angle ?? 45;
-  const spacing = opts.spacing != null ? opts.spacing : tileSize / 2;
   const bleed = opts.bleed != null ? opts.bleed : 1;
   const phase = opts.phase != null ? opts.phase : 0;
   const angles = Array.isArray(angle) ? angle : [angle];
@@ -42,6 +46,15 @@ export function buildLinesPath(opts: LinesOptions = {}, tileSize: number): strin
     const nx = -Math.sin(th), ny = Math.cos(th);
     const norm = Math.hypot(nx, ny) || 1;
     const ux = nx / norm, uy = ny / norm;
+
+    // Seamless tiling requires the tile translations projected onto the
+    // line normal (tileSize·|sin θ|, tileSize·|cos θ|) to be integer
+    // multiples of the spacing. tileSize / 2 satisfies this for
+    // axis-aligned angles but not for the 45° family, whose projection is
+    // tileSize / √2 — default to that (one line per tile diagonal) there.
+    const spacing = opts.spacing != null ? opts.spacing
+      : (((deg % 90) + 90) % 90) === 45 ? tileSize / Math.SQRT2
+      : tileSize / 2;
 
     // project corners onto the normal to get the range of offsets to cover
     let dmin = Infinity, dmax = -Infinity;

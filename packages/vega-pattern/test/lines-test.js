@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {buildLinesPath} from '../build/index.js';
+import {buildLinesPath, normalizePatternSpec} from '../build/index.js';
 
 // parse the 'M x1,y1 L x2,y2' segments emitted by buildLinesPath
 function segments(path) {
@@ -47,8 +47,50 @@ tape('buildLinesPath applies defaults for missing or absent options', t => {
   t.ok(segments(q).length > 0, 'undefined options produce a non-empty path');
 
   t.equal(q, p, 'undefined options match the empty-object defaults');
-  t.equal(p, buildLinesPath({angle: 45, spacing: 5}, 10),
-    'defaults are angle 45, spacing tileSize / 2');
+  t.equal(p, buildLinesPath({angle: 45, spacing: 10 / Math.SQRT2}, 10),
+    'defaults are angle 45, spacing tileSize / √2 (the tessellating value)');
+  t.end();
+});
+
+// A line set tiles seamlessly iff the tile translations projected onto the
+// line normal (T·|sin θ| and T·|cos θ|) are integer multiples of the spacing.
+// For the 45° family both projections are T/√2, so with phase 0 every line's
+// intercept (y - x for the "\\" family, x + y for the "/" family) must lie on
+// the tileSize grid — otherwise stripes break at every tile boundary.
+const onTileGrid = (c, T) => Math.abs(c - Math.round(c / T) * T) < 5e-3;
+
+tape('45°-family default spacing tessellates across tile boundaries', t => {
+  const T = 10;
+  const cases = [
+    {angle: 45, intercept: (x, y) => y - x},
+    {angle: -45, intercept: (x, y) => x + y},
+    {angle: 135, intercept: (x, y) => x + y}
+  ];
+  for (const {angle, intercept} of cases) {
+    const segs = segments(buildLinesPath({angle}, T));
+    t.ok(segs.length > 0, `angle ${angle} emits segments`);
+    for (const s of segs) {
+      t.ok(onTileGrid(intercept(s.x1, s.y1), T) && onTileGrid(intercept(s.x2, s.y2), T),
+        `angle ${angle}: line through (${s.x1},${s.y1}) lies on the tile grid`);
+    }
+  }
+  t.equal(buildLinesPath({angle: 0}, T), buildLinesPath({angle: 0, spacing: T / 2}, T),
+    'axis-aligned default spacing stays tileSize / 2');
+  t.end();
+});
+
+tape('diagonal built-in patterns tessellate seamlessly', t => {
+  for (const name of ['diagonal-stripe', 'crosshatch']) {
+    const spec = normalizePatternSpec({pattern: {name}});
+    const T = spec.tileSize;
+    const segs = segments(spec.shape);
+    t.ok(segs.length > 0, `${name} has line segments`);
+    for (const s of segs) {
+      // classify the segment's family by slope sign, then check its intercept
+      const c = (s.y2 - s.y1) / (s.x2 - s.x1) > 0 ? s.y1 - s.x1 : s.x1 + s.y1;
+      t.ok(onTileGrid(c, T), `${name}: line through (${s.x1},${s.y1}) lies on the tile grid`);
+    }
+  }
   t.end();
 });
 
