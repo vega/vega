@@ -1,6 +1,5 @@
 import tape from 'tape';
-import {pattern} from '../index.js';
-import {registry} from '../src/registry.js';
+import {pattern, registry} from '../build/index.js';
 
 tape('pattern() retrieves built-in patterns', t => {
   const p = pattern('crosshatch');

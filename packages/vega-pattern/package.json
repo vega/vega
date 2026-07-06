@@ -11,12 +11,14 @@
   ],
   "license": "BSD-3-Clause",
   "type": "module",
+  "types": "./build/index.d.ts",
   "author": {
     "name": "Vega",
     "url": "https://vega.github.io"
   },
   "exports": {
-    "default": "./build/vega-pattern.js"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,9 +30,10 @@
   },
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c rollup.config.js",
-    "pretest": "npm run build -- --config-test",
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "tape 'test/**/*-test.js'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {

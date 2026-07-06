@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {buildLinesPath} from '../index.js';
+import {buildLinesPath} from '../build/index.js';
 
 // parse the 'M x1,y1 L x2,y2' segments emitted by buildLinesPath
 function segments(path) {

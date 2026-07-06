@@ -1,5 +1,5 @@
 import tape from 'tape';
-import {isPattern, normalizePatternSpec, patternKey} from '../index.js';
+import {isPattern, normalizePatternSpec, patternKey} from '../build/index.js';
 
 tape('isPattern detects wrapper objects only', t => {
   t.ok(isPattern({pattern: {name: 'crosshatch'}}));
