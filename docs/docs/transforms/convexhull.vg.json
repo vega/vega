@@ -1,0 +1,102 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 400,
+  "height": 240,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        { "category": "A", "x": 20, "y": 30 },
+        { "category": "A", "x": 75, "y": 28 },
+        { "category": "A", "x": 54, "y": 90 },
+        { "category": "A", "x": 35, "y": 55 },
+        { "category": "B", "x": 170, "y": 120 },
+        { "category": "B", "x": 230, "y": 100 },
+        { "category": "B", "x": 250, "y": 180 },
+        { "category": "B", "x": 190, "y": 205 },
+        { "category": "B", "x": 210, "y": 145 }
+      ]
+    },
+    {
+      "name": "hulls",
+      "source": "table",
+      "transform": [
+        {
+          "type": "convexhull",
+          "x": "x",
+          "y": "y",
+          "groupby": ["category"],
+          "offset": 8,
+          "as": ["hx", "hy", "x", "y"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "linear",
+      "domain": { "data": "hulls", "field": "hx" },
+      "range": "width",
+      "nice": true
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "domain": { "data": "hulls", "field": "hy" },
+      "range": "height",
+      "nice": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": { "data": "table", "field": "category" },
+      "range": "category"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "facet",
+          "data": "hulls",
+          "groupby": "category"
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": { "data": "facet" },
+          "encode": {
+            "enter": {
+              "interpolate": { "value": "linear-closed" },
+              "x": { "scale": "xscale", "field": "hx" },
+              "y": { "scale": "yscale", "field": "hy" },
+              "fill": { "scale": "color", "field": "category" },
+              "fillOpacity": { "value": 0.15 },
+              "stroke": { "scale": "color", "field": "category" },
+              "strokeWidth": { "value": 2 }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "symbol",
+      "from": { "data": "table" },
+      "encode": {
+        "enter": {
+          "x": { "scale": "xscale", "field": "x" },
+          "y": { "scale": "yscale", "field": "y" },
+          "fill": { "scale": "color", "field": "category" },
+          "size": { "value": 80 }
+        }
+      }
+    }
+  ]
+}
