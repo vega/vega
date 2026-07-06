@@ -83,6 +83,7 @@
   "parallel-coords",
   "pattern-legend",
   "pattern-marks",
+  "pattern-scale-redundant",
   "playfair",
   "population",
   "quantile-dot-plot",
