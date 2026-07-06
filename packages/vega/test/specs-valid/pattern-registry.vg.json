@@ -1,0 +1,109 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "The four pattern-wrapper variant kinds side by side: a named (registry) pattern, an inline shape-path pattern, an inline generated rule pattern, and an image pattern. Programmatic extension of the built-in registry (registering a brand-new named pattern at runtime) is a JS-API capability -- analogous to vega-scale's scheme() -- exercised in pattern-registry-test.js rather than spec JSON, since specs cannot call into the registration function.",
+  "width": 360,
+  "height": 100,
+  "padding": 5,
+  "marks": [
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "x": {"value": 10},
+          "y": {"value": 10},
+          "width": {"value": 60},
+          "height": {"value": 60},
+          "stroke": {"value": "#333"},
+          "fill": {
+            "value": {"pattern": {"name": "diagonal-stripe", "foreground": "#4c78a8"}}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 40}, "y": {"value": 85},
+          "text": {"value": "named"},
+          "align": {"value": "center"}, "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "x": {"value": 100},
+          "y": {"value": 10},
+          "width": {"value": 60},
+          "height": {"value": 60},
+          "stroke": {"value": "#333"},
+          "fill": {
+            "value": {"pattern": {"shape": "M2,2 L8,8 M8,2 L2,8", "tileSize": 10, "strokeWidth": 1.5, "foreground": "teal"}}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 130}, "y": {"value": 85},
+          "text": {"value": "shape"},
+          "align": {"value": "center"}, "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "x": {"value": 190},
+          "y": {"value": 10},
+          "width": {"value": 60},
+          "height": {"value": 60},
+          "stroke": {"value": "#333"},
+          "fill": {
+            "value": {"pattern": {"rule": {"angle": [0, 90], "spacing": 6}, "tileSize": 12, "foreground": "purple"}}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 220}, "y": {"value": 85},
+          "text": {"value": "rule"},
+          "align": {"value": "center"}, "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "enter": {
+          "x": {"value": 280},
+          "y": {"value": 10},
+          "width": {"value": 60},
+          "height": {"value": 60},
+          "stroke": {"value": "#333"},
+          "fill": {
+            "value": {"pattern": {"url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QA/wD/AP+gvaeTAAAALUlEQVQokWO8/fzjfwYsoHDidmzCDExYRfGA4aCB0adiBdZQ6s/3pI4Nw0EDAG8uCTRp1W/iAAAAAElFTkSuQmCC", "tileSize": 16}}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "enter": {
+          "x": {"value": 310}, "y": {"value": 85},
+          "text": {"value": "image"},
+          "align": {"value": "center"}, "fontSize": {"value": 12}
+        }
+      }
+    }
+  ]
+}

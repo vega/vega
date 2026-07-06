@@ -22,7 +22,7 @@ extend(
 // -- Schemes -----
 
 import {scheme} from 'vega-scale';
-import {patternScheme} from 'vega-pattern';
+import {pattern, patternScheme} from 'vega-pattern';
 scheme('patterns', patternScheme);
 
 
@@ -66,6 +66,10 @@ export {
   interpolateRange,
   quantizeInterpolator
 } from 'vega-scale';
+
+export {
+  pattern
+} from 'vega-pattern';
 
 export {
   projection

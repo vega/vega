@@ -1,0 +1,72 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Gallery of all 13 built-in registry patterns as labeled small multiples, data-driven from a single rect/text mark pair rather than one mark per pattern -- each mark's fill is an expression-built pattern wrapper, {pattern: {name: datum.name}}, so the registry's full name list drives the grid directly.",
+  "width": 426,
+  "height": 282,
+  "padding": 5,
+  "signals": [
+    {"name": "tile", "value": 70},
+    {"name": "columns", "value": 5},
+    {"name": "colGap", "value": 14},
+    {"name": "rowGap", "value": 26},
+    {"name": "margin", "value": 10}
+  ],
+  "data": [
+    {
+      "name": "patterns",
+      "values": [
+        {"name": "diagonal-stripe"},
+        {"name": "horizontal-stripe"},
+        {"name": "vertical-stripe"},
+        {"name": "caps"},
+        {"name": "circles"},
+        {"name": "crosses"},
+        {"name": "crosshatch"},
+        {"name": "grid"},
+        {"name": "houndstooth"},
+        {"name": "nylon"},
+        {"name": "squares"},
+        {"name": "waves"},
+        {"name": "woven"}
+      ],
+      "transform": [
+        {"type": "window", "ops": ["row_number"], "as": ["idx"]},
+        {"type": "formula", "as": "row", "expr": "floor((datum.idx - 1) / columns)"},
+        {"type": "formula", "as": "col", "expr": "(datum.idx - 1) % columns"},
+        {"type": "formula", "as": "x", "expr": "margin + datum.col * (tile + colGap)"},
+        {"type": "formula", "as": "y", "expr": "margin + datum.row * (tile + rowGap)"}
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "patterns"},
+      "encode": {
+        "update": {
+          "x": {"field": "x"},
+          "y": {"field": "y"},
+          "width": {"signal": "tile"},
+          "height": {"signal": "tile"},
+          "stroke": {"value": "#ccc"},
+          "strokeWidth": {"value": 1},
+          "fill": {"signal": "{pattern: {name: datum.name}}"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "patterns"},
+      "encode": {
+        "update": {
+          "x": {"signal": "datum.x + tile / 2"},
+          "y": {"signal": "datum.y + tile + 12"},
+          "text": {"field": "name"},
+          "fontSize": {"value": 10},
+          "fill": {"value": "#444"},
+          "align": {"value": "center"}
+        }
+      }
+    }
+  ]
+}
