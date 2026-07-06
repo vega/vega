@@ -1,6 +1,6 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v6.json",
-  "description": "Accessibility flagship: redundant color+pattern encoding. Each bar's category is encoded twice over -- once by pattern shape, once by foreground color -- so the chart reads correctly in grayscale (pattern alone distinguishes categories) while still offering color for readers who can use it. The range is a literal array of fully-specified pattern wrappers (name + foreground) rather than a signal-composed scheme('patterns')/scheme('tableau10') pairing: the expression language exposes scale()/scale name references but no scheme() accessor to combine two named schemes element-wise in spec-land, so the foreground colors below are the first five vega-scale 'tableau10' values, applied by hand, one per named pattern.",
+  "description": "Accessibility flagship: redundant color+pattern encoding. Each bar's category is encoded twice over -- once by pattern shape, once by foreground color -- so the chart reads correctly in grayscale (pattern alone distinguishes categories) while still offering color for readers who can use it.",
   "width": 260,
   "height": 200,
   "padding": 5,

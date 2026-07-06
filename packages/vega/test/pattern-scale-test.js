@@ -2,6 +2,7 @@ import fs from 'fs';
 import tape from 'tape';
 import * as vega from '../index.js';
 import {isPattern} from 'vega-pattern';
+import {absoluteBounds, countInk, findByMarktype} from './util.js';
 
 const spec = JSON.parse(
   fs.readFileSync(process.cwd() + '/test/specs-valid/pattern-scale-redundant.vg.json', 'utf8')
@@ -13,15 +14,9 @@ async function makeView() {
   return view;
 }
 
-function findRectItems(node, out = []) {
-  if (node.marktype === 'rect') out.push(...node.items);
-  (node.items || []).forEach(child => findRectItems(child, out));
-  return out;
-}
-
 tape('redundant pattern+color scale spec parses and runs without error', async t => {
   const view = await makeView();
-  const bars = findRectItems(view.scenegraph().root);
+  const bars = findByMarktype(view.scenegraph().root, 'rect');
 
   t.equal(bars.length, 5, 'five bars, one per category');
   t.ok(bars.every(b => isPattern(b.fill)), 'every bar is filled with a pattern wrapper');
@@ -65,16 +60,18 @@ tape('toSVG: every bar references a distinct pattern def; legend adds further di
   t.end();
 });
 
-tape('toCanvas: the redundant-encoded chart renders visible ink', async t => {
+tape('toCanvas: each bar renders visible ink in its own region', async t => {
   const view = await makeView();
   const canvas = await view.toCanvas();
   const ctx = canvas.getContext('2d');
-  const {data, width, height} = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-  let ink = 0;
-  for (let i = 0; i < data.length; i += 4) {
-    if (data[i + 3] > 0 && !(data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255)) ink++;
-  }
-  t.ok(ink > 0, `canvas (${width}x${height}) contains non-background ink`);
+  const bars = findByMarktype(view.scenegraph().root, 'rect');
+  t.equal(bars.length, 5, 'five bars, one per category');
+  bars.forEach((item, i) => {
+    const b = absoluteBounds(view, item);
+    const ink = countInk(ctx, b.x1, b.y1, b.x2, b.y2);
+    t.ok(ink > 0, `bar ${i} region contains ink`);
+  });
+
   t.end();
 });

@@ -2,6 +2,7 @@ import fs from 'fs';
 import tape from 'tape';
 import * as vega from '../index.js';
 import {isPattern} from 'vega-pattern';
+import {absoluteBounds, countInk, findByRole, findByMarktype} from './util.js';
 
 const spec = JSON.parse(
   fs.readFileSync(process.cwd() + '/test/specs-valid/pattern-legend.vg.json', 'utf8')
@@ -11,45 +12,6 @@ async function makeView() {
   const view = new vega.View(vega.parse(spec), {renderer: 'none'}).finalize();
   await view.runAsync();
   return view;
-}
-
-// Walk up a legend-symbol item's ancestor GROUP items (via the mark->group
-// back-reference vega-scenegraph maintains) to accumulate the offsets that
-// item.bounds does not include (bounds are local to the item's immediate
-// parent group only).
-function ancestorOffset(item) {
-  let x = 0, y = 0, group = item.mark && item.mark.group;
-  while (group) {
-    x += group.x || 0;
-    y += group.y || 0;
-    group = group.mark && group.mark.group;
-  }
-  return {x, y};
-}
-
-// Absolute (rendered-surface) pixel bounds of a scenegraph item, accounting
-// for the view's padding + autosize origin plus every ancestor group's
-// local offset -- matches the translate chain the SVG/Canvas renderers emit.
-function absoluteBounds(view, item) {
-  const {x: ox, y: oy} = ancestorOffset(item);
-  const pad = view.padding();
-  const origin = view.origin();
-  const dx = pad.left + origin[0] + ox;
-  const dy = pad.top + origin[1] + oy;
-  return {
-    x1: item.bounds.x1 + dx, x2: item.bounds.x2 + dx,
-    y1: item.bounds.y1 + dy, y2: item.bounds.y2 + dy
-  };
-}
-
-function findByRole(node, role, out = []) {
-  if (node.marktype) {
-    if (node.role === role) out.push(...node.items);
-    (node.items || []).forEach(child => findByRole(child, role, out));
-  } else {
-    (node.items || []).forEach(mark => findByRole(mark, role, out));
-  }
-  return out;
 }
 
 tape('pattern legend spec parses and runs without error', async t => {
@@ -120,28 +82,12 @@ tape('toCanvas: both the chart bars and the legend swatches render ink', async t
   const canvas = await view.toCanvas();
   const ctx = canvas.getContext('2d');
 
-  function countInk(x1, y1, x2, y2) {
-    const x = Math.max(0, Math.floor(x1)), y = Math.max(0, Math.floor(y1));
-    const w = Math.max(1, Math.ceil(x2) - x), h = Math.max(1, Math.ceil(y2) - y);
-    const data = ctx.getImageData(x, y, w, h).data;
-    let ink = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      // non-white, non-transparent pixel
-      if (data[i + 3] > 0 && !(data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255)) ink++;
-    }
-    return ink;
-  }
-
-  const rectItems = [];
-  (function findRects(node) {
-    if (node.marktype === 'rect') rectItems.push(...node.items);
-    (node.items || []).forEach(findRects);
-  })(view.scenegraph().root);
+  const rectItems = findByMarktype(view.scenegraph().root, 'rect');
 
   t.equal(rectItems.length, 3, 'three bars in the chart');
   rectItems.forEach((item, i) => {
     const b = absoluteBounds(view, item);
-    const ink = countInk(b.x1, b.y1, b.x2, b.y2);
+    const ink = countInk(ctx, b.x1, b.y1, b.x2, b.y2);
     t.ok(ink > 0, `bar ${i} region contains ink`);
   });
 
@@ -149,7 +95,7 @@ tape('toCanvas: both the chart bars and the legend swatches render ink', async t
   t.equal(symbols.length, 3, 'three legend symbols');
   symbols.forEach((item, i) => {
     const b = absoluteBounds(view, item);
-    const ink = countInk(b.x1, b.y1, b.x2, b.y2);
+    const ink = countInk(ctx, b.x1, b.y1, b.x2, b.y2);
     t.ok(ink > 0, `legend symbol ${i} region contains ink`);
   });
 
