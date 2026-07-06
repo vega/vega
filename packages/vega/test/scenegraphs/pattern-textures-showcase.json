@@ -1,0 +1,270 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 10,
+              "y": 10,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 94,
+              "y": 10,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 178,
+              "y": 10,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 262,
+              "y": 10,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 346,
+              "y": 10,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 10,
+              "y": 106,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 94,
+              "y": 106,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 178,
+              "y": 106,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 262,
+              "y": 106,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 346,
+              "y": 106,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 10,
+              "y": 202,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 94,
+              "y": 202,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            },
+            {
+              "x": 178,
+              "y": 202,
+              "width": 70,
+              "height": 70,
+              "fill": {},
+              "stroke": "#ccc",
+              "strokeWidth": 1
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "text",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 45,
+              "y": 92,
+              "align": "center",
+              "fill": "#444",
+              "text": "diagonal-stripe",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 129,
+              "y": 92,
+              "align": "center",
+              "fill": "#444",
+              "text": "horizontal-stripe",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 213,
+              "y": 92,
+              "align": "center",
+              "fill": "#444",
+              "text": "vertical-stripe",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 297,
+              "y": 92,
+              "align": "center",
+              "fill": "#444",
+              "text": "caps",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 381,
+              "y": 92,
+              "align": "center",
+              "fill": "#444",
+              "text": "circles",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 45,
+              "y": 188,
+              "align": "center",
+              "fill": "#444",
+              "text": "crosses",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 129,
+              "y": 188,
+              "align": "center",
+              "fill": "#444",
+              "text": "crosshatch",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 213,
+              "y": 188,
+              "align": "center",
+              "fill": "#444",
+              "text": "grid",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 297,
+              "y": 188,
+              "align": "center",
+              "fill": "#444",
+              "text": "houndstooth",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 381,
+              "y": 188,
+              "align": "center",
+              "fill": "#444",
+              "text": "nylon",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 45,
+              "y": 284,
+              "align": "center",
+              "fill": "#444",
+              "text": "squares",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 129,
+              "y": 284,
+              "align": "center",
+              "fill": "#444",
+              "text": "waves",
+              "font": "sans-serif",
+              "fontSize": 10
+            },
+            {
+              "x": 213,
+              "y": 284,
+              "align": "center",
+              "fill": "#444",
+              "text": "woven",
+              "font": "sans-serif",
+              "fontSize": 10
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 426,
+      "height": 282
+    }
+  ],
+  "zindex": 0
+}
