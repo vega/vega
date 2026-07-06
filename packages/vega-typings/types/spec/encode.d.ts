@@ -198,6 +198,9 @@ export interface RadialGradient extends BaseGradient {
 // Pattern fill definitions. Common style properties shared by all variants;
 // geometry-defining properties (shape/url/rule/tileSize) differ per variant
 // and are locked (not overridable) once resolved from a named pattern.
+// NOTE: mirrored in vega-pattern/src/types.ts (the runtime source of truth) —
+// keep the two in sync. This copy feeds ts-json-schema-generator and is the
+// schema-generation source of truth, pending type consolidation.
 export interface PatternDefinitionBase {
   /**
    * The foreground color for the pattern geometry. Replaces whichever color(s)

@@ -10,12 +10,12 @@ export type LinesOptions = PatternRuleSpec;
  * bleed, phase } authoring spec rather than a hand-written path string.
  *
  * @param opts
- * @param opts.angle - line angle(s) in degrees.
+ * @param opts.angle - line angle(s) in degrees (default 45).
  *   An array of angles unions multiple line sets (e.g., for crosshatch).
- * @param opts.spacing - spacing between parallel lines.
+ * @param opts.spacing - spacing between parallel lines (default tileSize / 2).
  * @param opts.bleed - distance lines extend past the tile
- *   edge, to avoid seams when the pattern is tiled.
- * @param opts.phase - offset applied along the line normal.
+ *   edge, to avoid seams when the pattern is tiled (default 1).
+ * @param opts.phase - offset applied along the line normal (default 0).
  * @param tileSize - the pattern tile size; the tile spans
  *   [0, tileSize] x [0, tileSize].
  * @return an SVG path string, in tile-space coordinates.
