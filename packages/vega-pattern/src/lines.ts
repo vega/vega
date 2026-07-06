@@ -1,21 +1,26 @@
+import type {PatternRuleSpec} from './types.js';
+
+/** Options accepted by {@link buildLinesPath}; a PatternLinesShape minus its `type` discriminator. */
+export type LinesOptions = PatternRuleSpec;
+
 /**
  * Expand a rule/lines pattern definition into an SVG path made of line
  * segments, clipped against a square pattern tile. Used to render
  * angled stripe/hatch style patterns from a compact { angle, spacing,
  * bleed, phase } authoring spec rather than a hand-written path string.
  *
- * @param {object} [opts]
- * @param {number|number[]} [opts.angle=45] - line angle(s) in degrees.
+ * @param opts
+ * @param opts.angle - line angle(s) in degrees.
  *   An array of angles unions multiple line sets (e.g., for crosshatch).
- * @param {number} [opts.spacing=tileSize/2] - spacing between parallel lines.
- * @param {number} [opts.bleed=1] - distance lines extend past the tile
+ * @param opts.spacing - spacing between parallel lines.
+ * @param opts.bleed - distance lines extend past the tile
  *   edge, to avoid seams when the pattern is tiled.
- * @param {number} [opts.phase=0] - offset applied along the line normal.
- * @param {number} tileSize - the pattern tile size; the tile spans
+ * @param opts.phase - offset applied along the line normal.
+ * @param tileSize - the pattern tile size; the tile spans
  *   [0, tileSize] x [0, tileSize].
- * @return {string} an SVG path string, in tile-space coordinates.
+ * @return an SVG path string, in tile-space coordinates.
  */
-export function buildLinesPath(opts = {}, tileSize) {
+export function buildLinesPath(opts: LinesOptions = {}, tileSize: number): string {
   const angle = opts.angle ?? 45;
   const spacing = opts.spacing != null ? opts.spacing : tileSize / 2;
   const bleed = opts.bleed != null ? opts.bleed : 1;
@@ -24,14 +29,14 @@ export function buildLinesPath(opts = {}, tileSize) {
 
   const xmin = -bleed, ymin = -bleed;
   const xmax = tileSize + bleed, ymax = tileSize + bleed;
-  const corners = [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]];
-  const parts = [];
+  const corners: [number, number][] = [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]];
+  const parts: string[] = [];
 
-  const pushSeg = (x1, y1, x2, y2) => {
+  const pushSeg = (x1: number, y1: number, x2: number, y2: number) => {
     parts.push('M' + fmt(x1) + ',' + fmt(y1) + ' L' + fmt(x2) + ',' + fmt(y2));
   };
 
-  const genForAngle = (deg) => {
+  const genForAngle = (deg: number) => {
     const th = (deg || 0) * Math.PI / 180;
     // direction v = (cos th, sin th), unit normal n = (-sin th, cos th)
     const nx = -Math.sin(th), ny = Math.cos(th);
@@ -53,7 +58,7 @@ export function buildLinesPath(opts = {}, tileSize) {
       const d = phase + k * spacing;
 
       // intersect the line at offset d with the (bled) tile rectangle
-      const pts = [];
+      const pts: [number, number][] = [];
       if (Math.abs(ux) > 1e-6) {
         let x = (d - uy * ymin) / ux;
         if (x >= xmin - 1e-6 && x <= xmax + 1e-6) pts.push([x, ymin]);
@@ -68,7 +73,7 @@ export function buildLinesPath(opts = {}, tileSize) {
       }
 
       // dedupe near-coincident points
-      const uniq = [];
+      const uniq: [number, number][] = [];
       for (const p of pts) {
         let found = false;
         for (const q of uniq) {
@@ -95,7 +100,7 @@ export function buildLinesPath(opts = {}, tileSize) {
   return parts.join(' ');
 }
 
-function fmt(x) {
+function fmt(x: number): string {
   const v = Math.abs(x) < 1e-6 ? 0 : x;
   // prefer integers when close
   if (Math.abs(v - Math.round(v)) < 1e-6) return String(Math.round(v));

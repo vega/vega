@@ -1,25 +1,45 @@
 import {pattern as getPattern} from './patterns.js';
 import {buildLinesPath} from './lines.js';
+import type {
+  NormalizedPatternSpec,
+  Pattern,
+  PatternDefinitionInternal,
+  PatternLinesShape
+} from './types.js';
 
 // core geometry keys: locked once a named pattern is resolved from the
 // registry, since they define the tile-space drawing and must stay
 // consistent with the shape actually generated for that name. tileSize
 // is locked too — geometry is authored against it at registration time;
 // use `scale` to resize a named pattern instead.
-const CORE_KEYS = ['shape', 'url', 'rule', 'image', 'tileSize'];
-const REPEATS = [true, false, 'x', 'y'];
+const CORE_KEYS: (keyof PatternDefinitionInternal)[] = ['shape', 'url', 'rule', 'image', 'tileSize'];
+// kept loosely typed (not `(boolean | 'x' | 'y')[]`) so `.indexOf` can be
+// called with the current (possibly undefined) repeat value below without
+// a null check duplicating the runtime fallback logic.
+const REPEATS: readonly unknown[] = [true, false, 'x', 'y'];
 
 /**
  * Detect the user-facing pattern wrapper object, {pattern: {...}}.
  * The legacy v0 string shorthand ({pattern: 'crosshatch'}) is not valid.
  */
-export function isPattern(value) {
-  return !!(value && typeof value === 'object' &&
-    value.pattern && typeof value.pattern === 'object');
+export function isPattern(value: unknown): value is Pattern {
+  if (!value || typeof value !== 'object') return false;
+  const def = (value as {pattern?: unknown}).pattern;
+  return !!def && typeof def === 'object';
 }
 
-function isLinesShape(shape) {
-  return !!(shape && typeof shape === 'object' && shape.type === 'lines');
+function isLinesShape(shape: unknown): shape is PatternLinesShape {
+  return !!(shape && typeof shape === 'object' && (shape as {type?: unknown}).type === 'lines');
+}
+
+/**
+ * Coerce a value to a positive number, falling back otherwise. Mirrors
+ * the JS-native `+value > 0 ? +value : fallback` idiom used throughout
+ * this module, guarding the unary `+` against `undefined` operands.
+ */
+function positiveNumber(value: number | string | undefined, fallback: number): number {
+  const n = value == null ? NaN : +value;
+  return n > 0 ? n : fallback;
 }
 
 /**
@@ -27,38 +47,37 @@ function isLinesShape(shape) {
  * fully-resolved internal pattern spec. Pure: never mutates the input.
  * Returns null for invalid or unrecognized input.
  *
- * @param {object} input - a value that may be a pattern wrapper,
- *   {pattern: {...}}.
- * @return {object|null} the normalized spec, or null.
+ * @param input - a value that may be a pattern wrapper, {pattern: {...}}.
+ * @return the normalized spec, or null.
  */
-export function normalizePatternSpec(input) {
+export function normalizePatternSpec(input: unknown): NormalizedPatternSpec | null {
   if (!isPattern(input)) return null;
-  const def = input.pattern;
+  const def = input.pattern as PatternDefinitionInternal;
 
   // Resolve the pattern definition. A named pattern's core geometry
   // (shape/url/rule/image/tileSize) is locked to its registry
   // definition; only style properties may be layered on top.
-  let merged = def;
+  let merged: PatternDefinitionInternal = def;
 
   if (def.name != null) {
     // a malformed name is invalid input, not an inline pattern
     if (typeof def.name !== 'string' || !def.name) return null;
     const base = getPattern(def.name);
     if (!base) return null;
-    const overrides = {...def};
+    const overrides: PatternDefinitionInternal = {...def};
     delete overrides.name;
-    CORE_KEYS.forEach(key => delete overrides[key]);
+    for (const key of CORE_KEYS) delete overrides[key];
     merged = {...base, ...overrides};
   }
 
   // discriminator precedence: url/image wins over shape/rule when both are present
   const url = merged.url || merged.image;
-  let shape;
+  let shape: string | undefined;
   let isGenerated = false;
-  let tileSize;
+  let tileSize: number | undefined;
 
   if (!url) {
-    tileSize = +merged.tileSize > 0 ? +merged.tileSize : 10;
+    tileSize = positiveNumber(merged.tileSize, 10);
     const gen = merged.rule || (isLinesShape(merged.shape) ? merged.shape : null);
     if (gen) {
       shape = buildLinesPath(gen, tileSize);
@@ -69,10 +88,10 @@ export function normalizePatternSpec(input) {
     if (!shape) return null; // missing or degenerate (empty) geometry
   }
 
-  const repeat = REPEATS.indexOf(merged.repeat) < 0 ? true : merged.repeat;
-  const scale = +merged.scale > 0 ? +merged.scale : 1;
+  const repeat = (REPEATS.indexOf(merged.repeat) < 0 ? true : merged.repeat) as boolean | 'x' | 'y';
+  const scale = positiveNumber(merged.scale, 1);
 
-  const out = {
+  const out: NormalizedPatternSpec = {
     type: url ? 'image' : 'symbol',
     origin: merged.origin === 'mark' ? 'mark' : 'view',
     repeat,
@@ -89,7 +108,7 @@ export function normalizePatternSpec(input) {
     const ts = merged.tileSize;
     if (ts === 'bounds') {
       out.tileSize = ts;
-    } else if (+ts > 0) {
+    } else if (ts != null && +ts > 0) {
       out.tileSize = +ts;
     }
   } else {
@@ -109,7 +128,7 @@ export function normalizePatternSpec(input) {
     // Generated lines/rule geometry (isGenerated) already defaults to
     // stroke below, so this only changes inline `shape`-string specs.
     const inlineStroked = def.name == null && !isGenerated &&
-      !hadFill && !hadStroke && +merged.strokeWidth > 0;
+      !hadFill && !hadStroke && merged.strokeWidth != null && merged.strokeWidth > 0;
 
     if (isGenerated) {
       // rule/lines geometry is stroked, not filled; default a visible
@@ -143,10 +162,10 @@ export function normalizePatternSpec(input) {
  * Derive a stable content key for a normalized pattern spec, suitable
  * for def sharing / cache lookup. Equal specs produce equal keys.
  *
- * @param {object} spec - a spec returned by normalizePatternSpec.
- * @return {string} a stable string key.
+ * @param spec - a spec returned by normalizePatternSpec.
+ * @return a stable string key.
  */
-export function patternKey(spec) {
+export function patternKey(spec: NormalizedPatternSpec): string {
   // JSON-serialize the slots so values containing delimiter characters
   // cannot collide, and undefined (-> null) stays distinct from ''.
   return JSON.stringify([

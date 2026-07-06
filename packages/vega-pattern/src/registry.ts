@@ -1,9 +1,11 @@
+import type {PatternRegistryEntry} from './types.js';
+
 const stroke = '#000';
 const strokeWidth = 1;
 const background = 'transparent';
 const tileSize = 10;
 
-export const registry = {
+export const registry: Record<string, PatternRegistryEntry> = {
   'diagonal-stripe': {
     rule: { angle: -45 },
     tileSize,
@@ -99,12 +101,12 @@ export const registry = {
   }
 };
 
-function capsPath(tileSize) {
+function capsPath(tileSize: number): string {
   const s = Number(tileSize);
   return `M ${s / 4},${s * 3 / 4}l${s / 4},${-s / 2}l${s / 4},${s / 2}`;
 }
 
-function circlePath(tileSize, r = tileSize / 6, cx = tileSize / 2, cy = tileSize / 2) {
+function circlePath(tileSize: number, r: number = tileSize / 6, cx: number = tileSize / 2, cy: number = tileSize / 2): string {
   const rr = Number(r);
   const xx = Number(cx);
   const yy = Number(cy);
@@ -112,36 +114,36 @@ function circlePath(tileSize, r = tileSize / 6, cx = tileSize / 2, cy = tileSize
   return `M ${xx - rr} ${yy} a ${rr} ${rr} 0 1 0 ${dx} 0 a ${rr} ${rr} 0 1 0 -${dx} 0`;
 }
 
-function crossesPath(tileSize) {
+function crossesPath(tileSize: number): string {
   const s = Number(tileSize);
   return `M ${s / 4},${s / 4}l${s / 2},${s / 2}M${s / 4},${s * 3 / 4}l${s / 2},${-s / 2}`;
 }
 
-function houndstoothPath(tileSize) {
+function houndstoothPath(tileSize: number): string {
   const s = Number(tileSize);
-  const f = (v) => String(Number(v.toFixed(3)));
+  const f = (v: number): string => String(Number(v.toFixed(3)));
   const p1 = `M ${f(0)} ${f(0)} L ${f(0.4 * s)} ${f(0.4 * s)}`;
   const p2 = `M ${f(0.25 * s)} ${f(0)} L ${f(0.5 * s)} ${f(0.25 * s)} L ${f(0.5 * s)} ${f(0.5 * s)} L ${f(0.9 * s)} ${f(0.9 * s)} L ${f(0.5 * s)} ${f(0.5 * s)} L ${f(1 * s)} ${f(0.5 * s)} L ${f(1 * s)} ${f(0)}`;
   const p3 = `M ${f(0.5 * s)} ${f(1 * s)} L ${f(0.5 * s)} ${f(0.75 * s)} L ${f(0.75 * s)} ${f(1 * s)}`;
   return `${p1} ${p2} ${p3}`;
 }
 
-function nylonPath(tileSize) {
+function nylonPath(tileSize: number): string {
   const s = Number(tileSize);
   return `M 0 ${s / 4} l ${s / 4} 0 l 0 ${-s / 4} M ${s * 3 / 4} ${s} l 0 ${-s / 4} l ${s / 4} 0 M ${s / 4} ${s / 2} l 0 ${s / 4} l ${s / 4} 0 M ${s / 2} ${s / 4} l ${s / 4} 0 l 0 ${s / 4}`;
 }
 
-function squarePath(tileSize) {
+function squarePath(tileSize: number): string {
   const s = Number(tileSize);
   return `M ${s / 4} ${s / 4} l ${s / 2} 0 l 0 ${s / 2} l ${-s / 2} 0 Z`;
 }
 
-function wavesPath(tileSize) {
+function wavesPath(tileSize: number): string {
   const s = Number(tileSize);
   return `M 0 ${s / 2} c ${s / 8} ${-s / 4} , ${s * 3 / 8} ${-s / 4} , ${s / 2} 0 c ${s / 8} ${s / 4} , ${s * 3 / 8} ${s / 4} , ${s / 2} 0 M ${-s / 2} ${s / 2} c ${s / 8} ${s / 4} , ${s * 3 / 8} ${s / 4} , ${s / 2} 0 M ${s} ${s / 2} c ${s / 8} ${-s / 4} , ${s * 3 / 8} ${-s / 4} , ${s / 2} 0`;
 }
 
-function wovenPath(tileSize) {
+function wovenPath(tileSize: number): string {
   const s = Number(tileSize);
   return `M ${s / 4},${s / 4}l${s / 2},${s / 2}M${s * 3 / 4},${s / 4}l${s / 2},${-s / 2} M${s / 4},${s * 3 / 4}l${-s / 2},${s / 2}M${s * 3 / 4},${s * 5 / 4}l${s / 2},${-s / 2} M${-s / 4},${s / 4}l${s / 2},${-s / 2}`;
 }
