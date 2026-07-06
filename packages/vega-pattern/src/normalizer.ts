@@ -91,9 +91,18 @@ export function normalizePatternSpec(input: unknown): NormalizedPatternSpec | nu
   const repeat = (REPEATS.indexOf(merged.repeat) < 0 ? true : merged.repeat) as boolean | 'x' | 'y';
   const scale = positiveNumber(merged.scale, 1);
 
+  // origin default depends on repeat: a fully repeating pattern is a
+  // view-wide field ('view' keeps tiling continuous across marks), while a
+  // partial (x/y) or non-repeating pattern is a single strip/tile that only
+  // makes sense anchored to the mark it fills — at the view origin it
+  // usually misses the mark entirely.
+  const origin = merged.origin === 'mark' || merged.origin === 'view'
+    ? merged.origin
+    : repeat === true ? 'view' : 'mark';
+
   const out: NormalizedPatternSpec = {
     type: url ? 'image' : 'symbol',
-    origin: merged.origin === 'mark' ? 'mark' : 'view',
+    origin,
     repeat,
     scale,
     background: merged.background,

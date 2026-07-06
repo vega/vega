@@ -108,6 +108,24 @@ tape('image tileSize is validated; fill/stroke do not apply to images', t => {
   t.end();
 });
 
+tape('origin defaults to mark for partial or no repeat, view for full repeat', t => {
+  // a fully repeating pattern is a view-wide field, so 'view' keeps tiling
+  // continuous across marks; a partial (x/y) or non-repeating pattern is a
+  // single strip/tile that only makes sense relative to the mark it fills —
+  // anchored at the view origin it usually misses the mark entirely.
+  const p = def => normalizePatternSpec({pattern: {name: 'crosshatch', ...def}});
+  t.equal(p({}).origin, 'view', 'full repeat (default) -> view');
+  t.equal(p({repeat: true}).origin, 'view', 'repeat true -> view');
+  t.equal(p({repeat: 'x'}).origin, 'mark', 'repeat x -> mark');
+  t.equal(p({repeat: 'y'}).origin, 'mark', 'repeat y -> mark');
+  t.equal(p({repeat: false}).origin, 'mark', 'repeat false -> mark');
+  t.equal(p({repeat: 'x', origin: 'view'}).origin, 'view', 'explicit view wins over partial-repeat default');
+  t.equal(p({repeat: true, origin: 'mark'}).origin, 'mark', 'explicit mark wins over full-repeat default');
+  const img = normalizePatternSpec({pattern: {url: 'x.png', repeat: 'x'}});
+  t.equal(img.origin, 'mark', 'image patterns share the partial-repeat default');
+  t.end();
+});
+
 tape('common property hardening', t => {
   t.ok(normalizePatternSpec({pattern: {name: 'Crosshatch'}}), 'name resolution is case-insensitive');
   t.equal(normalizePatternSpec({pattern: {name: 'crosshatch', repeat: 'both'}}).repeat, true, 'invalid repeat falls back to true');

@@ -37,7 +37,8 @@ export interface PatternDefinitionBase {
    * The coordinate system pattern tiles anchor to: `"view"` for a shared,
    * view-wide tiling or `"mark"` to anchor tiles to each mark's bounds.
    *
-   * __Default value:__ `"view"`
+   * __Default value:__ `"view"` when `repeat` is `true` (the default),
+   * `"mark"` for partial (`"x"`/`"y"`) or non-repeating patterns.
    */
   origin?: 'view' | 'mark';
   /**

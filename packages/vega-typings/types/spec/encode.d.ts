@@ -225,7 +225,8 @@ export interface PatternDefinitionBase {
    * The coordinate system pattern tiles anchor to: `"view"` for a shared,
    * view-wide tiling or `"mark"` to anchor tiles to each mark's bounds.
    *
-   * __Default value:__ `"view"`
+   * __Default value:__ `"view"` when `repeat` is `true` (the default),
+   * `"mark"` for partial (`"x"`/`"y"`) or non-repeating patterns.
    */
   origin?: 'view' | 'mark';
   /**
@@ -248,6 +249,12 @@ export interface PatternLinesShape {
   type: 'lines';
   /** Angle in degrees, or array of angles for multi-directional lines (e.g. crosshatch). */
   angle?: number | number[];
+  /**
+   * Spacing between parallel lines, in pixels. Tiles seamlessly only if the
+   * tile size projected onto the line normal is an integer multiple of it.
+   *
+   * __Default value:__ `tileSize / 2` (axis-aligned angles) or `tileSize / √2` (45° family).
+   */
   spacing?: number;
   bleed?: number;
   phase?: number;
@@ -272,6 +279,12 @@ export interface PatternRule extends PatternDefinitionBase {
   rule: {
     /** Angle in degrees, or array of angles for multi-directional lines (e.g. crosshatch). */
     angle?: number | number[];
+    /**
+     * Spacing between parallel lines, in pixels. Tiles seamlessly only if the
+     * tile size projected onto the line normal is an integer multiple of it.
+     *
+     * __Default value:__ `tileSize / 2` (axis-aligned angles) or `tileSize / √2` (45° family).
+     */
     spacing?: number;
     bleed?: number;
     phase?: number;
