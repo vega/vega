@@ -245,8 +245,7 @@
         {
           "pattern": {
             "rule": {
-              "angle": 45,
-              "spacing": 5
+              "angle": 45
             },
             "foreground": "navy"
           }
@@ -832,10 +831,9 @@
                     "shape": {
                       "type": "lines",
                       "angle": [
-                        30,
-                        150
-                      ],
-                      "spacing": 5
+                        45,
+                        135
+                      ]
                     },
                     "tileSize": 14,
                     "foreground": "darkorange"
