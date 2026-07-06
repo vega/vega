@@ -2,7 +2,7 @@ import fs from 'fs';
 import tape from 'tape';
 import * as vega from '../index.js';
 import {isPattern} from 'vega-pattern';
-import {absoluteBounds, countInk, findByRole, findByMarktype} from './util.js';
+import {absoluteBounds, countInk, findByMarktype, findByRole} from './util.js';
 
 const spec = JSON.parse(
   fs.readFileSync(process.cwd() + '/test/specs-valid/pattern-legend.vg.json', 'utf8')
