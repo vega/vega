@@ -72,6 +72,35 @@ tape('pattern phase rides with the text item (mark-anchored)', t => {
   t.end();
 });
 
+tape('pattern frame includes dx, dy and the baseline offset (SVG transform parity)', t => {
+  // SVG anchors userSpaceOnUse patterns in the <text> element's FULL
+  // transform — translate(x + dx, y + dy + baselineOffset) — so two items
+  // whose glyphs land on identical pixels must also paint identical
+  // stripes, however that landing splits across y, dy, and baseline.
+  // Discrimination guard: dy = 7 and the baseline-middle offset
+  // (round(0.3 * 40) = 12) are deliberately NOT multiples of
+  // horizontal-stripe's 10px ink period, so a pattern frame anchored at
+  // (x, y) alone fails both comparisons.
+  const base = {
+    x: 10, text: 'MMM', font: 'Arial', fontSize: 40, fontWeight: 'bold',
+    align: 'left', fill: stripeFill(), mark: {marktype: 'text', role: 'mark'}
+  };
+  const img = item => draw([item]).getImageData(0, 0, W, H).data;
+
+  const dyA = img({...base, baseline: 'alphabetic', y: 60, dy: 7});
+  const dyB = img({...base, baseline: 'alphabetic', y: 67});
+  t.ok(ink(dyA) > 0, 'dy render produced ink');
+  t.equal(diffShifted(dyA, dyB, 0).structural, 0,
+    'PARITY: y+dy and equivalent y render identically, stripes included');
+
+  const blA = img({...base, baseline: 'middle', y: 60});
+  const blB = img({...base, baseline: 'alphabetic', y: 60 + Math.round(0.3 * 40)});
+  t.ok(ink(blA) > 0, 'baseline render produced ink');
+  t.equal(diffShifted(blA, blB, 0).structural, 0,
+    'PARITY: the baseline offset is part of the pattern frame');
+  t.end();
+});
+
 tape('patterned + rotated text: balanced save/restore, no throw, produces ink', t => {
   const c2d = canvas(W, H).getContext('2d');
   let saves = 0, restores = 0;

@@ -127,8 +127,18 @@ function draw(context, scene, bounds) {
       if (item.angle) context.rotate(item.angle * DegToRad);
       x = y = 0; // reset x, y
     }
-    x += (item.dx || 0);
-    y += (item.dy || 0) + offset(item);
+    if (patterned) {
+      // dx, dy and the baseline offset are part of the SVG text transform
+      // (attr() above: translate(x, y) rotate(a) translate(dx, dy)), so
+      // userSpaceOnUse patterns ride them too. Translating here — rather
+      // than offsetting the fillText coordinates — keeps the canvas
+      // pattern frame identical to SVG's whatever the item's dx, dy, or
+      // baseline; glyph positions are unchanged either way.
+      context.translate(item.dx || 0, (item.dy || 0) + offset(item));
+    } else {
+      x += (item.dx || 0);
+      y += (item.dy || 0) + offset(item);
+    }
 
     tl = textLines(item);
     blend(context, item);
