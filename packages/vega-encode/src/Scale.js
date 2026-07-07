@@ -332,8 +332,10 @@ function configureScheme(type, _, count) {
   if (isInterpolating(type)) {
     // interpolating scales coerce range entries through a color interpolator;
     // non-color objects (e.g. pattern fill wrappers) would silently resolve
-    // to black, so fail with a comprehensible error instead
-    if (isArray(scheme) && scheme.length && isObject(scheme[0])) {
+    // to black, so fail with a comprehensible error instead. Check every
+    // entry — mixed schemes (color strings interleaved with objects, e.g.
+    // the built-in 'monochrome' scheme) must not slip past on their first.
+    if (isArray(scheme) && scheme.some(isObject)) {
       error(`Scale type ${type} does not support interpolating color schemes.`);
     }
     return adjustScheme(scheme, extent, _.reverse);

@@ -258,6 +258,19 @@ tape('Scale rejects object-valued schemes for interpolating scale types', t => {
     'linear scale promoted to interpolating throws for object-valued scheme'
   );
 
+  // a MIXED scheme (color strings interleaved with objects, e.g. the
+  // built-in 'monochrome' scheme) must throw as well — leading with a
+  // string must not smuggle the object entries past the guard
+  const mixed = ['#000000', {pattern: {name: 'a'}}, '#999999', {pattern: {name: 'b'}}];
+  vs.scheme('test-mixed', mixed);
+  const ordMixed = scale({type: 'ordinal', scheme: 'test-mixed'});
+  t.deepEqual(ordMixed.range(), mixed, 'ordinal scale range receives raw mixed scheme entries');
+  t.throws(
+    () => scale({type: 'sequential', scheme: 'test-mixed'}),
+    /does not support interpolating color schemes/,
+    'sequential scale throws for mixed color/object scheme'
+  );
+
   t.end();
 });
 
