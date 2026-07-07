@@ -11,9 +11,9 @@
 | yc                | {% include type t="Number" %} | The center y-coordinate. Incompatible with `y` and `y2`.|
 | height            | {% include type t="Number" %} | The height of the mark in pixels, if supported.|
 | opacity           | {% include type t="Number" %} | The mark opacity from 0 (transparent) to 1 (opaque).|
-| fill              | {% include type t="Color" %}  | The fill color.|
+| fill              | {% include type t="Color" %}  | The fill color, {% include type t="Gradient" %}, or {% include type t="Pattern" %}.|
 | fillOpacity       | {% include type t="Number" %} | The fill opacity from 0 (transparent) to 1 (opaque).|
-| stroke            | {% include type t="Color" %}  | The stroke color.|
+| stroke            | {% include type t="Color" %}  | The stroke color, {% include type t="Gradient" %}, or {% include type t="Pattern" %}.|
 | strokeOpacity     | {% include type t="Number" %} | The stroke opacity from 0 (transparent) to 1 (opaque).|
 | strokeWidth       | {% include type t="Number" %} | The stroke width in pixels.|
 | strokeCap         | {% include type t="String" %} | The stroke cap for line ending style. One of `butt` (default), `round` or `square`.|

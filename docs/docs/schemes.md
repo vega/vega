@@ -47,6 +47,7 @@ vega.scheme("mygrey", grey);
 - [**Sequential Multi-Hue**](#seq-multi-hue)
 - [**Diverging**](#diverging)
 - [**Cyclical**](#cyclical)
+- [**Patterns**](#patterns)
 
 <script>
 function toggle(id) {
@@ -5407,3 +5408,15 @@ Cyclical color schemes may be used to highlight periodic patterns in continuous 
   <rect fill="url(#gradient-sinebow)" x="0" y="0" width="1" height="1"></rect>
 </svg>
 </div>
+
+### <a name="patterns"></a>Pattern Schemes {% include tag ver="TBD" %}
+
+In addition to color schemes, Vega registers two built-in schemes whose entries are [pattern](../types/#Pattern) values rather than (or mixed with) colors. Pattern values cannot be interpolated, so these schemes may be used only with scales that have discrete (or discretizing) domains; they are not valid for continuous scale ranges. For more, see [pattern fills in scale ranges](../scales/#range-patterns).
+
+The **`"patterns"`** scheme provides a texture-only palette, intended for *redundant* encoding - layering a texture channel on top of a color encoding so categories remain legible without color. It contains ten built-in patterns, ordered for maximal pairwise visual distinctness:
+
+{% include embed spec="pattern-scheme" %}
+
+The **`"monochrome"`** scheme provides a print-friendly palette for charts drawn without color, interleaving solid grayscale values with textures - the classic value-plus-texture practice for grayscale figures. Solid shades are the strongest monochrome channel, so the scheme leads with black and never places two flat greys side by side:
+
+{% include embed spec="monochrome-scheme" %}

@@ -11,6 +11,8 @@ permalink: /docs/legends/index.html
 
 Properties for specifying a legend. Legends accept one or more [scales](../scales) as parameters. At least one of the _size_, _shape_, _fill_, _stroke_, _strokeDash_, or _opacity_ properties **must** be specified. If multiple scales are provided, they **must** share the _same domain_ of input vales. Otherwise, the behavior of the legend is undefined.
 
+If a legend's backing scale includes [pattern](../types/#Pattern) values in its range {% include tag ver="TBD" %}, symbol legend swatches render the pattern, fitted to the bounds of each legend symbol.
+
 | Property      | Type                           | Description    |
 | :------------ |:------------------------------:| :------------- |
 | type          | {% include type t="String" %}  | The type of legend to include. One of `"symbol"` for discrete symbol legends, `"gradient"` for a continuous color gradient, or `"discrete"` for a discrete color gradient. If gradient or discrete are used, only the fill or stroke scale parameters are considered. If unspecified, the type will be inferred based on the scale parameters used and their backing scale types.|

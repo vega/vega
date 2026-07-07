@@ -402,6 +402,27 @@ Scale ranges can be specified in multiple ways:
 - For [`band`](#band) and [`point`](#point) scales only, a [step size](#band) for each range band. For example, `{"step": 20}`.
 - A string indicating a pre-defined [scale range default](#range-defaults). For example, `"width"`, `"symbol"`, or `"diverging"`.
 
+### <a name="range-patterns"></a>Pattern Fills in Scale Ranges {% include tag ver="TBD" %}
+
+Range arrays for [discrete](#discrete) and [discretizing](#discretizing) scales may include [pattern](../types/#Pattern) values, freely mixed with plain color strings. This supports redundant color and texture encoding, improving legibility in grayscale printing and for users with color vision deficiency. Legends generated for such scales render pattern swatches automatically.
+
+```json
+{
+  "name": "color",
+  "type": "ordinal",
+  "domain": {"data": "table", "field": "category"},
+  "range": [
+    {"pattern": {"name": "diagonal-stripe", "foreground": "#4c78a8"}},
+    "#f58518",
+    {"pattern": {"name": "crosshatch", "foreground": "#54a24b"}}
+  ]
+}
+```
+
+Two built-in [pattern schemes](../schemes/#patterns) provide one-line palettes: `"range": {"scheme": "patterns"}` for a texture-only palette, and `"range": {"scheme": "monochrome"}` for a print-friendly palette interleaving solid grayscale values with textures.
+
+Patterns are valid only as *range* values, not in scale domains. Scales with interpolating (continuous color) ranges cannot include patterns, as pattern values cannot be interpolated; such scales will raise an error.
+
 ### <a name="range-literals"></a>Scale Range Defaults
 
 Scale ranges can also accept string literals that map to default values. Default values can be modified, and new named defaults can be added, by using custom [config settings](../config).
