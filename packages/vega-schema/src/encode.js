@@ -157,6 +157,7 @@ const patternDefinitionBase = {
   foreground: stringType,
   background: stringType,
   strokeWidth: numberType,
+  repeat: oneOf(booleanType, enums(['x', 'y'])),
   origin: enums(['view', 'mark']),
   scale: numberType,
   shapeRendering: stringType
@@ -196,7 +197,6 @@ const patternRule = object({
 const patternImage = object({
   _url_: stringType,
   tileSize: oneOf(numberType, enums(['bounds'])),
-  repeat: oneOf(booleanType, enums(['x', 'y'])),
   ...patternDefinitionBase
 });
 

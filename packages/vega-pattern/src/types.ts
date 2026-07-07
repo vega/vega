@@ -34,6 +34,14 @@ export interface PatternDefinitionBase {
    */
   strokeWidth?: number;
   /**
+   * The tiling mode: `true` (the default) repeats in both directions,
+   * `"x"` and `"y"` repeat along one axis only, and `false` draws a
+   * single tile.
+   *
+   * __Default value:__ `true`
+   */
+  repeat?: boolean | 'x' | 'y';
+  /**
    * The coordinate system pattern tiles anchor to: `"view"` for a shared,
    * view-wide tiling or `"mark"` to anchor tiles to each mark's bounds.
    *
@@ -105,13 +113,6 @@ export interface PatternImage extends PatternDefinitionBase {
    * __Default value:__ `undefined` (the image's intrinsic size).
    */
   tileSize?: number | 'bounds';
-  /**
-   * Repeat behavior, limited to image patterns: `true` (both directions),
-   * `false` (no repetition), or repeat along `"x"` or `"y"` only.
-   *
-   * __Default value:__ `true`
-   */
-  repeat?: boolean | 'x' | 'y';
 }
 
 export type PatternDefinition = PatternNamed | PatternSymbol | PatternRule | PatternImage;
