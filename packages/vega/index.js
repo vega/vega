@@ -22,8 +22,9 @@ extend(
 // -- Schemes -----
 
 import {scheme} from 'vega-scale';
-import {pattern, patternScheme} from 'vega-pattern';
+import {monochromeScheme, pattern, patternScheme} from 'vega-pattern';
 scheme('patterns', patternScheme);
+scheme('monochrome', monochromeScheme);
 
 
 // -- Exports -----
