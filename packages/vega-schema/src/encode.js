@@ -179,7 +179,6 @@ const patternNamed = object({
 const patternSymbol = object({
   _shape_: oneOf(stringType, def('patternLinesShape')),
   tileSize: numberType,
-  size: numberType,
   ...patternDefinitionBase
 });
 

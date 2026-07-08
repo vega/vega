@@ -86,7 +86,6 @@ export interface PatternSymbol extends PatternDefinitionBase {
    * __Default value:__ `10`
    */
   tileSize?: number;
-  size?: number;
 }
 
 export interface PatternRule extends PatternDefinitionBase {
@@ -129,22 +128,19 @@ export interface Pattern {
 /**
  * Loosely-typed internal view of a pattern definition, used only inside
  * vega-pattern's normalizer. The public PatternDefinition (above)
- * intentionally omits `fill`/`stroke`/`image` -- callers should use
- * `foreground`/`url` -- but registry entries and inline shape specs still
- * carry them at runtime: registry.ts defines its built-ins directly in
- * terms of fill/stroke, and normalizer.ts historically accepted `image`
- * as an alias for `url`. This flattened, all-optional type widens
- * PatternDefinition just enough to type-check those internal reads
- * without changing the public surface or runtime behavior.
+ * intentionally omits `fill`/`stroke` -- callers use `foreground` -- but
+ * registry entries and inline shape specs still carry them at runtime
+ * (registry.ts defines its built-ins directly in terms of fill/stroke).
+ * This flattened, all-optional type widens PatternDefinition just enough
+ * to type-check those internal reads without changing the public surface
+ * or runtime behavior.
  */
 export interface PatternDefinitionInternal {
   name?: string;
   shape?: string | PatternLinesShape;
   rule?: PatternRuleSpec;
   url?: string;
-  image?: string;
   tileSize?: number | 'bounds';
-  size?: number;
   repeat?: boolean | 'x' | 'y';
   fill?: string;
   stroke?: string;

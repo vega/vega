@@ -280,7 +280,6 @@ export interface PatternSymbol extends PatternDefinitionBase {
    * __Default value:__ `10`
    */
   tileSize?: number;
-  size?: number;
 }
 
 export interface PatternRule extends PatternDefinitionBase {

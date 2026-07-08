@@ -12,7 +12,7 @@ import type {
 // consistent with the shape actually generated for that name. tileSize
 // is locked too — geometry is authored against it at registration time;
 // use `scale` to resize a named pattern instead.
-const CORE_KEYS: (keyof PatternDefinitionInternal)[] = ['shape', 'url', 'rule', 'image', 'tileSize'];
+const CORE_KEYS: (keyof PatternDefinitionInternal)[] = ['shape', 'url', 'rule', 'tileSize'];
 // kept loosely typed (not `(boolean | 'x' | 'y')[]`) so `.indexOf` can be
 // called with the current (possibly undefined) repeat value below without
 // a null check duplicating the runtime fallback logic.
@@ -70,8 +70,8 @@ export function normalizePatternSpec(input: unknown): NormalizedPatternSpec | nu
     merged = {...base, ...overrides};
   }
 
-  // discriminator precedence: url/image wins over shape/rule when both are present
-  const url = merged.url || merged.image;
+  // discriminator precedence: url wins over shape/rule when both are present
+  const url = merged.url;
   let shape: string | undefined;
   let isGenerated = false;
   let tileSize: number | undefined;
