@@ -1,8 +1,8 @@
 import tape from 'tape';
 import {buildPatternDef, patternRef, resetSVGPatternId} from '../src/PatternFill.js';
 
-// non-repeating axis extent used to emulate repeat:false/'x'/'y'
-// (see NO_REPEAT_EXTENT in src/PatternFill.js)
+// fixed fallback extent, used only when an item has no bounds to bound
+// the non-repeating axis to (see NO_REPEAT_EXTENT in src/PatternFill.js)
 const EXTENT = 8192;
 
 // register a def via patternRef and return its def entry
@@ -16,6 +16,14 @@ function makeDef(wrapper, item) {
 
 const rectItem = () =>
   ({mark: {role: 'mark', marktype: 'rect'}, bounds: {x1: 0, y1: 0, x2: 10, y2: 10}});
+
+// a rect item larger than the 10-unit crosshatch tile, positioned away
+// from the origin, so a bounded no-repeat extent (item bounds measured
+// from the tile origin) is distinguishable from both the tile cell size
+// and the fixed fallback extent. mark-origin anchor = min corner (20, 10).
+const bigRect = () =>
+  ({mark: {role: 'mark', marktype: 'rect'}, x: 20, y: 10, x2: 80, y2: 50,
+    bounds: {x1: 20, y1: 10, x2: 80, y2: 50}});
 
 tape('patternRef returns a url ref and registers a def', t => {
   resetSVGPatternId();
@@ -117,21 +125,80 @@ tape('buildPatternDef omits the background rect for transparent backgrounds', t 
   t.end();
 });
 
-tape('buildPatternDef enlarges only the non-repeating axis for repeat: x', t => {
+tape('buildPatternDef bounds the non-repeating axis to the item for repeat: x', t => {
   resetSVGPatternId();
-  const def = makeDef({pattern: {name: 'crosshatch', repeat: 'x'}}, rectItem());
+  // repeat:'x' defaults origin to 'mark' (anchor 20,10); non-repeating y
+  // is bounded to the item extent (y2 - anchor.y = 50 - 10 = 40), NOT the
+  // fixed fallback extent that browsers rasterize oversized and blur.
+  const def = makeDef({pattern: {name: 'crosshatch', repeat: 'x'}}, bigRect());
   const {attrs} = buildPatternDef(def);
   t.equal(attrs.width, 10, 'repeating x axis keeps the cell size');
-  t.equal(attrs.height, EXTENT, 'non-repeating y axis grows to the no-repeat extent');
+  t.equal(attrs.height, 40, 'non-repeating y axis is bounded to the item bounds');
+  t.ok(attrs.height < EXTENT, 'not the oversized fixed extent');
   t.end();
 });
 
-tape('buildPatternDef enlarges both axes for repeat: false', t => {
+tape('buildPatternDef bounds both axes to the item for repeat: false', t => {
   resetSVGPatternId();
-  const def = makeDef({pattern: {name: 'crosshatch', repeat: false}}, rectItem());
+  // anchor (20,10); extents x2-anchor.x = 60, y2-anchor.y = 40.
+  const def = makeDef({pattern: {name: 'crosshatch', repeat: false}}, bigRect());
   const {attrs} = buildPatternDef(def);
-  t.equal(attrs.width, EXTENT);
+  t.equal(attrs.width, 60, 'x bounded to the item extent from the tile origin');
+  t.equal(attrs.height, 40, 'y bounded to the item extent from the tile origin');
+  t.ok(attrs.width < EXTENT && attrs.height < EXTENT, 'not the oversized fixed extent');
+  t.end();
+});
+
+tape('buildPatternDef bounds the non-repeat extent from the view origin for origin: view', t => {
+  resetSVGPatternId();
+  // origin:'view' tiles from (0,0), so the extent spans to the item's far
+  // edge: x2 = 80, y2 = 50.
+  const def = makeDef({pattern: {name: 'crosshatch', repeat: false, origin: 'view'}}, bigRect());
+  const {attrs} = buildPatternDef(def);
+  t.equal(attrs.x, 0, 'view-anchored tile origin');
+  t.equal(attrs.y, 0);
+  t.equal(attrs.width, 80, 'x spans from the view origin to the item far edge');
+  t.equal(attrs.height, 50, 'y spans from the view origin to the item far edge');
+  t.end();
+});
+
+tape('buildPatternDef never shrinks the non-repeat cell below one tile', t => {
+  resetSVGPatternId();
+  // a mark smaller than the 10-unit tile: the cell must still be a full
+  // tile, or sub-tile tiling would repeat the content within the mark.
+  const tiny = {mark: {role: 'mark', marktype: 'rect'}, x: 0, y: 0, x2: 4, y2: 4,
+    bounds: {x1: 0, y1: 0, x2: 4, y2: 4}};
+  const def = makeDef({pattern: {name: 'crosshatch', repeat: false}}, tiny);
+  const {attrs} = buildPatternDef(def);
+  t.equal(attrs.width, 10, 'x floored at the tile cell size');
+  t.equal(attrs.height, 10, 'y floored at the tile cell size');
+  t.end();
+});
+
+tape('buildPatternDef falls back to the fixed extent when item bounds are unavailable', t => {
+  resetSVGPatternId();
+  const noBounds = {mark: {role: 'mark', marktype: 'rect'}};
+  const def = makeDef({pattern: {name: 'crosshatch', repeat: false, origin: 'view'}}, noBounds);
+  const {attrs} = buildPatternDef(def);
+  t.equal(attrs.width, EXTENT, 'no bounds -> fixed fallback extent');
   t.equal(attrs.height, EXTENT);
+  t.end();
+});
+
+tape('non-repeat defs key by the bounded extent (same anchor, different size -> distinct defs)', t => {
+  resetSVGPatternId();
+  const defs = {};
+  // same min corner (0,0) -> same mark anchor, but different far edges:
+  // the anchor key alone would collide, so the extent must key them apart.
+  const rect = (x2, y2) => ({mark: {role: 'mark', marktype: 'rect'}, x: 0, y: 0, x2, y2,
+    bounds: {x1: 0, y1: 0, x2, y2}});
+  const w = {pattern: {name: 'crosshatch', repeat: false}};
+  const r1 = patternRef(w, defs, '', rect(60, 40));
+  const r2 = patternRef(w, defs, '', rect(60, 40));
+  const r3 = patternRef(w, defs, '', rect(100, 40));
+  t.equal(r1, r2, 'same-size items share a non-repeat def');
+  t.notEqual(r1, r3, 'different-size items get distinct non-repeat defs');
+  t.equal(Object.keys(defs).length, 2, 'two defs registered');
   t.end();
 });
 

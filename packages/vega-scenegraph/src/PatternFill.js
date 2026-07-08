@@ -11,26 +11,33 @@ export function resetSVGPatternId() {
   pattern_id = 0;
 }
 
-// Enlargement applied to the non-repeating axis (axes) of a pattern cell
-// to emulate repeat: false / 'x' / 'y'. SVG <pattern> elements always
+// Fallback enlargement for the non-repeating axis (axes) of a pattern
+// cell emulating repeat: false / 'x' / 'y'. SVG <pattern> elements always
 // tile; to suppress visible repeats along an axis we grow that axis's
-// cell so the next tiled copy lands outside the paintable area. This is
-// a fixed constant (not derived from item bounds) so def content-keying
-// stays independent of any one item's geometry -- the same wrapper spec
-// always shares one def regardless of which items reference it.
+// cell so the next tiled copy lands outside the filled area.
 //
-// Size trade-off: browsers rasterize the entire pattern cell to an
-// offscreen surface, so an over-large extent (e.g. 1e5) risks exceeding
-// surface caps -- forcing a blurry downsample-then-upscale of the cell
-// content -- or triggering very large allocations. 8192 stays within
-// common browser surface limits while exceeding realistic chart sizes.
-// The cost: a chart larger than 8192 CSS px along a non-repeating axis
-// may show a duplicate tile copy. That failure mode is comparable to
-// canvas's emulation (padding the raster to the item's bounds extent),
-// which is also finite. The constant is centralized here for later
-// tuning; it has not been empirically browser-tested in this
-// environment.
+// Normally that extent is bounded to the filled item's own bounds (see
+// patternRef / noRepeatExtent), because browsers rasterize the ENTIRE
+// pattern cell to an offscreen surface: an over-large cell exceeds the
+// surface cap and is downsampled-then-upscaled, blurring the small tile
+// content that occupies a tiny fraction of it. Bounding the cell to the
+// item keeps it small enough to rasterize crisply, matching canvas's
+// bounds-padding (util/canvas/pattern.js tileLayout).
+//
+// This constant is only the fallback for when an item exposes no bounds
+// to measure against. It stays within common browser surface limits
+// while exceeding realistic chart sizes; a chart larger than this along a
+// non-repeating axis could show a duplicate tile copy.
 const NO_REPEAT_EXTENT = 8192;
+
+// The non-repeating-axis cell dimension for a def: the bounded extent
+// stashed by patternRef (item bounds measured from the tile origin), or
+// the fixed fallback when none was available, never smaller than one
+// tile (a sub-tile cell would tile the content within the mark).
+function noRepeatExtent(stored, tileDim) {
+  const e = stored != null ? stored : NO_REPEAT_EXTENT;
+  return Math.max(tileDim || 0, e);
+}
 
 // Renderer-side pattern state, keyed by the user-facing pattern wrapper
 // object so nothing is ever written onto user specs (the same discipline
@@ -145,6 +152,23 @@ export function patternRef(value, defs, base, item, renderer) {
     key += '|#' + round(boxWidth) + 'x' + round(boxHeight);
   }
 
+  // Non-repeating axes need a pattern cell just large enough to cover the
+  // filled item from the tile origin, so the next tiled copy falls outside
+  // the mark (one visible tile) -- bounded to the item's bounds rather than
+  // a fixed oversized constant the browser would blur (see NO_REPEAT_EXTENT).
+  // Folded into the key: same-anchor items of different sizes need different
+  // extents, so the anchor key alone cannot dedupe them.
+  let extentX, extentY;
+  if (spec.fit !== 'swatch' && spec.tileSize !== 'bounds') {
+    const rep = normalizeRepeat(spec.repeat);
+    const b = item && item.bounds;
+    if ((!rep.x || !rep.y) && b) {
+      extentX = Math.max(0, Math.ceil(b.x2 - (anchor ? anchor.x : 0)));
+      extentY = Math.max(0, Math.ceil(b.y2 - (anchor ? anchor.y : 0)));
+      key += '|~' + extentX + 'x' + extentY;
+    }
+  }
+
   // Every image pattern needs the image's natural dimensions: intrinsic
   // tiles for both cell axes, numeric-tileSize tiles for the aspect-
   // preserving cell height, bounding-box contain fits for the natural
@@ -171,6 +195,10 @@ export function patternRef(value, defs, base, item, renderer) {
     if (boxWidth !== undefined) {
       def.boxWidth = boxWidth;
       def.boxHeight = boxHeight;
+    }
+    if (extentX !== undefined) {
+      def.repeatExtentX = extentX;
+      def.repeatExtentY = extentY;
     }
   }
 
@@ -292,8 +320,8 @@ function buildSymbolDef(def) {
       patternUnits: 'userSpaceOnUse',
       x: def.x || 0,
       y: def.y || 0,
-      width: rep.x ? cell : NO_REPEAT_EXTENT,
-      height: rep.y ? cell : NO_REPEAT_EXTENT
+      width: rep.x ? cell : noRepeatExtent(def.repeatExtentX, cell),
+      height: rep.y ? cell : noRepeatExtent(def.repeatExtentY, cell)
     },
     children
   };
@@ -350,8 +378,8 @@ function buildImageDef(def) {
       patternUnits: 'userSpaceOnUse',
       x: def.x || 0,
       y: def.y || 0,
-      width: rep.x && w != null ? w : NO_REPEAT_EXTENT,
-      height: rep.y && h != null ? h : NO_REPEAT_EXTENT
+      width: rep.x && w != null ? w : noRepeatExtent(def.repeatExtentX, w),
+      height: rep.y && h != null ? h : noRepeatExtent(def.repeatExtentY, h)
     },
     children
   };
