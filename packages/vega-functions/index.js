@@ -56,6 +56,10 @@ export {
 } from './src/functions/pinch.js';
 
 export {
+  default as pattern
+} from './src/functions/pattern.js';
+
+export {
   default as pluck
 } from './src/functions/pluck.js';
 
