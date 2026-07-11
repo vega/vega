@@ -1,17 +1,10 @@
 import {hasCornerRadius, rectangle} from '../../path/shapes.js';
 import {isFunction} from 'vega-util';
 
-var clip_id = 1;
-
-export function resetSVGClipId() {
-  clip_id = 1;
-}
 
 export default function(renderer, item, size) {
   var clip = item.clip,
-      defs = renderer._defs,
-      id = item.clip_id || (item.clip_id = 'clip' + clip_id++),
-      c = defs.clipping[id] || (defs.clipping[id] = {id: id});
+      c = {};
 
   if (isFunction(clip)) {
     c.path = clip(null);
@@ -21,6 +14,9 @@ export default function(renderer, item, size) {
     c.width = size.width || 0;
     c.height = size.height || 0;
   }
-
-  return 'url(#' + id + ')';
+  if (c.path){
+    return `path(${c.path}) view-box`;
+  } else {
+    return `xywh(0 0 ${c.width} ${c.height}) view-box`;
+  }
 }
