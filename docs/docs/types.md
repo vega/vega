@@ -121,7 +121,7 @@ A gradient stop consists of a [Color](#Color) value and an _offset_ progress fra
 <br/><a name="Pattern" href="#Pattern">#</a>
 **Pattern** {% include tag ver="TBD" %}
 
-Accepts an object that specifies a repeating pattern (texture) fill or stroke. Like [gradients](#Gradient), patterns are object-valued color substitutes: they can be used anywhere a color literal is accepted, including mark `fill` and `stroke` encodings and [scale range](../scales/#range) arrays.
+Accepts an object that specifies a repeating pattern (texture) fill or stroke. Like [gradients](#Gradient), patterns are object-valued color substitutes: they can be used anywhere a color literal is accepted, including mark `fill` and `stroke` encodings and [scale range](../scales/#range) arrays. Pattern values can also be constructed within signal expressions via the [pattern](../expressions/#pattern) expression function - for example, to combine a texture from one scale with a foreground color from another.
 
 A pattern is defined as an object with a single `pattern` property, whose value describes the pattern to draw. For example, to fill a mark with a built-in diagonal stripe recolored blue:
 

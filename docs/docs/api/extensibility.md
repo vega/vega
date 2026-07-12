@@ -134,6 +134,8 @@ vega.pattern('unknown');    // null
 
 Note that specs referencing an unregistered pattern name will render those fills as transparent and log a warning; register custom patterns _before_ running a view that uses them.
 
+The expression language includes a companion [pattern](../../expressions/#pattern) function for building pattern values inside signal expressions - for example, composing a texture from one scale with a foreground color from another. Registration (this API) and construction (the expression function) are deliberately separate: registered names are resolved at render time, so patterns registered here are immediately usable from both specs and expressions.
+
 ## <a name="transform"></a>Transforms
 
 <a name="transforms" href="#transforms">#</a>

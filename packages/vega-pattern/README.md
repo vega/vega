@@ -168,6 +168,20 @@ vega.pattern('bricks'); // { shape: 'M0,6 H12 M6,0 V6', tileSize: 12, … }
 vega.pattern('nope');   // null
 ```
 
+<a name="pattern-expression" href="#pattern-expression">#</a>
+<b>pattern</b>(<i>spec</i>[, <i>overrides</i>]) · expression function
+[<>](https://github.com/vega/vega/blob/master/packages/vega-functions/src/functions/pattern.js "Source")
+
+Vega's [expression language](https://vega.github.io/vega/docs/expressions/#pattern) also provides a `pattern` function (via [vega-functions](https://github.com/vega/vega/tree/master/packages/vega-functions), the [`gradient`](https://vega.github.io/vega/docs/expressions/#gradient) analog) for building pattern values inside signal expressions. The *spec* may be a registered pattern name, an existing pattern value (such as the output of a scale with a pattern-valued range), or an inner definition object; the optional *overrides* object is merged onto the resulting definition, taking precedence. The canonical use is composing a texture from one scale with a foreground color from another:
+
+```json
+"fill": {
+  "signal": "pattern(scale('tex', datum.type), {foreground: scale('color', datum.group)})"
+}
+```
+
+The function is pure construction: it never mutates its input (shared scale range values are safe), and name resolution against the registry happens downstream at render time.
+
 <a name="isPattern" href="#isPattern">#</a>
 <b>isPattern</b>(<i>value</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-pattern/src/normalizer.ts "Source")

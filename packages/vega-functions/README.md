@@ -85,6 +85,7 @@ This package provides the following expression functions. All other constants an
 - [domain](https://vega.github.io/vega/docs/expressions/#domain)
 - [gradient](https://vega.github.io/vega/docs/expressions/#gradient)
 - [invert](https://vega.github.io/vega/docs/expressions/#invert)
+- [pattern](https://vega.github.io/vega/docs/expressions/#pattern)
 - [range](https://vega.github.io/vega/docs/expressions/#range)
 - [scale](https://vega.github.io/vega/docs/expressions/#scale)
 - [panLinear](https://vega.github.io/vega/docs/expressions/#panLinear)
