@@ -34,7 +34,7 @@ tape('pattern() composes texture and color scales end to end', async t => {
   const view = new vega.View(vega.parse(spec), {renderer: 'none'});
   const svg = await view.toSVG();
   const defs = svg.match(/<pattern /g) || [];
-  t.ok(defs.length >= 2, 'one def per texture/foreground combination');
+  t.equal(defs.length, 2, 'one def per texture/foreground combination');
   t.ok(svg.includes('#ff0000'), 'first foreground present in defs');
   t.ok(svg.includes('#0000ff'), 'second foreground present in defs');
   t.ok(/fill="url\(#pattern_\d+\)"/.test(svg), 'marks reference pattern defs');

@@ -30,6 +30,8 @@ tape('pattern merges overrides onto wrapper input without mutation', t => {
 tape('pattern handles null input and is registered', t => {
   t.equal(pattern(null), null);
   t.equal(pattern(undefined), null);
+  t.deepEqual(pattern('dots', 'red'), {pattern: {name: 'dots'}},
+    'non-object overrides are ignored');
   t.equal(expressionFunction('pattern'), pattern, 'lives in the function context');
   t.end();
 });
