@@ -1,0 +1,86 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Image-pattern fills driven end-to-end through a fill legend. Three small self-contained (data URI) tile images are used as pattern fills for an ordinal scale, with repeat mode and tile size exposed as bound signals -- image patterns have no foreground color knob (unlike named/shape/rule patterns), so color variation here comes entirely from the source images.",
+  "width": 260,
+  "height": 200,
+  "padding": 5,
+  "signals": [
+    {
+      "name": "patternRepeat",
+      "value": "true",
+      "bind": {"input": "select", "name": "repeat", "options": ["true", "false", "x", "y"]}
+    },
+    {
+      "name": "repeatValue",
+      "update": "patternRepeat === 'true' ? true : (patternRepeat === 'false' ? false : patternRepeat)"
+    },
+    {
+      "name": "tileSizeStr",
+      "value": "16",
+      "bind": {"input": "text", "name": "tileSize"}
+    },
+    {
+      "name": "tileSizeValue",
+      "update": "length(trim(tileSizeStr)) ? +tileSizeStr : 16"
+    }
+  ],
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"c": "A", "value": 10},
+        {"c": "B", "value": 20},
+        {"c": "C", "value": 30}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "band",
+      "domain": {"data": "table", "field": "c"},
+      "range": "width",
+      "padding": 0.25
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "table", "field": "value"},
+      "range": "height",
+      "nice": true
+    },
+    {
+      "name": "c",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "c"},
+      "range": {
+        "signal": "[{pattern: {url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QA/wD/AP+gvaeTAAAALUlEQVQokWO8/fzjfwYsoHDidmzCDExYRfGA4aCB0adiBdZQ6s/3pI4Nw0EDAG8uCTRp1W/iAAAAAElFTkSuQmCC', tileSize: tileSizeValue, repeat: repeatValue}}, {pattern: {url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QA/wD/AP+gvaeTAAAAX0lEQVQokZXQUQrAIAwD0LQG9BY77w7s9/YzRtSC9UMIIcij1u/rMVbge8YKFMkcs5+MwQYuZYnG7c8+/ByOI9KGoT0zDO09w1D2eqWAoWxmGMr2DEPZnmFMV9oztH8BTvIJCvT4lwIAAAAASUVORK5CYII=', tileSize: tileSizeValue, repeat: repeatValue}}, {pattern: {url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QA/wD/AP+gvaeTAAAAWklEQVQokWN8+fXVfwYSABMpiumjgQVd4PzTMwyrLixhYGBgYAgziGEwlDbBb8PqC0sZPv34yPDpx0eG1ReWUu4kDA3hBrEM/BwCDPwcAgzhBrEYGhiHQTwAAH/0GbNY0L1SAAAAAElFTkSuQmCC', tileSize: tileSizeValue, repeat: repeatValue}}]"
+      }
+    }
+  ],
+  "axes": [
+    {"orient": "bottom", "scale": "x"},
+    {"orient": "left", "scale": "y"}
+  ],
+  "legends": [
+    {"fill": "c", "title": "Tile image"}
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "c"},
+          "width": {"scale": "x", "band": 1},
+          "y": {"scale": "y", "field": "value"},
+          "y2": {"scale": "y", "value": 0},
+          "stroke": {"value": "#333"}
+        },
+        "update": {
+          "fill": {"scale": "c", "field": "c"}
+        }
+      }
+    }
+  ]
+}

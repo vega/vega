@@ -339,9 +339,15 @@ export type Diverging =
 
 export type Cyclical = 'rainbow' | 'sinebow';
 
+// Built-in pattern (texture) schemes registered by the vega package;
+// their entries are pattern fill values (or colors mixed with patterns)
+// rather than plain colors, and are valid only for discrete ranges.
+export type PatternScheme = 'patterns' | 'monochrome';
+
 export type ColorScheme =
   | Categorical
   | SequentialSingleHue
   | SequentialMultiHue
   | Diverging
-  | Cyclical;
+  | Cyclical
+  | PatternScheme;

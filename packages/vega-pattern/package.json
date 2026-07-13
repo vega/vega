@@ -1,0 +1,42 @@
+{
+  "name": "vega-pattern",
+  "version": "1.0.0",
+  "description": "Pattern (image & texture) utilities for Vega fill/stroke/color encodings.",
+  "keywords": [
+    "vega",
+    "pattern",
+    "texture",
+    "fill",
+    "stroke"
+  ],
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "types": "./build/index.d.ts",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-pattern#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
+  "scripts": {
+    "prebuild": "del-cli build",
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
+    "test": "tape 'test/**/*-test.js'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "dependencies": {
+    "vega-util": "^2.1.0"
+  }
+}

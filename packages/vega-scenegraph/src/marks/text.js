@@ -8,6 +8,7 @@ import fill from '../util/canvas/fill.js';
 import {pick} from '../util/canvas/pick.js';
 import stroke from '../util/canvas/stroke.js';
 import {rotate, translate} from '../util/svg/transform.js';
+import {isPattern} from 'vega-pattern';
 import {isArray} from 'vega-util';
 
 const textAlign = {
@@ -94,6 +95,7 @@ function bound(bounds, item, mode) {
 }
 
 function draw(context, scene, bounds) {
+  const renderer = this;
   visit(scene, item => {
     var opacity = item.opacity == null ? 1 : item.opacity,
         p, x, y, i, lh, tl, str;
@@ -109,14 +111,34 @@ function draw(context, scene, bounds) {
     x = p.x1,
     y = p.y1;
 
-    if (item.angle) {
+    // Canvas draws unrotated text via fillText(x, y) at absolute coordinates,
+    // so a pattern fill/stroke's grid would otherwise sit in the group frame
+    // (view-anchored) rather than riding the item (mark-anchored), unlike
+    // SVG where userSpaceOnUse patterns resolve in the referencing element's
+    // own transformed space. Translating to the item's origin here — the
+    // same move already made for rotated text — puts Canvas and SVG back in
+    // the same frame. See pattern-common.js resolveItemPattern for the
+    // matching origin-neutralization on the fill-resolution side.
+    const patterned = isPattern(item.fill) || isPattern(item.stroke);
+
+    if (item.angle || patterned) {
       context.save();
       context.translate(x, y);
-      context.rotate(item.angle * DegToRad);
+      if (item.angle) context.rotate(item.angle * DegToRad);
       x = y = 0; // reset x, y
     }
-    x += (item.dx || 0);
-    y += (item.dy || 0) + offset(item);
+    if (patterned) {
+      // dx, dy and the baseline offset are part of the SVG text transform
+      // (attr() above: translate(x, y) rotate(a) translate(dx, dy)), so
+      // userSpaceOnUse patterns ride them too. Translating here — rather
+      // than offsetting the fillText coordinates — keeps the canvas
+      // pattern frame identical to SVG's whatever the item's dx, dy, or
+      // baseline; glyph positions are unchanged either way.
+      context.translate(item.dx || 0, (item.dy || 0) + offset(item));
+    } else {
+      x += (item.dx || 0);
+      y += (item.dy || 0) + offset(item);
+    }
 
     tl = textLines(item);
     blend(context, item);
@@ -124,25 +146,25 @@ function draw(context, scene, bounds) {
       lh = lineHeight(item);
       for (i=0; i<tl.length; ++i) {
         str = textValue(item, tl[i]);
-        if (item.fill && fill(context, item, opacity)) {
+        if (item.fill && fill(context, item, opacity, renderer)) {
           context.fillText(str, x, y);
         }
-        if (item.stroke && stroke(context, item, opacity)) {
+        if (item.stroke && stroke(context, item, opacity, renderer)) {
           context.strokeText(str, x, y);
         }
         y += lh;
       }
     } else {
       str = textValue(item, tl);
-      if (item.fill && fill(context, item, opacity)) {
+      if (item.fill && fill(context, item, opacity, renderer)) {
         context.fillText(str, x, y);
       }
-      if (item.stroke && stroke(context, item, opacity)) {
+      if (item.stroke && stroke(context, item, opacity, renderer)) {
         context.strokeText(str, x, y);
       }
     }
 
-    if (item.angle) context.restore();
+    if (item.angle || patterned) context.restore();
   });
 }
 

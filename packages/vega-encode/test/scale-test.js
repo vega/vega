@@ -221,6 +221,59 @@ tape('Scale respects range color schemes', t => {
   t.end();
 });
 
+tape('Scale rejects object-valued schemes for interpolating scale types', t => {
+  const objects = [
+    {pattern: {name: 'a'}},
+    {pattern: {name: 'b'}},
+    {pattern: {name: 'c'}}
+  ];
+  vs.scheme('test-objects', objects);
+
+  // non-regression: ordinal (discrete) scales keep working with object range entries
+  const ord = scale({type: 'ordinal', scheme: 'test-objects'});
+  t.deepEqual(ord.range(), objects, 'ordinal scale range receives raw scheme objects');
+
+  // non-regression: discretizing scales (e.g. quantize) keep working with object entries
+  const qz = scale({
+    type: 'quantize',
+    domain: [0, 1],
+    scheme: 'test-objects',
+    schemeCount: objects.length
+  });
+  t.deepEqual(qz.range(), objects, 'quantize scale range receives raw scheme objects');
+
+  // interpolating scale types must raise a comprehensible error rather than
+  // silently coercing pattern-style objects to black via color interpolation
+  t.throws(
+    () => scale({type: 'sequential', scheme: 'test-objects'}),
+    /does not support interpolating color schemes/,
+    'sequential scale throws for object-valued scheme'
+  );
+
+  // a 'linear' scale with a 2-value domain and a scheme is internally
+  // promoted to a sequential (interpolating) scale, and must throw too
+  t.throws(
+    () => scale({type: 'linear', domain: [0, 1], scheme: 'test-objects'}),
+    /does not support interpolating color schemes/,
+    'linear scale promoted to interpolating throws for object-valued scheme'
+  );
+
+  // a MIXED scheme (color strings interleaved with objects, e.g. the
+  // built-in 'monochrome' scheme) must throw as well — leading with a
+  // string must not smuggle the object entries past the guard
+  const mixed = ['#000000', {pattern: {name: 'a'}}, '#999999', {pattern: {name: 'b'}}];
+  vs.scheme('test-mixed', mixed);
+  const ordMixed = scale({type: 'ordinal', scheme: 'test-mixed'});
+  t.deepEqual(ordMixed.range(), mixed, 'ordinal scale range receives raw mixed scheme entries');
+  t.throws(
+    () => scale({type: 'sequential', scheme: 'test-mixed'}),
+    /does not support interpolating color schemes/,
+    'sequential scale throws for mixed color/object scheme'
+  );
+
+  t.end();
+});
+
 tape('Scale warns for zero in log domain', t => {
   function logScale(domain) {
     return function() {

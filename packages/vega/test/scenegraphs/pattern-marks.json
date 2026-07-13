@@ -1,0 +1,520 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "group",
+          "role": "scope",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 10,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": "#333"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "symbol",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 140,
+                      "y": 40,
+                      "fill": {},
+                      "stroke": "#333",
+                      "size": 3000,
+                      "shape": "circle"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "arc",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 250,
+                      "y": 40,
+                      "fill": {},
+                      "stroke": "#333",
+                      "startAngle": 0,
+                      "endAngle": 4.5,
+                      "outerRadius": 35,
+                      "cornerRadius": 0,
+                      "padAngle": 0
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 450,
+                      "y": 40,
+                      "align": "center",
+                      "baseline": "middle",
+                      "fill": {},
+                      "stroke": "#333",
+                      "strokeWidth": 1,
+                      "text": "Vega",
+                      "font": "sans-serif",
+                      "fontSize": 80,
+                      "fontWeight": 900
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "path",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 620,
+                      "y": 10,
+                      "fill": {},
+                      "stroke": "#333",
+                      "path": "M30,0 L37,18 L57,18 L41,29 L48,46 L30,35 L12,46 L19,29 L3,18 L23,18 Z"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 40,
+                      "y": 105,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "rect",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 140,
+                      "y": 105,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "symbol",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 250,
+                      "y": 105,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "arc",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 450,
+                      "y": 105,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "text",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 650,
+                      "y": 105,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "path",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 20,
+              "y": 10,
+              "width": 860,
+              "height": 180
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "scope",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 20,
+                      "y": 80.00000000000001,
+                      "width": 60,
+                      "height": 39.999999999999986,
+                      "fill": {},
+                      "stroke": "#333",
+                      "y2": 120
+                    },
+                    {
+                      "x": 100,
+                      "y": 40.00000000000001,
+                      "width": 60,
+                      "height": 80,
+                      "fill": "goldenrod",
+                      "stroke": "#333",
+                      "y2": 120
+                    },
+                    {
+                      "x": 180,
+                      "y": 0,
+                      "width": 60,
+                      "height": 120,
+                      "fill": {},
+                      "stroke": "#333",
+                      "y2": 120
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "area",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 300,
+                      "y": 82.5,
+                      "height": 37.5,
+                      "fill": {},
+                      "stroke": "#333",
+                      "interpolate": "monotone",
+                      "y2": 120
+                    },
+                    {
+                      "x": 365,
+                      "y": 45,
+                      "height": 75,
+                      "fill": {},
+                      "stroke": "#333",
+                      "interpolate": "monotone",
+                      "y2": 120
+                    },
+                    {
+                      "x": 430,
+                      "y": 67.5,
+                      "height": 52.5,
+                      "fill": {},
+                      "stroke": "#333",
+                      "interpolate": "monotone",
+                      "y2": 120
+                    },
+                    {
+                      "x": 495,
+                      "y": 7.5,
+                      "height": 112.5,
+                      "fill": {},
+                      "stroke": "#333",
+                      "interpolate": "monotone",
+                      "y2": 120
+                    },
+                    {
+                      "x": 560,
+                      "y": 30,
+                      "height": 90,
+                      "fill": {},
+                      "stroke": "#333",
+                      "interpolate": "monotone",
+                      "y2": 120
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "trail",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 600,
+                      "y": 96,
+                      "fill": {},
+                      "size": 56
+                    },
+                    {
+                      "x": 665,
+                      "y": 72,
+                      "fill": {},
+                      "size": 72
+                    },
+                    {
+                      "x": 730,
+                      "y": 48,
+                      "fill": {},
+                      "size": 88
+                    },
+                    {
+                      "x": 795,
+                      "y": 23.999999999999993,
+                      "fill": {},
+                      "size": 104
+                    },
+                    {
+                      "x": 860,
+                      "y": 0,
+                      "fill": {},
+                      "size": 120
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 130,
+                      "y": 170,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "bar",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 430,
+                      "y": 170,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "area",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "text",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 730,
+                      "y": 170,
+                      "align": "center",
+                      "fill": "#000",
+                      "text": "trail",
+                      "font": "sans-serif",
+                      "fontSize": 12
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 20,
+              "y": 240,
+              "width": 860,
+              "height": 200
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "group",
+          "role": "scope",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "items": [
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 10,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": "#333"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 90,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": "#333"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 170,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": "#333"
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 250,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": {},
+                      "strokeWidth": 6
+                    }
+                  ],
+                  "zindex": 0
+                },
+                {
+                  "marktype": "rect",
+                  "role": "mark",
+                  "interactive": true,
+                  "clip": false,
+                  "items": [
+                    {
+                      "x": 330,
+                      "y": 10,
+                      "width": 60,
+                      "height": 60,
+                      "fill": {},
+                      "stroke": "#333"
+                    }
+                  ],
+                  "zindex": 0
+                }
+              ],
+              "x": 20,
+              "y": 460,
+              "width": 860,
+              "height": 80
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 900,
+      "height": 550
+    }
+  ],
+  "zindex": 0
+}

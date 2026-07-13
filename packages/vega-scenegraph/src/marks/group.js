@@ -76,6 +76,7 @@ const hitForeground = hitPath(rectanglePath, false);
 const hitCorner = hitPath(rectanglePath, true);
 
 function draw(context, scene, bounds, markTypes) {
+  const renderer = this;
   visit(scene, group => {
     const gx = group.x || 0,
           gy = group.y || 0,
@@ -86,10 +87,10 @@ function draw(context, scene, bounds, markTypes) {
     if ((group.stroke || group.fill) && opacity) {
       rectanglePath(context, group, gx, gy);
       blend(context, group);
-      if (group.fill && fill(context, group, opacity)) {
+      if (group.fill && fill(context, group, opacity, renderer)) {
         context.fill();
       }
-      if (group.stroke && !fore && stroke(context, group, opacity)) {
+      if (group.stroke && !fore && stroke(context, group, opacity, renderer)) {
         context.stroke();
       }
     }
@@ -115,7 +116,7 @@ function draw(context, scene, bounds, markTypes) {
     if (fore && group.stroke && opacity) {
       rectanglePath(context, group, gx, gy);
       blend(context, group);
-      if (stroke(context, group, opacity)) {
+      if (stroke(context, group, opacity, renderer)) {
         context.stroke();
       }
     }

@@ -51,6 +51,10 @@ export {
 } from './src/functions/modify.js';
 
 export {
+  default as pattern
+} from './src/functions/pattern.js';
+
+export {
   pinchDistance,
   pinchAngle
 } from './src/functions/pinch.js';

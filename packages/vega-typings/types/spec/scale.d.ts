@@ -1,4 +1,5 @@
 import { SignalRef } from '../index.js';
+import { Pattern } from './encode.js';
 import { ColorScheme } from './scheme.js';
 
 export type RangeEnum =
@@ -12,7 +13,7 @@ export type RangeEnum =
   | 'heatmap';
 
 export type RangeRawArray = (number | SignalRef)[];
-export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray)[];
+export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray | Pattern)[];
 export type RangeScheme =
   | RangeEnum
   | RangeRaw

@@ -810,6 +810,10 @@ Returns the number of steps needed within a band scale, based on the _count_ of 
 <b>gradient</b>(<i>scale</i>, <i>p0</i>, <i>p1</i>[, <i>count</i>])<br/>
 Returns a linear color gradient for the _scale_ (whose range must be a [continuous color scheme](../schemes)) and starting and ending points _p0_ and _p1_, each an _[x, y]_ array. The points _p0_ and _p1_ should be expressed in normalized coordinates in the domain [0, 1], relative to the bounds of the item being colored. If unspecified, _p0_ defaults to `[0, 0]` and _p1_ defaults to `[1, 0]`, for a horizontal gradient that spans the full bounds of an item. The optional _count_ argument indicates a desired target number of sample points to take from the color scale.
 
+<a name="pattern" href="#pattern">#</a>
+<b>pattern</b>(<i>spec</i>[, <i>overrides</i>]) {% include tag ver="TBD" %}<br/>
+Returns a [pattern](../types/#Pattern) fill or stroke value. The _spec_ may be a registered pattern name (`pattern('circles')`), an existing pattern value such as the output of an ordinal scale with a pattern-valued range (`pattern(scale('tex', datum.category))`), or a pattern definition object (`pattern({rule: {angle: 45}})`). The optional _overrides_ object is merged onto the resulting definition and takes precedence — for example, composing a texture from one scale with a foreground color from another: `pattern(scale('tex', datum.type), {foreground: scale('color', datum.group)})`. Returns `null` if _spec_ is null, leaving the property unset.
+
 <a name="panLinear" href="#panLinear">#</a>
 <b>panLinear</b>(<i>domain</i>, <i>delta</i>)<br/>
 Given a linear scale _domain_ array with numeric or datetime values, returns a new two-element domain array that is the result of panning the domain by a fractional _delta_. The _delta_ value represents fractional units of the scale range; for example, `0.5` indicates panning the scale domain to the right by half the scale range.

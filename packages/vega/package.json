@@ -60,6 +60,7 @@
     "vega-label": "~2.1.0",
     "vega-loader": "~5.1.0",
     "vega-parser": "~7.1.0",
+    "vega-pattern": "~1.0.0",
     "vega-projection": "~2.1.0",
     "vega-regression": "~2.1.0",
     "vega-runtime": "~7.1.0",

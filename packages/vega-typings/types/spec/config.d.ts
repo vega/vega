@@ -20,6 +20,7 @@ import {
   ColorValueRef,
   Gradient,
   NumericValueRef,
+  Pattern,
   ScaledValueRef,
   Text,
   TextDirection
@@ -139,20 +140,20 @@ export interface MarkConfig {
   smooth?: boolean | SignalRef;
 
   /**
-   * Default fill color.
+   * Default fill color, gradient, or pattern.
    *
    * __Default value:__ (None)
    *
    */
-  fill?: Color | Gradient | null | SignalRef;
+  fill?: Color | Gradient | Pattern | null | SignalRef;
 
   /**
-   * Default stroke color.
+   * Default stroke color, gradient, or pattern.
    *
    * __Default value:__ (None)
    *
    */
-  stroke?: Color | Gradient | null | SignalRef;
+  stroke?: Color | Gradient | Pattern | null | SignalRef;
 
   // ---------- Opacity ----------
   /**

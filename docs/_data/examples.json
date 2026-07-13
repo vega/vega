@@ -4,11 +4,13 @@
         {"name": "stacked-bar-chart"},
         {"name": "grouped-bar-chart"},
         {"name": "nested-bar-chart"},
+        {"name": "monochrome-bar-chart"},
         {"name": "population-pyramid"}
     ],
     "Line & Area Charts": [
         {"name": "line-chart"},
         {"name": "area-chart"},
+        {"name": "pattern-area-chart"},
         {"name": "stacked-area-chart"},
         {"name": "horizon-graph"},
         {"name": "job-voyager"}

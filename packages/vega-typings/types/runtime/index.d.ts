@@ -296,6 +296,8 @@ export function scale(type: string, scale?: any): any;
 export function scheme(name: string, scheme?: any): any;
 export function schemeDiscretized(name: string, scheme?: any, interpolator?: any): any;
 
+export function pattern(name: string, def?: object): object | null;
+
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
 export const transforms: { [name: string]: Transform };

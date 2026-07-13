@@ -1,4 +1,5 @@
 import {resetSVGGradientId} from './src/Gradient.js';
+import {resetSVGPatternId} from './src/PatternFill.js';
 import {resetSVGClipId} from './src/util/svg/clip.js';
 
 export {default as Bounds} from './src/Bounds.js';
@@ -67,4 +68,5 @@ export {path} from 'd3-path';
 export function resetSVGDefIds() {
   resetSVGClipId();
   resetSVGGradientId();
+  resetSVGPatternId();
 }

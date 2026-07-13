@@ -1,0 +1,73 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Pattern legend swatch rendering end-to-end: an ordinal fill scale mixing named pattern wrappers (with foreground colors) and a plain color, with a fill legend. Proves legend-symbol items receive the same pattern-wrapper objects as the chart marks, resolved to swatch-fit (objectBoundingBox) defs distinct from the marks' own (userSpaceOnUse) defs. A bound repeat signal exercises the repeat common property on named (non-image) patterns: repeat 'x'/'y'/false switches the marks to single-axis or single-tile fills (mark-anchored by default).",
+  "width": 200,
+  "height": 200,
+  "padding": 5,
+  "signals": [
+    {
+      "name": "patternRepeat",
+      "value": "true",
+      "bind": {"input": "select", "name": "repeat", "options": ["true", "false", "x", "y"]}
+    },
+    {
+      "name": "repeatValue",
+      "update": "patternRepeat === 'true' ? true : (patternRepeat === 'false' ? false : patternRepeat)"
+    }
+  ],
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"category": "A", "value": 28},
+        {"category": "B", "value": 55},
+        {"category": "C", "value": 43}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": {"data": "table", "field": "category"},
+      "range": "width",
+      "padding": 0.2
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "domain": {"data": "table", "field": "value"},
+      "range": "height",
+      "nice": true
+    },
+    {
+      "name": "fillScale",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "category"},
+      "range": {
+        "signal": "[{pattern: {name: 'diagonal-stripe', foreground: '#4c78a8', repeat: repeatValue}}, {pattern: {name: 'circles', foreground: '#f58518', repeat: repeatValue}}, '#54a24b']"
+      }
+    }
+  ],
+  "legends": [
+    {"fill": "fillScale", "title": "Category", "orient": "right"}
+  ],
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "category"},
+          "width": {"scale": "xscale", "band": 1},
+          "y": {"scale": "yscale", "field": "value"},
+          "y2": {"scale": "yscale", "value": 0},
+          "stroke": {"value": "#333"}
+        },
+        "update": {
+          "fill": {"scale": "fillScale", "field": "category"}
+        }
+      }
+    }
+  ]
+}

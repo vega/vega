@@ -4,13 +4,14 @@ title: Extensibility API
 permalink: /docs/api/extensibility/index.html
 ---
 
-Vega can be **extended** at runtime with new [scales](../../scales), [projections](../../projections), [color schemes](../../schemes), and [data transforms](../../transforms). While sometimes useful for custom deployments, keep in mind that extending Vega with new components can result in Vega JSON specifications that others may not be able to use directly.
+Vega can be **extended** at runtime with new [scales](../../scales), [projections](../../projections), [color schemes](../../schemes), [patterns](../../types/#Pattern), and [data transforms](../../transforms). While sometimes useful for custom deployments, keep in mind that extending Vega with new components can result in Vega JSON specifications that others may not be able to use directly.
 
 ## Extensibility API Reference
 
 - [Projections](#projections)
 - [Scales](#scales)
 - [Schemes](#schemes)
+- [Patterns](#patterns)
 - [Transforms](#transform)
 - [Data Formats](#format)
 - [Expression Functions](#expressions)
@@ -98,6 +99,42 @@ vega.<b>scheme</b>(<i>name</i>[, <i>scheme</i>])
 Registry function for adding and accessing color schemes.  The *name* argument is a String indicating the name of the color scheme. Scheme names are *not* case sensitive, for example `"blues"` and `"Blues"` map to the same scheme. If the *scheme* argument is not specified, this method returns the matching scheme value in the registry, or `undefined` if not found. If the *scheme* argument is provided, it must be a valid array of color values or an interpolator function that maps the domain [0, 1] to color values.
 
 By default, the scheme registry includes entries for all scheme types described in the [Vega Color Schemes documentation](../../schemes/).
+
+## <a name="patterns"></a>Patterns {% include tag ver="TBD" %}
+
+<a name="pattern" href="#pattern">#</a>
+vega.<b>pattern</b>(<i>name</i>[, <i>definition</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-pattern/src/patterns.ts "Source")
+
+Registry function for adding and accessing named [pattern](../../types/#Pattern) definitions, usable as mark fills and strokes and in scale ranges. The *name* argument is a String indicating the name of the pattern. Pattern names are *not* case sensitive. If the *definition* argument is not specified, this method returns the matching pattern definition in the registry, or `null` if not found. If the *definition* argument is provided, it must be a valid pattern definition object to add to the registry under the given *name* (a defensive copy is stored; overwriting an existing name is allowed).
+
+A pattern definition object declares the pattern geometry and its default styling. The geometry is given by exactly one of the properties `shape` (an SVG path string in tile coordinates, or a [lines generator](../../types/#PatternLines) object), `rule` (a [lines generator](../../types/#PatternLines) for stripe/hatch designs), or `url` (an image to tile), along with a `tileSize`. Default styling may be provided via the `fill`, `stroke`, `strokeWidth`, and `background` properties. Once registered, a pattern's geometry and `tileSize` are locked: specs referencing the pattern by name may recolor it (`foreground`, `background`) and resize it (`scale`), but cannot alter its design.
+
+By default, the pattern registry includes the built-in patterns listed in the [named pattern documentation](../../types/#PatternNamed).
+
+```js
+// register 'bricks': a 12px tile with two stroked path segments
+vega.pattern('bricks', {
+  shape: 'M0,6 H12 M6,0 V6',
+  tileSize: 12,
+  stroke: '#000',
+  strokeWidth: 1,
+  background: 'transparent'
+});
+
+// Vega specs can now reference the pattern by name:
+// "fill": {"value": {"pattern": {"name": "bricks", "foreground": "firebrick"}}}
+```
+
+```js
+// look up an existing definition
+vega.pattern('crosshatch'); // {rule: {...}, tileSize: 10, ...}
+vega.pattern('unknown');    // null
+```
+
+Note that specs referencing an unregistered pattern name will render those fills as transparent and log a warning; register custom patterns _before_ running a view that uses them.
+
+The expression language includes a companion [pattern](../../expressions/#pattern) function for building pattern values inside signal expressions - for example, composing a texture from one scale with a foreground color from another. Registration (this API) and construction (the expression function) are deliberately separate: registered names are resolved at render time, so patterns registered here are immediately usable from both specs and expressions.
 
 ## <a name="transform"></a>Transforms
 

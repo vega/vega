@@ -14,6 +14,7 @@ Reference documentation for common parameter **types** expected by Vega specific
 - [Color](#Color)
 - [Date](#Date)
 - [Gradient](#Gradient)
+- [Pattern](#Pattern)
 - [Number](#Number)
 - [Object](#Object)
 - [String](#String)
@@ -116,6 +117,145 @@ A gradient stop consists of a [Color](#Color) value and an _offset_ progress fra
 | :------------ | :---------------------------: | :------------|
 | offset        | {% include type t="Number" %} | {% include required %} The offset fraction for the color stop, indicating its position within the gradient.|
 | color         | [Color](#Color)               | {% include required %} The color value at this point in the gradient.|
+
+<br/><a name="Pattern" href="#Pattern">#</a>
+**Pattern** {% include tag ver="TBD" %}
+
+Accepts an object that specifies a repeating pattern (texture) fill or stroke. Like [gradients](#Gradient), patterns are object-valued color substitutes: they can be used anywhere a color literal is accepted, including mark `fill` and `stroke` encodings and [scale range](../scales/#range) arrays. Pattern values can also be constructed within signal expressions via the [pattern](../expressions/#pattern) expression function - for example, to combine a texture from one scale with a foreground color from another.
+
+A pattern is defined as an object with a single `pattern` property, whose value describes the pattern to draw. For example, to fill a mark with a built-in diagonal stripe recolored blue:
+
+```json
+"fill": {
+  "value": {
+    "pattern": {
+      "name": "diagonal-stripe",
+      "foreground": "#4c78a8"
+    }
+  }
+}
+```
+
+There are four pattern variants, distinguished by which geometry-defining property is present:
+
+1. A **named pattern** (`name`) drawn from the pattern registry.
+2. An inline **symbol pattern** (`shape`) defined by an SVG path.
+3. A **rule pattern** (`rule`) generated from angled line sets.
+4. An **image pattern** (`url`) that tiles an image.
+
+All variants also accept the [common pattern properties](#PatternCommon) described below.
+
+<a name="PatternNamed" href="#PatternNamed">#</a>
+**Named Pattern**
+
+References a pattern definition from the pattern registry by name. Vega includes the following built-in patterns, reproducing a common texture vocabulary: `diagonal-stripe`, `horizontal-stripe`, `vertical-stripe`, `caps`, `circles`, `crosses`, `crosshatch`, `grid`, `squares`, `nylon`, `waves`, `woven`, and `houndstooth`. Additional patterns can be registered at runtime using the [vega.pattern](../api/extensibility/#patterns) extensibility method.
+
+A named pattern's geometry and tile size are locked to its registry definition, so that its visual design (for example, stripe continuity) cannot be broken by overrides; use the `scale` property to resize a named pattern, and the `foreground` and `background` properties to recolor it.
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| name          | {% include type t="String" %} | {% include required %} The name of a registered pattern. Names are *not* case sensitive. Unknown names render as transparent and log a warning.|
+
+```json
+{
+  "pattern": {
+    "name": "crosshatch",
+    "foreground": "seagreen",
+    "background": "#eee"
+  }
+}
+```
+
+<a name="PatternSymbol" href="#PatternSymbol">#</a>
+**Symbol Pattern**
+
+Defines an inline pattern from an [SVG path string](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d) drawn in tile coordinates, or from a [lines generator](#PatternLines) object. By default path geometry is filled; specifying a positive `strokeWidth` alongside a path with no explicit fill declares stroked line art instead (useful for open paths, which would otherwise fill to nothing).
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| shape         | {% include type t="String" %}{% include or %}[Lines](#PatternLines) | {% include required %} An SVG path string in tile-space coordinates, or a [lines generator](#PatternLines) object of the form `{"type": "lines", ...}`.|
+| tileSize      | {% include type t="Number" %} | The pattern tile size in pixels (default `10`). The tile spans [0, tileSize] in both x and y.|
+
+```json
+{
+  "pattern": {
+    "shape": "M2,2 L8,8 M8,2 L2,8",
+    "tileSize": 10,
+    "strokeWidth": 1.5,
+    "foreground": "teal"
+  }
+}
+```
+
+<a name="PatternRule" href="#PatternRule">#</a>
+**Rule Pattern**
+
+A convenience variant that generates stripe and hatch designs from angled line sets, without hand-writing path strings. The generated lines are stroked using the `foreground` color (or black) and the `strokeWidth` property (default 1).
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| rule          | [Lines](#PatternLines)        | {% include required %} A [lines generator](#PatternLines) object describing the line sets to draw (the `type` property may be omitted here).|
+| tileSize      | {% include type t="Number" %} | The pattern tile size in pixels (default `10`).|
+
+```json
+{
+  "pattern": {
+    "rule": {
+      "angle": [45, 135]
+    },
+    "foreground": "purple"
+  }
+}
+```
+
+<a name="PatternLines" href="#PatternLines">#</a>
+**Lines Generator**
+
+Describes one or more sets of parallel lines, clipped to the pattern tile. Used as the `rule` property of a [rule pattern](#PatternRule) or as an object-valued `shape` (with `"type": "lines"`) of a [symbol pattern](#PatternSymbol).
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| angle         | {% include type t="Number|Number[]" %} | The line angle in degrees (default `45`). An array of angles unions multiple line sets (for example, `[45, 135]` for a crosshatch).|
+| spacing       | {% include type t="Number" %} | The spacing between parallel lines, in pixels. Defaults per angle to the largest value that tiles seamlessly: `tileSize / 2` for axis-aligned angles and `tileSize / √2` for the 45° family. An explicit spacing tiles seamlessly only if the tile size projected onto the line normal is an integer multiple of it; angles whose tangent is irrational (such as 30°) cannot tile seamlessly in a square tile.|
+| bleed         | {% include type t="Number" %} | The distance lines extend past the tile edge to avoid seams when tiled (default `1`).|
+| phase         | {% include type t="Number" %} | An offset applied along the line normal, shifting the line positions (default `0`).|
+
+<a name="PatternImage" href="#PatternImage">#</a>
+**Image Pattern**
+
+Tiles an image loaded from a URL or [data URI](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs). Image patterns have no `foreground` or `background` color controls; all color comes from the source image. Images are subject to the same loading and security policies as [image marks](../marks/image).
+
+| Name          | Type                          | Description  |
+| :------------ | :---------------------------: | :------------|
+| url           | {% include type t="URL" %}    | {% include required %} The URL or data URI of the image to tile.|
+| tileSize      | {% include type t="Number|String" %} | The tile width in pixels; the tile height preserves the image's aspect ratio. Use the string `"bounds"` to fit the image to the bounds of the mark being filled. If unspecified, the image's intrinsic size is used.|
+
+```json
+{
+  "pattern": {
+    "url": "data:image/png;base64,...",
+    "tileSize": 16,
+    "repeat": "x"
+  }
+}
+```
+
+<a name="PatternCommon" href="#PatternCommon">#</a>
+**Common Pattern Properties**
+
+Style properties shared by all pattern variants.
+
+| Name           | Type                          | Description  |
+| :------------- | :---------------------------: | :------------|
+| foreground     | [Color](#Color)               | The foreground color for the pattern geometry. Replaces whichever color(s) the resolved geometry declares (stroke and/or fill), while preserving transparent or `"none"` fills so that outline-only designs stay hollow. Defaults to the color(s) declared by the pattern geometry, or black if none. Not applicable to image patterns.|
+| background     | [Color](#Color)               | A background color painted behind the pattern tiles. By default no background is painted, and the mark shows through between the pattern geometry.|
+| strokeWidth    | {% include type t="Number" %} | The stroke width in pixels for stroked pattern geometry. Defaults to `1` for generated rule/lines geometry. On an inline symbol pattern with a path-string `shape` and no declared colors, a positive value declares the geometry as stroked line art rather than filled.|
+| repeat         | {% include type t="Boolean|String" %} | The tiling mode: `true` (default) repeats in both directions, `"x"` and `"y"` repeat along one axis only, and `false` draws a single tile.|
+| origin         | {% include type t="String" %} | The coordinate system pattern tiles anchor to: `"view"` for a shared, view-wide tiling that stays continuous across marks, or `"mark"` to anchor tiles to each mark's own bounds. Defaults to `"view"` when `repeat` is `true`, and to `"mark"` for partial (`"x"`/`"y"`) or non-repeating patterns. Patterns on `text` and `rule` marks are always mark-anchored, so that the pattern rides the mark; this property is ignored for those mark types.|
+| scale          | {% include type t="Number" %} | A scale factor applied to the pattern tiles (default `1`). This is the resize control for named patterns, whose `tileSize` is locked.|
+| shapeRendering | {% include type t="String" %} | A [shape-rendering hint](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-rendering) for the pattern geometry, such as `"crispEdges"` (SVG output only).|
+
+Patterns may also be used as [scale range](../scales/#range) values, mixed freely with plain colors, and appear in [legends](../legends) as pattern swatches. See the [scale range documentation](../scales/#range) and the built-in [pattern schemes](../schemes/#patterns) (`"patterns"` and `"monochrome"`) for details.
 
 <br/><a name="Number" href="#Number">#</a>
 **Number**
@@ -253,7 +393,7 @@ The base value must be specified using one of the following properties:
 | signal        | {% include type t="String" %} | A [signal](#Signal) name or expression.|
 | color         | {% include type t="ColorValue" %} | Specifies a color using value references for each color channel. See the [color value](#ColorValue) documentation.|
 | field         | {% include type t="FieldValue" %} | A data field name or descriptor. See the [field value](#FieldValue) documentation.|
-| value         | {% include type t="Any" %} | A constant value. Legal values include numbers, booleans, strings, [colors](#Color), and [gradients](#Gradient).|
+| value         | {% include type t="Any" %} | A constant value. Legal values include numbers, booleans, strings, [colors](#Color), [gradients](#Gradient), and [patterns](#Pattern).|
 
 These properties are listed here in precedence order. For example, if _signal_ is defined, any _color_, _field_ or _value_ properties will be ignored. In addition, the base value may be left undefined in the case of certain _scale_ values, or to indicate a `null` value.
 

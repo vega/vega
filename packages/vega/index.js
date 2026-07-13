@@ -19,6 +19,14 @@ extend(
 );
 
 
+// -- Schemes -----
+
+import {scheme} from 'vega-scale';
+import {monochromeScheme, pattern, patternScheme} from 'vega-pattern';
+scheme('patterns', patternScheme);
+scheme('monochrome', monochromeScheme);
+
+
 // -- Exports -----
 
 import * as pkg from './package.json' with { type: 'json' };
@@ -59,6 +67,10 @@ export {
   interpolateRange,
   quantizeInterpolator
 } from 'vega-scale';
+
+export {
+  pattern
+} from 'vega-pattern';
 
 export {
   projection

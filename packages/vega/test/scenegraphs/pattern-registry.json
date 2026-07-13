@@ -1,0 +1,158 @@
+{
+  "marktype": "group",
+  "name": "root",
+  "role": "frame",
+  "interactive": true,
+  "clip": false,
+  "items": [
+    {
+      "items": [
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 10,
+              "y": 10,
+              "width": 60,
+              "height": 60,
+              "fill": {},
+              "stroke": "#333"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "text",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 40,
+              "y": 85,
+              "align": "center",
+              "fill": "#000",
+              "text": "named",
+              "font": "sans-serif",
+              "fontSize": 12
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 100,
+              "y": 10,
+              "width": 60,
+              "height": 60,
+              "fill": {},
+              "stroke": "#333"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "text",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 130,
+              "y": 85,
+              "align": "center",
+              "fill": "#000",
+              "text": "shape",
+              "font": "sans-serif",
+              "fontSize": 12
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 190,
+              "y": 10,
+              "width": 60,
+              "height": 60,
+              "fill": {},
+              "stroke": "#333"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "text",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 220,
+              "y": 85,
+              "align": "center",
+              "fill": "#000",
+              "text": "rule",
+              "font": "sans-serif",
+              "fontSize": 12
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "rect",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 280,
+              "y": 10,
+              "width": 60,
+              "height": 60,
+              "fill": {},
+              "stroke": "#333"
+            }
+          ],
+          "zindex": 0
+        },
+        {
+          "marktype": "text",
+          "role": "mark",
+          "interactive": true,
+          "clip": false,
+          "items": [
+            {
+              "x": 310,
+              "y": 85,
+              "align": "center",
+              "fill": "#000",
+              "text": "image",
+              "font": "sans-serif",
+              "fontSize": 12
+            }
+          ],
+          "zindex": 0
+        }
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 100
+    }
+  ],
+  "zindex": 0
+}

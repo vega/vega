@@ -1,0 +1,81 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Swatches for the built-in 'monochrome' scheme, in scheme order.",
+  "width": 540,
+  "height": 190,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "entries",
+      "values": [
+        {"i": 0, "label": "#000000"},
+        {"i": 1, "label": "circles"},
+        {"i": 2, "label": "#666666"},
+        {"i": 3, "label": "crosshatch"},
+        {"i": 4, "label": "#cccccc"},
+        {"i": 5, "label": "diagonal-stripe"},
+        {"i": 6, "label": "#999999"},
+        {"i": 7, "label": "squares"},
+        {"i": 8, "label": "waves"},
+        {"i": 9, "label": "crosses"}
+      ],
+      "transform": [
+        {"type": "formula", "as": "col", "expr": "datum.i % 5"},
+        {"type": "formula", "as": "row", "expr": "floor(datum.i / 5)"}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "band",
+      "domain": [0, 1, 2, 3, 4],
+      "range": [0, 540]
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": [0, 1],
+      "range": [0, 190]
+    },
+    {
+      "name": "fill",
+      "type": "ordinal",
+      "domain": {"data": "entries", "field": "label"},
+      "range": {"scheme": "monochrome"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "entries"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "col", "offset": 22},
+          "y": {"scale": "y", "field": "row", "offset": 2},
+          "width": {"value": 64},
+          "height": {"value": 64},
+          "fill": {"scale": "fill", "field": "label"},
+          "stroke": {"value": "#ccc"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "entries"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "col", "offset": 54},
+          "y": {"scale": "y", "field": "row", "offset": 80},
+          "text": {"field": "label"},
+          "align": {"value": "center"},
+          "fontSize": {"value": 11},
+          "fill": {"value": "#4682b4"}
+        }
+      }
+    }
+  ]
+}

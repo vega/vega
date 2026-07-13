@@ -171,6 +171,8 @@ import {
 
 import scaleGradient from './functions/scale-gradient.js';
 
+import pattern from './functions/pattern.js';
+
 import {
   geoShape,
   pathShape
@@ -252,6 +254,7 @@ export const functionContext = {
   hsl,
   luminance,
   contrast,
+  pattern,
   sequence,
   format,
   utcFormat,

@@ -48,6 +48,19 @@ const arrayAllTypes = array(oneOf(
   array(numberOrSignal)
 ));
 
+// Range arrays additionally accept pattern fill wrappers ({pattern: {...}},
+// the same object used in encoding values, minus the {value: ...} layer).
+// Scale domains do not accept patterns, so this type is range-only.
+const rangeArrayTypes = array(oneOf(
+  nullType,
+  booleanType,
+  stringType,
+  numberType,
+  signalRef,
+  array(numberOrSignal),
+  def('patternWrapper')
+));
+
 const scheme = object({
   _scheme_: oneOf(
     stringType,
@@ -58,7 +71,7 @@ const scheme = object({
 
 const schemeRange = oneOf(
   rangeConstant,
-  arrayAllTypes,
+  rangeArrayTypes,
   scheme,
   signalRef
 );
@@ -69,7 +82,7 @@ const rangeStep = object({
 
 const bandRange = oneOf(
   rangeConstant,
-  arrayAllTypes,
+  rangeArrayTypes,
   rangeStep,
   signalRef
 );
@@ -193,7 +206,7 @@ const scale = oneOf(
   }),
   object({
     _type_: enums([Ordinal]),
-    range: oneOf(rangeConstant, arrayAllTypes, scheme, scaleData, signalRef),
+    range: oneOf(rangeConstant, rangeArrayTypes, scheme, scaleData, signalRef),
     interpolate: scaleInterpolateRef,
     domainImplicit: booleanOrSignal,
     ...scaleDomainProps
