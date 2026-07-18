@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "vega-util": "^2.1.0",
-    "@types/estree": "^1.0.8"
+    "@types/estree": "^1.0.9"
   }
 }
