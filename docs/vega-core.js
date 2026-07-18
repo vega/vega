@@ -120,6 +120,11 @@
   const one$1 = accessor(() => 1, [], 'one');
   const truthy = accessor(() => true, [], 'true');
   const falsy = accessor(() => false, [], 'false');
+
+  /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
+
+  /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
+  const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
   function log$1$1(method, level, input) {
     const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
@@ -129,8 +134,7 @@
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
-  function logger(_, method) {
-    let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
+  function logger(_, method, handler = log$1$1) {
     let level = _ || None$2;
     return {
       level(_) {
@@ -164,10 +168,7 @@
     return _ === Object(_);
   }
   const isLegalKey = key => key !== '__proto__';
-  function mergeConfig() {
-    for (var _len = arguments.length, configs = new Array(_len), _key = 0; _key < _len; _key++) {
-      configs[_key] = arguments[_key];
-    }
+  function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (const key in source) {
         if (key === 'signals') {
@@ -689,10 +690,10 @@
     return array && peek$1(array) - array[0] || 0;
   }
   function $(x) {
-    return isArray(x) ? '[' + x.map($) + ']' : isObject(x) || isString(x) ?
+    return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]` : isObject(x) || isString(x) ?
     // Output valid JSON and JS source strings.
-    // See http://timelessrepo.com/json-isnt-a-javascript-subset
-    JSON.stringify(x).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029') : x;
+    // See https://github.com/judofyr/timeless/blob/master/posts/json-isnt-a-javascript-subset.md
+    JSON.stringify(x).replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029') : x;
   }
   function toBoolean(_) {
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
@@ -1218,22 +1219,20 @@
   /**
    * Factory for a loader constructor that provides methods for requesting
    * files from either the network or disk, and for sanitizing request URIs.
-   * @param {function} fetch - The Fetch API for HTTP network requests.
-   *   If null or undefined, HTTP loading will be disabled.
    * @param {object} fs - The file system interface for file loading.
    *   If null or undefined, local file loading will be disabled.
    * @return {function} A loader constructor with the following signature:
    *   param {object} [options] - Optional default loading options to use.
    *   return {object} - A new loader instance.
    */
-  function loaderFactory(fetch, fs) {
+  function loaderFactory(fs) {
     return options => ({
       options: options || {},
       sanitize: sanitize,
       load: load$1,
       fileAccess: false,
       file: fileLoader(),
-      http: httpLoader(fetch)
+      http: httpLoader
     });
   }
 
@@ -1250,7 +1249,7 @@
   async function load$1(uri, options) {
     const opt = await this.sanitize(uri, options),
       url = opt.href;
-    return opt.localFile ? this.file(url) : this.http(url, options);
+    return opt.localFile ? this.file(url) : this.http(url, options?.http);
   }
 
   /**
@@ -1349,27 +1348,16 @@
   }
 
   /**
-   * HTTP request handler factory.
-   * @param {function} fetch - The Fetch API method.
-   * @return {function} - An http loader with the following signature:
-   *   param {string} url - The url to request.
-   *   param {object} options - An options hash.
-   *   return {Promise} - A promise that resolves to the file contents.
+   * An http loader.
+   * @param {string} url - The url to request.
+   * @param {Partial<RequestInit>} options - An options hash.
+   * @return {Promise} - A promise that resolves to the file contents.
    */
-  function httpLoader(fetch) {
-    return fetch ? async function (url, options) {
-      const opt = extend({}, this.options.http, options),
-        type = options && options.response,
-        response = await fetch(url, opt);
-      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
-    } : httpReject;
-  }
-
-  /**
-   * Default http request handler that simply rejects.
-   */
-  async function httpReject() {
-    error('No HTTP fetch method available.');
+  async function httpLoader(url, options) {
+    const opt = extend({}, this.options.http, options),
+      type = options && options.response,
+      response = await fetch(url, opt);
+    return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
   }
   const isValid = _ => _ != null && _ === _;
   const isBoolean = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
@@ -1529,7 +1517,7 @@
       }
     }
   }
-  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch);
+  const loader = loaderFactory();
 
   function UniqueList(idFunc) {
     const $ = idFunc || identity,
@@ -12883,12 +12871,9 @@
         return m;
       },
       m = {
-        open(tag) {
+        open(tag, ...attrs) {
           push(tag);
           outer = '<' + tag;
-          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            attrs[_key - 1] = arguments[_key];
-          }
           for (const set of attrs) {
             for (const key in set) attr(key, set[key]);
           }
@@ -21088,7 +21073,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version$1 = "6.1.0";
+  var version$1 = "6.2.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22594,6 +22579,8 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
+    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
+    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
@@ -22647,7 +22634,16 @@
       UnaryExpression: n => '(' + n.operator + visit(n.argument) + ')',
       ConditionalExpression: n => '(' + visit(n.test) + '?' + visit(n.consequent) + ':' + visit(n.alternate) + ')',
       LogicalExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
-      ObjectExpression: n => '{' + n.properties.map(visit).join(',') + '}',
+      ObjectExpression: n => {
+        // If any keys would override Object prototype methods, throw error
+        for (const prop of n.properties) {
+          const keyName = prop.key.name;
+          if (DisallowedObjectProperties.has(keyName)) {
+            error('Illegal property: ' + keyName);
+          }
+        }
+        return '{' + n.properties.map(visit).join(',') + '}';
+      },
       Property: n => {
         memberDepth += 1;
         const k = visit(n.key);
@@ -23294,28 +23290,16 @@
   function sequence(seq) {
     return array(seq) || (isString(seq) ? seq : null);
   }
-  function join(seq) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  function join(seq, ...args) {
     return array(seq).join(...args);
   }
-  function indexof(seq) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  function indexof(seq, ...args) {
     return sequence(seq).indexOf(...args);
   }
-  function lastindexof(seq) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
-    }
+  function lastindexof(seq, ...args) {
     return sequence(seq).lastIndexOf(...args);
   }
-  function slice(seq) {
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
-    }
+  function slice(seq, ...args) {
     return sequence(seq).slice(...args);
   }
   function replace(str, pattern, repl) {
@@ -23444,8 +23428,7 @@
    * @param {*} minDist the minimum distance, in pixels, that thenew point needs to be apart from the last point
    * @returns a new array containing the lasso with the new point
    */
-  function lassoAppend(lasso, x, y) {
-    let minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
+  function lassoAppend(lasso, x, y, minDist = 5) {
     lasso = array$2(lasso);
     const last = lasso[lasso.length - 1];
 
@@ -23460,8 +23443,7 @@
    * @returns the svg path command that draws the lasso
    */
   function lassoPath(lasso) {
-    return array$2(lasso).reduce((svg, _ref, i) => {
-      let [x, y] = _ref;
+    return array$2(lasso).reduce((svg, [x, y], i) => {
       return svg += i == 0 ? `M ${x},${y} ` : i === lasso.length - 1 ? ' Z' : `L ${x},${y} `;
     }, '');
   }
@@ -29545,6 +29527,7 @@
   exports.DAYOFYEAR = DAYOFYEAR;
   exports.Dataflow = Dataflow;
   exports.Debug = Debug;
+  exports.DisallowedObjectProperties = DisallowedObjectProperties;
   exports.Error = Error$1;
   exports.EventStream = EventStream;
   exports.Gradient = Gradient$1;
@@ -29768,4 +29751,3 @@
   exports.zoomSymlog = zoomSymlog;
 
 }));
-//# sourceMappingURL=vega-core.js.map

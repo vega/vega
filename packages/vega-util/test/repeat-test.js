@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('repeat repeats strings', t => {
   t.equal(vega.repeat('1', 0), '');

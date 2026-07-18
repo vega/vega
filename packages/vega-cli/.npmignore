@@ -1,4 +1,4 @@
 *.sublime-*
-.DS_Store
+!build/
 build/*.zip
 test/

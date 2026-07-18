@@ -1,9 +1,9 @@
-name: Test
+name: Test, Typecheck, and Lint
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 permissions:
@@ -15,12 +15,12 @@ jobs:
 
     strategy:
       matrix:
-        node: [18, 20, 22]
+        node: [22, 23, 24]
 
     name: Node ${{ matrix.node }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Ensure apt-get is updated
         run: sudo apt-get update
@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get install -y libxml2-utils
 
       - name: Setup Node ${{ matrix.node }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
 
@@ -38,6 +38,9 @@ jobs:
 
       - name: Run tests
         run: npm run test:no-lint
+
+      - name: Run typecheck
+        run: npm run typecheck
 
       - name: Lint
         run: npm run lint
