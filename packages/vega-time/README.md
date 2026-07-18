@@ -71,6 +71,12 @@ The supported options properties are:
 - _extent_: (required) A two-element (`[min, max]`) array indicating the date range over which the bin values are defined.
 - _maxbins_: The maximum number of allowable bins (default `40`). There will often be fewer bins as the domain gets sliced at "nicely" rounded values.
 
+<a name="detectTimeUnits" href="#detectTimeUnits">#</a>
+vega.<b>detectTimeUnits</b>(<i>data</i>, <i>field</i>[, <i>utc</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/detectTimeUnits.js "Source")
+
+Detect the time granularity of already-discretized date-time values, for example data pre-binned by month. Given an array of _data_ objects and a _field_ accessor for date-time values, returns an object describing the finest grain to which all values are aligned, in terms of `units` and `step` properties. These values can then be used as input to the [timeFloor](#timeFloor) or [utcFloor](#utcFloor) methods. If the optional _utc_ flag is true, alignment is assessed in Coordinated Universal Time (UTC), otherwise the local timezone is used.
+
 ### Local Time Utilities
 
 <a name="timeFloor" href="#timeFloor">#</a>
