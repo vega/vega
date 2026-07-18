@@ -50,7 +50,7 @@ tape('boundStroke should expand bounds for miter joins', t => {
   boundEqual(t, boundStroke(bounds(), {stroke: 'red', strokeWidth: 4, strokeMiterLimit: 2}, true),
     [-4, -4, 14, 14], 'explicit miter limit 2');
   boundEqual(t, boundStroke(bounds(), {stroke: 'red', strokeWidth: 4, strokeMiterLimit: 10}, true),
-    [-8, -8, 18, 18], 'miter limit capped at 4');
+    [-20, -20, 30, 30], 'explicit miter limit 10 honored');
   t.end();
 });
 

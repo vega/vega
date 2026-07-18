@@ -5,9 +5,9 @@ export default function(bounds, item, miter) {
     // square caps on diagonal segments extend up to sqrt(2)/2 of the width
     let e = (item.strokeCap === 'square' ? Math.SQRT2 : 1) * sw / 2;
     if (miter && (!item.strokeJoin || item.strokeJoin === 'miter')) {
-      // miter join tips extend up to miterLimit/2 stroke widths past a vertex,
-      // capped here at the SVG default limit of 4
-      e = Math.max(e, Math.min(item.strokeMiterLimit != null ? +item.strokeMiterLimit : 4, 4) * sw / 2);
+      // miter join tips extend up to miterLimit/2 stroke widths past a vertex;
+      // the default limit of 4 matches both the canvas and svg renderers
+      e = Math.max(e, (item.strokeMiterLimit != null ? +item.strokeMiterLimit : 4) * sw / 2);
     }
     bounds.expand(e);
   }
