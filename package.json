@@ -48,7 +48,7 @@
     "lerna": "^9.0.7",
     "lint-staged": "^16.4.0",
     "pngjs": "^7.0.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.9.5",
     "rollup": "^4.62.2",
     "rollup-plugin-bundle-size": "^1.0.3",
     "serve": "^14.2.6",
