@@ -1,5 +1,6 @@
-import {isLogarithmic} from './scales.js';
+import {isLogarithmic, isTemporal} from './scales.js';
 import {Time, UTC} from './scales/types.js';
+import {tickStep} from 'd3-array';
 import {timeInterval, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 
@@ -25,10 +26,20 @@ export function tickCount(scale, count, minStep) {
       count = Math.max(count, scale.bins.length);
     }
     if (minStep != null) {
+      const domain = scale.domain(),
+            lo = Math.min(domain[0], peek(domain)),
+            hi = Math.max(domain[0], peek(domain));
+
       count = Math.min(
         count,
-        Math.floor((span(scale.domain()) / minStep) || 1) + 1
+        Math.floor((Math.abs(span(domain)) / minStep) || 1) + 1
       );
+
+      if (!scale.bins && !isLogarithmic(scale.type) && !isTemporal(scale.type)
+          && isNumber(lo) && isNumber(hi) && lo < hi) {
+        // d3 tick steps grow monotonically as the count shrinks
+        while (count > 1 && tickStep(lo, hi, count) < minStep) --count;
+      }
     }
   }
 

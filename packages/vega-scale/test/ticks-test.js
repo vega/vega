@@ -1,8 +1,6 @@
 import tape from 'tape';
-import { validTicks } from '../index.js';
-import { tickValues } from '../index.js';
+import { scale, tickCount, tickValues, validTicks } from '../index.js';
 import {timeInterval} from 'vega-time';
-import { tickCount } from '../src/ticks.js';
 
 tape('validTicks uses count correctly', t => {
   const data = [0, 1, 2, 3, 4, 5, 6, 7];
@@ -66,10 +64,64 @@ tape('tickValues uses scale and count correctly', t => {
   t.end();
 });
 
-tape('tickCount handles minStep correctly', t => {
-  const c1 = tickCount({domain: () => [0, 1]}, 10, {minStep: 1});
-  t.equal(c1, 2);
+tape('tickCount and tickValues enforce minStep', t => {
+  const linear = scale('linear');
 
-  const c2 = tickCount({domain: () => [0, 10]}, 10, {minStep: 3});
-  t.equal(c2, 4);
+  // no minStep leaves the count unchanged
+  const s0 = linear().domain([0, 12]);
+  t.equal(tickCount(s0, 10), 10);
+  t.equal(tickCount(s0, 10, null), 10);
+  t.equal(tickCount(s0, 10, 0), 10);
+  t.deepEqual(tickValues(s0, tickCount(s0, 10)), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+
+  // issue #4163: count capping alone yields step 2 < minStep 3
+  const c1 = tickCount(s0, 10, 3);
+  t.equal(c1, 3);
+  t.deepEqual(tickValues(s0, c1), [0, 5, 10]);
+
+  const s1 = linear().domain([0, 1]);
+  const c2 = tickCount(s1, 10, 1);
+  t.equal(c2, 1);
+  t.deepEqual(tickValues(s1, c2), [0, 1]);
+
+  const s2 = linear().domain([0, 10]);
+  const c3 = tickCount(s2, 10, 3);
+  t.equal(c3, 3);
+  t.deepEqual(tickValues(s2, c3), [0, 5, 10]);
+
+  // minStep larger than the domain span degenerates to a single count
+  const c4 = tickCount(s0, 10, 20);
+  t.equal(c4, 1);
+  t.deepEqual(tickValues(s0, c4), [0, 10]);
+
+  // descending domain
+  const s3 = linear().domain([12, 0]);
+  const c5 = tickCount(s3, 10, 3);
+  t.equal(c5, 3);
+  t.deepEqual(tickValues(s3, c5), [10, 5, 0]);
+
+  // non-numeric domain passes through unchanged
+  const s4 = scale('band')().domain(['a', 'b', 'c']).range([0, 100]);
+  t.deepEqual(tickValues(s4, tickCount(s4, 5, 1)), ['a', 'b', 'c']);
+
+  t.end();
+});
+
+tape('tickCount does not enforce minStep for log and time scales', t => {
+  // log scales retain count capping only
+  const s0 = scale('log')().domain([1, 100]);
+  const c0 = tickCount(s0, 10, 10);
+  t.equal(c0, 10);
+  t.ok(tickValues(s0, c0).length > 0);
+
+  // temporal scales retain count capping only
+  const s1 = scale('utc')().domain([Date.UTC(2020, 0, 1), Date.UTC(2020, 0, 2)]);
+  const c1 = tickCount(s1, 10, 1000 * 60 * 60 * 7);
+  t.equal(c1, 4);
+  t.deepEqual(
+    tickValues(s1, c1).map(d => +d),
+    [0, 6, 12, 18, 24].map(h => Date.UTC(2020, 0, 1, h))
+  );
+
+  t.end();
 });
