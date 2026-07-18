@@ -17,7 +17,7 @@ export default function(type, shape, tip) {
       return bounds;
     } else {
       shape(context(bounds), items);
-      return boundStroke(bounds, items[0]);
+      return boundStroke(bounds, items[0], true);
     }
   }
 

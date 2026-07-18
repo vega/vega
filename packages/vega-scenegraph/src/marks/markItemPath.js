@@ -15,7 +15,7 @@ export default function(type, shape, isect) {
 
   function bound(bounds, item) {
     shape(context(bounds, item.angle), item);
-    return boundStroke(bounds, item).translate(item.x || 0, item.y || 0);
+    return boundStroke(bounds, item, true).translate(item.x || 0, item.y || 0);
   }
 
   function draw(context, item) {
