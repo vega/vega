@@ -1,6 +1,6 @@
-import CanvasHandler from './CanvasHandler';
-import {OPTS} from './HybridRenderer';
-import {domChild} from './util/dom';
+import CanvasHandler from './CanvasHandler.js';
+import {OPTS} from './HybridRenderer.js';
+import {domChild} from './util/dom.js';
 
 export default class HybridHandler extends CanvasHandler {
   constructor (loader, tooltip) {

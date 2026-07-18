@@ -318,7 +318,7 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 
 <a name="sampleUniform" href="#sampleUniform">#</a>
 <b>sampleUniform</b>([<i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
-Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution) over the interval [_min_, _max_). If unspecified, _min_ defaults to `0` and _max_ defaults to `1`. If only one argument is provided, it is interpreted as the _max_ value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
 <b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>]) {% include tag ver="5.7" %}<br/>
@@ -523,7 +523,7 @@ Returns an array containing an arithmetic sequence of numbers. If _step_ is omit
 Returns a section of _array_ between the _start_ and _end_ indices. If the _end_ argument is negative, it is treated as an offset from the end of the array (_length(array) + end_).
 
 <a name="sort" href="#sort">#</a>
-<b>sort</b>(<i>array</i>)<br/>
+<b>sort</b>(<i>array</i>)<br/>{% include tag ver="5.31" %}<br/>
 Sorts the array in natural order using [ascending from Vega Utils](https://vega.github.io/vega/docs/api/util/#ascending).
 
 <a name="span" href="#span">#</a>
@@ -593,6 +593,19 @@ Truncates an input _string_ to a target _length_. The optional _align_ argument 
 <b>upper</b>(<i>string</i>)<br/>
 Transforms _string_ to upper-case letters.
 
+<a name="btoa" href="#btoa">#</a>
+<b>btoa</b>(<i>string</i>) {% include tag ver="5.32.0" %}<br/>
+Creates a [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64)-encoded [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string. Same as JavaScript's [Window.btoa()](https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa).
+
+<a name="atob" href="#atob">#</a>
+<b>atob</b>(<i>string</i>) {% include tag ver="5.32.0" %}<br/>
+Decodes an [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) string that was encoded with [Base64](https://developer.mozilla.org/en-US/docs/Glossary/Base64). Same as JavaScript's [Window.atob()](https://developer.mozilla.org/en-US/docs/Web/API/Window/atob).
+
+<a name="encodeURIComponent" href="#encodeURIComponent">#</a>
+<b>encodeURIComponent</b>(<i>string</i>)<br/>
+Encodes a URI component by replacing each instance of certain characters with UTF-8 encoding. Same as JavaScript's [encodeURIComponent()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent).
+
+
 [Back to Top](#reference)
 
 
@@ -622,7 +635,7 @@ Formats a (0-6) _weekday_ number as an abbreviated week day name, according to t
 <a name="format" href="#format">#</a>
 <b>format</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a numeric _value_ as a string. The _specifier_ must be a valid [d3-format specifier](https://github.com/d3/d3-format/) (e.g., `format(value, ',.2f')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="monthFormat" href="#monthFormat">#</a>
 <b>monthFormat</b>(<i>month</i>)<br/>
@@ -639,7 +652,7 @@ Returns a time format specifier string for the given time [_units_](../api/time/
 <a name="timeFormat" href="#timeFormat">#</a>
 <b>timeFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to the local time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `timeFormat(timestamp, '%A')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="timeParse" href="#timeParse">#</a>
 <b>timeParse</b>(<i>string</i>, <i>specifier</i>)<br/>
@@ -648,7 +661,7 @@ Parses a _string_ value to a Date object, according to the local time. The _spec
 <a name="utcFormat" href="#utcFormat">#</a>
 <b>utcFormat</b>(<i>value</i>, <i>specifier</i>)<br/>
 Formats a datetime _value_ (either a `Date` object or timestamp) as a string, according to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) time. The _specifier_ must be a valid [d3-time-format specifier](https://github.com/d3/d3-time-format/) or [TimeMultiFormat object](../types/#TimeMultiFormat) {% include tag ver="5.8" %}. For example: `utcFormat(timestamp, '%A')`.
-Null values are formatted as `"null"`. 
+Null values are formatted as `"null"`.
 
 <a name="utcParse" href="#utcParse">#</a>
 <b>utcParse</b>(<i>value</i>, <i>specifier</i>)<br/>

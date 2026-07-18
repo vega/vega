@@ -1,6 +1,6 @@
 import * as vega from 'vega';
 
-import { spec as histogram } from '../spec/valid/histogram';
+import { spec as histogram } from '../spec/valid/histogram.js';
 
 // Runtime examples from https://vega.github.io/vega/usage/
 

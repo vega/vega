@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    { pluck } = require('../');
+import tape from 'tape';
+import { pluck } from '../index.js';
 
 tape('pluck plucks values from an array', t => {
   const data = [

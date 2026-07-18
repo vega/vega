@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    JoinAggregate = tx.joinaggregate;
+import tape from 'tape';
+import {field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, joinaggregate as JoinAggregate} from '../index.js';
 
 tape('JoinAggregate extends tuples with aggregate values', t => {
   const data = [
@@ -12,9 +9,9 @@ tape('JoinAggregate extends tuples with aggregate values', t => {
     {k:'a', v:2}, {k:'b', v:4}
   ];
 
-  var key = util.field('k'),
-      val = util.field('v'),
-      df = new vega.Dataflow(),
+  var key = field('k'),
+      val = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       agg = df.add(JoinAggregate, {
         groupby: [key],
@@ -103,12 +100,12 @@ tape('JoinAggregate handles count aggregates', t => {
     {foo:4, bar:5}
   ];
 
-  var foo = util.field('foo'),
-      bar = util.field('bar'),
+  var foo = field('foo'),
+      bar = field('bar'),
       df, col, agg, out, d;
 
   // counts only
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(JoinAggregate, {
     fields: [null, foo, bar],
@@ -138,7 +135,7 @@ tape('JoinAggregate handles count aggregates', t => {
   t.equal(d[2].count_bar, 3);
 
   // multiple counts plus other measures
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(JoinAggregate, {
     fields: [null, foo, bar, bar],
@@ -191,11 +188,11 @@ tape('JoinAggregate handles distinct aggregates', t => {
     {foo:0}
   ];
 
-  var foo = util.field('foo'),
+  var foo = field('foo'),
       df, col, agg, out, d, i, n;
 
   // counts only
-  df = new vega.Dataflow();
+  df = new Dataflow();
   col = df.add(Collect);
   agg = df.add(JoinAggregate, {
     fields: [foo],

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A labeled scatter plot of films showing Rotten Tomatoes ratings versus IMDB ratings.",
   "padding": 5,
   "width": 800,

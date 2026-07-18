@@ -1,6 +1,6 @@
-import ols from './ols';
-import {visitPoints} from './points';
-import rSquared from './r-squared';
+import ols from './ols.js';
+import {visitPoints} from './points.js';
+import rSquared from './r-squared.js';
 
 // Adapted from d3-regression by Harry Stevens
 // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE

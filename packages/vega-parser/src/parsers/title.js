@@ -1,13 +1,13 @@
-import {addEncoders, extendEncode} from './encode/util';
-import {GroupSubtitleStyle, GroupTitleStyle, Left, Right, Skip} from './guides/constants';
-import guideGroup from './guides/guide-group';
-import guideMark from './guides/guide-mark';
-import {alignExpr, lookup} from './guides/guide-util';
-import parseMark from './mark';
-import {TextMark} from './marks/marktypes';
-import {TitleRole, TitleSubtitleRole, TitleTextRole} from './marks/roles';
-import {Collect} from '../transforms';
-import {ref} from '../util';
+import {addEncoders, extendEncode} from './encode/util.js';
+import {GroupSubtitleStyle, GroupTitleStyle, Left, Right, Skip} from './guides/constants.js';
+import guideGroup from './guides/guide-group.js';
+import guideMark from './guides/guide-mark.js';
+import {alignExpr, lookup} from './guides/guide-util.js';
+import parseMark from './mark.js';
+import {TextMark} from './marks/marktypes.js';
+import {TitleRole, TitleSubtitleRole, TitleTextRole} from './marks/roles.js';
+import {Collect} from '../transforms.js';
+import {ref} from '../util.js';
 import {extend, isString} from 'vega-util';
 
 const angleExpr = `item.orient==="${Left}"?-90:item.orient==="${Right}"?90:0`;

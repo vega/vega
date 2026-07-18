@@ -2,7 +2,7 @@ import {
   array, arrayType, booleanOrNumberOrSignal, booleanOrSignal, booleanType,
   def, enums, nullType, numberOrSignal, numberType, object, oneOf, orSignal,
   signalRef, stringOrSignal, stringType
-} from './util';
+} from './util.js';
 
 import {
   Band, BinOrdinal, Identity, Linear, Log, Ordinal, Point, Pow,

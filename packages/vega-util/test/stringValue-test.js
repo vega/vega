@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../build/index.js';
 
 tape('stringValue maps values', t => {
   // should wrap string arguments in double quotation marks
@@ -11,6 +11,9 @@ tape('stringValue maps values', t => {
   // should return boolean arguments as they are
   t.equal(vega.stringValue(true), true);
   t.equal(vega.stringValue(false), false);
+
+  // should handle null
+  t.equal(vega.stringValue(null), null);
 
   // should return number arguments as they are
   t.equal(vega.stringValue(2), 2);
@@ -25,20 +28,18 @@ tape('stringValue maps values', t => {
   t.equal(JSON.stringify(x), vega.stringValue(x));
 
   // should handle quotes in strings
-  let tests = ["'hello'", '"hello"'];
+  const tests = ["'hello'", '"hello"'];
   tests.forEach(s => {
     t.equal(s, eval(vega.stringValue(s)));
   });
 
-  // should handle special characters in strings
-  tests = ['\ntest', // newline
-    '\u0000',
-    '\u2028', // line separator
-    '\u2029' // paragraph separator
-  ];
-  tests.forEach(s => {
-    t.equal(s, eval(vega.stringValue(s)));
-  });
+  // should handle arrays and nulls
+  const a = [123, 'hello', null];
+  t.equal(JSON.stringify(a), vega.stringValue(a));
+
+  // should replace all instances of problematic Unicode characters
+  // \n = newline, \u0000 = null char, \u2028 = line separator, \u2029 = paragraph separator
+  t.equal(vega.stringValue('\n \u0000 \u2028 \u2029 \u2029'), '"\\n \\u0000 \\u2028 \\u2029 \\u2029"');
 
   t.end();
 });

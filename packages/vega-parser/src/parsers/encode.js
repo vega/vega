@@ -1,6 +1,6 @@
-import applyDefaults from './encode/defaults';
-import entry from './encode/entry';
-import rule from './encode/rule';
+import applyDefaults from './encode/defaults.js';
+import entry from './encode/entry.js';
+import rule from './encode/rule.js';
 
 import {parseExpression} from 'vega-functions';
 import {extend, isArray} from 'vega-util';

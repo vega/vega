@@ -1,4 +1,4 @@
-import {DataPrefix, IndexPrefix, ScalePrefix} from './constants';
+import {DataPrefix, IndexPrefix, ScalePrefix} from './constants.js';
 import {Literal} from 'vega-expression';
 import {error, hasOwnProperty} from 'vega-util';
 

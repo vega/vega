@@ -1,4 +1,4 @@
-import {Group} from './constants';
+import {Group} from './constants.js';
 import {Transform} from 'vega-dataflow';
 import {GroupItem, Item} from 'vega-scenegraph';
 import {inherits} from 'vega-util';

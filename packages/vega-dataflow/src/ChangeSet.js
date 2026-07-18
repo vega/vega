@@ -1,4 +1,4 @@
-import {ingest, tupleid} from './Tuple';
+import {ingest, tupleid} from './Tuple.js';
 import {array, constant, isFunction} from 'vega-util';
 
 export function isChangeSet(v) {

@@ -1,5 +1,5 @@
-import {Skip} from './constants';
-import {extendEncode} from '../encode/util';
+import {Skip} from './constants.js';
+import {extendEncode} from '../encode/util.js';
 
 export default function(mark, extras) {
   if (extras) {

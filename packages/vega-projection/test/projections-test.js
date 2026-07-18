@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../index.js';
 
 tape('default projections are registered', t => {
   [
@@ -25,4 +25,3 @@ tape('default projections are registered', t => {
 
   t.end();
 });
-

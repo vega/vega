@@ -1,11 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Lookup = tx.lookup,
-    TupleIndex = tx.tupleindex;
+import tape from 'tape';
+import {field} from 'vega-util';
+import {Dataflow, changeset} from 'vega-dataflow';
+import {collect as Collect, lookup as Lookup, tupleindex as TupleIndex} from '../index.js';
 
 tape('Lookup looks up matching tuples', t => {
   const lut = [
@@ -21,13 +17,13 @@ tape('Lookup looks up matching tuples', t => {
     {'id': 3, 'x': 3, 'y': 3}
   ];
 
-  var uv = util.field('u.value'),
-      vv = util.field('v.value'),
-      id = util.field('id'),
-      x  = util.field('x'),
-      y  = util.field('y'),
+  var uv = field('u.value'),
+      vv = field('v.value'),
+      id = field('id'),
+      x  = field('x'),
+      y  = field('y'),
 
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       ti = df.add(TupleIndex, {field:id, pulse:c0}),
       c1 = df.add(Collect),
@@ -71,12 +67,12 @@ tape('Lookup looks up matching values', t => {
     {'id': 3, 'x': 3, 'y': 3}
   ];
 
-  var value = util.field('value'),
-      id = util.field('id'),
-      x = util.field('x'),
-      y = util.field('y'),
+  var value = field('value'),
+      id = field('id'),
+      x = field('x'),
+      y = field('y'),
 
-      df = new vega.Dataflow(),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       ti = df.add(TupleIndex, {field:id, pulse:c0}),
       c1 = df.add(Collect),

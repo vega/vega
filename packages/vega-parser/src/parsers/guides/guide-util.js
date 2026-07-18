@@ -1,5 +1,5 @@
-import {Center, End, Left, Right, Start, Vertical} from './constants';
-import {value} from '../../util';
+import {Center, End, Left, Right, Start, Vertical} from './constants.js';
+import {value} from '../../util.js';
 import {isObject, stringValue} from 'vega-util';
 
 export function lookup(spec, config) {

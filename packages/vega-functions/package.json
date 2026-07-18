@@ -1,39 +1,50 @@
 {
   "name": "vega-functions",
-  "version": "5.15.0",
+  "version": "6.1.1",
   "description": "Custom functions for the Vega expression language.",
   "keywords": [
     "vega",
     "expression",
     "functions"
   ],
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
   "license": "BSD-3-Clause",
-  "main": "build/vega-functions.js",
-  "module": "build/vega-functions.module.js",
-  "unpkg": "build/vega-functions.min.js",
-  "repository": "vega/vega",
+  "type": "module",
+  "exports": {
+    "default": "./build/vega-functions.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-functions#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
-    "pretest": "yarn build --config-test",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
+    "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
+    "d3-array": "^3.2.4",
     "d3-color": "^3.1.0",
-    "d3-geo": "^3.1.0",
-    "vega-dataflow": "^5.7.6",
-    "vega-expression": "^5.1.1",
-    "vega-scale": "^7.4.1",
-    "vega-scenegraph": "^4.13.0",
-    "vega-selections": "^5.4.2",
-    "vega-statistics": "^1.9.0",
-    "vega-time": "^2.1.2",
-    "vega-util": "^1.17.2"
+    "d3-geo": "^3.1.1",
+    "vega-dataflow": "^6.1.0",
+    "vega-expression": "^6.1.0",
+    "vega-scale": "^8.1.0",
+    "vega-scenegraph": "^5.1.0",
+    "vega-selections": "^6.1.0",
+    "vega-statistics": "^2.0.0",
+    "vega-time": "^3.1.0",
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-format": "^1.1.2"
+    "vega-format": "^2.1.0"
   }
 }

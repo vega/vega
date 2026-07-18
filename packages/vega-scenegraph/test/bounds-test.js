@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    Bounds = require('../').Bounds;
+import tape from 'tape';
+import { Bounds } from '../index.js';
 
 tape('Bounds should support constructor without arguments', t => {
   const b = new Bounds();

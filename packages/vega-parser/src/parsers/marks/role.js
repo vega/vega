@@ -1,5 +1,5 @@
-import {GroupMark} from './marktypes';
-import {MarkRole, ScopeRole} from './roles';
+import {GroupMark} from './marktypes.js';
+import {MarkRole, ScopeRole} from './roles.js';
 
 export default function(spec) {
   const role = spec.role || '';

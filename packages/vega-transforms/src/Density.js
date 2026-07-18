@@ -1,4 +1,4 @@
-import parseDist from './util/Distributions';
+import parseDist from './util/Distributions.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {sampleCurve} from 'vega-statistics';
 import {error, extent, inherits} from 'vega-util';

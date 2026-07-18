@@ -10,7 +10,7 @@ import {
   SECONDS,
   WEEK,
   YEAR
-} from './units';
+} from './units.js';
 
 import {
   timeDay,

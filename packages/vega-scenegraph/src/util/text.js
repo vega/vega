@@ -1,4 +1,4 @@
-import {context} from './canvas/context';
+import {context} from './canvas/context.js';
 import {isArray, lruCache} from 'vega-util';
 
 // memoize text width measurement

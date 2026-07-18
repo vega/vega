@@ -1,6 +1,6 @@
 import {Literal} from 'vega-expression';
 import {error, hasOwnProperty, peek} from 'vega-util';
-import {Intersect} from './util';
+import {Intersect} from './util.js';
 
 const DataPrefix = ':',
       IndexPrefix = '@';
@@ -14,12 +14,10 @@ export function selectionVisitor(name, args, scope, params) {
         indexName = IndexPrefix + field,
         dataName = DataPrefix + data;
 
-  // eslint-disable-next-line no-prototype-builtins
   if (op === Intersect && !hasOwnProperty(params, indexName)) {
     params[indexName] = scope.getData(data).indataRef(scope, field);
   }
 
-  // eslint-disable-next-line no-prototype-builtins
   if (!hasOwnProperty(params, dataName)) {
     params[dataName] = scope.getData(data).tuplesRef();
   }

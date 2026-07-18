@@ -343,4 +343,3 @@ function adjustScheme(scheme, extent, reverse) {
 function flip(array, reverse) {
   return reverse ? array.slice().reverse() : array;
 }
-

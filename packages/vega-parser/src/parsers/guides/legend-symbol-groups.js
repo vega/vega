@@ -1,13 +1,13 @@
 import {
   GuideLabelStyle, Index, Label, LegendScales, Offset, Size, Skip,
   Value, one, zero
-} from './constants';
-import guideGroup from './guide-group';
-import guideMark from './guide-mark';
-import {lookup} from './guide-util';
-import {addEncoders, encoder, extendEncode} from '../encode/util';
-import {SymbolMark, TextMark} from '../marks/marktypes';
-import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles';
+} from './constants.js';
+import guideGroup from './guide-group.js';
+import guideMark from './guide-mark.js';
+import {lookup} from './guide-util.js';
+import {addEncoders, encoder, extendEncode} from '../encode/util.js';
+import {SymbolMark, TextMark} from '../marks/marktypes.js';
+import {LegendLabelRole, LegendSymbolRole, ScopeRole} from '../marks/roles.js';
 
 // userEncode is top-level, includes entries, symbols, labels
 export default function(spec, config, userEncode, dataRef, columns) {

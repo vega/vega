@@ -1,4 +1,4 @@
-import {DegToRad, HalfPi, Tau} from '../util/constants';
+import {DegToRad, HalfPi, Tau} from '../util/constants.js';
 
 export var segmentCache = {};
 export var bezierCache = {};

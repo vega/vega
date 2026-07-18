@@ -1,4 +1,4 @@
-import partition from './partition';
+import partition from './partition.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {
   regressionConstant, regressionExp, regressionLinear, regressionLog,

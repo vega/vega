@@ -1,6 +1,5 @@
-var tape = require('tape'),
-    vega = require('../'),
-    Handler = vega.Handler;
+import tape from 'tape';
+import {Handler} from '../index.js';
 
 tape('Handler should support argument free constructor', t => {
   const h = new Handler();

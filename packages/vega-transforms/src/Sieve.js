@@ -20,4 +20,3 @@ inherits(Sieve, Transform, {
       : pulse.StopPropagation;
   }
 });
-

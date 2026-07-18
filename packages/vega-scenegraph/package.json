@@ -1,29 +1,40 @@
 {
   "name": "vega-scenegraph",
-  "version": "4.13.0",
+  "version": "5.1.0",
   "description": "Vega scenegraph and renderers.",
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-scenegraph.js",
-  "module": "build/vega-scenegraph.module.js",
-  "unpkg": "build/vega-scenegraph.min.js",
-  "repository": "vega/vega",
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "default": "./build/vega-scenegraph.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-scenegraph#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "schema": "node schema > build/vega-scenegraph-schema.json",
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
-    "postbuild": "yarn schema",
-    "pretest": "yarn build --config-test",
-    "test": "tape -r ./test/__init__ 'test/**/*-test.js' && yarn xmllint",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
+    "postbuild": "npm run schema",
+    "pretest": "npm run build -- --config-test",
+    "test": "tape 'test/**/*-test.js' && npm run xmllint",
     "xmllint": "xmllint --noout ./test/resources/svg/*.svg",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
     "d3-path": "^3.1.0",
     "d3-shape": "^3.2.0",
-    "vega-canvas": "^1.2.7",
-    "vega-loader": "^4.5.2",
-    "vega-scale": "^7.4.1",
-    "vega-util": "^1.17.2"
+    "vega-canvas": "^2.0.0",
+    "vega-loader": "^5.1.0",
+    "vega-scale": "^8.1.0",
+    "vega-util": "^2.1.0"
   }
 }

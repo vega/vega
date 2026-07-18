@@ -1,20 +1,20 @@
-import {addEncoders, extendEncode} from './encode/util';
+import {addEncoders, extendEncode} from './encode/util.js';
 import {
   Discrete, Gradient,
   GuideLabelStyle, LegendScales, Skip, Symbols
-} from './guides/constants';
-import guideGroup from './guides/guide-group';
-import {getEncoding, getStyle, lookup} from './guides/guide-util';
-import legendGradient from './guides/legend-gradient';
-import legendGradientDiscrete from './guides/legend-gradient-discrete';
-import legendGradientLabels from './guides/legend-gradient-labels';
-import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups';
-import legendTitle from './guides/legend-title';
-import parseMark from './mark';
-import {LegendEntryRole, LegendRole} from './marks/roles';
+} from './guides/constants.js';
+import guideGroup from './guides/guide-group.js';
+import {getEncoding, getStyle, lookup} from './guides/guide-util.js';
+import legendGradient from './guides/legend-gradient.js';
+import legendGradientDiscrete from './guides/legend-gradient-discrete.js';
+import legendGradientLabels from './guides/legend-gradient-labels.js';
+import legendSymbolGroups, {legendSymbolLayout} from './guides/legend-symbol-groups.js';
+import legendTitle from './guides/legend-title.js';
+import parseMark from './mark.js';
+import {LegendEntryRole, LegendRole} from './marks/roles.js';
 
-import {deref, ref} from '../util';
-import {Collect, LegendEntries} from '../transforms';
+import {deref, ref} from '../util.js';
+import {Collect, LegendEntries} from '../transforms.js';
 
 import {parseExpression} from 'vega-functions';
 import {isContinuous, isDiscretizing} from 'vega-scale';

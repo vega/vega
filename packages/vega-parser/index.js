@@ -1,9 +1,9 @@
-export {default as parse} from './src/parse';
-export {default as config} from './src/config';
+export {default as parse} from './src/parse.js';
+export {default as config} from './src/config.js';
 
-export {default as signal} from './src/parsers/signal';
-export {default as signalUpdates} from './src/parsers/signal-updates';
-export {default as stream} from './src/parsers/stream';
+export {default as signal} from './src/parsers/signal.js';
+export {default as signalUpdates} from './src/parsers/signal-updates.js';
+export {default as stream} from './src/parsers/stream.js';
 
 export {
   MarkRole,
@@ -20,7 +20,7 @@ export {
   LegendLabelRole,
   LegendSymbolRole,
   LegendTitleRole
-} from './src/parsers/marks/roles';
+} from './src/parsers/marks/roles.js';
 
-export {default as Scope} from './src/Scope';
-export {default as DataScope} from './src/DataScope';
+export {default as Scope} from './src/Scope.js';
+export {default as DataScope} from './src/DataScope.js';

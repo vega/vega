@@ -1,4 +1,4 @@
-import labelLayout from './LabelLayout';
+import labelLayout from './LabelLayout.js';
 import {Transform} from 'vega-dataflow';
 import {array, error, inherits, isFunction} from 'vega-util';
 

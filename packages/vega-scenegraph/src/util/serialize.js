@@ -1,4 +1,4 @@
-import boundMark from '../bound/boundMark';
+import boundMark from '../bound/boundMark.js';
 
 const keys = [
   'marktype', 'name', 'role', 'interactive', 'clip', 'items', 'zindex',
