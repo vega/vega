@@ -64,6 +64,7 @@
   "legends",
   "legends-continuous",
   "legends-discrete",
+  "legends-empty",
   "legends-ordinal",
   "legends-symbol",
   "lifelines",

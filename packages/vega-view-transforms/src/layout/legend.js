@@ -129,6 +129,14 @@ function legendBounds(item, b) {
   // aggregate item bounds
   item.items.forEach(_ => b.union(_.bounds));
 
+  if (b.empty()) {
+    // set upper-right corner for empty legends (e.g., no entries or title);
+    // otherwise the -MAX_VALUE sentinel extents would survive the x1/y1
+    // anchoring below, inflating legend size and autosize layout (#2881)
+    b.x2 = item.padding;
+    b.y2 = item.padding;
+  }
+
   // anchor to legend origin
   b.x1 = item.padding;
   b.y1 = item.padding;

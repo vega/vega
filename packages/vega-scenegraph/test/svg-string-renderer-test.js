@@ -74,6 +74,56 @@ tape('SVGStringRenderer should support descriptions', t => {
   t.end();
 });
 
+function guideScene(role, datum, description) {
+  const scale = {type: 'band', domain: () => ['a', 'b', 'c']};
+  return {
+    marktype: 'group',
+    role: role,
+    description: description,
+    items: [{
+      datum: datum,
+      orient: 'bottom',
+      context: {
+        scales: {x: {value: scale}, color: {value: scale}},
+        dataflow: {locale: () => null}
+      },
+      items: []
+    }]
+  };
+}
+
+tape('SVGStringRenderer should generate default aria-labels for guides', t => {
+  const axis = render(guideScene('axis', {scale: 'x'}), 400, 200);
+  t.ok(axis.includes(
+    'role="graphics-symbol" aria-roledescription="axis" '
+    + 'aria-label="X-axis for a discrete scale with 3 values: a, b, c"'
+  ));
+
+  const legend = render(guideScene('legend', {type: 'symbol', scales: {fill: 'color'}}), 400, 200);
+  t.ok(legend.includes(
+    'role="graphics-symbol" aria-roledescription="legend" '
+    + 'aria-label="Symbol legend for fill color with 3 values: a, b, c"'
+  ));
+
+  t.end();
+});
+
+tape('SVGStringRenderer should use guide descriptions as aria-labels', t => {
+  const axis = render(guideScene('axis', {scale: 'x'}, 'A custom axis description'), 400, 200);
+  t.ok(axis.includes(
+    'role="graphics-symbol" aria-roledescription="axis" '
+    + 'aria-label="A custom axis description"'
+  ));
+
+  const legend = render(guideScene('legend', {type: 'symbol', scales: {fill: 'color'}}, 'A custom legend description'), 400, 200);
+  t.ok(legend.includes(
+    'role="graphics-symbol" aria-roledescription="legend" '
+    + 'aria-label="A custom legend description"'
+  ));
+
+  t.end();
+});
+
 tape('SVGStringRenderer should support clipping and gradients', t => {
   const scene = loadScene('scenegraph-defs.json');
   let str = render(scene, 102, 102);

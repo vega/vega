@@ -320,7 +320,10 @@ tape('Aggregate handles empty/invalid data', t => {
     'product',
     'mean',
     'variance',
+    'variancep',
     'stdev',
+    'stdevp',
+    'stderr',
     'min',
     'max',
     'median',
@@ -351,6 +354,61 @@ tape('Aggregate handles empty/invalid data', t => {
   ops.forEach((op, i) => {
     t.equal(d[op], res[i], op);
   });
+
+  t.end();
+});
+
+tape('Aggregate handles population variance and stdev', t => {
+  const data = [{v: 7}, {v: 3}];
+  const ops = ['variance', 'stdev', 'variancep', 'stdevp'];
+
+  var v = field('v'),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        fields: ops.map(() => v),
+        ops: ops,
+        as: ops,
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data.slice(0, 1))).run();
+  let d = out.value[0];
+  t.equal(d.variance, undefined);
+  t.equal(d.stdev, undefined);
+  t.equal(d.variancep, 0);
+  t.equal(d.stdevp, 0);
+
+  df.pulse(col, changeset().insert(data.slice(1))).run();
+  d = out.value[0];
+  t.equal(d.variance, 8);
+  t.equal(d.stdev, Math.sqrt(8));
+  t.equal(d.variancep, 4);
+  t.equal(d.stdevp, 2);
+
+  t.end();
+});
+
+tape('Aggregate handles streaming population variance and stdev', t => {
+  const data = [{v: 2.5}, {v: 7.1}, {v: 0.3}, {v: 9.9}];
+
+  var v = field('v'),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        fields: [v, v],
+        ops: ['variancep', 'stdevp'],
+        as: ['variancep', 'stdevp'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data)).run();
+  df.pulse(col, changeset().remove(data.slice(1))).run();
+  const d = out.value[0];
+  t.ok(d.variancep >= 0, 'variancep is non-negative');
+  t.equal(d.stdevp, 0);
 
   t.end();
 });

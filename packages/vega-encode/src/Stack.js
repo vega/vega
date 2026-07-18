@@ -110,7 +110,7 @@ function partition(data, groupby, sort, field) {
   } else {
     for (map={}, i=0, n=data.length; i<n; ++i) {
       t = data[i];
-      k = groupby.map(get);
+      k = JSON.stringify(groupby.map(get));
       g = map[k];
       if (!g) {
         map[k] = (g = []);
