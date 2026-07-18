@@ -1,5 +1,5 @@
 import {isTuple} from 'vega-dataflow';
-import {isArray, isObject, truthy} from 'vega-util';
+import {isArray, isFunction, isObject, truthy} from 'vega-util';
 
 function equal(a, b) {
   return a === b || a !== a && b !== b ? true
@@ -28,6 +28,15 @@ function removePredicate(props) {
   return _ => equalObject(props, _);
 }
 
+/**
+ * Modify data in a dataset.
+ * @param {string} name - Dataset name
+ * @param {Array|Object} insert - Data to insert
+ * @param {boolean|Array|Object} remove - true to remove all, array/tuple to remove, or object to match
+ * @param {Object} toggle - Data to toggle
+ * @param {Object|Array} modify - Tuple or array of tuples to modify
+ * @param {Object} values - Field values to update
+ */
 export default function(name, insert, remove, toggle, modify, values) {
   const df = this.context.dataflow,
         data = this.context.data[name],
@@ -72,6 +81,9 @@ export default function(name, insert, remove, toggle, modify, values) {
   }
 
   if (modify) {
+    if (isFunction(modify)) {
+      throw Error('modify parameter must be a data tuple, not a function');
+    }
     for (key in values) {
       changes.modify(modify, key, values[key]);
     }

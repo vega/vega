@@ -1,6 +1,6 @@
 {
   "name": "vega-util",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "JavaScript utilities for Vega.",
   "keywords": [
     "vega",
@@ -8,23 +8,29 @@
   ],
   "license": "BSD-3-Clause",
   "type": "module",
+  "types": "./build/index.d.ts",
   "author": {
     "name": "Vega",
     "url": "https://vega.github.io"
   },
   "exports": {
-    "types": "./index.d.ts",
-    "default": "./build/vega-util.js"
+    "types": "./build/index.d.ts",
+    "default": "./build/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-util#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
-    "build": "rollup -c rollup.config.js",
-    "pretest": "npm run build -- --config-test",
+    "build": "tsc -p tsconfig.json",
+    "pretest": "npm run build",
     "test": "tape 'test/**/*-test.js'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm test && npm run build"
   }
 }

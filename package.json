@@ -18,9 +18,11 @@
     "serve": "serve packages/vega/ -l 8080",
     "test": "npm run test:no-lint && npm run lint",
     "test:no-lint": "lerna run test --ignore vega-typings && lerna run test --scope vega-typings",
+    "typecheck": "tsc",
     "lint": "eslint -c eslint.config.js .",
     "format": "npm run lint -- --fix",
-    "postinstall": "scripts/postinstall.sh"
+    "postinstall": "scripts/postinstall.sh",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -28,22 +30,24 @@
     "@babel/eslint-parser": "^7.28.0",
     "@babel/plugin-transform-runtime": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
-    "@blazediff/core": "^0.6.0",
-    "@definitelytyped/dtslint": "0.2.33",
+    "@blazediff/core": "^1.7.0",
+    "@definitelytyped/dtslint": "0.2.36",
     "@eslint/js": "^9.34.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-terser": "^1.0.0",
     "@types/node": "^24.3.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "canvas": "^3.2.0",
-    "del-cli": "^6.0.0",
+    "del-cli": "^7.0.0",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
-    "jsdom": "^27.0.0",
-    "lerna": "^8.2.2",
+    "husky": "^9.1.7",
+    "jsdom": "^29.0.1",
+    "lerna": "^9.0.1",
+    "lint-staged": "^16.2.7",
     "pngjs": "^7.0.0",
     "prettier": "^3.6.2",
     "rollup": "^4.50.0",
@@ -58,6 +62,9 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=22.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,mjs,cjs}": "eslint --fix"
   }
 }
