@@ -27,7 +27,9 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
         offset = offsets(g, _('offset', 0)),
         anchor = _('anchor', Start),
         frame = _('frame', Group),
-        mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
+        mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0,
+        ax = frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
+        ay = frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1);
 
   const p = {
     align:   Each,
@@ -42,28 +44,28 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     case Left:
       p.anchor = {
         x: Math.floor(xb.x1) - offset, column: End,
-        y: frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1),
+        y: ay,
         row: anchor
       };
       break;
     case Right:
       p.anchor = {
         x: Math.ceil(xb.x2) + offset,
-        y: frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1),
+        y: ay,
         row: anchor
       };
       break;
     case Top:
       p.anchor = {
         y: Math.floor(yb.y1) - offset, row: End,
-        x: frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
+        x: ax,
         column: anchor
       };
       break;
     case Bottom:
       p.anchor = {
         y: Math.ceil(yb.y2) + offset,
-        x: frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
+        x: ax,
         column: anchor
       };
       break;

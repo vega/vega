@@ -597,7 +597,7 @@ export interface BaseLegendLayout {
   /**
    * The reference frame for the anchor position, one of `"group"` (the default, to anchor relative to the group width or height) or `"bounds"` (to anchor relative to the full bounding box).
    */
-  frame?: TitleFrame;
+  frame?: TitleFrame | SignalRef;
 
   /**
    * A flag to center legends within a shared orient group.
