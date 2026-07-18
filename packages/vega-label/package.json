@@ -1,6 +1,6 @@
 {
   "name": "vega-label",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Label layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -33,8 +33,8 @@
   },
   "dependencies": {
     "vega-canvas": "^2.0.0",
-    "vega-dataflow": "^6.1.0",
-    "vega-scenegraph": "^5.1.0",
+    "vega-dataflow": "^6.1.1",
+    "vega-scenegraph": "^5.2.0",
     "vega-util": "^2.1.0"
   },
   "devDependencies": {
