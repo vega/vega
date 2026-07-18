@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 function equal(a1, a2) {
   return a1.length === a2.length &&
     a1.every((d, i) => Math.abs(d - a2[i]) < 1e-10);
@@ -63,5 +63,15 @@ tape('zoomSymlog zooms a domain along a symlog scale', t => {
   t.ok(equal(vega.zoomSymlog([-3, 3], null, 0.5, 1), [-1, 1]));
   t.ok(equal(vega.zoomSymlog([ 0, 1], null, 3.0, 1), [-1, 3]));
   t.ok(equal(vega.zoomSymlog([-1, 3], null, 1/3, 1), [ 0, 1]));
+  t.end();
+});
+
+tape('panLinear throws error for empty domain', t => {
+  t.throws(() => vega.panLinear([], 0.5), /Domain array must not be empty/);
+  t.end();
+});
+
+tape('zoomLinear throws error for empty domain', t => {
+  t.throws(() => vega.zoomLinear([], null, 2.0), /Domain array must not be empty/);
   t.end();
 });

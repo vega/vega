@@ -129,7 +129,7 @@ Dataflow.prototype = {
   warn: logMethod('warn'),
 
   /**
-   * Logs a information message. By default, logged messages are written to
+   * Logs an information message. By default, logged messages are written to
    * console output. The message will only be logged if the current log level is
    * high enough to permit information messages.
    */

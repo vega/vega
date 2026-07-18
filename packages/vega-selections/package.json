@@ -1,6 +1,6 @@
 {
   "name": "vega-selections",
-  "version": "6.1.0",
+  "version": "6.1.2",
   "description": "Vega expression functions for Vega-Lite selections.",
   "keywords": [
     "vega",
@@ -16,6 +16,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-selections#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
   },
   "scripts": {
     "prebuild": "del-cli build",

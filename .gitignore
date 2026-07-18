@@ -1,14 +1,22 @@
-.sass-cache
-.jekyll-metadata
+# OS/IDE
 .DS_Store
 /.idea
+
+# Build
+/node_modules
+/packages/*/node_modules
+/packages/*/build
+/packages/*/LICENSE
+
+# Docs
+.sass-cache
+.jekyll-metadata
 /build
 /docs/_site
 /docs/Gemfile.lock
 /docs/.bundle/
 /docs/vendor/
-/node_modules
-/packages/*/node_modules
-/packages/*/build
-/packages/*/LICENSE
 /docs/data/*.parquet
+
+# Agents
+.claude/

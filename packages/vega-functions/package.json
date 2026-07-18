@@ -1,6 +1,6 @@
 {
   "name": "vega-functions",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Custom functions for the Vega expression language.",
   "keywords": [
     "vega",
@@ -19,6 +19,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-functions#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
   },
   "scripts": {
     "prebuild": "del-cli build",
