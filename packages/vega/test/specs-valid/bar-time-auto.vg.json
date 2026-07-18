@@ -33,7 +33,8 @@
         {
           "type": "timeunit",
           "field": "t",
-          "inferUnits": true
+          "inferUnits": true,
+          "timezone": "utc"
         }
       ]
     }

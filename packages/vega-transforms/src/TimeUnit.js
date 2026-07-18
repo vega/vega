@@ -1,7 +1,7 @@
 import {Transform} from 'vega-dataflow';
 import {
-  TIME_UNITS, timeBin, timeFloor, timeInterval, timeUnits,
-  utcFloor, utcInterval, detectTimeUnits
+  TIME_UNITS, detectTimeUnits, timeBin, timeFloor, timeInterval,
+  timeUnits, utcFloor, utcInterval
 } from 'vega-time';
 import {accessorFields, extent, inherits, peek} from 'vega-util';
 
@@ -83,9 +83,13 @@ inherits(TimeUnit, Transform, {
   _floor(_, pulse) {
     const utc = _.timezone === 'utc';
 
+    if (_.inferUnits && (_.units || _.step != null || _.maxbins != null || _.extent)) {
+      pulse.dataflow.warn('TimeUnit inferUnits overrides units, step, maxbins and extent.');
+    }
+
     // get parameters
     const {units, step} = _.inferUnits
-      ? detectTimeUnits(pulse.materialize(pulse.SOURCE).source, _.field)
+      ? detectTimeUnits(pulse.materialize(pulse.SOURCE).source, _.field, utc)
       : _.units
         ? {units: _.units, step: _.step || 1}
         : timeBin({
