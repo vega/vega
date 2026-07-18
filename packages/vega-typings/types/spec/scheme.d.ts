@@ -340,8 +340,4 @@ export type Diverging =
 export type Cyclical = 'rainbow' | 'sinebow';
 
 export type ColorScheme =
-  | Categorical
-  | SequentialSingleHue
-  | SequentialMultiHue
-  | Diverging
-  | Cyclical;
+  Categorical | SequentialSingleHue | SequentialMultiHue | Diverging | Cyclical;
