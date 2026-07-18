@@ -1,4 +1,4 @@
-import json from './json';
+import json from './json.js';
 import {feature, mesh} from 'topojson-client';
 import {error} from 'vega-util';
 

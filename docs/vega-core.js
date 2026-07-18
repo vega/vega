@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$1, $$1$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
+})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$2, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
 
   function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -21,8 +21,8 @@
     return Object.freeze(n);
   }
 
-  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
-  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1$1);
+  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$2);
+  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -120,6 +120,11 @@
   const one$1 = accessor(() => 1, [], 'one');
   const truthy = accessor(() => true, [], 'true');
   const falsy = accessor(() => false, [], 'false');
+
+  /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
+
+  /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
+  const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
   function log$1$1(method, level, input) {
     const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
@@ -129,8 +134,7 @@
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
-  function logger(_, method) {
-    let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
+  function logger(_, method, handler = log$1$1) {
     let level = _ || None$2;
     return {
       level(_) {
@@ -164,10 +168,7 @@
     return _ === Object(_);
   }
   const isLegalKey = key => key !== '__proto__';
-  function mergeConfig() {
-    for (var _len = arguments.length, configs = new Array(_len), _key = 0; _key < _len; _key++) {
-      configs[_key] = arguments[_key];
-    }
+  function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (const key in source) {
         if (key === 'signals') {
@@ -454,9 +455,8 @@
     }
     return [u, v];
   }
-  const hop = Object.prototype.hasOwnProperty;
   function has$1(object, property) {
-    return hop.call(object, property);
+    return Object.hasOwn(object, property);
   }
   const NULL = {};
   function fastmap(input) {
@@ -690,10 +690,10 @@
     return array && peek$1(array) - array[0] || 0;
   }
   function $(x) {
-    return isArray(x) ? '[' + x.map($) + ']' : isObject(x) || isString(x) ?
+    return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]` : isObject(x) || isString(x) ?
     // Output valid JSON and JS source strings.
-    // See http://timelessrepo.com/json-isnt-a-javascript-subset
-    JSON.stringify(x).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029') : x;
+    // See https://github.com/judofyr/timeless/blob/master/posts/json-isnt-a-javascript-subset.md
+    JSON.stringify(x).replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029') : x;
   }
   function toBoolean(_) {
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
@@ -1219,22 +1219,20 @@
   /**
    * Factory for a loader constructor that provides methods for requesting
    * files from either the network or disk, and for sanitizing request URIs.
-   * @param {function} fetch - The Fetch API for HTTP network requests.
-   *   If null or undefined, HTTP loading will be disabled.
    * @param {object} fs - The file system interface for file loading.
    *   If null or undefined, local file loading will be disabled.
    * @return {function} A loader constructor with the following signature:
    *   param {object} [options] - Optional default loading options to use.
    *   return {object} - A new loader instance.
    */
-  function loaderFactory(fetch, fs) {
+  function loaderFactory(fs) {
     return options => ({
       options: options || {},
       sanitize: sanitize,
       load: load$1,
-      fileAccess: !!fs,
-      file: fileLoader(fs),
-      http: httpLoader(fetch)
+      fileAccess: false,
+      file: fileLoader(),
+      http: httpLoader
     });
   }
 
@@ -1251,7 +1249,7 @@
   async function load$1(uri, options) {
     const opt = await this.sanitize(uri, options),
       url = opt.href;
-    return opt.localFile ? this.file(url) : this.http(url, options);
+    return opt.localFile ? this.file(url) : this.http(url, options?.http);
   }
 
   /**
@@ -1339,11 +1337,7 @@
    *   return {Promise} A promise that resolves to the file contents.
    */
   function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
+    return fileReject;
   }
 
   /**
@@ -1354,27 +1348,16 @@
   }
 
   /**
-   * HTTP request handler factory.
-   * @param {function} fetch - The Fetch API method.
-   * @return {function} - An http loader with the following signature:
-   *   param {string} url - The url to request.
-   *   param {object} options - An options hash.
-   *   return {Promise} - A promise that resolves to the file contents.
+   * An http loader.
+   * @param {string} url - The url to request.
+   * @param {Partial<RequestInit>} options - An options hash.
+   * @return {Promise} - A promise that resolves to the file contents.
    */
-  function httpLoader(fetch) {
-    return fetch ? async function (url, options) {
-      const opt = extend({}, this.options.http, options),
-        type = options && options.response,
-        response = await fetch(url, opt);
-      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
-    } : httpReject;
-  }
-
-  /**
-   * Default http request handler that simply rejects.
-   */
-  async function httpReject() {
-    error('No HTTP fetch method available.');
+  async function httpLoader(url, options) {
+    const opt = extend({}, this.options.http, options),
+      type = options && options.response,
+      response = await fetch(url, opt);
+    return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
   }
   const isValid = _ => _ != null && _ === _;
   const isBoolean = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
@@ -1534,10 +1517,7 @@
       }
     }
   }
-  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch,
-  // use built-in fetch API
-  null // no file system access
-  );
+  const loader = loaderFactory();
 
   function UniqueList(idFunc) {
     const $ = idFunc || identity,
@@ -2985,8 +2965,6 @@
     }
   });
 
-  /* eslint-disable require-atomic-updates */
-
   /**
    * Evaluates the dataflow and returns a Promise that resolves when pulse
    * propagation completes. This method will increment the current timestamp
@@ -3919,67 +3897,67 @@
       p;
     if (w < 6.25) {
       w -= 3.125;
-      p = -3.6444120640178196996e-21;
-      p = -1.685059138182016589e-19 + p * w;
+      p = -364441206401782e-35;
+      p = -16850591381820166e-35 + p * w;
       p = 1.2858480715256400167e-18 + p * w;
       p = 1.115787767802518096e-17 + p * w;
-      p = -1.333171662854620906e-16 + p * w;
+      p = -1333171662854621e-31 + p * w;
       p = 2.0972767875968561637e-17 + p * w;
       p = 6.6376381343583238325e-15 + p * w;
-      p = -4.0545662729752068639e-14 + p * w;
-      p = -8.1519341976054721522e-14 + p * w;
+      p = -4054566272975207e-29 + p * w;
+      p = -8151934197605472e-29 + p * w;
       p = 2.6335093153082322977e-12 + p * w;
-      p = -1.2975133253453532498e-11 + p * w;
-      p = -5.4154120542946279317e-11 + p * w;
+      p = -12975133253453532e-27 + p * w;
+      p = -5415412054294628e-26 + p * w;
       p = 1.051212273321532285e-09 + p * w;
-      p = -4.1126339803469836976e-09 + p * w;
-      p = -2.9070369957882005086e-08 + p * w;
+      p = -4.112633980346984e-9 + p * w;
+      p = -2.9070369957882005e-8 + p * w;
       p = 4.2347877827932403518e-07 + p * w;
-      p = -1.3654692000834678645e-06 + p * w;
-      p = -1.3882523362786468719e-05 + p * w;
+      p = -13654692000834679e-22 + p * w;
+      p = -13882523362786469e-21 + p * w;
       p = 0.0001867342080340571352 + p * w;
-      p = -0.00074070253416626697512 + p * w;
-      p = -0.0060336708714301490533 + p * w;
+      p = -740702534166267e-18 + p * w;
+      p = -0.006033670871430149 + p * w;
       p = 0.24015818242558961693 + p * w;
       p = 1.6536545626831027356 + p * w;
     } else if (w < 16.0) {
       w = Math.sqrt(w) - 3.25;
       p = 2.2137376921775787049e-09;
       p = 9.0756561938885390979e-08 + p * w;
-      p = -2.7517406297064545428e-07 + p * w;
+      p = -2.7517406297064545e-7 + p * w;
       p = 1.8239629214389227755e-08 + p * w;
       p = 1.5027403968909827627e-06 + p * w;
-      p = -4.013867526981545969e-06 + p * w;
+      p = -4013867526981546e-21 + p * w;
       p = 2.9234449089955446044e-06 + p * w;
       p = 1.2475304481671778723e-05 + p * w;
-      p = -4.7318229009055733981e-05 + p * w;
+      p = -47318229009055734e-21 + p * w;
       p = 6.8284851459573175448e-05 + p * w;
       p = 2.4031110387097893999e-05 + p * w;
-      p = -0.0003550375203628474796 + p * w;
+      p = -3550375203628475e-19 + p * w;
       p = 0.00095328937973738049703 + p * w;
-      p = -0.0016882755560235047313 + p * w;
+      p = -0.0016882755560235047 + p * w;
       p = 0.0024914420961078508066 + p * w;
-      p = -0.0037512085075692412107 + p * w;
+      p = -0.003751208507569241 + p * w;
       p = 0.005370914553590063617 + p * w;
       p = 1.0052589676941592334 + p * w;
       p = 3.0838856104922207635 + p * w;
     } else if (Number.isFinite(w)) {
       w = Math.sqrt(w) - 5.0;
-      p = -2.7109920616438573243e-11;
-      p = -2.5556418169965252055e-10 + p * w;
+      p = -27109920616438573e-27;
+      p = -2555641816996525e-25 + p * w;
       p = 1.5076572693500548083e-09 + p * w;
-      p = -3.7894654401267369937e-09 + p * w;
+      p = -3.789465440126737e-9 + p * w;
       p = 7.6157012080783393804e-09 + p * w;
-      p = -1.4960026627149240478e-08 + p * w;
+      p = -1.496002662714924e-8 + p * w;
       p = 2.9147953450901080826e-08 + p * w;
-      p = -6.7711997758452339498e-08 + p * w;
+      p = -6.771199775845234e-8 + p * w;
       p = 2.2900482228026654717e-07 + p * w;
-      p = -9.9298272942317002539e-07 + p * w;
+      p = -9.9298272942317e-7 + p * w;
       p = 4.5260625972231537039e-06 + p * w;
-      p = -1.9681778105531670567e-05 + p * w;
+      p = -1968177810553167e-20 + p * w;
       p = 7.5995277030017761139e-05 + p * w;
-      p = -0.00021503011930044477347 + p * w;
-      p = -0.00013871931833623122026 + p * w;
+      p = -21503011930044477e-20 + p * w;
+      p = -13871931833623122e-20 + p * w;
       p = 1.0103004648645343977 + p * w;
       p = 4.8499064014085844221 + p * w;
     } else {
@@ -4366,7 +4344,6 @@
     };
   }
   function exp(data, x, y) {
-    // eslint-disable-next-line no-unused-vars
     const [xv, yv, ux, uy] = points(data, x, y);
     let YL = 0,
       XY = 0,
@@ -8614,7 +8591,7 @@
     };
   }
   function band() {
-    const scale = $$1.scaleOrdinal().unknown(undefined),
+    const scale = $$2.scaleOrdinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range;
     let range$1 = [0, 1],
@@ -8798,7 +8775,7 @@
       }
     };
     scale.tickFormat = function (count, specifier) {
-      return $$1.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
+      return $$2.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
     };
     scale.copy = function () {
       return scaleBinOrdinal().domain(scale.domain()).range(scale.range());
@@ -12044,12 +12021,12 @@
     /**
      * Add an event handler. Subclasses should override this method.
      */
-    on( /*type, handler*/) {}
+    on(/*type, handler*/) {}
 
     /**
      * Remove an event handler. Subclasses should override this method.
      */
-    off( /*type, handler*/) {}
+    off(/*type, handler*/) {}
 
     /**
      * Utility method for finding the array index of an event handler.
@@ -12255,7 +12232,7 @@
      * incremental should implement this method.
      * @param {Item} item - The dirty item whose bounds should be redrawn.
      */
-    dirty( /*item*/) {}
+    dirty(/*item*/) {}
 
     /**
      * Render an input scenegraph, potentially with a set of dirty items.
@@ -12294,7 +12271,7 @@
      * @param {Array} markTypes - Array of the mark types to render.
      *                            If undefined, render all mark types
      */
-    _render( /*scene, markTypes*/
+    _render(/*scene, markTypes*/
     ) {
       // subclasses to override
     }
@@ -12894,12 +12871,9 @@
         return m;
       },
       m = {
-        open(tag) {
+        open(tag, ...attrs) {
           push(tag);
           outer = '<' + tag;
-          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            attrs[_key - 1] = arguments[_key];
-          }
           for (const set of attrs) {
             for (const key in set) attr(key, set[key]);
           }
@@ -16112,7 +16086,7 @@
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
     if (type === Ordinal) {
-      scale.unknown(_.domainImplicit ? $$1.scaleImplicit : undefined);
+      scale.unknown(_.domainImplicit ? $$2.scaleImplicit : undefined);
     }
 
     // perform 'nice' adjustment as requested
@@ -16222,7 +16196,7 @@
     } else if (isFunction(scale.round)) {
       scale.round(round);
     } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? $$1$1.interpolateRound : $$1$1.interpolate);
+      scale.interpolate(round ? $$1.interpolateRound : $$1.interpolate);
     }
     if (range) scale.range(flip(range, _.reverse));
   }
@@ -20556,7 +20530,7 @@
         addv[i] = key(data[i]);
         addi[i] = i;
       }
-      addv = sort(addv, addi);
+      addv = sort$1(addv, addi);
       if (n0) {
         oldv = value;
         oldi = index;
@@ -20618,7 +20592,7 @@
       size: () => size
     };
   }
-  function sort(values, index) {
+  function sort$1(values, index) {
     values.sort.call(index, (a, b) => {
       const x = values[a],
         y = values[b];
@@ -21099,7 +21073,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.30.0";
+  var version$1 = "6.2.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22577,6 +22551,9 @@
       substring: fn('substring', STRING),
       split: fn('split', STRING),
       trim: fn('trim', STRING, 0),
+      // base64 encode/decode
+      btoa: 'btoa',
+      atob: 'atob',
       // REGEXP functions
       regexp: REGEXP,
       test: fn('test', REGEXP),
@@ -22602,6 +22579,8 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
+    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
+    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
@@ -22655,7 +22634,16 @@
       UnaryExpression: n => '(' + n.operator + visit(n.argument) + ')',
       ConditionalExpression: n => '(' + visit(n.test) + '?' + visit(n.consequent) + ':' + visit(n.alternate) + ')',
       LogicalExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
-      ObjectExpression: n => '{' + n.properties.map(visit).join(',') + '}',
+      ObjectExpression: n => {
+        // If any keys would override Object prototype methods, throw error
+        for (const prop of n.properties) {
+          const keyName = prop.key.name;
+          if (DisallowedObjectProperties.has(keyName)) {
+            error('Illegal property: ' + keyName);
+          }
+        }
+        return '{' + n.properties.map(visit).join(',') + '}';
+      },
       Property: n => {
         memberDepth += 1;
         const k = visit(n.key);
@@ -22700,6 +22688,12 @@
     TYPE_RANGE_EXC = 'R-E',
     TYPE_RANGE_LE = 'R-LE',
     TYPE_RANGE_RE = 'R-RE',
+    TYPE_PRED_LT = 'E-LT',
+    TYPE_PRED_LTE = 'E-LTE',
+    TYPE_PRED_GT = 'E-GT',
+    TYPE_PRED_GTE = 'E-GTE',
+    TYPE_PRED_VALID = 'E-VALID',
+    TYPE_PRED_ONE_OF = 'E-ONE',
     UNIT_INDEX = 'index:unit';
 
   // TODO: revisit date coercion?
@@ -22733,6 +22727,18 @@
           if (!inrange(dval, values[i], false, false)) return false;
         } else if (f.type === TYPE_RANGE_LE) {
           if (!inrange(dval, values[i], false, true)) return false;
+        } else if (f.type === TYPE_PRED_LT) {
+          if (dval >= values[i]) return false;
+        } else if (f.type === TYPE_PRED_LTE) {
+          if (dval > values[i]) return false;
+        } else if (f.type === TYPE_PRED_GT) {
+          if (dval <= values[i]) return false;
+        } else if (f.type === TYPE_PRED_GTE) {
+          if (dval < values[i]) return false;
+        } else if (f.type === TYPE_PRED_VALID) {
+          if (dval === null || isNaN(dval)) return false;
+        } else if (f.type === TYPE_PRED_ONE_OF) {
+          if (values[i].indexOf(dval) === -1) return false;
         }
       }
     }
@@ -22979,13 +22985,9 @@
       field = 'unit',
       indexName = IndexPrefix$1 + field,
       dataName = DataPrefix$1 + data;
-
-    // eslint-disable-next-line no-prototype-builtins
     if (op === Intersect && !has$1(params, indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
-
-    // eslint-disable-next-line no-prototype-builtins
     if (!has$1(params, dataName)) {
       params[dataName] = scope.getData(data).tuplesRef();
     }
@@ -23093,13 +23095,17 @@
       }
     }
   }
+
+  /**
+   * nameOrFunction must be a string or function that was registered.
+   * Return undefined if scale is not recognized.
+   */
   function getScale(nameOrFunction, ctx) {
-    if (isFunction(nameOrFunction)) {
-      return nameOrFunction;
-    }
     if (isString(nameOrFunction)) {
       const maybeScale = ctx.scales[nameOrFunction];
       return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
+    } else if (isFunction(nameOrFunction)) {
+      return isRegisteredScale(nameOrFunction) ? nameOrFunction : undefined;
     }
     return undefined;
   }
@@ -23284,36 +23290,28 @@
   function sequence(seq) {
     return array(seq) || (isString(seq) ? seq : null);
   }
-  function join(seq) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  function join(seq, ...args) {
     return array(seq).join(...args);
   }
-  function indexof(seq) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  function indexof(seq, ...args) {
     return sequence(seq).indexOf(...args);
   }
-  function lastindexof(seq) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
-    }
+  function lastindexof(seq, ...args) {
     return sequence(seq).lastIndexOf(...args);
   }
-  function slice(seq) {
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
-    }
+  function slice(seq, ...args) {
     return sequence(seq).slice(...args);
   }
   function replace(str, pattern, repl) {
     if (isFunction(repl)) error('Function argument passed to replace.');
+    if (!isString(pattern) && !isRegExp(pattern)) error('Please pass a string or RegExp argument to replace.');
     return String(str).replace(pattern, repl);
   }
   function reverse(seq) {
     return array(seq).slice().reverse();
+  }
+  function sort(seq) {
+    return array(seq).slice().sort(ascending$1);
   }
   function bandspace(count, paddingInner, paddingOuter) {
     return bandSpace(count || 0, paddingInner || 0, paddingOuter || 0);
@@ -23430,8 +23428,7 @@
    * @param {*} minDist the minimum distance, in pixels, that thenew point needs to be apart from the last point
    * @returns a new array containing the lasso with the new point
    */
-  function lassoAppend(lasso, x, y) {
-    let minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
+  function lassoAppend(lasso, x, y, minDist = 5) {
     lasso = array$2(lasso);
     const last = lasso[lasso.length - 1];
 
@@ -23446,8 +23443,7 @@
    * @returns the svg path command that draws the lasso
    */
   function lassoPath(lasso) {
-    return array$2(lasso).reduce((svg, _ref, i) => {
-      let [x, y] = _ref;
+    return array$2(lasso).reduce((svg, [x, y], i) => {
       return svg += i == 0 ? `M ${x},${y} ` : i === lasso.length - 1 ? ' Z' : `L ${x},${y} `;
     }, '');
   }
@@ -23555,6 +23551,7 @@
     lastindexof,
     replace,
     reverse,
+    sort,
     slice,
     flush,
     lerp,
@@ -26632,6 +26629,8 @@
   const GuideTitleStyle = 'guide-title';
   const GroupTitleStyle = 'group-title';
   const GroupSubtitleStyle = 'group-subtitle';
+
+  /** All values of LegendType */
   const Symbols = 'symbol';
   const Gradient = 'gradient';
   const Discrete = 'discrete';
@@ -29514,6 +29513,7 @@
   // -- Transforms -----
 
   extend(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
+  const version = version$1;
 
   Object.defineProperty(exports, "path", {
     enumerable: true,
@@ -29527,6 +29527,7 @@
   exports.DAYOFYEAR = DAYOFYEAR;
   exports.Dataflow = Dataflow;
   exports.Debug = Debug;
+  exports.DisallowedObjectProperties = DisallowedObjectProperties;
   exports.Error = Error$1;
   exports.EventStream = EventStream;
   exports.Gradient = Gradient$1;
@@ -29691,7 +29692,6 @@
   exports.renderModule = renderModule;
   exports.repeat = repeat;
   exports.resetDefaultLocale = resetDefaultLocale;
-  exports.resetSVGClipId = resetSVGClipId;
   exports.resetSVGDefIds = resetSVGDefIds;
   exports.responseType = responseType;
   exports.runtimeContext = context;

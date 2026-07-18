@@ -1,17 +1,17 @@
-import {addEncoders, extendEncode} from './encode/util';
-import axisConfig from './guides/axis-config';
-import axisDomain from './guides/axis-domain';
-import axisGrid from './guides/axis-grid';
-import axisTicks from './guides/axis-ticks';
-import axisLabels from './guides/axis-labels';
-import axisTitle from './guides/axis-title';
-import {Skip} from './guides/constants';
-import guideGroup from './guides/guide-group';
-import {lookup, tickBand} from './guides/guide-util';
-import {AxisRole} from './marks/roles';
-import parseMark from './mark';
-import {AxisTicks, Collect} from '../transforms';
-import {ref, value} from '../util';
+import {addEncoders, extendEncode} from './encode/util.js';
+import axisConfig from './guides/axis-config.js';
+import axisDomain from './guides/axis-domain.js';
+import axisGrid from './guides/axis-grid.js';
+import axisTicks from './guides/axis-ticks.js';
+import axisLabels from './guides/axis-labels.js';
+import axisTitle from './guides/axis-title.js';
+import {Skip} from './guides/constants.js';
+import guideGroup from './guides/guide-group.js';
+import {lookup, tickBand} from './guides/guide-util.js';
+import {AxisRole} from './marks/roles.js';
+import parseMark from './mark.js';
+import {AxisTicks, Collect} from '../transforms.js';
+import {ref, value} from '../util.js';
 
 export default function(spec, scope) {
   const config = axisConfig(spec, scope),

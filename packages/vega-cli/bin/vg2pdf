@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render a Vega specification to PDF, using node canvas
-const {createWriteStream} = require('fs'),
-      render = require('../src/render');
+import { createWriteStream } from 'fs';
+import render from '../src/render.js';
 
 render('pdf', function(canvas, arg) {
   const file = arg._[1] || null,

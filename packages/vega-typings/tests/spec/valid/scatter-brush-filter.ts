@@ -1,7 +1,7 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  $schema: 'https://vega.github.io/schema/vega/v6.json',
   autosize: 'pad',
   padding: 5,
   width: 200,

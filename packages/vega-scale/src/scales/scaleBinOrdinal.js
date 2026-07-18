@@ -1,8 +1,8 @@
 import {bisect} from 'd3-array';
 import {tickFormat} from 'd3-scale';
 import {peek} from 'vega-util';
-import {numbers} from './numbers';
-import {slice} from './slice';
+import {numbers} from './numbers.js';
+import {slice} from './slice.js';
 
 export function scaleBinOrdinal() {
   let domain = [],

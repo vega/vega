@@ -1,6 +1,6 @@
-import Marks from './marks/index';
+import Marks from './marks/index.js';
 import {error} from 'vega-util';
-import Bounds from './Bounds';
+import Bounds from './Bounds.js';
 
 export function intersect(scene, bounds, filter) {
   const hits = [], // intersection results
@@ -75,4 +75,3 @@ function intersectItem(item, box, test) {
   const bounds = item.bounds;
   return box.encloses(bounds) || (box.intersects(bounds) && test(item, box));
 }
-

@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    dotbin = require('../').dotbin;
+import tape from 'tape';
+import { dotbin } from '../index.js';
 
 tape('dotbin calculates dot plot bin positions', t => {
   const data = [1, 1, 2, 3, 4, 5, 6];

@@ -107,7 +107,7 @@ If an input _specifier_ object omits any of these key values, a default value wi
 vega.<b>timeFloor</b>(<i>units</i>[, <i>step</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/floor.js "Source")
 
-Returns a function that performs flooring (truncation) of input dates to given time _units_ in the local timezone. The _units_ argument must be an array of valid time unit strings, for example `['year', 'month']` or `['week', 'date']`. The optional _step_ argument (default 1) indicates the number of time unit steps (of the smallest provided unit) to include as part of the truncation scheme. For example, `utcFloor(['quarter'])` is equivalent to `utcFloor(['month'], 3)`.
+Returns a function that performs flooring (truncation) of input dates to given time _units_ in the local timezone. The _units_ argument must be an array of valid time unit strings, for example `['year', 'month']` or `['week', 'date']`. The optional _step_ argument (default 1) indicates the number of time unit steps (of the smallest provided unit) to include as part of the truncation scheme. For example, `timeFloor(['quarter'])` is equivalent to `timeFloor(['month'], 3)`.
 
 <a name="timeInterval" href="#timeInterval">#</a>
 vega.<b>timeInterval</b>(<i>unit</i>)

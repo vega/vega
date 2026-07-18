@@ -1,4 +1,4 @@
-import { ascending } from 'vega-util';
+import { ascending, isString } from 'vega-util';
 
 const slice = Array.prototype.slice;
 
@@ -7,8 +7,10 @@ const apply = (m, args, cast) => {
   return obj[m].apply(obj, slice.call(args, 1));
 };
 
-const datetime = (y, m, d, H, M, S, ms) =>
-  new Date(y, m || 0, d != null ? d : 1, H || 0, M || 0, S || 0, ms || 0);
+const datetime = (yearOrTimestring, m = 0, d = 1, H = 0, M = 0, S = 0, ms = 0) =>
+   isString(yearOrTimestring)
+     ? new Date(yearOrTimestring)
+     : new Date(yearOrTimestring, m, d, H, M, S, ms);
 
 export default {
   // math functions
@@ -75,6 +77,13 @@ export default {
   split:        function() { return apply('split', arguments, String); },
   replace:      function() { return apply('replace', arguments, String); },
   trim:         x => String(x).trim(),
+  // Base64 encode/decode
+  // Convert binary string to base64-encoded ascii
+  btoa:         x => btoa(x),
+  // Convert base64-encoded ascii to binary string
+  atob:         x => atob(x),
+  // URI encoding
+  encodeURIComponent: x => encodeURIComponent(x),
 
   // regexp functions
   regexp:       RegExp,

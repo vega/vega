@@ -93,15 +93,15 @@ import {
 import {
   contrast,
   luminance
-} from './functions/luminance';
+} from './functions/luminance.js';
 
 import {
   data,
   indata,
   setdata
-} from './functions/data';
+} from './functions/data.js';
 
-import encode from './functions/encode';
+import encode from './functions/encode.js';
 
 import {
   dayAbbrevFormat,
@@ -113,35 +113,35 @@ import {
   timeParse,
   utcFormat,
   utcParse
-} from './functions/format';
+} from './functions/format.js';
 
 import {
   geoArea,
   geoBounds,
   geoCentroid,
   geoScale
-} from './functions/geo';
+} from './functions/geo.js';
 
-import inScope from './functions/inscope';
+import inScope from './functions/inscope.js';
 
-import intersect from './functions/intersect';
+import intersect from './functions/intersect.js';
 
 import {
   debug,
   info,
   warn
-} from './functions/log';
+} from './functions/log.js';
 
-import merge from './functions/merge';
+import merge from './functions/merge.js';
 
-import modify from './functions/modify';
+import modify from './functions/modify.js';
 
 import {
   pinchAngle,
   pinchDistance
-} from './functions/pinch';
+} from './functions/pinch.js';
 
-import pluck from './functions/pluck';
+import pluck from './functions/pluck.js';
 
 import {
   indexof,
@@ -151,13 +151,13 @@ import {
   reverse,
   slice,
   sort
-} from './functions/sequence';
+} from './functions/sequence.js';
 
 import {
   intersectLasso,
   lassoAppend,
   lassoPath
-} from './functions/lasso';
+} from './functions/lasso.js';
 
 import {
   bandspace,
@@ -167,39 +167,39 @@ import {
   invert,
   range,
   scale
-} from './functions/scale';
+} from './functions/scale.js';
 
-import scaleGradient from './functions/scale-gradient';
+import scaleGradient from './functions/scale-gradient.js';
 
 import {
   geoShape,
   pathShape
-} from './functions/shape';
+} from './functions/shape.js';
 
 import {
   treeAncestors,
   treePath
-} from './functions/tree';
+} from './functions/tree.js';
 
 import {
   containerSize,
   screen,
   windowSize
-} from './functions/window';
+} from './functions/window.js';
 
 import {
   SignalPrefix
-} from './constants';
+} from './constants.js';
 
 import {
   internalScaleFunctions
-} from './scales';
+} from './scales.js';
 
 import {
   dataVisitor,
   indataVisitor,
   scaleVisitor
-} from './visitors';
+} from './visitors.js';
 
 // Expression function context object
 export const functionContext = {

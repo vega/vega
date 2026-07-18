@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    {luminance, contrast} = require('../');
+import tape from 'tape';
+import { contrast, luminance } from '../index.js';
 
 tape('luminance calculation extremes', t => {
   t.equal(luminance('#000000'), 0);

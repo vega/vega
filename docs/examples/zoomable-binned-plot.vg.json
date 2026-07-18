@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "An interactive scatter plot example with binned aggregation supporting pan and zoom.",
   "width": 500,
   "height": 300,

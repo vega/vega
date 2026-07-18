@@ -1,6 +1,6 @@
 import { array, toSet } from 'vega-util';
-import invertRange from './scales/invertRange';
-import invertRangeExtent from './scales/invertRangeExtent';
+import invertRange from './scales/invertRange.js';
+import invertRangeExtent from './scales/invertRangeExtent.js';
 
 import {
   Band,
@@ -13,16 +13,16 @@ import {
   Time,
   UTC,
   Discretizing as Z
-} from './scales/types';
+} from './scales/types.js';
 
 import {
   band as scaleBand,
   point as scalePoint
-} from './scales/scaleBand';
+} from './scales/scaleBand.js';
 
 import {
   scaleBinOrdinal
-} from './scales/scaleBinOrdinal';
+} from './scales/scaleBinOrdinal.js';
 
 import * as $ from 'd3-scale';
 

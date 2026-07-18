@@ -1,28 +1,39 @@
 {
   "name": "vega-crossfilter",
-  "version": "4.1.2",
+  "version": "5.1.0",
   "description": "Indexed cross-filtering for Vega dataflows.",
   "keywords": [
     "vega",
     "crossfilter"
   ],
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-crossfilter.js",
-  "module": "build/vega-crossfilter.module.js",
-  "unpkg": "build/vega-crossfilter.min.js",
-  "repository": "vega/vega",
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "default": "./build/vega-crossfilter.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-crossfilter#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --config-transform",
-    "pretest": "yarn build --config-test",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --config-transform",
+    "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-array": "^3.2.2",
-    "vega-dataflow": "^5.7.6",
-    "vega-util": "^1.17.2"
+    "d3-array": "^3.2.4",
+    "vega-dataflow": "^6.1.0",
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

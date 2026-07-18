@@ -1,15 +1,15 @@
-import parse from './dataflow';
-import expressionCodegen from './expression';
+import parse from './dataflow.js';
+import expressionCodegen from './expression.js';
 import {
   parseOperator,
   parseOperatorParameters
-} from './operator';
-import parseParameters from './parameters';
-import parseStream from './stream';
-import parseUpdate from './update';
+} from './operator.js';
+import parseParameters from './parameters.js';
+import parseStream from './stream.js';
+import parseUpdate from './update.js';
 
-import {getState, setState} from './state';
-import {canonicalType, isCollect} from './util';
+import {getState, setState} from './state.js';
+import {canonicalType, isCollect} from './util.js';
 
 /**
  * Context objects store the current parse state.

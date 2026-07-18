@@ -1,4 +1,4 @@
-import Bounds from './Bounds';
+import Bounds from './Bounds.js';
 
 export default function Item(mark) {
   this.mark = mark;

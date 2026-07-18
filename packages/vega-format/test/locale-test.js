@@ -1,7 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {deDE} = require('./util');
-
+import tape from 'tape';
+import * as vega from '../index.js';
+import { deDE } from './util.js';
 function isFunction(t, value) {
   t.equal(typeof value, 'function');
 }

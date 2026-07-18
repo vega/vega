@@ -1,4 +1,4 @@
-import {hasCornerRadius, rectangle} from '../../path/shapes';
+import {hasCornerRadius, rectangle} from '../../path/shapes.js';
 import {isFunction} from 'vega-util';
 
 export default function(context, scene) {

@@ -1,17 +1,14 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    Quantile = tx.quantile;
+import tape from 'tape';
+import { field, truthy } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect, quantile as Quantile } from '../index.js';
 
 tape('Quantile transform calculates empirical quantiles', t => {
   var data = [9, 8, 7, 1, 2, 3, 6, 5, 4].map(_ => ({v: _})),
       prob = [0.25, 0.50, 0.75];
 
-  var v = util.field('v'),
-      df = new vega.Dataflow(),
+  var v = field('v'),
+      df = new Dataflow(),
       c = df.add(Collect),
       q = df.add(Quantile, {field: v, probs: prob, pulse:c}),
       p;
@@ -38,7 +35,7 @@ tape('Quantile transform calculates empirical quantiles', t => {
 
   // test tuple modification
   df.pulse(c, changeset()
-    .modify(util.truthy, 'v', t => t.v + 1))
+    .modify(truthy, 'v', t => t.v + 1))
     .run();
   p = q.pulse;
   t.equal(p.add.length, 3);

@@ -1,4 +1,4 @@
-import memoize from './memoize';
+import memoize from './memoize.js';
 import {tickStep} from 'd3-array';
 import {
   format as d3_format,

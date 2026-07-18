@@ -93,7 +93,7 @@ Returns the quantile value (the inverse of the [cumulative distribution function
 vega.<b>sampleUniform</b>([<i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
-Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+Returns a sample from a univariate [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 <a name="cumulativeUniform" href="#cumulativeUniform">#</a>
 vega.<b>cumulativeUniform</b>(value[, <i>min</i>, <i>max</i>])
@@ -144,7 +144,7 @@ Once created, *mean* and *stdev* values can be accessed or modified using the `m
 vega.<b>randomUniform</b>([<i>min</i>, <i>max</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/uniform.js "Source")
 
-Creates a distribution object representing a [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
+Creates a distribution object representing a [continuous uniform probability distribution](https://en.wikipedia.org/wiki/Continuous_uniform_distribution) over the interval [*min*, *max*). If unspecified, *min* defaults to `0` and *max* defaults to `1`. If only one argument is provided, it is interpreted as the *max* value.
 
 Once created, *min* and *max* values can be accessed or modified using the `min` and `max` getter/setter methods.
 
@@ -302,7 +302,7 @@ Calculates [dot plot](https://en.wikipedia.org/wiki/Dot_plot_%28statistics%29) b
 vega.<b>quantiles</b>(<i>array</i>, <i>p</i>[, <i>accessor</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/quartiles.js "Source")
 
-Given an *array* of numeric values and array *p* of probability thresholds in the range [0, 1], returns an array of p-[quantiles](https://en.wikipedia.org/wiki/Quantile). The return value is a array the same length as the input *p*. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
+Given an *array* of numeric values and array *p* of probability thresholds in the range [0, 1], returns an array of p-[quantiles](https://en.wikipedia.org/wiki/Quantile). The return value is an array the same length as the input *p*. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
 
 <a name="quartiles" href="#quartiles">#</a>
 vega.<b>quartiles</b>(<i>array</i>[, <i>accessor</i>])

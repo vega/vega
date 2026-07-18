@@ -1,10 +1,10 @@
 import {Transform, ingest} from 'vega-dataflow';
 import {inherits, isArray} from 'vega-util';
-import {transform} from './Isocontour';
-import {params} from './KDE2D';
-import contours from './util/contours';
-import density2D from './util/density2D';
-import quantize from './util/quantize';
+import {transform} from './Isocontour.js';
+import {params} from './KDE2D.js';
+import contours from './util/contours.js';
+import density2D from './util/density2D.js';
+import quantize from './util/quantize.js';
 
 /**
  * Generate contours based on kernel-density estimation of point data.

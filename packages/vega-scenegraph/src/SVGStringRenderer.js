@@ -1,14 +1,14 @@
-import Renderer from './Renderer';
-import {gradientRef, isGradient, patternPrefix} from './Gradient';
-import Marks from './marks/index';
-import {ariaItemAttributes, ariaMarkAttributes} from './util/aria';
-import {cssClass} from './util/dom';
-import {markup} from './util/markup';
-import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text';
-import {visit} from './util/visit';
-import clip from './util/svg/clip';
-import metadata from './util/svg/metadata';
-import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles';
+import Renderer from './Renderer.js';
+import {gradientRef, isGradient, patternPrefix} from './Gradient.js';
+import Marks from './marks/index.js';
+import {ariaItemAttributes, ariaMarkAttributes} from './util/aria.js';
+import {cssClass} from './util/dom.js';
+import {markup} from './util/markup.js';
+import {fontFamily, fontSize, lineHeight, textLines, textValue} from './util/text.js';
+import {visit} from './util/visit.js';
+import clip from './util/svg/clip.js';
+import metadata from './util/svg/metadata.js';
+import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles.js';
 import {extend, isArray} from 'vega-util';
 
 export default class SVGStringRenderer extends Renderer {

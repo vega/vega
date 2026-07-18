@@ -1,4 +1,4 @@
-import initializeRenderer from './initialize-renderer';
+import initializeRenderer from './initialize-renderer.js';
 import {renderModule} from 'vega-scenegraph';
 import {error} from 'vega-util';
 

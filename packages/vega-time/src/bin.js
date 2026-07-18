@@ -1,4 +1,4 @@
-import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, WEEK, YEAR} from './units';
+import {DATE, HOURS, MILLISECONDS, MINUTES, MONTH, SECONDS, WEEK, YEAR} from './units.js';
 import {span} from 'vega-util';
 import {bisector, tickStep} from 'd3-array';
 
