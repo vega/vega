@@ -610,7 +610,7 @@ export interface BaseLegendLayout {
   direction?: Orientation | SignalRef;
 
   /**
-   * The pixel margin between legends within a orient group.
+   * The pixel margin between legends within an orient group.
    */
   margin?: number | SignalRef;
 

@@ -1,6 +1,6 @@
 {
   "name": "vega-time",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "JavaScript date/time utilities for Vega.",
   "keywords": [
     "vega",
@@ -21,6 +21,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-time#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
@@ -31,6 +35,6 @@
   "dependencies": {
     "d3-array": "^3.2.4",
     "d3-time": "^3.1.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   }
 }

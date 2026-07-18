@@ -1,6 +1,6 @@
 {
   "name": "vega-regression",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Regression transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -20,6 +20,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-regression#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
@@ -29,9 +33,9 @@
   },
   "dependencies": {
     "d3-array": "^3.2.4",
-    "vega-dataflow": "^6.0.0",
+    "vega-dataflow": "^6.1.0",
     "vega-statistics": "^2.0.0",
-    "vega-util": "^2.0.0"
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

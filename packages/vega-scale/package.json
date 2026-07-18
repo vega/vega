@@ -1,6 +1,6 @@
 {
   "name": "vega-scale",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "description": "Scales and color schemes for visual encoding.",
   "keywords": [
     "vega",
@@ -21,6 +21,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-scale#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
@@ -33,7 +37,7 @@
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
-    "vega-time": "^3.0.0",
-    "vega-util": "^2.0.0"
+    "vega-time": "^3.1.0",
+    "vega-util": "^2.1.0"
   }
 }

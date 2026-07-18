@@ -302,7 +302,7 @@ Calculates [dot plot](https://en.wikipedia.org/wiki/Dot_plot_%28statistics%29) b
 vega.<b>quantiles</b>(<i>array</i>, <i>p</i>[, <i>accessor</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/quartiles.js "Source")
 
-Given an *array* of numeric values and array *p* of probability thresholds in the range [0, 1], returns an array of p-[quantiles](https://en.wikipedia.org/wiki/Quantile). The return value is a array the same length as the input *p*. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
+Given an *array* of numeric values and array *p* of probability thresholds in the range [0, 1], returns an array of p-[quantiles](https://en.wikipedia.org/wiki/Quantile). The return value is an array the same length as the input *p*. An optional *accessor* function can be used to first extract numerical values from an array of input objects, and is equivalent to first calling `array.map(accessor)`. This method ignores null, undefined and NaN values.
 
 <a name="quartiles" href="#quartiles">#</a>
 vega.<b>quartiles</b>(<i>array</i>[, <i>accessor</i>])

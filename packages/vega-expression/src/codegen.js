@@ -1,6 +1,6 @@
 import Constants from './constants.js';
 import Functions from './functions.js';
-import {error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
+import {DisallowedObjectProperties, error, hasOwnProperty, isFunction, isString, toSet} from 'vega-util';
 
 function stripQuotes(s) {
   const n = s && s.length - 1;
@@ -97,8 +97,18 @@ export default function(opt) {
     LogicalExpression: n =>
         '(' + visit(n.left) + n.operator + visit(n.right) + ')',
 
-    ObjectExpression: n =>
-        '{' + n.properties.map(visit).join(',') + '}',
+    ObjectExpression: n => {
+      // If any keys would override Object prototype methods, throw error
+      for (const prop of n.properties) {
+        const keyName = prop.key.name;
+
+        if (DisallowedObjectProperties.has(keyName)) {
+          error('Illegal property: ' + keyName);
+        }
+      }
+
+      return '{' + n.properties.map(visit).join(',') + '}';
+    },
 
     Property: n => {
         memberDepth += 1;

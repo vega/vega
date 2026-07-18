@@ -1,6 +1,6 @@
 {
   "name": "vega-projection-extended",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Extended projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -21,6 +21,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-projection-extended#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c  rollup.config.js",
@@ -29,6 +33,6 @@
   },
   "dependencies": {
     "d3-geo-projection": "^4.0.0",
-    "vega-projection": "^2.0.0"
+    "vega-projection": "^2.1.0"
   }
 }

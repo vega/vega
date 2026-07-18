@@ -118,13 +118,27 @@ function processPartition(list, state, cmp, _) {
   }
 }
 
+function clamp(x, lo, hi) {
+  return x < lo ? lo : x > hi ? hi : x;
+}
+
 function setWindow(w, f, i, n) {
   w.p0 = w.i0;
   w.p1 = w.i1;
-  w.i0 = f[0] == null ? 0 : Math.max(0, i - Math.abs(f[0]));
-  w.i1 = f[1] == null ? n : Math.min(n, i + Math.abs(f[1]) + 1);
+
+  // f[0]: start offset (inclusive). null => unbounded (0)
+  // Use the SIGNED offset relative to i.
+  const start = f[0] == null ? 0 : i + f[0];
+
+  // f[1]: end offset (inclusive in “row terms”), so we +1 for exclusive bound.
+  // null => unbounded (n)
+  const endExclusive = f[1] == null ? n : i + f[1] + 1;
+
+  w.i0 = clamp(start, 0, n);
+  w.i1 = clamp(endExclusive, 0, n);
   w.index = i;
 }
+
 
 // if frame type is 'range', adjust window for peer values
 function adjustRange(w, bisect) {
