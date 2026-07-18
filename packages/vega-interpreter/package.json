@@ -1,6 +1,6 @@
 {
   "name": "vega-interpreter",
-  "version": "1.1.0",
+  "version": "2.2.1",
   "description": "CSP-compliant interpreter for Vega expressions.",
   "keywords": [
     "vega",
@@ -9,21 +9,33 @@
     "runtime"
   ],
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-interpreter.js",
-  "module": "build/vega-interpreter.module.js",
-  "unpkg": "build/vega-interpreter.min.js",
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "types": "./index.d.ts",
+    "default": "./build/vega-interpreter.js"
+  },
   "types": "index.d.ts",
-  "repository": "vega/vega",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-interpreter#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --extend",
-    "pretest": "yarn build --config-test",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js --extend",
+    "pretest": "npm run build -- --config-test",
     "test": "TZ=America/Los_Angeles tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-util": "^1.17.3"
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega": "*"

@@ -1,6 +1,6 @@
-import pathParse from './parse';
-import pathRender from './render';
-import {HalfSqrt3, Tau} from '../util/constants';
+import pathParse from './parse.js';
+import pathRender from './render.js';
+import {HalfSqrt3, Tau} from '../util/constants.js';
 import {hasOwnProperty} from 'vega-util';
 
 const Tan30 = 0.5773502691896257;

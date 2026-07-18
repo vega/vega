@@ -1,6 +1,6 @@
 {
   "name": "vega-projection",
-  "version": "1.6.2",
+  "version": "2.1.0",
   "description": "Projections for cartographic mapping.",
   "keywords": [
     "vega",
@@ -8,21 +8,32 @@
     "projection"
   ],
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-projection.js",
-  "module": "build/vega-projection.module.js",
-  "unpkg": "build/vega-projection.min.js",
-  "repository": "vega/vega",
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "default": "./build/vega-projection.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-projection#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs",
-    "pretest": "yarn build --config-test",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
+    "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "d3-geo": "^3.1.0",
+    "d3-geo": "^3.1.1",
     "d3-geo-projection": "^4.0.0",
-    "vega-scale": "^7.4.2"
+    "vega-scale": "^8.1.0"
   }
 }

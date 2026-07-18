@@ -1,16 +1,16 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    vs = require('vega-scale'),
-    encode = require('../');
+import tape from 'tape';
+import { error, extend } from 'vega-util';
+import { Dataflow } from 'vega-dataflow';
+import * as vs from 'vega-scale';
+import * as encode from '../index.js';
 
 function scale(params) {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       s = df.add(encode.scale, params),
       e = false;
   df.error = (_ => e = _);
   df.run();
-  return e ? util.error(e) : s.value;
+  return e ? error(e) : s.value;
 }
 
 tape('Scale respects domain configuration', t => {
@@ -22,29 +22,29 @@ tape('Scale respects domain configuration', t => {
   // test zero inclusion
   s = scale(params);
   t.deepEqual(s.domain(), [0, 9.5]);
-  s = scale(util.extend({zero: true}, params));
+  s = scale(extend({zero: true}, params));
   t.deepEqual(s.domain(), [0, 9.5]);
-  s = scale(util.extend({zero: false}, params));
+  s = scale(extend({zero: false}, params));
   t.deepEqual(s.domain(), [1, 9.5]);
 
   // test nice domain
-  s = scale(util.extend({nice: true}, params));
+  s = scale(extend({nice: true}, params));
   t.deepEqual(s.domain(), [0, 10]);
 
   // test domain min/max
-  s = scale(util.extend({domainMin: -1, domainMax: 10}, params));
+  s = scale(extend({domainMin: -1, domainMax: 10}, params));
   t.deepEqual(s.domain(), [-1, 10]);
 
   // domain min overrides zero
-  s = scale(util.extend({zero: true, domainMin: 0.5, domainMax: 10}, params));
+  s = scale(extend({zero: true, domainMin: 0.5, domainMax: 10}, params));
   t.deepEqual(s.domain(), [0.5, 10]);
 
   // test domain mid
-  s = scale(util.extend({domainMid: 5}, params));
+  s = scale(extend({domainMid: 5}, params));
   t.deepEqual(s.domain(), [0, 5, 9.5]);
 
   // test domain raw
-  s = scale(util.extend({domainRaw: [2, 11]}, params));
+  s = scale(extend({domainRaw: [2, 11]}, params));
   t.deepEqual(s.domain(), [2, 11]);
 
   t.end();
@@ -123,12 +123,12 @@ tape('Ordinal scale respects domainImplicit', t => {
   t.equal(s('bar'), undefined);
   t.equal(s('foo'), undefined);
 
-  s = scale(util.extend({domainImplicit: false}, params));
+  s = scale(extend({domainImplicit: false}, params));
   t.equal(s('foo'), undefined);
   t.equal(s('bar'), undefined);
   t.equal(s('foo'), undefined);
 
-  s = scale(util.extend({domainImplicit: true}, params));
+  s = scale(extend({domainImplicit: true}, params));
   t.equal(s('foo'), 'a');
   t.equal(s('bar'), 'b');
   t.equal(s('foo'), 'a');
@@ -146,11 +146,11 @@ tape('Scale respects range configuration', t => {
   // round
   s = scale(params);
   t.equal(s(0.5), 0.5);
-  s = scale(util.extend({round: true}, params));
+  s = scale(extend({round: true}, params));
   t.equal(s(0.5), 1);
 
   // reverse
-  s = scale(util.extend({reverse: true}, params));
+  s = scale(extend({reverse: true}, params));
   t.deepEqual(s.range(), [10, 0]);
 
   // rangeStep
@@ -165,7 +165,7 @@ tape('Scale respects range configuration', t => {
   t.equal(s.bandwidth(), 20);
 
   s = t.throws(() => {
-    scale(util.extend({}, params, {type: 'linear'}));
+    scale(extend({}, params, {type: 'linear'}));
   });
 
   t.end();
@@ -224,11 +224,11 @@ tape('Scale respects range color schemes', t => {
 tape('Scale warns for zero in log domain', t => {
   function logScale(domain) {
     return function() {
-      var df = new vega.Dataflow(), e;
+      var df = new Dataflow(), e;
       df.warn = (_ => e = _);
       df.add(encode.scale, {type: 'log', domain: domain});
       df.run();
-      if (e) util.error(e);
+      if (e) error(e);
     };
   }
 
@@ -244,7 +244,7 @@ tape('Scale warns for zero in log domain', t => {
 
 tape('Scale infers scale key from type, domain, and range', t => {
   function key(params) {
-    const df = new vega.Dataflow(),
+    const df = new Dataflow(),
           s = df.add(encode.scale, params);
     df.run();
     return s.value.type;

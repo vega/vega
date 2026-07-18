@@ -1,4 +1,4 @@
-import {booleanType, enums, object, oneOf, signalRef} from './util';
+import {booleanType, enums, object, oneOf, signalRef} from './util.js';
 
 const autosizeEnum = [
   'pad',

@@ -1,14 +1,14 @@
-import parseAutosize from './autosize';
-import parsePadding from './padding';
-import parseEncode from './encode';
-import parseSignal from './signal';
-import parseSpec from './scope';
-import {extendEncode} from './encode/util';
-import {GroupMark} from './marks/marktypes';
-import {FrameRole} from './marks/roles';
-import {operator, ref, value} from '../util';
-import DataScope from '../DataScope';
-import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms';
+import parseAutosize from './autosize.js';
+import parsePadding from './padding.js';
+import parseEncode from './encode.js';
+import parseSignal from './signal.js';
+import parseSpec from './scope.js';
+import {extendEncode} from './encode/util.js';
+import {GroupMark} from './marks/marktypes.js';
+import {FrameRole} from './marks/roles.js';
+import {operator, ref, value} from '../util.js';
+import DataScope from '../DataScope.js';
+import {Bound, Collect, Encode, Render, Sieve, ViewLayout} from '../transforms.js';
 import {array, extend, hasOwnProperty} from 'vega-util';
 
 const rootEncode = spec => extendEncode(

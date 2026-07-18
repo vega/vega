@@ -1,10 +1,10 @@
-import CanvasHandler from './CanvasHandler';
-import CanvasRenderer from './CanvasRenderer';
-import SVGHandler from './SVGHandler';
-import SVGRenderer from './SVGRenderer';
-import SVGStringRenderer from './SVGStringRenderer';
-import HybridRenderer from './HybridRenderer';
-import HybridHandler from './HybridHandler';
+import CanvasHandler from './CanvasHandler.js';
+import CanvasRenderer from './CanvasRenderer.js';
+import SVGHandler from './SVGHandler.js';
+import SVGRenderer from './SVGRenderer.js';
+import SVGStringRenderer from './SVGStringRenderer.js';
+import HybridRenderer from './HybridRenderer.js';
+import HybridHandler from './HybridHandler.js';
 
 const Canvas = 'canvas';
 const Hybrid = 'hybrid';

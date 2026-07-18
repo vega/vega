@@ -1,4 +1,4 @@
-import {height, offset, width} from './render-size';
+import {height, offset, width} from './render-size.js';
 
 export default function(view, r, el, constructor, scaleFactor, opt) {
   r = r || new constructor(view.loader());

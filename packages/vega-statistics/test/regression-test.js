@@ -1,8 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    x = d => d[0],
-    y = d => d[1];
-
+import tape from 'tape';
+import * as vega from '../index.js';
+var x = d => d[0], y = d => d[1];
 function closeTo(t, a, b) {
   return t.equal(a.toFixed(9), b.toFixed(9));
 }

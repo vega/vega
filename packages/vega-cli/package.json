@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "5.31.0",
+  "version": "6.2.0",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
@@ -8,20 +8,36 @@
     "server"
   ],
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "index.js",
-  "bin": {
-    "vg2pdf": "./bin/vg2pdf",
-    "vg2png": "./bin/vg2png",
-    "vg2svg": "./bin/vg2svg"
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
   },
-  "repository": "vega/vega",
+  "funding": {
+    "url": "https://app.hubspot.com/payments/GyPC972GD9Rt"
+  },
+  "exports": {
+    "default": "./build/index.js"
+  },
+  "bin": {
+    "vg2pdf": "bin/vg2pdf",
+    "vg2png": "bin/vg2png",
+    "vg2svg": "bin/vg2svg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-cli#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "test": "tape 'test/**/*-test.js'"
   },
   "dependencies": {
-    "canvas": "^2.11.2",
-    "vega": "5.31.0",
-    "yargs": "17"
+    "canvas": "^3.1.1",
+    "vega": "6.2.0",
+    "yargs": "18"
   }
 }

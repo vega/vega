@@ -1,9 +1,9 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    Compare = require('../').compare;
+import tape from 'tape';
+import { Dataflow } from 'vega-dataflow';
+import { compare as Compare } from '../index.js';
 
 tape('Compare generates comparator functions', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c = df.add('foo'),
       o = df.add('ascending'),
       f = df.add(Compare, {fields:c, orders:o});

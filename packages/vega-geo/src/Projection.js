@@ -1,4 +1,4 @@
-import {Feature, FeatureCollection} from './constants';
+import {Feature, FeatureCollection} from './constants.js';
 import {Transform} from 'vega-dataflow';
 import {projection, projectionProperties} from 'vega-projection';
 import {array, error, inherits, isFunction} from 'vega-util';

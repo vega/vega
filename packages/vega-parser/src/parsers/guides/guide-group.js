@@ -1,4 +1,4 @@
-import {GroupMark} from '../marks/marktypes';
+import {GroupMark} from '../marks/marktypes.js';
 
 export default function(mark) {
   mark.type = GroupMark;

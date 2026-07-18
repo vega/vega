@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
   typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$1, $$1$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
+})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $$2, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
 
   function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -21,8 +21,8 @@
     return Object.freeze(n);
   }
 
-  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
-  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1$1);
+  var $__namespace = /*#__PURE__*/_interopNamespaceDefault($$2);
+  var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
 
   function accessor(fn, fields, name) {
     fn.fields = fields || [];
@@ -120,6 +120,11 @@
   const one$1 = accessor(() => 1, [], 'one');
   const truthy = accessor(() => true, [], 'true');
   const falsy = accessor(() => false, [], 'false');
+
+  /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
+
+  /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
+  const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
   function log$1$1(method, level, input) {
     const args = [level].concat([].slice.call(input));
     console[method].apply(console, args); // eslint-disable-line no-console
@@ -129,8 +134,7 @@
   const Warn = 2;
   const Info = 3;
   const Debug = 4;
-  function logger(_, method) {
-    let handler = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : log$1$1;
+  function logger(_, method, handler = log$1$1) {
     let level = _ || None$2;
     return {
       level(_) {
@@ -164,10 +168,7 @@
     return _ === Object(_);
   }
   const isLegalKey = key => key !== '__proto__';
-  function mergeConfig() {
-    for (var _len = arguments.length, configs = new Array(_len), _key = 0; _key < _len; _key++) {
-      configs[_key] = arguments[_key];
-    }
+  function mergeConfig(...configs) {
     return configs.reduce((out, source) => {
       for (const key in source) {
         if (key === 'signals') {
@@ -689,10 +690,10 @@
     return array && peek$1(array) - array[0] || 0;
   }
   function $(x) {
-    return isArray(x) ? '[' + x.map($) + ']' : isObject(x) || isString(x) ?
+    return isArray(x) ? `[${x.map(v => v === null ? 'null' : $(v))}]` : isObject(x) || isString(x) ?
     // Output valid JSON and JS source strings.
-    // See http://timelessrepo.com/json-isnt-a-javascript-subset
-    JSON.stringify(x).replace('\u2028', '\\u2028').replace('\u2029', '\\u2029') : x;
+    // See https://github.com/judofyr/timeless/blob/master/posts/json-isnt-a-javascript-subset.md
+    JSON.stringify(x).replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029') : x;
   }
   function toBoolean(_) {
     return _ == null || _ === '' ? null : !_ || _ === 'false' || _ === '0' ? false : !!_;
@@ -1218,22 +1219,20 @@
   /**
    * Factory for a loader constructor that provides methods for requesting
    * files from either the network or disk, and for sanitizing request URIs.
-   * @param {function} fetch - The Fetch API for HTTP network requests.
-   *   If null or undefined, HTTP loading will be disabled.
    * @param {object} fs - The file system interface for file loading.
    *   If null or undefined, local file loading will be disabled.
    * @return {function} A loader constructor with the following signature:
    *   param {object} [options] - Optional default loading options to use.
    *   return {object} - A new loader instance.
    */
-  function loaderFactory(fetch, fs) {
+  function loaderFactory(fs) {
     return options => ({
       options: options || {},
       sanitize: sanitize,
       load: load$1,
       fileAccess: false,
-      file: fileLoader(fs),
-      http: httpLoader(fetch)
+      file: fileLoader(),
+      http: httpLoader
     });
   }
 
@@ -1250,7 +1249,7 @@
   async function load$1(uri, options) {
     const opt = await this.sanitize(uri, options),
       url = opt.href;
-    return opt.localFile ? this.file(url) : this.http(url, options);
+    return opt.localFile ? this.file(url) : this.http(url, options?.http);
   }
 
   /**
@@ -1338,11 +1337,7 @@
    *   return {Promise} A promise that resolves to the file contents.
    */
   function fileLoader(fs) {
-    return fs ? filename => new Promise((accept, reject) => {
-      fs.readFile(filename, (error, data) => {
-        if (error) reject(error);else accept(data);
-      });
-    }) : fileReject;
+    return fileReject;
   }
 
   /**
@@ -1353,27 +1348,16 @@
   }
 
   /**
-   * HTTP request handler factory.
-   * @param {function} fetch - The Fetch API method.
-   * @return {function} - An http loader with the following signature:
-   *   param {string} url - The url to request.
-   *   param {object} options - An options hash.
-   *   return {Promise} - A promise that resolves to the file contents.
+   * An http loader.
+   * @param {string} url - The url to request.
+   * @param {Partial<RequestInit>} options - An options hash.
+   * @return {Promise} - A promise that resolves to the file contents.
    */
-  function httpLoader(fetch) {
-    return fetch ? async function (url, options) {
-      const opt = extend({}, this.options.http, options),
-        type = options && options.response,
-        response = await fetch(url, opt);
-      return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
-    } : httpReject;
-  }
-
-  /**
-   * Default http request handler that simply rejects.
-   */
-  async function httpReject() {
-    error('No HTTP fetch method available.');
+  async function httpLoader(url, options) {
+    const opt = extend({}, this.options.http, options),
+      type = options && options.response,
+      response = await fetch(url, opt);
+    return !response.ok ? error(response.status + '' + response.statusText) : isFunction(response[type]) ? response[type]() : response.text();
   }
   const isValid = _ => _ != null && _ === _;
   const isBoolean = _ => _ === 'true' || _ === 'false' || _ === true || _ === false;
@@ -1533,10 +1517,7 @@
       }
     }
   }
-  const loader = loaderFactory(typeof fetch !== 'undefined' && fetch,
-  // use built-in fetch API
-  null // no file system access
-  );
+  const loader = loaderFactory();
 
   function UniqueList(idFunc) {
     const $ = idFunc || identity,
@@ -2984,8 +2965,6 @@
     }
   });
 
-  /* eslint-disable require-atomic-updates */
-
   /**
    * Evaluates the dataflow and returns a Promise that resolves when pulse
    * propagation completes. This method will increment the current timestamp
@@ -4365,7 +4344,6 @@
     };
   }
   function exp(data, x, y) {
-    // eslint-disable-next-line no-unused-vars
     const [xv, yv, ux, uy] = points(data, x, y);
     let YL = 0,
       XY = 0,
@@ -8613,7 +8591,7 @@
     };
   }
   function band() {
-    const scale = $$1.scaleOrdinal().unknown(undefined),
+    const scale = $$2.scaleOrdinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range;
     let range$1 = [0, 1],
@@ -8797,7 +8775,7 @@
       }
     };
     scale.tickFormat = function (count, specifier) {
-      return $$1.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
+      return $$2.tickFormat(domain[0], peek$1(domain), count == null ? 10 : count, specifier);
     };
     scale.copy = function () {
       return scaleBinOrdinal().domain(scale.domain()).range(scale.range());
@@ -12893,12 +12871,9 @@
         return m;
       },
       m = {
-        open(tag) {
+        open(tag, ...attrs) {
           push(tag);
           outer = '<' + tag;
-          for (var _len = arguments.length, attrs = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            attrs[_key - 1] = arguments[_key];
-          }
           for (const set of attrs) {
             for (const key in set) attr(key, set[key]);
           }
@@ -16111,7 +16086,7 @@
     // if ordinal scale domain is defined, prevent implicit
     // domain construction as side-effect of scale lookup
     if (type === Ordinal) {
-      scale.unknown(_.domainImplicit ? $$1.scaleImplicit : undefined);
+      scale.unknown(_.domainImplicit ? $$2.scaleImplicit : undefined);
     }
 
     // perform 'nice' adjustment as requested
@@ -16221,7 +16196,7 @@
     } else if (isFunction(scale.round)) {
       scale.round(round);
     } else if (isFunction(scale.rangeRound)) {
-      scale.interpolate(round ? $$1$1.interpolateRound : $$1$1.interpolate);
+      scale.interpolate(round ? $$1.interpolateRound : $$1.interpolate);
     }
     if (range) scale.range(flip(range, _.reverse));
   }
@@ -21098,7 +21073,7 @@
     resolvefilter: ResolveFilter
   });
 
-  var version = "5.31.0";
+  var version$1 = "6.2.0";
 
   const RawCode = 'RawCode';
   const Literal = 'Literal';
@@ -22576,6 +22551,9 @@
       substring: fn('substring', STRING),
       split: fn('split', STRING),
       trim: fn('trim', STRING, 0),
+      // base64 encode/decode
+      btoa: 'btoa',
+      atob: 'atob',
       // REGEXP functions
       regexp: REGEXP,
       test: fn('test', REGEXP),
@@ -22601,6 +22579,8 @@
       globalvar = opt.globalvar,
       fieldvar = opt.fieldvar,
       outputGlobal = isFunction(globalvar) ? globalvar : id => `${globalvar}["${id}"]`;
+    // JSON authors are not allowed to set properties with these names, as these are built-in to the JS Object Prototype.
+    new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
     let globals = {},
       fields = {},
       memberDepth = 0;
@@ -22654,7 +22634,16 @@
       UnaryExpression: n => '(' + n.operator + visit(n.argument) + ')',
       ConditionalExpression: n => '(' + visit(n.test) + '?' + visit(n.consequent) + ':' + visit(n.alternate) + ')',
       LogicalExpression: n => '(' + visit(n.left) + n.operator + visit(n.right) + ')',
-      ObjectExpression: n => '{' + n.properties.map(visit).join(',') + '}',
+      ObjectExpression: n => {
+        // If any keys would override Object prototype methods, throw error
+        for (const prop of n.properties) {
+          const keyName = prop.key.name;
+          if (DisallowedObjectProperties.has(keyName)) {
+            error('Illegal property: ' + keyName);
+          }
+        }
+        return '{' + n.properties.map(visit).join(',') + '}';
+      },
       Property: n => {
         memberDepth += 1;
         const k = visit(n.key);
@@ -22996,13 +22985,9 @@
       field = 'unit',
       indexName = IndexPrefix$1 + field,
       dataName = DataPrefix$1 + data;
-
-    // eslint-disable-next-line no-prototype-builtins
     if (op === Intersect && !has$1(params, indexName)) {
       params[indexName] = scope.getData(data).indataRef(scope, field);
     }
-
-    // eslint-disable-next-line no-prototype-builtins
     if (!has$1(params, dataName)) {
       params[dataName] = scope.getData(data).tuplesRef();
     }
@@ -23112,12 +23097,15 @@
   }
 
   /**
-   * Name must be a string. Return undefined if the scale is not registered.
+   * nameOrFunction must be a string or function that was registered.
+   * Return undefined if scale is not recognized.
    */
-  function getScale(name, ctx) {
-    if (isString(name)) {
-      const maybeScale = ctx.scales[name];
+  function getScale(nameOrFunction, ctx) {
+    if (isString(nameOrFunction)) {
+      const maybeScale = ctx.scales[nameOrFunction];
       return maybeScale && isRegisteredScale(maybeScale.value) ? maybeScale.value : undefined;
+    } else if (isFunction(nameOrFunction)) {
+      return isRegisteredScale(nameOrFunction) ? nameOrFunction : undefined;
     }
     return undefined;
   }
@@ -23302,32 +23290,21 @@
   function sequence(seq) {
     return array(seq) || (isString(seq) ? seq : null);
   }
-  function join(seq) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
-    }
+  function join(seq, ...args) {
     return array(seq).join(...args);
   }
-  function indexof(seq) {
-    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-      args[_key2 - 1] = arguments[_key2];
-    }
+  function indexof(seq, ...args) {
     return sequence(seq).indexOf(...args);
   }
-  function lastindexof(seq) {
-    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-      args[_key3 - 1] = arguments[_key3];
-    }
+  function lastindexof(seq, ...args) {
     return sequence(seq).lastIndexOf(...args);
   }
-  function slice(seq) {
-    for (var _len4 = arguments.length, args = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-      args[_key4 - 1] = arguments[_key4];
-    }
+  function slice(seq, ...args) {
     return sequence(seq).slice(...args);
   }
   function replace(str, pattern, repl) {
     if (isFunction(repl)) error('Function argument passed to replace.');
+    if (!isString(pattern) && !isRegExp(pattern)) error('Please pass a string or RegExp argument to replace.');
     return String(str).replace(pattern, repl);
   }
   function reverse(seq) {
@@ -23363,13 +23340,8 @@
     const s = getScale(name, (group || this).context);
     return s ? s(value) : undefined;
   }
-
-  /**
-   * Passing a function is only used for for testing.
-   * Outside of tests, the first argument should be a string.
-   */
-  function scaleGradient(scaleOrFunction, p0, p1, count, group) {
-    let scale = typeof scaleOrFunction === 'string' ? getScale(scaleOrFunction, (group || this).context) : scaleOrFunction;
+  function scaleGradient(scale, p0, p1, count, group) {
+    scale = getScale(scale, (group || this).context);
     const gradient = Gradient$1(p0, p1);
     let stops = scale.domain(),
       min = stops[0],
@@ -23456,8 +23428,7 @@
    * @param {*} minDist the minimum distance, in pixels, that thenew point needs to be apart from the last point
    * @returns a new array containing the lasso with the new point
    */
-  function lassoAppend(lasso, x, y) {
-    let minDist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
+  function lassoAppend(lasso, x, y, minDist = 5) {
     lasso = array$2(lasso);
     const last = lasso[lasso.length - 1];
 
@@ -23472,8 +23443,7 @@
    * @returns the svg path command that draws the lasso
    */
   function lassoPath(lasso) {
-    return array$2(lasso).reduce((svg, _ref, i) => {
-      let [x, y] = _ref;
+    return array$2(lasso).reduce((svg, [x, y], i) => {
       return svg += i == 0 ? `M ${x},${y} ` : i === lasso.length - 1 ? ' Z' : `L ${x},${y} `;
     }, '');
   }
@@ -23698,7 +23668,7 @@
 
     // if the code generator has already been initialized,
     // we need to also register the function with it
-    codeGenerator.functions[name] = thisPrefix + name;
+    if (codeGenerator) codeGenerator.functions[name] = thisPrefix + name;
     return this;
   }
 
@@ -29543,6 +29513,7 @@
   // -- Transforms -----
 
   extend(transforms, tx, vtx, encode$1, geo, force, label, tree, reg, voronoi, wordcloud, xf);
+  const version = version$1;
 
   Object.defineProperty(exports, "path", {
     enumerable: true,
@@ -29556,6 +29527,7 @@
   exports.DAYOFYEAR = DAYOFYEAR;
   exports.Dataflow = Dataflow;
   exports.Debug = Debug;
+  exports.DisallowedObjectProperties = DisallowedObjectProperties;
   exports.Error = Error$1;
   exports.EventStream = EventStream;
   exports.Gradient = Gradient$1;
@@ -29720,7 +29692,6 @@
   exports.renderModule = renderModule;
   exports.repeat = repeat;
   exports.resetDefaultLocale = resetDefaultLocale;
-  exports.resetSVGClipId = resetSVGClipId;
   exports.resetSVGDefIds = resetSVGDefIds;
   exports.responseType = responseType;
   exports.runtimeContext = context;

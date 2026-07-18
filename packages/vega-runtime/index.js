@@ -1,1 +1,1 @@
-export {default as context} from './src/context';
+export {default as context} from './src/context.js';

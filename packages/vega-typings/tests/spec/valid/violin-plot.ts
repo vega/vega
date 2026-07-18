@@ -1,7 +1,7 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  $schema: 'https://vega.github.io/schema/vega/v6.json',
   description: 'A violin plot example showing distributions for pengiun body mass.',
   width: 500,
   padding: 5,

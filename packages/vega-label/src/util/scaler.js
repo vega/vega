@@ -1,4 +1,4 @@
-import Bitmap from './Bitmap';
+import Bitmap from './Bitmap.js';
 
 export default function(width, height, padding) {
   const ratio = Math.max(1, Math.sqrt((width * height) / 1e6)),

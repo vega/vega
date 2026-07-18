@@ -8,13 +8,13 @@ import {
   Padding,
   SignalValue,
   Spec
-} from '../spec';
-import { Changeset, Transform } from './dataflow';
-import { Renderers } from './renderer';
-import { Scene } from './scene';
+} from '../spec/index.js';
+import { Changeset, Transform } from './dataflow.js';
+import { Renderers } from './renderer.js';
+import { Scene } from './scene.js';
 
-export { Runtime } from './runtime';
-import { Runtime } from './runtime';
+export { Runtime } from './runtime.js';
+import { Runtime } from './runtime.js';
 
 export const version: string;
 
@@ -300,9 +300,11 @@ export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
 export const transforms: { [name: string]: Transform };
 
+export function resetSVGDefIds(): void;
+
 export { parseSelector } from 'vega-event-selector';
 export { codegenExpression, parseExpression } from 'vega-expression';
 export * from 'vega-util';
-export * from './dataflow';
-export * from './renderer';
-export * from './scene';
+export * from './dataflow.js';
+export * from './renderer.js';
+export * from './scene.js';

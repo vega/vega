@@ -1,5 +1,5 @@
-import {isLogarithmic} from './scales';
-import {Time, UTC} from './scales/types';
+import {isLogarithmic} from './scales.js';
+import {Time, UTC} from './scales/types.js';
 import {timeInterval, utcInterval} from 'vega-time';
 import {error, isArray, isNumber, isObject, isString, peek, span} from 'vega-util';
 

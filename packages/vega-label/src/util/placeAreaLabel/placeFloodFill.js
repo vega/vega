@@ -1,5 +1,5 @@
 import {textMetrics} from 'vega-scenegraph';
-import {collision, outOfBounds} from './common';
+import {collision, outOfBounds} from './common.js';
 
 // pixel direction offsets for flood fill search
 const X_DIR = [-1, -1, 1, 1];

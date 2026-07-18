@@ -1,5 +1,5 @@
-import {Bottom, End, Group, Left, Right, Start, Top} from '../constants';
-import {set, tempBounds} from './util';
+import {Bottom, End, Group, Left, Right, Start, Top} from '../constants.js';
+import {set, tempBounds} from './util.js';
 
 export function titleLayout(view, mark, width, height, viewBounds) {
   var group = mark.items[0],

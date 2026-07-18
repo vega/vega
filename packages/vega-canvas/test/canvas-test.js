@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    canvas = require('canvas');
+import tape from 'tape';
+import * as vega from '../index.js';
+import * as canvas from 'canvas';
 
 tape('Canvas loader loads node canvas', t => {
   let c = vega.canvas(10, 20);

@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "4.1.6",
+  "version": "5.1.0",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -8,24 +8,35 @@
     "layout"
   ],
   "license": "BSD-3-Clause",
-  "author": "Jeffrey Heer (http://idl.cs.washington.edu)",
-  "main": "build/vega-wordcloud.js",
-  "module": "build/vega-wordcloud.module.js",
-  "unpkg": "build/vega-wordcloud.min.js",
-  "repository": "vega/vega",
+  "type": "module",
+  "author": {
+    "name": "Vega",
+    "url": "https://vega.github.io"
+  },
+  "exports": {
+    "default": "./build/vega-wordcloud.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vega/vega.git"
+  },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-wordcloud#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
-    "prebuild": "rimraf build",
-    "build": "rollup -c rollup.config.mjs --config-transform",
-    "pretest": "yarn build --config-test",
+    "prebuild": "del-cli build",
+    "build": "rollup -c rollup.config.js",
+    "pretest": "npm run build -- --config-test",
     "test": "tape 'test/**/*-test.js'",
-    "prepublishOnly": "yarn test && yarn build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-canvas": "^1.2.7",
-    "vega-dataflow": "^5.7.7",
-    "vega-scale": "^7.4.2",
-    "vega-statistics": "^1.9.0",
-    "vega-util": "^1.17.3"
+    "vega-canvas": "^2.0.0",
+    "vega-dataflow": "^6.1.0",
+    "vega-scale": "^8.1.0",
+    "vega-statistics": "^2.0.0",
+    "vega-util": "^2.1.0"
   },
   "devDependencies": {
     "vega-transforms": "*"

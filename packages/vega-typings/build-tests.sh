@@ -35,4 +35,4 @@ do
 
 done
 
-yarn run format-tests
+npm run format-tests

@@ -10,15 +10,6 @@ For [documentation](https://vega.github.io/vega/docs/), [tutorials](https://vega
 
 Try using Vega in the online [Vega Editor](https://vega.github.io/editor/#/examples/vega/bar-chart).
 
-## Internet Explorer Support
-For backwards compatibility, Vega includes a [babel-ified](https://babeljs.io/) IE-compatible version of the code in the `packages/vega/build-es5` directory. Older browsers also require these polyfill libraries:
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.4/polyfill.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.3/runtime.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
-```
-
 ## Contributions, Development, and Support
 
 Interested in contributing to Vega? Please see our [contribution and development guidelines](CONTRIBUTING.md), subject to our [code of conduct](https://github.com/vega/.github/blob/master/CODE_OF_CONDUCT.md).

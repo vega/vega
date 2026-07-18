@@ -1,7 +1,7 @@
 import {
   anyOf, array, booleanType, def, enums, nullType, numberType,
   object, oneOf, signalRef, stringType
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const compareRef = def('compare');
@@ -11,7 +11,7 @@ const exprStringRef = def('exprString');
 const exprRef = def('expr');
 
 function req(key) {
-  return '_' + key + '_';
+  return `_${key}_`;
 }
 
 function transformSchema(name, def) {

@@ -1,13 +1,13 @@
 import {
   Bottom, Center, GuideLabelStyle, Index, Label, Left, Middle,
   Perc, Right, Top, Value, one, zero
-} from './constants';
-import guideMark from './guide-mark';
-import {lookup} from './guide-util';
-import {addEncoders, encoder} from '../encode/util';
-import {TextMark} from '../marks/marktypes';
-import {LegendLabelRole} from '../marks/roles';
-import {value} from '../../util';
+} from './constants.js';
+import guideMark from './guide-mark.js';
+import {lookup} from './guide-util.js';
+import {addEncoders, encoder} from '../encode/util.js';
+import {TextMark} from '../marks/marktypes.js';
+import {LegendLabelRole} from '../marks/roles.js';
+import {value} from '../../util.js';
 
 const alignExpr = `datum.${Perc}<=0?"${Left}":datum.${Perc}>=1?"${Right}":"${Center}"`,
       baselineExpr = `datum.${Perc}<=0?"${Bottom}":datum.${Perc}>=1?"${Top}":"${Middle}"`;
