@@ -3,7 +3,9 @@ import tape from 'tape';
 import * as vega from '../index.js';
 import specsValid from './specs-valid.json' with { type: 'json' };
 
-const GENERATE_SCENES = true; // flag to generate test scenes
+// Set the GENERATE_SCENES environment variable to regenerate golden scenes
+// instead of comparing, e.g.: GENERATE_SCENES=1 npx tape test/scene-test.js
+const GENERATE_SCENES = !!process.env.GENERATE_SCENES; // flag to generate test scenes
 const OUTPUT_FAILURES = false; // flag to write scenes upon test failure
 const specdir = process.cwd() + '/test/specs-valid/';
 const testdir = process.cwd() + '/test/scenegraphs/';
