@@ -1,6 +1,6 @@
 import {
-  Bottom, BottomLeft, BottomRight, Each, End, Flush, Left, Middle,
-  None, Right, Start, Symbols, Top,
+  Bottom, BottomLeft, BottomRight, Bounds, Each, End, Flush, Group, Left,
+  Middle, None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
 import {boundStroke, multiLineOffset} from 'vega-scenegraph';
@@ -26,7 +26,10 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
   const _ = lookup(config, orient),
         offset = offsets(g, _('offset', 0)),
         anchor = _('anchor', Start),
-        mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0;
+        frame = _('frame', Group),
+        mult = anchor === End ? 1 : anchor === Middle ? 0.5 : 0,
+        ax = frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
+        ay = frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1);
 
   const p = {
     align:   Each,
@@ -41,25 +44,29 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     case Left:
       p.anchor = {
         x: Math.floor(xb.x1) - offset, column: End,
-        y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        y: ay,
+        row: anchor
       };
       break;
     case Right:
       p.anchor = {
         x: Math.ceil(xb.x2) + offset,
-        y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        y: ay,
+        row: anchor
       };
       break;
     case Top:
       p.anchor = {
         y: Math.floor(yb.y1) - offset, row: End,
-        x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        x: ax,
+        column: anchor
       };
       break;
     case Bottom:
       p.anchor = {
         y: Math.ceil(yb.y2) + offset,
-        x: mult * (w || yb.width() + 2 * yb.x1), column: anchor
+        x: ax,
+        column: anchor
       };
       break;
     case TopLeft:
