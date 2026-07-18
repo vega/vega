@@ -88,6 +88,7 @@ tape('tickCount and tickValues enforce minStep', t => {
   const c3 = tickCount(s2, 10, 3);
   t.equal(c3, 3);
   t.deepEqual(tickValues(s2, c3), [0, 5, 10]);
+  t.equal(tickCount(s2, 10, 5), 3);
 
   // minStep larger than the domain span degenerates to a single count
   const c4 = tickCount(s0, 10, 20);
