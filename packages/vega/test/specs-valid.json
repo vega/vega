@@ -60,6 +60,7 @@
   "layout-vconcat",
   "layout-splom",
   "layout-wrap",
+  "legend-frame-bounds",
   "legends",
   "legends-continuous",
   "legends-discrete",

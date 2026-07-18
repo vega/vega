@@ -1,9 +1,9 @@
-import { boundStroke, multiLineOffset } from 'vega-scenegraph';
 import {
-  Bottom, BottomLeft, BottomRight, Bounds, Each, End, Flush,
-  Group, Left, Middle, None, Right, Start, Symbols, Top,
+  Bottom, BottomLeft, BottomRight, Bounds, Each, End, Flush, Group, Left,
+  Middle, None, Right, Start, Symbols, Top,
   TopLeft, TopRight
 } from '../constants.js';
+import {boundStroke, multiLineOffset} from 'vega-scenegraph';
 
 // utility for looking up legend layout configuration
 function lookup(config, orient) {
@@ -42,26 +42,28 @@ export function legendParams(g, orient, config, xb, yb, w, h) {
     case Left:
       p.anchor = {
         x: Math.floor(xb.x1) - offset, column: End,
-        y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        y: frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1),
+        row: anchor
       };
       break;
     case Right:
       p.anchor = {
         x: Math.ceil(xb.x2) + offset,
-        y: mult * (h || xb.height() + 2 * xb.y1), row: anchor
+        y: frame === Bounds ? yb.y1 + mult * yb.height() : mult * (h || xb.height() + 2 * xb.y1),
+        row: anchor
       };
       break;
     case Top:
       p.anchor = {
         y: Math.floor(yb.y1) - offset, row: End,
-        x: anchor === Start && frame === Bounds ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        x: frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
         column: anchor
       };
       break;
     case Bottom:
       p.anchor = {
         y: Math.ceil(yb.y2) + offset,
-        x: anchor === Start && frame === Bounds ? xb.x1 : mult * (w || yb.width() + 2 * yb.x1),
+        x: frame === Bounds ? xb.x1 + mult * xb.width() : mult * (w || yb.width() + 2 * yb.x1),
         column: anchor
       };
       break;

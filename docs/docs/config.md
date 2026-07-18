@@ -407,6 +407,7 @@ Collections of legends with the same *orient* value are positioned together, eit
 | bounds                | {% include type t="String" %}   | The type of bounding box calculation to use for calculating legend extents. One of `"flush"` (the default, for using legend width and height values only) or `"full"` (to use the full bounding box, for example including border stroke widths).|
 | center                | {% include type t="Boolean" %}  | A boolean flag (default `false`) indicating if legends should be centered within the respective layout area. For example, given a vertical direction, two legends will share a left edge by default. If *center* is true, the smaller legends will be centered in the space spanned by all the legends.|
 | direction             | {% include type t="String" %}   | The direction in which subsequent legends should be spatially positioned. One of `"horizontal"` or `"vertical"`.|
+| frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"group"` (the default, to anchor relative to the group width or height) or `"bounds"` (to anchor relative to the full bounding box). |
 | margin                | {% include type t="Number" %}   | Margin, in pixels, to place between consecutive legends with the same *orient* value. |
 | offset                | {% include type t="Number" %}   | Offset, in pixels, of the legend from the chart body. |
 
