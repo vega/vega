@@ -412,3 +412,27 @@ tape('Aggregate handles streaming population variance and stdev', t => {
 
   t.end();
 });
+
+tape('Aggregate handles streaming sample variance, stdev and stderr', t => {
+  const data = [{v: 5}, {v: 100000.123}, {v: 5}, {v: -99999.456}];
+
+  var v = field('v'),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        fields: [v, v, v],
+        ops: ['variance', 'stdev', 'stderr'],
+        as: ['variance', 'stdev', 'stderr'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data)).run();
+  df.pulse(col, changeset().remove([data[1], data[3]])).run();
+  const d = out.value[0];
+  t.ok(d.variance >= 0, 'variance is non-negative');
+  t.equal(d.stdev, 0);
+  t.equal(d.stderr, 0);
+
+  t.end();
+});
