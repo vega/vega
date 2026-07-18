@@ -168,11 +168,11 @@ tape('Stack stacks null and empty string groups separately', t => {
     {key: '', value: 4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
       st = df.add(Stack, {
-        groupby: [util.field('key')],
-        field: util.field('value'),
+        groupby: [field('key')],
+        field: field('value'),
         pulse: c0
       });
 
@@ -203,11 +203,11 @@ tape('Stack stacks zero and false groups separately', t => {
     {key: false, value: 4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
       st = df.add(Stack, {
-        groupby: [util.field('key')],
-        field: util.field('value'),
+        groupby: [field('key')],
+        field: field('value'),
         pulse: c0
       });
 
@@ -238,11 +238,11 @@ tape('Stack stacks multi-field groups with commas separately', t => {
     {u: 'a', v: 'b,c', value: 4}
   ];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
       st = df.add(Stack, {
-        groupby: [util.field('u'), util.field('v')],
-        field: util.field('value'),
+        groupby: [field('u'), field('v')],
+        field: field('value'),
         pulse: c0
       });
 
