@@ -1,3 +1,4 @@
+import runAsyncCatch from './runAsyncCatch.js';
 import {transforms} from 'vega-dataflow';
 import {isArray} from 'vega-util';
 
@@ -42,7 +43,7 @@ function signalTest(name, op) {
  * @return {View} - This view instance.
  */
 export function setState(state) {
-  this.runAsync(null,
+  runAsyncCatch(this, null,
     v => { v._trigger = false; v._runtime.setState(state); },
     v => { v._trigger = true; }
   );

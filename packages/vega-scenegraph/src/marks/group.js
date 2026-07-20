@@ -2,7 +2,7 @@ import {hasCornerRadius, rectangle} from '../path/shapes.js';
 import boundStroke from '../bound/boundStroke.js';
 import {intersectRect} from '../util/intersect.js';
 import value from '../util/value.js';
-import {pickVisit, visit} from '../util/visit.js';
+import {pickVisit, visit, visitItems} from '../util/visit.js';
 import blend from '../util/canvas/blend.js';
 import {clipGroup} from '../util/canvas/clip.js';
 import fill from '../util/canvas/fill.js';
@@ -75,6 +75,29 @@ const hitBackground = hitPath(rectanglePath);
 const hitForeground = hitPath(rectanglePath, false);
 const hitCorner = hitPath(rectanglePath, true);
 
+function drawGroupBackground(context, group, gx, gy, fore, opacity) {
+  if ((group.stroke || group.fill) && opacity) {
+    rectanglePath(context, group, gx, gy);
+    blend(context, group);
+    if (group.fill && fill(context, group, opacity)) {
+      context.fill();
+    }
+    if (group.stroke && !fore && stroke(context, group, opacity)) {
+      context.stroke();
+    }
+  }
+}
+
+function drawGroupForeground(context, group, gx, gy, fore, opacity) {
+  if (fore && group.stroke && opacity) {
+    rectanglePath(context, group, gx, gy);
+    blend(context, group);
+    if (stroke(context, group, opacity)) {
+      context.stroke();
+    }
+  }
+}
+
 function draw(context, scene, bounds, markTypes) {
   visit(scene, group => {
     const gx = group.x || 0,
@@ -82,17 +105,7 @@ function draw(context, scene, bounds, markTypes) {
           fore = group.strokeForeground,
           opacity = group.opacity == null ? 1 : group.opacity;
 
-    // draw group background
-    if ((group.stroke || group.fill) && opacity) {
-      rectanglePath(context, group, gx, gy);
-      blend(context, group);
-      if (group.fill && fill(context, group, opacity)) {
-        context.fill();
-      }
-      if (group.stroke && !fore && stroke(context, group, opacity)) {
-        context.stroke();
-      }
-    }
+    drawGroupBackground(context, group, gx, gy, fore, opacity);
 
     // setup graphics context, set clip and bounds
     context.save();
@@ -111,15 +124,37 @@ function draw(context, scene, bounds, markTypes) {
     if (bounds) bounds.translate(gx, gy);
     context.restore();
 
-    // draw group foreground
-    if (fore && group.stroke && opacity) {
-      rectanglePath(context, group, gx, gy);
-      blend(context, group);
-      if (stroke(context, group, opacity)) {
-        context.stroke();
+    drawGroupForeground(context, group, gx, gy, fore, opacity);
+  });
+}
+
+async function drawAsync(context, scene, bounds, markTypes, scheduler) {
+  for (const group of visitItems(scene)) {
+    if (scheduler.shouldYield()) await scheduler.yield();
+
+    const gx = group.x || 0,
+          gy = group.y || 0,
+          fore = group.strokeForeground,
+          opacity = group.opacity == null ? 1 : group.opacity;
+
+    drawGroupBackground(context, group, gx, gy, fore, opacity);
+
+    context.save();
+    context.translate(gx, gy);
+    if (group.clip) clipGroup(context, group);
+    if (bounds) bounds.translate(-gx, -gy);
+
+    for (const item of visitItems(group)) {
+      if (item.marktype === 'group' || markTypes == null || markTypes.includes(item.marktype)) {
+        await this.drawAsync(context, item, bounds, markTypes);
       }
     }
-  });
+
+    if (bounds) bounds.translate(gx, gy);
+    context.restore();
+
+    drawGroupForeground(context, group, gx, gy, fore, opacity);
+  }
 }
 
 function pick(context, scene, x, y, gx, gy) {
@@ -197,6 +232,7 @@ export default {
   attr:       attr,
   bound:      bound,
   draw:       draw,
+  drawAsync:  drawAsync,
   pick:       pick,
   isect:      intersectRect,
   content:    content,

@@ -1,3 +1,5 @@
+import runAsyncCatch from './runAsyncCatch.js';
+
 export default function() {
   // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio#monitoring_screen_resolution_or_zoom_level_changes
   if (this.renderer() === 'canvas' && this._renderer._canvas) {
@@ -15,7 +17,7 @@ export default function() {
       this._renderer._canvas.getContext('2d').pixelRatio = window.devicePixelRatio || 1;
       this._redraw = true;
       this._resize = 1;
-      this.resize().runAsync();
+      runAsyncCatch(this.resize());
     };
     updatePixelRatio();
   }

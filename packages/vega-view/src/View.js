@@ -13,6 +13,7 @@ import renderToSVG from './render-to-svg.js';
 import {resizeRenderer} from './render-size.js';
 import runtime from './runtime.js';
 import {scale} from './scale.js';
+import scheduler from './scheduler.js';
 import {initializeResize, resizeView, viewHeight, viewWidth} from './size.js';
 import {getState, setState} from './state.js';
 import timer from './timer.js';
@@ -51,6 +52,8 @@ export default function View(spec, options) {
     const loc = extend({}, spec.locale, options.locale);
     view.locale(locale(loc.number, loc.time));
   }
+
+  view._scheduler = scheduler(options.scheduling);
 
   view._el = null;
   view._elBind = null;
@@ -165,6 +168,7 @@ inherits(View, Dataflow, {
         }
         this._redraw = false;
       } catch (e) {
+        if (this._scheduler && this._scheduler.didAbort(e)) throw e;
         this.error(e);
       }
     }
