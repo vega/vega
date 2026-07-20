@@ -99,8 +99,8 @@ scale(Log, $.scaleLog, [C, Log]);
 scale(Pow, $.scalePow, C);
 scale(Sqrt, $.scaleSqrt, C);
 scale(Symlog, $.scaleSymlog, C);
-scale(Time, $.scaleTime, [C, T]);
-scale(UTC, $.scaleUtc, [C, T]);
+scale(Time, $.scaleTime, [C, I, T]);
+scale(UTC, $.scaleUtc, [C, I, T]);
 
 // sequential scales
 scale(Sequential, $.scaleSequential, [C, I]); // backwards compat
