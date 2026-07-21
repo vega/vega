@@ -16,6 +16,12 @@ export default function() {
     timers[n].stop();
   }
 
+  // disconnect the container resize observer, if any
+  if (this._resizeObserver) {
+    this._resizeObserver.disconnect();
+    this._resizeObserver = null;
+  }
+
   n = listeners.length;
   while (--n >= 0) {
     e = listeners[n];

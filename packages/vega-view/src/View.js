@@ -19,6 +19,7 @@ import timer from './timer.js';
 import defaultTooltip from './tooltip.js';
 import trap from './trap.js';
 import watchPixelRatio from './watchPixelRatio.js';
+import watchResize from './watchResize.js';
 
 import {Dataflow, asyncCallback} from 'vega-dataflow';
 import {locale} from 'vega-format';
@@ -68,6 +69,7 @@ export default function View(spec, options) {
   view._timers = [];
   view._eventListeners = [];
   view._resizeListeners = [];
+  view._resizeObserver = null;
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);
@@ -391,5 +393,8 @@ inherits(View, Dataflow, {
   setState,
 
   // RE-RENDER ON ZOOM
-  _watchPixelRatio: watchPixelRatio
+  _watchPixelRatio: watchPixelRatio,
+
+  // RE-RENDER ON CONTAINER RESIZE
+  _watchResize: watchResize
 });

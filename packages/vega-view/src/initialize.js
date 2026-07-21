@@ -44,6 +44,9 @@ export default function(el, elBind) {
     });
   }
 
+  // observe the container element for size changes (responsive sizing)
+  view._watchResize();
+
   return view;
 }
 
