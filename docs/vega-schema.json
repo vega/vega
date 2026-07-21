@@ -15657,6 +15657,16 @@
             }
           ]
         },
+        "inferUnits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/signalRef"
+            }
+          ]
+        },
         "timezone": {
           "anyOf": [
             {
