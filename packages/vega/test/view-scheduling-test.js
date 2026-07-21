@@ -1,11 +1,12 @@
 import tape from 'tape';
 import * as vega from '../index.js';
 
-// deterministic scatter plot specification, with enough points to
-// exercise batched item drawing in the canvas renderer
+// deterministic scatter plot specification, with enough points that every
+// chunked loop -- item drawing, data join, encoding and bounds -- crosses
+// at least two of its batch boundaries
 function spec() {
   const points = [];
-  for (let i = 0; i < 600; ++i) {
+  for (let i = 0; i < 1500; ++i) {
     points.push({u: i % 50, v: (i * 37) % 91});
   }
 
@@ -28,10 +29,14 @@ function spec() {
         from: {data: 'table'},
         encode: {
           enter: {
-            x: {scale: 'x', field: 'u'},
-            y: {scale: 'y', field: 'v'},
             size: {value: 16},
             fill: {value: 'steelblue'}
+          },
+          // positions live in the update set so that modifying the data
+          // re-encodes every item, exercising the mod and reflow branches
+          update: {
+            x: {scale: 'x', field: 'u'},
+            y: {scale: 'y', field: 'v'}
           }
         }
       }
@@ -54,6 +59,28 @@ async function run(scheduling) {
   return view;
 }
 
+// a modify pass over every tuple, which drives the mod and reflow branches
+// of the encode and bounds transforms rather than just their add branches
+async function modify(view) {
+  const cs = vega.changeset();
+  view.data('table').forEach(d => cs.modify(d, 'v', (d.v + 13) % 91));
+  await view.change('table', cs).runAsync();
+  return view;
+}
+
+function identical(t, b, a, when) {
+  t.deepEqual(b.data('table'), a.data('table'), `identical datasets ${when}`);
+  t.equal(
+    b.scenegraph().toJSON(2),
+    a.scenegraph().toJSON(2),
+    `identical scenegraphs ${when}`
+  );
+  t.ok(
+    b._renderer.canvas().toBuffer().equals(a._renderer.canvas().toBuffer()),
+    `identical rendered canvases ${when}`
+  );
+}
+
 tape('View scheduling produces results identical to synchronous evaluation', async t => {
   const a = await run(undefined),
         b = await run(true);
@@ -61,16 +88,15 @@ tape('View scheduling produces results identical to synchronous evaluation', asy
   t.equal(a._scheduler, null, 'scheduling disabled by default');
   t.ok(b._scheduler, 'scheduling enabled');
 
-  t.deepEqual(b.data('table'), a.data('table'), 'identical datasets');
-  t.equal(
-    b.scenegraph().toJSON(2),
-    a.scenegraph().toJSON(2),
-    'identical scenegraphs'
-  );
-  t.ok(
-    b._renderer.canvas().toBuffer().equals(a._renderer.canvas().toBuffer()),
-    'identical rendered canvases'
-  );
+  identical(t, b, a, 'after the initial run');
+
+  // chunked evaluation must also agree once tuples are modified in place;
+  // the modify pass is only worth comparing if it actually moves the marks
+  const before = b.scenegraph().toJSON(2);
+  await modify(a);
+  await modify(b);
+  t.notEqual(b.scenegraph().toJSON(2), before, 'the modify pass changed the scenegraph');
+  identical(t, b, a, 'after a modify pass');
 
   a.finalize();
   b.finalize();

@@ -1,10 +1,12 @@
 // Dataflow consumes an optional cooperative scheduler via its _scheduler
 // property (null by default, set by vega-view's opt-in scheduling option).
 // The scheduler contract is reset(), shouldYield(), yield() and
-// didAbort(error). Evaluation only ever yields between operator
-// evaluations, never mid-operator, so pulse propagation state stays
-// consistent across suspensions; an abort surfaces as a rejection of the
-// in-flight run promise with the signal's reason.
+// didAbort(error). Evaluation yields between operator evaluations, and
+// expensive operators additionally yield inside their per-item loops via
+// the visitChunked helper. Re-entrant runs queue behind the in-flight run,
+// so no other evaluation mutates pulse state while an operator is
+// suspended; an abort surfaces as a rejection of the in-flight run promise
+// with the signal's reason.
 import tape from 'tape';
 import * as vega from '../index.js';
 
@@ -254,5 +256,75 @@ tape('Dataflow runAsync resolves only after runs cascaded from runAfter', async 
 
   t.equal(df.stamp(), 2, 'cascaded run evaluated before runAsync resolved');
   t.equal(n1.value, 6, 'cascaded run propagated before runAsync resolved');
+  t.end();
+});
+
+tape('visitChunked visits every entry in order', async t => {
+  const array = Array.from({length: 10}, (_, i) => i),
+        seen = [],
+        indices = [];
+
+  await vega.visitChunked(array, (value, index, source) => {
+    seen.push(value);
+    indices.push(index);
+    t.equal(source, array, 'visitor receives the source array');
+  }, testScheduler(), 4);
+
+  // chunking is an implementation detail; callers depend on visiting the
+  // whole array exactly once, in order, with visitArray's argument shape
+  t.deepEqual(seen, array, 'visited every entry in order');
+  t.deepEqual(indices, array, 'visited with source array indices');
+  t.end();
+});
+
+tape('visitChunked yields once per batch boundary', async t => {
+  const scheduler = testScheduler(),
+        array = Array.from({length: 10}, (_, i) => i);
+
+  // batches of 4 over 10 entries means boundaries before entries 4 and 8
+  await vega.visitChunked(array, () => {}, scheduler, 4);
+  t.equal(scheduler.yields, 2, 'yielded at each batch boundary');
+
+  // a single batch has no boundary to yield at, so a small pass stays
+  // effectively synchronous even under an always-yield scheduler
+  scheduler.yields = 0;
+  await vega.visitChunked(array, () => {}, scheduler, 10);
+  t.equal(scheduler.yields, 0, 'no yield when the array fits one batch');
+
+  scheduler.yields = 0;
+  await vega.visitChunked([], () => {}, scheduler, 4);
+  t.equal(scheduler.yields, 0, 'no yield for an empty array');
+  t.end();
+});
+
+tape('visitChunked only yields when the scheduler asks', async t => {
+  const scheduler = testScheduler(),
+        array = Array.from({length: 10}, (_, i) => i);
+
+  scheduler.shouldYield = () => false;
+  await vega.visitChunked(array, () => {}, scheduler, 4);
+
+  t.equal(scheduler.yields, 0, 'batch boundaries do not force a yield');
+  t.end();
+});
+
+tape('visitChunked propagates an abort thrown from yield', async t => {
+  const controller = new AbortController(),
+        reason = new Error('run cancelled'),
+        scheduler = testScheduler(controller.signal),
+        array = Array.from({length: 10}, (_, i) => i),
+        seen = [];
+
+  controller.abort(reason);
+
+  try {
+    await vega.visitChunked(array, value => seen.push(value), scheduler, 4);
+    t.fail('visitChunked did not reject upon abort');
+  } catch (error) {
+    t.equal(error, reason, 'rejected with the abort reason');
+  }
+
+  // the abort lands at the first batch boundary, leaving the tail unvisited
+  t.deepEqual(seen, [0, 1, 2, 3], 'stopped visiting at the batch boundary');
   t.end();
 });

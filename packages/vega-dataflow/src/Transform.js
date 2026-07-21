@@ -34,7 +34,7 @@ inherits(Transform, Operator, {
     rv = rv || pulse;
 
     if (rv.then) {
-      rv = rv.then(_ => this.pulse =_);
+      rv = rv.then(_ => _ === pulse.StopPropagation ? _ : (this.pulse = _));
     } else if (rv !== pulse.StopPropagation) {
       this.pulse = rv;
     }

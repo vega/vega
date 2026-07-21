@@ -1,7 +1,9 @@
 import {AxisRole, Group, LegendRole, TitleRole} from './constants.js';
-import {Transform} from 'vega-dataflow';
+import {Transform, visitChunked} from 'vega-dataflow';
 import {Marks, boundClip} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
+
+const SCHEDULING_BATCH = 256;
 
 /**
  * Calculate bounding boxes for scenegraph items.
@@ -19,9 +21,13 @@ inherits(Bound, Transform, {
           mark = _.mark,
           type = mark.marktype,
           entry = Marks[type],
-          bound = entry.bound;
+          bound = entry.bound,
+          modified = _.modified(),
+          scheduler = view._scheduler,
+          chunked = !!scheduler && !pulse.pulses
+            && mark.items.length > SCHEDULING_BATCH;
 
-    let markBounds = mark.bounds, rebound;
+    let markBounds = mark.bounds;
 
     if (entry.nested) {
       // multi-item marks have a single bounds instance
@@ -32,49 +38,105 @@ inherits(Bound, Transform, {
       });
     }
 
-    else if (type === Group || _.modified()) {
+    else if (type === Group || modified) {
       // operator parameters modified -> re-bound all items
       // updates group bounds in response to modified group content
-      pulse.visit(pulse.MOD, item => view.dirty(item));
-      markBounds.clear();
-      mark.items.forEach(item => markBounds.union(boundItem(item, bound)));
+      const visit = {
+        dirty: item => view.dirty(item),
+        bound: item => { markBounds.union(boundItem(item, bound)); }
+      };
 
-      // force reflow for axes/legends/titles to propagate any layout changes
-      switch (mark.role) {
-        case AxisRole:
-        case LegendRole:
-        case TitleRole:
-          pulse.reflow();
-      }
+      if (chunked) return boundAllChunked(pulse, mark, scheduler, visit);
+
+      pulse.visit(pulse.MOD, visit.dirty);
+      markBounds.clear();
+      mark.items.forEach(visit.bound);
+
+      reflowLayout(pulse, mark);
     }
 
     else {
       // incrementally update bounds, re-bound mark as needed
-      rebound = pulse.changed(pulse.REM);
+      const visit = {
+        rebound: pulse.changed(pulse.REM),
 
-      pulse.visit(pulse.ADD, item => {
-        markBounds.union(boundItem(item, bound));
-      });
+        add: item => { markBounds.union(boundItem(item, bound)); },
 
-      pulse.visit(pulse.MOD, item => {
-        rebound = rebound || markBounds.alignsWith(item.bounds);
-        view.dirty(item);
-        markBounds.union(boundItem(item, bound));
-      });
+        mod: item => {
+          visit.rebound = visit.rebound || markBounds.alignsWith(item.bounds);
+          view.dirty(item);
+          markBounds.union(boundItem(item, bound));
+        },
 
-      if (rebound) {
+        union: item => { markBounds.union(item.bounds); }
+      };
+
+      if (chunked) return boundIncrementalChunked(pulse, mark, scheduler, visit);
+
+      pulse.visit(pulse.ADD, visit.add);
+      pulse.visit(pulse.MOD, visit.mod);
+
+      if (visit.rebound) {
         markBounds.clear();
-        mark.items.forEach(item => markBounds.union(item.bounds));
+        mark.items.forEach(visit.union);
       }
     }
 
-    // ensure mark bounds do not exceed any clipping region
-    boundClip(mark);
-
-    return pulse.modifies('bounds');
+    return boundResult(mark, pulse);
   }
 });
 
 function boundItem(item, bound, opt) {
   return bound(item.bounds.clear(), item, opt);
+}
+
+function collect(pulse, flags) {
+  const items = [];
+  pulse.visit(flags, item => { items.push(item); });
+  return items;
+}
+
+async function boundAllChunked(pulse, mark, scheduler, visit) {
+  await visitChunked(
+    collect(pulse, pulse.MOD), visit.dirty, scheduler, SCHEDULING_BATCH
+  );
+  mark.bounds.clear();
+  await visitChunked(mark.items, visit.bound, scheduler, SCHEDULING_BATCH);
+
+  reflowLayout(pulse, mark);
+
+  return boundResult(mark, pulse);
+}
+
+async function boundIncrementalChunked(pulse, mark, scheduler, visit) {
+  await visitChunked(
+    collect(pulse, pulse.ADD), visit.add, scheduler, SCHEDULING_BATCH
+  );
+  await visitChunked(
+    collect(pulse, pulse.MOD), visit.mod, scheduler, SCHEDULING_BATCH
+  );
+
+  if (visit.rebound) {
+    mark.bounds.clear();
+    await visitChunked(mark.items, visit.union, scheduler, SCHEDULING_BATCH);
+  }
+
+  return boundResult(mark, pulse);
+}
+
+function reflowLayout(pulse, mark) {
+  // force reflow for axes/legends/titles to propagate any layout changes
+  switch (mark.role) {
+    case AxisRole:
+    case LegendRole:
+    case TitleRole:
+      pulse.reflow();
+  }
+}
+
+function boundResult(mark, pulse) {
+  // ensure mark bounds do not exceed any clipping region
+  boundClip(mark);
+
+  return pulse.modifies('bounds');
 }
