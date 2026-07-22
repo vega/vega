@@ -32,7 +32,7 @@
   "dependencies": {
     "@types/geojson": "7946.0.16",
     "vega-event-selector": "^4.0.0",
-    "vega-expression": "^6.2.0",
+    "vega-expression": "^6.2.1",
     "vega-util": "^2.1.0"
   },
   "devDependencies": {

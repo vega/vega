@@ -1,6 +1,6 @@
 {
   "name": "vega-runtime",
-  "version": "7.1.1",
+  "version": "7.1.2",
   "description": "Runtime support for Vega dataflows.",
   "keywords": [
     "vega",
@@ -33,11 +33,11 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-dataflow": "^6.1.1",
+    "vega-dataflow": "^6.1.2",
     "vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-encode": "*",
-    "vega-transforms": "*"
+    "vega-encode": "5.2.1",
+    "vega-transforms": "5.2.1"
   }
 }

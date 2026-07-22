@@ -1,6 +1,6 @@
 {
   "name": "vega-format",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "JavaScript string formatting utilities for Vega.",
   "keywords": [
     "vega",
@@ -37,7 +37,7 @@
     "d3-array": "^3.2.4",
     "d3-format": "^3.1.2",
     "d3-time-format": "^4.1.0",
-    "vega-time": "^3.2.0",
+    "vega-time": "^3.2.1",
     "vega-util": "^2.1.0"
   }
 }

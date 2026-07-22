@@ -1,6 +1,6 @@
 {
   "name": "vega-dataflow",
-  "version": "6.1.1",
+  "version": "6.1.2",
   "description": "Reactive dataflow processing.",
   "keywords": [
     "vega",
@@ -34,8 +34,8 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "dependencies": {
-    "vega-format": "^2.1.1",
-    "vega-loader": "^5.1.1",
+    "vega-format": "^2.1.2",
+    "vega-loader": "^5.1.2",
     "vega-util": "^2.1.0"
   }
 }

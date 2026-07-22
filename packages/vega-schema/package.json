@@ -1,6 +1,6 @@
 {
   "name": "vega-schema",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Generate the Vega JSON schema.",
   "keywords": [
     "vega",
@@ -32,19 +32,19 @@
     "prepublishOnly": "npm test"
   },
   "dependencies": {
-    "vega-scale": "^8.1.1"
+    "vega-scale": "^8.1.2"
   },
   "devDependencies": {
-    "vega-crossfilter": "*",
-    "vega-encode": "*",
-    "vega-force": "*",
-    "vega-geo": "*",
-    "vega-hierarchy": "*",
-    "vega-label": "*",
-    "vega-regression": "*",
-    "vega-transforms": "*",
-    "vega-view-transforms": "*",
-    "vega-voronoi": "*",
-    "vega-wordcloud": "*"
+    "vega-crossfilter": "5.1.2",
+    "vega-encode": "5.2.1",
+    "vega-force": "5.1.2",
+    "vega-geo": "5.1.2",
+    "vega-hierarchy": "5.1.2",
+    "vega-label": "2.1.2",
+    "vega-regression": "2.1.2",
+    "vega-transforms": "5.2.1",
+    "vega-view-transforms": "5.2.1",
+    "vega-voronoi": "5.1.2",
+    "vega-wordcloud": "5.1.2"
   }
 }

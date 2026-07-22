@@ -1,6 +1,6 @@
 {
   "name": "vega-cli",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Command line utilities for server-side Vega.",
   "keywords": [
     "vega",
@@ -17,7 +17,7 @@
     "url": "https://app.hubspot.com/payments/GyPC972GD9Rt"
   },
   "exports": {
-    "default": "./build/index.js"
+    "default": "./index.js"
   },
   "bin": {
     "vg2pdf": "bin/vg2pdf",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "canvas": "^3.2.3",
-    "vega": "6.3.0",
+    "vega": "6.3.1",
     "yargs": "18"
   }
 }
