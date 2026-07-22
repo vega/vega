@@ -36,11 +36,12 @@ type RecurseStrategy = Record<string, unknown> | boolean | null;
 /** Merges Vega config objects. Signals merged by name (source takes precedence),
  * legend.layout recursively merged, style fully recursive, others shallow.
  *
- * The signature is generic because declared interfaces such as the vega-typings
- * and vega-lite `Config` types have no implicit index signature and would not be
- * assignable to the internal structural types. */
-export function mergeConfig<C extends object>(...configs: C[]): C {
-  return (configs as Partial<VegaConfig>[]).reduce((out, source) => {
+ * The public signature is generic because declared interfaces such as the
+ * vega-typings and vega-lite `Config` types have no implicit index signature
+ * and would not be assignable to the internal structural types. */
+export function mergeConfig<C extends object>(...configs: C[]): C;
+export function mergeConfig(...configs: Partial<VegaConfig>[]): VegaConfig {
+  return configs.reduce<VegaConfig>((out, source) => {
     for (const key in source) {
       if (key === 'signals') {
         // for signals, we merge the signals arrays
@@ -59,13 +60,12 @@ export function mergeConfig<C extends object>(...configs: C[]): C {
       }
     }
     return out;
-  }, {} as VegaConfig) as C;
+  }, {});
 }
 
-/** Writes config value to output with optional recursion, rejecting illegal keys that could be used to modify the prototype chain.
- * Generic for the same reason as mergeConfig. */
-export function writeConfig<C extends object>(
-  output: C,
+/** Writes config value to output with optional recursion, rejecting illegal keys that could be used to modify the prototype chain */
+export function writeConfig(
+  output: object,
   key: string,
   value: unknown,
   recurse?: boolean | object | null
