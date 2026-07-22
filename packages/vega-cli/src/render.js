@@ -43,10 +43,19 @@ export default function(type, callback, opt) {
             loader: vega.loader({ baseURL: base }), // load files from base path
             logger: vega.logger(loglevel, 'error'), // route all logging to stderr
             renderer: 'none' // no primary renderer needed
-        }).finalize(); // clear any timers, etc
-        return (type === 'svg'
-            ? view.toSVG(scale)
-            : view.toCanvas(scale * ppi / 72, opt)).then(_ => callback(_, arg));
+        });
+        // Run the dataflow to evaluate signals first (this returns a Promise)
+        return view.runAsync()
+            .then(() => {
+                // Now finalize after the signals have been evaluated
+                view.finalize();
+
+                // Return the appropriate rendering format
+                return type === 'svg'
+                    ? view.toSVG(scale)
+                    : view.toCanvas(scale * ppi / 72, opt);
+            })
+            .then(_ => callback(_, arg));
     }
     // read input from file or stdin
     read(arg._[0] || null)
