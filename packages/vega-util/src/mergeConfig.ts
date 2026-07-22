@@ -35,9 +35,13 @@ type RecurseStrategy = Record<string, unknown> | boolean | null;
 
 /** Merges Vega config objects. Signals merged by name (source takes precedence),
  * legend.layout recursively merged, style fully recursive, others shallow.
- * Return type is compatible with vega-typings Config. */
+ *
+ * The public signature is generic because declared interfaces such as the
+ * vega-typings and vega-lite `Config` types have no implicit index signature
+ * and would not be assignable to the internal structural types. */
+export function mergeConfig<C extends object>(...configs: C[]): C;
 export function mergeConfig(...configs: Partial<VegaConfig>[]): VegaConfig {
-  return configs.reduce((out, source) => {
+  return configs.reduce<VegaConfig>((out, source) => {
     for (const key in source) {
       if (key === 'signals') {
         // for signals, we merge the signals arrays
@@ -56,31 +60,32 @@ export function mergeConfig(...configs: Partial<VegaConfig>[]): VegaConfig {
       }
     }
     return out;
-  }, {} as VegaConfig);
+  }, {});
 }
 
 /** Writes config value to output with optional recursion, rejecting illegal keys that could be used to modify the prototype chain */
 export function writeConfig(
-  output: ConfigObject,
+  output: object,
   key: string,
-  value: ConfigValue,
-  recurse?: RecurseStrategy
+  value: unknown,
+  recurse?: boolean | object | null
 ): void {
   if (!isLegalKey(key)) return;
 
+  const out = output as ConfigObject;
   let k: string, o: ConfigObject;
   if (isObject(value) && !isArray(value)) {
     const valueObj = value as ConfigObject;
-    o = (isObject(output[key]) ? output[key] : (output[key] = {})) as ConfigObject;
+    o = (isObject(out[key]) ? out[key] : (out[key] = {})) as ConfigObject;
     for (k in valueObj) {
-      if (recurse && (recurse === true || recurse[k])) {
+      if (recurse && (recurse === true || (recurse as Record<string, unknown>)[k])) {
         writeConfig(o, k, valueObj[k]);
       } else if (isLegalKey(k)) {
         o[k] = valueObj[k];
       }
     }
   } else {
-    output[key] = value;
+    out[key] = value as ConfigValue;
   }
 }
 
