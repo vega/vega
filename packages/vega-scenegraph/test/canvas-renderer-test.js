@@ -76,6 +76,35 @@ tape('CanvasRenderer should use DOM if available', t => {
   t.end();
 });
 
+tape('CanvasRenderer should update canvas style size when devicePixelRatio returns to 1', t => {
+  const dom = new jsdom.JSDOM();
+  global.document = dom.window.document;
+  global.window = dom.window;
+  global.HTMLElement = dom.window.HTMLElement;
+  const setDPR = value =>
+    Object.defineProperty(dom.window, 'devicePixelRatio', {value, configurable: true});
+
+  const r = new Renderer().initialize(document.body, 450, 300);
+  const canvas = r.canvas();
+
+  setDPR(2);
+  r.resize(450, 300);
+  t.strictEqual(canvas.width, 900);
+  t.strictEqual(canvas.style.width, '450px');
+  t.strictEqual(canvas.style.height, '300px');
+
+  setDPR(1);
+  r.resize(650, 400);
+  t.strictEqual(canvas.width, 650);
+  t.strictEqual(canvas.style.width, '650px');
+  t.strictEqual(canvas.style.height, '400px');
+
+  delete global.document;
+  delete global.window;
+  delete global.HTMLElement;
+  t.end();
+});
+
 tape('CanvasRenderer should render scenegraph to canvas', t => {
   const scene = loadScene('scenegraph-rect.json');
   const image = render(scene, 400, 200);
