@@ -119,7 +119,8 @@ import {
   geoArea,
   geoBounds,
   geoCentroid,
-  geoScale
+  geoScale,
+  geoTranslate
 } from './functions/geo.js';
 
 import inScope from './functions/inscope.js';
@@ -362,6 +363,7 @@ expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('geoScale', geoScale, scaleVisitor);
+expressionFunction('geoTranslate', geoTranslate, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('treePath', treePath, dataVisitor);

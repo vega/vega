@@ -26,3 +26,8 @@ export function geoScale(projection, group) {
   const p = getScale(projection, (group || this).context);
   return p && p.scale();
 }
+
+export function geoTranslate(projection, group) {
+  const p = getScale(projection, (group || this).context);
+  return p && p.translate();
+}

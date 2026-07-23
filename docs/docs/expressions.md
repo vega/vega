@@ -865,6 +865,10 @@ Returns the projected planar centroid (typically in pixels) for the specified Ge
 <b>geoScale</b>(<i>projection</i>[, <i>group</i>])<br/>
 Returns the scale value for the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection.
 
+<a name="geoTranslate" href="#geoTranslate">#</a>
+<b>geoTranslate</b>(<i>projection</i>[, <i>group</i>])<br/>
+Returns the two-element translation array for the named _projection_. The optional _group_ argument takes a scenegraph group mark item to indicate the specific scope in which to look up the projection.
+
 [Back to Top](#reference)
 
 
