@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Vega Scheduling Test</title>
+    <script src="../../build/vega.js"></script>
+    <style>
+      body { margin: 10px; font: 14px Helvetica Neue; }
+      canvas, svg { border: 1px solid #ccc; }
+      #tabs { margin: 10px 0; }
+      #tabs button { font: inherit; padding: 4px 12px; }
+      #tabs button.active { font-weight: bold; border-color: #333; }
+    </style>
+  </head>
+  <body>
+    <p>
+      To profile: open the DevTools Performance panel and use its reload-and-record button. Compare traces with the
+      <code>scheduling</code> checkbox off and on. Off, dataflow evaluation and canvas rendering run as one long task.
+      On, the run splits into many short tasks that yield via <code>scheduler.yield()</code>, and the main thread stays
+      responsive between them. The total run time appears as the <code>vega scheduled run</code> measure in the Timings
+      track; compare it across traces to see the overhead scheduling adds. Check the second box to simulate browsers
+      without the Prioritized Task Scheduling API (Safari): it deletes <code>globalThis.scheduler</code> before the run,
+      so yields fall back to <code>setTimeout(0)</code> and show up in the trace as timer-fired tasks instead.
+    </p>
+    <label><input type="checkbox" id="scheduling"> Enable scheduling</label>
+    <label><input type="checkbox" id="fallback"> Simulate no Scheduler API (setTimeout fallback)</label>
+    <div id="tabs">
+      <button data-chart="scatter">Scatter</button>
+      <button data-chart="line">Line</button>
+      <button data-chart="bar">Bar</button>
+    </div>
+    <div id="view"></div>
+    <script>
+const params = new URLSearchParams(location.search);
+const scheduling = params.get('scheduling') !== 'false';
+const fallback = params.get('fallback') === 'true';
+const chart = params.get('chart') || 'scatter';
+const seed = Number(params.get('seed')) || 1;
+const random = vega.randomLCG(seed);
+
+const checkbox = document.getElementById('scheduling');
+checkbox.checked = scheduling;
+checkbox.addEventListener('change', () => {
+  params.set('scheduling', checkbox.checked);
+  location.search = params.toString();
+});
+
+const fallbackCheckbox = document.getElementById('fallback');
+fallbackCheckbox.checked = fallback;
+fallbackCheckbox.addEventListener('change', () => {
+  params.set('fallback', fallbackCheckbox.checked);
+  location.search = params.toString();
+});
+
+// simulate Safari, which lacks the Prioritized Task Scheduling API, so
+// scheduler.yield() calls fall back to setTimeout(0)
+if (fallback) delete globalThis.scheduler;
+
+document.querySelectorAll('#tabs button').forEach(button => {
+  button.classList.toggle('active', button.dataset.chart === chart);
+  button.addEventListener('click', () => {
+    params.set('chart', button.dataset.chart);
+    location.search = params.toString();
+  });
+});
+
+function scatterSpec() {
+  const values = Array.from({length: 100000}, (_, i) => ({
+    x: i % 1000,
+    y: random() * 100 + (i % 7) * 10,
+    category: `series-${i % 7}`
+  }));
+
+  return {
+    width: 800,
+    height: 400,
+    padding: 5,
+
+    data: [
+      {
+        name: 'table',
+        values
+      }
+    ],
+
+    scales: [
+      {
+        name: 'xscale',
+        type: 'linear',
+        range: 'width',
+        domain: {data: 'table', field: 'x'}
+      },
+      {
+        name: 'yscale',
+        type: 'linear',
+        range: 'height',
+        nice: true,
+        domain: {data: 'table', field: 'y'}
+      },
+      {
+        name: 'color',
+        type: 'ordinal',
+        range: {scheme: 'category10'},
+        domain: {data: 'table', field: 'category'}
+      }
+    ],
+
+    axes: [
+      {orient: 'bottom', scale: 'xscale'},
+      {orient: 'left', scale: 'yscale'}
+    ],
+
+    marks: [
+      {
+        type: 'symbol',
+        from: {data: 'table'},
+        encode: {
+          update: {
+            x: {scale: 'xscale', field: 'x'},
+            y: {scale: 'yscale', field: 'y'},
+            size: {value: 16},
+            fill: {scale: 'color', field: 'category'},
+            fillOpacity: {value: 0.5}
+          }
+        }
+      }
+    ]
+  };
+}
+
+function lineSpec() {
+  const values = [];
+  for (let s = 0; s < 100; s++) {
+    let y = random() * 100;
+    for (let x = 0; x < 1000; x++) {
+      y += random() * 4 - 2;
+      values.push({x, y, category: `series-${s}`});
+    }
+  }
+
+  return {
+    width: 800,
+    height: 400,
+    padding: 5,
+
+    data: [
+      {
+        name: 'table',
+        values
+      }
+    ],
+
+    scales: [
+      {
+        name: 'xscale',
+        type: 'linear',
+        range: 'width',
+        domain: {data: 'table', field: 'x'}
+      },
+      {
+        name: 'yscale',
+        type: 'linear',
+        range: 'height',
+        nice: true,
+        domain: {data: 'table', field: 'y'}
+      },
+      {
+        name: 'color',
+        type: 'ordinal',
+        range: {scheme: 'category20'},
+        domain: {data: 'table', field: 'category'}
+      }
+    ],
+
+    axes: [
+      {orient: 'bottom', scale: 'xscale'},
+      {orient: 'left', scale: 'yscale'}
+    ],
+
+    marks: [
+      {
+        type: 'group',
+        from: {facet: {name: 'series', data: 'table', groupby: 'category'}},
+        marks: [
+          {
+            type: 'line',
+            from: {data: 'series'},
+            encode: {
+              update: {
+                x: {scale: 'xscale', field: 'x'},
+                y: {scale: 'yscale', field: 'y'},
+                stroke: {scale: 'color', field: 'category'},
+                strokeWidth: {value: 1},
+                strokeOpacity: {value: 0.7}
+              }
+            }
+          }
+        ]
+      }
+    ]
+  };
+}
+
+function barSpec() {
+  const values = [];
+  for (let x = 0; x < 1000; x++) {
+    for (let s = 0; s < 20; s++) {
+      values.push({x, y: random() * 100, category: `series-${s}`});
+    }
+  }
+
+  return {
+    width: 800,
+    height: 400,
+    padding: 5,
+
+    data: [
+      {
+        name: 'table',
+        values,
+        transform: [
+          {type: 'stack', groupby: ['x'], sort: {field: 'category'}, field: 'y'}
+        ]
+      }
+    ],
+
+    scales: [
+      {
+        name: 'xscale',
+        type: 'band',
+        range: 'width',
+        domain: {data: 'table', field: 'x'}
+      },
+      {
+        name: 'yscale',
+        type: 'linear',
+        range: 'height',
+        nice: true,
+        domain: {data: 'table', field: 'y1'}
+      },
+      {
+        name: 'color',
+        type: 'ordinal',
+        range: {scheme: 'category20'},
+        domain: {data: 'table', field: 'category'}
+      }
+    ],
+
+    axes: [
+      {orient: 'bottom', scale: 'xscale', labelOverlap: true},
+      {orient: 'left', scale: 'yscale'}
+    ],
+
+    marks: [
+      {
+        type: 'rect',
+        from: {data: 'table'},
+        encode: {
+          update: {
+            x: {scale: 'xscale', field: 'x'},
+            width: {scale: 'xscale', band: 1},
+            y: {scale: 'yscale', field: 'y0'},
+            y2: {scale: 'yscale', field: 'y1'},
+            fill: {scale: 'color', field: 'category'}
+          }
+        }
+      }
+    ]
+  };
+}
+
+const charts = {scatter: scatterSpec, line: lineSpec, bar: barSpec};
+
+async function run() {
+  const spec = (charts[chart] || charts.scatter)();
+
+  const view = new vega.View(vega.parse(spec), {
+    // canvas renderer: 100k points as SVG would create 100k DOM nodes and crash the tab
+    renderer: 'canvas',
+    container: '#view',
+    scheduling
+  });
+
+  performance.mark('run-start');
+  // vega posts no tasks itself; wrapping the call in postTask sets the priority
+  // that the scheduler.yield() calls inside the run inherit
+  const result = typeof scheduler !== 'undefined' && scheduler.postTask
+    ? await scheduler.postTask(() => view.runAsync(), {priority: 'user-visible'})
+    : await view.runAsync();
+  performance.mark('run-end');
+  performance.measure('vega scheduled run', 'run-start', 'run-end');
+  console.log(result);
+}
+run();
+    </script>
+  </body>
+</html>

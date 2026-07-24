@@ -24,7 +24,8 @@ export default function(el, elBind) {
 
   // initialize renderer and input handler
   view._renderer = !Renderer ? null
-    : initializeRenderer(view, view._renderer, el, Renderer);
+    : initializeRenderer(view, view._renderer, el, Renderer, undefined,
+        view._scheduler ? {scheduler: view._scheduler} : undefined);
   view._handler = initializeHandler(view, view._handler, el, Handler);
   view._redraw = true;
 

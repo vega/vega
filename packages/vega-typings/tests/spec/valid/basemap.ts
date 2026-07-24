@@ -33,7 +33,7 @@ export const spec: Spec = {
     },
     {
       name: 'source_0',
-      url: 'https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/world-110m.json',
+      url: 'data/world-110m.json',
       format: { feature: 'countries', type: 'topojson' },
       transform: [
         {

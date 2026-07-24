@@ -5,8 +5,11 @@ import marks from './marks/index.js';
 import {domClear} from './util/dom.js';
 import clip from './util/canvas/clip.js';
 import resize from './util/canvas/resize.js';
+import {visitItems} from './util/visit.js';
 import {canvas} from 'vega-canvas';
 import {error} from 'vega-util';
+
+const SCHEDULING_BATCH = 64;
 
 export default class CanvasRenderer extends Renderer {
   constructor(loader) {
@@ -19,6 +22,13 @@ export default class CanvasRenderer extends Renderer {
 
   initialize(el, width, height, origin, scaleFactor, options) {
     this._options = options || {};
+
+    this._scheduler = (this._options.scheduler
+        && !this._options.externalContext
+        && this._options.type !== 'pdf')
+      ? this._options.scheduler : null;
+    this._scratch = null;
+    this._rendering = null;
 
     this._canvas = this._options.externalContext
       ? null
@@ -48,6 +58,8 @@ export default class CanvasRenderer extends Renderer {
       ctx.translate(this._origin[0], this._origin[1]);
     }
 
+    this._scratch = null;
+
     this._redraw = true;
     return this;
   }
@@ -71,6 +83,107 @@ export default class CanvasRenderer extends Renderer {
     }
 
     this._dirty.union(b);
+  }
+
+  render(scene, markTypes) {
+    if (this._scheduler) {
+      this._scratch = null;
+    }
+    return super.render(scene, markTypes);
+  }
+
+  renderAsync(scene, markTypes) {
+    if (!this._scheduler) return super.renderAsync(scene, markTypes);
+
+    const r = this;
+    r._call = () => {
+      r._renderScheduled(scene, markTypes).catch(err => {
+        if (!r._scheduler.didAbort(err)) throw err;
+      });
+    };
+
+    return r._renderScheduled(scene, markTypes)
+      .then(() => r._ready)
+      .then(() => r._rendering)
+      .then(() => r);
+  }
+
+  async _renderScheduled(scene, markTypes) {
+    while (this._rendering) {
+      await this._rendering.catch(() => {});
+    }
+    const p = this._rendering = this._renderChunked(scene, markTypes);
+    const done = () => { if (this._rendering === p) this._rendering = null; };
+    p.then(done, done);
+    return p;
+  }
+
+  async _renderChunked(scene, markTypes) {
+    const fresh = !this._scratch,
+          scratch = this._scratchCanvas(),
+          g = scratch.getContext('2d'),
+          o = this._origin,
+          w = this._width,
+          h = this._height,
+          db = this._dirty,
+          vb = viewBounds(o, w, h);
+
+    g.save();
+    const b = this._redraw || fresh || db.empty()
+      ? (this._redraw = false, vb.expand(1))
+      : clipToBounds(g, vb.intersect(db), o);
+
+    this.clear(-o[0], -o[1], w, h, g);
+
+    try {
+      await this.drawAsync(g, scene, b, markTypes);
+    } catch (err) {
+      this._scratch = null;
+      this._redraw = true;
+      throw err;
+    }
+
+    g.restore();
+    db.clear();
+
+    if (this._scratch === scratch) {
+      const vg = this.context(),
+            vc = this._canvas;
+      vg.save();
+      vg.setTransform(1, 0, 0, 1, 0, 0);
+      // neutralize context effects already baked into the scratch canvas
+      // so the blit does not apply them a second time
+      vg.globalAlpha = 1;
+      vg.globalCompositeOperation = 'source-over';
+      vg.filter = 'none';
+      vg.shadowBlur = 0;
+      vg.shadowColor = 'transparent';
+      vg.clearRect(0, 0, vc.width, vc.height);
+      vg.drawImage(scratch, 0, 0);
+      vg.restore();
+    }
+
+    return this;
+  }
+
+  _scratchCanvas() {
+    if (!this._scratch) {
+      const source = this._canvas,
+            ratio = source.getContext('2d').pixelRatio || 1,
+            opt = this._options.context,
+            scratch = canvas(1, 1, this._options.type),
+            g = scratch.getContext('2d');
+
+      scratch.width = source.width;
+      scratch.height = source.height;
+      for (const key in opt) { g[key] = opt[key]; }
+      g.pixelRatio = ratio;
+      g.setTransform(ratio, 0, 0, ratio,
+        ratio * this._origin[0], ratio * this._origin[1]);
+
+      this._scratch = scratch;
+    }
+    return this._scratch;
   }
 
   _render(scene, markTypes) {
@@ -110,9 +223,43 @@ export default class CanvasRenderer extends Renderer {
     if (scene.clip) ctx.restore();
   }
 
-  clear(x, y, w, h) {
-    const opt = this._options,
-          g = this.context();
+  async drawAsync(ctx, scene, bounds, markTypes) {
+    if (scene.marktype !== 'group' && markTypes != null && !markTypes.includes(scene.marktype)) {
+      return;
+    }
+
+    const scheduler = this._scheduler;
+    if (scheduler.shouldYield()) await scheduler.yield();
+
+    const mark = marks[scene.marktype];
+    if (scene.clip) clip(ctx, scene);
+    if (mark.drawAsync) {
+      await mark.drawAsync.call(this, ctx, scene, bounds, markTypes, scheduler);
+    } else if (mark.nested) {
+      mark.draw.call(this, ctx, scene, bounds, markTypes);
+    } else {
+      await this._drawItemsChunked(mark, ctx, scene, bounds, scheduler);
+    }
+    if (scene.clip) ctx.restore();
+  }
+
+  async _drawItemsChunked(mark, ctx, scene, bounds, scheduler) {
+    const items = visitItems(scene),
+          n = items.length;
+
+    for (let i = 0; i < n; i += SCHEDULING_BATCH) {
+      if (i > 0 && scheduler.shouldYield()) await scheduler.yield();
+
+      const batch = Object.create(scene);
+      batch.items = items.slice(i, i + SCHEDULING_BATCH);
+      batch.zdirty = false;
+      batch.zitems = null;
+      mark.draw.call(this, ctx, batch, bounds);
+    }
+  }
+
+  clear(x, y, w, h, g = this.context()) {
+    const opt = this._options;
 
     if (opt.type !== 'pdf' && !opt.externalContext) {
       // calling clear rect voids vector output in pdf mode

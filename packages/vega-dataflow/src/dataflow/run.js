@@ -31,6 +31,8 @@ export async function evaluate(encode, prerun, postrun) {
   // if the pulse value is set, this is a re-entrant call
   if (df._pulse) return reentrant(df);
 
+  if (df._scheduler) df._scheduler.reset();
+
   // wait for pending datasets to load
   if (df._pending) await df._pending;
 
@@ -46,6 +48,8 @@ export async function evaluate(encode, prerun, postrun) {
   // increment timestamp clock
   const stamp = ++df._clock;
 
+  const scheduler = df._scheduler;
+
   // set the current pulse
   df._pulse = new Pulse(df, stamp, encode);
 
@@ -57,6 +61,8 @@ export async function evaluate(encode, prerun, postrun) {
 
   try {
     while (df._heap.size() > 0) {
+      if (scheduler && scheduler.shouldYield()) await scheduler.yield();
+
       // dequeue operator with highest priority
       op = df._heap.pop();
 
@@ -99,6 +105,7 @@ export async function evaluate(encode, prerun, postrun) {
 
   if (error) {
     df._postrun = [];
+    if (scheduler && scheduler.didAbort(error)) throw error;
     df.error(error);
   }
 
@@ -107,7 +114,15 @@ export async function evaluate(encode, prerun, postrun) {
     const pr = df._postrun.sort((a, b) => b.priority - a.priority);
     df._postrun = [];
     for (let i=0; i<pr.length; ++i) {
-      await asyncCallback(df, pr[i].callback);
+      const cascade = scheduler ? (df._cascade = []) : null;
+      try {
+        await asyncCallback(df, pr[i].callback);
+      } finally {
+        df._cascade = null;
+      }
+      for (let j=0; cascade && j<cascade.length; ++j) {
+        await cascade[j];
+      }
     }
   }
 
@@ -116,10 +131,11 @@ export async function evaluate(encode, prerun, postrun) {
 
   // handle non-blocking asynchronous callbacks
   if (async.length) {
-    Promise.all(async)
+    const p = Promise.all(async)
       .then(cb => df.runAsync(null, () => {
         cb.forEach(f => { try { f(df); } catch (err) { df.error(err); } });
       }));
+    if (scheduler) p.catch(err => df.error(err));
   }
 
   return df;
@@ -145,8 +161,9 @@ export async function evaluate(encode, prerun, postrun) {
  *   evaluation completes.
  */
 export async function runAsync(encode, prerun, postrun) {
-  // await previously queued functions
-  while (this._running) await this._running;
+  // await previously queued functions; a rejection (such as an aborted
+  // scheduler) belongs to the prior caller, not this queued invocation
+  while (this._running) await this._running.catch(() => {});
 
   // run dataflow, manage running promise
   const clear = () => this._running = null;
@@ -176,8 +193,17 @@ export async function runAsync(encode, prerun, postrun) {
  * @return {Dataflow} - This dataflow instance.
  */
 export function run(encode, prerun, postrun) {
-  return this._pulse ? reentrant(this)
-    : (this.evaluate(encode, prerun, postrun), this);
+  if (this._pulse) return reentrant(this);
+  if (this._cascade) {
+    this._cascade.push(this.evaluate(encode, prerun, postrun));
+  } else if (this._scheduler) {
+    // queue behind any in-flight scheduled evaluation or rendering, so a
+    // synchronous run cannot mutate state while a yielded render is reading it
+    this.runAsync(encode, prerun, postrun).catch(err => this.error(err));
+  } else {
+    this.evaluate(encode, prerun, postrun);
+  }
+  return this;
 }
 
 /**
