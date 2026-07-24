@@ -7,6 +7,8 @@ const BindClass = 'vega-bind',
       NameClass = 'vega-bind-name',
       RadioClass = 'vega-bind-radio';
 
+const EventHandlerAttr = /^on/i;
+
 /**
  * Bind a signal to an external HTML input element. The resulting two-way
  * binding will propagate input changes to signals, and propagate signal
@@ -113,18 +115,22 @@ function generate(bind, el, param, view) {
     case 'range':    input = range; break;
   }
 
-  input(bind, wrapper, param, value);
+  input === form
+    ? input(bind, wrapper, param, value, view)
+    : input(bind, wrapper, param, value);
 }
 
 /**
  * Generates an arbitrary input form element.
  * The input type is controlled via user-provided parameters.
  */
-function form(bind, el, param, value) {
+function form(bind, el, param, value, view) {
   const node = element('input');
 
   for (const key in param) {
-    if (key !== 'signal' && key !== 'element') {
+    if (EventHandlerAttr.test(key)) {
+      view.warn(`Ignoring unsupported signal binding property "${key}" for signal "${param.signal}".`);
+    } else if (key !== 'signal' && key !== 'element') {
       node.setAttribute(key === 'input' ? 'type' : key, param[key]);
     }
   }
