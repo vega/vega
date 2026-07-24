@@ -9,6 +9,7 @@ const extent = orSignal(array(array2, {minItems: 2, maxItems: 2}));
 
 const projection = object({
   _name_: stringType,
+  description: stringType,
   type: stringOrSignal,
   clipAngle: numberOrSignal,
   clipExtent: extent,

@@ -33,6 +33,7 @@ function transformSchema(name, def) {
 
   const props = {
     _type_: enums([name]),
+    description: stringType,
     signal: stringType
   };
 

@@ -143,6 +143,7 @@ const scaleData = oneOf(
 );
 
 const scaleDomainProps = {
+  description: stringType,
   _name_: stringType,
   domain: oneOf(arrayAllTypes, scaleDataRef, signalRef),
   domainMin: numberOrSignal,

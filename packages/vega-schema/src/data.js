@@ -60,6 +60,7 @@ const dataFormat = anyOf(
 
 const dataProps = {
   _name_: stringType,
+  description: stringType,
   transform: array(transformRef),
   on: onTriggerRef
 };
