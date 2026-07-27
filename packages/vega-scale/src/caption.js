@@ -52,13 +52,14 @@ export function domainCaption(locale, scale, opt, ariaLoc, formatStr, pluralKey)
   }
 
   const languageTag = ariaLoc['languageTag'] || 'en';
+  const listJoiner = ariaLoc['domainListJoiner'] || ', ';
 
   // if scale breaks domain into bins, describe boundaries
   if (isDiscretizing(scale.type)) {
     const v = labelValues(scale).slice(1).map(fmt),
           n = v.length;
     const key = pluralKey('domainBoundaries', n, languageTag, ariaLoc);
-    return formatStr(ariaLoc[key], n, v.join(', '));
+    return formatStr(ariaLoc[key], n, v.join(listJoiner));
   }
 
   // if scale domain is discrete, list values
@@ -68,11 +69,11 @@ export function domainCaption(locale, scale, opt, ariaLoc, formatStr, pluralKey)
 
     let valueStr;
     if (n > max) {
-      const head = d.slice(0, max - 2).map(fmt).join(', ');
+      const head = d.slice(0, max - 2).map(fmt).join(listJoiner);
       const tail = d.slice(-1).map(fmt)[0];
       valueStr = formatStr(ariaLoc['domainDiscreteOverflow'], head, tail);
     } else {
-      valueStr = d.map(fmt).join(', ');
+      valueStr = d.map(fmt).join(listJoiner);
     }
 
     const key = pluralKey('domainValues', n, languageTag, ariaLoc);

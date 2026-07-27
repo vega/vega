@@ -34,6 +34,9 @@ export const DEFAULT_ARIA_LOCALE = {
   'channelJoiner': ', ',
   'channelFinalJoiner': ' and ',
 
+  // Domain captions
+  'domainListJoiner': ', ',
+
   // Domain captions — CLDR plural suffixes
   'domainBoundaries_one': '{0} boundary: {1}',
   'domainBoundaries_other': '{0} boundaries: {1}',
