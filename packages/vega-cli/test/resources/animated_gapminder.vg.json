@@ -850,7 +850,7 @@
       "scale": "x",
       "orient": "bottom",
       "grid": false,
-      "title": "fertility",
+      "labels": false,
       "labelFlush": true,
       "labelOverlap": true,
       "tickCount": { "signal": "ceil(width/40)" },
@@ -860,7 +860,7 @@
       "scale": "y",
       "orient": "left",
       "grid": false,
-      "title": "life_expect",
+      "labels": false,
       "labelOverlap": true,
       "tickCount": { "signal": "ceil(height/40)" },
       "zindex": 0
