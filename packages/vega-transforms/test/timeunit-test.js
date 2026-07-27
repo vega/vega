@@ -261,6 +261,94 @@ tape('TimeUnit supports unit inference with extent', t => {
   t.end();
 });
 
+tape('TimeUnit infers units from discretized data', t => {
+  const data = [
+    {date: new Date(2012, 0, 1)},
+    {date: new Date(2012, 1, 1)},
+    {date: new Date(2012, 2, 1)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'month']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +localDate(2012, 0, 1));
+  t.equal(+data[0].unit1, +localDate(2012, 1, 1));
+
+  t.end();
+});
+
+tape('TimeUnit infers units in UTC time', t => {
+  const data = [
+    {date: utcDate(2012, 0, 1)},
+    {date: utcDate(2012, 1, 1)},
+    {date: utcDate(2012, 2, 1)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, timezone: 'utc', field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'month']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +utcDate(2012, 0, 1));
+  t.equal(+data[0].unit1, +utcDate(2012, 1, 1));
+
+  t.end();
+});
+
+tape('TimeUnit infers week units', t => {
+  const data = [
+    {date: new Date(2012, 0, 8)},
+    {date: new Date(2012, 0, 15)},
+    {date: new Date(2012, 0, 22)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'week']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +localDate(2012, 0, 8));
+  t.equal(+data[0].unit1, +localDate(2012, 0, 15));
+
+  t.end();
+});
+
+tape('TimeUnit warns if inferUnits overrides other parameters', t => {
+  const data = [
+    {date: new Date(2012, 0, 1)},
+    {date: new Date(2012, 1, 1)}
+  ];
+  const warnings = [];
+
+  var df = new Dataflow().logger({
+        level() {},
+        error() {},
+        warn: msg => warnings.push(msg),
+        info() {},
+        debug() {}
+      }),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, units: ['year'], field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(warnings.length, 1);
+  t.deepEqual(s.value.units, ['year', 'month']);
+
+  t.end();
+});
+
 tape('TimeUnit supports point output', t => {
   const data = [{date: new Date(2012, 0, 1)}];
 

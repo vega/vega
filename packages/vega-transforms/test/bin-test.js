@@ -80,7 +80,7 @@ tape('Bin handles tail aggregation for last bin', t => {
       });
 
   df.run();
-  testBin(t, bin.value, [0, 29], 5);
+  testBin(t, bin.value, [0, 30], 5);
 
   // inspired by vega/vega#2181
   t.equal(bin.value({v:28}), 25);

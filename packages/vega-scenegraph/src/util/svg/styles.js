@@ -16,8 +16,9 @@ export const stylesCss = {
   blend:            'mix-blend-mode'
 };
 
-// ensure miter limit default is consistent with canvas (#2498)
+// ensure miter limit default is consistent with canvas (#2498);
+// both renderers use the SVG default limit of 4
 export const rootAttributes = {
   'fill': 'none',
-  'stroke-miterlimit': 10
+  'stroke-miterlimit': 4
 };

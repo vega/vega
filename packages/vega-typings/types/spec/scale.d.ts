@@ -2,14 +2,7 @@ import { SignalRef } from '../index.js';
 import { ColorScheme } from './scheme.js';
 
 export type RangeEnum =
-  | 'width'
-  | 'height'
-  | 'symbol'
-  | 'category'
-  | 'ordinal'
-  | 'ramp'
-  | 'diverging'
-  | 'heatmap';
+  'width' | 'height' | 'symbol' | 'category' | 'ordinal' | 'ramp' | 'diverging' | 'heatmap';
 
 export type RangeRawArray = (number | SignalRef)[];
 export type RangeRaw = (null | boolean | string | number | SignalRef | RangeRawArray)[];
@@ -82,14 +75,7 @@ export interface ScaleBinParams {
 export type ScaleBins = (number | SignalRef)[] | SignalRef | ScaleBinParams;
 
 export type ScaleInterpolateEnum =
-  | 'rgb'
-  | 'lab'
-  | 'hcl'
-  | 'hsl'
-  | 'hsl-long'
-  | 'hcl-long'
-  | 'cubehelix'
-  | 'cubehelix-long';
+  'rgb' | 'lab' | 'hcl' | 'hsl' | 'hsl-long' | 'hcl-long' | 'cubehelix' | 'cubehelix-long';
 
 export interface ScaleInterpolateParams {
   type: 'rgb' | 'cubehelix' | 'cubehelix-long' | SignalRef;
@@ -116,14 +102,7 @@ export type ScaleData = (ScaleDataRef | ScaleMultiDataRef | ScaleMultiFieldsRef)
   sort?: SortField;
 };
 export type QuantScaleType =
-  | 'linear'
-  | 'pow'
-  | 'sqrt'
-  | 'log'
-  | 'symlog'
-  | 'time'
-  | 'utc'
-  | 'sequential';
+  'linear' | 'pow' | 'sqrt' | 'log' | 'symlog' | 'time' | 'utc' | 'sequential';
 export type DiscreteScaleType = 'ordinal' | 'band' | 'point';
 export type DiscretizingScaleType = 'quantile' | 'quantize' | 'threshold' | 'bin-ordinal';
 export type ScaleType = QuantScaleType | DiscreteScaleType | DiscretizingScaleType | 'identity';
@@ -175,14 +154,7 @@ export interface SequentialScale extends NumericScale {
   type: 'sequential';
 }
 export type TimeInterval =
-  | 'millisecond'
-  | 'second'
-  | 'minute'
-  | 'hour'
-  | 'day'
-  | 'week'
-  | 'month'
-  | 'year';
+  'millisecond' | 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 
 export interface TimeIntervalStep {
   interval: TimeInterval;

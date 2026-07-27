@@ -105,7 +105,7 @@ function ariaGuide(mark, opt) {
     return bundle(
       opt.role || GRAPHICS_SYMBOL,
       opt.desc,
-      item.description || caption(item)
+      mark.description || item.description || caption(item)
     );
   } catch (err) {
     return null;

@@ -1,5 +1,5 @@
 import {array32} from './arrays.js';
-import {bisectLeft, bisectRight, permute} from 'd3-array';
+import {bisectLeft, permute} from 'd3-array';
 
 /**
  * Maintains a list of values, sorted by key.
@@ -78,7 +78,7 @@ export default function SortedIndex() {
     }
     return [
       bisectLeft(array, range[0], 0, n),
-      bisectRight(array, range[1], 0, n)
+      bisectLeft(array, range[1], 0, n)
     ];
   }
 

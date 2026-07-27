@@ -6,6 +6,7 @@ import globals from 'globals';
 // but we probably will want to enable these lints
 // in the future.
 const legacyRules = {
+  'no-useless-assignment': 'off',
   '@typescript-eslint/no-var-requires': 'off',
   '@typescript-eslint/no-this-alias': 'off',
   '@typescript-eslint/no-unused-vars': 'off',

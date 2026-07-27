@@ -1,5 +1,5 @@
 import tape from 'tape';
-import * as vega from '../index.js';
+import * as vega from '../build/index.js';
 
 tape('splitAccessPath parses field accessor paths', t => {
   t.deepEqual(vega.splitAccessPath('x'), ['x']);

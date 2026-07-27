@@ -42,6 +42,7 @@ inherits(AxisTicks, Transform, {
     ticks = values.map((value, i) =>
       ingest({
         index: i / (values.length - 1 || 1),
+        tickIndex: i,
         value: value,
         label: format(value)
       })
@@ -52,6 +53,7 @@ inherits(AxisTicks, Transform, {
       // this is used to generate axes with 'binned' domains
       ticks.push(ingest({
         index: -1,
+        tickIndex: -1,
         extra: {value: ticks[0].value},
         label: ''
       }));

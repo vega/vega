@@ -39,3 +39,7 @@ export {
 export {
   default as timeBin
 } from './src/bin.js';
+
+export {
+  default as detectTimeUnits
+} from './src/detectTimeUnits.js';

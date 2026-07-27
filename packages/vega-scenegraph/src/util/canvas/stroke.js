@@ -15,7 +15,7 @@ export default function(context, item, opacity) {
     context.lineWidth = lw;
     context.lineCap = item.strokeCap || 'butt';
     context.lineJoin = item.strokeJoin || 'miter';
-    context.miterLimit = item.strokeMiterLimit || 10;
+    context.miterLimit = item.strokeMiterLimit != null ? item.strokeMiterLimit : 4;
 
     if (context.setLineDash) {
       context.setLineDash(item.strokeDash || Empty);

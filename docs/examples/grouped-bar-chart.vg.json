@@ -82,7 +82,7 @@
           "name": "pos",
           "type": "band",
           "range": "height",
-          "domain": {"data": "facet", "field": "position"}
+          "domain": {"data": "table", "field": "position"}
         }
       ],
 

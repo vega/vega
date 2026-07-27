@@ -142,6 +142,7 @@ This package provides the following constants and functions:
 - [`trim`](https://vega.github.io/vega/docs/expressions/#trim)
 - [`atob`](https://vega.github.io/vega/docs/expressions/#atob)
 - [`btoa`](https://vega.github.io/vega/docs/expressions/#btoa)
+- [`encodeURIComponent`](https://vega.github.io/vega/docs/expressions/#encodeURIComponent)
 
 
 **RegExp Functions**

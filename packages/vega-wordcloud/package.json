@@ -1,6 +1,6 @@
 {
   "name": "vega-wordcloud",
-  "version": "5.1.0",
+  "version": "5.1.2",
   "description": "Wordcloud layout transform for Vega dataflows.",
   "keywords": [
     "vega",
@@ -20,6 +20,10 @@
     "type": "git",
     "url": "git+https://github.com/vega/vega.git"
   },
+  "homepage": "https://github.com/vega/vega/tree/main/packages/vega-wordcloud#readme",
+  "bugs": {
+    "url": "https://github.com/vega/vega/issues"
+  },
   "scripts": {
     "prebuild": "del-cli build",
     "build": "rollup -c rollup.config.js",
@@ -29,12 +33,12 @@
   },
   "dependencies": {
     "vega-canvas": "^2.0.0",
-    "vega-dataflow": "^6.1.0",
-    "vega-scale": "^8.1.0",
+    "vega-dataflow": "^6.1.2",
+    "vega-scale": "^8.1.2",
     "vega-statistics": "^2.0.0",
     "vega-util": "^2.1.0"
   },
   "devDependencies": {
-    "vega-transforms": "*"
+    "vega-transforms": "5.2.1"
   }
 }
