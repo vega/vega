@@ -1,5 +1,6 @@
 import {domainCaption, isDiscrete} from 'vega-scale';
 import {array, peek, toSet} from 'vega-util';
+import {DEFAULT_ARIA_LOCALE, formatString, selectPluralKey} from './aria-locale.js';
 
 const ARIA_HIDDEN = 'aria-hidden';
 const ARIA_LABEL = 'aria-label';
@@ -31,19 +32,47 @@ const AriaIgnore = toSet([
   'title'
 ]);
 
-// aria attribute generators for guide roles
-const AriaGuides = {
-  'axis': {desc: 'axis', caption: axisCaption},
-  'legend': {desc: 'legend', caption: legendCaption},
-  'title-text': {
-    desc: 'title',
-    caption: item => `Title text '${titleCaption(item)}'`
-  },
-  'title-subtitle': {
-    desc: 'subtitle',
-    caption: item => `Subtitle text '${titleCaption(item)}'`
+/**
+ * Retrieve the aria locale from a group context's dataflow.
+ * Falls back to the default English locale.
+ */
+function getAriaLocale(context) {
+  try {
+    const loc = context?.dataflow?.ariaLocale?.();
+    return loc || DEFAULT_ARIA_LOCALE;
+  } catch (e) {
+    return DEFAULT_ARIA_LOCALE;
   }
-};
+}
+
+/**
+ * Resolve the localized mark type name.
+ */
+function markTypeName(type, loc) {
+  return loc['marktype.' + type] || type;
+}
+
+// aria attribute generators for guide roles
+function ariaGuides(loc) {
+  return {
+    'axis': {
+      desc: loc['role.axis'] || 'axis',
+      caption: axisCaption
+    },
+    'legend': {
+      desc: loc['role.legend'] || 'legend',
+      caption: legendCaption
+    },
+    'title-text': {
+      desc: loc['role.title'] || 'title',
+      caption: item => formatString(loc['titleText'], titleCaption(item))
+    },
+    'title-subtitle': {
+      desc: loc['role.subtitle'] || 'subtitle',
+      caption: item => formatString(loc['subtitleText'], titleCaption(item))
+    }
+  };
+}
 
 // aria properties generated for mark item encoding channels
 export const AriaEncode = {
@@ -62,6 +91,8 @@ export function ariaItemAttributes(emit, item) {
     }
   } else {
     const type = item.mark.marktype;
+    const loc = getAriaLocale(item.mark.group?.context);
+    const typeName = markTypeName(type, loc);
     emit(
       ARIA_LABEL,
       item.description
@@ -72,20 +103,26 @@ export function ariaItemAttributes(emit, item) {
     );
     emit(
       ARIA_ROLEDESCRIPTION,
-      item.ariaRoleDescription || `${type} mark`
+      item.ariaRoleDescription || formatString(loc['role.mark'] || '{0} mark', typeName)
     );
   }
 }
 
 export function ariaMarkAttributes(mark) {
-  return mark.aria === false ? { [ARIA_HIDDEN]: true }
-    : AriaIgnore[mark.role] ? null
-    : AriaGuides[mark.role] ? ariaGuide(mark, AriaGuides[mark.role])
-    : ariaMark(mark);
+  if (mark.aria === false) return { [ARIA_HIDDEN]: true };
+  if (AriaIgnore[mark.role]) return null;
+
+  const loc = getAriaLocale(mark.group?.context);
+  if (mark.role) {
+    const guides = ariaGuides(loc);
+    if (guides[mark.role]) return ariaGuide(mark, guides[mark.role]);
+  }
+  return ariaMark(mark, loc);
 }
 
-function ariaMark(mark) {
+function ariaMark(mark, loc) {
   const type = mark.marktype;
+  const typeName = markTypeName(type, loc);
   const recurse = (
     type === 'group' ||
     type === 'text' ||
@@ -93,7 +130,7 @@ function ariaMark(mark) {
   );
   return bundle(
     recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL,
-    `${type} mark container`,
+    formatString(loc['role.markContainer'] || '{0} mark container', typeName),
     mark.description
   );
 }
@@ -124,28 +161,57 @@ function axisCaption(item) {
         scale = ctx.scales[datum.scale].value,
         locale = ctx.dataflow.locale(),
         type = scale.type,
-        xy = (orient === 'left' || orient === 'right') ? 'Y' : 'X';
+        loc = getAriaLocale(ctx);
 
-  return `${xy}-axis`
-    + (title ? ` titled '${title}'` : '')
-    + ` for a ${isDiscrete(type) ? 'discrete' : type} scale`
-    + ` with ${domainCaption(locale, scale, item)}`;
+  const orientLabel = (orient === 'left' || orient === 'right')
+    ? loc['orientationY']
+    : loc['orientationX'];
+
+  let label = formatString(loc['axisLabel'], orientLabel);
+
+  if (title) {
+    label += formatString(loc['axisTitled'], title);
+  }
+
+  label += isDiscrete(type)
+    ? loc['axisScaleDiscrete']
+    : formatString(loc['axisScaleContinuous'], type);
+
+  const domain = domainCaption(locale, scale, item, loc, formatString, selectPluralKey);
+  label += formatString(loc['axisWithDomain'], domain);
+
+  return label;
 }
 
 function legendCaption(item) {
   const datum = item.datum,
         title = datum.title ? extractTitle(item) : null,
-        type = `${datum.type || ''} legend`.trim(),
         scales = datum.scales,
         props = Object.keys(scales),
         ctx = item.context,
         scale = ctx.scales[scales[props[0]]].value,
-        locale = ctx.dataflow.locale();
+        locale = ctx.dataflow.locale(),
+        loc = getAriaLocale(ctx);
 
-  return capitalize(type)
-    + (title ? ` titled '${title}'` : '')
-    + ` for ${channelCaption(props)}`
-    + ` with ${domainCaption(locale, scale, item)}`;
+  // Conditional: legend kind present → format with kind, else use default
+  let label = datum.type
+    ? formatString(loc['legendType'], datum.type)
+    : loc['legendTypeDefault'];
+
+  // Capitalize
+  label = label[0].toUpperCase() + label.slice(1);
+
+  if (title) {
+    label += formatString(loc['legendTitled'], title);
+  }
+
+  const channelDesc = channelCaption(props, loc);
+  label += formatString(loc['legendForChannel'], channelDesc);
+
+  const domain = domainCaption(locale, scale, item, loc, formatString, selectPluralKey);
+  label += formatString(loc['legendWithDomain'], domain);
+
+  return label;
 }
 
 function extractTitle(item) {
@@ -156,12 +222,13 @@ function extractTitle(item) {
   }
 }
 
-function channelCaption(props) {
-  props = props.map(p => p + (p === 'fill' || p === 'stroke' ? ' color' : ''));
-  return props.length < 2 ? props[0]
-    : props.slice(0, -1).join(', ') + ' and ' + peek(props);
-}
+function channelCaption(props, loc) {
+  // Each channel has its own localized name, falling back to raw prop name
+  const named = props.map(p => loc['channel.' + p] || p);
 
-function capitalize(s) {
-  return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+  if (named.length < 2) return named[0];
+
+  return named.slice(0, -1).join(loc['channelJoiner'])
+    + loc['channelFinalJoiner']
+    + named[named.length - 1];
 }
