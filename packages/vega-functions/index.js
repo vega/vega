@@ -5,8 +5,17 @@ export {
 } from './src/functions/data.js';
 
 export {
+  easeFunctions,
+  easeFunctionNames
+} from './src/functions/ease.js';
+
+export {
   default as encode
 } from './src/functions/encode.js';
+
+export {
+  interpolateLinear
+} from './src/functions/interpolate.js';
 
 export {
   format,
