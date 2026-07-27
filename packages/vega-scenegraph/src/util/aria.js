@@ -228,7 +228,7 @@ function channelCaption(props, loc) {
 
   if (named.length < 2) return named[0];
 
-  return named.slice(0, -1).join(loc['channelJoiner'])
-    + loc['channelFinalJoiner']
+  return named.slice(0, -1).join(loc['listJoiner'])
+    + loc['listFinalJoiner']
     + named[named.length - 1];
 }

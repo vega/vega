@@ -52,7 +52,7 @@ export function domainCaption(locale, scale, opt, ariaLoc, formatStr, pluralKey)
   }
 
   const languageTag = ariaLoc['languageTag'] || 'en';
-  const listJoiner = ariaLoc['domainListJoiner'] || ', ';
+  const listJoiner = ariaLoc['listJoiner'] || ', ';
 
   // if scale breaks domain into bins, describe boundaries
   if (isDiscretizing(scale.type)) {

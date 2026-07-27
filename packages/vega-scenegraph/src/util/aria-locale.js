@@ -3,6 +3,10 @@
  * Uses {N} indexed placeholders for positional argument substitution.
  */
 export const DEFAULT_ARIA_LOCALE = {
+  // General: list-of-items composition
+  'listJoiner': ', ',
+  'listFinalJoiner': ' and ',
+
   // Container
   'containerRoleDescription': 'visualization',
 
@@ -31,11 +35,6 @@ export const DEFAULT_ARIA_LOCALE = {
   // Channel names
   'channel.fill': 'fill color',
   'channel.stroke': 'stroke color',
-  'channelJoiner': ', ',
-  'channelFinalJoiner': ' and ',
-
-  // Domain captions
-  'domainListJoiner': ', ',
 
   // Domain captions — CLDR plural suffixes
   'domainBoundaries_one': '{0} boundary: {1}',
