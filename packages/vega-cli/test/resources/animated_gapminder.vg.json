@@ -72,16 +72,7 @@
     { "name": "anim_value", "update": "invert('time', eased_anim_clock)" },
     {
       "name": "animation_frame_tuple",
-      "on": [
-        {
-          "events": [
-            { "signal": "eased_anim_clock" },
-            { "signal": "anim_value" }
-          ],
-          "update": "{unit: \"\", fields: animation_frame_tuple_fields, values: [anim_value ? anim_value : min_extent]}",
-          "force": true
-        }
-      ]
+      "update": "{unit: \"\", fields: animation_frame_tuple_fields, values: [anim_value ? anim_value : min_extent]}"
     },
     {
       "name": "animation_frame_tuple_fields",
@@ -89,12 +80,7 @@
     },
     {
       "name": "animation_frame_modify",
-      "on": [
-        {
-          "events": { "signal": "animation_frame_tuple" },
-          "update": "modify(\"animation_frame_store\", animation_frame_tuple, true)"
-        }
-      ]
+      "update": "modify(\"animation_frame_store\", animation_frame_tuple, true)"
     }
   ],
   "marks": [

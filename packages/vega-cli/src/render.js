@@ -37,25 +37,23 @@ export default function(type, callback, opt) {
         time: arg.timeFormat ? load(arg.timeFormat) : null
     };
     // instantiate view and invoke headless render method
-    function render(spec) {
+    async function render(spec) {
         const view = new vega.View(vega.parse(spec, config), {
             locale: locale, // set locale options
             loader: vega.loader({ baseURL: base }), // load files from base path
             logger: vega.logger(loglevel, 'error'), // route all logging to stderr
             renderer: 'none' // no primary renderer needed
         });
-        // Run the dataflow to evaluate signals first (this returns a Promise)
-        return view.runAsync()
-            .then(() => {
-                // Now finalize after the signals have been evaluated
-                view.finalize();
-
-                // Return the appropriate rendering format
-                return type === 'svg'
-                    ? view.toSVG(scale)
-                    : view.toCanvas(scale * ppi / 72, opt);
-            })
-            .then(_ => callback(_, arg));
+        // Clear timers up front, before the dataflow ever runs -- toSVG/toCanvas
+        // run it for us. Order matters here: we emit a single static image, so a
+        // timer-driven signal (an animation clock, say) must not be able to
+        // advance while data loads. Finalizing after the run instead would make
+        // the captured frame depend on how long the load happened to take.
+        view.finalize();
+        const image = type === 'svg'
+            ? await view.toSVG(scale)
+            : await view.toCanvas(scale * ppi / 72, opt);
+        return callback(image, arg);
     }
     // read input from file or stdin
     read(arg._[0] || null)
