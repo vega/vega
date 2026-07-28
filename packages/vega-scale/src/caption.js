@@ -18,6 +18,8 @@ function format(locale, scale, specifier, formatType) {
 
 /**
  * Generate a domain caption for accessibility labels.
+ * If @param ariaLoc and @param formatStr are not provided, labels will only
+ * be emitted in English.
  * @param locale - The number/time formatting locale
  * @param scale - The scale instance
  * @param {object} [opt] - Options (maxlen, format, formatType)
