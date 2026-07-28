@@ -112,6 +112,7 @@ export interface ViewOptions {
   renderer?: Renderers;
   tooltip?: TooltipHandler;
   locale?: LocaleFormatters;
+  ariaLocale?: Record<string, string>;
   expr?: any;
   watchPixelRatio?: boolean;
 }
@@ -225,6 +226,9 @@ export class View {
 
   locale(locale: LocaleFormatters): this;
   locale(): LocaleFormatters;
+
+  ariaLocale(locale: Record<string, string>): this;
+  ariaLocale(): Record<string, string>;
 
   changeset(): Changeset;
 }
