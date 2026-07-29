@@ -317,3 +317,26 @@ tape('Evaluate expressions with white list', t => {
 
   t.end();
 });
+
+tape('Codegen rejects Object.prototype keys whether quoted or not', t => {
+  const codegen = vega.codegenExpression({ globalvar: 'global' });
+  const compile = str => () => codegen(vega.parseExpression(str));
+
+  // Unquoted keys that would shadow Object.prototype members are rejected.
+  t.throws(compile('{toString: 1}'), /Illegal property/);
+  t.throws(compile('{constructor: 1}'), /Illegal property/);
+
+  // Quoted keys must be rejected too. Their key node is a Literal, not an Identifier,
+  // so reading prop.key.name alone (undefined for a Literal) let these bypass the
+  // DisallowedObjectProperties check and compile.
+  t.throws(compile('{"toString": 1}'), /Illegal property/);
+  t.throws(compile('{"constructor": 1}'), /Illegal property/);
+  t.throws(compile('{"__proto__": 1}'), /Illegal property/);
+
+  // Ordinary keys still compile, including numeric literal keys.
+  t.doesNotThrow(compile('{a: 1}'));
+  t.doesNotThrow(compile('{"b": 2}'));
+  t.doesNotThrow(compile('{0: 1}'));
+
+  t.end();
+});
