@@ -22,6 +22,11 @@ tape('timeInterval provides local intervals for time units', t => {
   t.equal(+local(2000, 0, 30), +ti(local(2000, 1, 1)));
   t.equal(+local(2012, 3), +ti(local(2012, 3, 4)));
 
+  // ISO weeks start on Monday rather than Sunday
+  ti = vega.timeInterval('isoweek');
+  t.equal(+local(2000, 0, 31), +ti(local(2000, 1, 1)));
+  t.equal(+local(2012, 3, 2), +ti(local(2012, 3, 4)));
+
   ti = vega.timeInterval('date');
   t.equal(+local(2000, 0, 1), +ti(local(2000, 0, 1, 12)));
   t.equal(+local(2012, 3, 4), +ti(local(2012, 3, 4, 7)));
@@ -72,6 +77,10 @@ tape('utcInterval provides utc intervals for time units', t => {
   ti = vega.utcInterval('week');
   t.equal(+utc(2000, 0, 30), +ti(utc(2000, 1, 1)));
   t.equal(+utc(2012, 3), +ti(utc(2012, 3, 4)));
+
+  ti = vega.utcInterval('isoweek');
+  t.equal(+utc(2000, 0, 31), +ti(utc(2000, 1, 1)));
+  t.equal(+utc(2012, 3, 2), +ti(utc(2012, 3, 4)));
 
   ti = vega.utcInterval('date');
   t.equal(+utc(2000, 0, 1), +ti(utc(2000, 0, 1, 12)));

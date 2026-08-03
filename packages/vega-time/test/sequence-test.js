@@ -19,6 +19,7 @@ tape('timeSequence generates local date sequences', t => {
   test(t, vega.timeSequence, vega.timeOffset, 'quarter', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'month', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'week', local(2012), 10);
+  test(t, vega.timeSequence, vega.timeOffset, 'isoweek', local(2012, 0, 2), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'date', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'day', local(2012), 10);
   test(t, vega.timeSequence, vega.timeOffset, 'dayofyear', local(2012), 10);
@@ -34,6 +35,7 @@ tape('utcSequence generates utc date sequences', t => {
   test(t, vega.utcSequence, vega.utcOffset, 'quarter', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'month', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'week', utc(2012), 10);
+  test(t, vega.utcSequence, vega.utcOffset, 'isoweek', utc(2012, 0, 2), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'date', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'day', utc(2012), 10);
   test(t, vega.utcSequence, vega.utcOffset, 'dayofyear', utc(2012), 10);

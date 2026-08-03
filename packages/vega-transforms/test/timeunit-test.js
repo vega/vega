@@ -8,6 +8,7 @@ const UNITS = [
   'quarter',
   'month',
   'week',
+  'isoweek',
   'date',
   'day',
   'year-quarter',
@@ -15,9 +16,18 @@ const UNITS = [
   'year-month-date',
   'year-week',
   'year-week-day',
+  'year-isoweek',
+  'year-isoweek-day',
   'month-date',
-  'week-day'
+  'week-day',
+  'isoweek-day'
 ];
+
+const ISO_WEEK_ONE = [2014, 11, 29];
+
+function isoRef(date, week, day) {
+  return date(ISO_WEEK_ONE[0], ISO_WEEK_ONE[1], ISO_WEEK_ONE[2] + 7 * (week - 1) + day);
+}
 
 function floor(unit, date) {
   switch (unit) {
@@ -25,6 +35,7 @@ function floor(unit, date) {
     case 'quarter':         return d => date(2012, 3 * d.q, 1);
     case 'month':           return d => date(2012, d.m, 1);
     case 'week':            return d => date(2012, 0, 7 * (d.w - 1) + 1);
+    case 'isoweek':         return d => isoRef(date, d.iw, 0);
     case 'date':            return d => date(2012, 0, d.d);
     case 'day':             return d => date(2012, 0, d.u + 1);
     case 'year-quarter':    return d => date(d.y, 3 * d.q, 1);
@@ -32,8 +43,11 @@ function floor(unit, date) {
     case 'year-month-date': return d => date(d.y, d.m, d.d);
     case 'year-week':       return d => date(d.y, 0, 7 * (d.w - 1) + 1);
     case 'year-week-day':   return d => date(d.y, d.m, d.d);
+    case 'year-isoweek':    return d => date(d.iy, 0, d.w1 + 7 * (d.iw - 1));
+    case 'year-isoweek-day':return d => date(d.y, d.m, d.d);
     case 'month-date':      return d => date(2012, d.m, d.d);
     case 'week-day':        return d => date(2012, 0, 7 * (d.w - 1) + d.u + 1);
+    case 'isoweek-day':     return d => isoRef(date, d.iw, d.iu);
   }
 }
 
@@ -43,6 +57,7 @@ function increment(unit, step) {
     case 'quarter':         return d => inc(d, 'q', step);
     case 'month':           return d => inc(d, 'm', step);
     case 'week':            return d => inc(d, 'w', step);
+    case 'isoweek':         return d => inc(d, 'iw', step);
     case 'date':            return d => inc(d, 'd', step);
     case 'day':             return d => inc(d, 'u', step);
     case 'year-quarter':    return d => inc(d, 'q', step);
@@ -50,8 +65,11 @@ function increment(unit, step) {
     case 'year-month-date': return d => inc(d, 'd', step);
     case 'year-week':       return d => inc(d, 'w', step);
     case 'year-week-day':   return d => inc(d, 'd', step);
+    case 'year-isoweek':    return d => inc(d, 'iw', step);
+    case 'year-isoweek-day':return d => inc(d, 'd', step);
     case 'month-date':      return d => inc(d, 'd', step);
     case 'week-day':        return d => inc(d, 'u', step);
+    case 'isoweek-day':     return d => inc(d, 'iu', step);
   }
 }
 
@@ -78,10 +96,12 @@ function testDates(t, data, unit, step, date) {
 
 tape('TimeUnit truncates dates to time units', t => {
   const data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    // iw is the ISO week number, iy its week-numbering year, w1 the day of January on which
+    // week 1 of iy begins, and iu the ISO day of the week (Monday = 0)
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, iw: 14, iy: 2012, w1: 2, iu: 0},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, iw: 27, iy: 2012, w1: 2, iu: 1},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, iw: 40, iy: 2012, w1: 2, iu: 3}
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
@@ -109,10 +129,10 @@ tape('TimeUnit truncates dates to time units', t => {
 
 tape('TimeUnit truncates UTC dates to time units', t => {
   const data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, iw: 14, iy: 2012, w1: 2, iu: 0},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, iw: 27, iy: 2012, w1: 2, iu: 1},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, iw: 40, iy: 2012, w1: 2, iu: 3}
   ];
   data.forEach(o => o.date = new Date(Date.UTC(o.y, o.m, o.d)));
 
@@ -140,10 +160,10 @@ tape('TimeUnit truncates UTC dates to time units', t => {
 
 tape('TimeUnit supports unit steps', t => {
   const data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, iw: 14, iy: 2012, w1: 2, iu: 0},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, iw: 27, iy: 2012, w1: 2, iu: 1},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, iw: 40, iy: 2012, w1: 2, iu: 3}
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
@@ -173,10 +193,10 @@ tape('TimeUnit supports unit steps', t => {
 
 tape('TimeUnit supports unit inference', t => {
   const data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, iw: 14, iy: 2012, w1: 2, iu: 0},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, iw: 27, iy: 2012, w1: 2, iu: 1},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, iw: 40, iy: 2012, w1: 2, iu: 3}
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
@@ -223,10 +243,10 @@ tape('TimeUnit supports unit inference', t => {
 
 tape('TimeUnit supports unit inference with extent', t => {
   const data = [
-    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0},
-    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1},
-    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2},
-    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4}
+    {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
+    {y: 2012, q: 1, m: 3, d: 2, w: 14, u: 1, iw: 14, iy: 2012, w1: 2, iu: 0},
+    {y: 2012, q: 2, m: 6, d: 3, w: 27, u: 2, iw: 27, iy: 2012, w1: 2, iu: 1},
+    {y: 2012, q: 3, m: 9, d: 4, w: 40, u: 4, iw: 40, iy: 2012, w1: 2, iu: 3}
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
