@@ -15,22 +15,20 @@ const fileProtocol = 'file://';
 /**
  * Factory for a loader constructor that provides methods for requesting
  * files from either the network or disk, and for sanitizing request URIs.
- * @param {function} fetch - The Fetch API for HTTP network requests.
- *   If null or undefined, HTTP loading will be disabled.
  * @param {object} fs - The file system interface for file loading.
  *   If null or undefined, local file loading will be disabled.
  * @return {function} A loader constructor with the following signature:
  *   param {object} [options] - Optional default loading options to use.
  *   return {object} - A new loader instance.
  */
-export default function(fetch, fs) {
+export default function(fs) {
   return options => ({
     options: options || {},
     sanitize: sanitize,
     load: load,
     fileAccess: !!fs,
     file: fileLoader(fs),
-    http: httpLoader(fetch)
+    http: httpLoader
   });
 }
 
@@ -50,7 +48,7 @@ async function load(uri, options) {
 
   return opt.localFile
     ? this.file(url)
-    : this.http(url, options);
+    : this.http(url, options?.http);
 }
 
 /**
@@ -91,7 +89,8 @@ async function sanitize(uri, options) {
   // should we load from file system?
   loadFile = (isFile = uri.startsWith(fileProtocol))
     || options.mode === 'file'
-    || options.mode !== 'http' && !hasProtocol && fileAccess;
+    || (options.mode !== 'http')
+      && !hasProtocol && fileAccess;
 
   if (isFile) {
     // strip file protocol
@@ -160,31 +159,18 @@ async function fileReject() {
 }
 
 /**
- * HTTP request handler factory.
- * @param {function} fetch - The Fetch API method.
- * @return {function} - An http loader with the following signature:
- *   param {string} url - The url to request.
- *   param {object} options - An options hash.
- *   return {Promise} - A promise that resolves to the file contents.
+ * An http loader.
+ * @param {string} url - The url to request.
+ * @param {Partial<RequestInit>} options - An options hash.
+ * @return {Promise} - A promise that resolves to the file contents.
  */
-function httpLoader(fetch) {
-  return fetch
-    ? async function(url, options) {
-        const opt = extend({}, this.options.http, options),
-              type = options && options.response,
-              response = await fetch(url, opt);
+async function httpLoader(url, options) {
+  const opt = extend({}, this.options.http, options),
+        type = options && options.response,
+        response = await fetch(url, opt);
 
-        return !response.ok
-          ? error(response.status + '' + response.statusText)
-          : isFunction(response[type]) ? response[type]()
-          : response.text();
-      }
-    : httpReject;
-}
-
-/**
- * Default http request handler that simply rejects.
- */
-async function httpReject() {
-  error('No HTTP fetch method available.');
+  return !response.ok
+    ? error(response.status + '' + response.statusText)
+    : isFunction(response[type]) ? response[type]()
+    : response.text();
 }

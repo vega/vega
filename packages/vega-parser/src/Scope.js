@@ -1,15 +1,15 @@
-import DataScope from './DataScope';
+import DataScope from './DataScope.js';
 
 import {
   Compare, Expression, Field, Key, Projection, Proxy, Scale, Sieve
-} from './transforms';
+} from './transforms.js';
 
 import {
   Ascending, Entry, aggrField, compareRef, fieldRef, isExpr,
   isSignal, keyRef, operator, ref
-} from './util';
+} from './util.js';
 
-import parseScope from './parsers/scope';
+import parseScope from './parsers/scope.js';
 import {parseExpression} from 'vega-functions';
 
 import {

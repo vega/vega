@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../index.js';
 
 function regexEqual(x, y) {
   return (x instanceof RegExp) && (y instanceof RegExp) &&
@@ -212,6 +212,10 @@ tape('Evaluate expressions with white list', t => {
   t.equal(evaluate('trim(" 123 ")'), ' 123 '.trim());
   t.equal(evaluate('parseFloat("3.14")'), parseFloat('3.14'));
   t.equal(evaluate('parseInt("42")'),parseInt('42'));
+  t.equal(evaluate('btoa("a")'),  btoa('a'));
+  t.equal(evaluate('atob("YQ==")'), atob('YQ=='));
+  t.equal(evaluate('encodeURIComponent("hello world")'), encodeURIComponent('hello world'));
+  t.equal(evaluate('encodeURIComponent("a=b&c=d")'), encodeURIComponent('a=b&c=d'));
 
   // should eval regular expression functions
   t.equal(evaluate('test(/ain/, "spain")'), /ain/.test('spain'));

@@ -1,10 +1,10 @@
-import Renderer from './Renderer';
-import Bounds from './Bounds';
-import marks from './marks/index';
+import Renderer from './Renderer.js';
+import Bounds from './Bounds.js';
+import marks from './marks/index.js';
 
-import {domClear} from './util/dom';
-import clip from './util/canvas/clip';
-import resize from './util/canvas/resize';
+import {domClear} from './util/dom.js';
+import clip from './util/canvas/clip.js';
+import resize from './util/canvas/resize.js';
 import {canvas} from 'vega-canvas';
 import {error} from 'vega-util';
 

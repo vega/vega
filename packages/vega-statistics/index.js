@@ -1,41 +1,41 @@
-export {default as bandwidthNRD} from './src/bandwidth';
-export {default as bin} from './src/bin';
-export {default as bootstrapCI} from './src/bootstrapCI';
-export {default as dotbin} from './src/dotbin';
-export {default as quantiles} from './src/quantiles';
-export {default as quartiles} from './src/quartiles';
-export {random, setRandom} from './src/random';
-export {default as randomLCG} from './src/lcg';
-export {default as randomInteger} from './src/integer';
-export {default as randomKDE} from './src/kde';
+export {default as bandwidthNRD} from './src/bandwidth.js';
+export {default as bin} from './src/bin.js';
+export {default as bootstrapCI} from './src/bootstrapCI.js';
+export {default as dotbin} from './src/dotbin.js';
+export {default as quantiles} from './src/quantiles.js';
+export {default as quartiles} from './src/quartiles.js';
+export {random, setRandom} from './src/random.js';
+export {default as randomLCG} from './src/lcg.js';
+export {default as randomInteger} from './src/integer.js';
+export {default as randomKDE} from './src/kde.js';
 export {
   default as randomLogNormal,
   sampleLogNormal,
   densityLogNormal,
   cumulativeLogNormal,
   quantileLogNormal
-} from './src/lognormal';
-export {default as randomMixture} from './src/mixture';
+} from './src/lognormal.js';
+export {default as randomMixture} from './src/mixture.js';
 export {
   default as randomNormal,
   sampleNormal,
   densityNormal,
   cumulativeNormal,
   quantileNormal
-} from './src/normal';
+} from './src/normal.js';
 export {
   default as randomUniform,
   sampleUniform,
   densityUniform,
   cumulativeUniform,
   quantileUniform
-} from './src/uniform';
-export {default as regressionConstant} from './src/regression/constant';
-export {default as regressionLinear} from './src/regression/linear';
-export {default as regressionLog} from './src/regression/log';
-export {default as regressionExp} from './src/regression/exp';
-export {default as regressionPow} from './src/regression/pow';
-export {default as regressionQuad} from './src/regression/quad';
-export {default as regressionPoly} from './src/regression/poly';
-export {default as regressionLoess} from './src/regression/loess';
-export {default as sampleCurve} from './src/sampleCurve';
+} from './src/uniform.js';
+export {default as regressionConstant} from './src/regression/constant.js';
+export {default as regressionLinear} from './src/regression/linear.js';
+export {default as regressionLog} from './src/regression/log.js';
+export {default as regressionExp} from './src/regression/exp.js';
+export {default as regressionPow} from './src/regression/pow.js';
+export {default as regressionQuad} from './src/regression/quad.js';
+export {default as regressionPoly} from './src/regression/poly.js';
+export {default as regressionLoess} from './src/regression/loess.js';
+export {default as sampleCurve} from './src/sampleCurve.js';

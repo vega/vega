@@ -1,7 +1,7 @@
-import Renderer from './Renderer';
-import SVGRenderer from './SVGRenderer';
-import CanvasRenderer from './CanvasRenderer';
-import {domChild} from './util/dom';
+import Renderer from './Renderer.js';
+import SVGRenderer from './SVGRenderer.js';
+import CanvasRenderer from './CanvasRenderer.js';
+import {domChild} from './util/dom.js';
 
 /**
  * @typedef {Object} HybridRendererOptions

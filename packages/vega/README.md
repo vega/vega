@@ -10,18 +10,12 @@ For documentation, tutorials, and examples, see the [Vega website](https://vega.
 
 ## Install
 
-Use npm or yarn to install Vega for use in third-party libraries or applications.
+Use npm to install Vega for use in third-party libraries or applications.
 
 Using npm:
 
 ```sh
 npm install vega
-```
-
-or using yarn:
-
-```sh
-yarn add vega
 ```
 
 If you would like to install the Vega command line utilities (`vg2pdf`, `vg2png`, `vg2svg`), see the [`vega-cli` package](https://github.com/vega/vega/tree/master/packages/vega-cli).
@@ -38,5 +32,5 @@ Read about future plans in [our roadmap](https://docs.google.com/document/d/1fsc
 
 This package builds the bundled Vega library files and the JSON schema. It also includes a high-level test suite. If performing local development:
 
-- Run `yarn build` to build both browser and node.js bundles.
-- Run `yarn test` to run the test suite.
+- Run `npm run build` to build both browser and node.js bundles.
+- Run `npm test` to run the test suite.

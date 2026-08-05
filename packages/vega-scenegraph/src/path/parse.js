@@ -1,5 +1,5 @@
 const paramCounts = { m:2, l:2, h:1, v:1, z:0, c:6, s:4, q:4, t:2, a:7 };
-const commandPattern = /[mlhvzcsqta]([^mlhvzcsqta]+|$)/gi;
+const commandPattern = /[mlhvzcsqta]([^mlhvzcsqta]*)/gi;
 const numberPattern = /^[+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)|([0-9]+))([eE][+-]?[0-9]+)?/;
 const spacePattern = /^((\s+,?\s*)|(,\s*))/;
 const flagPattern = /^[01]/;

@@ -1,0 +1,428 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Donut with non-overlapping labels.",
+  "width": 200,
+  "height": 200,
+  "autosize": "pad",
+  "padding": 30,
+  "signals": [
+    {
+      "name": "startAngle",
+      "value": 0,
+      "bind": {"input": "range", "min": 0, "max": 6.29, "step": 0.01}
+    },
+    {
+      "name": "sortField",
+      "update": "''",
+      "description": "Sort field if desired"
+    },
+    {
+      "name": "sortOrder",
+      "update": "''",
+      "description": "Sort order if desired (ascending or descending)"
+    },
+    {
+      "name": "labelFontSize",
+      "init": "12",
+      "description": "The font size used for labels"
+    },
+    {
+      "name": "labelHeight",
+      "update": "labelFontSize",
+      "description": "This is approximately the same as the label font size but can be adjusted if you want extra padding"
+    },
+    {"name": "innerRadius", "update": "60"},
+    {"name": "outerRadius", "update": "100"},
+    {
+      "name": "counter",
+      "description": "Counter used to loop through an array",
+      "value": 0,
+      "on": [
+        {
+          "events": {"type": "timer", "throttle": 0},
+          "update": "counter<length(data('labelPositions'))?counter + 1:counter"
+        },
+        {"events": {"signal": "leftRightCount"}, "update": "0"}
+      ]
+    },
+    {
+      "name": "shiftArray",
+      "description": "An array of shift positions",
+      "update": "{right: leftRightCount.right!=0? pluck(data('labelPositions')[0]['shiftArray'],'shift'):[], left: leftRightCount.left!=0? pluck(data('labelPositions')[leftRightCount.right]['shiftArray'],'shift'):[]}"
+    },
+    {
+      "name": "leftRightCountArray",
+      "description": "Array of label sides",
+      "update": "reverse(sort( pluck( data('labelPositions'), 'side')))"
+    },
+    {
+      "name": "leftRightCount",
+      "description": "Count of  label sides",
+      "update": "{right:lastindexof(leftRightCountArray,'right')+1,left:length(leftRightCountArray)- (lastindexof(leftRightCountArray,'right')+1)}"
+    },
+    {
+      "name": "p1",
+      "description": "Used to loop through position array one element at a time with a running sum but reseting the counter to 0 if it ever goes negative",
+      "value": {"right": 0, "left": 0},
+      "on": [
+        {
+          "events": {"signal": "leftRightCount"},
+          "update": "{'right': 0, 'left': 0}"
+        },
+        {
+          "events": {"signal": "counter"},
+          "update": "{right:shiftArray.right[counter-1]+p1.right<0?0:shiftArray.right[counter-1]+p1.right, left:shiftArray.left[counter-1]+p1.left<0?0:shiftArray.left[counter-1]+p1.left}",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "p2",
+      "description": "Used to reassemble the position array as a string with final shift positions",
+      "value": {"right": [], "left": []},
+      "on": [
+        {
+          "events": {"signal": "leftRightCount"},
+          "update": "{'right': [], 'left': []}"
+        },
+        {
+          "events": {"signal": "p1"},
+          "update": "{right:length(p2.right)!=0? p1.right+','+p2.right:p1.right,left:length(p2.left)!=0? p1.left+','+p2.left:p1.left}"
+        }
+      ]
+    },
+    {
+      "name": "shiftArrayRunning",
+      "description": "Converts a string to an array and reverses",
+      "update": "{right:reverse(split(p2.right,',')),left:reverse(split(p2.left,','))}"
+    }
+  ],
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"id": "United States", "value": 1},
+        {"id": "France", "value": 1},
+        {"id": "Germany", "value": 1},
+        {"id": "Italy", "value": 1},
+        {"id": "UK", "value": 1},
+        {"id": "Canada", "value": 10},
+        {"id": "China", "value": 3},
+        {"id": "India", "value": 7},
+        {"id": "Argentina", "value": 8}
+      ],
+      "transform": [
+        {
+          "type": "collect",
+          "sort": {
+            "field": {"signal": "sortField"},
+            "order": {"signal": "sortOrder"}
+          }
+        },
+        {
+          "type": "pie",
+          "field": "value",
+          "startAngle": {"signal": "startAngle"},
+          "endAngle": {"signal": "round((2*PI)*10000)/10000+startAngle"}
+        },
+        {
+          "type": "formula",
+          "as": "middleAngle",
+          "expr": " (((datum.endAngle - datum.startAngle)/2) + datum.startAngle)-PI/2"
+        },
+        {
+          "type": "formula",
+          "as": "side",
+          "expr": "datum.middleAngle + PI/2  <= PI || datum.middleAngle + PI/2 >= 2*PI && datum.middleAngle + PI/2 <= PI*3?'right':'left'"
+        },
+        {
+          "type": "formula",
+          "as": "x1",
+          "expr": " (outerRadius *cos(datum.middleAngle))+width/2 "
+        },
+        {
+          "type": "formula",
+          "as": "y1",
+          "expr": " (outerRadius*sin(datum.middleAngle))+width/2 "
+        },
+        {
+          "type": "formula",
+          "as": "x2",
+          "expr": " ((outerRadius+10)*cos(datum.middleAngle))+width/2 "
+        },
+        {
+          "type": "formula",
+          "as": "y2",
+          "expr": " ((outerRadius+10)*sin(datum.middleAngle))+width/2 "
+        },
+        {
+          "type": "formula",
+          "as": "x3",
+          "expr": "datum.side== 'right'?outerRadius+(width/2)+20:(width/2)-outerRadius-20"
+        },
+        {"type": "formula", "as": "bin", "expr": "0"}
+      ]
+    },
+    {
+      "name": "leftExt",
+      "source": ["table"],
+      "transform": [
+        {"type": "filter", "expr": "datum.side=='left'"},
+        {"type": "extent", "field": "y2", "signal": "leftExt"}
+      ]
+    },
+    {
+      "name": "rightExt",
+      "source": ["table"],
+      "transform": [
+        {"type": "filter", "expr": "datum.side=='right'"},
+        {"type": "extent", "field": "y2", "signal": "rightExt"}
+      ]
+    },
+    {
+      "name": "labelSequenceRight",
+      "transform": [
+        {
+          "type": "sequence",
+          "start": {"signal": "rightExt[0]"},
+          "stop": {"signal": "(rightExt[1]+labelHeight)"},
+          "step": {"signal": "labelHeight"},
+          "as": "bin"
+        },
+        {"type": "formula", "expr": "'right'", "as": "side"}
+      ]
+    },
+    {
+      "name": "labelSequenceLeft",
+      "transform": [
+        {
+          "type": "sequence",
+          "start": {"signal": "leftExt[0]"},
+          "stop": {"signal": "(leftExt[1]+labelHeight)"},
+          "step": {"signal": "labelHeight"},
+          "as": "bin"
+        },
+        {"type": "formula", "expr": "'left'", "as": "side"}
+      ]
+    },
+    {
+      "name": "labelBinsRight",
+      "source": ["rightExt", "labelSequenceRight"],
+      "transform": [
+        {
+          "type": "bin",
+          "field": "y2",
+          "step": {"signal": "labelHeight"},
+          "extent": {"signal": "rightExt"},
+          "interval": false,
+          "as": ["binTemp", "bin1"],
+          "nice": false
+        },
+        {
+          "type": "formula",
+          "expr": "datum.bin==0?datum.binTemp:datum.bin",
+          "as": "bin"
+        }
+      ]
+    },
+    {
+      "name": "labelBinsLeft",
+      "source": ["leftExt", "labelSequenceLeft"],
+      "transform": [
+        {
+          "type": "bin",
+          "field": "y2",
+          "step": {"signal": "labelHeight"},
+          "extent": {"signal": "leftExt"},
+          "interval": false,
+          "as": ["binTemp", "bin1"],
+          "nice": false
+        },
+        {
+          "type": "formula",
+          "expr": "datum.bin==0?datum.binTemp:datum.bin",
+          "as": "bin"
+        }
+      ]
+    },
+    {
+      "name": "labelPositions",
+      "source": ["labelBinsLeft", "labelBinsRight"],
+      "transform": [
+        {
+          "type": "joinaggregate",
+          "ops": ["count"],
+          "as": ["count"],
+          "groupby": ["side", "bin"]
+        },
+        {"type": "filter", "expr": "datum.value != null || datum.count == 1"},
+        {"type": "formula", "expr": "datum.count-1", "as": "count"},
+        {
+          "type": "collect",
+          "sort": {
+            "field": ["side", "bin"],
+            "order": ["descending", "ascending"]
+          }
+        },
+        {
+          "type": "window",
+          "sort": {"field": ["bin", "y2"], "order": ["ascending", "ascending"]},
+          "ops": ["row_number"],
+          "as": ["index"],
+          "groupby": ["side"]
+        },
+        {
+          "type": "window",
+          "sort": {"field": "index", "order": "ascending"},
+          "ops": ["row_number"],
+          "groupby": ["side", "bin"]
+        },
+        {
+          "type": "formula",
+          "expr": "datum.value==0?0:datum.row_number",
+          "as": "row_number"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.value==null?-labelHeight:datum.row_number==1?0:labelHeight",
+          "as": "shift"
+        },
+        {
+          "type": "collect",
+          "sort": {
+            "field": ["side", "index"],
+            "order": ["descending", "ascending"]
+          }
+        },
+        {
+          "type": "joinaggregate",
+          "ops": ["values"],
+          "as": ["shiftArray"],
+          "fields": ["shift"],
+          "groupby": ["side"]
+        }
+      ]
+    },
+    {
+      "name": "labelPositionsFinal",
+      "source": ["labelPositions"],
+      "transform": [
+        {
+          "type": "collect",
+          "sort": {
+            "field": ["side", "index"],
+            "order": ["descending", "ascending"]
+          }
+        },
+        {
+          "type": "formula",
+          "expr": "datum.side=='right'?toNumber(shiftArrayRunning.right[datum.index-1]):toNumber(shiftArrayRunning.left[datum.index-1])",
+          "as": "shiftArrayRunning"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.shiftArrayRunning+datum.bin",
+          "as": "binShifted"
+        },
+        {
+          "type": "formula",
+          "as": "x4",
+          "expr": "datum.side== 'right'?outerRadius+(width/2)+25:(width/2)-outerRadius-25"
+        },
+        {
+          "type": "window",
+          "sort": {"field": "index", "order": "ascending"},
+          "ops": ["lead"],
+          "fields": ["shift"],
+          "groupby": ["side"]
+        },
+        {
+          "type": "formula",
+          "as": "y4",
+          "expr": "datum.y2>datum.binShifted&&datum.lead_shift<0?datum.y2:datum.binShifted"
+        },
+        {
+          "type": "formula",
+          "as": "labelPath",
+          "expr": "datum.value==null?'': 'M '+ datum.x1 + ' ' + datum.y1 + 'L'+ datum.x2 + ' ' + datum.y2 + ' H'+ datum.x3  +'L '+ datum.x4 + ' ' + datum.y4 "
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "id"},
+      "range": {"scheme": "category20"}
+    }
+  ],
+  "marks": [
+    {
+      "type": "arc",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "id"},
+          "x": {"signal": "width / 2"},
+          "y": {"signal": "height / 2"},
+          "stroke": {"value": "white"}
+        },
+        "update": {
+          "startAngle": {"field": "startAngle"},
+          "endAngle": {"field": "endAngle"},
+          "innerRadius": {"signal": "innerRadius"},
+          "outerRadius": {"signal": "outerRadius"}
+        }
+      }
+    },
+    {
+      "type": "path",
+      "name": "labelPath",
+      "from": {"data": "labelPositionsFinal"},
+      "encode": {
+        "update": {
+          "strokeWidth": {"value": 1},
+          "path": {"field": "labelPath"},
+          "stroke": {"value": "grey"},
+          "opacity": {"value": 0.7}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "labelPositionsFinal"},
+      "description": "Debug boxes. Opacity is set to zero but can be changed to better understand how the bins are being layed out",
+      "encode": {
+        "update": {
+          "x": {"field": "x4"},
+          "y": {"field": "y4"},
+          "width": {"value": 20},
+          "height": {"signal": "labelHeight"},
+          "strokeWidth": {"value": 2},
+          "stroke": {"value": "grey"},
+          "fill": {"value": "#4682b4"},
+          "opacity": {"signal": "datum.value==null?0:0"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "name": "labels",
+      "from": {"data": "labelPositionsFinal"},
+      "encode": {
+        "update": {
+          "text": {"field": "id"},
+          "opacity": {"value": 0.6},
+          "fill": {"value": "black"},
+          "baseline": {"value": "middle"},
+          "align": {"signal": "datum.side=='left'?'right':'left'"},
+          "dx": {"signal": "datum.side=='left'?-3:3"},
+          "x": {"field": "x4"},
+          "y": {"field": "y4"},
+          "fontSize": {"signal": "labelFontSize"}
+        }
+      }
+    }
+  ]
+}

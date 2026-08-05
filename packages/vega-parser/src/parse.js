@@ -1,6 +1,6 @@
-import parseView from './parsers/view';
-import Scope from './Scope';
-import defaults from './config';
+import parseView from './parsers/view.js';
+import Scope from './Scope.js';
+import defaults from './config.js';
 import {error, isObject, mergeConfig} from 'vega-util';
 
 export default function(spec, config, options) {

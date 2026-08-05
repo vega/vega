@@ -1,6 +1,6 @@
-import Bounds from './Bounds';
-import GroupItem from './GroupItem';
-import {sceneFromJSON, sceneToJSON} from './util/serialize';
+import Bounds from './Bounds.js';
+import GroupItem from './GroupItem.js';
+import {sceneFromJSON, sceneToJSON} from './util/serialize.js';
 
 export default class Scenegraph {
   constructor(scene) {

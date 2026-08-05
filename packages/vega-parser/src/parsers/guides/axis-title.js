@@ -1,10 +1,10 @@
-import {getSign, ifTop, ifX, ifY, mult, patch} from './axis-util';
-import {Bottom, GuideTitleStyle, Top, one, zero} from './constants';
-import guideMark from './guide-mark';
-import {alignExpr, anchorExpr, lookup} from './guide-util';
-import {addEncoders, encoder, has} from '../encode/util';
-import {TextMark} from '../marks/marktypes';
-import {AxisTitleRole} from '../marks/roles';
+import {getSign, ifTop, ifX, ifY, mult, patch} from './axis-util.js';
+import {Bottom, GuideTitleStyle, Top, one, zero} from './constants.js';
+import guideMark from './guide-mark.js';
+import {alignExpr, anchorExpr, lookup} from './guide-util.js';
+import {addEncoders, encoder, has} from '../encode/util.js';
+import {TextMark} from '../marks/marktypes.js';
+import {AxisTitleRole} from '../marks/roles.js';
 import {extend} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef) {

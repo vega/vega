@@ -1,5 +1,5 @@
-import Handler from './Handler';
-import Marks from './marks/index';
+import Handler from './Handler.js';
+import Marks from './marks/index.js';
 import {
   ClickEvent,
   DragEnterEvent, DragLeaveEvent, DragOverEvent, Events, HrefEvent,
@@ -8,9 +8,9 @@ import {
   PointerDownEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent,
   TooltipHideEvent, TooltipShowEvent,
   TouchEndEvent, TouchMoveEvent, TouchStartEvent
-} from './util/events';
-import point from './util/point';
-import {domFind} from './util/dom';
+} from './util/events.js';
+import point from './util/point.js';
+import {domFind} from './util/dom.js';
 
 export default class CanvasHandler extends Handler {
   constructor(loader, tooltip) {

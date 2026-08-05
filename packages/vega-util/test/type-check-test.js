@@ -1,5 +1,5 @@
-var tape = require('tape'),
-    vega = require('../');
+import tape from 'tape';
+import * as vega from '../build/index.js';
 
 tape('isArray tests arrays', t => {
   t.equal(vega.isArray([]), true);

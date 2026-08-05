@@ -1,4 +1,4 @@
-import {bezier, segments} from './arc';
+import {bezier, segments} from './arc.js';
 
 const temp = ['l', 0, 0, 0, 0, 0, 0, 0];
 

@@ -1,4 +1,4 @@
-import {shape} from '../path/shapes';
-import markItemPath from './markItemPath';
+import {shape} from '../path/shapes.js';
+import markItemPath from './markItemPath.js';
 
 export default markItemPath('shape', shape);

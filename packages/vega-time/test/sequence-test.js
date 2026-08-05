@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+import tape from 'tape';
+import * as vega from '../index.js';
+import { local, utc } from './util.js';
 
 function test(t, sequence, offset, unit, start, steps) {
   const seq1 = range(steps).map(s => +offset(unit, start, s)),

@@ -1,5 +1,5 @@
-import Bounds from '../Bounds';
-import marks from '../marks/index';
+import Bounds from '../Bounds.js';
+import marks from '../marks/index.js';
 
 export default function(item, func, opt) {
   var type = marks[item.mark.marktype],

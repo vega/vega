@@ -1,5 +1,5 @@
-import {has} from './util';
-import {FrameRole, MarkRole} from '../marks/roles';
+import {has} from './util.js';
+import {FrameRole, MarkRole} from '../marks/roles.js';
 import {array, extend} from 'vega-util';
 
 export default function(encode, type, role, style, config) {

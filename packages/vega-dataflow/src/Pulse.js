@@ -1,4 +1,4 @@
-import {tupleid} from './Tuple';
+import {tupleid} from './Tuple.js';
 import {isArray, visitArray} from 'vega-util';
 
 /**

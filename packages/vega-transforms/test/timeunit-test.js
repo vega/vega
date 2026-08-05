@@ -1,11 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    field = util.field,
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    TimeUnit = tx.timeunit;
+import tape from 'tape';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { extent, field } from 'vega-util';
+import { collect as Collect, timeunit as TimeUnit } from '../index.js';
 
 const UNITS = [
   'year',
@@ -89,7 +85,7 @@ tape('TimeUnit truncates dates to time units', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
@@ -120,7 +116,7 @@ tape('TimeUnit truncates UTC dates to time units', t => {
   ];
   data.forEach(o => o.date = new Date(Date.UTC(o.y, o.m, o.d)));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),
@@ -151,7 +147,7 @@ tape('TimeUnit supports unit steps', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year', 'month']),
       step = df.add(1),
@@ -184,7 +180,7 @@ tape('TimeUnit supports unit inference', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       bins = df.add(12),
       c = df.add(Collect),
@@ -234,10 +230,10 @@ tape('TimeUnit supports unit inference with extent', t => {
   ];
   data.forEach(o => o.date = new Date(o.y, o.m, o.d));
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       bins = df.add(12),
-      ext = df.add(util.extent(data, date)),
+      ext = df.add(extent(data, date)),
       c = df.add(Collect),
       s = df.add(TimeUnit, {
         field: date,
@@ -265,10 +261,98 @@ tape('TimeUnit supports unit inference with extent', t => {
   t.end();
 });
 
+tape('TimeUnit infers units from discretized data', t => {
+  const data = [
+    {date: new Date(2012, 0, 1)},
+    {date: new Date(2012, 1, 1)},
+    {date: new Date(2012, 2, 1)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'month']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +localDate(2012, 0, 1));
+  t.equal(+data[0].unit1, +localDate(2012, 1, 1));
+
+  t.end();
+});
+
+tape('TimeUnit infers units in UTC time', t => {
+  const data = [
+    {date: utcDate(2012, 0, 1)},
+    {date: utcDate(2012, 1, 1)},
+    {date: utcDate(2012, 2, 1)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, timezone: 'utc', field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'month']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +utcDate(2012, 0, 1));
+  t.equal(+data[0].unit1, +utcDate(2012, 1, 1));
+
+  t.end();
+});
+
+tape('TimeUnit infers week units', t => {
+  const data = [
+    {date: new Date(2012, 0, 8)},
+    {date: new Date(2012, 0, 15)},
+    {date: new Date(2012, 0, 22)}
+  ];
+
+  var df = new Dataflow(),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'week']);
+  t.equal(s.value.step, 1);
+  t.equal(+data[0].unit0, +localDate(2012, 0, 8));
+  t.equal(+data[0].unit1, +localDate(2012, 0, 15));
+
+  t.end();
+});
+
+tape('TimeUnit warns if inferUnits overrides other parameters', t => {
+  const data = [
+    {date: new Date(2012, 0, 1)},
+    {date: new Date(2012, 1, 1)}
+  ];
+  const warnings = [];
+
+  var df = new Dataflow().logger({
+        level() {},
+        error() {},
+        warn: msg => warnings.push(msg),
+        info() {},
+        debug() {}
+      }),
+      date = field('date'),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {inferUnits: true, units: ['year'], field: date, pulse: c});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.equal(warnings.length, 1);
+  t.deepEqual(s.value.units, ['year', 'month']);
+
+  t.end();
+});
+
 tape('TimeUnit supports point output', t => {
   const data = [{date: new Date(2012, 0, 1)}];
 
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       date = field('date'),
       units = df.add(['year']),
       c = df.add(Collect),

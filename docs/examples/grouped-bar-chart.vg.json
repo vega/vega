@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A basic grouped bar chart example.",
   "width": 300,
   "height": 240,
@@ -82,7 +82,7 @@
           "name": "pos",
           "type": "band",
           "range": "height",
-          "domain": {"data": "facet", "field": "position"}
+          "domain": {"data": "table", "field": "position"}
         }
       ],
 

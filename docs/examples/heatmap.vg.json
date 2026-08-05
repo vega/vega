@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A heatmap showing average daily temperatures in Seattle for each hour of the day.",
   "width": 800,
   "height": 500,

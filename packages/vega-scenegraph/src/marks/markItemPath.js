@@ -1,10 +1,10 @@
-import boundStroke from '../bound/boundStroke';
-import context from '../bound/boundContext';
-import {intersectPath} from '../util/intersect';
-import {drawAll} from '../util/canvas/draw';
-import {pickPath} from '../util/canvas/pick';
-import {rotateItem} from '../util/svg/transform';
-import {DegToRad} from '../util/constants';
+import boundStroke from '../bound/boundStroke.js';
+import context from '../bound/boundContext.js';
+import {intersectPath} from '../util/intersect.js';
+import {drawAll} from '../util/canvas/draw.js';
+import {pickPath} from '../util/canvas/pick.js';
+import {rotateItem} from '../util/svg/transform.js';
+import {DegToRad} from '../util/constants.js';
 
 export default function(type, shape, isect) {
 
@@ -15,7 +15,7 @@ export default function(type, shape, isect) {
 
   function bound(bounds, item) {
     shape(context(bounds, item.angle), item);
-    return boundStroke(bounds, item).translate(item.x || 0, item.y || 0);
+    return boundStroke(bounds, item, true).translate(item.x || 0, item.y || 0);
   }
 
   function draw(context, item) {

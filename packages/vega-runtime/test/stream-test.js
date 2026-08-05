@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    runtime = require('../'),
-    events = require('./events');
+import tape from 'tape';
+import { Dataflow } from 'vega-dataflow';
+import * as runtime from '../index.js';
+import {events, fire} from './events.js';
 
 tape('Parser parses event streams', t => {
 
@@ -17,9 +17,9 @@ tape('Parser parses event streams', t => {
     ]
   };
 
-  const df = new vega.Dataflow();
-  df.events = events.events;
-  df.fire = events.fire;
+  const df = new Dataflow();
+  df.events = events;
+  df.fire = fire;
 
   var ctx = runtime.context(df, {}).parse(spec),
       streams = ctx.nodes,

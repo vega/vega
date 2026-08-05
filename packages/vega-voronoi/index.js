@@ -1,1 +1,1 @@
-export {default as voronoi} from './src/Voronoi';
+export {default as voronoi} from './src/Voronoi.js';

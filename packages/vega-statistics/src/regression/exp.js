@@ -1,9 +1,8 @@
-import ols from './ols';
-import {points, visitPoints} from './points';
-import rSquared from './r-squared';
+import ols from './ols.js';
+import {points, visitPoints} from './points.js';
+import rSquared from './r-squared.js';
 
 export default function(data, x, y) {
-  // eslint-disable-next-line no-unused-vars
   const [xv, yv, ux, uy] = points(data, x, y);
   let YL = 0, XY = 0, XYL = 0, X2Y = 0, n = 0, dx, ly, xy;
 

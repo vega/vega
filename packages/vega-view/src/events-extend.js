@@ -1,4 +1,4 @@
-import {offset} from './render-size';
+import {offset} from './render-size.js';
 import {constant, isString} from 'vega-util';
 import {point} from 'vega-scenegraph';
 

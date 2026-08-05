@@ -1,8 +1,8 @@
-import curves from './curves';
-import symbols from './symbols';
+import curves from './curves.js';
+import symbols from './symbols.js';
 
-import {default as vg_rect} from './rectangle';
-import {default as vg_trail} from './trail';
+import {default as vg_rect} from './rectangle.js';
+import {default as vg_trail} from './trail.js';
 
 import {
   arc as d3_arc,

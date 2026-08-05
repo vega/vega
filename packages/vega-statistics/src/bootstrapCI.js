@@ -1,5 +1,5 @@
-import numbers from './numbers';
-import {random} from './random';
+import numbers from './numbers.js';
+import {random} from './random.js';
 import {ascending, quantile} from 'd3-array';
 
 export default function(array, samples, alpha, f) {

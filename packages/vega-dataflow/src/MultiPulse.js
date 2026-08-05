@@ -1,4 +1,4 @@
-import Pulse from './Pulse';
+import Pulse from './Pulse.js';
 import {error, inherits, isArray} from 'vega-util';
 
 /**

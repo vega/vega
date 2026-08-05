@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "A quantile-quantile plot example, comparing distributions by quantile values.",
   "padding": 5,
 

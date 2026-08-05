@@ -1,7 +1,7 @@
-var tape = require('tape'),
-    vega = require('../'),
-    locale = vega.numberFormatDefaultLocale(),
-    {deDE} = require('./util');
+import tape from 'tape';
+import * as vega from '../index.js';
+import { deDE } from './util.js';
+var locale = vega.numberFormatDefaultLocale();
 
 tape('format formats numbers', t => {
   t.equal(locale.format('.1f')(0.16), '0.2');

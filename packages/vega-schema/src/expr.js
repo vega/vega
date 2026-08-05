@@ -1,4 +1,4 @@
-import { object, stringType } from './util';
+import { object, stringType } from './util.js';
 
 const expr = object({
   _expr_: stringType,

@@ -1,5 +1,5 @@
-import Parameters from './Parameters';
-import UniqueList from './util/UniqueList';
+import Parameters from './Parameters.js';
+import UniqueList from './util/UniqueList.js';
 import {array, error, id, isArray} from 'vega-util';
 
 let OP_ID = 0;

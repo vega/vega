@@ -1,7 +1,7 @@
-import { SignalRef } from '.';
-import { Color } from './color';
-import { Cursor, StrokeCap, StrokeJoin } from './config.d';
-import { TitleAnchor } from './title';
+import { SignalRef } from '../index.js';
+import { Color } from './color.js';
+import { Cursor, StrokeCap, StrokeJoin } from './config.d.js';
+import { TitleAnchor } from './title.js';
 
 export type Field = string | SignalRef | DatumFieldRef | GroupFieldRef | ParentFieldRef;
 
@@ -398,19 +398,7 @@ export type TextBaseline = 'alphabetic' | Baseline | 'line-top' | 'line-bottom';
 export type TextDirection = 'ltr' | 'rtl';
 
 export type FontWeight =
-  | 'normal'
-  | 'bold'
-  | 'lighter'
-  | 'bolder'
-  | 100
-  | 200
-  | 300
-  | 400
-  | 500
-  | 600
-  | 700
-  | 800
-  | 900;
+  'normal' | 'bold' | 'lighter' | 'bolder' | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 
 // see https://developer.mozilla.org/en-US/docs/Web/CSS/font-style#Values
 export type FontStyle = 'normal' | 'italic' | 'oblique' | string;
@@ -446,12 +434,4 @@ export interface Encodable<T> {
 export type Encode<T> = Partial<Record<EncodeEntryName, T>>;
 
 export type EncodeEntryName =
-  | 'enter'
-  | 'update'
-  | 'exit'
-  | 'hover'
-  | 'leave'
-  | 'select'
-  | 'release'
-  | 'focusin'
-  | 'focusout';
+  'enter' | 'update' | 'exit' | 'hover' | 'leave' | 'select' | 'release' | 'focusin' | 'focusout';

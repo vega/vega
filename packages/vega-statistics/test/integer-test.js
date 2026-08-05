@@ -1,5 +1,6 @@
-var tape = require('tape'),
-    integer = require('../').randomInteger;
+import tape from 'tape';
+import { randomInteger } from '../index.js';
+var integer = { randomInteger }.randomInteger;
 
 tape('integer generates random values', t => {
   let s = integer(10).sample();

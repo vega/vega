@@ -1,12 +1,8 @@
-var tape = require('tape'),
-    vega = require('../'),
-    context = vega.path,
-    Bounds = vega.Bounds,
-    pathParse = vega.pathParse,
-    pathRender = vega.pathRender;
+import tape from 'tape';
+import {Bounds, boundContext, path as context, pathEqual, pathParse, pathRender} from '../index.js';
 
 function bound(path, bounds) {
-  pathRender(vega.boundContext(bounds), path, 0, 0);
+  pathRender(boundContext(bounds), path, 0, 0);
   return bounds;
 }
 
@@ -159,6 +155,25 @@ tape('pathParse should handle implicit m lineTo', t => {
   t.end();
 });
 
+tape('pathParse should handle Z followed by command without space', t => {
+  // Issue #4072: Z immediately followed by another command was being dropped
+  const s1 = 'M-1-1H1V1H-1ZM0-1 0 1';
+  const p1 = [['M',-1,-1], ['H',1], ['V',1], ['H',-1], ['Z'], ['M',0,-1], ['L',0,1]];
+  t.deepEqual(pathParse(s1), p1);
+
+  // Lowercase z should also work
+  const s2 = 'M0,0L10,10zL20,20';
+  const p2 = [['M',0,0], ['L',10,10], ['z'], ['L',20,20]];
+  t.deepEqual(pathParse(s2), p2);
+
+  // Multiple Z commands in sequence
+  const s3 = 'M0,0ZZM1,1';
+  const p3 = [['M',0,0], ['Z'], ['Z'], ['M',1,1]];
+  t.deepEqual(pathParse(s3), p3);
+
+  t.end();
+});
+
 tape('boundContext should calculate paths bounds', t => {
   for (let i=0; i<paths.length; ++i) {
     const p = pathParse(paths[i]);
@@ -176,7 +191,7 @@ tape('pathRender should render paths', t => {
   for (let i=0; i<paths.length; ++i) {
     p = pathParse(paths[i]);
     pathRender(ctx = context(), p, 0, 0);
-    t.ok(vega.pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
+    t.ok(pathEqual(ctx+'', output[i]), 'path: ' + paths[i]);
   }
   t.end();
 });

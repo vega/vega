@@ -1,6 +1,6 @@
 import {
   array, arrayType, def, enums, not, numberType, object, oneOf, stringType
-} from './util';
+} from './util.js';
 
 const Checkbox = 'checkbox',
       Radio = 'radio',

@@ -1,4 +1,4 @@
-import {stream} from '../EventStream';
+import {stream} from '../EventStream.js';
 import {array} from 'vega-util';
 
 /**

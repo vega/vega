@@ -2,13 +2,13 @@ import {
   numberFormatDefaultLocale,
   numberFormatLocale,
   resetNumberFormatDefaultLocale
-} from './number';
+} from './number.js';
 
 import {
   resetTimeFormatDefaultLocale,
   timeFormatDefaultLocale,
   timeFormatLocale
-} from './time';
+} from './time.js';
 
 import {error, extend} from 'vega-util';
 

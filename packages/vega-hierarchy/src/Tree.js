@@ -1,4 +1,4 @@
-import HierarchyLayout from './HierarchyLayout';
+import HierarchyLayout from './HierarchyLayout.js';
 import {error, hasOwnProperty, inherits} from 'vega-util';
 import {cluster, tree} from 'd3-hierarchy';
 

@@ -1,4 +1,4 @@
-import Item from './Item';
+import Item from './Item.js';
 import {inherits} from 'vega-util';
 
 export default function GroupItem(mark) {

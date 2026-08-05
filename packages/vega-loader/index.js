@@ -1,22 +1,22 @@
-import loaderFactory from './src/loader';
+import fs from 'fs';
+import loaderFactory from './src/loader.js';
 
 export const loader = loaderFactory(
-  require('node-fetch'),
-  require('fs')
+  fs
 );
 
 export {
   default as read
-} from './src/read';
+} from './src/read.js';
 
 export {
   inferType,
   inferTypes,
   typeParsers
-} from './src/type';
+} from './src/type.js';
 
 export {
   format,
   formats,
   responseType
-} from './src/formats/index';
+} from './src/formats/index.js';

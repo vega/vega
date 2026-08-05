@@ -1,1 +1,1 @@
-export {default as force} from './src/Force';
+export {default as force} from './src/Force.js';

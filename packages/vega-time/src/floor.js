@@ -10,11 +10,11 @@ import {
   SECONDS,
   WEEK,
   YEAR
-} from './units';
+} from './units.js';
 import {
   localDate, localDayOfYear, localFirst, localWeekNum,
   utcDate, utcDayOfYear, utcFirst, utcWeekNum
-} from './util';
+} from './util.js';
 import {constant, one, peek, toSet, zero} from 'vega-util';
 
 function floor(units, step, get, inv, newDate) {

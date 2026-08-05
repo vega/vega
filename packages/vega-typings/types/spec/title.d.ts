@@ -1,5 +1,5 @@
-import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '.';
-import { Encode, Text } from './encode';
+import { GroupEncodeEntry, GuideEncodeEntry, SignalRef, TextEncodeEntry } from '../index.js';
+import { Encode, Text } from './encode.js';
 import {
   AlignValue,
   AnchorValue,
@@ -9,7 +9,7 @@ import {
   NumberValue,
   StringValue,
   TextBaselineValue
-} from './values';
+} from './values.js';
 
 export type TitleOrient = 'none' | 'left' | 'right' | 'top' | 'bottom';
 export type TitleAnchor = null | 'start' | 'middle' | 'end';

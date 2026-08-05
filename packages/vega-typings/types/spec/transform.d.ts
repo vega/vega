@@ -9,7 +9,7 @@ import {
   Vector5,
   Vector6,
   Vector7
-} from '.';
+} from '../index.js';
 
 export type DataName = string;
 
@@ -649,6 +649,7 @@ export interface TimeUnitTransform {
   field: FieldRef;
   interval?: boolean | SignalRef;
   units?: (TimeUnit | SignalRef)[] | SignalRef;
+  inferUnits?: boolean | SignalRef;
   step?: number | SignalRef;
   timezone?: TimeZone | SignalRef;
   as?: Vector2<string | SignalRef> | SignalRef;

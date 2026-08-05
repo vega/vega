@@ -1,11 +1,11 @@
-import {getSign, ifX, ifY} from './axis-util';
-import {Value, one, zero} from './constants';
-import guideMark from './guide-mark';
-import {lookup} from './guide-util';
-import {addEncoders} from '../encode/util';
-import {RuleMark} from '../marks/marktypes';
-import {AxisGridRole} from '../marks/roles';
-import {isSignal} from '../../util';
+import {getSign, ifX, ifY} from './axis-util.js';
+import {Value, one, zero} from './constants.js';
+import guideMark from './guide-mark.js';
+import {lookup} from './guide-util.js';
+import {addEncoders} from '../encode/util.js';
+import {RuleMark} from '../marks/marktypes.js';
+import {AxisGridRole} from '../marks/roles.js';
+import {isSignal} from '../../util.js';
 import {extend, isObject} from 'vega-util';
 
 export default function(spec, config, userEncode, dataRef, band) {

@@ -1,5 +1,5 @@
-import adjustSpatial from './adjust-spatial';
-import interpret from './interpret';
+import adjustSpatial from './adjust-spatial.js';
+import interpret from './interpret.js';
 
 export default {
   /**

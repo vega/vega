@@ -1,11 +1,11 @@
-import {getSign, ifRight, ifTop, ifX, ifY, patch} from './axis-util';
-import {GuideLabelStyle, Label, Value, one, zero} from './constants';
-import guideMark from './guide-mark';
-import {extendOffset, lookup} from './guide-util';
-import {addEncoders, encoder} from '../encode/util';
-import {TextMark} from '../marks/marktypes';
-import {AxisLabelRole} from '../marks/roles';
-import {deref} from '../../util';
+import {getSign, ifRight, ifTop, ifX, ifY, patch} from './axis-util.js';
+import {GuideLabelStyle, Label, Value, one, zero} from './constants.js';
+import guideMark from './guide-mark.js';
+import {extendOffset, lookup} from './guide-util.js';
+import {addEncoders, encoder} from '../encode/util.js';
+import {TextMark} from '../marks/marktypes.js';
+import {AxisLabelRole} from '../marks/roles.js';
+import {deref} from '../../util.js';
 
 function flushExpr(scale, threshold, a, b, c) {
   return {

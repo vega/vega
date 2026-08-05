@@ -1,8 +1,8 @@
 import {max} from 'd3-array';
 import {Transform, ingest, rederive} from 'vega-dataflow';
 import {identity, inherits, isArray, isFunction, isNumber} from 'vega-util';
-import contours from './util/contours';
-import quantize from './util/quantize';
+import contours from './util/contours.js';
+import quantize from './util/quantize.js';
 
 /**
  * Generate isocontours (level sets) based on input raster grid data.

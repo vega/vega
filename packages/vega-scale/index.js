@@ -1,6 +1,6 @@
 export {
   default as bandSpace
-} from './src/scales/bandSpace';
+} from './src/scales/bandSpace.js';
 
 export {
   Identity,
@@ -20,7 +20,7 @@ export {
   Ordinal,
   Band,
   Point
-} from './src/scales/types';
+} from './src/scales/types.js';
 
 export {
   interpolate,
@@ -29,7 +29,7 @@ export {
   scaleCopy,
   scaleFraction,
   quantizeInterpolator
-} from './src/interpolate';
+} from './src/interpolate.js';
 
 export {
   scale,
@@ -43,34 +43,34 @@ export {
   isLogarithmic,
   isQuantile,
   isTemporal
-} from './src/scales';
+} from './src/scales.js';
 
 export {
   scheme
-} from './src/schemes';
+} from './src/schemes.js';
 
 export {
   SymbolLegend,
   DiscreteLegend,
   GradientLegend
-} from './src/legend-types';
+} from './src/legend-types.js';
 
 export {
   tickCount,
   tickFormat,
   tickValues,
   validTicks
-} from './src/ticks';
+} from './src/ticks.js';
 
 export {
   labelFormat,
   labelFraction,
   labelValues
-} from './src/labels';
+} from './src/labels.js';
 
 export {
   domainCaption
-} from './src/caption';
+} from './src/caption.js';
 
 export {
   scaleImplicit

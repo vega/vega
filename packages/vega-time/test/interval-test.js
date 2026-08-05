@@ -1,6 +1,6 @@
-var tape = require('tape'),
-    vega = require('../'),
-    {local, utc} = require('./util');
+import tape from 'tape';
+import * as vega from '../index.js';
+import { local, utc } from './util.js';
 
 tape('timeInterval provides local intervals for time units', t => {
   let ti;

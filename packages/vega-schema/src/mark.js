@@ -1,7 +1,7 @@
 import {
   allOf, array, booleanOrSignal, booleanType, def, enums, not, object,
   oneOf, stringOrSignal, stringType
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const sortOrderRef = def('sortOrder');

@@ -1,6 +1,8 @@
-var tape = require('tape'),
-    vega = require('../'),
-    loader = vega.loader();
+import tape from 'tape';
+import * as vega from '../index.js';
+import { readFileSync } from 'fs';
+
+const loader = vega.loader();
 
 const host = 'vega.github.io';
 const dir = '/datalib/';
@@ -10,7 +12,7 @@ const url = base + uri;
 const rel = '//' + host + dir + uri;
 const file = './test/' + uri;
 const fake = 'https://vega.github.io/vega/dne.html';
-const text = require('fs').readFileSync(file, 'utf8');
+const text = { readFileSync }.readFileSync(file, 'utf8');
 
 function testSanitize(t, uri, options, result) {
   if (result != null) {

@@ -1,10 +1,7 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    tx = require('../'),
-    changeset = vega.changeset,
-    Collect = tx.collect,
-    TupleIndex = tx.tupleindex;
+import tape from 'tape';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { field, truthy } from 'vega-util';
+import { collect as Collect, tupleindex as TupleIndex } from '../index.js';
 
 tape('TupleIndex maintains an index of tuples', t => {
   const data = [
@@ -13,9 +10,9 @@ tape('TupleIndex maintains an index of tuples', t => {
     {'id': 5, 'value': 'baz'}
   ];
 
-  var id = util.field('id'),
-      va = util.field('value'),
-      df = new vega.Dataflow(),
+  var id = field('id'),
+      va = field('value'),
+      df = new Dataflow(),
       c0 = df.add(Collect),
       fi = df.add(null), // populate with field accessor later
       ti = df.add(TupleIndex, {field:fi, pulse:c0}),
@@ -83,9 +80,9 @@ tape('TupleIndex maintains an index of tuples', t => {
 });
 
 tape('TupleIndex does not leak memory', t => {
-  var df = new vega.Dataflow(),
+  var df = new Dataflow(),
       c0 = df.add(Collect),
-      ti = df.add(TupleIndex, {field: util.field('id'), pulse: c0}),
+      ti = df.add(TupleIndex, {field: field('id'), pulse: c0}),
       n = df.cleanThreshold + 1;
 
   function generate() {
@@ -97,7 +94,7 @@ tape('TupleIndex does not leak memory', t => {
 
   // burn in by filling up to threshold, then remove all
   df.pulse(c0, changeset().insert(generate())).run();
-  df.pulse(c0, changeset().remove(util.truthy)).run();
+  df.pulse(c0, changeset().remove(truthy)).run();
   t.equal(ti.value.empty, 0, 'Zero empty map entries');
 
   t.end();

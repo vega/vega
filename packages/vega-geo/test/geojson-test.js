@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    vega = require('vega-dataflow'),
-    util = require('vega-util'),
-    GeoJSON = require('../').geojson,
-    Collect = require('vega-transforms').collect;
+import tape from 'tape';
+import {Dataflow} from 'vega-dataflow';
+import { field } from 'vega-util';
+import { geojson as GeoJSON } from '../index.js';
+import { collect as Collect } from 'vega-transforms';
 
 function geodata() {
   return [
@@ -15,9 +15,9 @@ function geodata() {
 tape('GeoJSON transform consolidates lon/lat data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      lon = util.field('lon'),
-      lat = util.field('lat'),
+  var df = new Dataflow(),
+      lon = field('lon'),
+      lat = field('lat'),
       col = df.add(Collect),
       gj = df.add(GeoJSON, {fields: [lon, lat], pulse: col});
 
@@ -39,8 +39,8 @@ tape('GeoJSON transform consolidates lon/lat data', t => {
 tape('GeoJSON transform consolidates geojson data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      geo = util.field('geo'),
+  var df = new Dataflow(),
+      geo = field('geo'),
       col = df.add(Collect),
       gj = df.add(GeoJSON, {geojson: geo, pulse: col});
 
@@ -62,10 +62,10 @@ tape('GeoJSON transform consolidates geojson data', t => {
 tape('GeoJSON transform consolidates both lon/lat and geojson data', t => {
   const data = geodata();
 
-  var df = new vega.Dataflow(),
-      lon = util.field('lon'),
-      lat = util.field('lat'),
-      geo = util.field('geo'),
+  var df = new Dataflow(),
+      lon = field('lon'),
+      lat = field('lat'),
+      geo = field('geo'),
       col = df.add(Collect),
       gj = df.add(GeoJSON, {fields: [lon, lat], geojson: geo, pulse: col});
 

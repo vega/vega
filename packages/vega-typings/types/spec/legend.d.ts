@@ -5,10 +5,10 @@ import {
   SignalRef,
   SymbolEncodeEntry,
   TextEncodeEntry
-} from '.';
-import { FormatType, LabelOverlap, TickCount, TimeFormatSpecifier } from './axis';
-import { Text } from './encode';
-import { LayoutAlign } from './layout';
+} from '../index.js';
+import { FormatType, LabelOverlap, TickCount, TimeFormatSpecifier } from './axis.js';
+import { Text } from './encode.js';
+import { LayoutAlign } from './layout.js';
 import {
   AlignValue,
   AnchorValue,
@@ -21,7 +21,7 @@ import {
   StringValue,
   SymbolShapeValue,
   TextBaselineValue
-} from './values';
+} from './values.js';
 
 export interface GuideEncodeEntry<T> {
   name?: string;

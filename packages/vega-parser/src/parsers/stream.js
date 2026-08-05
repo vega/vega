@@ -1,4 +1,4 @@
-import {Scope, View} from '../util';
+import {Scope, View} from '../util.js';
 import {parseExpression} from 'vega-functions';
 import {error, stringValue} from 'vega-util';
 

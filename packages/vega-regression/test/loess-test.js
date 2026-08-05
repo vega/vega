@@ -1,19 +1,18 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Loess = require('../').loess,
-    changeset = vega.changeset;
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
+import { loess as Loess } from '../index.js';
 
-  tape('Loess handles repeated x-values', t => {
+tape('Loess handles repeated x-values', t => {
     const data = [
       {k: 'a', u: 1, v: 1}, {k: 'a', u: 2, v: 2}, {k: 'a', u: 3, v: 5},
       {k: 'b', u: 1, v: 3}, {k: 'b', u: 2, v: 6}, {k: 'b', u: 3, v: 7}
     ];
 
-    var u = util.field('u'),
-        v = util.field('v'),
-        df = new vega.Dataflow(),
+    var u = field('u'),
+        v = field('v'),
+        df = new Dataflow(),
         col = df.add(Collect),
         reg = df.add(Loess, {x: u, y: v, bandwidth: 1, pulse: col}),
         out = df.add(Collect, {pulse: reg});
@@ -38,10 +37,10 @@ tape('Loess adapts bandwidth when too small', t => {
     {k: 'b', u: 1, v: 2}, {k: 'b', u: 2, v: 5}, {k: 'b', u: 3, v: 6}
   ];
 
-  var k = util.field('k'),
-      u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
+  var k = field('k'),
+      u = field('u'),
+      v = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       reg = df.add(Loess, {
         groupby: [k],

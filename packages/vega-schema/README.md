@@ -2,7 +2,7 @@
 
 Generate the Vega JSON schema.
 
-Run `yarn build` to compile the schema-generating routines and generate the output JSON schema file.
+Run `npm run build` to compile the schema-generating routines and generate the output JSON schema file.
 
 ## API Reference
 

@@ -1,4 +1,4 @@
-import { ascending, error, isArray, isFunction, isString } from 'vega-util';
+import { ascending, error, isArray, isFunction, isRegExp, isString } from 'vega-util';
 
 function array(seq) {
   return isArray(seq) || ArrayBuffer.isView(seq) ? seq : null;
@@ -26,6 +26,8 @@ export function slice(seq, ...args) {
 
 export function replace(str, pattern, repl) {
   if (isFunction(repl)) error('Function argument passed to replace.');
+  if (!isString(pattern) && !isRegExp(pattern)) error('Please pass a string or RegExp argument to replace.');
+
   return String(str).replace(pattern, repl);
 }
 export function reverse(seq) {

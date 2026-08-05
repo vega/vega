@@ -1,4 +1,4 @@
-import {array16, array32, array8} from './arrays';
+import {array16, array32, array8} from './arrays.js';
 
 /**
  * Maintains CrossFilter state.

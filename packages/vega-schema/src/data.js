@@ -1,7 +1,7 @@
 import {
   anyOf, anyType, array, booleanOrSignal, def, enums, object, oneOf,
   orSignal, signalRef, stringOrSignal, stringType, type
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const transformRef = def('transform');

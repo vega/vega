@@ -1,4 +1,4 @@
-import {operator} from '../util';
+import {operator} from '../util.js';
 import {parseExpression} from 'vega-functions';
 
 export default function(spec, scope, name) {

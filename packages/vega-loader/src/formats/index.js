@@ -1,6 +1,6 @@
-import {delimitedFormat, default as dsv} from './dsv';
-import json from './json';
-import topojson from './topojson';
+import {delimitedFormat, default as dsv} from './dsv.js';
+import json from './json.js';
+import topojson from './topojson.js';
 import {hasOwnProperty} from 'vega-util';
 
 export const format = {

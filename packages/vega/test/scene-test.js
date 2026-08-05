@@ -1,15 +1,19 @@
-const GENERATE_SCENES = false, // flag to generate test scenes
-      OUTPUT_FAILURES = false, // flag to write scenes upon test failure
-      specdir = process.cwd() + '/test/specs-valid/',
-      testdir = process.cwd() + '/test/scenegraphs/',
-      fs = require('fs'),
-      tape = require('tape'),
-      vega = require('../'),
-      loader = vega.loader({baseURL: 'test/'}),
-      specs = require('./specs-valid.json').filter(spec => // filter wordcloud due to cross-platform canvas issues
-      spec !== 'wordcloud');
+import fs from 'fs';
+import tape from 'tape';
+import * as vega from '../index.js';
+import specsValid from './specs-valid.json' with { type: 'json' };
 
-// Plug-in a seeded random number generator for testing.
+// Set the GENERATE_SCENES environment variable to regenerate golden scenes
+// instead of comparing, e.g.: GENERATE_SCENES=1 npx tape test/scene-test.js
+const GENERATE_SCENES = !!process.env.GENERATE_SCENES; // flag to generate test scenes
+const OUTPUT_FAILURES = false; // flag to write scenes upon test failure
+const specdir = process.cwd() + '/test/specs-valid/';
+const testdir = process.cwd() + '/test/scenegraphs/';
+const loader = vega.loader({ baseURL: 'test/' });
+const specs = specsValid.filter(spec => // filter wordcloud due to cross-platform canvas issues
+ spec !== 'wordcloud');
+
+ // Plug-in a seeded random number generator for testing.
 vega.setRandom(vega.randomLCG(123456789));
 
 // Standardize font metrics to suppress cross-platform variance.

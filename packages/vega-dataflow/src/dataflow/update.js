@@ -1,4 +1,4 @@
-import Pulse from '../Pulse';
+import Pulse from '../Pulse.js';
 
 const NO_OPT = {skip: false, force: false};
 

@@ -1,4 +1,4 @@
-import intersect from './intersect';
+import intersect from './intersect.js';
 import {Bounds} from 'vega-scenegraph';
 import {array} from 'vega-util';
 
@@ -23,7 +23,7 @@ export function lassoAppend(lasso, x, y, minDist = 5) {
 
 
 /**
- * Generates a svg path command which draws a lasso
+ * Generates an svg path command which draws a lasso
  *
  * @param {*} lasso the lasso in pixel space in the form [[x,y], [x,y], ...]
  * @returns the svg path command that draws the lasso

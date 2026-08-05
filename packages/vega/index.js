@@ -21,7 +21,8 @@ extend(
 
 // -- Exports -----
 
-export {version} from './package.json';
+import * as pkg from './package.json' with { type: 'json' };
+export const version = pkg.version;
 
 export * from 'vega-statistics';
 

@@ -1,8 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    transforms = require('vega-transforms'),
-    runtime = require('../');
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow } from 'vega-dataflow';
+import * as transforms from 'vega-transforms';
+import * as runtime from '../index.js';
 
 tape('Parser parses expressions', t => {
   const values = [
@@ -35,11 +35,11 @@ tape('Parser parses expressions', t => {
     {id:5, type:'Collect', params: {pulse: {$ref:4}}}
   ]};
 
-  var df  = new vega.Dataflow(),
+  var df  = new Dataflow(),
       ctx = runtime.context(df, transforms).parse(spec),
       ops = ctx.nodes,
       ids = Object.keys(ops),
-      z = util.field('z');
+      z = field('z');
 
   t.equal(ids.length, spec.operators.length);
 

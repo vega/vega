@@ -1,7 +1,7 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  $schema: 'https://vega.github.io/schema/vega/v6.json',
   background: 'white',
   padding: 5,
   width: 300,
@@ -33,7 +33,7 @@ export const spec: Spec = {
     },
     {
       name: 'source_0',
-      url: 'https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/world-110m.json',
+      url: 'data/world-110m.json',
       format: { feature: 'countries', type: 'topojson' },
       transform: [
         {

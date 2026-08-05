@@ -16,7 +16,7 @@ export default function(canvas, width, height, origin, scaleFactor, opt) {
     context[key] = opt[key];
   }
 
-  if (inDOM && ratio !== 1) {
+  if (inDOM) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
   }

@@ -1,6 +1,6 @@
-import Handler from './Handler';
-import {domFind} from './util/dom';
-import {FocusInEvent, FocusOutEvent, HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events';
+import Handler from './Handler.js';
+import {domFind} from './util/dom.js';
+import {FocusInEvent, FocusOutEvent, HrefEvent, TooltipHideEvent, TooltipShowEvent} from './util/events.js';
 
 export default class SVGHandler extends Handler {
   constructor(loader, tooltip) {

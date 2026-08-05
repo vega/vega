@@ -1,5 +1,5 @@
-import {SQRT2, SQRT2PI} from './constants';
-import {random} from './random';
+import {SQRT2, SQRT2PI} from './constants.js';
+import {random} from './random.js';
 
 let nextSample = NaN;
 

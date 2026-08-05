@@ -1,5 +1,5 @@
-import ols from './ols';
-import {points} from './points';
+import ols from './ols.js';
+import {points} from './points.js';
 import {median} from 'd3-array';
 
 const maxiters = 2,

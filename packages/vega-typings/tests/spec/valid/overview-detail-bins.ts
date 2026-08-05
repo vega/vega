@@ -1,7 +1,7 @@
 import { Spec } from 'vega';
 
 export const spec: Spec = {
-  $schema: 'https://vega.github.io/schema/vega/v5.json',
+  $schema: 'https://vega.github.io/schema/vega/v6.json',
   autosize: 'pad',
   padding: 5,
   width: 963,
@@ -11,7 +11,7 @@ export const spec: Spec = {
     },
     {
       name: 'source_0',
-      url: 'https://vega.github.io/vega-datasets/data/flights-5k.json',
+      url: 'data/flights-5k.json',
       format: { type: 'json' },
       transform: [
         {

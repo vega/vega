@@ -3,8 +3,8 @@ import {
   Group, LegendRole, Middle, Row,
   RowFooter, RowHeader, RowTitle,
   TitleRole, X, Y
-} from '../constants';
-import {tempBounds} from './util';
+} from '../constants.js';
+import {tempBounds} from './util.js';
 import {Bounds} from 'vega-scenegraph';
 import {isObject} from 'vega-util';
 

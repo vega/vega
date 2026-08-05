@@ -16,6 +16,7 @@
     "Circular Charts": [
         {"name": "pie-chart"},
         {"name": "donut-chart"},
+        {"name": "donut-chart-labelled"},
         {"name": "radial-plot"},
         {"name": "radar-chart"}
     ],

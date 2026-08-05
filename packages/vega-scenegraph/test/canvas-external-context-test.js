@@ -1,11 +1,11 @@
-var tape = require('tape'),
-    fs = require('fs'),
-    {canvas} = require('vega-canvas'),
-    vega = require('../'),
-    Renderer = vega.CanvasRenderer,
-    res = './test/resources/';
+import tape from 'tape';
+import fs from 'fs';
+import {canvas} from 'vega-canvas';
+import {CanvasRenderer as Renderer, sceneFromJSON} from '../index.js';
+import GENERATE from './resources/generate-tests.js';
+import './__init__.js';
 
-const GENERATE = require('./resources/generate-tests');
+const res = './test/resources/';
 
 function generate(path, image) {
   if (GENERATE) fs.writeFileSync(res + path, image);
@@ -16,7 +16,7 @@ function load(file) {
 }
 
 tape('CanvasRenderer should support supplied external canvas context', t => {
-  const scene = vega.sceneFromJSON(load('scenegraph-rect.json')),
+  const scene = sceneFromJSON(load('scenegraph-rect.json')),
         externalCanvas = canvas(400, 400),
         externalContext = externalCanvas.getContext('2d'),
         cr = new Renderer();

@@ -1,4 +1,4 @@
-import {layoutAlign} from './layout';
+import {layoutAlign} from './layout.js';
 
 import {
   alignValue, allOf, anchorValue, anyOf, arrayOrSignal,
@@ -7,7 +7,7 @@ import {
   numberOrSignal, numberType, numberValue, object, orSignal,
   orientValue, pattern, required, stringType, stringValue,
   textOrSignal, type
-} from './util';
+} from './util.js';
 
 // types defined elsewhere
 const encodeEntryRef = def('encodeEntry');

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "Rotating globe animation depicting earthquake locations. Background - pseudorandomly distributed 'stars'.",
   "width": 600,
   "height": 600,

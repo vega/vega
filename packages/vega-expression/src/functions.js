@@ -86,6 +86,11 @@ export default function(codegen) {
     substring:   fn('substring', STRING),
     split:       fn('split', STRING),
     trim:        fn('trim', STRING, 0),
+    // base64 encode/decode
+    btoa:        'btoa',
+    atob:        'atob',
+    // URI encoding
+    encodeURIComponent: 'encodeURIComponent',
 
     // REGEXP functions
     regexp:  REGEXP,

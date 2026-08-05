@@ -1,6 +1,6 @@
-import estimateBandwidth from './bandwidth';
-import gaussian from './normal';
-import {random} from './random';
+import estimateBandwidth from './bandwidth.js';
+import gaussian from './normal.js';
+import {random} from './random.js';
 
 export default function(support, bandwidth) {
   const kernel = gaussian();

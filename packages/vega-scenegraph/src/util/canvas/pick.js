@@ -1,4 +1,4 @@
-import {pickVisit} from '../visit';
+import {pickVisit} from '../visit.js';
 import {truthy} from 'vega-util';
 
 export function pick(test) {

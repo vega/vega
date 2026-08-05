@@ -1,11 +1,10 @@
-var tape = require('tape'),
-    vega = require('../'), // eslint-disable-line no-unused-vars
-    ajv = require('ajv'),
-    fs = require('fs'),
-    schema = require('../build/vega-schema.json'),
-    validSpecs = require('./specs-valid.json'),
-    invalidSpecs = require('./specs-invalid.json'),
-    addFormats = require('ajv-formats');
+import tape from 'tape';
+import * as ajv from 'ajv';
+import fs from 'fs';
+import schema from '../build/vega-schema.json' with { type: 'json' };
+import validSpecs from './specs-valid.json' with { type: 'json' };
+import invalidSpecs from './specs-invalid.json' with { type: 'json' };
+import addFormats from 'ajv-formats';
 
 const validator = new ajv.default({
     allErrors: true,

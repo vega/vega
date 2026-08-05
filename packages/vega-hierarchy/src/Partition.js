@@ -1,4 +1,4 @@
-import HierarchyLayout from './HierarchyLayout';
+import HierarchyLayout from './HierarchyLayout.js';
 import {inherits} from 'vega-util';
 import {partition} from 'd3-hierarchy';
 

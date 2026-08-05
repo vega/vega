@@ -1,5 +1,5 @@
 {
-  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
   "description": "Area charts showing the density of cuisine options in Seattle's U-District.",
   "width": 500,
   "height": 380,

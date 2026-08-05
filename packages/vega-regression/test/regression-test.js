@@ -1,9 +1,8 @@
-var tape = require('tape'),
-    util = require('vega-util'),
-    vega = require('vega-dataflow'),
-    Collect = require('vega-transforms').collect,
-    Regression = require('../').regression,
-    changeset = vega.changeset;
+import tape from 'tape';
+import { field } from 'vega-util';
+import { Dataflow, changeset } from 'vega-dataflow';
+import { collect as Collect } from 'vega-transforms';
+import { regression as Regression } from '../index.js';
 
 tape('Regression fits constant regression model', t => {
   const data = [
@@ -11,10 +10,10 @@ tape('Regression fits constant regression model', t => {
     {k: 'b', u: 3, v: 2}, {k: 'b', u: 2, v: 1}
   ];
 
-  var k = util.field('k'),
-      u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
+  var k = field('k'),
+      u = field('u'),
+      v = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       reg = df.add(Regression, {
         method: 'constant',
@@ -55,10 +54,10 @@ tape('Regression fits linear regression model', t => {
     {k: 'b', u: 3, v: 2}, {k: 'b', u: 2, v: 1}
   ];
 
-  var k = util.field('k'),
-      u = util.field('u'),
-      v = util.field('v'),
-      df = new vega.Dataflow(),
+  var k = field('k'),
+      u = field('u'),
+      v = field('v'),
+      df = new Dataflow(),
       col = df.add(Collect),
       reg = df.add(Regression, {
         method: 'linear',
@@ -95,9 +94,9 @@ tape('Regression fits linear regression model', t => {
 
 tape('Regression fits quadratic regression model', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
-      x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
+      x = field('x'),
+      y = field('y'),
+      df = new Dataflow(),
       col = df.add(Collect),
       reg = df.add(Regression, {method: 'quad', x: x, y: y, pulse: col}),
       out = df.add(Collect, {pulse: reg});
@@ -115,9 +114,9 @@ tape('Regression fits quadratic regression model', t => {
 
 tape('Regression outputs model parameters', t => {
   var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
-      x = util.field('x'),
-      y = util.field('y'),
-      df = new vega.Dataflow(),
+      x = field('x'),
+      y = field('y'),
+      df = new Dataflow(),
       col = df.add(Collect),
       reg = df.add(Regression, {method: 'quad', params: true, x: x, y: y, pulse: col}),
       out = df.add(Collect, {pulse: reg});

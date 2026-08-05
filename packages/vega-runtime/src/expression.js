@@ -1,4 +1,4 @@
-import {adjustSpatial} from './util';
+import {adjustSpatial} from './util.js';
 import {stringValue} from 'vega-util';
 
 function expression(ctx, args, code) {

@@ -1,4 +1,4 @@
-import partition from './partition';
+import partition from './partition.js';
 import {regressionLoess} from 'vega-statistics';
 import {Transform, ingest} from 'vega-dataflow';
 import {accessorName, inherits} from 'vega-util';

@@ -1,4 +1,4 @@
-import { Operator } from './dataflow';
+import { Operator } from './dataflow.js';
 
 export interface Scene {
   bounds: Bounds;
