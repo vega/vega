@@ -6,7 +6,6 @@
       "es2022",
       "dom"
     ],
-    "moduleResolution": "NodeNext",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
@@ -14,8 +13,6 @@
     "allowJs": true,
     "checkJs": false,
     "noEmit": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
