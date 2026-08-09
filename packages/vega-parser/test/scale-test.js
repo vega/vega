@@ -144,3 +144,74 @@ tape('Parser parses Vega specs with multi-domain scales', t => {
 
   t.end();
 });
+
+tape('Parser parses multi-domain scales with signal values', t => {
+  const spec = {
+    'signals': [
+      {'name': 'lo', 'value': 2},
+      {'name': 'hi', 'value': 8}
+    ],
+    'data': [
+      {'name': 'table', 'values': [{'x': 0}, {'x': 5}]}
+    ],
+    'scales': [
+      {
+        'name': 'xscale',
+        'type': 'linear',
+        'range': [0, 1],
+        'domain': {
+          'fields': [
+            [{'signal': 'lo'}, {'signal': 'hi'}],
+            {'data': 'table', 'field': 'x'}
+          ]
+        }
+      }
+    ]
+  };
+
+  const dfs = parse(spec);
+  const setdata = dfs.operators.filter(o => o.update && o.update.code.includes('setdata'));
+
+  t.equal(setdata.length, 1);
+  t.ok(/^this\.setdata\("(_:vega:_\d+)",\[_\["\$lo"\],_\["\$hi"\]\]\)$/.test(setdata[0].update.code));
+  t.deepEqual(Object.keys(setdata[0].params), ['$lo', '$hi']);
+
+  const name = setdata[0].update.code.match(/"(_:vega:_\d+)"/)[1];
+  const coll = dfs.operators.find(o => o.data && o.data[name]);
+
+  t.equal(coll.value, undefined);
+  t.equal(coll.params.input.$ref, setdata[0].id);
+
+  t.end();
+});
+
+tape('Parser parses multi-domain scales with literal values', t => {
+  const spec = {
+    'data': [
+      {'name': 'table', 'values': [{'x': 0}, {'x': 5}]}
+    ],
+    'scales': [
+      {
+        'name': 'xscale',
+        'type': 'linear',
+        'range': [0, 1],
+        'domain': {
+          'fields': [
+            [2, 8],
+            {'data': 'table', 'field': 'x'}
+          ]
+        }
+      }
+    ]
+  };
+
+  const dfs = parse(spec);
+
+  t.equal(dfs.operators.filter(o => o.update && o.update.code.includes('setdata')).length, 0);
+  t.deepEqual(
+    dfs.operators.filter(o => o.value && o.value.$ingest).map(o => o.value.$ingest),
+    [[{'x': 0}, {'x': 5}], [2, 8]]
+  );
+
+  t.end();
+});
