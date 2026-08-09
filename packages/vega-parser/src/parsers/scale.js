@@ -1,7 +1,7 @@
 import {
   Aggregate, Collect, MultiExtent, MultiValues, Sieve, Values
 } from '../transforms.js';
-import {aggrField, keyFieldRef, ref} from '../util.js';
+import {aggrField, isSignal, keyFieldRef, ref} from '../util.js';
 
 import {isDiscrete, isQuantile, isValidScaleType} from 'vega-scale';
 import {
@@ -118,10 +118,13 @@ function fieldRef(data, scope) {
   const name = '_:vega:_' + (FIELD_REF_ID++),
         coll = Collect({});
 
-  if (isArray(data)) {
+  if (isArray(data) && !data.some(isSignal)) {
     coll.value = {$ingest: data};
-  } else if (data.signal) {
-    const code = 'setdata(' + stringValue(name) + ',' + data.signal + ')';
+  } else {
+    const values = isArray(data)
+      ? '[' + data.map(v => isSignal(v) ? v.signal : stringValue(v)).join(',') + ']'
+      : data.signal;
+    const code = 'setdata(' + stringValue(name) + ',' + values + ')';
     coll.params.input = scope.signalRef(code);
   }
   scope.addDataPipeline(name, [coll, Sieve({})]);

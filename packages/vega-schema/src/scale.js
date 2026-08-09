@@ -133,7 +133,7 @@ const scaleData = oneOf(
     _fields_: array(
       oneOf(
         object({_data_: stringType, _field_: stringOrSignal}),
-        array(oneOf(stringType, numberType, booleanType)),
+        array(oneOf(stringType, numberType, booleanType, signalRef)),
         signalRef
       ),
       {minItems: 1}
