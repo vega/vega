@@ -58,7 +58,6 @@ tape('Interpreter matches generated code for regexp literals', t => {
 
 tape('Interpreter filters a dataset with a global regexp literal', async t => {
   const spec = {
-    $schema: 'https://vega.github.io/schema/vega/v6.json',
     data: [{
       name: 'table',
       values: data,

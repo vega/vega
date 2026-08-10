@@ -17,7 +17,7 @@ if (typeof setImmediate === 'function') DisallowedMethods.add(setImmediate);
 const Visitors = {
   // global and sticky regexps carry lastIndex across calls, so hand out a
   // fresh instance per evaluation, as the generated code path does
-  Literal: ($, n) => n.regex && (n.value.global || n.value.sticky)
+  Literal: ($, n) => n.regex && n.value && (n.value.global || n.value.sticky)
     ? new RegExp(n.regex.pattern, n.regex.flags)
     : n.value,
 
