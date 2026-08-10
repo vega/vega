@@ -8,17 +8,13 @@ const require = createRequire(import.meta.url);
 
 // load a JSON file, or a JS file that exports an object
 function load(file, flag) {
-    let value;
     try {
-        value = require(path.resolve(file));
+        const value = require(path.resolve(file));
+        return value?.[Symbol.toStringTag] === 'Module' ? value.default : value;
     }
     catch (err) {
         throw `Could not load --${flag} file "${file}": ${err.message.split('\n')[0]}`;
     }
-    // unwrap the default export of an ES module
-    return value && value[Symbol.toStringTag] === 'Module' && 'default' in value
-        ? value.default
-        : value;
 }
 
 const Levels = {
@@ -28,7 +24,21 @@ const Levels = {
     debug: vega.Debug
 };
 
+function fail(err) {
+    process.exitCode = 1;
+    console.error(err); // eslint-disable-line no-console
+}
+
 export default function(type, callback, opt) {
+    try {
+        main(type, callback, opt);
+    }
+    catch (err) {
+        fail(err);
+    }
+};
+
+function main(type, callback, opt) {
     // parse command line arguments
     const arg = args(type);
     // set baseURL, if specified. default to input spec directory
@@ -67,5 +77,5 @@ export default function(type, callback, opt) {
     // read input from file or stdin
     read(arg._[0] || null)
         .then(text => render(JSON.parse(text)))
-        .catch(err => { process.exitCode = 1; console.error(err); }); // eslint-disable-line no-console
-};
+        .catch(fail);
+}
