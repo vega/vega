@@ -340,3 +340,22 @@ tape('Codegen rejects Object.prototype keys whether quoted or not', t => {
 
   t.end();
 });
+
+tape('Codegen rejects then as an object key', t => {
+  const codegen = vega.codegenExpression({ globalvar: 'global' });
+  const compile = str => () => codegen(vega.parseExpression(str));
+
+  // `then` is not an Object.prototype member, so it is not covered by the derived
+  // set and is listed explicitly. It is rejected quoted and unquoted alike.
+  t.throws(compile('{then: 1}'), /Illegal property/);
+  t.throws(compile('{"then": 1}'), /Illegal property/);
+
+  // Also rejected when it is not the first key.
+  t.throws(compile('{a: 1, then: 2}'), /Illegal property/);
+
+  // Similarly named keys are unaffected.
+  t.doesNotThrow(compile('{then_: 1}'));
+  t.doesNotThrow(compile('{thenable: 1}'));
+
+  t.end();
+});
