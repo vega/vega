@@ -36,7 +36,6 @@ export interface TimeFormatSpecifier {
   month?: string;
   date?: string;
   week?: string;
-  isoweek?: string;
   day?: string;
   hours?: string;
   minutes?: string;
