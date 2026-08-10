@@ -141,12 +141,12 @@ vega.<b>week</b>(<i>date</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
 
 Returns the week number of the year for the given _date_, which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
 <a name="isoweek" href="#isoweek">#</a>
 vega.<b>isoweek</b>(<i>date</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
 
 Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _date_, which should be either a `Date` object or timestamp value. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.
-
 
 
 ### <a name="utc-time-utilities"></a>UTC Time Utilities
@@ -188,9 +188,9 @@ vega.<b>utcweek</b>(<i>date</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
 
 Returns the week number of the year for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
 <a name="utcisoweek" href="#utcisoweek">#</a>
 vega.<b>utcisoweek</b>(<i>date</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
 
 Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.
-
