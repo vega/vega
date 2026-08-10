@@ -24,7 +24,8 @@ export {
   geoArea,
   geoBounds,
   geoCentroid,
-  geoScale
+  geoScale,
+  geoTranslate
 } from './src/functions/geo.js';
 
 export {

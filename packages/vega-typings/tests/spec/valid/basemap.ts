@@ -68,6 +68,7 @@ export const spec: Spec = {
   ],
   signals: [
     { name: 'projection_scale', update: "geoScale('projection')" },
+    { name: 'projection_translate', update: "geoTranslate('projection')" },
     {
       name: 'base_tile_size',
       update: '(2 * PI * projection_scale) / pow(2, zoom_level)'
