@@ -1,9 +1,25 @@
 import * as vega from 'vega';
 import path from 'path';
+import { createRequire } from 'module';
 import args from './args.js';
 import read from './read.js';
 
-function load(file) {}
+const require = createRequire(import.meta.url);
+
+// load a JSON file, or a JS file that exports an object
+function load(file, flag) {
+    let value;
+    try {
+        value = require(path.resolve(file));
+    }
+    catch (err) {
+        throw `Could not load --${flag} file "${file}": ${err.message.split('\n')[0]}`;
+    }
+    // unwrap the default export of an ES module
+    return value && value[Symbol.toStringTag] === 'Module' && 'default' in value
+        ? value.default
+        : value;
+}
 
 const Levels = {
     error: vega.Error,
@@ -20,7 +36,7 @@ export default function(type, callback, opt) {
     // set log level, defaults to logging warning messages
     const loglevel = Levels[String(arg.loglevel).toLowerCase()] || vega.Warn;
     // load config file, if specified
-    const config = arg.config ? load(arg.config) : null;
+    const config = arg.config ? load(arg.config, 'config') : null;
     // set output image scale factor
     const scale = arg.scale || undefined;
     // Allows for other ppi settings than 72 for png files
@@ -33,8 +49,8 @@ export default function(type, callback, opt) {
     }
     // locale options, load custom number/time formats if specified
     const locale = {
-        number: arg.format ? load(arg.format) : null,
-        time: arg.timeFormat ? load(arg.timeFormat) : null
+        number: arg.format ? load(arg.format, 'format') : null,
+        time: arg.timeFormat ? load(arg.timeFormat, 'timeFormat') : null
     };
     // instantiate view and invoke headless render method
     function render(spec) {
