@@ -5,12 +5,19 @@ import {aggrField, isSignal, keyFieldRef, ref} from '../util.js';
 
 import {isDiscrete, isQuantile, isValidScaleType} from 'vega-scale';
 import {
-  error, extend, hasOwnProperty, isArray, isObject, isString, stringValue
+  error, extend, hasOwnProperty, isArray, isObject, isString, stringValue, toSet
 } from 'vega-util';
 
 let FIELD_REF_ID = 0;
 
 const MULTIDOMAIN_SORT_OPS  = {min: 'min', max: 'max', count: 'sum'};
+
+const SCALE_PROPERTIES = toSet([
+  'align', 'base', 'bins', 'clamp', 'constant', 'domain', 'domainImplicit',
+  'domainMax', 'domainMid', 'domainMin', 'domainRaw', 'exponent', 'interpolate',
+  'name', 'nice', 'padding', 'paddingInner', 'paddingOuter', 'range', 'reverse',
+  'round', 'type', 'zero'
+]);
 
 export function initScale(spec, scope) {
   const type = spec.type || 'linear';
@@ -48,7 +55,7 @@ export function parseScale(spec, scope) {
   }
 
   for (key in spec) {
-    if (hasOwnProperty(params, key) || key === 'name') continue;
+    if (hasOwnProperty(params, key) || key === 'name' || !SCALE_PROPERTIES[key]) continue;
     params[key] = parseLiteral(spec[key], scope);
   }
 }

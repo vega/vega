@@ -69,6 +69,28 @@ tape('Parser parses Vega specs with scales', t => {
   t.end();
 });
 
+tape('Parser ignores unknown scale spec properties', t => {
+  const spec = {
+    'scales': [
+      {
+        'name': 'xscale',
+        'type': 'linear',
+        'domain': [0, 1],
+        'range': [0, 1],
+        'description': 'annotation',
+        '_description': {'note': 'annotation'}
+      }
+    ]
+  };
+
+  const dfs = parse(spec);
+  const scale = dfs.operators.find(o => o.type === 'scale');
+
+  t.equal(scale.params.description, undefined);
+  t.equal(scale.params._description, undefined);
+  t.end();
+});
+
 tape('Parser parses Vega specs with multi-domain scales', t => {
   const spec = {
     'data': [
