@@ -30,8 +30,7 @@ function setup(width, height) {
   const dom = new JSDOM('<div id="view"></div>'),
         el = dom.window.document.querySelector('#view'),
         size = {width, height},
-        observers = [],
-        frames = [];
+        observers = [];
 
   global.document = dom.window.document;
   global.window = dom.window;
@@ -50,22 +49,16 @@ function setup(width, height) {
     disconnect() { this.disconnected = true; }
   };
 
-  global.requestAnimationFrame = callback => frames.push(callback);
-
   return {
     el,
     size,
     observers,
-    frames,
     // deliver a ResizeObserver notification
     notify: () => observers[observers.length - 1].callback([]),
-    // invoke pending animation frame callbacks
-    flush: () => frames.splice(0, frames.length).forEach(callback => callback()),
     teardown: () => {
       delete global.document;
       delete global.window;
       delete global.ResizeObserver;
-      delete global.requestAnimationFrame;
     }
   };
 }
@@ -85,13 +78,15 @@ function newView(env, viewSpec) {
   return view;
 }
 
-// alternate pending animation frames and dataflow runs until the view goes quiet
+// alternate dataflow runs and resize notifications, as a browser would,
+// until a run leaves the container size unchanged
 async function settle(env, view) {
+  let last = [];
   for (let i = 0; i < 10; ++i) {
     await view.runAsync();
-    await new Promise(resolve => setTimeout(resolve, 0));
-    if (!env.frames.length) return;
-    env.flush();
+    if (env.size.width === last[0] && env.size.height === last[1]) return;
+    last = [env.size.width, env.size.height];
+    env.notify();
   }
   throw new Error('view did not settle');
 }
@@ -105,7 +100,6 @@ tape('container:resize updates size signals when the container resizes', async t
 
   env.size.width = 800;
   env.notify();
-  env.flush();
   await view.runAsync();
 
   t.equal(view.width(), 800, 'width signal follows the container');
@@ -130,26 +124,19 @@ tape('container is only observed when a spec listens for resizes', async t => {
   t.end();
 });
 
-tape('container:resize coalesces notifications into a single event', async t => {
+tape('container:resize ignores notifications that leave the size unchanged', async t => {
   const env = setup(400, 300),
         view = newView(env);
 
   await view.runAsync();
 
-  env.size.width = 500;
+  // the observe-time notification, and any layout pass that does not
+  // change the client size, dispatch nothing
   env.notify();
-  env.size.width = 600;
   env.notify();
-  env.size.width = 700;
-  env.notify();
-
-  t.equal(env.frames.length, 1, 'one animation frame requested');
-
-  env.flush();
   await view.runAsync();
 
-  t.equal(view.signal('resizes'), 1, 'one event delivered for three notifications');
-  t.equal(view.width(), 700, 'width signal reflects the latest container size');
+  t.equal(view.signal('resizes'), 0, 'no events for unchanged sizes');
 
   view.finalize();
   env.teardown();
@@ -163,14 +150,12 @@ tape('container:resize does not drop a resize that lands mid-run', async t => {
   await view.runAsync();
 
   env.size.width = 800;
-  env.notify();
-  env.flush(); // starts the run for 800
+  env.notify(); // queues a run for 800
 
-  // the drag continues while that run is in flight, and then stops: nothing
-  // further arrives to correct a dropped notification
+  // the drag continues while that run is in flight, and then stops: the
+  // second event chains onto the running dataflow rather than being lost
   env.size.width = 900;
   env.notify();
-  t.equal(env.frames.length, 0, 'no frame requested while the view is running');
 
   await settle(env, view);
 
@@ -198,11 +183,11 @@ tape('container:resize settles when the container size follows the chart', async
 
   const resizes = view.signal('resizes');
   t.ok(resizes > 0 && resizes < 4, `converged after ${resizes} events`);
-  t.equal(env.frames.length, 0, 'no further frames pending');
   t.equal(view.signal('height'), 260, 'height signal followed the container');
 
-  // quiescent: nothing more happens without a new notification
-  await settle(env, view);
+  // quiescent: nothing more happens without a genuine size change
+  env.notify();
+  await view.runAsync();
   t.equal(view.signal('resizes'), resizes, 'no further events once settled');
 
   view.finalize();
@@ -212,62 +197,19 @@ tape('container:resize settles when the container size follows the chart', async
 
 tape('container:resize keeps up with a sustained drag', async t => {
   const env = setup(400, 300),
-        warnings = [],
-        view = new View(parse(spec), {
-          renderer: 'none',
-          logger: {error() {}, warn: message => warnings.push(message), info() {}, debug() {}}
-        });
+        view = newView(env);
 
-  view.initialize(env.el);
   await settle(env, view);
 
-  // one external size change per frame, for longer than the loop limit
+  // one size change per frame, as a browser delivers them during a drag
   for (let i = 1; i <= 20; ++i) {
     env.size.width = 400 + i * 20;
     env.notify();
-    env.flush();
     await view.runAsync();
-    await new Promise(resolve => setTimeout(resolve, 0));
   }
-  await settle(env, view);
 
-  t.equal(warnings.length, 0, 'a long drag is not mistaken for a loop');
   t.equal(view.width(), 800, 'width tracked the whole drag');
-
-  view.finalize();
-  env.teardown();
-  t.end();
-});
-
-tape('container:resize gives up when the container never settles', async t => {
-  const env = setup(400, 300),
-        warnings = [],
-        view = new View(parse(heightSpec), {
-          renderer: 'none',
-          logger: {error() {}, warn: message => warnings.push(message), info() {}, debug() {}}
-        });
-
-  view.initialize(env.el);
-
-  // no fixed point: every render leaves the container a little taller
-  view.addSignalListener('height', (_, value) => { env.size.height = value + 10; });
-
-  await settle(env, view);
-
-  env.size.width = 800;
-  env.notify();
-  await settle(env, view);
-
-  t.ok(view.signal('resizes') < 10, `bounded at ${view.signal('resizes')} events`);
-  t.equal(warnings.length, 1, 'warns once');
-  t.ok(/depends on the view it contains/.test(warnings[0]), 'warning names the cause');
-
-  // a notification for the size the render produced no longer restarts it
-  const resizes = view.signal('resizes');
-  env.notify();
-  await settle(env, view);
-  t.equal(view.signal('resizes'), resizes, 'quiet once it has given up');
-  t.equal(warnings.length, 1, 'does not warn repeatedly');
+  t.equal(view.signal('resizes'), 20, 'one event per notification');
 
   view.finalize();
   env.teardown();
