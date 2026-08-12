@@ -67,10 +67,9 @@ Vega also supports a `resize` event on the `container` source, which fires when 
 }
 ```
 
-The event requires browser support for [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) and fires at most once per animation frame, so no throttling is needed.
+The event requires browser support for [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), which delivers size changes at most once per animation frame, so no throttling is needed.
 
 The container's size should not depend on the view it contains: a size signal driven from a content-sized container (for example, `height` from `containerSize()[1]` inside a `height: auto` element) re-renders the view every time the view resizes its own container.
-
 
 ## <a name="object"></a>Event Stream Objects
 

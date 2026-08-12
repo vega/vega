@@ -1,9 +1,6 @@
-const RESIZE = 'resize';
-
 /**
  * Observe the container element and dispatch 'container:resize' events to any
- * event streams registered for them. Does nothing if the specification does
- * not use the container event source, or where ResizeObserver is unavailable.
+ * event streams registered for them.
  * @param {View} view - The view whose container should be observed.
  */
 export default function observeContainer(view) {
@@ -26,7 +23,7 @@ export default function observeContainer(view) {
     if (el.clientWidth === width && el.clientHeight === height) return;
     width = el.clientWidth;
     height = el.clientHeight;
-    listeners.forEach(handler => handler({type: RESIZE, target: el}));
+    listeners.forEach(handler => handler({type: 'resize', target: el}));
   });
 
   view._resizeObserver.observe(el);
