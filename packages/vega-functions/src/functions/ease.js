@@ -57,5 +57,3 @@ export const easeFunctions = {
   easeElasticOut: d3.easeElasticOut,
   easeElasticInOut: d3.easeElasticInOut
 };
-
-export const easeFunctionNames = Object.keys(easeFunctions);

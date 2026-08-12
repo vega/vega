@@ -5,8 +5,7 @@ export {
 } from './src/functions/data.js';
 
 export {
-  easeFunctions,
-  easeFunctionNames
+  easeFunctions
 } from './src/functions/ease.js';
 
 export {

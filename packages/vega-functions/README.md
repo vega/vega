@@ -28,6 +28,21 @@ This package provides the following expression functions. All other constants an
 
 - [random](https://vega.github.io/vega/docs/expressions/#random)
 
+**Easing Functions**
+
+Each family below is also provided in `In`, `Out` and `InOut` variants (for example, `easeQuadIn`), except for `easeLinear`.
+
+- [easeLinear](https://vega.github.io/vega/docs/expressions/#easeLinear)
+- [easeQuad](https://vega.github.io/vega/docs/expressions/#easeQuad)
+- [easeCubic](https://vega.github.io/vega/docs/expressions/#easeCubic)
+- [easePoly](https://vega.github.io/vega/docs/expressions/#easePoly)
+- [easeSin](https://vega.github.io/vega/docs/expressions/#easeSin)
+- [easeExp](https://vega.github.io/vega/docs/expressions/#easeExp)
+- [easeCircle](https://vega.github.io/vega/docs/expressions/#easeCircle)
+- [easeBounce](https://vega.github.io/vega/docs/expressions/#easeBounce)
+- [easeBack](https://vega.github.io/vega/docs/expressions/#easeBack)
+- [easeElastic](https://vega.github.io/vega/docs/expressions/#easeElastic)
+
 **Date/Time Functions**
 
 - [quarter](https://vega.github.io/vega/docs/expressions/#quarter)
@@ -38,6 +53,7 @@ This package provides the following expression functions. All other constants an
 - [clampRange](https://vega.github.io/vega/docs/expressions/#clampRange)
 - [extent](https://vega.github.io/vega/docs/expressions/#extent)
 - [inrange](https://vega.github.io/vega/docs/expressions/#inrange)
+- [interpolateLinear](https://vega.github.io/vega/docs/expressions/#interpolateLinear)
 - [lerp](https://vega.github.io/vega/docs/expressions/#lerp)
 - [peek](https://vega.github.io/vega/docs/expressions/#peek)
 - [sequence](https://vega.github.io/vega/docs/expressions/#sequence)

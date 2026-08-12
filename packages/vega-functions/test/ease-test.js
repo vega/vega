@@ -1,5 +1,7 @@
 import tape from 'tape';
-import { easeFunctionNames, easeFunctions, functionContext } from '../index.js';
+import { easeFunctions, functionContext } from '../index.js';
+
+const easeFunctionNames = Object.keys(easeFunctions);
 
 tape('easing functions are registered in the function context', t => {
   t.ok(easeFunctionNames.length > 0);

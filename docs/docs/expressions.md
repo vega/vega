@@ -283,7 +283,9 @@ Trigonometric tangent. Same as JavaScript's [`Math.tan`](https://developer.mozil
 
 ## <a name="easing-functions"></a>Easing Functions
 
-Easing functions shape the rate of change of an animation over time. Each takes a normalized time _t_ in the interval [0, 1] and returns an eased position, also in [0, 1], with `f(0) === 0` and `f(1) === 1`. These are the [d3-ease](https://github.com/d3/d3-ease) implementations, exposed under their d3 names.
+Easing functions shape the rate of change of an animation over time. Each takes a normalized time _t_ in the interval [0, 1] and returns an eased position, with `f(0) === 0` and `f(1) === 1`. These are the [d3-ease](https://github.com/d3/d3-ease) implementations, exposed under their d3 names.
+
+Most families return a position within [0, 1], but the `easeBack` and `easeElastic` families deliberately overshoot: across their variants, `easeBack` spans about [-0.1, 1.1] and `easeElastic` spans about [-0.373, 1.373]. If a downstream calculation requires a value within the unit interval, clamp the result, for example `clamp(easeElastic(t), 0, 1)`.
 
 Every family below is available in three variants: `In` (slow start), `Out` (slow finish), and `InOut` (slow start and finish). The bare name is an alias for the `InOut` variant, except for `easeLinear`, which has no variants.
 
@@ -321,11 +323,11 @@ Bounce easing, as in a ball falling on a hard surface. Note that `easeBounce` al
 
 <a name="easeBack" href="#easeBack">#</a>
 <b>easeBack</b>(<i>t</i>), <b>easeBackIn</b>(<i>t</i>), <b>easeBackOut</b>(<i>t</i>), <b>easeBackInOut</b>(<i>t</i>)<br/>
-Anticipatory easing, which overshoots its range, with d3's default overshoot.
+Anticipatory easing, which backs up before advancing toward its target, with d3's default overshoot. Across its variants the returned position spans about [-0.1, 1.1].
 
 <a name="easeElastic" href="#easeElastic">#</a>
 <b>easeElastic</b>(<i>t</i>), <b>easeElasticIn</b>(<i>t</i>), <b>easeElasticOut</b>(<i>t</i>), <b>easeElasticInOut</b>(<i>t</i>)<br/>
-Elastic easing, like a rubber band, with d3's default amplitude and period. Note that `easeElastic` aliases `easeElasticOut`, following d3.
+Elastic easing, like a rubber band, with d3's default amplitude and period. Across its variants the returned position spans about [-0.373, 1.373]. Note that `easeElastic` aliases `easeElasticOut`, following d3.
 
 [Back to Top](#reference)
 
