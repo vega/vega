@@ -56,7 +56,7 @@ Other event types supported by the browser (e.g., [`resize`](https://developer.m
 
 In addition, Vega supports a `timer` event, which fires a new event at a specified time interval (in milliseconds) determined by the event stream _throttle_ property. {% include tag ver="4.0" %}
 
-Vega also supports a `resize` event on the `container` source, which fires when the DOM element containing the view changes size, for whatever reason: a window resize, a CSS layout change, or a script resizing the element. Use it with the [`containerSize`](../expressions/#containerSize) expression function to make a visualization responsive to its container. {% include tag ver="6.3" %}
+Vega also supports a `resize` event on the `container` source, which fires when the DOM element containing the view changes size, for whatever reason: a window resize, a CSS layout change, or a script resizing the element. Use it with the [`containerSize`](../expressions/#containerSize) expression function to make a visualization responsive to its container. {% include tag ver="6.4" %}
 
 {: .suppress-error}
 ```json
@@ -194,7 +194,7 @@ The _source_ property supports the following options:
 - The string `*`, indicating any mark type, but excluding the view component itself.
 - The string `view` or `scope`, indicating event scopes as described in the [_source_ property documentation](#event-stream-objects).
 - The string `window`, indicating the [browser window object](https://developer.mozilla.org/en-US/docs/Web/API/Window).
-- The string `container`, indicating the DOM element containing the view. Only the `resize` type is supported. {% include tag ver="6.3" %}
+- The string `container`, indicating the DOM element containing the view. Only the `resize` type is supported. {% include tag ver="6.4" %}
 - If none of the above, _source_ will be interpreted as a [CSS selector string](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) indicating DOM elements to monitor.
 
 The _type_ property must be one of the [supported event types](#types). To indicate that an input event should be consumed (_i.e._, that [`event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) is called), include an exclamation point (`!`) at the end of the event type.
