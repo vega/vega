@@ -71,6 +71,7 @@ tape('CanvasRenderer should use DOM if available', t => {
   const r = new Renderer().initialize(document.body, 100, 100);
   t.strictEqual(r.element(), document.body);
   t.strictEqual(r.canvas(), document.body.childNodes[0]);
+  t.strictEqual(r.canvas().style.getPropertyValue('vertical-align'), 'bottom');
 
   delete global.document;
   t.end();

@@ -47,6 +47,9 @@ export default class SVGRenderer extends Renderer {
       this._svg.setAttributeNS(xmlns, 'xmlns:xlink', metadata['xmlns:xlink']);
       this._svg.setAttribute('version', metadata['version']);
       this._svg.setAttribute('class', 'marks');
+      // an inline element sits on the text baseline, leaving a few pixels of
+      // descender space below it that count towards the container's height
+      this._svg.style.setProperty('vertical-align', 'bottom');
       domClear(el, 1);
 
       // set the svg root group
@@ -118,19 +121,20 @@ export default class SVGRenderer extends Renderer {
 
     if (!svg) return null;
 
+    // styles position the element on the page; they are not part of the image
+    const style = svg.getAttribute('style');
+    svg.removeAttribute('style');
+
     let node;
     if (bg) {
-      svg.removeAttribute('style');
       node = domChild(svg, RootIndex, 'rect', svgns);
       setAttributes(node, {width: this._width, height: this._height, fill: bg});
     }
 
     const text = serializeXML(svg);
 
-    if (bg) {
-      svg.removeChild(node);
-      this._svg.style.setProperty('background-color', bg);
-    }
+    if (bg) svg.removeChild(node);
+    if (style) svg.setAttribute('style', style);
 
     return text;
   }
