@@ -67,7 +67,9 @@ Vega also supports a `resize` event on the `container` source, which fires when 
 }
 ```
 
-The container is only observed if a specification listens for `container:resize`, and only where the browser supports [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver). Events are coalesced to at most one per animation frame, and changes to the container size caused by the view's own re-render are ignored, so a content-sized container does not feed back into itself.
+The container is only observed if a specification listens for `container:resize`, and only where the browser supports [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver). Events are coalesced to at most one per animation frame, and the view never re-enters while it is already responding to a resize; it re-measures the container once that run completes, so a resize that arrives mid-render is not lost.
+
+Driving a size signal from a container that is itself sized by its content (for example, `height` from `containerSize()[1]` inside a `height: auto` element) is circular: rendering the view changes the container, which resizes the view. Vega compares the container against the size it last rendered, so a circular specification that has a stable size converges on it within a round or two. One that does not — because each render leaves the container a little larger, say — is capped after a few rounds, and Vega warns `Container size depends on the view it contains` and stops matching the container. Give the container a size that does not depend on its contents to resolve it.
 
 
 ## <a name="object"></a>Event Stream Objects
