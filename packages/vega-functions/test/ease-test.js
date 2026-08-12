@@ -11,7 +11,7 @@ tape('easing functions are registered in the function context', t => {
   t.end();
 });
 
-tape('easing functions map the unit interval onto itself', t => {
+tape('easing functions fix the endpoints of the unit interval', t => {
   // the back and elastic families return -0 at the origin, so compare
   // numerically rather than with strict equality
   easeFunctionNames.forEach(name => {
