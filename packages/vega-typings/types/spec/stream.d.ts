@@ -49,6 +49,10 @@ export type EventStream = StreamParameters &
         source: 'window';
         type: WindowEventType;
       }
+    | {
+        source: 'container';
+        type: 'resize';
+      }
   );
 export interface DerivedStream extends StreamParameters {
   stream: Stream;

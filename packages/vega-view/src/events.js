@@ -5,6 +5,8 @@ import {array, extend, isArray, isObject, toSet} from 'vega-util';
 const VIEW = 'view',
       TIMER = 'timer',
       WINDOW = 'window',
+      CONTAINER = 'container',
+      RESIZE = 'resize',
       NO_TRAP = {trap: false};
 
 /**
@@ -88,6 +90,15 @@ export function events(source, type, filter) {
     if (permit(view, 'view', type)) {
       // send traps errors, so use {trap: false} option
       view.addEventListener(type, send, NO_TRAP);
+    }
+  }
+
+  else if (source === CONTAINER) {
+    if (type !== RESIZE) {
+      view.warn('Unsupported container event type: ' + type);
+    } else if (permit(view, 'container', type)) {
+      // the container element is not known until the view is initialized
+      view._containerListeners.push(send);
     }
   }
 

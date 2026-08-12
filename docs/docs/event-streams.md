@@ -56,6 +56,19 @@ Other event types supported by the browser (e.g., [`resize`](https://developer.m
 
 In addition, Vega supports a `timer` event, which fires a new event at a specified time interval (in milliseconds) determined by the event stream _throttle_ property. {% include tag ver="4.0" %}
 
+Vega also supports a `resize` event on the `container` source, which fires when the DOM element containing the view changes size, for whatever reason: a window resize, a CSS layout change, or a script resizing the element. Use it with the [`containerSize`](../expressions/#containerSize) expression function to make a visualization responsive to its container. {% include tag ver="6.3" %}
+
+{: .suppress-error}
+```json
+{
+  "name": "width",
+  "update": "containerSize()[0]",
+  "on": [{"events": "container:resize", "update": "containerSize()[0]"}]
+}
+```
+
+The container is only observed if a specification listens for `container:resize`, and only where the browser supports [`ResizeObserver`](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver). Events are coalesced to at most one per animation frame, and changes to the container size caused by the view's own re-render are ignored, so a content-sized container does not feed back into itself.
+
 
 ## <a name="object"></a>Event Stream Objects
 
@@ -63,7 +76,7 @@ A basic event stream consists of an event source and type:
 
 | Property    | Type                          | Description   |
 | :---------- | :---------------------------: | :------------ |
-| source      | {% include type t="String" %} | The input event source. For event streams defined in the top-level scope of a Vega specification, this property defaults to `"view"`, which monitors all input events in the current Vega view component (including those targeting the containing Canvas or SVG component itself). For event streams defined within nested scopes, this property defaults to `"scope"`, which limits consideration to only events originating within the group in which the event stream is defined. Othe legal values include `"window"` for the browser window object, or a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) string indicating external DOM elements. The source property is ignored if the event _type_ is `"timer"`.|
+| source      | {% include type t="String" %} | The input event source. For event streams defined in the top-level scope of a Vega specification, this property defaults to `"view"`, which monitors all input events in the current Vega view component (including those targeting the containing Canvas or SVG component itself). For event streams defined within nested scopes, this property defaults to `"scope"`, which limits consideration to only events originating within the group in which the event stream is defined. Othe legal values include `"window"` for the browser window object, `"container"` for the DOM element containing the view (`"resize"` events only), or a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) string indicating external DOM elements. The source property is ignored if the event _type_ is `"timer"`.|
 | type        | {% include type t="String" %} | {% include required %} The event type to monitor (e.g., `"click"`, `"keydown"`, `"timer"`). For more, see the [supported event types list](#types).|
 
 Any event stream object may also include the following properties for filtering or modifying an event stream:
@@ -179,6 +192,7 @@ The _source_ property supports the following options:
 - The string `*`, indicating any mark type, but excluding the view component itself.
 - The string `view` or `scope`, indicating event scopes as described in the [_source_ property documentation](#event-stream-objects).
 - The string `window`, indicating the [browser window object](https://developer.mozilla.org/en-US/docs/Web/API/Window).
+- The string `container`, indicating the DOM element containing the view. Only the `resize` type is supported. {% include tag ver="6.3" %}
 - If none of the above, _source_ will be interpreted as a [CSS selector string](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors) indicating DOM elements to monitor.
 
 The _type_ property must be one of the [supported event types](#types). To indicate that an input event should be consumed (_i.e._, that [`event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) is called), include an exclamation point (`!`) at the end of the event type.
@@ -196,6 +210,7 @@ rect:mousedown      // mousedown events on any rect marks
 @foo:mousedown      // mousedown events on marks named 'foo'
 symbol:mousedown!   // capture and consume mousedown events on symbol marks
 window:mousemove    // capture mousemove events from the browser window
+container:resize    // capture size changes of the view container element
 mousemove{100}      // throttle the stream by 100 ms
 mousemove{100, 200} // also debounce the stream by 200 ms
 mousemove{0, 200}   // debounce by 200 ms, but do not throttle
