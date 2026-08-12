@@ -13,6 +13,10 @@ tape('timeUnits standardizes time units', t => {
   t.deepEqual(vega.timeUnits(['year', 'day', 'week']), ['year', 'week', 'day']);
   t.deepEqual(vega.timeUnits(['day', 'week', 'year']), ['year', 'week', 'day']);
 
+  t.deepEqual(vega.timeUnits(['year', 'isoweek', 'day']), ['year', 'isoweek', 'day']);
+  t.deepEqual(vega.timeUnits(['year', 'day', 'isoweek']), ['year', 'isoweek', 'day']);
+  t.deepEqual(vega.timeUnits(['day', 'isoweek', 'year']), ['year', 'isoweek', 'day']);
+
   t.deepEqual(vega.timeUnits(['year', 'dayofyear']), ['year', 'dayofyear']);
   t.deepEqual(vega.timeUnits(['dayofyear', 'year']), ['year', 'dayofyear']);
 
@@ -35,6 +39,12 @@ tape('timeUnits standardizes time units', t => {
   t.throws(() => vega.timeUnits(['day', 'dayofyear']));
   t.throws(() => vega.timeUnits(['week', 'date']));
   t.throws(() => vega.timeUnits(['week', 'dayofyear']));
+  t.throws(() => vega.timeUnits(['quarter', 'isoweek']));
+  t.throws(() => vega.timeUnits(['month', 'isoweek']));
+  t.throws(() => vega.timeUnits(['isoweek', 'date']));
+  t.throws(() => vega.timeUnits(['isoweek', 'dayofyear']));
+  t.throws(() => vega.timeUnits(['week', 'isoweek']));
+  t.throws(() => vega.timeUnits(['year', 'week', 'isoweek', 'day']));
 
   t.end();
 });

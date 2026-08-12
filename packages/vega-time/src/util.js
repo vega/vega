@@ -1,4 +1,4 @@
-import {timeDay, timeWeek, utcDay, utcWeek} from 'd3-time';
+import {timeDay, timeMonday, timeWeek, utcDay, utcMonday, utcWeek} from 'd3-time';
 
 const t0 = new Date;
 
@@ -18,12 +18,36 @@ export function week(d) {
   return localWeekNum(new Date(d));
 }
 
+export function isoweek(d) {
+  return localISOWeekNum(new Date(d));
+}
+
 export function localDayOfYear(d) {
   return timeDay.count(localYear(d.getFullYear()) - 1, d);
 }
 
 export function localWeekNum(d) {
   return timeWeek.count(localYear(d.getFullYear()) - 1, d);
+}
+
+export function localISOWeekYear(d) {
+  return timeDay.offset(timeMonday.floor(d), 3).getFullYear();
+}
+
+export function localISOWeekNum(d) {
+  return 1 + timeMonday.count(localISOWeekOne(localISOWeekYear(d)), d);
+}
+
+// The Monday on which week 1 of the given week-numbering year begins.
+function localISOWeekOne(y) {
+  return timeMonday.floor(timeDay.offset(localYear(y), 3));
+}
+
+// The day of January on which week 1 of the given week-numbering year begins. Values of zero or
+// less refer to the preceding December, which localDate rolls over for us.
+export function localISOWeekOneDate(y) {
+  const d = localISOWeekOne(y);
+  return d.getMonth() ? d.getDate() - 31 : d.getDate();
 }
 
 export function localFirst(y) {
@@ -47,6 +71,10 @@ export function utcweek(d) {
   return utcWeekNum(new Date(d));
 }
 
+export function utcisoweek(d) {
+  return utcISOWeekNum(new Date(d));
+}
+
 export function utcDayOfYear(d) {
   const y = Date.UTC(d.getUTCFullYear(), 0, 1);
   return utcDay.count(y - 1, d);
@@ -55,6 +83,23 @@ export function utcDayOfYear(d) {
 export function utcWeekNum(d) {
   const y = Date.UTC(d.getUTCFullYear(), 0, 1);
   return utcWeek.count(y - 1, d);
+}
+
+export function utcISOWeekYear(d) {
+  return utcDay.offset(utcMonday.floor(d), 3).getUTCFullYear();
+}
+
+export function utcISOWeekNum(d) {
+  return 1 + utcMonday.count(utcISOWeekOne(utcISOWeekYear(d)), d);
+}
+
+function utcISOWeekOne(y) {
+  return utcMonday.floor(utcDay.offset(Date.UTC(y, 0, 1), 3));
+}
+
+export function utcISOWeekOneDate(y) {
+  const d = utcISOWeekOne(y);
+  return d.getUTCMonth() ? d.getUTCDate() - 31 : d.getUTCDate();
 }
 
 export function utcFirst(y) {

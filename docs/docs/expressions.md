@@ -427,6 +427,10 @@ Returns the (zero-based) month for the given _datetime_ value, in local time.
 <b>week</b>(<i>date</i>) {% include tag ver="5.11" %}<br/>
 Returns the week number of the year for the given _datetime_, in local time. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 
+<a name="isoweek" href="#isoweek">#</a>
+<b>isoweek</b>(<i>date</i>) {% include tag ver="6.4" %}<br/>
+Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _datetime_, in local time. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.
+
 <a name="hours" href="#hours">#</a>
 <b>hours</b>(<i>datetime</i>)<br/>
 Returns the hours component for the given _datetime_ value, in local time.
@@ -490,6 +494,10 @@ Returns the (zero-based) month for the given _datetime_ value, in UTC time.
 <a name="utcweek" href="#utcweek">#</a>
 <b>utcweek</b>(<i>date</i>) {% include tag ver="5.11" %}<br/>
 Returns the week number of the year for the given _datetime_, in UTC time. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
+<a name="utcisoweek" href="#utcisoweek">#</a>
+<b>utcisoweek</b>(<i>date</i>) {% include tag ver="6.4" %}<br/>
+Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _datetime_, in UTC time. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.
 
 <a name="utchours" href="#utchours">#</a>
 <b>utchours</b>(<i>datetime</i>)<br/>

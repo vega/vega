@@ -6,6 +6,7 @@ tape('timeUnitSpecifier produces specifier for single time units', t => {
   t.equal(vega.timeUnitSpecifier('quarter'), 'Q%q');
   t.equal(vega.timeUnitSpecifier('month'), '%b');
   t.equal(vega.timeUnitSpecifier('week'), 'W%U');
+  t.equal(vega.timeUnitSpecifier('isoweek'), 'W%V');
   t.equal(vega.timeUnitSpecifier('day'), '%a');
   t.equal(vega.timeUnitSpecifier('date'), '%d');
   t.equal(vega.timeUnitSpecifier('dayofyear'), '%j');
@@ -22,6 +23,9 @@ tape('timeUnitSpecifier produces specifier for multiple time units', t => {
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date']), '%Y-%m-%d');
   t.equal(vega.timeUnitSpecifier(['year', 'week']), '%Y W%U');
   t.equal(vega.timeUnitSpecifier(['year', 'week', 'day']), '%Y W%U %a');
+  t.equal(vega.timeUnitSpecifier(['year', 'isoweek']), '%G W%V');
+  t.equal(vega.timeUnitSpecifier(['year', 'isoweek', 'day']), '%G W%V %a');
+  t.equal(vega.timeUnitSpecifier(['isoweek', 'day']), 'W%V %a');
   t.equal(vega.timeUnitSpecifier(['year', 'dayofyear']), '%Y %j');
   t.equal(vega.timeUnitSpecifier(['day', 'hours', 'minutes']), '%a %H:%M');
   t.equal(vega.timeUnitSpecifier(['year', 'month', 'date', 'hours']), '%Y-%m-%d %H:00');

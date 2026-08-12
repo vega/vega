@@ -17,6 +17,7 @@ The date-time utilities support a set of pre-defined time units. A single _unit_
 - `'month'` - Calendar months (January, February, _etc._).
 - `'date'` - Calendar day of the month (January 1, January 2, _etc._).
 - `'week'` - Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+- `'isoweek'` - [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) weeks. Weeks start on Monday, and week 1 is the week that contains January 4 (equivalently, the week containing the year's first Thursday). A week therefore belongs to the _week-numbering year_ of its Thursday, which may differ from the calendar year of the week's first or last days.
 - `'day'` - Day of the week (Sunday, Monday, _etc._).
 - `'dayofyear'` - Day of the year (1, 2, ..., 365, _etc._).
 - `'hours'` - Hours of the day (12:00am, 1:00am, _etc_.).
@@ -30,7 +31,7 @@ Multiple _units_ can be listed in an array to indicate desired intervals of time
 vega.<b>timeUnits</b>(<i>units</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/units.js "Source")
 
-Returns a standardized and sorted specifier for the given _units_, which must be an array of one or more valid time unit strings. The returned array contains the same units, sorted in decreasing over of unit size, such that the most granular unit is last (for example, `['year', 'month', 'date']`). This method throws an error if the _units_ array is empty, contains an invalid unit, or contains incompatible units. Specifically, the `'quarter'`, `'month'`, and `'date'` units can not be used in conjunction with the `'week'` or `'day'` units.
+Returns a standardized and sorted specifier for the given _units_, which must be an array of one or more valid time unit strings. The returned array contains the same units, sorted in decreasing over of unit size, such that the most granular unit is last (for example, `['year', 'month', 'date']`). This method throws an error if the _units_ array is empty, contains an invalid unit, or contains incompatible units. Specifically, the `'quarter'`, `'month'`, and `'date'` units can not be used in conjunction with the `'week'`, `'isoweek'`, or `'day'` units, and `'week'` and `'isoweek'` can not be used together.
 
 <a name="timeUnitSpecifier" href="#timeUnitSpecifier">#</a>
 vega.<b>timeUnitSpecifier</b>(<i>units</i>[, <i>specifiers</i>])
@@ -49,6 +50,8 @@ If no _specifiers_ object is provided, the following defaults are used:
   "month": "%b ",
   "date": "%d ",
   "week": "W%U ",
+  "isoweek": "W%V ",
+  "year-isoweek": "%G W%V ",
   "day": "%a ",
   "hours": "%H:00",
   "hours-minutes": "%H:%M",
@@ -115,6 +118,12 @@ vega.<b>week</b>(<i>date</i>)
 
 Returns the week number of the year for the given _date_, which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
 
+<a name="isoweek" href="#isoweek">#</a>
+vega.<b>isoweek</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _date_, which should be either a `Date` object or timestamp value. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.
+
 ### UTC Time Utilities
 
 <a name="utcFloor" href="#utcFloor">#</a>
@@ -152,3 +161,9 @@ vega.<b>utcweek</b>(<i>date</i>)
 [<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
 
 Returns the week number of the year for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. This function assumes Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+
+<a name="utcisoweek" href="#utcisoweek">#</a>
+vega.<b>utcisoweek</b>(<i>date</i>)
+[<>](https://github.com/vega/vega/blob/master/packages/vega-time/src/util.js "Source")
+
+Returns the [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) week number for the given _date_ in [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) (UTC), which should be either a `Date` object or timestamp value. Weeks start on Monday and week 1 is the week that contains January 4, so the result is between 1 and 53 and is numbered within the week-numbering year rather than the calendar year.

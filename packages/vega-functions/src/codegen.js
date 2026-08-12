@@ -34,12 +34,14 @@ import {
 
 import {
   dayofyear,
+  isoweek,
   timeOffset,
   timeSequence,
   timeUnitSpecifier,
   utcOffset,
   utcSequence,
   utcdayofyear,
+  utcisoweek,
   utcweek,
   week
 } from 'vega-time';
@@ -277,6 +279,8 @@ export const functionContext = {
   utcquarter,
   week,
   utcweek,
+  isoweek,
+  utcisoweek,
   dayofyear,
   utcdayofyear,
   warn,
