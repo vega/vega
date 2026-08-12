@@ -21,6 +21,7 @@ This page documents the expression language. If you are interested in implementa
 - [Type Coercion Functions](#type-coercion-functions)
 - [Control Flow Functions](#control-flow-functions)
 - [Math Functions](#math-functions)
+- [Easing Functions](#easing-functions)
 - [Statistical Functions](#statistical-functions)
 - [Date-Time Functions](#datetime-functions)
 - [Array Functions](#array-functions)
@@ -280,6 +281,57 @@ Trigonometric tangent. Same as JavaScript's [`Math.tan`](https://developer.mozil
 [Back to Top](#reference)
 
 
+## <a name="easing-functions"></a>Easing Functions
+
+Easing functions shape the rate of change of an animation over time. Each takes a normalized time _t_ in the interval [0, 1] and returns an eased position, with `f(0) === 0` and `f(1) === 1`. These are the [d3-ease](https://github.com/d3/d3-ease) implementations, exposed under their d3 names.
+
+Most families return a position within [0, 1], but the `easeBack` and `easeElastic` families deliberately overshoot it. If a downstream calculation requires a value within the unit interval, clamp the result, for example `clamp(easeElastic(t), 0, 1)`.
+
+Every family below is available in three variants: `In` (slow start), `Out` (slow finish), and `InOut` (slow start and finish). The bare name is an alias for the `InOut` variant, except for `easeLinear`, which has no variants.
+
+<a name="easeLinear" href="#easeLinear">#</a>
+<b>easeLinear</b>(<i>t</i>)<br/>
+The identity function; the animation proceeds at a constant rate.
+
+<a name="easeQuad" href="#easeQuad">#</a>
+<b>easeQuad</b>(<i>t</i>), <b>easeQuadIn</b>(<i>t</i>), <b>easeQuadOut</b>(<i>t</i>), <b>easeQuadInOut</b>(<i>t</i>)<br/>
+Quadratic easing (_t_<sup>2</sup>).
+
+<a name="easeCubic" href="#easeCubic">#</a>
+<b>easeCubic</b>(<i>t</i>), <b>easeCubicIn</b>(<i>t</i>), <b>easeCubicOut</b>(<i>t</i>), <b>easeCubicInOut</b>(<i>t</i>)<br/>
+Cubic easing (_t_<sup>3</sup>).
+
+<a name="easePoly" href="#easePoly">#</a>
+<b>easePoly</b>(<i>t</i>), <b>easePolyIn</b>(<i>t</i>), <b>easePolyOut</b>(<i>t</i>), <b>easePolyInOut</b>(<i>t</i>)<br/>
+Polynomial easing, with d3's default exponent of 3.
+
+<a name="easeSin" href="#easeSin">#</a>
+<b>easeSin</b>(<i>t</i>), <b>easeSinIn</b>(<i>t</i>), <b>easeSinOut</b>(<i>t</i>), <b>easeSinInOut</b>(<i>t</i>)<br/>
+Sinusoidal easing.
+
+<a name="easeExp" href="#easeExp">#</a>
+<b>easeExp</b>(<i>t</i>), <b>easeExpIn</b>(<i>t</i>), <b>easeExpOut</b>(<i>t</i>), <b>easeExpInOut</b>(<i>t</i>)<br/>
+Exponential easing (2<sup>_t_</sup>).
+
+<a name="easeCircle" href="#easeCircle">#</a>
+<b>easeCircle</b>(<i>t</i>), <b>easeCircleIn</b>(<i>t</i>), <b>easeCircleOut</b>(<i>t</i>), <b>easeCircleInOut</b>(<i>t</i>)<br/>
+Circular easing.
+
+<a name="easeBounce" href="#easeBounce">#</a>
+<b>easeBounce</b>(<i>t</i>), <b>easeBounceIn</b>(<i>t</i>), <b>easeBounceOut</b>(<i>t</i>), <b>easeBounceInOut</b>(<i>t</i>)<br/>
+Bounce easing, as in a ball falling on a hard surface. Note that `easeBounce` aliases `easeBounceOut`, following d3.
+
+<a name="easeBack" href="#easeBack">#</a>
+<b>easeBack</b>(<i>t</i>), <b>easeBackIn</b>(<i>t</i>), <b>easeBackOut</b>(<i>t</i>), <b>easeBackInOut</b>(<i>t</i>)<br/>
+Anticipatory easing, which backs up before advancing toward its target, with d3's default overshoot. Across its variants the returned position spans about [-0.1, 1.1].
+
+<a name="easeElastic" href="#easeElastic">#</a>
+<b>easeElastic</b>(<i>t</i>), <b>easeElasticIn</b>(<i>t</i>), <b>easeElasticOut</b>(<i>t</i>), <b>easeElasticInOut</b>(<i>t</i>)<br/>
+Elastic easing, like a rubber band, with d3's default amplitude and period. Across its variants the returned position spans about [-0.373, 1.373]. Note that `easeElastic` aliases `easeElasticOut`, following d3.
+
+[Back to Top](#reference)
+
+
 ## <a name="statistical-functions"></a>Statistical Functions
 
 Methods for sampling and calculating values for probability distributions.
@@ -501,6 +553,10 @@ Returns the length of the input _array_.
 <a name="lerp" href="#lerp">#</a>
 <b>lerp</b>(<i>array</i>, <i>fraction</i>)<br/>
 Returns the linearly interpolated value between the first and last entries in the _array_ for the provided interpolation _fraction_ (typically between 0 and 1). For example, `lerp([0, 50], 0.5)` returns 25.
+
+<a name="interpolateLinear" href="#interpolateLinear">#</a>
+<b>interpolateLinear</b>(<i>array</i>, <i>fraction</i>)<br/>
+Returns the piecewise-linearly interpolated value across _all_ entries in the _array_ for the provided interpolation _fraction_ (typically between 0 and 1). The entries are treated as evenly-spaced control points, and interpolation occurs within whichever segment _fraction_ falls into. Unlike [lerp](#lerp), which considers only the first and last entries, this respects intermediate values: `interpolateLinear([0, 100, 10], 0.5)` returns 100, whereas `lerp([0, 100, 10], 0.5)` returns 5.
 
 <a name="peek" href="#peek">#</a>
 <b>peek</b>(<i>array</i>)<br/>

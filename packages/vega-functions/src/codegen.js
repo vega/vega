@@ -101,7 +101,11 @@ import {
   setdata
 } from './functions/data.js';
 
+import {easeFunctions} from './functions/ease.js';
+
 import encode from './functions/encode.js';
+
+import {interpolateLinear} from './functions/interpolate.js';
 
 import {
   dayAbbrevFormat,
@@ -240,6 +244,7 @@ export const functionContext = {
   slice,
   flush,
   lerp,
+  interpolateLinear,
   merge,
   pad,
   peek,
@@ -301,7 +306,8 @@ export const functionContext = {
   modify,
   lassoAppend,
   lassoPath,
-  intersectLasso
+  intersectLasso,
+  ...easeFunctions
 };
 
 const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions

@@ -13,6 +13,7 @@ const d3Deps = [
   'd3-color',
   'd3-dispatch',
   'd3-dsv',
+  'd3-ease',
   'd3-force',
   'd3-format',
   'd3-geo',
