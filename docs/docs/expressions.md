@@ -957,7 +957,7 @@ Functions for accessing web browser facilities.
 
 <a name="containerSize" href="#containerSize">#</a>
 <b>containerSize</b>()<br/>
-Returns the current CSS box size (`[el.clientWidth, el.clientHeight]`) of the parent DOM element that contains the Vega view. If there is no container element, returns `[undefined, undefined]`.
+Returns the current CSS box size (`[el.clientWidth, el.clientHeight]`) of the parent DOM element that contains the Vega view. If there is no container element, returns `[undefined, undefined]`. To keep a view sized to its container, update a size signal on the [`container:resize`](../event-streams/#types) event stream. {% include tag ver="6.4" %}
 
 <a name="screen" href="#screen">#</a>
 <b>screen</b>()<br/>

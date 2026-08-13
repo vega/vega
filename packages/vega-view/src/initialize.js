@@ -3,6 +3,7 @@ import bind from './bind.js';
 import element from './element.js';
 import initializeRenderer from './initialize-renderer.js';
 import initializeHandler from './initialize-handler.js';
+import observeContainer from './observeContainer.js';
 import {CanvasHandler, renderModule} from 'vega-scenegraph';
 
 export default function(el, elBind) {
@@ -43,6 +44,8 @@ export default function(el, elBind) {
       bind(view, _.element || elBind, _);
     });
   }
+
+  observeContainer(view);
 
   return view;
 }

@@ -49,6 +49,7 @@ export interface Config
   group?: any; // TODO
   events?: {
     bind?: 'any' | 'container' | 'none';
+    container?: boolean;
     defaults?: DefaultsConfig;
     globalCursor?: boolean;
     selector?: boolean | string[];
