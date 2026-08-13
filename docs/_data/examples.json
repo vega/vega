@@ -112,6 +112,8 @@
         {"name": "bar-line-toggle"},
         {"name": "map-with-tooltip"},
         {"name": "pacman"},
-        {"name": "platformer"}
+        {"name": "platformer"},
+        {"name": "column-stacked-interactive"},
+        {"name": "interactive-line-chart"}
     ]
 }

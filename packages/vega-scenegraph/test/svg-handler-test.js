@@ -11,6 +11,8 @@ const marks = JSON.parse(load('marks.json'));
 for (const name in marks) { sceneFromJSON(marks[name]); }
 
 const events = [
+  'focusin',
+  'focusout',
   'keydown',
   'keypress',
   'keyup',

@@ -314,7 +314,7 @@ export const functionContext = {
   ...easeFunctions
 };
 
-const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
+const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'], // event functions
       eventPrefix = 'event.vega.', // event function prefix
       thisPrefix = 'this.', // function context prefix
       astVisitors = {}; // AST visitors for dependency analysis

@@ -4,7 +4,7 @@ import Unary from './ops-unary.js';
 import Functions from './functions.js';
 import {DisallowedObjectProperties} from 'vega-util';
 
-const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'];
+const EventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y', 'focus'];
 const DisallowedMethods = new Set([
   Function,
   eval,

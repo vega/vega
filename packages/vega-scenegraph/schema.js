@@ -171,7 +171,9 @@ const MARK_BASE = {
       'type': 'array',
       'items': { '$ref': '#/definitions/item-' }
     },
-    'zindex': { 'type': 'number' }
+    'zindex': { 'type': 'number' },
+    'tabindex': { 'type': 'number' },
+    'outline': { 'type': 'string' }
   },
   'required': [ 'marktype' ]
 };
@@ -221,7 +223,9 @@ const ITEM_BASE = {
     'description': { 'type': 'string' },
     'aria': { 'type': 'boolean' },
     'ariaRole': { 'type': 'string' },
-    'ariaRoleDescription': { 'type': 'string' }
+    'ariaRoleDescription': { 'type': 'string' },
+    'tabindex': { 'type': 'number' },
+    'outline': { 'type': 'string' }
   }
 };
 
@@ -352,7 +356,8 @@ const MARKS = {
       'cornerRadiusTopLeft': { 'type': 'number' },
       'cornerRadiusTopRight': { 'type': 'number' },
       'cornerRadiusBottomRight': { 'type': 'number' },
-      'cornerRadiusBottomLeft': { 'type': 'number' }
+      'cornerRadiusBottomLeft': { 'type': 'number' },
+      'outline': { 'type': 'string' }
     }
   },
   'rule': {

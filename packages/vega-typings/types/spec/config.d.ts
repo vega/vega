@@ -111,6 +111,8 @@ export interface MarkConfig {
    */
   description?: string | SignalRef;
 
+  tabindex?: number | SignalRef;
+
   /**
    * Width of the marks.
    */

@@ -37,6 +37,8 @@ export default function parseView(spec, scope) {
 
   // assign description, event, legend, and locale configuration
   scope.description = spec.description || config.description;
+  scope.ariaRole = spec.ariaRole || config.ariaRole;
+  scope.ariaRoleDescription = spec.ariaRoleDescription || config.ariaRoleDescription;
   scope.eventConfig = config.events;
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
   scope.locale = config.locale;

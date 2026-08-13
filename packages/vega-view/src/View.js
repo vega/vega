@@ -1,4 +1,4 @@
-import {ariaLabel} from './aria.js';
+import {ariaRole as aRole, ariaRoleDescription as aRoleDescription, ariaLabel} from './aria.js';
 import background from './background.js';
 import cursor, {setCursor} from './cursor.js';
 import {change, data, dataref, insert, remove} from './data.js';
@@ -108,6 +108,12 @@ export default function View(spec, options) {
   // initialize cursor
   cursor(view);
 
+  // initialize aria role for the view
+  view.ariaRole(spec.ariaRole);
+
+  // initialize aria-roledescription for the view
+  view.ariaRoleDescription(spec.ariaRoleDescription);
+
   // initialize view description
   view.description(spec.description);
 
@@ -191,6 +197,24 @@ inherits(View, Dataflow, {
       return this;
     }
     return this._desc;
+  },
+
+  ariaRole(text) {
+    if (arguments.length) {
+      const desc = text != null ? (text + '') : null;
+      if (desc !== this._ariaRole) aRole(this._el, this._ariaRole = desc);
+      return this;
+    }
+    return this._ariaRole;
+  },
+
+  ariaRoleDescription(text) {
+    if (arguments.length) {
+      const desc = text != null ? (text + '') : null;
+      if (desc !== this._ariaRoleDescription) aRoleDescription(this._el, this._ariaRoleDescription = desc);
+      return this;
+    }
+    return this._ariaRoleDescription;
   },
 
   container() {

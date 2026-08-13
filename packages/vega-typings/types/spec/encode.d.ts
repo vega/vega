@@ -278,6 +278,7 @@ export interface EncodeEntry {
    * If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute).
    */
   description?: ProductionRule<StringValueRef>;
+  tabindex?: ProductionRule<NumericValueRef>;
   [k: string]: ProductionRule<ArbitraryValueRef> | undefined;
 }
 
@@ -433,4 +434,4 @@ export interface Encodable<T> {
 export type Encode<T> = Partial<Record<EncodeEntryName, T>>;
 
 export type EncodeEntryName =
-  'enter' | 'update' | 'exit' | 'hover' | 'leave' | 'select' | 'release';
+  'enter' | 'update' | 'exit' | 'hover' | 'leave' | 'select' | 'release' | 'focusin' | 'focusout';
