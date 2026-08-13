@@ -78,6 +78,15 @@ function newView(env, viewSpec) {
   return view;
 }
 
+function logger(warnings, errors) {
+  return {
+    error: message => { if (errors) errors.push(String(message)); },
+    warn: message => warnings.push(String(message)),
+    info() {},
+    debug() {}
+  };
+}
+
 // alternate dataflow runs and resize notifications, as a browser would,
 // until a run leaves the container size unchanged
 async function settle(env, view) {
@@ -92,192 +101,295 @@ async function settle(env, view) {
 }
 
 tape('container:resize updates size signals when the container resizes', async t => {
-  const env = setup(400, 300),
-        view = newView(env);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
 
-  await view.runAsync();
-  t.equal(view.width(), 400, 'initial width from the container');
+    await view.runAsync();
+    t.equal(view.width(), 400, 'initial width from the container');
 
-  env.size.width = 800;
-  env.notify();
-  await view.runAsync();
+    env.size.width = 800;
+    env.notify();
+    await view.runAsync();
 
-  t.equal(view.width(), 800, 'width signal follows the container');
-  t.equal(view.signal('resizes'), 1, 'one container:resize event delivered');
+    t.equal(view.width(), 800, 'width signal follows the container');
+    t.equal(view.signal('resizes'), 1, 'one container:resize event delivered');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container is only observed when a spec listens for resizes', async t => {
-  const env = setup(400, 300),
-        view = newView(env, {width: 400, height: 100});
+  const env = setup(400, 300);
+  try {
+    const view = newView(env, {width: 400, height: 100});
 
-  await view.runAsync();
+    await view.runAsync();
 
-  t.equal(env.observers.length, 0, 'no observer created');
-  t.equal(view._resizeObserver, null, 'no observer stored on the view');
+    t.equal(env.observers.length, 0, 'no observer created');
+    t.equal(view._resizeObserver, null, 'no observer stored on the view');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
+  t.end();
+});
+
+tape('container:resize accepts object-form event streams', async t => {
+  const env = setup(400, 300);
+  try {
+    const view = newView(env, {
+      height: 100,
+      signals: [{
+        name: 'resizes', value: 0,
+        on: [{events: {source: 'container', type: 'resize'}, update: 'resizes + 1'}]
+      }]
+    });
+
+    await view.runAsync();
+    env.size.width = 800;
+    env.notify();
+    await view.runAsync();
+
+    t.equal(view.signal('resizes'), 1, 'object-form stream receives events');
+
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container:resize ignores notifications that leave the size unchanged', async t => {
-  const env = setup(400, 300),
-        view = newView(env);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
 
-  await view.runAsync();
+    await view.runAsync();
 
-  // the observe-time notification, and any layout pass that does not
-  // change the client size, dispatch nothing
-  env.notify();
-  env.notify();
-  await view.runAsync();
+    // the observe-time notification, and any layout pass that does not
+    // change the client size, dispatch nothing
+    env.notify();
+    env.notify();
+    await view.runAsync();
 
-  t.equal(view.signal('resizes'), 0, 'no events for unchanged sizes');
+    t.equal(view.signal('resizes'), 0, 'no events for unchanged sizes');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
+  t.end();
+});
+
+tape('container:resize ignores zero-size notifications from hidden containers', async t => {
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
+    await view.runAsync();
+
+    env.size.width = 0;
+    env.size.height = 0;
+    env.notify();
+    await view.runAsync();
+    t.equal(view.signal('resizes'), 0, 'no event while hidden');
+    t.equal(view.width(), 400, 'width keeps the last real size');
+
+    env.size.width = 600;
+    env.size.height = 300;
+    env.notify();
+    await view.runAsync();
+    t.equal(view.signal('resizes'), 1, 'one event on showing the container');
+    t.equal(view.width(), 600, 'width follows the restored container');
+
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container:resize does not drop a resize that lands mid-run', async t => {
-  const env = setup(400, 300),
-        view = newView(env);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
 
-  await view.runAsync();
+    await view.runAsync();
 
-  env.size.width = 800;
-  env.notify(); // queues a run for 800
+    env.size.width = 800;
+    env.notify(); // queues a run for 800
 
-  // the drag continues while that run is in flight, and then stops: the
-  // second event chains onto the running dataflow rather than being lost
-  env.size.width = 900;
-  env.notify();
+    // the drag continues while that run is in flight, and then stops: the
+    // second event chains onto the running dataflow rather than being lost
+    env.size.width = 900;
+    env.notify();
 
-  await settle(env, view);
+    await settle(env, view);
 
-  t.equal(view.width(), 900, 'width signal ends at the latest container size');
+    t.equal(view.width(), 900, 'width signal ends at the latest container size');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container:resize settles when the container size follows the chart', async t => {
-  const env = setup(400, 300),
-        view = newView(env, heightSpec);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env, heightSpec);
 
-  // a content-sized container: rendering the chart changes its own height
-  view.addSignalListener('width', (_, value) => {
-    env.size.height = value > 500 ? 260 : 160;
-  });
+    // a content-sized container: rendering the chart changes its own height
+    view.addSignalListener('width', (_, value) => {
+      env.size.height = value > 500 ? 260 : 160;
+    });
 
-  await settle(env, view);
+    await settle(env, view);
 
-  env.size.width = 800;
-  env.notify();
-  await settle(env, view);
+    env.size.width = 800;
+    env.notify();
+    await settle(env, view);
 
-  const resizes = view.signal('resizes');
-  t.ok(resizes > 0 && resizes < 4, `converged after ${resizes} events`);
-  t.equal(view.signal('height'), 260, 'height signal followed the container');
+    const resizes = view.signal('resizes');
+    t.ok(resizes > 0 && resizes < 4, `converged after ${resizes} events`);
+    t.equal(view.signal('height'), 260, 'height signal followed the container');
 
-  // quiescent: nothing more happens without a genuine size change
-  env.notify();
-  await view.runAsync();
-  t.equal(view.signal('resizes'), resizes, 'no further events once settled');
+    // quiescent: nothing more happens without a genuine size change
+    env.notify();
+    await view.runAsync();
+    t.equal(view.signal('resizes'), resizes, 'no further events once settled');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container:resize keeps up with a sustained drag', async t => {
-  const env = setup(400, 300),
-        view = newView(env);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
 
-  await settle(env, view);
+    await settle(env, view);
 
-  // one size change per frame, as a browser delivers them during a drag
-  for (let i = 1; i <= 20; ++i) {
-    env.size.width = 400 + i * 20;
-    env.notify();
-    await view.runAsync();
+    // one size change per frame, as a browser delivers them during a drag
+    for (let i = 1; i <= 20; ++i) {
+      env.size.width = 400 + i * 20;
+      env.notify();
+      await view.runAsync();
+    }
+
+    t.equal(view.width(), 800, 'width tracked the whole drag');
+    t.equal(view.signal('resizes'), 20, 'one event per notification');
+
+    view.finalize();
+  } finally {
+    env.teardown();
   }
-
-  t.equal(view.width(), 800, 'width tracked the whole drag');
-  t.equal(view.signal('resizes'), 20, 'one event per notification');
-
-  view.finalize();
-  env.teardown();
   t.end();
 });
 
-tape('container:resize is a no-op without ResizeObserver or a container', async t => {
+tape('container event listeners follow the events config', async t => {
   const env = setup(400, 300);
-  delete global.ResizeObserver;
+  try {
+    const warnings = [],
+          blocked = new View(parse(spec, {events: {container: false}}), {
+            renderer: 'none',
+            logger: logger(warnings)
+          });
 
-  const unsupported = newView(env);
-  await unsupported.runAsync();
-  t.equal(unsupported._resizeObserver, null, 'no observer without ResizeObserver support');
-  unsupported.finalize();
+    blocked.initialize(env.el);
+    await blocked.runAsync();
+    t.equal(blocked._resizeObserver, null, 'container: false creates no observer');
+    t.ok(
+      warnings.includes('Blocked container resize event listener.'),
+      'warns when blocked'
+    );
+    blocked.finalize();
 
-  const headless = new View(parse(spec), {renderer: 'none'});
-  await headless.runAsync();
-  t.equal(headless._resizeObserver, null, 'no observer without a container element');
-  headless.finalize();
+    const allowed = new View(parse(spec, {events: {container: ['resize']}}), {renderer: 'none'});
+    allowed.initialize(env.el);
+    await allowed.runAsync();
+    t.ok(allowed._resizeObserver, 'array config allowlists resize');
+    allowed.finalize();
+  } finally {
+    env.teardown();
+  }
+  t.end();
+});
 
-  env.teardown();
+tape('container streams registered after initialize are observed', async t => {
+  const env = setup(400, 300);
+  try {
+    const view = newView(env, {width: 400, height: 100});
+    await view.runAsync();
+    t.equal(view._resizeObserver, null, 'no observer for a spec without container streams');
+
+    const stream = view.events('container', 'resize');
+    t.ok(view._resizeObserver, 'late registration inits the observer');
+
+    env.size.width = 800;
+    env.notify();
+    await view.runAsync();
+    t.equal(stream.value && stream.value.type, 'resize', 'late stream receives events');
+
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container:resize rejects unsupported event types', async t => {
-  const env = setup(400, 300),
-        warnings = [],
-        view = new View(parse({
-          height: 100,
-          signals: [{
-            name: 'clicks', value: 0,
-            on: [{events: 'container:click', update: 'clicks + 1'}]
-          }]
-        }), {
-          renderer: 'none',
-          logger: {
-            error() {}, warn: message => warnings.push(message), info() {}, debug() {}
-          }
-        });
+  const env = setup(400, 300);
+  try {
+    const warnings = [],
+          view = new View(parse({
+            height: 100,
+            signals: [{
+              name: 'clicks', value: 0,
+              on: [{events: 'container:click', update: 'clicks + 1'}]
+            }]
+          }), {renderer: 'none', logger: logger(warnings)});
 
-  view.initialize(env.el);
-  await view.runAsync();
+    view.initialize(env.el);
+    await view.runAsync();
 
-  t.deepEqual(warnings, ['Unsupported container event type: click'], 'warns once');
-  t.equal(view._resizeObserver, null, 'no observer created');
+    t.deepEqual(warnings, ['Unsupported container event type: click'], 'warns once');
+    t.equal(view._resizeObserver, null, 'no observer created');
 
-  view.finalize();
-  env.teardown();
+    view.finalize();
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
 
 tape('container observer is disconnected on re-initialize and finalize', async t => {
-  const env = setup(400, 300),
-        view = newView(env);
+  const env = setup(400, 300);
+  try {
+    const view = newView(env);
 
-  await view.runAsync();
-  const first = view._resizeObserver;
-  t.deepEqual(first.observed, [env.el], 'observes the container element');
+    await view.runAsync();
+    const first = view._resizeObserver;
+    t.deepEqual(first.observed, [env.el], 'observes the container element');
 
-  view.initialize(env.el);
-  const second = view._resizeObserver;
-  t.ok(first.disconnected, 'previous observer disconnected on re-initialize');
-  t.notEqual(second, first, 'a fresh observer is stored');
+    view.initialize(env.el);
+    const second = view._resizeObserver;
+    t.ok(first.disconnected, 'previous observer disconnected on re-initialize');
+    t.notEqual(second, first, 'a fresh observer is stored');
 
-  view.finalize();
-  t.ok(second.disconnected, 'observer disconnected on finalize');
-  t.equal(view._resizeObserver, null, 'observer reference cleared');
-
-  env.teardown();
+    view.finalize();
+    t.ok(second.disconnected, 'observer disconnected on finalize');
+    t.equal(view._resizeObserver, null, 'observer reference cleared');
+  } finally {
+    env.teardown();
+  }
   t.end();
 });
