@@ -20,11 +20,12 @@ export default function observeContainer(view) {
       height = el.clientHeight;
 
   view._resizeObserver = new ResizeObserver(() => {
+    if (!el.clientWidth && !el.clientHeight) return;
     if (el.clientWidth === width && el.clientHeight === height) return;
     width = el.clientWidth;
     height = el.clientHeight;
     listeners.forEach(handler => handler({type: 'resize', target: el}));
   });
 
-  view._resizeObserver.observe(el);
+    view._resizeObserver.observe(el);
 }

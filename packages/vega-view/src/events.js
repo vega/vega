@@ -1,4 +1,5 @@
 import eventExtend from './events-extend.js';
+import observeContainer from './observeContainer.js';
 import {EventStream} from 'vega-dataflow';
 import {array, extend, isArray, isObject, toSet} from 'vega-util';
 
@@ -24,7 +25,7 @@ export function initializeEventConfig(config) {
   };
 
   unpack(events.defaults, ['prevent', 'allow']);
-  unpack(events, ['view', 'window', 'selector']);
+  unpack(events, ['view', 'window', 'selector', 'container']);
 
   return events;
 }
@@ -99,6 +100,7 @@ export function events(source, type, filter) {
     } else if (permit(view, 'container', type)) {
       // the container element is not known until the view is initialized
       view._containerListeners.push(send);
+      if (view.container()) observeContainer(view);
     }
   }
 
