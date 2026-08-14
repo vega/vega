@@ -112,8 +112,12 @@
     const falsy = accessor(() => false, [], 'false');
 
     /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
-    /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
-    const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
+    /**
+     * Properties JSON authors may not set. Most are function-valued members of
+     * Object.prototype; `__proto__` and `then` are listed explicitly because they
+     * are not, but the language still treats them specially.
+     */
+    const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__', 'then']);
 
     function log$5(method, level, input) {
       const args = [level, ...input];
@@ -164,9 +168,6 @@
     }
 
     const isLegalKey = key => key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
-    /** Merges Vega config objects. Signals merged by name (source takes precedence),
-     * legend.layout recursively merged, style fully recursive, others shallow.
-     * Return type is compatible with vega-typings Config. */
     function mergeConfig(...configs) {
       return configs.reduce((out, source) => {
         for (const key in source) {
@@ -192,10 +193,11 @@
     /** Writes config value to output with optional recursion, rejecting illegal keys that could be used to modify the prototype chain */
     function writeConfig(output, key, value, recurse) {
       if (!isLegalKey(key)) return;
+      const out = output;
       let k, o;
       if (isObject(value) && !isArray(value)) {
         const valueObj = value;
-        o = isObject(output[key]) ? output[key] : output[key] = {};
+        o = isObject(out[key]) ? out[key] : out[key] = {};
         for (k in valueObj) {
           if (recurse && (recurse === true || recurse[k])) {
             writeConfig(o, k, valueObj[k]);
@@ -204,7 +206,7 @@
           }
         }
       } else {
-        output[key] = value;
+        out[key] = value;
       }
     }
     /** Merges named object arrays, deduplicating by name. (b takes precedence). */
@@ -1779,7 +1781,7 @@
       return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
     }
 
-    function exponent (x) {
+    function exponent$1 (x) {
       return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
     }
 
@@ -2027,7 +2029,7 @@
         return format;
       }
       function formatPrefix(specifier, value) {
-        var e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3,
+        var e = Math.max(-8, Math.min(8, Math.floor(exponent$1(value) / 3))) * 3,
           k = Math.pow(10, -e),
           f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier), {
             suffix: prefixes[8 + e / 3]
@@ -2058,16 +2060,16 @@
     }
 
     function precisionFixed (step) {
-      return Math.max(0, -exponent(Math.abs(step)));
+      return Math.max(0, -exponent$1(Math.abs(step)));
     }
 
     function precisionPrefix (step, value) {
-      return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
+      return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent$1(value) / 3))) * 3 - exponent$1(Math.abs(step)));
     }
 
     function precisionRound (step, max) {
       step = Math.abs(step), max = Math.abs(max) - step;
-      return Math.max(0, exponent(max) - exponent(step)) + 1;
+      return Math.max(0, exponent$1(max) - exponent$1(step)) + 1;
     }
 
     const t0$2 = new Date(),
@@ -2376,6 +2378,7 @@
     const QUARTER = 'quarter';
     const MONTH = 'month';
     const WEEK = 'week';
+    const ISOWEEK = 'isoweek';
     const DATE = 'date';
     const DAY = 'day';
     const DAYOFYEAR = 'dayofyear';
@@ -2383,7 +2386,7 @@
     const MINUTES = 'minutes';
     const SECONDS = 'seconds';
     const MILLISECONDS = 'milliseconds';
-    const TIME_UNITS = [YEAR, QUARTER, MONTH, WEEK, DATE, DAY, DAYOFYEAR, HOURS, MINUTES, SECONDS, MILLISECONDS];
+    const TIME_UNITS = [YEAR, QUARTER, MONTH, WEEK, ISOWEEK, DATE, DAY, DAYOFYEAR, HOURS, MINUTES, SECONDS, MILLISECONDS];
     const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
     function timeUnits(units) {
       const u = array$5(units).slice(),
@@ -2398,8 +2401,8 @@
           error(`Invalid time unit: ${unit}.`);
         }
       });
-      const numTypes = (m[WEEK] || m[DAY] ? 1 : 0) + (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) + (m[DAYOFYEAR] ? 1 : 0);
-      if (numTypes > 1) {
+      const numTypes = (m[WEEK] || m[ISOWEEK] || m[DAY] ? 1 : 0) + (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) + (m[DAYOFYEAR] ? 1 : 0);
+      if (numTypes > 1 || m[WEEK] && m[ISOWEEK]) {
         error(`Incompatible time units: ${units}`);
       }
 
@@ -2413,12 +2416,14 @@
       [MONTH]: '%b ',
       [DATE]: '%d ',
       [WEEK]: 'W%U ',
+      [ISOWEEK]: 'W%V ',
       [DAY]: '%a ',
       [DAYOFYEAR]: '%j ',
       [HOURS]: '%H:00',
       [MINUTES]: '00:%M',
       [SECONDS]: ':%S',
       [MILLISECONDS]: '.%L',
+      [`${YEAR}-${ISOWEEK}`]: '%G W%V ',
       [`${YEAR}-${MONTH}`]: '%Y-%m ',
       [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
       [`${HOURS}-${MINUTES}`]: '%H:%M'
@@ -2457,11 +2462,32 @@
     function week(d) {
       return localWeekNum(new Date(d));
     }
+    function isoweek(d) {
+      return localISOWeekNum(new Date(d));
+    }
     function localDayOfYear(d) {
       return timeDay.count(localYear(d.getFullYear()) - 1, d);
     }
     function localWeekNum(d) {
       return timeSunday.count(localYear(d.getFullYear()) - 1, d);
+    }
+    function localISOWeekYear(d) {
+      return timeDay.offset(timeMonday.floor(d), 3).getFullYear();
+    }
+    function localISOWeekNum(d) {
+      return 1 + timeMonday.count(localISOWeekOne(localISOWeekYear(d)), d);
+    }
+
+    // The Monday on which week 1 of the given week-numbering year begins.
+    function localISOWeekOne(y) {
+      return timeMonday.floor(timeDay.offset(localYear(y), 3));
+    }
+
+    // The day of January on which week 1 of the given week-numbering year begins. Values of zero or
+    // less refer to the preceding December, which localDate rolls over for us.
+    function localISOWeekOneDate(y) {
+      const d = localISOWeekOne(y);
+      return d.getMonth() ? d.getDate() - 31 : d.getDate();
     }
     function localFirst(y) {
       return localYear(y).getDay();
@@ -2480,6 +2506,9 @@
     function utcweek(d) {
       return utcWeekNum(new Date(d));
     }
+    function utcisoweek(d) {
+      return utcISOWeekNum(new Date(d));
+    }
     function utcDayOfYear(d) {
       const y = Date.UTC(d.getUTCFullYear(), 0, 1);
       return utcDay.count(y - 1, d);
@@ -2487,6 +2516,19 @@
     function utcWeekNum(d) {
       const y = Date.UTC(d.getUTCFullYear(), 0, 1);
       return utcSunday.count(y - 1, d);
+    }
+    function utcISOWeekYear(d) {
+      return utcDay.offset(utcMonday.floor(d), 3).getUTCFullYear();
+    }
+    function utcISOWeekNum(d) {
+      return 1 + utcMonday.count(utcISOWeekOne(utcISOWeekYear(d)), d);
+    }
+    function utcISOWeekOne(y) {
+      return utcMonday.floor(utcDay.offset(Date.UTC(y, 0, 1), 3));
+    }
+    function utcISOWeekOneDate(y) {
+      const d = utcISOWeekOne(y);
+      return d.getUTCMonth() ? d.getUTCDate() - 31 : d.getUTCDate();
     }
     function utcFirst(y) {
       t0$1.setTime(Date.UTC(y, 0, 1));
@@ -2500,6 +2542,16 @@
       }
       return new Date(Date.UTC(y, m, d, H, M, S, L));
     }
+
+    // Just like Vega's timeunit transform, set default year to 2012, so domain conversion will be
+    // compatible with Vega. 2012 is a leap year beginning on a Sunday, so days of the week order
+    // properly at the start of the year.
+    const REFERENCE_YEAR = 2012;
+
+    // Reference year for isoweek units with no year unit. ISO 8601 week numbers run to 53 in a long
+    // year, and 2015 is one (its week 1 starts on 2014-12-29), so every week number maps to a real
+    // week that formats back to the same number.
+    const ISOWEEK_REFERENCE_YEAR = 2015;
     function floor(units, step, get, inv, newDate) {
       const s = step || 1,
         b = peek$1(units),
@@ -2509,9 +2561,9 @@
         };
       const t = new Date(),
         u = toSet(units),
-        y = u[YEAR] ? _(YEAR) : constant$5(2012),
+        y = u[YEAR] ? _(YEAR, null, u[ISOWEEK] ? YEAR + ISOWEEK : YEAR) : constant$5(u[ISOWEEK] ? ISOWEEK_REFERENCE_YEAR : REFERENCE_YEAR),
         m = u[MONTH] ? _(MONTH) : u[QUARTER] ? _(QUARTER) : zero$3,
-        d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$2,
+        d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[ISOWEEK] && u[DAY] ? _(DAY, 1, ISOWEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[ISOWEEK] ? _(ISOWEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$2,
         H = u[HOURS] ? _(HOURS) : zero$3,
         M = u[MINUTES] ? _(MINUTES) : zero$3,
         S = u[SECONDS] ? _(SECONDS) : zero$3,
@@ -2533,6 +2585,17 @@
       return day + week * 7 - (firstDay + 6) % 7;
     }
 
+    // day within an ISO week, Monday = 0 through Sunday = 6
+    function isoDay(day) {
+      return (day + 6) % 7;
+    }
+
+    // returns the day of the year for the given day of the given ISO week number, where
+    // weekOneDate is the day of January on which week 1 begins
+    function isoWeekday(weekOneDate, week, day) {
+      return weekOneDate + (week - 1) * 7 + day;
+    }
+
     // -- LOCAL TIME --
 
     const localGet = {
@@ -2547,11 +2610,15 @@
       [DAYOFYEAR]: d => localDayOfYear(d),
       [WEEK]: d => localWeekNum(d),
       [WEEK + DAY]: (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
-      [DAY]: (d, y) => weekday(1, d.getDay(), localFirst(y))
+      [DAY]: (d, y) => weekday(1, d.getDay(), localFirst(y)),
+      [ISOWEEK]: d => localISOWeekNum(d),
+      [YEAR + ISOWEEK]: d => localISOWeekYear(d),
+      [ISOWEEK + DAY]: (d, y) => isoWeekday(localISOWeekOneDate(y), localISOWeekNum(d), isoDay(d.getDay()))
     };
     const localInv = {
       [QUARTER]: q => 3 * q,
-      [WEEK]: (w, y) => weekday(w, 0, localFirst(y))
+      [WEEK]: (w, y) => weekday(w, 0, localFirst(y)),
+      [ISOWEEK]: (w, y) => isoWeekday(localISOWeekOneDate(y), w, 0)
     };
     function timeFloor(units, step) {
       return floor(units, step || 1, localGet, localInv, localDate$1);
@@ -2571,11 +2638,15 @@
       [DAYOFYEAR]: d => utcDayOfYear(d),
       [WEEK]: d => utcWeekNum(d),
       [DAY]: (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
-      [WEEK + DAY]: (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+      [WEEK + DAY]: (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y)),
+      [ISOWEEK]: d => utcISOWeekNum(d),
+      [YEAR + ISOWEEK]: d => utcISOWeekYear(d),
+      [ISOWEEK + DAY]: (d, y) => isoWeekday(utcISOWeekOneDate(y), utcISOWeekNum(d), isoDay(d.getUTCDay()))
     };
     const utcInv = {
       [QUARTER]: q => 3 * q,
-      [WEEK]: (w, y) => weekday(w, 0, utcFirst(y))
+      [WEEK]: (w, y) => weekday(w, 0, utcFirst(y)),
+      [ISOWEEK]: (w, y) => isoWeekday(utcISOWeekOneDate(y), w, 0)
     };
     function utcFloor(units, step) {
       return floor(units, step || 1, utcGet, utcInv, utcDate$1);
@@ -2585,6 +2656,7 @@
       [QUARTER]: timeMonth.every(3),
       [MONTH]: timeMonth,
       [WEEK]: timeSunday,
+      [ISOWEEK]: timeMonday,
       [DATE]: timeDay,
       [DAY]: timeDay,
       [DAYOFYEAR]: timeDay,
@@ -2598,6 +2670,7 @@
       [QUARTER]: utcMonth.every(3),
       [MONTH]: utcMonth,
       [WEEK]: utcSunday,
+      [ISOWEEK]: utcMonday,
       [DATE]: utcDay,
       [DAY]: utcDay,
       [DAYOFYEAR]: utcDay,
@@ -6659,7 +6732,7 @@
 
     // Adapted from d3-regression by Harry Stevens
     // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE
-    function linear$2(data, x, y) {
+    function linear$3(data, x, y) {
       let X = 0,
         Y = 0,
         XY = 0,
@@ -6809,7 +6882,7 @@
     function poly(data, x, y, order) {
       // use more efficient methods for lower orders
       if (order === 0) return constant$4(data, x, y);
-      if (order === 1) return linear$2(data, x, y);
+      if (order === 1) return linear$3(data, x, y);
       if (order === 2) return quad(data, x, y);
       const [xv, yv, ux, uy] = points(data, x, y),
         n = xv.length,
@@ -10875,20 +10948,20 @@
     const sin$2 = Math.sin;
     const sqrt$3 = Math.sqrt;
     const epsilon$5 = 1e-12;
-    const pi$3 = Math.PI;
-    const halfPi$2 = pi$3 / 2;
-    const tau$3 = 2 * pi$3;
+    const pi$4 = Math.PI;
+    const halfPi$3 = pi$4 / 2;
+    const tau$4 = 2 * pi$4;
     function acos$1(x) {
-      return x > 1 ? 0 : x < -1 ? pi$3 : Math.acos(x);
+      return x > 1 ? 0 : x < -1 ? pi$4 : Math.acos(x);
     }
     function asin$2(x) {
-      return x >= 1 ? halfPi$2 : x <= -1 ? -halfPi$2 : Math.asin(x);
+      return x >= 1 ? halfPi$3 : x <= -1 ? -halfPi$3 : Math.asin(x);
     }
 
-    const pi$2 = Math.PI,
-      tau$2 = 2 * pi$2,
+    const pi$3 = Math.PI,
+      tau$3 = 2 * pi$3,
       epsilon$4 = 1e-6,
-      tauEpsilon = tau$2 - epsilon$4;
+      tauEpsilon = tau$3 - epsilon$4;
     function append$1(strings) {
       this._ += strings[0];
       for (let i = 1, n = strings.length; i < n; ++i) {
@@ -10969,7 +11042,7 @@
             l20_2 = x20 * x20 + y20 * y20,
             l21 = Math.sqrt(l21_2),
             l01 = Math.sqrt(l01_2),
-            l = r * Math.tan((pi$2 - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
+            l = r * Math.tan((pi$3 - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
             t01 = l / l01,
             t21 = l / l21;
 
@@ -11006,7 +11079,7 @@
         if (!r) return;
 
         // Does the angle go the wrong way? Flip the direction.
-        if (da < 0) da = da % tau$2 + tau$2;
+        if (da < 0) da = da % tau$3 + tau$3;
 
         // Is this a complete circle? Draw two arcs to complete the circle.
         if (da > tauEpsilon) {
@@ -11015,7 +11088,7 @@
 
         // Is this arc non-empty? Draw an arc!
         else if (da > epsilon$4) {
-          this._append`A${r},${r},0,${+(da >= pi$2)},${cw},${this._x1 = x + r * Math.cos(a1)},${this._y1 = y + r * Math.sin(a1)}`;
+          this._append`A${r},${r},0,${+(da >= pi$3)},${cw},${this._x1 = x + r * Math.cos(a1)},${this._y1 = y + r * Math.sin(a1)}`;
         }
       }
       rect(x, y, w, h) {
@@ -11130,8 +11203,8 @@
           r,
           r0 = +innerRadius.apply(this, arguments),
           r1 = +outerRadius.apply(this, arguments),
-          a0 = startAngle.apply(this, arguments) - halfPi$2,
-          a1 = endAngle.apply(this, arguments) - halfPi$2,
+          a0 = startAngle.apply(this, arguments) - halfPi$3,
+          a1 = endAngle.apply(this, arguments) - halfPi$3,
           da = abs$2(a1 - a0),
           cw = a1 > a0;
         if (!context) context = buffer = path();
@@ -11143,7 +11216,7 @@
         if (!(r1 > epsilon$5)) context.moveTo(0, 0);
 
         // Or is it a circle or annulus?
-        else if (da > tau$3 - epsilon$5) {
+        else if (da > tau$4 - epsilon$5) {
           context.moveTo(r1 * cos$2(a0), r1 * sin$2(a0));
           context.arc(0, 0, r1, a0, a1, !cw);
           if (r0 > epsilon$5) {
@@ -11191,7 +11264,7 @@
             // Restrict the corner radius according to the sector angle. If this
             // intersection fails, it’s probably because the arc is too small, so
             // disable the corner radius entirely.
-            if (da < pi$3) {
+            if (da < pi$4) {
               if (oc = intersect$3(x01, y01, x00, y00, x11, y11, x10, y10)) {
                 var ax = x01 - oc[0],
                   ay = y01 - oc[1],
@@ -11259,7 +11332,7 @@
       }
       arc.centroid = function () {
         var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2,
-          a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - pi$3 / 2;
+          a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - pi$4 / 2;
         return [cos$2(a) * r, sin$2(a) * r];
       };
       arc.innerRadius = function (_) {
@@ -11467,9 +11540,9 @@
 
     var circle = {
       draw(context, size) {
-        const r = sqrt$3(size / pi$3);
+        const r = sqrt$3(size / pi$4);
         context.moveTo(r, 0);
-        context.arc(0, 0, r, 0, tau$3);
+        context.arc(0, 0, r, 0, tau$4);
       }
     };
 
@@ -12983,7 +13056,7 @@
 
     var constant$2 = x => () => x;
 
-    function linear$1(a, d) {
+    function linear$2(a, d) {
       return function (t) {
         return a + t * d;
       };
@@ -12995,7 +13068,7 @@
     }
     function hue$1(a, b) {
       var d = b - a;
-      return d ? linear$1(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$2(isNaN(a) ? b : a);
+      return d ? linear$2(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$2(isNaN(a) ? b : a);
     }
     function gamma(y) {
       return (y = +y) === 1 ? nogamma : function (a, b) {
@@ -13004,7 +13077,7 @@
     }
     function nogamma(a, b) {
       var d = b - a;
-      return d ? linear$1(a, d) : constant$2(isNaN(a) ? b : a);
+      return d ? linear$2(a, d) : constant$2(isNaN(a) ? b : a);
     }
 
     var rgb = (function rgbGamma(y) {
@@ -13700,10 +13773,10 @@
       };
       return scale;
     }
-    function linear() {
+    function linear$1() {
       var scale = continuous$1();
       scale.copy = function () {
-        return copy$2(scale, linear());
+        return copy$2(scale, linear$1());
       };
       initRange.apply(scale, arguments);
       return linearish(scale);
@@ -14569,7 +14642,7 @@
     scale$4(Identity, identity$1);
 
     // continuous scales
-    scale$4(Linear, linear, Continuous);
+    scale$4(Linear, linear$1, Continuous);
     scale$4(Log, log$2, [Continuous, Log]);
     scale$4(Pow, pow$2, Continuous);
     scale$4(Sqrt, sqrt$2, Continuous);
@@ -18305,7 +18378,7 @@
       for (const key in opt) {
         context[key] = opt[key];
       }
-      if (inDOM && ratio !== 1) {
+      if (inDOM) {
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
       }
@@ -18328,6 +18401,9 @@
         if (el && this._canvas) {
           domClear(el, 0).appendChild(this._canvas);
           this._canvas.setAttribute('class', 'marks');
+          // an inline element sits on the text baseline, leaving a few pixels of
+          // descender space below it that count towards the container's height
+          this._canvas.style.setProperty('vertical-align', 'bottom');
         }
 
         // this method will invoke resize to size the canvas appropriately
@@ -18731,6 +18807,9 @@
           this._svg.setAttributeNS(xmlns, 'xmlns:xlink', metadata['xmlns:xlink']);
           this._svg.setAttribute('version', metadata['version']);
           this._svg.setAttribute('class', 'marks');
+          // an inline element sits on the text baseline, leaving a few pixels of
+          // descender space below it that count towards the container's height
+          this._svg.style.setProperty('vertical-align', 'bottom');
           domClear(el, 1);
 
           // set the svg root group
@@ -18796,9 +18875,12 @@
         const svg = this._svg,
           bg = this._bgcolor;
         if (!svg) return null;
+
+        // styles position the element on the page; they are not part of the image
+        const style = svg.getAttribute('style');
+        svg.removeAttribute('style');
         let node;
         if (bg) {
-          svg.removeAttribute('style');
           node = domChild(svg, RootIndex, 'rect', svgns);
           setAttributes(node, {
             width: this._width,
@@ -18807,10 +18889,8 @@
           });
         }
         const text = serializeXML(svg);
-        if (bg) {
-          svg.removeChild(node);
-          this._svg.style.setProperty('background-color', bg);
-        }
+        if (bg) svg.removeChild(node);
+        if (style) svg.setAttribute('style', style);
         return text;
       }
 
@@ -21997,7 +22077,7 @@
       }
 
       // determine size for potential discrete range
-      count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
+      count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Ordinal ? +_.schemeCount || count || DEFAULT_COUNT : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
 
       // adjust and/or quantize scheme as appropriate
       return isInterpolating(type) ? adjustScheme(scheme$1, extent, _.reverse) : isFunction(scheme$1) ? quantizeInterpolator(adjustScheme(scheme$1, extent), count) : type === Ordinal ? scheme$1 : scheme$1.slice(0, count);
@@ -22196,12 +22276,12 @@
 
     var epsilon$3 = 1e-6;
     var epsilon2 = 1e-12;
-    var pi$1 = Math.PI;
-    var halfPi$1 = pi$1 / 2;
-    var quarterPi = pi$1 / 4;
-    var tau$1 = pi$1 * 2;
-    var degrees = 180 / pi$1;
-    var radians = pi$1 / 180;
+    var pi$2 = Math.PI;
+    var halfPi$2 = pi$2 / 2;
+    var quarterPi = pi$2 / 4;
+    var tau$2 = pi$2 * 2;
+    var degrees = 180 / pi$2;
+    var radians = pi$2 / 180;
     var abs$1 = Math.abs;
     var atan = Math.atan;
     var atan2 = Math.atan2;
@@ -22218,10 +22298,10 @@
     var sqrt$1 = Math.sqrt;
     var tan = Math.tan;
     function acos(x) {
-      return x > 1 ? 0 : x < -1 ? pi$1 : Math.acos(x);
+      return x > 1 ? 0 : x < -1 ? pi$2 : Math.acos(x);
     }
     function asin$1(x) {
-      return x > 1 ? halfPi$1 : x < -1 ? -halfPi$1 : Math.asin(x);
+      return x > 1 ? halfPi$2 : x < -1 ? -halfPi$2 : Math.asin(x);
     }
 
     function noop$2() {}
@@ -22325,11 +22405,11 @@
       },
       polygonEnd: function () {
         var areaRing = +areaRingSum$1;
-        areaSum$1.add(areaRing < 0 ? tau$1 + areaRing : areaRing);
+        areaSum$1.add(areaRing < 0 ? tau$2 + areaRing : areaRing);
         this.lineStart = this.lineEnd = this.point = noop$2;
       },
       sphere: function () {
-        areaSum$1.add(tau$1);
+        areaSum$1.add(tau$2);
       }
     };
     function areaRingStart$1() {
@@ -22693,17 +22773,17 @@
     }
 
     function rotationIdentity(lambda, phi) {
-      if (abs$1(lambda) > pi$1) lambda -= Math.round(lambda / tau$1) * tau$1;
+      if (abs$1(lambda) > pi$2) lambda -= Math.round(lambda / tau$2) * tau$2;
       return [lambda, phi];
     }
     rotationIdentity.invert = rotationIdentity;
     function rotateRadians(deltaLambda, deltaPhi, deltaGamma) {
-      return (deltaLambda %= tau$1) ? deltaPhi || deltaGamma ? compose(rotationLambda(deltaLambda), rotationPhiGamma(deltaPhi, deltaGamma)) : rotationLambda(deltaLambda) : deltaPhi || deltaGamma ? rotationPhiGamma(deltaPhi, deltaGamma) : rotationIdentity;
+      return (deltaLambda %= tau$2) ? deltaPhi || deltaGamma ? compose(rotationLambda(deltaLambda), rotationPhiGamma(deltaPhi, deltaGamma)) : rotationLambda(deltaLambda) : deltaPhi || deltaGamma ? rotationPhiGamma(deltaPhi, deltaGamma) : rotationIdentity;
     }
     function forwardRotationLambda(deltaLambda) {
       return function (lambda, phi) {
         lambda += deltaLambda;
-        if (abs$1(lambda) > pi$1) lambda -= Math.round(lambda / tau$1) * tau$1;
+        if (abs$1(lambda) > pi$2) lambda -= Math.round(lambda / tau$2) * tau$2;
         return [lambda, phi];
       };
     }
@@ -22755,12 +22835,12 @@
         sinRadius = sin$1(radius),
         step = direction * delta;
       if (t0 == null) {
-        t0 = radius + direction * tau$1;
+        t0 = radius + direction * tau$2;
         t1 = radius - step / 2;
       } else {
         t0 = circleRadius(cosRadius, t0);
         t1 = circleRadius(cosRadius, t1);
-        if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau$1;
+        if (direction > 0 ? t0 < t1 : t0 > t1) t0 += direction * tau$2;
       }
       for (var point, t = t0; direction > 0 ? t > t1 : t < t1; t -= step) {
         point = spherical([cosRadius, -sinRadius * cos$1(t), -sinRadius * sin$1(t)]);
@@ -22773,7 +22853,7 @@
       point = cartesian(point), point[0] -= cosRadius;
       cartesianNormalizeInPlace(point);
       var radius = acos(-point[1]);
-      return ((-point[2] < 0 ? -radius : radius) + tau$1 - epsilon$3) % tau$1;
+      return ((-point[2] < 0 ? -radius : radius) + tau$2 - epsilon$3) % tau$2;
     }
 
     function clipBuffer () {
@@ -22899,7 +22979,7 @@
     }
 
     function longitude(point) {
-      return abs$1(point[0]) <= pi$1 ? point[0] : sign(point[0]) * ((abs$1(point[0]) + pi$1) % tau$1 - pi$1);
+      return abs$1(point[0]) <= pi$2 ? point[0] : sign(point[0]) * ((abs$1(point[0]) + pi$2) % tau$2 - pi$2);
     }
     function polygonContains (polygon, point) {
       var lambda = longitude(point),
@@ -22909,7 +22989,7 @@
         angle = 0,
         winding = 0;
       var sum = new Adder();
-      if (sinPhi === 1) phi = halfPi$1 + epsilon$3;else if (sinPhi === -1) phi = -halfPi$1 - epsilon$3;
+      if (sinPhi === 1) phi = halfPi$2 + epsilon$3;else if (sinPhi === -1) phi = -halfPi$2 - epsilon$3;
       for (var i = 0, n = polygon.length; i < n; ++i) {
         if (!(m = (ring = polygon[i]).length)) continue;
         var ring,
@@ -22928,10 +23008,10 @@
             delta = lambda1 - lambda0,
             sign = delta >= 0 ? 1 : -1,
             absDelta = sign * delta,
-            antimeridian = absDelta > pi$1,
+            antimeridian = absDelta > pi$2,
             k = sinPhi0 * sinPhi1;
           sum.add(atan2(k * sign * sin$1(absDelta), cosPhi0 * cosPhi1 + k * cos$1(absDelta)));
-          angle += antimeridian ? delta + sign * tau$1 : delta;
+          angle += antimeridian ? delta + sign * tau$2 : delta;
 
           // Are the longitudes either side of the point’s meridian (lambda),
           // and are the latitudes smaller than the parallel (phi)?
@@ -23072,12 +23152,12 @@
     // Intersections are sorted along the clip edge. For both antimeridian cutting
     // and circle clipping, the same comparison is used.
     function compareIntersection(a, b) {
-      return ((a = a.x)[0] < 0 ? a[1] - halfPi$1 - epsilon$3 : halfPi$1 - a[1]) - ((b = b.x)[0] < 0 ? b[1] - halfPi$1 - epsilon$3 : halfPi$1 - b[1]);
+      return ((a = a.x)[0] < 0 ? a[1] - halfPi$2 - epsilon$3 : halfPi$2 - a[1]) - ((b = b.x)[0] < 0 ? b[1] - halfPi$2 - epsilon$3 : halfPi$2 - b[1]);
     }
 
     var clipAntimeridian = clip$1(function () {
       return true;
-    }, clipAntimeridianLine, clipAntimeridianInterpolate, [-pi$1, -halfPi$1]);
+    }, clipAntimeridianLine, clipAntimeridianInterpolate, [-pi$2, -halfPi$2]);
 
     // Takes a line and cuts into visible segments. Return values: 0 - there were
     // intersections or the line was empty; 1 - no intersections; 2 - there were
@@ -23094,18 +23174,18 @@
           clean = 1;
         },
         point: function (lambda1, phi1) {
-          var sign1 = lambda1 > 0 ? pi$1 : -pi$1,
+          var sign1 = lambda1 > 0 ? pi$2 : -pi$2,
             delta = abs$1(lambda1 - lambda0);
-          if (abs$1(delta - pi$1) < epsilon$3) {
+          if (abs$1(delta - pi$2) < epsilon$3) {
             // line crosses a pole
-            stream.point(lambda0, phi0 = (phi0 + phi1) / 2 > 0 ? halfPi$1 : -halfPi$1);
+            stream.point(lambda0, phi0 = (phi0 + phi1) / 2 > 0 ? halfPi$2 : -halfPi$2);
             stream.point(sign0, phi0);
             stream.lineEnd();
             stream.lineStart();
             stream.point(sign1, phi0);
             stream.point(lambda1, phi0);
             clean = 0;
-          } else if (sign0 !== sign1 && delta >= pi$1) {
+          } else if (sign0 !== sign1 && delta >= pi$2) {
             // line crosses antimeridian
             if (abs$1(lambda0 - sign0) < epsilon$3) lambda0 -= sign0 * epsilon$3; // handle degeneracies
             if (abs$1(lambda1 - sign1) < epsilon$3) lambda1 -= sign1 * epsilon$3;
@@ -23137,18 +23217,18 @@
     function clipAntimeridianInterpolate(from, to, direction, stream) {
       var phi;
       if (from == null) {
-        phi = direction * halfPi$1;
-        stream.point(-pi$1, phi);
+        phi = direction * halfPi$2;
+        stream.point(-pi$2, phi);
         stream.point(0, phi);
-        stream.point(pi$1, phi);
-        stream.point(pi$1, 0);
-        stream.point(pi$1, -phi);
+        stream.point(pi$2, phi);
+        stream.point(pi$2, 0);
+        stream.point(pi$2, -phi);
         stream.point(0, -phi);
-        stream.point(-pi$1, -phi);
-        stream.point(-pi$1, 0);
-        stream.point(-pi$1, phi);
+        stream.point(-pi$2, -phi);
+        stream.point(-pi$2, 0);
+        stream.point(-pi$2, phi);
       } else if (abs$1(from[0] - to[0]) > epsilon$3) {
-        var lambda = from[0] < to[0] ? pi$1 : -pi$1;
+        var lambda = from[0] < to[0] ? pi$2 : -pi$2;
         phi = direction * lambda / 2;
         stream.point(-lambda, phi);
         stream.point(0, phi);
@@ -23194,7 +23274,7 @@
             var point1 = [lambda, phi],
               point2,
               v = visible(lambda, phi),
-              c = smallRadius ? v ? 0 : code(lambda, phi) : v ? code(lambda + (lambda < 0 ? pi$1 : -pi$1), phi) : 0;
+              c = smallRadius ? v ? 0 : code(lambda, phi) : v ? code(lambda + (lambda < 0 ? pi$2 : -pi$2), phi) : 0;
             if (!point0 && (v00 = v0 = v)) stream.lineStart();
             if (v !== v0) {
               point2 = intersect(point0, point1);
@@ -23294,12 +23374,12 @@
           z;
         if (lambda1 < lambda0) z = lambda0, lambda0 = lambda1, lambda1 = z;
         var delta = lambda1 - lambda0,
-          polar = abs$1(delta - pi$1) < epsilon$3,
+          polar = abs$1(delta - pi$2) < epsilon$3,
           meridian = polar || delta < epsilon$3;
         if (!polar && phi1 < phi0) z = phi0, phi0 = phi1, phi1 = z;
 
         // Check that the first point is between a and b.
-        if (meridian ? polar ? phi0 + phi1 > 0 ^ q[1] < (abs$1(q[0] - lambda0) < epsilon$3 ? phi0 : phi1) : phi0 <= q[1] && q[1] <= phi1 : delta > pi$1 ^ (lambda0 <= q[0] && q[0] <= lambda1)) {
+        if (meridian ? polar ? phi0 + phi1 > 0 ^ q[1] < (abs$1(q[0] - lambda0) < epsilon$3 ? phi0 : phi1) : phi0 <= q[1] && q[1] <= phi1 : delta > pi$2 ^ (lambda0 <= q[0] && q[0] <= lambda1)) {
           var q1 = cartesianScale(u, (-w + t) / uu);
           cartesianAddInPlace(q1, A);
           return [q, spherical(q1)];
@@ -23309,7 +23389,7 @@
       // Generates a 4-bit vector representing the location of a point relative to
       // the small circle's bounding box.
       function code(lambda, phi) {
-        var r = smallRadius ? radius : pi$1 - radius,
+        var r = smallRadius ? radius : pi$2 - radius,
           code = 0;
         if (lambda < -r) code |= 1; // left
         else if (lambda > r) code |= 2; // right
@@ -23317,7 +23397,7 @@
         else if (phi > r) code |= 8; // above
         return code;
       }
-      return clip$1(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi$1, radius - pi$1]);
+      return clip$1(visible, clipLine, interpolate, smallRadius ? [0, -radius] : [-pi$2, radius - pi$2]);
     }
 
     function clipLine (a, b, x0, y0, x1, y1) {
@@ -23814,7 +23894,7 @@
           default:
             {
               this._context.moveTo(x + this._radius, y);
-              this._context.arc(x, y, this._radius, 0, tau$1);
+              this._context.arc(x, y, this._radius, 0, tau$2);
               break;
             }
         }
@@ -24339,7 +24419,7 @@
 
     function conicProjection(projectAt) {
       var phi0 = 0,
-        phi1 = pi$1 / 3,
+        phi1 = pi$2 / 3,
         m = projectionMutator(projectAt),
         p = m(phi0, phi1);
       p.parallels = function (_) {
@@ -24374,7 +24454,7 @@
       project.invert = function (x, y) {
         var r0y = r0 - y,
           l = atan2(x, abs$1(r0y)) * sign(r0y);
-        if (r0y * n < 0) l -= pi$1 * sign(x) * sign(r0y);
+        if (r0y * n < 0) l -= pi$2 * sign(x) * sign(r0y);
         return [l / n, asin$1((c - (x * x + r0y * r0y) * n * n) / (2 * n))];
       };
       return project;
@@ -24535,13 +24615,13 @@
     }
 
     function mercatorRaw(lambda, phi) {
-      return [lambda, log$1(tan((halfPi$1 + phi) / 2))];
+      return [lambda, log$1(tan((halfPi$2 + phi) / 2))];
     }
     mercatorRaw.invert = function (x, y) {
-      return [x, 2 * atan(exp(y)) - halfPi$1];
+      return [x, 2 * atan(exp(y)) - halfPi$2];
     };
     function geoMercator () {
-      return mercatorProjection(mercatorRaw).scale(961 / tau$1);
+      return mercatorProjection(mercatorRaw).scale(961 / tau$2);
     }
     function mercatorProjection(project) {
       var m = projection$1(project),
@@ -24567,7 +24647,7 @@
         return arguments.length ? (_ == null ? x0 = y0 = x1 = y1 = null : (x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reclip()) : x0 == null ? null : [[x0, y0], [x1, y1]];
       };
       function reclip() {
-        var k = pi$1 * scale(),
+        var k = pi$2 * scale(),
           t = m(rotation(m.rotate()).invert([0, 0]));
         return clipExtent(x0 == null ? [[t[0] - k, t[1] - k], [t[0] + k, t[1] + k]] : project === mercatorRaw ? [[Math.max(t[0] - k, x0), y0], [Math.min(t[0] + k, x1), y1]] : [[x0, Math.max(t[1] - k, y0)], [x1, Math.min(t[1] + k, y1)]]);
       }
@@ -24575,7 +24655,7 @@
     }
 
     function tany(y) {
-      return tan((halfPi$1 + y) / 2);
+      return tan((halfPi$2 + y) / 2);
     }
     function conicConformalRaw(y0, y1) {
       var cy0 = cos$1(y0),
@@ -24584,9 +24664,9 @@
       if (!n) return mercatorRaw;
       function project(x, y) {
         if (f > 0) {
-          if (y < -halfPi$1 + epsilon$3) y = -halfPi$1 + epsilon$3;
+          if (y < -halfPi$2 + epsilon$3) y = -halfPi$2 + epsilon$3;
         } else {
-          if (y > halfPi$1 - epsilon$3) y = halfPi$1 - epsilon$3;
+          if (y > halfPi$2 - epsilon$3) y = halfPi$2 - epsilon$3;
         }
         var r = f / pow$1(tany(y), n);
         return [r * sin$1(n * x), f - r * cos$1(n * x)];
@@ -24595,8 +24675,8 @@
         var fy = f - y,
           r = sign(n) * sqrt$1(x * x + fy * fy),
           l = atan2(x, abs$1(fy)) * sign(fy);
-        if (fy * n < 0) l -= pi$1 * sign(x) * sign(fy);
-        return [l / n, 2 * atan(pow$1(f / r, 1 / n)) - halfPi$1];
+        if (fy * n < 0) l -= pi$2 * sign(x) * sign(fy);
+        return [l / n, 2 * atan(pow$1(f / r, 1 / n)) - halfPi$2];
       };
       return project;
     }
@@ -24625,7 +24705,7 @@
       project.invert = function (x, y) {
         var gy = g - y,
           l = atan2(x, abs$1(gy)) * sign(gy);
-        if (gy * n < 0) l -= pi$1 * sign(x) * sign(gy);
+        if (gy * n < 0) l -= pi$2 * sign(x) * sign(gy);
         return [l / n, g - sign(n) * sqrt$1(x * x + gy * gy)];
       };
       return project;
@@ -24805,10 +24885,10 @@
     }
 
     function transverseMercatorRaw(lambda, phi) {
-      return [log$1(tan((halfPi$1 + phi) / 2)), -lambda];
+      return [log$1(tan((halfPi$2 + phi) / 2)), -lambda];
     }
     transverseMercatorRaw.invert = function (x, y) {
-      return [-y, 2 * atan(exp(x)) - halfPi$1];
+      return [-y, 2 * atan(exp(x)) - halfPi$2];
     };
     function geoTransverseMercator () {
       var m = mercatorProjection(transverseMercatorRaw),
@@ -24827,11 +24907,11 @@
     var cos = Math.cos;
     var sin = Math.sin;
     var epsilon$2 = 1e-6;
-    var pi = Math.PI;
-    var halfPi = pi / 2;
+    var pi$1 = Math.PI;
+    var halfPi$1 = pi$1 / 2;
     var sqrt2 = sqrt(2);
     function asin(x) {
-      return x > 1 ? halfPi : x < -1 ? -halfPi : Math.asin(x);
+      return x > 1 ? halfPi$1 : x < -1 ? -halfPi$1 : Math.asin(x);
     }
     function sqrt(x) {
       return x > 0 ? Math.sqrt(x) : 0;
@@ -24853,7 +24933,7 @@
       };
       return forward;
     }
-    var mollweideRaw = mollweideBromleyRaw(sqrt2 / halfPi, sqrt2, pi);
+    var mollweideRaw = mollweideBromleyRaw(sqrt2 / halfPi$1, sqrt2, pi$1);
     function geoMollweide () {
       return projection$1(mollweideRaw).scale(169.529);
     }
@@ -30507,7 +30587,7 @@
     });
     const Methods = {
       constant: constant$4,
-      linear: linear$2,
+      linear: linear$3,
       log: log$3,
       exp: exp$1,
       pow: pow$3,
@@ -31759,7 +31839,7 @@
       }
     };
 
-    const tau = 2 * Math.PI,
+    const tau$1 = 2 * Math.PI,
       pow = Math.pow;
     function pointX(p) {
       return p[0];
@@ -31957,7 +32037,7 @@
           const x = points[i],
             y = points[i + 1];
           context.moveTo(x + r, y);
-          context.arc(x, y, r, 0, tau);
+          context.arc(x, y, r, 0, tau$1);
         }
         return buffer && buffer.value();
       }
@@ -33315,7 +33395,181 @@
         resolvefilter: ResolveFilter
     });
 
-    var version$1 = "6.3.1";
+    var version$1 = "6.4.0";
+
+    const linear = t => +t;
+
+    function quadIn(t) {
+      return t * t;
+    }
+    function quadOut(t) {
+      return t * (2 - t);
+    }
+    function quadInOut(t) {
+      return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
+    }
+
+    function cubicIn(t) {
+      return t * t * t;
+    }
+    function cubicOut(t) {
+      return --t * t * t + 1;
+    }
+    function cubicInOut(t) {
+      return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
+    }
+
+    var exponent = 3;
+    var polyIn = function custom(e) {
+      e = +e;
+      function polyIn(t) {
+        return Math.pow(t, e);
+      }
+      polyIn.exponent = custom;
+      return polyIn;
+    }(exponent);
+    var polyOut = function custom(e) {
+      e = +e;
+      function polyOut(t) {
+        return 1 - Math.pow(1 - t, e);
+      }
+      polyOut.exponent = custom;
+      return polyOut;
+    }(exponent);
+    var polyInOut = function custom(e) {
+      e = +e;
+      function polyInOut(t) {
+        return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
+      }
+      polyInOut.exponent = custom;
+      return polyInOut;
+    }(exponent);
+
+    var pi = Math.PI,
+      halfPi = pi / 2;
+    function sinIn(t) {
+      return +t === 1 ? 1 : 1 - Math.cos(t * halfPi);
+    }
+    function sinOut(t) {
+      return Math.sin(t * halfPi);
+    }
+    function sinInOut(t) {
+      return (1 - Math.cos(pi * t)) / 2;
+    }
+
+    // tpmt is two power minus ten times t scaled to [0,1]
+    function tpmt(x) {
+      return (Math.pow(2, -10 * x) - 0.0009765625) * 1.0009775171065494;
+    }
+
+    function expIn(t) {
+      return tpmt(1 - +t);
+    }
+    function expOut(t) {
+      return 1 - tpmt(t);
+    }
+    function expInOut(t) {
+      return ((t *= 2) <= 1 ? tpmt(1 - t) : 2 - tpmt(t - 1)) / 2;
+    }
+
+    function circleIn(t) {
+      return 1 - Math.sqrt(1 - t * t);
+    }
+    function circleOut(t) {
+      return Math.sqrt(1 - --t * t);
+    }
+    function circleInOut(t) {
+      return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
+    }
+
+    var b1 = 4 / 11,
+      b2 = 6 / 11,
+      b3 = 8 / 11,
+      b4 = 3 / 4,
+      b5 = 9 / 11,
+      b6 = 10 / 11,
+      b7 = 15 / 16,
+      b8 = 21 / 22,
+      b9 = 63 / 64,
+      b0 = 1 / b1 / b1;
+    function bounceIn(t) {
+      return 1 - bounceOut(1 - t);
+    }
+    function bounceOut(t) {
+      return (t = +t) < b1 ? b0 * t * t : t < b3 ? b0 * (t -= b2) * t + b4 : t < b6 ? b0 * (t -= b5) * t + b7 : b0 * (t -= b8) * t + b9;
+    }
+    function bounceInOut(t) {
+      return ((t *= 2) <= 1 ? 1 - bounceOut(1 - t) : bounceOut(t - 1) + 1) / 2;
+    }
+
+    var overshoot = 1.70158;
+    var backIn = function custom(s) {
+      s = +s;
+      function backIn(t) {
+        return (t = +t) * t * (s * (t - 1) + t);
+      }
+      backIn.overshoot = custom;
+      return backIn;
+    }(overshoot);
+    var backOut = function custom(s) {
+      s = +s;
+      function backOut(t) {
+        return --t * t * ((t + 1) * s + t) + 1;
+      }
+      backOut.overshoot = custom;
+      return backOut;
+    }(overshoot);
+    var backInOut = function custom(s) {
+      s = +s;
+      function backInOut(t) {
+        return ((t *= 2) < 1 ? t * t * ((s + 1) * t - s) : (t -= 2) * t * ((s + 1) * t + s) + 2) / 2;
+      }
+      backInOut.overshoot = custom;
+      return backInOut;
+    }(overshoot);
+
+    var tau = 2 * Math.PI,
+      amplitude = 1,
+      period = 0.3;
+    var elasticIn = function custom(a, p) {
+      var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+      function elasticIn(t) {
+        return a * tpmt(- --t) * Math.sin((s - t) / p);
+      }
+      elasticIn.amplitude = function (a) {
+        return custom(a, p * tau);
+      };
+      elasticIn.period = function (p) {
+        return custom(a, p);
+      };
+      return elasticIn;
+    }(amplitude, period);
+    var elasticOut = function custom(a, p) {
+      var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+      function elasticOut(t) {
+        return 1 - a * tpmt(t = +t) * Math.sin((t + s) / p);
+      }
+      elasticOut.amplitude = function (a) {
+        return custom(a, p * tau);
+      };
+      elasticOut.period = function (p) {
+        return custom(a, p);
+      };
+      return elasticOut;
+    }(amplitude, period);
+    var elasticInOut = function custom(a, p) {
+      var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+      function elasticInOut(t) {
+        return ((t = t * 2 - 1) < 0 ? a * tpmt(-t) * Math.sin((s - t) / p) : 2 - a * tpmt(t) * Math.sin((s + t) / p)) / 2;
+      }
+      elasticInOut.amplitude = function (a) {
+        return custom(a, p * tau);
+      };
+      elasticInOut.period = function (p) {
+        return custom(a, p);
+      };
+      return elasticInOut;
+    }(amplitude, period);
 
     const RawCode = 'RawCode';
     const Literal = 'Literal';
@@ -34879,7 +35133,7 @@
         ObjectExpression: n => {
           // If any keys would override Object prototype methods, throw error
           for (const prop of n.properties) {
-            const keyName = prop.key.name;
+            const keyName = prop.key.type === 'Literal' ? String(prop.key.value) : prop.key.name;
             if (DisallowedObjectProperties.has(keyName)) {
               error('Illegal property: ' + keyName);
             }
@@ -35257,6 +35511,55 @@
       df.pulse(input, df.changeset().remove(truthy).insert(tuples));
       return 1;
     }
+
+    /**
+     * The d3-ease easing functions, exposed to the expression language under their
+     * d3 names. Each maps a normalized time in [0, 1] to an eased position in
+     * [0, 1], letting animations vary their playback rate over the time domain.
+     *
+     * The parametric families (`easePoly`, `easeBack`, `easeElastic`) are exposed
+     * at their default parameters only; d3's `.exponent()` / `.overshoot()` /
+     * `.amplitude()` configuration has no expression-language equivalent.
+     */
+    const easeFunctions = {
+      easeLinear: linear,
+      easeQuad: quadInOut,
+      easeQuadIn: quadIn,
+      easeQuadOut: quadOut,
+      easeQuadInOut: quadInOut,
+      easeCubic: cubicInOut,
+      easeCubicIn: cubicIn,
+      easeCubicOut: cubicOut,
+      easeCubicInOut: cubicInOut,
+      easePoly: polyInOut,
+      easePolyIn: polyIn,
+      easePolyOut: polyOut,
+      easePolyInOut: polyInOut,
+      easeSin: sinInOut,
+      easeSinIn: sinIn,
+      easeSinOut: sinOut,
+      easeSinInOut: sinInOut,
+      easeExp: expInOut,
+      easeExpIn: expIn,
+      easeExpOut: expOut,
+      easeExpInOut: expInOut,
+      easeCircle: circleInOut,
+      easeCircleIn: circleIn,
+      easeCircleOut: circleOut,
+      easeCircleInOut: circleInOut,
+      easeBounce: bounceOut,
+      easeBounceIn: bounceIn,
+      easeBounceOut: bounceOut,
+      easeBounceInOut: bounceInOut,
+      easeBack: backInOut,
+      easeBackIn: backIn,
+      easeBackOut: backOut,
+      easeBackInOut: backInOut,
+      easeElastic: elasticOut,
+      easeElasticIn: elasticIn,
+      easeElasticOut: elasticOut,
+      easeElasticInOut: elasticInOut
+    };
     function encode(item, name, retval) {
       if (item) {
         const df = this.context.dataflow,
@@ -35264,6 +35567,32 @@
         df.pulse(target, df.changeset().encode(item, name));
       }
       return retval !== undefined ? retval : item;
+    }
+
+    /**
+     * Piecewise-linear interpolation across an array of values.
+     *
+     * Unlike `lerp`, which interpolates between the first and last entries only,
+     * this treats the array as evenly-spaced control points and interpolates
+     * within the segment that `frac` falls into. It turns an array into a
+     * piecewise-linear function of position -- a custom easing curve, for
+     * instance, or any sampled series read at an arbitrary point.
+     *
+     * @param {Array<number>} values - The control points, in order.
+     * @param {number} frac - Position along the array, in [0, 1].
+     * @return {number} The interpolated value.
+     */
+    function interpolateLinear(values, frac) {
+      if (!isArray(values) || !values.length) return undefined;
+      const n = values.length,
+        lo = values[0],
+        f = +frac;
+      if (n === 1 || !(f > 0)) return lo;
+      if (f >= 1) return peek$1(values);
+      const pos = f * (n - 1),
+        i = Math.floor(pos),
+        t = pos - i;
+      return t ? values[i] + t * (values[i + 1] - values[i]) : values[i];
     }
     const wrap = method => function (value, spec) {
       const locale = this.context.dataflow.locale();
@@ -35395,6 +35724,10 @@
     function geoScale(projection, group) {
       const p = getScale(projection, (group || this).context);
       return p && p.scale();
+    }
+    function geoTranslate(projection, group) {
+      const p = getScale(projection, (group || this).context);
+      return p && p.translate();
     }
     function inScope(item) {
       const group = this.context.group;
@@ -35816,6 +36149,7 @@
       slice,
       flush,
       lerp,
+      interpolateLinear,
       merge,
       pad: pad$2,
       peek: peek$1,
@@ -35848,6 +36182,8 @@
       utcquarter,
       week,
       utcweek,
+      isoweek,
+      utcisoweek,
       dayofyear,
       utcdayofyear,
       warn,
@@ -35880,7 +36216,8 @@
       modify,
       lassoAppend,
       lassoPath,
-      intersectLasso
+      intersectLasso,
+      ...easeFunctions
     };
     const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'],
       // event functions
@@ -35946,6 +36283,7 @@
     expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
     expressionFunction('geoShape', geoShape, scaleVisitor);
     expressionFunction('geoScale', geoScale, scaleVisitor);
+    expressionFunction('geoTranslate', geoTranslate, scaleVisitor);
     expressionFunction('indata', indata, indataVisitor);
     expressionFunction('data', data$1, dataVisitor);
     expressionFunction('treePath', treePath, dataVisitor);
@@ -36771,9 +37109,42 @@
         y: item => xy(item)[1]
       };
     }
+
+    /**
+     * Observe the container element and dispatch 'container:resize' events to any
+     * event streams registered for them.
+     * @param {View} view - The view whose container should be observed.
+     */
+    function observeContainer(view) {
+      if (view._resizeObserver) {
+        view._resizeObserver.disconnect();
+        view._resizeObserver = null;
+      }
+      const el = view.container(),
+        listeners = view._containerListeners;
+      if (typeof ResizeObserver === 'undefined' || !el || !listeners.length) return;
+
+      // the size the listeners last saw, so that the observe-time notification
+      // and fractional changes that leave the client size intact dispatch nothing
+      let width = el.clientWidth,
+        height = el.clientHeight;
+      view._resizeObserver = new ResizeObserver(() => {
+        if (!el.clientWidth && !el.clientHeight) return;
+        if (el.clientWidth === width && el.clientHeight === height) return;
+        width = el.clientWidth;
+        height = el.clientHeight;
+        listeners.forEach(handler => handler({
+          type: 'resize',
+          target: el
+        }));
+      });
+      view._resizeObserver.observe(el);
+    }
     const VIEW$1 = 'view',
       TIMER = 'timer',
       WINDOW = 'window',
+      CONTAINER = 'container',
+      RESIZE = 'resize',
       NO_TRAP = {
         trap: false
       };
@@ -36793,7 +37164,7 @@
         });
       };
       unpack(events.defaults, ['prevent', 'allow']);
-      unpack(events, ['view', 'window', 'selector']);
+      unpack(events, ['view', 'window', 'selector', 'container']);
       return events;
     }
     function trackEventListener(view, sources, type, handler) {
@@ -36845,6 +37216,14 @@
         if (permit(view, 'view', type)) {
           // send traps errors, so use {trap: false} option
           view.addEventListener(type, send, NO_TRAP);
+        }
+      } else if (source === CONTAINER) {
+        if (type !== RESIZE) {
+          view.warn('Unsupported container event type: ' + type);
+        } else if (permit(view, 'container', type)) {
+          // the container element is not known until the view is initialized
+          view._containerListeners.push(send);
+          if (view.container()) observeContainer(view);
         }
       } else {
         if (source === WINDOW) {
@@ -36911,6 +37290,12 @@
       while (--n >= 0) {
         timers[n].stop();
       }
+
+      // disconnect the container resize observer, if any
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+        this._resizeObserver = null;
+      }
       n = listeners.length;
       while (--n >= 0) {
         e = listeners[n];
@@ -36941,6 +37326,7 @@
     const BindClass = 'vega-bind',
       NameClass = 'vega-bind-name',
       RadioClass = 'vega-bind-radio';
+    const EventHandlerAttr = /^on/i;
 
     /**
      * Bind a signal to an external HTML input element. The resulting two-way
@@ -37044,17 +37430,19 @@
           input = range;
           break;
       }
-      input(bind, wrapper, param, value);
+      input === form ? input(bind, wrapper, param, value, view) : input(bind, wrapper, param, value);
     }
 
     /**
      * Generates an arbitrary input form element.
      * The input type is controlled via user-provided parameters.
      */
-    function form(bind, el, param, value) {
+    function form(bind, el, param, value, view) {
       const node = element('input');
       for (const key in param) {
-        if (key !== 'signal' && key !== 'element') {
+        if (EventHandlerAttr.test(key)) {
+          view.warn(`Ignoring unsupported signal binding property "${key}" for signal "${param.signal}".`);
+        } else if (key !== 'signal' && key !== 'element') {
           node.setAttribute(key === 'input' ? 'type' : key, param[key]);
         }
       }
@@ -37241,6 +37629,7 @@
           bind(view, _.element || elBind, _);
         });
       }
+      observeContainer(view);
       return view;
     }
     function lookup$1(view, el, clear) {
@@ -37576,6 +37965,8 @@
       view._timers = [];
       view._eventListeners = [];
       view._resizeListeners = [];
+      view._containerListeners = [];
+      view._resizeObserver = null;
 
       // initialize event configuration
       view._eventConfig = initializeEventConfig(spec.eventConfig);
@@ -38698,12 +39089,13 @@
     function fieldRef(data, scope) {
       const name = '_:vega:_' + FIELD_REF_ID++,
         coll = Collect({});
-      if (isArray(data)) {
+      if (isArray(data) && !data.some(isSignal)) {
         coll.value = {
           $ingest: data
         };
-      } else if (data.signal) {
-        const code = 'setdata(' + stringValue(name) + ',' + data.signal + ')';
+      } else {
+        const values = isArray(data) ? '[' + data.map(v => isSignal(v) ? v.signal : stringValue(v)).join(',') + ']' : data.signal;
+        const code = 'setdata(' + stringValue(name) + ',' + values + ')';
         coll.params.input = scope.signalRef(code);
       }
       scope.addDataPipeline(name, [coll, Sieve({})]);
@@ -41799,6 +42191,7 @@
     exports.Handler = Handler;
     exports.HybridHandler = HybridHandler;
     exports.HybridRenderer = HybridRenderer;
+    exports.ISOWEEK = ISOWEEK;
     exports.Info = Info;
     exports.Item = Item;
     exports.MILLISECONDS = MILLISECONDS;
@@ -41900,6 +42293,7 @@
     exports.isRegExp = isRegExp;
     exports.isString = isString;
     exports.isTuple = isTuple;
+    exports.isoweek = isoweek;
     exports.key = key;
     exports.lerp = lerp;
     exports.lineHeight = lineHeight;
@@ -41948,7 +42342,7 @@
     exports.read = read;
     exports.regressionConstant = constant$4;
     exports.regressionExp = exp$1;
-    exports.regressionLinear = linear$2;
+    exports.regressionLinear = linear$3;
     exports.regressionLoess = loess;
     exports.regressionLog = log$3;
     exports.regressionPoly = poly;
@@ -42003,6 +42397,7 @@
     exports.utcOffset = utcOffset;
     exports.utcSequence = utcSequence;
     exports.utcdayofyear = utcdayofyear;
+    exports.utcisoweek = utcisoweek;
     exports.utcquarter = utcquarter;
     exports.utcweek = utcweek;
     exports.version = version;
