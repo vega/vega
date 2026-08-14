@@ -1,5 +1,6 @@
 import eventExtend from './events-extend.js';
 import observeContainer from './observeContainer.js';
+import runAsyncCatch from './runAsyncCatch.js';
 import {EventStream} from 'vega-dataflow';
 import {array, extend, isArray, isObject, toSet} from 'vega-util';
 
@@ -72,7 +73,7 @@ export function events(source, type, filter) {
   var view = this,
       s = new EventStream(filter),
       send = function(e, item) {
-        view.runAsync(null, () => {
+        runAsyncCatch(view, null, () => {
           if (source === VIEW && prevent(view, type)) {
             e.preventDefault();
           }

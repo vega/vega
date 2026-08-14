@@ -1,4 +1,5 @@
 import element from './element.js';
+import runAsyncCatch from './runAsyncCatch.js';
 import {trackEventListener} from './events.js';
 import {debounce} from 'vega-util';
 import {tickStep} from 'd3-array';
@@ -35,7 +36,7 @@ export default function(view, el, binding) {
       set: null,
       update: value => {
         if (value != view.signal(param.signal)) {
-          view.runAsync(null, () => {
+          runAsyncCatch(view, null, () => {
             bind.source = true;
             view.signal(param.signal, value);
           });
