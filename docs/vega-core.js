@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-timer')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-timer'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
-})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3Timer) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('d3-dsv'), require('topojson-client'), require('d3-array'), require('d3-format'), require('d3-time'), require('d3-time-format'), require('d3-shape'), require('d3-path'), require('d3-scale'), require('d3-interpolate'), require('d3-geo'), require('d3-color'), require('d3-force'), require('d3-hierarchy'), require('d3-delaunay'), require('d3-ease'), require('d3-timer')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'd3-dsv', 'topojson-client', 'd3-array', 'd3-format', 'd3-time', 'd3-time-format', 'd3-shape', 'd3-path', 'd3-scale', 'd3-interpolate', 'd3-geo', 'd3-color', 'd3-force', 'd3-hierarchy', 'd3-delaunay', 'd3-ease', 'd3-timer'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.vega = {}, global.d3, global.topojson, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3, global.d3));
+})(this, (function (exports, d3Dsv, topojsonClient, d3Array, d3Format, d3Time, d3TimeFormat, d3Shape, d3Path, $, $$1, d3Geo, d3Color, d3Force, d3Hierarchy, d3Delaunay, d3, d3Timer) { 'use strict';
 
     function _interopNamespaceDefault(e) {
         var n = Object.create(null);
@@ -23,6 +23,7 @@
 
     var $__namespace = /*#__PURE__*/_interopNamespaceDefault($);
     var $$1__namespace = /*#__PURE__*/_interopNamespaceDefault($$1);
+    var d3__namespace = /*#__PURE__*/_interopNamespaceDefault(d3);
 
     function accessor(fn, fields, name) {
       return Object.assign(fn, {
@@ -132,8 +133,12 @@
     const falsy = accessor(() => false, [], 'false');
 
     /** Utilities common to vega-interpreter and vega-expression for evaluating expresions */
-    /** JSON authors are not allowed to set these properties, as these are built-in to the JS Object Prototype and should not be overridden. */
-    const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__']);
+    /**
+     * Properties JSON authors may not set. Most are function-valued members of
+     * Object.prototype; `__proto__` and `then` are listed explicitly because they
+     * are not, but the language still treats them specially.
+     */
+    const DisallowedObjectProperties = new Set([...Object.getOwnPropertyNames(Object.prototype).filter(name => typeof Object.prototype[name] === 'function'), '__proto__', 'then']);
 
     function log$3(method, level, input) {
       const args = [level, ...input];
@@ -184,9 +189,6 @@
     }
 
     const isLegalKey = key => key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
-    /** Merges Vega config objects. Signals merged by name (source takes precedence),
-     * legend.layout recursively merged, style fully recursive, others shallow.
-     * Return type is compatible with vega-typings Config. */
     function mergeConfig(...configs) {
       return configs.reduce((out, source) => {
         for (const key in source) {
@@ -212,10 +214,11 @@
     /** Writes config value to output with optional recursion, rejecting illegal keys that could be used to modify the prototype chain */
     function writeConfig(output, key, value, recurse) {
       if (!isLegalKey(key)) return;
+      const out = output;
       let k, o;
       if (isObject(value) && !isArray(value)) {
         const valueObj = value;
-        o = isObject(output[key]) ? output[key] : output[key] = {};
+        o = isObject(out[key]) ? out[key] : out[key] = {};
         for (k in valueObj) {
           if (recurse && (recurse === true || recurse[k])) {
             writeConfig(o, k, valueObj[k]);
@@ -224,7 +227,7 @@
           }
         }
       } else {
-        output[key] = value;
+        out[key] = value;
       }
     }
     /** Merges named object arrays, deduplicating by name. (b takes precedence). */
@@ -881,6 +884,7 @@
     const QUARTER = 'quarter';
     const MONTH = 'month';
     const WEEK = 'week';
+    const ISOWEEK = 'isoweek';
     const DATE = 'date';
     const DAY = 'day';
     const DAYOFYEAR = 'dayofyear';
@@ -888,7 +892,7 @@
     const MINUTES = 'minutes';
     const SECONDS = 'seconds';
     const MILLISECONDS = 'milliseconds';
-    const TIME_UNITS = [YEAR, QUARTER, MONTH, WEEK, DATE, DAY, DAYOFYEAR, HOURS, MINUTES, SECONDS, MILLISECONDS];
+    const TIME_UNITS = [YEAR, QUARTER, MONTH, WEEK, ISOWEEK, DATE, DAY, DAYOFYEAR, HOURS, MINUTES, SECONDS, MILLISECONDS];
     const UNITS = TIME_UNITS.reduce((o, u, i) => (o[u] = 1 + i, o), {});
     function timeUnits(units) {
       const u = array$2(units).slice(),
@@ -903,8 +907,8 @@
           error(`Invalid time unit: ${unit}.`);
         }
       });
-      const numTypes = (m[WEEK] || m[DAY] ? 1 : 0) + (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) + (m[DAYOFYEAR] ? 1 : 0);
-      if (numTypes > 1) {
+      const numTypes = (m[WEEK] || m[ISOWEEK] || m[DAY] ? 1 : 0) + (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) + (m[DAYOFYEAR] ? 1 : 0);
+      if (numTypes > 1 || m[WEEK] && m[ISOWEEK]) {
         error(`Incompatible time units: ${units}`);
       }
 
@@ -918,12 +922,14 @@
       [MONTH]: '%b ',
       [DATE]: '%d ',
       [WEEK]: 'W%U ',
+      [ISOWEEK]: 'W%V ',
       [DAY]: '%a ',
       [DAYOFYEAR]: '%j ',
       [HOURS]: '%H:00',
       [MINUTES]: '00:%M',
       [SECONDS]: ':%S',
       [MILLISECONDS]: '.%L',
+      [`${YEAR}-${ISOWEEK}`]: '%G W%V ',
       [`${YEAR}-${MONTH}`]: '%Y-%m ',
       [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
       [`${HOURS}-${MINUTES}`]: '%H:%M'
@@ -962,11 +968,32 @@
     function week(d) {
       return localWeekNum(new Date(d));
     }
+    function isoweek(d) {
+      return localISOWeekNum(new Date(d));
+    }
     function localDayOfYear(d) {
       return d3Time.timeDay.count(localYear(d.getFullYear()) - 1, d);
     }
     function localWeekNum(d) {
       return d3Time.timeWeek.count(localYear(d.getFullYear()) - 1, d);
+    }
+    function localISOWeekYear(d) {
+      return d3Time.timeDay.offset(d3Time.timeMonday.floor(d), 3).getFullYear();
+    }
+    function localISOWeekNum(d) {
+      return 1 + d3Time.timeMonday.count(localISOWeekOne(localISOWeekYear(d)), d);
+    }
+
+    // The Monday on which week 1 of the given week-numbering year begins.
+    function localISOWeekOne(y) {
+      return d3Time.timeMonday.floor(d3Time.timeDay.offset(localYear(y), 3));
+    }
+
+    // The day of January on which week 1 of the given week-numbering year begins. Values of zero or
+    // less refer to the preceding December, which localDate rolls over for us.
+    function localISOWeekOneDate(y) {
+      const d = localISOWeekOne(y);
+      return d.getMonth() ? d.getDate() - 31 : d.getDate();
     }
     function localFirst(y) {
       return localYear(y).getDay();
@@ -985,6 +1012,9 @@
     function utcweek(d) {
       return utcWeekNum(new Date(d));
     }
+    function utcisoweek(d) {
+      return utcISOWeekNum(new Date(d));
+    }
     function utcDayOfYear(d) {
       const y = Date.UTC(d.getUTCFullYear(), 0, 1);
       return d3Time.utcDay.count(y - 1, d);
@@ -992,6 +1022,19 @@
     function utcWeekNum(d) {
       const y = Date.UTC(d.getUTCFullYear(), 0, 1);
       return d3Time.utcWeek.count(y - 1, d);
+    }
+    function utcISOWeekYear(d) {
+      return d3Time.utcDay.offset(d3Time.utcMonday.floor(d), 3).getUTCFullYear();
+    }
+    function utcISOWeekNum(d) {
+      return 1 + d3Time.utcMonday.count(utcISOWeekOne(utcISOWeekYear(d)), d);
+    }
+    function utcISOWeekOne(y) {
+      return d3Time.utcMonday.floor(d3Time.utcDay.offset(Date.UTC(y, 0, 1), 3));
+    }
+    function utcISOWeekOneDate(y) {
+      const d = utcISOWeekOne(y);
+      return d.getUTCMonth() ? d.getUTCDate() - 31 : d.getUTCDate();
     }
     function utcFirst(y) {
       t0.setTime(Date.UTC(y, 0, 1));
@@ -1005,6 +1048,16 @@
       }
       return new Date(Date.UTC(y, m, d, H, M, S, L));
     }
+
+    // Just like Vega's timeunit transform, set default year to 2012, so domain conversion will be
+    // compatible with Vega. 2012 is a leap year beginning on a Sunday, so days of the week order
+    // properly at the start of the year.
+    const REFERENCE_YEAR = 2012;
+
+    // Reference year for isoweek units with no year unit. ISO 8601 week numbers run to 53 in a long
+    // year, and 2015 is one (its week 1 starts on 2014-12-29), so every week number maps to a real
+    // week that formats back to the same number.
+    const ISOWEEK_REFERENCE_YEAR = 2015;
     function floor(units, step, get, inv, newDate) {
       const s = step || 1,
         b = peek$1(units),
@@ -1014,9 +1067,9 @@
         };
       const t = new Date(),
         u = toSet(units),
-        y = u[YEAR] ? _(YEAR) : constant$1(2012),
+        y = u[YEAR] ? _(YEAR, null, u[ISOWEEK] ? YEAR + ISOWEEK : YEAR) : constant$1(u[ISOWEEK] ? ISOWEEK_REFERENCE_YEAR : REFERENCE_YEAR),
         m = u[MONTH] ? _(MONTH) : u[QUARTER] ? _(QUARTER) : zero$1,
-        d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$1,
+        d = u[WEEK] && u[DAY] ? _(DAY, 1, WEEK + DAY) : u[ISOWEEK] && u[DAY] ? _(DAY, 1, ISOWEEK + DAY) : u[WEEK] ? _(WEEK, 1) : u[ISOWEEK] ? _(ISOWEEK, 1) : u[DAY] ? _(DAY, 1) : u[DATE] ? _(DATE, 1) : u[DAYOFYEAR] ? _(DAYOFYEAR, 1) : one$1,
         H = u[HOURS] ? _(HOURS) : zero$1,
         M = u[MINUTES] ? _(MINUTES) : zero$1,
         S = u[SECONDS] ? _(SECONDS) : zero$1,
@@ -1038,6 +1091,17 @@
       return day + week * 7 - (firstDay + 6) % 7;
     }
 
+    // day within an ISO week, Monday = 0 through Sunday = 6
+    function isoDay(day) {
+      return (day + 6) % 7;
+    }
+
+    // returns the day of the year for the given day of the given ISO week number, where
+    // weekOneDate is the day of January on which week 1 begins
+    function isoWeekday(weekOneDate, week, day) {
+      return weekOneDate + (week - 1) * 7 + day;
+    }
+
     // -- LOCAL TIME --
 
     const localGet = {
@@ -1052,11 +1116,15 @@
       [DAYOFYEAR]: d => localDayOfYear(d),
       [WEEK]: d => localWeekNum(d),
       [WEEK + DAY]: (d, y) => weekday(localWeekNum(d), d.getDay(), localFirst(y)),
-      [DAY]: (d, y) => weekday(1, d.getDay(), localFirst(y))
+      [DAY]: (d, y) => weekday(1, d.getDay(), localFirst(y)),
+      [ISOWEEK]: d => localISOWeekNum(d),
+      [YEAR + ISOWEEK]: d => localISOWeekYear(d),
+      [ISOWEEK + DAY]: (d, y) => isoWeekday(localISOWeekOneDate(y), localISOWeekNum(d), isoDay(d.getDay()))
     };
     const localInv = {
       [QUARTER]: q => 3 * q,
-      [WEEK]: (w, y) => weekday(w, 0, localFirst(y))
+      [WEEK]: (w, y) => weekday(w, 0, localFirst(y)),
+      [ISOWEEK]: (w, y) => isoWeekday(localISOWeekOneDate(y), w, 0)
     };
     function timeFloor(units, step) {
       return floor(units, step || 1, localGet, localInv, localDate);
@@ -1076,11 +1144,15 @@
       [DAYOFYEAR]: d => utcDayOfYear(d),
       [WEEK]: d => utcWeekNum(d),
       [DAY]: (d, y) => weekday(1, d.getUTCDay(), utcFirst(y)),
-      [WEEK + DAY]: (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y))
+      [WEEK + DAY]: (d, y) => weekday(utcWeekNum(d), d.getUTCDay(), utcFirst(y)),
+      [ISOWEEK]: d => utcISOWeekNum(d),
+      [YEAR + ISOWEEK]: d => utcISOWeekYear(d),
+      [ISOWEEK + DAY]: (d, y) => isoWeekday(utcISOWeekOneDate(y), utcISOWeekNum(d), isoDay(d.getUTCDay()))
     };
     const utcInv = {
       [QUARTER]: q => 3 * q,
-      [WEEK]: (w, y) => weekday(w, 0, utcFirst(y))
+      [WEEK]: (w, y) => weekday(w, 0, utcFirst(y)),
+      [ISOWEEK]: (w, y) => isoWeekday(utcISOWeekOneDate(y), w, 0)
     };
     function utcFloor(units, step) {
       return floor(units, step || 1, utcGet, utcInv, utcDate);
@@ -1090,6 +1162,7 @@
       [QUARTER]: d3Time.timeMonth.every(3),
       [MONTH]: d3Time.timeMonth,
       [WEEK]: d3Time.timeWeek,
+      [ISOWEEK]: d3Time.timeMonday,
       [DATE]: d3Time.timeDay,
       [DAY]: d3Time.timeDay,
       [DAYOFYEAR]: d3Time.timeDay,
@@ -1103,6 +1176,7 @@
       [QUARTER]: d3Time.utcMonth.every(3),
       [MONTH]: d3Time.utcMonth,
       [WEEK]: d3Time.utcWeek,
+      [ISOWEEK]: d3Time.utcMonday,
       [DATE]: d3Time.utcDay,
       [DAY]: d3Time.utcDay,
       [DAYOFYEAR]: d3Time.utcDay,
@@ -12840,7 +12914,7 @@
       for (const key in opt) {
         context[key] = opt[key];
       }
-      if (inDOM && ratio !== 1) {
+      if (inDOM) {
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
       }
@@ -12863,6 +12937,9 @@
         if (el && this._canvas) {
           domClear(el, 0).appendChild(this._canvas);
           this._canvas.setAttribute('class', 'marks');
+          // an inline element sits on the text baseline, leaving a few pixels of
+          // descender space below it that count towards the container's height
+          this._canvas.style.setProperty('vertical-align', 'bottom');
         }
 
         // this method will invoke resize to size the canvas appropriately
@@ -13266,6 +13343,9 @@
           this._svg.setAttributeNS(xmlns, 'xmlns:xlink', metadata['xmlns:xlink']);
           this._svg.setAttribute('version', metadata['version']);
           this._svg.setAttribute('class', 'marks');
+          // an inline element sits on the text baseline, leaving a few pixels of
+          // descender space below it that count towards the container's height
+          this._svg.style.setProperty('vertical-align', 'bottom');
           domClear(el, 1);
 
           // set the svg root group
@@ -13331,9 +13411,12 @@
         const svg = this._svg,
           bg = this._bgcolor;
         if (!svg) return null;
+
+        // styles position the element on the page; they are not part of the image
+        const style = svg.getAttribute('style');
+        svg.removeAttribute('style');
         let node;
         if (bg) {
-          svg.removeAttribute('style');
           node = domChild(svg, RootIndex, 'rect', svgns);
           setAttributes(node, {
             width: this._width,
@@ -13342,10 +13425,8 @@
           });
         }
         const text = serializeXML(svg);
-        if (bg) {
-          svg.removeChild(node);
-          this._svg.style.setProperty('background-color', bg);
-        }
+        if (bg) svg.removeChild(node);
+        if (style) svg.setAttribute('style', style);
         return text;
       }
 
@@ -16532,7 +16613,7 @@
       }
 
       // determine size for potential discrete range
-      count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
+      count = type === Threshold ? count + 1 : type === BinOrdinal ? count - 1 : type === Ordinal ? +_.schemeCount || count || DEFAULT_COUNT : type === Quantile || type === Quantize ? +_.schemeCount || DEFAULT_COUNT : count;
 
       // adjust and/or quantize scheme as appropriate
       return isInterpolating(type) ? adjustScheme(scheme$1, extent, _.reverse) : isFunction(scheme$1) ? quantizeInterpolator(adjustScheme(scheme$1, extent), count) : type === Ordinal ? scheme$1 : scheme$1.slice(0, count);
@@ -21382,7 +21463,7 @@
         resolvefilter: ResolveFilter
     });
 
-    var version$1 = "6.3.1";
+    var version$1 = "6.4.0";
 
     const RawCode = 'RawCode';
     const Literal = 'Literal';
@@ -22946,7 +23027,7 @@
         ObjectExpression: n => {
           // If any keys would override Object prototype methods, throw error
           for (const prop of n.properties) {
-            const keyName = prop.key.name;
+            const keyName = prop.key.type === 'Literal' ? String(prop.key.value) : prop.key.name;
             if (DisallowedObjectProperties.has(keyName)) {
               error('Illegal property: ' + keyName);
             }
@@ -23324,6 +23405,55 @@
       df.pulse(input, df.changeset().remove(truthy).insert(tuples));
       return 1;
     }
+
+    /**
+     * The d3-ease easing functions, exposed to the expression language under their
+     * d3 names. Each maps a normalized time in [0, 1] to an eased position in
+     * [0, 1], letting animations vary their playback rate over the time domain.
+     *
+     * The parametric families (`easePoly`, `easeBack`, `easeElastic`) are exposed
+     * at their default parameters only; d3's `.exponent()` / `.overshoot()` /
+     * `.amplitude()` configuration has no expression-language equivalent.
+     */
+    const easeFunctions = {
+      easeLinear: d3__namespace.easeLinear,
+      easeQuad: d3__namespace.easeQuad,
+      easeQuadIn: d3__namespace.easeQuadIn,
+      easeQuadOut: d3__namespace.easeQuadOut,
+      easeQuadInOut: d3__namespace.easeQuadInOut,
+      easeCubic: d3__namespace.easeCubic,
+      easeCubicIn: d3__namespace.easeCubicIn,
+      easeCubicOut: d3__namespace.easeCubicOut,
+      easeCubicInOut: d3__namespace.easeCubicInOut,
+      easePoly: d3__namespace.easePoly,
+      easePolyIn: d3__namespace.easePolyIn,
+      easePolyOut: d3__namespace.easePolyOut,
+      easePolyInOut: d3__namespace.easePolyInOut,
+      easeSin: d3__namespace.easeSin,
+      easeSinIn: d3__namespace.easeSinIn,
+      easeSinOut: d3__namespace.easeSinOut,
+      easeSinInOut: d3__namespace.easeSinInOut,
+      easeExp: d3__namespace.easeExp,
+      easeExpIn: d3__namespace.easeExpIn,
+      easeExpOut: d3__namespace.easeExpOut,
+      easeExpInOut: d3__namespace.easeExpInOut,
+      easeCircle: d3__namespace.easeCircle,
+      easeCircleIn: d3__namespace.easeCircleIn,
+      easeCircleOut: d3__namespace.easeCircleOut,
+      easeCircleInOut: d3__namespace.easeCircleInOut,
+      easeBounce: d3__namespace.easeBounce,
+      easeBounceIn: d3__namespace.easeBounceIn,
+      easeBounceOut: d3__namespace.easeBounceOut,
+      easeBounceInOut: d3__namespace.easeBounceInOut,
+      easeBack: d3__namespace.easeBack,
+      easeBackIn: d3__namespace.easeBackIn,
+      easeBackOut: d3__namespace.easeBackOut,
+      easeBackInOut: d3__namespace.easeBackInOut,
+      easeElastic: d3__namespace.easeElastic,
+      easeElasticIn: d3__namespace.easeElasticIn,
+      easeElasticOut: d3__namespace.easeElasticOut,
+      easeElasticInOut: d3__namespace.easeElasticInOut
+    };
     function encode(item, name, retval) {
       if (item) {
         const df = this.context.dataflow,
@@ -23331,6 +23461,32 @@
         df.pulse(target, df.changeset().encode(item, name));
       }
       return retval !== undefined ? retval : item;
+    }
+
+    /**
+     * Piecewise-linear interpolation across an array of values.
+     *
+     * Unlike `lerp`, which interpolates between the first and last entries only,
+     * this treats the array as evenly-spaced control points and interpolates
+     * within the segment that `frac` falls into. It turns an array into a
+     * piecewise-linear function of position -- a custom easing curve, for
+     * instance, or any sampled series read at an arbitrary point.
+     *
+     * @param {Array<number>} values - The control points, in order.
+     * @param {number} frac - Position along the array, in [0, 1].
+     * @return {number} The interpolated value.
+     */
+    function interpolateLinear(values, frac) {
+      if (!isArray(values) || !values.length) return undefined;
+      const n = values.length,
+        lo = values[0],
+        f = +frac;
+      if (n === 1 || !(f > 0)) return lo;
+      if (f >= 1) return peek$1(values);
+      const pos = f * (n - 1),
+        i = Math.floor(pos),
+        t = pos - i;
+      return t ? values[i] + t * (values[i + 1] - values[i]) : values[i];
     }
     const wrap = method => function (value, spec) {
       const locale = this.context.dataflow.locale();
@@ -23462,6 +23618,10 @@
     function geoScale(projection, group) {
       const p = getScale(projection, (group || this).context);
       return p && p.scale();
+    }
+    function geoTranslate(projection, group) {
+      const p = getScale(projection, (group || this).context);
+      return p && p.translate();
     }
     function inScope(item) {
       const group = this.context.group;
@@ -23883,6 +24043,7 @@
       slice,
       flush,
       lerp,
+      interpolateLinear,
       merge,
       pad,
       peek: peek$1,
@@ -23915,6 +24076,8 @@
       utcquarter,
       week,
       utcweek,
+      isoweek,
+      utcisoweek,
       dayofyear,
       utcdayofyear,
       warn,
@@ -23947,7 +24110,8 @@
       modify,
       lassoAppend,
       lassoPath,
-      intersectLasso
+      intersectLasso,
+      ...easeFunctions
     };
     const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'],
       // event functions
@@ -24013,6 +24177,7 @@
     expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
     expressionFunction('geoShape', geoShape, scaleVisitor);
     expressionFunction('geoScale', geoScale, scaleVisitor);
+    expressionFunction('geoTranslate', geoTranslate, scaleVisitor);
     expressionFunction('indata', indata, indataVisitor);
     expressionFunction('data', data$1, dataVisitor);
     expressionFunction('treePath', treePath, dataVisitor);
@@ -24838,9 +25003,42 @@
         y: item => xy(item)[1]
       };
     }
+
+    /**
+     * Observe the container element and dispatch 'container:resize' events to any
+     * event streams registered for them.
+     * @param {View} view - The view whose container should be observed.
+     */
+    function observeContainer(view) {
+      if (view._resizeObserver) {
+        view._resizeObserver.disconnect();
+        view._resizeObserver = null;
+      }
+      const el = view.container(),
+        listeners = view._containerListeners;
+      if (typeof ResizeObserver === 'undefined' || !el || !listeners.length) return;
+
+      // the size the listeners last saw, so that the observe-time notification
+      // and fractional changes that leave the client size intact dispatch nothing
+      let width = el.clientWidth,
+        height = el.clientHeight;
+      view._resizeObserver = new ResizeObserver(() => {
+        if (!el.clientWidth && !el.clientHeight) return;
+        if (el.clientWidth === width && el.clientHeight === height) return;
+        width = el.clientWidth;
+        height = el.clientHeight;
+        listeners.forEach(handler => handler({
+          type: 'resize',
+          target: el
+        }));
+      });
+      view._resizeObserver.observe(el);
+    }
     const VIEW$1 = 'view',
       TIMER = 'timer',
       WINDOW = 'window',
+      CONTAINER = 'container',
+      RESIZE = 'resize',
       NO_TRAP = {
         trap: false
       };
@@ -24860,7 +25058,7 @@
         });
       };
       unpack(events.defaults, ['prevent', 'allow']);
-      unpack(events, ['view', 'window', 'selector']);
+      unpack(events, ['view', 'window', 'selector', 'container']);
       return events;
     }
     function trackEventListener(view, sources, type, handler) {
@@ -24912,6 +25110,14 @@
         if (permit(view, 'view', type)) {
           // send traps errors, so use {trap: false} option
           view.addEventListener(type, send, NO_TRAP);
+        }
+      } else if (source === CONTAINER) {
+        if (type !== RESIZE) {
+          view.warn('Unsupported container event type: ' + type);
+        } else if (permit(view, 'container', type)) {
+          // the container element is not known until the view is initialized
+          view._containerListeners.push(send);
+          if (view.container()) observeContainer(view);
         }
       } else {
         if (source === WINDOW) {
@@ -24978,6 +25184,12 @@
       while (--n >= 0) {
         timers[n].stop();
       }
+
+      // disconnect the container resize observer, if any
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+        this._resizeObserver = null;
+      }
       n = listeners.length;
       while (--n >= 0) {
         e = listeners[n];
@@ -25008,6 +25220,7 @@
     const BindClass = 'vega-bind',
       NameClass = 'vega-bind-name',
       RadioClass = 'vega-bind-radio';
+    const EventHandlerAttr = /^on/i;
 
     /**
      * Bind a signal to an external HTML input element. The resulting two-way
@@ -25111,17 +25324,19 @@
           input = range;
           break;
       }
-      input(bind, wrapper, param, value);
+      input === form ? input(bind, wrapper, param, value, view) : input(bind, wrapper, param, value);
     }
 
     /**
      * Generates an arbitrary input form element.
      * The input type is controlled via user-provided parameters.
      */
-    function form(bind, el, param, value) {
+    function form(bind, el, param, value, view) {
       const node = element('input');
       for (const key in param) {
-        if (key !== 'signal' && key !== 'element') {
+        if (EventHandlerAttr.test(key)) {
+          view.warn(`Ignoring unsupported signal binding property "${key}" for signal "${param.signal}".`);
+        } else if (key !== 'signal' && key !== 'element') {
           node.setAttribute(key === 'input' ? 'type' : key, param[key]);
         }
       }
@@ -25308,6 +25523,7 @@
           bind(view, _.element || elBind, _);
         });
       }
+      observeContainer(view);
       return view;
     }
     function lookup$1(view, el, clear) {
@@ -25643,6 +25859,8 @@
       view._timers = [];
       view._eventListeners = [];
       view._resizeListeners = [];
+      view._containerListeners = [];
+      view._resizeObserver = null;
 
       // initialize event configuration
       view._eventConfig = initializeEventConfig(spec.eventConfig);
@@ -26765,12 +26983,13 @@
     function fieldRef(data, scope) {
       const name = '_:vega:_' + FIELD_REF_ID++,
         coll = Collect({});
-      if (isArray(data)) {
+      if (isArray(data) && !data.some(isSignal)) {
         coll.value = {
           $ingest: data
         };
-      } else if (data.signal) {
-        const code = 'setdata(' + stringValue(name) + ',' + data.signal + ')';
+      } else {
+        const values = isArray(data) ? '[' + data.map(v => isSignal(v) ? v.signal : stringValue(v)).join(',') + ']' : data.signal;
+        const code = 'setdata(' + stringValue(name) + ',' + values + ')';
         coll.params.input = scope.signalRef(code);
       }
       scope.addDataPipeline(name, [coll, Sieve({})]);
@@ -29870,6 +30089,7 @@
     exports.Handler = Handler;
     exports.HybridHandler = HybridHandler;
     exports.HybridRenderer = HybridRenderer;
+    exports.ISOWEEK = ISOWEEK;
     exports.Info = Info;
     exports.Item = Item;
     exports.MILLISECONDS = MILLISECONDS;
@@ -29971,6 +30191,7 @@
     exports.isRegExp = isRegExp;
     exports.isString = isString;
     exports.isTuple = isTuple;
+    exports.isoweek = isoweek;
     exports.key = key;
     exports.lerp = lerp;
     exports.lineHeight = lineHeight;
@@ -30073,6 +30294,7 @@
     exports.utcOffset = utcOffset;
     exports.utcSequence = utcSequence;
     exports.utcdayofyear = utcdayofyear;
+    exports.utcisoweek = utcisoweek;
     exports.utcquarter = utcquarter;
     exports.utcweek = utcweek;
     exports.version = version;
