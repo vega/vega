@@ -33,7 +33,7 @@
   "dependencies": {
     "d3-array": "^3.2.4",
     "vega-dataflow": "^6.1.3",
-    "vega-util": "^2.1.0"
+    "vega-util": "^2.1.3"
   },
   "devDependencies": {
     "vega-transforms": "5.2.2"

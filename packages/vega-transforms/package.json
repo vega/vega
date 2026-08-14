@@ -43,6 +43,6 @@
     "vega-dataflow": "^6.1.3",
     "vega-statistics": "^2.0.0",
     "vega-time": "^3.3.0",
-    "vega-util": "^2.1.0"
+    "vega-util": "^2.1.3"
   }
 }

@@ -31,6 +31,6 @@
   "dependencies": {
     "d3-array": "3.2.4",
     "vega-expression": "^6.2.2",
-    "vega-util": "^2.1.0"
+    "vega-util": "^2.1.3"
   }
 }

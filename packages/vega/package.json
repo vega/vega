@@ -69,7 +69,7 @@
     "vega-time": "~3.3.0",
     "vega-transforms": "~5.2.2",
     "vega-typings": "~2.3.0",
-    "vega-util": "~2.1.0",
+    "vega-util": "~2.1.3",
     "vega-view": "~6.2.0",
     "vega-view-transforms": "~5.2.2",
     "vega-voronoi": "~5.1.3",
