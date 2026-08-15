@@ -78,6 +78,7 @@ Transforms for calculating spatial coordinates to achieve various layouts.
 - [`linkpath`](linkpath) - Route visual links between node elements.
 - [`pie`](pie) - Compute angular layout for pie and donut charts.
 - [`stack`](stack) - Compute stacked layouts for groups of values.
+- [`convexhull`](convexhull) - Compute convex hull polygons for sets of points.
 - [`voronoi`](voronoi) - Compute a Voronoi diagram for a set of points.
 - [`wordcloud`](wordcloud) - Compute a word cloud layout of text strings.
 
