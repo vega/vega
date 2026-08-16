@@ -11,6 +11,9 @@ export default function() {
       listeners = this._eventListeners,
       n, m, e, h, t;
 
+  // cancel any in-flight cooperatively scheduled evaluation or rendering
+  if (this._scheduler) this._scheduler.cancel();
+
   n = timers.length;
   while (--n >= 0) {
     timers[n].stop();

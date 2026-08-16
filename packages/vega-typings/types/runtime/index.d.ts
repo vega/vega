@@ -114,6 +114,7 @@ export interface ViewOptions {
   locale?: LocaleFormatters;
   expr?: any;
   watchPixelRatio?: boolean;
+  scheduling?: boolean | { signal?: AbortSignal };
 }
 
 export class View {

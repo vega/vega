@@ -33,6 +33,8 @@ export default function Dataflow() {
   this._touched = UniqueList(id);
   this._input = {};
   this._pulse = null;
+  this._scheduler = null;
+  this._cascade = null;
 
   this._heap = Heap((a, b) => a.qrank - b.qrank);
   this._postrun = [];

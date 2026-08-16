@@ -1,6 +1,7 @@
 // Utilities
 export {default as UniqueList} from './src/util/UniqueList.js';
 export {default as asyncCallback} from './src/util/asyncCallback.js';
+export {default as visitChunked} from './src/util/visitChunked.js';
 
 // Core Runtime
 export {default as changeset, isChangeSet} from './src/ChangeSet.js';

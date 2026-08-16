@@ -36,6 +36,18 @@ export function visit(scene, visitor) {
   }
 }
 
+export function visitItems(scene) {
+  const items = scene.items;
+  if (!items || !items.length) return [];
+
+  const zitems = zorder(scene);
+  if (!zitems || !zitems.length) return items;
+
+  const output = [];
+  visit(scene, item => output.push(item));
+  return output;
+}
+
 export function pickVisit(scene, visitor) {
   var items = scene.items, hit, i;
   if (!items || !items.length) return null;
