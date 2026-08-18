@@ -114,6 +114,8 @@ export interface ViewOptions {
   locale?: LocaleFormatters;
   expr?: any;
   watchPixelRatio?: boolean;
+  canvas?: HTMLCanvasElement | OffscreenCanvas;
+  scaleFactor?: number;
 }
 
 export class View {
