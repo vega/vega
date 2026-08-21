@@ -23,7 +23,7 @@ import watchPixelRatio from './watchPixelRatio.js';
 import {Dataflow, asyncCallback} from 'vega-dataflow';
 import {locale} from 'vega-format';
 import {
-  CanvasHandler, RenderType, Scenegraph, renderModule, DEFAULT_ARIA_LOCALE
+  CanvasHandler, DEFAULT_ARIA_LOCALE, RenderType, Scenegraph, renderModule
 } from 'vega-scenegraph';
 import {
   error, extend, hasOwnProperty, inherits, stringValue

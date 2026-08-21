@@ -112,7 +112,7 @@ export function ariaMarkAttributes(mark) {
   if (mark.aria === false) return { [ARIA_HIDDEN]: true };
   if (AriaIgnore[mark.role]) return null;
 
-  const loc = getAriaLocale(mark.group?.context);
+  const loc = getAriaLocale(mark.group?.context || mark.items?.[0]?.context);
   if (mark.role) {
     const guides = ariaGuides(loc);
     if (guides[mark.role]) return ariaGuide(mark, guides[mark.role]);
