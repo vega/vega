@@ -30,6 +30,7 @@ The timeunit transform accepts the following set of pre-defined time units. A si
 - `"month"` - Calendar months (January, February, _etc._).
 - `"date"` - Calendar day of the month (January 1, January 2, _etc._).
 - `"week"` - Sunday-based weeks. Days before the first Sunday of the year are considered to be in week 0, the first Sunday of the year is the start of week 1, the second Sunday week 2, _etc._.
+- `"isoweek"` - [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date) weeks {% include tag ver="6.4" %}. Weeks start on Monday, and week 1 is the week that contains January 4 (equivalently, the week containing the year's first Thursday). A week therefore belongs to the _week-numbering year_ of its Thursday, which may differ from the calendar year of the week's first or last days. The `"week"` and `"isoweek"` units can not be combined.
 - `"day"` - Day of the week (Sunday, Monday, _etc._).
 - `"dayofyear"` - Day of the year (1, 2, ..., 365, _etc._).
 - `"hours"` - Hours of the day (12:00am, 1:00am, _etc_.).
@@ -48,6 +49,8 @@ This example discretizes values in the _date_ field by year and Sunday-based wee
 ```json
 {"type": "timeunit", "field": "date", "units": ["year", "week"], "step": 2}
 ```
+
+Use `"isoweek"` in place of `"week"` to follow the ISO 8601 week date scheme instead, which starts weeks on Monday and numbers them within the week-numbering year. Because the two schemes disagree at year boundaries, `["year", "isoweek"]` is formatted with the week-numbering year (`%G`) rather than the calendar year (`%Y`).
 
 Given the input data
 
@@ -104,5 +107,7 @@ the timeunit transform produces the output
 ```
 
 Note that the output dates default to the year 2012. This default is chosen as it is a leap year (and so the date February 29 is respected) that begins on a Sunday (and so days of the week will order properly at the beginning of the year).
+
+When `"isoweek"` is used without a `"year"` unit, the output dates default to the year 2015 instead. That year is chosen because it is an ISO long year, containing all 53 possible week numbers.
 
 A similar grouping by Sunday-based day of week is specified by `"units": ["day"]`, whereas grouping by day of the month (regardless of year or month) is specified by `"units": ["date"]`.

@@ -15,7 +15,11 @@ const DisallowedMethods = new Set([
 if (typeof setImmediate === 'function') DisallowedMethods.add(setImmediate);
 
 const Visitors = {
-  Literal: ($, n) => n.value,
+  // global and sticky regexps carry lastIndex across calls, so hand out a
+  // fresh instance per evaluation, as the generated code path does
+  Literal: ($, n) => n.regex && n.value && (n.value.global || n.value.sticky)
+    ? new RegExp(n.regex.pattern, n.regex.flags)
+    : n.value,
 
   Identifier: ($, n) => {
     const id = n.name;

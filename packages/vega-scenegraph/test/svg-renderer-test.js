@@ -90,6 +90,19 @@ tape('SVGRenderer should behave when dom element is not provided', t => {
   t.end();
 });
 
+tape('SVGRenderer should keep element styles out of the svg string', t => {
+  const scene = loadScene('scenegraph-rect.json'),
+        r = new Renderer().initialize(doc.body, 400, 200)
+          .background('white')
+          .render(scene);
+
+  t.equal(r.canvas().style.getPropertyValue('vertical-align'), 'bottom');
+  t.equal(r.svg().includes('style='), false, 'no style attribute in the export');
+  t.equal(r.canvas().style.getPropertyValue('vertical-align'), 'bottom', 'restored');
+  t.equal(r.canvas().style.getPropertyValue('background-color'), 'white', 'restored');
+  t.end();
+});
+
 tape('SVGRenderer should render scenegraph to svg', t => {
   const scene = loadScene('scenegraph-rect.json');
   const svg = render(scene, 400, 200);

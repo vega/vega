@@ -27,6 +27,9 @@ export default class CanvasRenderer extends Renderer {
     if (el && this._canvas) {
       domClear(el, 0).appendChild(this._canvas);
       this._canvas.setAttribute('class', 'marks');
+      // an inline element sits on the text baseline, leaving a few pixels of
+      // descender space below it that count towards the container's height
+      this._canvas.style.setProperty('vertical-align', 'bottom');
     }
 
     // this method will invoke resize to size the canvas appropriately

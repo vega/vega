@@ -90,7 +90,7 @@ export interface ScaleDataRef {
 }
 
 export interface ScaleMultiDataRef {
-  fields: ((string | number | boolean)[] | ScaleDataRef | SignalRef)[];
+  fields: ((string | number | boolean | SignalRef)[] | ScaleDataRef | SignalRef)[];
 }
 
 export interface ScaleMultiFieldsRef {

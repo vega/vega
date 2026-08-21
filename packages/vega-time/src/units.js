@@ -4,6 +4,7 @@ export const YEAR = 'year';
 export const QUARTER = 'quarter';
 export const MONTH = 'month';
 export const WEEK = 'week';
+export const ISOWEEK = 'isoweek';
 export const DATE = 'date';
 export const DAY = 'day';
 export const DAYOFYEAR = 'dayofyear';
@@ -17,6 +18,7 @@ export const TIME_UNITS = [
   QUARTER,
   MONTH,
   WEEK,
+  ISOWEEK,
   DATE,
   DAY,
   DAYOFYEAR,
@@ -44,12 +46,12 @@ export function timeUnits(units) {
   });
 
   const numTypes = (
-    (m[WEEK] || m[DAY] ? 1 : 0) +
+    (m[WEEK] || m[ISOWEEK] || m[DAY] ? 1 : 0) +
     (m[QUARTER] || m[MONTH] || m[DATE] ? 1 : 0) +
     (m[DAYOFYEAR] ? 1 : 0)
   );
 
-  if (numTypes > 1) {
+  if (numTypes > 1 || (m[WEEK] && m[ISOWEEK])) {
     error(`Incompatible time units: ${units}`);
   }
 
@@ -65,12 +67,14 @@ const defaultSpecifiers = {
   [MONTH]: '%b ',
   [DATE]: '%d ',
   [WEEK]: 'W%U ',
+  [ISOWEEK]: 'W%V ',
   [DAY]: '%a ',
   [DAYOFYEAR]: '%j ',
   [HOURS]: '%H:00',
   [MINUTES]: '00:%M',
   [SECONDS]: ':%S',
   [MILLISECONDS]: '.%L',
+  [`${YEAR}-${ISOWEEK}`]: '%G W%V ',
   [`${YEAR}-${MONTH}`]: '%Y-%m ',
   [`${YEAR}-${MONTH}-${DATE}`]: '%Y-%m-%d ',
   [`${HOURS}-${MINUTES}`]: '%H:%M'

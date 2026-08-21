@@ -34,12 +34,14 @@ import {
 
 import {
   dayofyear,
+  isoweek,
   timeOffset,
   timeSequence,
   timeUnitSpecifier,
   utcOffset,
   utcSequence,
   utcdayofyear,
+  utcisoweek,
   utcweek,
   week
 } from 'vega-time';
@@ -101,7 +103,11 @@ import {
   setdata
 } from './functions/data.js';
 
+import {easeFunctions} from './functions/ease.js';
+
 import encode from './functions/encode.js';
+
+import {interpolateLinear} from './functions/interpolate.js';
 
 import {
   dayAbbrevFormat,
@@ -119,7 +125,8 @@ import {
   geoArea,
   geoBounds,
   geoCentroid,
-  geoScale
+  geoScale,
+  geoTranslate
 } from './functions/geo.js';
 
 import inScope from './functions/inscope.js';
@@ -239,6 +246,7 @@ export const functionContext = {
   slice,
   flush,
   lerp,
+  interpolateLinear,
   merge,
   pad,
   peek,
@@ -271,6 +279,8 @@ export const functionContext = {
   utcquarter,
   week,
   utcweek,
+  isoweek,
+  utcisoweek,
   dayofyear,
   utcdayofyear,
   warn,
@@ -300,7 +310,8 @@ export const functionContext = {
   modify,
   lassoAppend,
   lassoPath,
-  intersectLasso
+  intersectLasso,
+  ...easeFunctions
 };
 
 const eventFunctions = ['view', 'item', 'group', 'xy', 'x', 'y'], // event functions
@@ -362,6 +373,7 @@ expressionFunction('geoBounds', geoBounds, scaleVisitor);
 expressionFunction('geoCentroid', geoCentroid, scaleVisitor);
 expressionFunction('geoShape', geoShape, scaleVisitor);
 expressionFunction('geoScale', geoScale, scaleVisitor);
+expressionFunction('geoTranslate', geoTranslate, scaleVisitor);
 expressionFunction('indata', indata, indataVisitor);
 expressionFunction('data', data, dataVisitor);
 expressionFunction('treePath', treePath, dataVisitor);

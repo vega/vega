@@ -100,7 +100,9 @@ export default function(opt) {
     ObjectExpression: n => {
       // If any keys would override Object prototype methods, throw error
       for (const prop of n.properties) {
-        const keyName = prop.key.name;
+          const keyName = prop.key.type === 'Literal'
+            ? String(prop.key.value)
+            : prop.key.name;
 
         if (DisallowedObjectProperties.has(keyName)) {
           error('Illegal property: ' + keyName);

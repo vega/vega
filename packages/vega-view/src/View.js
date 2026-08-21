@@ -71,6 +71,8 @@ export default function View(spec, options) {
   view._timers = [];
   view._eventListeners = [];
   view._resizeListeners = [];
+  view._containerListeners = [];
+  view._resizeObserver = null;
 
   // initialize event configuration
   view._eventConfig = initializeEventConfig(spec.eventConfig);

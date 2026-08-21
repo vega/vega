@@ -5,8 +5,16 @@ export {
 } from './src/functions/data.js';
 
 export {
+  easeFunctions
+} from './src/functions/ease.js';
+
+export {
   default as encode
 } from './src/functions/encode.js';
+
+export {
+  interpolateLinear
+} from './src/functions/interpolate.js';
 
 export {
   format,
@@ -24,7 +32,8 @@ export {
   geoArea,
   geoBounds,
   geoCentroid,
-  geoScale
+  geoScale,
+  geoTranslate
 } from './src/functions/geo.js';
 
 export {
