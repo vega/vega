@@ -15053,31 +15053,70 @@
       }
       return !specifier && type === Time ? locale.timeFormat('%A, %d %B %Y, %X') : !specifier && type === UTC ? locale.utcFormat('%A, %d %B %Y, %X UTC') : labelFormat(locale, scale, 5, null, specifier, formatType, true);
     }
-    function domainCaption(locale, scale, opt) {
+
+    /**
+     * Generate a domain caption for accessibility labels.
+     * If @param ariaLoc and @param formatStr are not provided, labels will only
+     * be emitted in English.
+     * @param locale - The number/time formatting locale
+     * @param scale - The scale instance
+     * @param {object} [opt] - Options (maxlen, format, formatType)
+     * @param {Record<string, string>} [ariaLoc] - Aria locale strings for i18n
+     * @param {function} [formatStr] - The formatString utility function
+     * @param {function} [pluralKey] - The selectPluralKey utility function
+     * @returns {string}
+     */
+    function domainCaption(locale, scale, opt, ariaLoc, formatStr, pluralKey) {
       opt = opt || {};
       const max = Math.max(3, opt.maxlen || 7),
         fmt = format$1(locale, scale, opt.format, opt.formatType);
+
+      // When no aria locale is provided, use original hardcoded English strings
+      if (!ariaLoc || !formatStr) {
+        if (isDiscretizing(scale.type)) {
+          const v = labelValues(scale).slice(1).map(fmt),
+            n = v.length;
+          return `${n} boundar${n === 1 ? 'y' : 'ies'}: ${v.join(', ')}`;
+        } else if (isDiscrete(scale.type)) {
+          const d = scale.domain(),
+            n = d.length,
+            v = n > max ? d.slice(0, max - 2).map(fmt).join(', ') + ', ending with ' + d.slice(-1).map(fmt) : d.map(fmt).join(', ');
+          return `${n} value${n === 1 ? '' : 's'}: ${v}`;
+        } else {
+          const d = scale.domain();
+          return `values from ${fmt(d[0])} to ${fmt(peek$1(d))}`;
+        }
+      }
+      const languageTag = ariaLoc['languageTag'] || 'en';
+      const listJoiner = ariaLoc['listJoiner'] || ', ';
 
       // if scale breaks domain into bins, describe boundaries
       if (isDiscretizing(scale.type)) {
         const v = labelValues(scale).slice(1).map(fmt),
           n = v.length;
-        return `${n} boundar${n === 1 ? 'y' : 'ies'}: ${v.join(', ')}`;
+        const key = pluralKey('domainBoundaries', n, languageTag, ariaLoc);
+        return formatStr(ariaLoc[key], n, v.join(listJoiner));
       }
 
       // if scale domain is discrete, list values
-      else if (isDiscrete(scale.type)) {
+      if (isDiscrete(scale.type)) {
         const d = scale.domain(),
-          n = d.length,
-          v = n > max ? d.slice(0, max - 2).map(fmt).join(', ') + ', ending with ' + d.slice(-1).map(fmt) : d.map(fmt).join(', ');
-        return `${n} value${n === 1 ? '' : 's'}: ${v}`;
+          n = d.length;
+        let valueStr;
+        if (n > max) {
+          const head = d.slice(0, max - 2).map(fmt).join(listJoiner);
+          const tail = d.slice(-1).map(fmt)[0];
+          valueStr = formatStr(ariaLoc['domainDiscreteOverflow'], head, tail);
+        } else {
+          valueStr = d.map(fmt).join(listJoiner);
+        }
+        const key = pluralKey('domainValues', n, languageTag, ariaLoc);
+        return formatStr(ariaLoc[key], n, valueStr);
       }
 
       // if scale domain is continuous, describe value range
-      else {
-        const d = scale.domain();
-        return `values from ${fmt(d[0])} to ${fmt(peek$1(d))}`;
-      }
+      const d = scale.domain();
+      return formatStr(ariaLoc['domainContinuous'], fmt(d[0]), fmt(peek$1(d)));
     }
 
     let gradient_id = 0;
@@ -18573,6 +18612,118 @@
       evt.vegaType = evt.type;
       handler.call(context._obj, evt, item);
     };
+
+    /**
+     * Default English aria locale strings for Vega chart accessibility labels.
+     * Uses {N} indexed placeholders for positional argument substitution.
+     */
+    const DEFAULT_ARIA_LOCALE = {
+      // General: list-of-items composition
+      'listJoiner': ', ',
+      'listFinalJoiner': ' and ',
+      // Container
+      'containerRoleDescription': 'visualization',
+      // Marks
+      'markContainer': '{0} mark container',
+      'markRoleDescription': '{0} mark',
+      // Titles
+      'titleText': "Title text '{0}'",
+      'subtitleText': "Subtitle text '{0}'",
+      // Axes
+      'axisLabel': '{0}-axis',
+      'axisTitled': " titled '{0}'",
+      'axisScaleDiscrete': ' for a discrete scale',
+      'axisScaleContinuous': ' for a {0} scale',
+      'axisWithDomain': ' with {0}',
+      // Legends
+      'legendType': '{0} legend',
+      'legendTypeDefault': 'Legend',
+      'legendTitled': " titled '{0}'",
+      'legendForChannel': ' for {0}',
+      'legendWithDomain': ' with {0}',
+      // Channel names
+      'channel.fill': 'fill color',
+      'channel.stroke': 'stroke color',
+      // Domain captions — CLDR plural suffixes
+      'domainBoundaries_one': '{0} boundary: {1}',
+      'domainBoundaries_other': '{0} boundaries: {1}',
+      'domainValues_one': '{0} value: {1}',
+      'domainValues_other': '{0} values: {1}',
+      'domainDiscreteOverflow': '{0}, ending with {1}',
+      'domainContinuous': 'values from {0} to {1}',
+      // Orientation mapping
+      'orientationX': 'X',
+      'orientationY': 'Y',
+      // Role descriptions
+      'role.visualization': 'visualization',
+      'role.axis': 'axis',
+      'role.legend': 'legend',
+      'role.title': 'title',
+      'role.subtitle': 'subtitle',
+      'role.markContainer': '{0} mark container',
+      'role.mark': '{0} mark'
+    };
+    let defaultAriaLocale;
+
+    /**
+     * Get or set the default ARIA locale.
+     * @param {Record<string, string>} [definition] - Locale string overrides.
+     * @returns {Record<string, string>} the default ARIA locale
+     */
+    function ariaLocale(definition) {
+      if (arguments.length) {
+        defaultAriaLocale = extend$1({}, DEFAULT_ARIA_LOCALE, definition);
+      }
+      return defaultAriaLocale;
+    }
+
+    /**
+     * Reset the default ARIA locale to English.
+     * @returns {Record<string, string>} the default ARIA locale
+     */
+    function resetAriaLocale() {
+      return defaultAriaLocale = extend$1({}, DEFAULT_ARIA_LOCALE);
+    }
+    resetAriaLocale();
+
+    /**
+     * Replace {N} placeholders with positional arguments.
+     * @param {string} template - Template string with {0}, {1}, etc.
+     * @param {...(string|number)} args - Replacement values.
+     * @returns {string}
+     */
+    function formatString(template, ...args) {
+      return template.replace(/\{(\d+)\}/g, (match, index) => {
+        const i = parseInt(index, 10);
+        return i < args.length ? String(args[i]) : match;
+      });
+    }
+
+    /**
+     * Select the appropriate CLDR-suffixed locale key for a count.
+     * Uses Intl.PluralRules when available, falls back to singular/plural.
+     * @param {string} baseKey - e.g., 'domainValues'
+     * @param {number} n - the count
+     * @param {string} languageTag - BCP 47 tag (e.g., 'ar', 'pl', 'en')
+     * @param {Record<string, string>} loc - the locale strings
+     * @returns {string} the resolved key (e.g., 'domainValues_few')
+     */
+    function selectPluralKey(baseKey, n, languageTag, loc) {
+      let category;
+      if (typeof Intl !== 'undefined' && Intl.PluralRules) {
+        try {
+          const pr = new Intl.PluralRules(languageTag || 'en');
+          category = pr.select(n);
+        } catch (e) {
+          category = null;
+        }
+      }
+      if (!category) {
+        category = n === 1 ? 'one' : 'other';
+      }
+      const key = `${baseKey}_${category}`;
+      return loc[key] != null ? key : `${baseKey}_other`;
+    }
     const ARIA_HIDDEN = 'aria-hidden';
     const ARIA_LABEL = 'aria-label';
     const ARIA_ROLE = 'role';
@@ -18589,25 +18740,47 @@
     // we can ignore them, no need to generate attributes
     const AriaIgnore = toSet(['axis-domain', 'axis-grid', 'axis-label', 'axis-tick', 'axis-title', 'legend-band', 'legend-entry', 'legend-gradient', 'legend-label', 'legend-title', 'legend-symbol', 'title']);
 
-    // aria attribute generators for guide roles
-    const AriaGuides = {
-      'axis': {
-        desc: 'axis',
-        caption: axisCaption
-      },
-      'legend': {
-        desc: 'legend',
-        caption: legendCaption
-      },
-      'title-text': {
-        desc: 'title',
-        caption: item => `Title text '${titleCaption(item)}'`
-      },
-      'title-subtitle': {
-        desc: 'subtitle',
-        caption: item => `Subtitle text '${titleCaption(item)}'`
+    /**
+     * Retrieve the aria locale from a group context's dataflow.
+     * Falls back to the default English locale.
+     */
+    function getAriaLocale(context) {
+      try {
+        const loc = context?.dataflow?.ariaLocale?.();
+        return loc || ariaLocale();
+      } catch (e) {
+        return ariaLocale();
       }
-    };
+    }
+
+    /**
+     * Resolve the localized mark type name.
+     */
+    function markTypeName(type, loc) {
+      return loc['marktype.' + type] || type;
+    }
+
+    // aria attribute generators for guide roles
+    function ariaGuides(loc) {
+      return {
+        'axis': {
+          desc: loc['role.axis'] || 'axis',
+          caption: axisCaption
+        },
+        'legend': {
+          desc: loc['role.legend'] || 'legend',
+          caption: legendCaption
+        },
+        'title-text': {
+          desc: loc['role.title'] || 'title',
+          caption: item => formatString(loc['titleText'], titleCaption(item))
+        },
+        'title-subtitle': {
+          desc: loc['role.subtitle'] || 'subtitle',
+          caption: item => formatString(loc['subtitleText'], titleCaption(item))
+        }
+      };
+    }
 
     // aria properties generated for mark item encoding channels
     const AriaEncode = {
@@ -18624,20 +18797,30 @@
         }
       } else {
         const type = item.mark.marktype;
+        const loc = getAriaLocale(item.mark.group?.context);
+        const typeName = markTypeName(type, loc);
         emit(ARIA_LABEL, item.description);
         emit(ARIA_ROLE, item.ariaRole || (type === 'group' ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL));
-        emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || `${type} mark`);
+        emit(ARIA_ROLEDESCRIPTION, item.ariaRoleDescription || formatString(loc['role.mark'] || '{0} mark', typeName));
       }
     }
     function ariaMarkAttributes(mark) {
-      return mark.aria === false ? {
+      if (mark.aria === false) return {
         [ARIA_HIDDEN]: true
-      } : AriaIgnore[mark.role] ? null : AriaGuides[mark.role] ? ariaGuide(mark, AriaGuides[mark.role]) : ariaMark(mark);
+      };
+      if (AriaIgnore[mark.role]) return null;
+      const loc = getAriaLocale(mark.group?.context || mark.items?.[0]?.context);
+      if (mark.role) {
+        const guides = ariaGuides(loc);
+        if (guides[mark.role]) return ariaGuide(mark, guides[mark.role]);
+      }
+      return ariaMark(mark, loc);
     }
-    function ariaMark(mark) {
+    function ariaMark(mark, loc) {
       const type = mark.marktype;
+      const typeName = markTypeName(type, loc);
       const recurse = type === 'group' || type === 'text' || mark.items.some(_ => _.description != null && _.aria !== false);
-      return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, `${type} mark container`, mark.description);
+      return bundle(recurse ? GRAPHICS_OBJECT : GRAPHICS_SYMBOL, formatString(loc['role.markContainer'] || '{0} mark container', typeName), mark.description);
     }
     function ariaGuide(mark, opt) {
       try {
@@ -18659,19 +18842,40 @@
         scale = ctx.scales[datum.scale].value,
         locale = ctx.dataflow.locale(),
         type = scale.type,
-        xy = orient === 'left' || orient === 'right' ? 'Y' : 'X';
-      return `${xy}-axis` + (title ? ` titled '${title}'` : '') + ` for a ${isDiscrete(type) ? 'discrete' : type} scale` + ` with ${domainCaption(locale, scale, item)}`;
+        loc = getAriaLocale(ctx);
+      const orientLabel = orient === 'left' || orient === 'right' ? loc['orientationY'] : loc['orientationX'];
+      let label = formatString(loc['axisLabel'], orientLabel);
+      if (title) {
+        label += formatString(loc['axisTitled'], title);
+      }
+      label += isDiscrete(type) ? loc['axisScaleDiscrete'] : formatString(loc['axisScaleContinuous'], type);
+      const domain = domainCaption(locale, scale, item, loc, formatString, selectPluralKey);
+      label += formatString(loc['axisWithDomain'], domain);
+      return label;
     }
     function legendCaption(item) {
       const datum = item.datum,
         title = datum.title ? extractTitle(item) : null,
-        type = `${datum.type || ''} legend`.trim(),
         scales = datum.scales,
         props = Object.keys(scales),
         ctx = item.context,
         scale = ctx.scales[scales[props[0]]].value,
-        locale = ctx.dataflow.locale();
-      return capitalize(type) + (title ? ` titled '${title}'` : '') + ` for ${channelCaption(props)}` + ` with ${domainCaption(locale, scale, item)}`;
+        locale = ctx.dataflow.locale(),
+        loc = getAriaLocale(ctx);
+
+      // Conditional: legend kind present → format with kind, else use default
+      let label = datum.type ? formatString(loc['legendType'], datum.type) : loc['legendTypeDefault'];
+
+      // Capitalize
+      label = label[0].toUpperCase() + label.slice(1);
+      if (title) {
+        label += formatString(loc['legendTitled'], title);
+      }
+      const channelDesc = channelCaption(props, loc);
+      label += formatString(loc['legendForChannel'], channelDesc);
+      const domain = domainCaption(locale, scale, item, loc, formatString, selectPluralKey);
+      label += formatString(loc['legendWithDomain'], domain);
+      return label;
     }
     function extractTitle(item) {
       try {
@@ -18680,12 +18884,11 @@
         return null;
       }
     }
-    function channelCaption(props) {
-      props = props.map(p => p + (p === 'fill' || p === 'stroke' ? ' color' : ''));
-      return props.length < 2 ? props[0] : props.slice(0, -1).join(', ') + ' and ' + peek$1(props);
-    }
-    function capitalize(s) {
-      return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+    function channelCaption(props, loc) {
+      // Each channel has its own localized name, falling back to raw prop name
+      const named = props.map(p => loc['channel.' + p] || p);
+      if (named.length < 2) return named[0];
+      return named.slice(0, -1).join(loc['listJoiner']) + loc['listFinalJoiner'] + named[named.length - 1];
     }
     const innerText = val => (val + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const attrText = val => innerText(val).replace(/"/g, '&quot;').replace(/\t/g, '&#x9;').replace(/\n/g, '&#xA;').replace(/\r/g, '&#xD;');
@@ -36920,8 +37123,9 @@
     function initializeAria(view) {
       const el = view.container();
       if (el) {
+        const loc = view.ariaLocale();
         el.setAttribute('role', 'graphics-document');
-        el.setAttribute('aria-roleDescription', 'visualization');
+        el.setAttribute('aria-roleDescription', loc['role.visualization'] || 'visualization');
         ariaLabel(el, view.description());
       }
     }
@@ -37950,6 +38154,10 @@
         const loc = extend$1({}, spec.locale, options.locale);
         view.locale(locale(loc.number, loc.time));
       }
+
+      // snapshot aria locale defaults for i18n accessibility labels
+      view._ariaLocaleBase = extend$1({}, ariaLocale(), spec.ariaLocale);
+      view._ariaLocale = extend$1({}, view._ariaLocaleBase, options.ariaLocale);
       view._el = null;
       view._elBind = null;
       view._renderType = options.renderer || RenderType.Canvas;
@@ -38073,6 +38281,13 @@
           return this;
         }
         return this._desc;
+      },
+      ariaLocale(definition) {
+        if (arguments.length) {
+          this._ariaLocale = extend$1({}, this._ariaLocaleBase, definition);
+          return this;
+        }
+        return this._ariaLocale;
       },
       container() {
         return this._el;
@@ -41483,6 +41698,7 @@
       scope.eventConfig = config.events;
       scope.legends = scope.objectProperty(config.legend && config.legend.layout);
       scope.locale = config.locale;
+      scope.ariaLocale = config.ariaLocale;
 
       // store root group item
       const input = scope.add(Collect());
@@ -41589,6 +41805,7 @@
       this.operators = [];
       this.eventConfig = null;
       this.locale = null;
+      this.ariaLocale = null;
       this._id = 0;
       this._subid = 0;
       this._nextsub = [0];
@@ -41637,7 +41854,8 @@
           updates: this.updates,
           bindings: this.bindings,
           eventConfig: this.eventConfig,
-          locale: this.locale
+          locale: this.locale,
+          ariaLocale: this.ariaLocale
         };
       },
       id() {
@@ -42180,6 +42398,7 @@
     exports.DATE = DATE;
     exports.DAY = DAY;
     exports.DAYOFYEAR = DAYOFYEAR;
+    exports.DEFAULT_ARIA_LOCALE = DEFAULT_ARIA_LOCALE;
     exports.Dataflow = Dataflow;
     exports.Debug = Debug;
     exports.DisallowedObjectProperties = DisallowedObjectProperties;
@@ -42221,6 +42440,7 @@
     exports.accessor = accessor;
     exports.accessorFields = accessorFields;
     exports.accessorName = accessorName;
+    exports.ariaLocale = ariaLocale;
     exports.array = array$5;
     exports.ascending = ascending$2;
     exports.bandwidthNRD = estimateBandwidth;
@@ -42266,6 +42486,7 @@
     exports.fontSize = fontSize;
     exports.format = format$2;
     exports.formatLocale = numberFormatDefaultLocale;
+    exports.formatString = formatString;
     exports.formats = formats$1;
     exports.hasOwnProperty = hasOwnProperty;
     exports.id = id;
@@ -42350,6 +42571,7 @@
     exports.regressionQuad = quad;
     exports.renderModule = renderModule;
     exports.repeat = repeat;
+    exports.resetAriaLocale = resetAriaLocale;
     exports.resetDefaultLocale = resetDefaultLocale;
     exports.resetSVGDefIds = resetSVGDefIds;
     exports.responseType = responseType;
@@ -42366,6 +42588,7 @@
     exports.sceneVisit = visit;
     exports.sceneZOrder = zorder;
     exports.scheme = scheme;
+    exports.selectPluralKey = selectPluralKey;
     exports.serializeXML = serializeXML;
     exports.setHybridRendererOptions = setHybridRendererOptions;
     exports.setRandom = setRandom;
