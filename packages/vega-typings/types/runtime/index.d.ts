@@ -21,6 +21,9 @@ export const version: string;
 // Locale API
 export function formatLocale(definition: object): void;
 export function timeFormatLocale(definition: object): void;
+export function ariaLocale(): Record<string, string>;
+export function ariaLocale(definition: Record<string, string>): Record<string, string>;
+export function resetAriaLocale(): Record<string, string>;
 
 // Parser
 export function parse(spec: Spec, config?: Config, opt?: { ast?: boolean }): Runtime;

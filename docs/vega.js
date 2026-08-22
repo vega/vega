@@ -18663,6 +18663,28 @@
       'role.markContainer': '{0} mark container',
       'role.mark': '{0} mark'
     };
+    let defaultAriaLocale;
+
+    /**
+     * Get or set the default ARIA locale.
+     * @param {Record<string, string>} [definition] - Locale string overrides.
+     * @returns {Record<string, string>} the default ARIA locale
+     */
+    function ariaLocale(definition) {
+      if (arguments.length) {
+        defaultAriaLocale = extend$1({}, DEFAULT_ARIA_LOCALE, definition);
+      }
+      return defaultAriaLocale;
+    }
+
+    /**
+     * Reset the default ARIA locale to English.
+     * @returns {Record<string, string>} the default ARIA locale
+     */
+    function resetAriaLocale() {
+      return defaultAriaLocale = extend$1({}, DEFAULT_ARIA_LOCALE);
+    }
+    resetAriaLocale();
 
     /**
      * Replace {N} placeholders with positional arguments.
@@ -18725,9 +18747,9 @@
     function getAriaLocale(context) {
       try {
         const loc = context?.dataflow?.ariaLocale?.();
-        return loc || DEFAULT_ARIA_LOCALE;
+        return loc || ariaLocale();
       } catch (e) {
-        return DEFAULT_ARIA_LOCALE;
+        return ariaLocale();
       }
     }
 
@@ -18787,7 +18809,7 @@
         [ARIA_HIDDEN]: true
       };
       if (AriaIgnore[mark.role]) return null;
-      const loc = getAriaLocale(mark.group?.context || mark.items[0]?.context);
+      const loc = getAriaLocale(mark.group?.context || mark.items?.[0]?.context);
       if (mark.role) {
         const guides = ariaGuides(loc);
         if (guides[mark.role]) return ariaGuide(mark, guides[mark.role]);
@@ -38133,8 +38155,9 @@
         view.locale(locale(loc.number, loc.time));
       }
 
-      // initialize aria locale for i18n accessibility labels
-      view._ariaLocale = extend$1({}, DEFAULT_ARIA_LOCALE, spec.ariaLocale, options.ariaLocale);
+      // snapshot aria locale defaults for i18n accessibility labels
+      view._ariaLocaleBase = extend$1({}, ariaLocale(), spec.ariaLocale);
+      view._ariaLocale = extend$1({}, view._ariaLocaleBase, options.ariaLocale);
       view._el = null;
       view._elBind = null;
       view._renderType = options.renderer || RenderType.Canvas;
@@ -38261,7 +38284,7 @@
       },
       ariaLocale(definition) {
         if (arguments.length) {
-          this._ariaLocale = extend$1({}, DEFAULT_ARIA_LOCALE, definition);
+          this._ariaLocale = extend$1({}, this._ariaLocaleBase, definition);
           return this;
         }
         return this._ariaLocale;
@@ -41675,6 +41698,7 @@
       scope.eventConfig = config.events;
       scope.legends = scope.objectProperty(config.legend && config.legend.layout);
       scope.locale = config.locale;
+      scope.ariaLocale = config.ariaLocale;
 
       // store root group item
       const input = scope.add(Collect());
@@ -41781,6 +41805,7 @@
       this.operators = [];
       this.eventConfig = null;
       this.locale = null;
+      this.ariaLocale = null;
       this._id = 0;
       this._subid = 0;
       this._nextsub = [0];
@@ -41829,7 +41854,8 @@
           updates: this.updates,
           bindings: this.bindings,
           eventConfig: this.eventConfig,
-          locale: this.locale
+          locale: this.locale,
+          ariaLocale: this.ariaLocale
         };
       },
       id() {
@@ -42414,6 +42440,7 @@
     exports.accessor = accessor;
     exports.accessorFields = accessorFields;
     exports.accessorName = accessorName;
+    exports.ariaLocale = ariaLocale;
     exports.array = array$5;
     exports.ascending = ascending$2;
     exports.bandwidthNRD = estimateBandwidth;
@@ -42544,6 +42571,7 @@
     exports.regressionQuad = quad;
     exports.renderModule = renderModule;
     exports.repeat = repeat;
+    exports.resetAriaLocale = resetAriaLocale;
     exports.resetDefaultLocale = resetDefaultLocale;
     exports.resetSVGDefIds = resetSVGDefIds;
     exports.responseType = responseType;

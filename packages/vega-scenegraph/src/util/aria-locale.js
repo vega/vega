@@ -1,3 +1,5 @@
+import {extend} from 'vega-util';
+
 /**
  * Default English aria locale strings for Vega chart accessibility labels.
  * Uses {N} indexed placeholders for positional argument substitution.
@@ -57,6 +59,30 @@ export const DEFAULT_ARIA_LOCALE = {
   'role.markContainer': '{0} mark container',
   'role.mark': '{0} mark'
 };
+
+let defaultAriaLocale;
+
+/**
+ * Get or set the default ARIA locale.
+ * @param {Record<string, string>} [definition] - Locale string overrides.
+ * @returns {Record<string, string>} the default ARIA locale
+ */
+export function ariaLocale(definition) {
+  if (arguments.length) {
+    defaultAriaLocale = extend({}, DEFAULT_ARIA_LOCALE, definition);
+  }
+  return defaultAriaLocale;
+}
+
+/**
+ * Reset the default ARIA locale to English.
+ * @returns {Record<string, string>} the default ARIA locale
+ */
+export function resetAriaLocale() {
+  return defaultAriaLocale = extend({}, DEFAULT_ARIA_LOCALE);
+}
+
+resetAriaLocale();
 
 /**
  * Replace {N} placeholders with positional arguments.

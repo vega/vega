@@ -1,5 +1,28 @@
 import tape from 'tape';
-import {DEFAULT_ARIA_LOCALE, formatString, selectPluralKey} from '../src/util/aria-locale.js';
+import {
+  DEFAULT_ARIA_LOCALE,
+  ariaLocale,
+  formatString,
+  resetAriaLocale,
+  selectPluralKey
+} from '../src/util/aria-locale.js';
+
+tape('ariaLocale gets, sets, and resets the default locale', t => {
+  const loc = ariaLocale({
+    languageTag: 'es',
+    'role.axis': 'eje'
+  });
+
+  t.equal(loc.languageTag, 'es');
+  t.equal(loc['role.axis'], 'eje');
+  t.equal(loc['role.legend'], 'legend', 'fills in unspecified English defaults');
+  t.equal(ariaLocale(), loc, 'gets the current default');
+
+  const reset = resetAriaLocale();
+  t.equal(reset['role.axis'], 'axis');
+  t.equal(ariaLocale(), reset);
+  t.end();
+});
 
 tape('formatString replaces {N} placeholders', t => {
   t.equal(formatString('{0}-axis', 'X'), 'X-axis');

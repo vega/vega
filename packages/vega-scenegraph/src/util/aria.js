@@ -1,6 +1,6 @@
 import {domainCaption, isDiscrete} from 'vega-scale';
 import {array, peek, toSet} from 'vega-util';
-import {DEFAULT_ARIA_LOCALE, formatString, selectPluralKey} from './aria-locale.js';
+import {ariaLocale, formatString, selectPluralKey} from './aria-locale.js';
 
 const ARIA_HIDDEN = 'aria-hidden';
 const ARIA_LABEL = 'aria-label';
@@ -39,9 +39,9 @@ const AriaIgnore = toSet([
 function getAriaLocale(context) {
   try {
     const loc = context?.dataflow?.ariaLocale?.();
-    return loc || DEFAULT_ARIA_LOCALE;
+    return loc || ariaLocale();
   } catch (e) {
-    return DEFAULT_ARIA_LOCALE;
+    return ariaLocale();
   }
 }
 

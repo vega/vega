@@ -74,8 +74,6 @@ vega.<b>defaultLocale</b>([<i>numberDefinition</i>, <i>timeDefinition</i>])
 
 Get or set the default locale for both number and time formatting. If no arguments are provided, returns the current default locale. Otherwise, sets the default locales based on the provided *numberDefinition* and *timeDefinition*, and returns the resulting combined locale object. The input definitions should be of the same type accepted by the [locale](#locale) method.
 
-ALPER TODO: consider adding ariaLocale as another option here to one-shot all localization globally
-
 <a name="resetDefaultLocale" href="#resetDefaultLocale">#</a>
 vega.<b>resetDefaultLocale</b>()
 [<>](https://github.com/vega/vega/blob/master/packages/vega-format/src/locale.js "Source")
@@ -84,11 +82,34 @@ Resets the default locale for both number and time formatting and returns the re
 
 ## <a name="localization"></a>Localization <small>{% include tag ver="FUTURE" %}</small>
 
-By default, Vega will add "aria-label" and "aria-roleDescription" text to describe structural elements of the visualization rendered to SVG.  These descriptions will be in American English ("en-us") by default.  
+By default, Vega will add `aria-label` and `aria-roledescription` text to describe structural elements of the visualization rendered to SVG. These descriptions use English (`en`) by default.
 
-This behavior can be customized by providing a `Record<string, string>` object to `ariaLocale` to the `View` constructor.  Any localization key not provided will fall back to the original translation shipped in Vega.
+<a name="ariaLocale" href="#ariaLocale">#</a>
+vega.<b>ariaLocale</b>([<i>definition</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/util/aria-locale.js "Source")
 
-The structure of this object is as follows, where indexed placeholders (such as `{0}`) indicate string subtitution for composite translation:
+Gets or sets the default locale for ARIA labels. If no argument is provided, returns the current default ARIA locale. Otherwise, merges the provided `Record<string, string>` *definition* with Vega's American English defaults, sets the resulting global default, and returns it. The new default applies to views created after this method is called; existing views retain the locale with which they were constructed.
+
+For example, set global Spanish strings before parsing specifications and creating views:
+
+```js
+vega.ariaLocale({
+  languageTag: 'es',
+  'role.visualization': 'visualización',
+  'role.axis': 'eje',
+  'role.legend': 'leyenda'
+});
+```
+
+<a name="resetAriaLocale" href="#resetAriaLocale">#</a>
+vega.<b>resetAriaLocale</b>()
+[<>](https://github.com/vega/vega/blob/master/packages/vega-scenegraph/src/util/aria-locale.js "Source")
+
+Resets the default ARIA locale to Vega's American English translation and returns the resulting locale object.
+
+For a specific view, provide an `ariaLocale` object in the Vega configuration or as a `View` constructor option. Any localization key not provided at any level falls back to Vega's American English translation.
+
+The structure of this object is as follows, where indexed placeholders (such as `{0}`) indicate string substitution for composite translation:
 
 | Key | Default Value | Description |
 | --- | --- | --- |
@@ -139,4 +160,3 @@ The structure of this object is as follows, where indexed placeholders (such as 
 | `marktype.symbol` | `"symbol"` | Names a symbol mark in ARIA descriptions. |
 | `marktype.text` | `"text"` | Names a text mark in ARIA descriptions. |
 | `marktype.trail` | `"trail"` | Names a trail mark in ARIA descriptions. |
-
