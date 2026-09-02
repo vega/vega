@@ -35,7 +35,7 @@ When using multiple spatial properties along the same dimension (_x_ and _x2_, o
 
 ### Accessibility Properties {% include tag ver="5.11" %}
 
-Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output. Vega will automatically generate ARIA attributes for container SVG `<g>` elements for each mark definition; this can be configured using [mark-level accessibility properties](/docs/marks/#accessibility). Use the properties below in encode sets to add ARIA attributes for individual mark items.
+Accessibility properties are used to determine [ARIA (Accessible Rich Internet Applications) attributes](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) when using Vega to render SVG output. Vega will automatically generate ARIA attributes for container SVG `<g>` elements for each mark definition; this can be configured using [mark-level accessibility properties]({{ site.baseurl }}/docs/marks/#accessibility). Use the properties below in encode sets to add ARIA attributes for individual mark items.
 
 | Property          | Type                          | Description  |
 | :---------------- | :---------------------------: | :------------|
