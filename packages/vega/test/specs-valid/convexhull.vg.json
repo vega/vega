@@ -1,0 +1,57 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 200,
+  "height": 120,
+  "data": [
+    {
+      "name": "points",
+      "values": [
+        { "group": "a", "x": 0, "y": 0 },
+        { "group": "a", "x": 10, "y": 0 },
+        { "group": "a", "x": 10, "y": 10 },
+        { "group": "a", "x": 0, "y": 10 }
+      ]
+    },
+    {
+      "name": "hull",
+      "source": "points",
+      "transform": [
+        {
+          "type": "convexhull",
+          "x": "x",
+          "y": "y",
+          "groupby": ["group"],
+          "offset": 1,
+          "as": ["hx", "hy", "x", "y"]
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": { "data": "hull", "field": "hx" },
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": { "data": "hull", "field": "hy" },
+      "range": "height"
+    }
+  ],
+  "marks": [
+    {
+      "type": "line",
+      "from": { "data": "hull" },
+      "encode": {
+        "enter": {
+          "interpolate": { "value": "linear-closed" },
+          "x": { "scale": "x", "field": "hx" },
+          "y": { "scale": "y", "field": "hy" }
+        }
+      }
+    }
+  ]
+}

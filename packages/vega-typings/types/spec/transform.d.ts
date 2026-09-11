@@ -31,6 +31,7 @@ export type Transforms =
   | AggregateTransform
   | BinTransform
   | CollectTransform
+  | ConvexHullTransform
   | CountPatternTransform
   | ContourTransform
   | CrossTransform
@@ -178,6 +179,15 @@ export interface BaseBin {
 export interface CollectTransform {
   type: 'collect';
   sort: Compare;
+}
+
+export interface ConvexHullTransform {
+  type: 'convexhull';
+  x: FieldRef;
+  y: FieldRef;
+  groupby?: FieldRef[] | SignalRef;
+  offset?: number | SignalRef;
+  as?: Vector4<string | SignalRef> | SignalRef;
 }
 
 export interface CountPatternTransform {

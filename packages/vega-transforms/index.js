@@ -2,6 +2,7 @@ export {default as aggregate} from './src/Aggregate.js';
 export {default as bin} from './src/Bin.js';
 export {default as collect} from './src/Collect.js';
 export {default as compare} from './src/Compare.js';
+export {default as convexhull} from './src/ConvexHull.js';
 export {default as countpattern} from './src/CountPattern.js';
 export {default as cross} from './src/Cross.js';
 export {default as density} from './src/Density.js';

@@ -21,6 +21,7 @@
   "chart",
   "chart-rangestep",
   "choropleth",
+  "convexhull",
   "contour-map",
   "contour-scatter",
   "corner-radius",
