@@ -15,9 +15,13 @@ export function interpolateColors(colors, type, gamma) {
 }
 
 export function quantizeInterpolator(interpolator, count) {
-  const samples = new Array(count),
-        n = count + 1;
-  for (let i = 0; i < count;) samples[i] = interpolator(++i / n);
+  if (count <= 0) return [];
+  if (count === 1) return [interpolator(0.5)];
+
+  const samples = new Array(count);
+  for (let i = 0; i < count; i++) {
+    samples[i] = interpolator(i / (count - 1));
+  }
   return samples;
 }
 
