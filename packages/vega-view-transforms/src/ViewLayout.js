@@ -36,6 +36,40 @@ inherits(ViewLayout, Transform, {
   }
 });
 
+// clamp bounds to the frame rect [0, width] x [0, height]; returns null
+// if the intersection is degenerate (i.e. content lies entirely outside)
+function clampBounds(b, width, height) {
+  const r = new Bounds().set(
+    b.x1 < 0 ? 0 : b.x1,
+    b.y1 < 0 ? 0 : b.y1,
+    b.x2 > width ? width : b.x2,
+    b.y2 > height ? height : b.y2
+  );
+  return (r.x2 > r.x1 && r.y2 > r.y1) ? r : null;
+}
+
+// return true if the given mark's subtree contains any nested guide marks
+// (axes, legends, or titles), indicating a layout scope whose bounds define
+// the placement area for guides and should not be clamped to the frame
+function hasNestedGuides(mark) {
+  const role = mark && mark.role;
+  if (role === AxisRole || role === LegendRole || role === TitleRole
+   || role.startsWith('axis') || role.startsWith('legend') || role.startsWith('title')) {
+    return true;
+  }
+  const items = mark.items;
+  if (!items) return false;
+  for (let i = 0; i < items.length; ++i) {
+    const nested = items[i].items;
+    if (nested) {
+      for (let j = 0; j < nested.length; ++j) {
+        if (hasNestedGuides(nested[j])) return true;
+      }
+    }
+  }
+  return false;
+}
+
 function shouldReflow(group) {
   // We typically should reflow if layout is invoked (#2568), as child items
   // may have resized and reflow ensures group bounds are re-calculated.
@@ -71,6 +105,27 @@ function layoutGroup(view, group, _) {
         break;
       case FrameRole:
       case ScopeRole:
+        b = mark.bounds;
+        if (!b.empty()) {
+          // track full mark bounds for autosize, but clamp the guide-layout
+          // contribution of content-only scopes (no nested axes/legends/
+          // titles) to the group frame, so that mark overhang at the plot
+          // edge (e.g. path stroke) does not shift legend and other guide
+          // placement (#4267); scopes with nested guides keep full bounds
+          // (their extents define the layout area for facet-style charts)
+          viewBounds.union(b);
+          if (hasNestedGuides(mark)) {
+            xBounds.union(b);
+            yBounds.union(b);
+          } else {
+            b = clampBounds(b, width, height);
+            if (b) {
+              xBounds.union(b);
+              yBounds.union(b);
+            }
+          }
+        }
+        break;
       case RowHeader:
       case RowFooter:
       case RowTitle:

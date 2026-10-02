@@ -64,6 +64,7 @@
   "layout-wrap",
   "legend-frame-bounds",
   "legends",
+  "legends-overhang",
   "legends-continuous",
   "legends-discrete",
   "legends-empty",
