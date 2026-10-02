@@ -58,6 +58,7 @@ export interface Config
     window?: boolean | string[];
   };
   locale?: Locale;
+  ariaLocale?: Record<string, string>;
 
   /**
    * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the "lineBreak" mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid.

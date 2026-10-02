@@ -50,6 +50,13 @@ export {
 export {sceneEqual, pathEqual} from './src/util/equal.js';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize.js';
 export {
+  ariaLocale,
+  DEFAULT_ARIA_LOCALE,
+  formatString,
+  resetAriaLocale,
+  selectPluralKey
+} from './src/util/aria-locale.js';
+export {
   intersectPath,
   intersectPoint,
   intersectRule,
