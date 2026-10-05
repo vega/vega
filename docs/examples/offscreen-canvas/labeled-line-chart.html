@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vega OffscreenCanvas Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      display: block;
+      margin: 20px 0;
+      width: 700px;
+      height: 400px;
+    }
+    #status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .loading { background-color: #fff3cd; color: #856404; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error   { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>Vega rendering in a Web Worker</h1>
+
+  <p>
+    A labeled chart rendered to an OffscreenCanvas by a Web Worker.
+    The label transform's collision detection also runs inside the worker.
+  </p>
+
+  <canvas id="view"></canvas>
+
+  <div id="status" class="loading">Starting worker&hellip;</div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

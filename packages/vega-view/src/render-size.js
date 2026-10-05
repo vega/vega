@@ -23,7 +23,8 @@ export function resizeRenderer(view) {
       h = height(view);
 
   view._renderer.background(view.background());
-  view._renderer.resize(w, h, origin);
+  // pass the scale factor through so a resize does not reset the pixel ratio
+  view._renderer.resize(w, h, origin, view._customScaleFactor ?? view._renderer._scale);
   view._handler.origin(origin);
 
   view._resizeListeners.forEach(handler => {

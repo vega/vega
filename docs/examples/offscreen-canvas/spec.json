@@ -1,0 +1,102 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "A connected scatter plot of driving statistics, with year labels placed by the label transform.",
+  "width": 700,
+  "height": 400,
+  "padding": 5,
+
+  "data": [
+    {"name": "driving", "url": "../../data/driving.json"}
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "driving", "field": "miles"},
+      "range": "width",
+      "nice": true,
+      "zero": false,
+      "round": true
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "driving", "field": "gas"},
+      "range": "height",
+      "nice": true,
+      "zero": false,
+      "round": true
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "bottom",
+      "scale": "x",
+      "tickCount": 5,
+      "grid": true,
+      "title": "Miles driven per capita each year"
+    },
+    {
+      "orient": "left",
+      "scale": "y",
+      "tickCount": 5,
+      "grid": true,
+      "format": "$0.2f",
+      "title": "Price of a gallon of gasoline (adjusted for inflation)"
+    }
+  ],
+
+  "marks": [
+    {
+      "name": "line",
+      "type": "line",
+      "from": {"data": "driving"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "miles"},
+          "y": {"scale": "y", "field": "gas"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 1}
+        }
+      }
+    },
+    {
+      "name": "points",
+      "type": "symbol",
+      "from": {"data": "driving"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "miles"},
+          "y": {"scale": "y", "field": "gas"},
+          "fill": {"value": "#fff"},
+          "stroke": {"value": "#000"},
+          "strokeWidth": {"value": 1},
+          "size": {"value": 49}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "points"},
+      "encode": {
+        "enter": {
+          "text": {"field": "datum.year"},
+          "fontSize": {"value": 10},
+          "fill": {"value": "#333"}
+        }
+      },
+      "transform": [
+        {
+          "type": "label",
+          "size": [700, 400],
+          "padding": 2,
+          "anchor": ["top", "bottom", "left", "right"],
+          "offset": [2],
+          "avoidMarks": ["line"]
+        }
+      ]
+    }
+  ]
+}
