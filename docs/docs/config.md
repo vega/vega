@@ -59,6 +59,7 @@ Properties defined in the top-level scope of the configuration object.
 | height        | {% include type t="Number|Signal" %} | The height in pixels of the data rectangle. {% include tag ver="5.10" %} |
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
 | locale        | {% include type t="Object" %}        | Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../api/locale). Locale definitions provided in the config block may be overridden by the View constructor *locale* option. {% include tag ver="5.12" %} |
+| ariaLocale    | {% include type t="Object" %}        | Locale strings for generated ARIA labels. Definitions provided in the config block override the [global ARIA locale](../api/locale/#ariaLocale) and may be overridden by the View constructor *ariaLocale* option. {% include tag ver="FUTURE" %} |
 | lineBreak     | {% include type t="String|Signal" %} | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the `lineBreak` mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid. {% include tag ver="5.10" %} |
 
 ### Usage

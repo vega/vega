@@ -21,6 +21,7 @@ export interface Runtime {
   bindings: Binding[];
   eventConfig?: Config['events'];
   locale?: Config['locale'];
+  ariaLocale?: Record<string, string>;
 }
 
 export interface BaseOperator {
