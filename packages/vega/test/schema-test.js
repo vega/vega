@@ -20,6 +20,16 @@ tape('JSON schema is valid', t => {
   t.end();
 });
 
+tape('JSON schema supports mark-level zindex property', t => {
+  t.ok(schema.definitions.mark.properties.zindex,
+    'mark definition includes a zindex property');
+  t.ok(validate({marks: [{type: 'rect', zindex: 1}]}),
+    'validates a numeric mark zindex');
+  t.notOk(validate({marks: [{type: 'rect', zindex: 'one'}]}),
+    'rejects a non-numeric mark zindex');
+  t.end();
+});
+
 tape('JSON schema recognizes valid specifications', t => {
   const dir = process.cwd() + '/test/specs-valid/';
   validSpecs.forEach(file => {
