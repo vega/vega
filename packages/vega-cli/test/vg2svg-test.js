@@ -39,3 +39,22 @@ tape('vg2svg errors on an invalid config file', t => {
     t.end();
   });
 });
+
+tape('vg2svg keeps the locale from the spec config', t => {
+  const cmd = './bin/vg2svg test/resources/bar-locale.vg.json';
+  exec(cmd, (error, stdout) => {
+    t.error(error, 'exits with a zero code');
+    t.ok(stdout.includes('>20.000<'), 'uses the number locale from config.locale');
+    t.notOk(stdout.includes('>20,000<'), 'does not fall back to the default locale');
+    t.end();
+  });
+});
+
+tape('vg2svg lets --format override the locale from the spec config', t => {
+  const cmd = './bin/vg2svg --format test/resources/number-locale.json test/resources/bar-locale.vg.json';
+  exec(cmd, (error, stdout) => {
+    t.error(error, 'exits with a zero code');
+    t.ok(stdout.includes("20'000"), 'uses the number locale from --format');
+    t.end();
+  });
+});
