@@ -12,21 +12,20 @@ const prototype = TupleStore.prototype;
 prototype.reset = function() {
   this._add = [];
   this._rem = [];
-  this._ext = null;
-  this._get = null;
-  this._q = null;
+  this._memo = {};
 };
 
 prototype.add = function(v) {
   this._add.push(v);
+  this._memo = {};
 };
 
 prototype.rem = function(v) {
   this._rem.push(v);
+  this._memo = {};
 };
 
 prototype.values = function() {
-  this._get = null;
   if (this._rem.length === 0) return this._add;
 
   const a = this._add,
@@ -55,6 +54,24 @@ prototype.values = function() {
 };
 
 // memoizing statistics methods
+// Each statistic is cached separately along with the accessor it was
+// computed for, and all caches are cleared whenever the store changes.
+function memoize(store, name, get, compute) {
+  const memo = store._memo[name];
+  if (memo && memo.get === get) return memo.value;
+  const value = compute(store.values(), get);
+  store._memo[name] = {get, value};
+  return value;
+}
+
+function computeExtent(v, get) {
+  const i = extentIndex(v, get);
+  return [v[i[0]], v[i[1]]];
+}
+
+function computeCI(v, get) {
+  return bootstrapCI(v, 1000, 0.05, get);
+}
 
 prototype.distinct = function(get) {
   const v = this.values(),
@@ -75,13 +92,7 @@ prototype.distinct = function(get) {
 };
 
 prototype.extent = function(get) {
-  if (this._get !== get || !this._ext) {
-    const v = this.values(),
-          i = extentIndex(v, get);
-    this._ext = [v[i[0]], v[i[1]]];
-    this._get = get;
-  }
-  return this._ext;
+  return memoize(this, 'extent', get, computeExtent);
 };
 
 prototype.argmin = function(get) {
@@ -103,11 +114,7 @@ prototype.max = function(get) {
 };
 
 prototype.quartile = function(get) {
-  if (this._get !== get || !this._q) {
-    this._q = quartiles(this.values(), get);
-    this._get = get;
-  }
-  return this._q;
+  return memoize(this, 'quartile', get, quartiles);
 };
 
 prototype.q1 = function(get) {
@@ -123,11 +130,7 @@ prototype.q3 = function(get) {
 };
 
 prototype.ci = function(get) {
-  if (this._get !== get || !this._ci) {
-    this._ci = bootstrapCI(this.values(), 1000, 0.05, get);
-    this._get = get;
-  }
-  return this._ci;
+  return memoize(this, 'ci', get, computeCI);
 };
 
 prototype.ci0 = function(get) {
