@@ -15,11 +15,16 @@ export default function(renderer, item, size) {
 
   if (isFunction(clip)) {
     c.path = clip(null);
+    delete c.width;
+    delete c.height;
   } else if (hasCornerRadius(size)) {
     c.path = rectangle(null, size, 0, 0);
+    delete c.width;
+    delete c.height;
   } else {
     c.width = size.width || 0;
     c.height = size.height || 0;
+    delete c.path;
   }
 
   return 'url(#' + id + ')';
