@@ -161,7 +161,7 @@ Once created, the *distributions* and *weights* arrays can be accessed or modifi
 vega.<b>randomKDE</b>(<i>values</i>[, <i>bandwidth</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-statistics/src/kde.js "Source")
 
-Creates a distribution object representing a [kernel density estimate](https://en.wikipedia.org/wiki/Kernel_density_estimation) for an array of numerical *values*. This method uses a Gaussian kernel to estimate a smoothed, continuous probability distribution. The optional *bandwidth* parameter determines the width of the Gaussian kernel. If the *bandwidth* is either `0` or unspecified, a default bandwidth value will be automatically estimated based on the input data. KDE distributions do **not** support the `icdf` method: calling `icdf` will result in an error.
+Creates a distribution object representing a [kernel density estimate](https://en.wikipedia.org/wiki/Kernel_density_estimation) for an array of numerical *values*. Null, undefined and NaN entries in *values* are ignored. This method uses a Gaussian kernel to estimate a smoothed, continuous probability distribution. The optional *bandwidth* parameter determines the width of the Gaussian kernel. If the *bandwidth* is either `0` or unspecified, a default bandwidth value will be automatically estimated based on the input data. KDE distributions do **not** support the `icdf` method: calling `icdf` will result in an error.
 
 Once created, *data* and *bandwidth* values can be accessed or modified using the `data` and `bandwidth` getter/setter methods.
 
