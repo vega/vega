@@ -12,6 +12,7 @@ import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles.js';
 import {isArray} from 'vega-util';
 
 const RootIndex = 0,
+      SVGNamespace = Symbol.for('vega-scenegraph.svg-namespace'),
       xmlns = 'http://www.w3.org/2000/xmlns/',
       svgns = metadata.xmlns;
 
@@ -38,7 +39,7 @@ export default class SVGRenderer extends Renderer {
    */
   initialize(el, width, height, origin, scaleFactor) {
     // create the svg definitions cache
-    this._defs = {};
+    this._defs = {prefix: el ? svgPrefix(el.ownerDocument) : ''};
     this._clearDefs();
 
     if (el) {
@@ -353,7 +354,7 @@ export default class SVGRenderer extends Renderer {
         el.removeAttribute(name);
       } else {
         if (isGradient(value)) {
-          value = gradientRef(value, this._defs.gradient, href());
+          value = gradientRef(value, this._defs.gradient, href(), this._defs.prefix);
         }
         el.setAttribute(name, value + '');
       }
@@ -380,7 +381,7 @@ export default class SVGRenderer extends Renderer {
 
     for (const id in defs.gradient) {
       if (!el) defs.el = (el = domChild(svg, RootIndex + 1, 'defs', svgns));
-      index = updateGradient(el, defs.gradient[id], index);
+      index = updateGradient(el, defs.gradient[id], index, defs.prefix);
     }
 
     for (const id in defs.clipping) {
@@ -406,6 +407,13 @@ export default class SVGRenderer extends Renderer {
   }
 }
 
+// Allocate namespaces on the document so independently loaded Vega bundles
+// cannot reuse IDs. Keep the prefix out of the scenegraph for string exports.
+function svgPrefix(doc) {
+  const id = doc[SVGNamespace] = (doc[SVGNamespace] || 0) + 1;
+  return 'vega_' + id + '_';
+}
+
 // mark ancestor chain with a dirty id
 function dirtyParents(item, id) {
   for (; item && item.dirty !== id; item=item.mark.group) {
@@ -417,7 +425,8 @@ function dirtyParents(item, id) {
 }
 
 // update gradient definitions
-function updateGradient(el, grad, index) {
+function updateGradient(el, grad, index, prefix) {
+  const id = prefix + grad.id;
   let i, n, stop;
 
   if (grad.gradient === 'radial') {
@@ -427,7 +436,7 @@ function updateGradient(el, grad, index) {
     // maintain a circular gradient that matches what canvas provides.
     let pt = domChild(el, index++, 'pattern', svgns);
     setAttributes(pt, {
-      id: patternPrefix + grad.id,
+      id: prefix + patternPrefix + grad.id,
       viewBox: '0,0,1,1',
       width: '100%',
       height: '100%',
@@ -438,12 +447,12 @@ function updateGradient(el, grad, index) {
     setAttributes(pt, {
       width: 1,
       height: 1,
-      fill: `url(${href()}#${grad.id})`
+      fill: `url(${href()}#${id})`
     });
 
     el = domChild(el, index++, 'radialGradient', svgns);
     setAttributes(el, {
-      id: grad.id,
+      id: id,
       fx: grad.x1,
       fy: grad.y1,
       fr: grad.r1,
@@ -454,7 +463,7 @@ function updateGradient(el, grad, index) {
   } else {
     el = domChild(el, index++, 'linearGradient', svgns);
     setAttributes(el, {
-      id: grad.id,
+      id: id,
       x1: grad.x1,
       x2: grad.x2,
       y1: grad.y1,
