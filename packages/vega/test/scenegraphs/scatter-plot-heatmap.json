@@ -432,7 +432,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -28,
+                      "x": -23.119999999999997,
                       "y": 150,
                       "align": "center",
                       "baseline": "bottom",
@@ -619,7 +619,7 @@
               ],
               "x": 418,
               "y": 0,
-              "width": 61,
+              "width": 41,
               "height": 216,
               "orient": "right"
             }
