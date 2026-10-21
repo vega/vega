@@ -499,7 +499,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -27,
+                      "x": -22.119999999999997,
                       "y": 300,
                       "align": "center",
                       "baseline": "bottom",
@@ -1820,7 +1820,7 @@
                               ],
                               "x": 0,
                               "y": 0,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             },
@@ -1869,7 +1869,7 @@
                               ],
                               "x": 0,
                               "y": 13,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             },
@@ -1918,7 +1918,7 @@
                               ],
                               "x": 0,
                               "y": 26,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             },
@@ -1967,7 +1967,7 @@
                               ],
                               "x": 0,
                               "y": 39,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             },
@@ -2016,7 +2016,7 @@
                               ],
                               "x": 0,
                               "y": 52,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             },
@@ -2065,7 +2065,7 @@
                               ],
                               "x": 0,
                               "y": 65,
-                              "width": 168,
+                              "width": 133.26,
                               "height": 11,
                               "opacity": 1
                             }
@@ -2106,7 +2106,7 @@
               ],
               "x": 818,
               "y": 0,
-              "width": 168,
+              "width": 134,
               "height": 92,
               "orient": "right"
             }
