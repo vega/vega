@@ -341,6 +341,7 @@ function style(s, item, scene, tag, defs) {
     s['font-style'] = item.fontStyle;
     s['font-variant'] = item.fontVariant;
     s['font-weight'] = item.fontWeight;
+    s['text-decoration'] = item.textDecoration;
   }
 
   for (const prop in stylesAttr) {

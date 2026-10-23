@@ -43,7 +43,8 @@ function attr(emit, item) {
       a = item.angle || 0, t;
 
   emit('text-anchor', textAlign[item.align] || 'start');
-
+  
+  if (item.textDecoration) emit('text-decoration', item.textDecoration);
   if (a) {
     t = translate(x, y) + ' ' + rotate(a);
     if (dx || dy) t += ' ' + translate(dx, dy);
@@ -130,6 +131,34 @@ function draw(context, scene, bounds) {
         if (item.stroke && stroke(context, item, opacity)) {
           context.strokeText(str, x, y);
         }
+        if (item.textDecoration) {
+          const m = context.measureText(str);
+          const w = m.width;
+          const a = item.align || 'left';
+          const fs = item.fontSize || 12;
+          let x1;
+          if (a === 'center') x1 = x - w / 2;
+          else if (a === 'right') x1 = x - w;
+          else x1 = x;
+          context.save();
+          context.strokeStyle = item.fill || item.stroke || '#000';
+          context.lineWidth = 1;
+          if (item.textDecoration.indexOf('underline') >= 0) {
+            const y1 = y + Math.max(1, fs * 0.1);
+            context.beginPath();
+            context.moveTo(x1, y1);
+            context.lineTo(x1 + w, y1);
+            context.stroke();
+          }
+          if (item.textDecoration.indexOf('line-through') >= 0) {
+            const y1 = y - Math.max(1, fs * 0.35);
+            context.beginPath();
+            context.moveTo(x1, y1);
+            context.lineTo(x1 + w, y1);
+            context.stroke();
+          }
+          context.restore();
+        }
         y += lh;
       }
     } else {
@@ -139,6 +168,34 @@ function draw(context, scene, bounds) {
       }
       if (item.stroke && stroke(context, item, opacity)) {
         context.strokeText(str, x, y);
+      }
+      if (item.textDecoration) {
+        const m = context.measureText(str);
+        const w = m.width;
+        const a = item.align || 'left';
+        const fs = item.fontSize || 12;
+        let x1;
+        if (a === 'center') x1 = x - w / 2;
+        else if (a === 'right') x1 = x - w;
+        else x1 = x;
+        context.save();
+        context.strokeStyle = item.fill || item.stroke || '#000';
+        context.lineWidth = 1;
+        if (item.textDecoration.indexOf('underline') >= 0) {
+          const y1 = y + Math.max(1, fs * 0.1);
+          context.beginPath();
+          context.moveTo(x1, y1);
+          context.lineTo(x1 + w, y1);
+          context.stroke();
+        }
+        if (item.textDecoration.indexOf('line-through') >= 0) {
+          const y1 = y - Math.max(1, fs * 0.35);
+          context.beginPath();
+          context.moveTo(x1, y1);
+          context.lineTo(x1 + w, y1);
+          context.stroke();
+        }
+        context.restore();
       }
     }
 
