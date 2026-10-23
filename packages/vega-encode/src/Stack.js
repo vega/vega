@@ -58,12 +58,14 @@ inherits(Stack, Transform, {
 function stackCenter(group, max, field, y0, y1) {
   var last = (max - group.sum) / 2,
       m = group.length,
-      j = 0, t;
+      j = 0, v, t;
 
   for (; j<m; ++j) {
     t = group[j];
     t[y0] = last;
-    t[y1] = (last += Math.abs(field(t)));
+    v = Math.abs(field(t));
+    t[y1] = last + v;
+    last += v || 0;
   }
 }
 
@@ -71,12 +73,14 @@ function stackNormalize(group, max, field, y0, y1) {
   var scale = 1 / group.sum,
       last = 0,
       m = group.length,
-      j = 0, v = 0, t;
+      j = 0, v = 0, value, t;
 
   for (; j<m; ++j) {
     t = group[j];
     t[y0] = last;
-    t[y1] = last = scale * (v += Math.abs(field(t)));
+    value = Math.abs(field(t));
+    t[y1] = scale * (v + value);
+    last = scale * (v += value || 0);
   }
 }
 
@@ -94,7 +98,8 @@ function stackZero(group, max, field, y0, y1) {
       t[y1] = (lastNeg += v);
     } else {
       t[y0] = lastPos;
-      t[y1] = (lastPos += v);
+      t[y1] = lastPos + v;
+      lastPos += v || 0;
     }
   }
 }
@@ -124,7 +129,7 @@ function partition(data, groupby, sort, field) {
   for (k=0, max=0, m=groups.length; k<m; ++k) {
     g = groups[k];
     for (i=0, s=0, n=g.length; i<n; ++i) {
-      s += Math.abs(field(g[i]));
+      s += Math.abs(field(g[i])) || 0;
     }
     g.sum = s;
     if (s > max) max = s;
