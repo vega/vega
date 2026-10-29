@@ -21,6 +21,9 @@ export const version: string;
 // Locale API
 export function formatLocale(definition: object): void;
 export function timeFormatLocale(definition: object): void;
+export function ariaLocale(): Record<string, string>;
+export function ariaLocale(definition: Record<string, string>): Record<string, string>;
+export function resetAriaLocale(): Record<string, string>;
 
 // Parser
 export function parse(spec: Spec, config?: Config, opt?: { ast?: boolean }): Runtime;
@@ -112,6 +115,7 @@ export interface ViewOptions {
   renderer?: Renderers;
   tooltip?: TooltipHandler;
   locale?: LocaleFormatters;
+  ariaLocale?: Record<string, string>;
   expr?: any;
   watchPixelRatio?: boolean;
 }
@@ -225,6 +229,9 @@ export class View {
 
   locale(locale: LocaleFormatters): this;
   locale(): LocaleFormatters;
+
+  ariaLocale(locale: Record<string, string>): this;
+  ariaLocale(): Record<string, string>;
 
   changeset(): Changeset;
 }
