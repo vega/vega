@@ -1,3 +1,5 @@
+import {isOffscreenCanvas} from 'vega-canvas';
+
 function devicePixelRatio() {
   return typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
 }
@@ -6,6 +8,7 @@ export default function(canvas, width, height, origin, scaleFactor, opt) {
   const inDOM = typeof HTMLElement !== 'undefined'
               && canvas instanceof HTMLElement
               && canvas.parentNode != null,
+        isOffscreen = isOffscreenCanvas(canvas),
         context = canvas.getContext('2d'),
         ratio = inDOM ? devicePixelRatio() : scaleFactor;
 
@@ -16,7 +19,8 @@ export default function(canvas, width, height, origin, scaleFactor, opt) {
     context[key] = opt[key];
   }
 
-  if (inDOM) {
+  // OffscreenCanvas doesn't have a style property
+  if (inDOM && !isOffscreen) {
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
   }

@@ -11,6 +11,7 @@ import {
 } from './util/events.js';
 import point from './util/point.js';
 import {domFind} from './util/dom.js';
+import {isOffscreenCanvas} from 'vega-canvas';
 
 export default class CanvasHandler extends Handler {
   constructor(loader, tooltip) {
@@ -35,14 +36,21 @@ export default class CanvasHandler extends Handler {
   }
 
   initialize(el, origin, obj) {
-    this._canvas = el && domFind(el, 'canvas');
+    const isOffscreen = obj && isOffscreenCanvas(obj.canvas);
 
-    // add minimal events required for proper state management
-    [
-      ClickEvent, MouseDownEvent,
-      PointerDownEvent, PointerMoveEvent, PointerOutEvent,
-      DragLeaveEvent
-    ].forEach(type => eventListenerCheck(this, type));
+    this._canvas = isOffscreen
+      ? obj.canvas
+      : (el && domFind(el, 'canvas'));
+
+    // OffscreenCanvas does not support DOM events
+    if (this._canvas && !isOffscreen) {
+      // add minimal events required for proper state management
+      [
+        ClickEvent, MouseDownEvent,
+        PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+        DragLeaveEvent
+      ].forEach(type => eventListenerCheck(this, type));
+    }
 
     return super.initialize(el, origin, obj);
   }
