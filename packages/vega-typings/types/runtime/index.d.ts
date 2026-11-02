@@ -114,6 +114,8 @@ export interface ViewOptions {
   locale?: LocaleFormatters;
   expr?: any;
   watchPixelRatio?: boolean;
+  canvas?: HTMLCanvasElement | OffscreenCanvas;
+  scaleFactor?: number;
 }
 
 export class View {
@@ -122,6 +124,10 @@ export class View {
   // View Configuration
 
   initialize(container?: Element | string, bindContainer?: Element | string): this;
+
+  readonly canvas: HTMLCanvasElement | OffscreenCanvas | null;
+  scaleFactor(): number;
+  scaleFactor(scaleFactor: number): this;
 
   finalize(): this;
 
@@ -204,7 +210,10 @@ export class View {
 
   // Image Export
 
-  toCanvas(scaleFactor?: number, options?: ToCanvasOptions): Promise<HTMLCanvasElement>;
+  toCanvas(
+    scaleFactor?: number,
+    options?: ToCanvasOptions
+  ): Promise<HTMLCanvasElement | OffscreenCanvas>;
   toSVG(scaleFactor?: number): Promise<string>;
   toImageURL(type: string, scaleFactor?: number): Promise<string>;
 
