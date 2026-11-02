@@ -1,9 +1,7 @@
+import {Epsilon} from './util/constants.js';
 import {Transform} from 'vega-dataflow';
 import {bin} from 'vega-statistics';
 import {accessor, accessorFields, accessorName, inherits, toNumber} from 'vega-util';
-
-// epsilon bias to offset floating point error (#1737)
-const EPSILON = 1e-14;
 
 /**
  * Generates a binning function for discretizing data.
@@ -97,7 +95,7 @@ inherits(Bin, Transform, {
         : v > stop ? +Infinity
         : (
             v = Math.max(start, Math.min(v, stop - step)),
-            start + step * Math.floor(EPSILON + (v - start) / step)
+            start + step * Math.floor(Epsilon + (v - start) / step)
           );
     };
 

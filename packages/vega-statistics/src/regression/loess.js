@@ -1,9 +1,9 @@
 import ols from './ols.js';
 import {points} from './points.js';
+import {Epsilon} from '../constants.js';
 import {median} from 'd3-array';
 
-const maxiters = 2,
-      epsilon = 1e-12;
+const maxiters = 2;
 
 // Adapted from science.js by Jason Davies
 // Source: https://github.com/jasondavies/science.js/blob/master/src/stats/loess.js
@@ -54,13 +54,13 @@ export default function(data, x, y, bandwidth) {
     }
 
     const medianResidual = median(residuals);
-    if (Math.abs(medianResidual) < epsilon) break;
+    if (Math.abs(medianResidual) < Epsilon) break;
 
     for (let i = 0, arg, w; i < n; ++i){
       arg = residuals[i] / (6 * medianResidual);
-      // default to epsilon (rather than zero) for large deviations
+      // default to Epsilon (rather than zero) for large deviations
       // keeping weights tiny but non-zero prevents singularites
-      robustWeights[i] = (arg >= 1) ? epsilon : ((w = 1 - arg * arg) * w);
+      robustWeights[i] = (arg >= 1) ? Epsilon : ((w = 1 - arg * arg) * w);
     }
   }
 
