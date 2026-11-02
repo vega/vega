@@ -50,5 +50,8 @@ tape('integer evaluates the inverse cdf', t => {
   t.equal(n1.icdf(0.6), 2);
   t.equal(n1.icdf(0.8), 3);
   t.equal(n1.icdf(1.0), 4);
+  t.equal(n1.icdf(0.1), 0);
+  t.equal(n1.icdf(0.5), 2);
+  t.equal(n1.icdf(0.9), 4);
   t.end();
 });
