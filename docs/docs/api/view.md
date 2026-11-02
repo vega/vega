@@ -26,6 +26,7 @@ vega.<b>View</b>(<i>runtime</i>[, <i>options</i>])
 
 Constructor that creates a new View instance for the provided [Vega dataflow *runtime* specification](https://github.com/vega/vega/blob/master/packages/vega-runtime/). If provided, the *options* argument should be an object with one or more of the following properties:
 
+- *ariaLocale*: Customizes the text used in ARIA labels of structural elements.  See the [ariaLocale](#view_ariaLocale) method.
 - *background*: View background color. See the [background](#view_background) method.
 - *bind*: DOM container element (or CSS selector) for input elements bound to signals. See the [initialize](#view_initialize) method.
 - *container*: Parent DOM container element (or unique CSS selector) for this view. See the [initialize](#view_initialize) method.
@@ -157,6 +158,12 @@ view.<b>description</b>([<i>text</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source") {% include tag ver="5.10" %}
 
 Gets or sets descriptive *text* for this view. This description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the view's container element. If no arguments are provided, returns the current description. If *text* is specified, this method sets the description and updates the view container element.
+
+<a name="view_ariaLocale" href="#view_ariaLocale">#</a>
+view.<b>ariaLocale</b>([<i>localeObject</i>])
+[<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source") {% include tag ver="FUTURE" %}
+
+Gets or sets the localization object that provides translations for structural elements labeled by ARIA. See the [Locale API](../locale/#ariaLocale) for the global configuration method and full list of localization keys. A blank or empty `localeObject` means that structural elements will use the default American English (en-us) translation provided by Vega.
 
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])

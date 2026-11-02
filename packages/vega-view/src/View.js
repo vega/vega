@@ -23,7 +23,7 @@ import watchPixelRatio from './watchPixelRatio.js';
 import {Dataflow, asyncCallback} from 'vega-dataflow';
 import {locale} from 'vega-format';
 import {
-  CanvasHandler, RenderType, Scenegraph, renderModule
+  CanvasHandler, RenderType, Scenegraph, ariaLocale, renderModule
 } from 'vega-scenegraph';
 import {
   error, extend, hasOwnProperty, inherits, stringValue
@@ -51,6 +51,10 @@ export default function View(spec, options) {
     const loc = extend({}, spec.locale, options.locale);
     view.locale(locale(loc.number, loc.time));
   }
+
+  // snapshot aria locale defaults for i18n accessibility labels
+  view._ariaLocaleBase = extend({}, ariaLocale(), spec.ariaLocale);
+  view._ariaLocale = extend({}, view._ariaLocaleBase, options.ariaLocale);
 
   view._el = null;
   view._elBind = null;
@@ -191,6 +195,14 @@ inherits(View, Dataflow, {
       return this;
     }
     return this._desc;
+  },
+
+  ariaLocale(definition) {
+    if (arguments.length) {
+      this._ariaLocale = extend({}, this._ariaLocaleBase, definition);
+      return this;
+    }
+    return this._ariaLocale;
   },
 
   container() {

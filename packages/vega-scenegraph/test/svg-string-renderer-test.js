@@ -1,7 +1,7 @@
 import fs from 'fs';
 import tape from 'tape';
 import { loader } from 'vega-loader';
-import { Bounds, SVGStringRenderer as Renderer, markup, resetSVGDefIds, sceneFromJSON, sceneToJSON } from '../index.js';
+import { Bounds, DEFAULT_ARIA_LOCALE, SVGStringRenderer as Renderer, markup, resetSVGDefIds, sceneFromJSON, sceneToJSON } from '../index.js';
 import GENERATE from './resources/generate-tests.js';
 import './__init__.js';
 
@@ -85,7 +85,24 @@ function guideScene(role, datum, description) {
       orient: 'bottom',
       context: {
         scales: {x: {value: scale}, color: {value: scale}},
-        dataflow: {locale: () => null}
+        dataflow: {locale: () => null, ariaLocale: () => null}
+      },
+      items: []
+    }]
+  };
+}
+
+function guideSceneWithLocale(role, datum, ariaLocale) {
+  const scale = {type: 'band', domain: () => ['a', 'b', 'c']};
+  return {
+    marktype: 'group',
+    role: role,
+    items: [{
+      datum: datum,
+      orient: 'bottom',
+      context: {
+        scales: {x: {value: scale}, color: {value: scale}},
+        dataflow: {locale: () => null, ariaLocale: () => ariaLocale}
       },
       items: []
     }]
@@ -120,6 +137,65 @@ tape('SVGStringRenderer should use guide descriptions as aria-labels', t => {
     'role="graphics-symbol" aria-roledescription="legend" '
     + 'aria-label="A custom legend description"'
   ));
+
+  t.end();
+});
+
+tape('SVGStringRenderer should localize aria-labels with custom locale', t => {
+  const esLocale = {
+    ...DEFAULT_ARIA_LOCALE,
+    'axisLabel': 'Eje {0}',
+    'axisScaleDiscrete': ' para una escala discreta',
+    'axisWithDomain': ' con {0}',
+    'domainValues_other': '{0} valores: {1}',
+    'listJoiner': ', ',
+    'role.axis': 'eje',
+    'languageTag': 'es'
+  };
+  const axis = render(guideSceneWithLocale('axis', {scale: 'x'}, esLocale), 400, 200);
+  t.ok(axis.includes(
+    'aria-roledescription="eje"'
+  ), 'roleDescription is localized');
+  t.ok(axis.includes(
+    'aria-label="Eje X para una escala discreta con 3 valores: a, b, c"'
+  ), 'axis label is localized');
+
+  t.end();
+});
+
+tape('SVGStringRenderer should localize legend aria-labels', t => {
+  const esLocale = {
+    ...DEFAULT_ARIA_LOCALE,
+    'legendType': 'leyenda de {0}',
+    'legendForChannel': ' para {0}',
+    'legendWithDomain': ' con {0}',
+    'channel.fill': 'color de relleno',
+    'domainValues_other': '{0} valores: {1}',
+    'role.legend': 'leyenda',
+    'languageTag': 'es'
+  };
+  const legend = render(guideSceneWithLocale('legend', {type: 'symbol', scales: {fill: 'color'}}, esLocale), 400, 200);
+  t.ok(legend.includes(
+    'aria-roledescription="leyenda"'
+  ), 'legend roleDescription is localized');
+  t.ok(legend.includes(
+    'Leyenda de symbol'
+  ), 'legend type is localized and capitalized');
+  t.ok(legend.includes(
+    'para color de relleno'
+  ), 'channel name is localized');
+
+  t.end();
+});
+
+tape('SVGStringRenderer should use custom list joiner', t => {
+  const deLoc = {
+    ...DEFAULT_ARIA_LOCALE,
+    'listJoiner': '; ',
+    'languageTag': 'de'
+  };
+  const axis = render(guideSceneWithLocale('axis', {scale: 'x'}, deLoc), 400, 200);
+  t.ok(axis.includes('3 values: a; b; c'), 'list joiner is customized');
 
   t.end();
 });

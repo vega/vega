@@ -40,6 +40,7 @@ export default function parseView(spec, scope) {
   scope.eventConfig = config.events;
   scope.legends = scope.objectProperty(config.legend && config.legend.layout);
   scope.locale = config.locale;
+  scope.ariaLocale = config.ariaLocale;
 
   // store root group item
   const input = scope.add(Collect());
