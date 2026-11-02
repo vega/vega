@@ -2,7 +2,7 @@ import tape from 'tape';
 import {Bounds, Marks, boundContext, boundStroke} from '../index.js';
 import {symbol} from '../src/path/shapes.js';
 
-const EPSILON = 1e-10;
+const Epsilon = 1e-10;
 
 const shapes = [
   'circle', 'cross', 'diamond', 'square', 'arrow', 'wedge', 'stroke',
@@ -21,10 +21,10 @@ function boundEqual(t, item, msg) {
   const a = replayBound(item),
         b = Marks.symbol.bound(new Bounds(), item);
   t.ok(
-    Math.abs(b.x1 - a.x1) < EPSILON &&
-    Math.abs(b.y1 - a.y1) < EPSILON &&
-    Math.abs(b.x2 - a.x2) < EPSILON &&
-    Math.abs(b.y2 - a.y2) < EPSILON,
+    Math.abs(b.x1 - a.x1) < Epsilon &&
+    Math.abs(b.y1 - a.y1) < Epsilon &&
+    Math.abs(b.x2 - a.x2) < Epsilon &&
+    Math.abs(b.y2 - a.y2) < Epsilon,
     msg + ' -- expected [' + [a.x1, a.y1, a.x2, a.y2] + '], got [' + [b.x1, b.y1, b.x2, b.y2] + ']'
   );
 }

@@ -1,4 +1,4 @@
-import {EPSILON} from './constants.js';
+import {Epsilon} from './constants.js';
 import {random} from './random.js';
 
 export default function(min, max) {
@@ -39,7 +39,7 @@ export default function(min, max) {
       return v < a ? 0 : v >= b ? 1 : (v - a + 1) / d;
     },
     icdf(p) {
-      return (p >= 0 && p <= 1) ? a - 1 + Math.ceil(p * d - EPSILON) : NaN;
+      return (p >= 0 && p <= 1) ? a - 1 + Math.ceil(p * d - Epsilon) : NaN;
     }
   };
 

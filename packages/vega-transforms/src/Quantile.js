@@ -1,4 +1,4 @@
-import {EPSILON} from './util/constants.js';
+import {Epsilon} from './util/constants.js';
 import {partition} from './util/util.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {quantiles} from 'vega-statistics';
@@ -52,7 +52,7 @@ inherits(Quantile, Transform, {
           names = (_.groupby || []).map(accessorName),
           values = [],
           step = _.step || 0.01,
-          p = _.probs || range(step/2, 1 - EPSILON, step),
+          p = _.probs || range(step/2, 1 - Epsilon, step),
           n = p.length;
 
     groups.forEach(g => {
