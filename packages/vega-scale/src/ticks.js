@@ -167,6 +167,7 @@ export function tickLog(scale, count, values) {
 
   // apply d3-scale's log format filter criteria
   const test = d => {
+    d = Math.abs(d);
     let i = d / Math.pow(base, Math.round(Math.log(d) / logb));
     if (i * base < base - 0.5) i *= base;
     return i <= k;
