@@ -1,4 +1,4 @@
-import {DegToRad, Epsilon, HalfPi, Tau} from '../util/constants.js';
+import {DegToRad, EPSILON, HalfPi, Tau} from '../util/constants.js';
 
 const circleThreshold = Tau - 1e-8;
 let bounds, lx, ly, rot, ma, mb, mc, md;
@@ -124,7 +124,7 @@ function cubicExtrema(x0, x1, x2, x3, cb) {
   let t0 = 0, t1 = 0, r;
 
   // solve for parameter t
-  if (Math.abs(a) > Epsilon) {
+  if (Math.abs(a) > EPSILON) {
     // quadratic equation
     r = b * b + c * a;
     if (r >= 0) {

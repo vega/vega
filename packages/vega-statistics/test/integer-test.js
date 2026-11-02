@@ -55,3 +55,11 @@ tape('integer evaluates the inverse cdf', t => {
   t.equal(n1.icdf(0.9), 4);
   t.end();
 });
+
+tape('integer inverse cdf inverts the cdf despite floating point error', t => {
+  const n1 = integer(0, 25);
+  // 0.28 * 25 === 7.000000000000001
+  t.equal(n1.icdf(n1.cdf(6)), 6);
+  for (let x = 0; x < 25; ++x) t.equal(n1.icdf(n1.cdf(x)), x);
+  t.end();
+});

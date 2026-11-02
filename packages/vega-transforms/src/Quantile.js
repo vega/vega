@@ -1,3 +1,4 @@
+import {EPSILON} from './util/constants.js';
 import {partition} from './util/util.js';
 import {Transform, ingest} from 'vega-dataflow';
 import {quantiles} from 'vega-statistics';
@@ -35,8 +36,6 @@ Quantile.Definition = {
     { 'name': 'as', 'type': 'string', 'array': true, 'default': ['prob', 'value'] }
   ]
 };
-
-const EPSILON = 1e-14;
 
 inherits(Quantile, Transform, {
   transform(_, pulse) {
