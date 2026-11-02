@@ -1,4 +1,4 @@
-import {SQRT2, SQRT2PI} from './constants.js';
+import {Sqrt2, Sqrt2Pi} from './constants.js';
 import {random} from './random.js';
 
 let nextSample = NaN;
@@ -27,7 +27,7 @@ export function sampleNormal(mean, stdev) {
 export function densityNormal(value, mean, stdev) {
   stdev = stdev == null ? 1 : stdev;
   const z = (value - (mean || 0)) / stdev;
-  return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
+  return Math.exp(-0.5 * z * z) / (stdev * Sqrt2Pi);
 }
 
 // Approximation from West (2009)
@@ -76,7 +76,7 @@ export function cumulativeNormal(value, mean, stdev) {
 // Approximation of Probit function using inverse error function.
 export function quantileNormal(p, mean, stdev) {
   if (p < 0 || p > 1) return NaN;
-  return (mean || 0) + (stdev == null ? 1 : stdev) * SQRT2 * erfinv(2 * p - 1);
+  return (mean || 0) + (stdev == null ? 1 : stdev) * Sqrt2 * erfinv(2 * p - 1);
 }
 
 // Approximate inverse error function. Implementation from "Approximating
