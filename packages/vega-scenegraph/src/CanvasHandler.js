@@ -11,6 +11,7 @@ import {
 } from './util/events.js';
 import point from './util/point.js';
 import {domFind} from './util/dom.js';
+import {isOffscreenCanvas} from 'vega-canvas';
 
 export default class CanvasHandler extends Handler {
   constructor(loader, tooltip) {
@@ -19,6 +20,7 @@ export default class CanvasHandler extends Handler {
     this._touch = null;
     this._first = true;
     this._events = {};
+    this._isOffscreen = false;
 
     // supported events
     this.events = Events;
@@ -35,14 +37,18 @@ export default class CanvasHandler extends Handler {
   }
 
   initialize(el, origin, obj) {
-    this._canvas = el && domFind(el, 'canvas');
+    // a canvas supplied via options takes the place of a DOM element search
+    this._canvas = (obj && obj.canvas) || (el && domFind(el, 'canvas'));
+    this._isOffscreen = isOffscreenCanvas(this._canvas);
 
-    // add minimal events required for proper state management
-    [
-      ClickEvent, MouseDownEvent,
-      PointerDownEvent, PointerMoveEvent, PointerOutEvent,
-      DragLeaveEvent
-    ].forEach(type => eventListenerCheck(this, type));
+    if (this._canvas && !this._isOffscreen) {
+      // add minimal events required for proper state management
+      [
+        ClickEvent, MouseDownEvent,
+        PointerDownEvent, PointerMoveEvent, PointerOutEvent,
+        DragLeaveEvent
+      ].forEach(type => eventListenerCheck(this, type));
+    }
 
     return super.initialize(el, origin, obj);
   }
@@ -185,7 +191,9 @@ function eventListenerCheck(handler, type) {
 
 function addEventListener(handler, type) {
   const canvas = handler.canvas();
-  if (canvas && !handler._events[type]) {
+  // OffscreenCanvas never receives DOM-dispatched events, so skip
+  // attachment on every registration path, not just the initial batch
+  if (canvas && !handler._isOffscreen && !handler._events[type]) {
     handler._events[type] = 1;
     canvas.addEventListener(type, handler[type]
       ? evt => handler[type](evt)
