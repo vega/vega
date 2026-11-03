@@ -1,6 +1,6 @@
 import {
-  allOf, array, booleanOrSignal, booleanType, def, enums, not, object,
-  oneOf, stringOrSignal, stringType
+  allOf, array, booleanOrSignal, booleanType, def, enums, not, numberType,
+  object, oneOf, stringOrSignal, stringType
 } from './util.js';
 
 // types defined elsewhere
@@ -73,7 +73,8 @@ const mark = object({
   interactive: booleanOrSignal,
   encode: def('encode'),
   transform: array(def('transformMark')),
-  on: def('onMarkTrigger')
+  on: def('onMarkTrigger'),
+  zindex: numberType
 }, undefined);
 
 const markGroup = allOf(
