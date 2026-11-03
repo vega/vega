@@ -121,7 +121,7 @@
                   "items": [
                     {
                       "x": 30,
-                      "y": 99,
+                      "y": 58.79,
                       "align": "center",
                       "baseline": "top",
                       "fill": "#000",
@@ -256,7 +256,7 @@
                   "clip": false,
                   "items": [
                     {
-                      "x": -115,
+                      "x": -96.03,
                       "y": 30,
                       "align": "center",
                       "baseline": "bottom",

@@ -18,13 +18,54 @@ function useCanvas(use) {
   textMetrics.width = (use && context) ? measureWidth : estimateWidth;
 }
 
-// make simple estimate if no canvas is available
-function estimateWidth(item, text) {
-  return _estimateWidth(textValue(item, text), fontSize(item));
+// Advance widths of printable ASCII in thousandths of an em, from Helvetica,
+// whose metrics Arial and Liberation Sans share. Most systems resolve the
+// default sans-serif font to one of them.
+const ASCII_WIDTHS = [
+  278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
+  556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556,
+  1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
+  667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
+  333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
+  556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584
+];
+
+const ZWJ = 0x200d;
+
+function charWidth(c) {
+  return c >= 32 && c < 127 ? ASCII_WIDTHS[c - 32]
+    // combining marks, zero-width characters, variation selectors,
+    // emoji skin tone modifiers and tags extend the previous character
+    : (c >= 0x0300 && c <= 0x036f) || (c >= 0x200b && c <= 0x200f)
+      || (c >= 0xfe00 && c <= 0xfe0f) || (c >= 0x1f3fb && c <= 0x1f3ff)
+      || (c >= 0xe0000 && c <= 0xe007f) || c === 0x20e3 ? 0
+    : (c >= 0x1f300 && c <= 0x1faff) ? 1250
+    : (c >= 0x1100 && c <= 0x115f) || (c >= 0x2e80 && c <= 0xa4cf)
+      || (c >= 0xac00 && c <= 0xd7a3) || (c >= 0xf900 && c <= 0xfaff)
+      || (c >= 0xfe30 && c <= 0xfe4f) || (c >= 0xff00 && c <= 0xff60)
+      || (c >= 0xffe0 && c <= 0xffe6) || (c >= 0x20000 && c <= 0x3fffd) ? 1000
+    : 600;
 }
 
-function _estimateWidth(text, currentFontHeight) {
-  return ~~(0.8 * text.length * currentFontHeight);
+function isBold(item) {
+  const w = item.fontWeight;
+  return w === 'bold' || w === 'bolder' || +w >= 600;
+}
+
+// estimate text width if no canvas is available
+function estimateWidth(item, text) {
+  return _estimateWidth(textValue(item, text), item);
+}
+
+function _estimateWidth(text, item) {
+  let width = 0, joined = false;
+  for (const char of text) {
+    const c = char.codePointAt(0);
+    // a character joined by ZWJ is part of the previous emoji
+    if (!joined) width += charWidth(c);
+    joined = c === ZWJ;
+  }
+  return width * fontSize(item) * (isBold(item) ? 1.1 : 1) / 1000;
 }
 
 // measure text width if canvas is available
@@ -81,8 +122,7 @@ function widthGetter(item) {
     return text => _measureWidth(text, currentFont);
   } else if (textMetrics.width === estimateWidth) {
     // we are relying on estimates
-    const currentFontHeight = fontSize(item);
-    return text => _estimateWidth(text, currentFontHeight);
+    return text => _estimateWidth(text, item);
   } else {
     // User defined textMetrics.width function in use (e.g. vl-convert)
     return text => textMetrics.width(item, text);

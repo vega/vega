@@ -16727,8 +16727,12 @@
               "fontSize": 8
             },
             {
+              "x": 800,
+              "y": 140.45652173913044,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Annie Get Your Gun",
               "font": "sans-serif",
               "fontSize": 8
@@ -16749,9 +16753,9 @@
             },
             {
               "x": 568,
-              "y": 394.80434782608694,
+              "y": 387.80434782608694,
               "align": "center",
-              "baseline": "top",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Alive",
@@ -16928,15 +16932,23 @@
               "fontSize": 8
             },
             {
+              "x": 667.5,
+              "y": 221.7391304347826,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Benji",
               "font": "sans-serif",
               "fontSize": 8
             },
             {
+              "x": 803.5,
+              "y": 78.26086956521733,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Before Sunrise",
               "font": "sans-serif",
               "fontSize": 8
@@ -17016,8 +17028,12 @@
               "fontSize": 8
             },
             {
+              "x": 803.5,
+              "y": 52.17391304347822,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Big Parade",
               "font": "sans-serif",
               "fontSize": 8
@@ -17448,10 +17464,10 @@
               "fontSize": 8
             },
             {
-              "x": 739.5,
-              "y": 267.39130434782606,
-              "align": "left",
-              "baseline": "middle",
+              "x": 736,
+              "y": 263.89130434782606,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Cinderella",
@@ -17747,9 +17763,9 @@
             },
             {
               "x": 624,
-              "y": 310.02173913043475,
+              "y": 303.02173913043475,
               "align": "center",
-              "baseline": "top",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Day of the Dead",
@@ -17946,8 +17962,12 @@
               "fontSize": 8
             },
             {
+              "x": 800,
+              "y": 173.06521739130437,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Fall of the Roman Empire",
               "font": "sans-serif",
               "fontSize": 8
@@ -18048,12 +18068,8 @@
               "fontSize": 8
             },
             {
-              "x": 552,
-              "y": 381.28260869565213,
-              "align": "center",
-              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "The Fog",
               "font": "sans-serif",
               "fontSize": 8
@@ -18126,8 +18142,12 @@
               "fontSize": 8
             },
             {
+              "x": 611.5,
+              "y": 241.30434782608688,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Firm",
               "font": "sans-serif",
               "fontSize": 8
@@ -18449,12 +18469,8 @@
               "fontSize": 8
             },
             {
-              "x": 803.5,
-              "y": 84.78260869565209,
-              "align": "left",
-              "baseline": "middle",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Henry V",
               "font": "sans-serif",
               "fontSize": 8
@@ -18555,8 +18571,12 @@
               "fontSize": 8
             },
             {
+              "x": 748.5,
+              "y": 247.82608695652172,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "House of Wax",
               "font": "sans-serif",
               "fontSize": 8
@@ -18730,12 +18750,8 @@
               "fontSize": 8
             },
             {
-              "x": 803.5,
-              "y": 58.69565217391297,
-              "align": "left",
-              "baseline": "middle",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Jaws",
               "font": "sans-serif",
               "fontSize": 8
@@ -18776,8 +18792,12 @@
               "fontSize": 8
             },
             {
+              "x": 364.5,
+              "y": 104.34782608695652,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "King Kong",
               "font": "sans-serif",
               "fontSize": 8
@@ -19099,8 +19119,12 @@
               "fontSize": 8
             },
             {
+              "x": 803.5,
+              "y": 97.8260869565217,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Mary Poppins",
               "font": "sans-serif",
               "fontSize": 8
@@ -19463,8 +19487,12 @@
               "fontSize": 8
             },
             {
+              "x": 763.5,
+              "y": 254.3478260869565,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "A Nightmare on Elm Street",
               "font": "sans-serif",
               "fontSize": 8
@@ -19477,12 +19505,8 @@
               "fontSize": 8
             },
             {
-              "x": 776,
-              "y": 185.63043478260866,
-              "align": "center",
-              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Notorious",
               "font": "sans-serif",
               "fontSize": 8
@@ -19565,8 +19589,12 @@
               "fontSize": 8
             },
             {
+              "x": 672,
+              "y": 251.32608695652172,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Omen",
               "font": "sans-serif",
               "fontSize": 8
@@ -19874,8 +19902,12 @@
               "fontSize": 8
             },
             {
+              "x": 752,
+              "y": 16.0652173913043,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Pulp Fiction",
               "font": "sans-serif",
               "fontSize": 8
@@ -19909,12 +19941,8 @@
               "fontSize": 8
             },
             {
-              "x": 704,
-              "y": 225.2391304347826,
-              "align": "center",
-              "baseline": "top",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Quo Vadis?",
               "font": "sans-serif",
               "fontSize": 8
@@ -20141,10 +20169,10 @@
               "fontSize": 8
             },
             {
-              "x": 483.5,
-              "y": 345.65217391304344,
-              "align": "left",
-              "baseline": "middle",
+              "x": 480,
+              "y": 349.15217391304344,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
               "opacity": 1,
               "text": "Raise the Titanic",
@@ -20338,8 +20366,12 @@
               "fontSize": 8
             },
             {
+              "x": 148.5,
+              "y": 358.69565217391306,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Ishtar",
               "font": "sans-serif",
               "fontSize": 8
@@ -20433,8 +20465,12 @@
               "fontSize": 8
             },
             {
+              "x": 696,
+              "y": 29.10869565217392,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Usual Suspects",
               "font": "sans-serif",
               "fontSize": 8
@@ -20524,8 +20560,12 @@
               "fontSize": 8
             },
             {
+              "x": 800,
+              "y": 238.28260869565216,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Straight out of Brooklyn",
               "font": "sans-serif",
               "fontSize": 8
@@ -20837,8 +20877,12 @@
               "fontSize": 8
             },
             {
+              "x": 336,
+              "y": 296.9782608695652,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Tank Girl",
               "font": "sans-serif",
               "fontSize": 8
@@ -20893,12 +20937,8 @@
               "fontSize": 8
             },
             {
-              "x": 755.5,
-              "y": 149.99999999999994,
-              "align": "left",
-              "baseline": "middle",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Time Bandits",
               "font": "sans-serif",
               "fontSize": 8
@@ -21003,9 +21043,9 @@
             },
             {
               "x": 544,
-              "y": 414.36956521739125,
+              "y": 407.36956521739125,
               "align": "center",
-              "baseline": "top",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Tron",
@@ -21076,8 +21116,12 @@
               "fontSize": 8
             },
             {
+              "x": 803.5,
+              "y": 65.21739130434784,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Toy Story",
               "font": "sans-serif",
               "fontSize": 8
@@ -21370,8 +21414,12 @@
               "fontSize": 8
             },
             {
+              "x": 243.5,
+              "y": 313.0434782608695,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "102 Dalmatians",
               "font": "sans-serif",
               "fontSize": 8
@@ -21616,8 +21664,12 @@
               "fontSize": 8
             },
             {
+              "x": 40,
+              "y": 211.71739130434779,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "88 Minutes",
               "font": "sans-serif",
               "fontSize": 8
@@ -21732,10 +21784,10 @@
               "fontSize": 8
             },
             {
-              "x": 360,
-              "y": 303.5,
-              "align": "center",
-              "baseline": "top",
+              "x": 363.5,
+              "y": 300,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
               "opacity": 1,
               "text": "Air Bud",
@@ -22315,8 +22367,12 @@
               "fontSize": 8
             },
             {
+              "x": 424,
+              "y": 107.36956521739127,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Across the Universe",
               "font": "sans-serif",
               "fontSize": 8
@@ -22375,8 +22431,12 @@
               "fontSize": 8
             },
             {
+              "x": 192,
+              "y": 172.58695652173913,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Awake",
               "font": "sans-serif",
               "fontSize": 8
@@ -22417,7 +22477,7 @@
               "fontSize": 8
             },
             {
-              "x": 19.5,
+              "x": 19.499999999999996,
               "y": 456.52173913043475,
               "align": "left",
               "baseline": "middle",
@@ -22870,8 +22930,12 @@
               "fontSize": 8
             },
             {
+              "x": 435.5,
+              "y": 117.39130434782601,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Blow",
               "font": "sans-serif",
               "fontSize": 8
@@ -22905,8 +22969,12 @@
               "fontSize": 8
             },
             {
+              "x": 152,
+              "y": 87.8043478260869,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Boondock Saints",
               "font": "sans-serif",
               "fontSize": 8
@@ -23119,10 +23187,10 @@
               "fontSize": 8
             },
             {
-              "x": 500.5,
-              "y": 417.39130434782606,
-              "align": "right",
-              "baseline": "middle",
+              "x": 504,
+              "y": 413.89130434782606,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "The Brothers",
@@ -23284,8 +23352,12 @@
               "fontSize": 8
             },
             {
+              "x": 768,
+              "y": 224.76086956521735,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Catch Me if You Can",
               "font": "sans-serif",
               "fontSize": 8
@@ -23298,8 +23370,12 @@
               "fontSize": 8
             },
             {
+              "x": 80,
+              "y": 394.80434782608694,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Catwoman",
               "font": "sans-serif",
               "fontSize": 8
@@ -23498,10 +23574,10 @@
               "fontSize": 8
             },
             {
-              "x": 115.5,
-              "y": 463.04347826086956,
-              "align": "left",
-              "baseline": "middle",
+              "x": 112.00000000000001,
+              "y": 466.54347826086956,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
               "opacity": 1,
               "text": "Chairman of the Board",
@@ -23593,8 +23669,12 @@
               "fontSize": 8
             },
             {
+              "x": 544,
+              "y": 414.36956521739125,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Closer",
               "font": "sans-serif",
               "fontSize": 8
@@ -23838,15 +23918,23 @@
               "fontSize": 8
             },
             {
+              "x": 600,
+              "y": 205.67391304347822,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Crash",
               "font": "sans-serif",
               "fontSize": 8
             },
             {
+              "x": 24,
+              "y": 485.6304347826087,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Crossover",
               "font": "sans-serif",
               "fontSize": 8
@@ -23985,8 +24073,12 @@
               "fontSize": 8
             },
             {
+              "x": 136,
+              "y": 374.7608695652173,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Dance Flick",
               "font": "sans-serif",
               "fontSize": 8
@@ -24384,8 +24476,12 @@
               "fontSize": 8
             },
             {
+              "x": 160,
+              "y": 381.7608695652173,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Derailed",
               "font": "sans-serif",
               "fontSize": 8
@@ -24412,8 +24508,12 @@
               "fontSize": 8
             },
             {
+              "x": 32,
+              "y": 250.84782608695653,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Darkness",
               "font": "sans-serif",
               "fontSize": 8
@@ -24454,10 +24554,10 @@
               "fontSize": 8
             },
             {
-              "x": 651.5,
-              "y": 260.86956521739125,
-              "align": "left",
-              "baseline": "middle",
+              "x": 648,
+              "y": 264.36956521739125,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
               "opacity": 1,
               "text": "Drumline",
@@ -24662,8 +24762,12 @@
               "fontSize": 8
             },
             {
+              "x": 672,
+              "y": 160.02173913043475,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Elf",
               "font": "sans-serif",
               "fontSize": 8
@@ -25086,10 +25190,10 @@
               "fontSize": 8
             },
             {
-              "x": 648,
-              "y": 22.586956521739047,
-              "align": "center",
-              "baseline": "bottom",
+              "x": 644.5,
+              "y": 26.086956521739047,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
               "opacity": 1,
               "text": "Fight Club",
@@ -25539,8 +25643,12 @@
               "fontSize": 8
             },
             {
+              "x": 51.5,
+              "y": 443.4782608695652,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Gigli",
               "font": "sans-serif",
               "fontSize": 8
@@ -25593,9 +25701,9 @@
             },
             {
               "x": 320,
-              "y": 75.2391304347826,
+              "y": 68.2391304347826,
               "align": "center",
-              "baseline": "top",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Gandhi, My Father",
@@ -25841,10 +25949,10 @@
               "fontSize": 8
             },
             {
-              "x": 752,
-              "y": 212.19565217391303,
-              "align": "center",
-              "baseline": "top",
+              "x": 755.5,
+              "y": 208.69565217391303,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
               "opacity": 1,
               "text": "Hamlet",
@@ -25944,9 +26052,9 @@
             },
             {
               "x": 528,
-              "y": 394.80434782608694,
+              "y": 387.80434782608694,
               "align": "center",
-              "baseline": "top",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Heist",
@@ -26042,8 +26150,12 @@
               "fontSize": 8
             },
             {
+              "x": 552,
+              "y": 231.76086956521735,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Hitch",
               "font": "sans-serif",
               "fontSize": 8
@@ -26105,10 +26217,10 @@
               "fontSize": 8
             },
             {
-              "x": 755.5,
-              "y": 365.21739130434787,
-              "align": "left",
-              "baseline": "middle",
+              "x": 752,
+              "y": 361.71739130434787,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Milk",
@@ -26554,10 +26666,10 @@
               "fontSize": 8
             },
             {
-              "x": 692.5,
-              "y": 6.521739130434746,
-              "align": "right",
-              "baseline": "middle",
+              "x": 696,
+              "y": 10.021739130434746,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
               "opacity": 1,
               "text": "Inception",
@@ -26747,8 +26859,12 @@
               "fontSize": 8
             },
             {
+              "x": 344,
+              "y": 133.45652173913044,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Jacket",
               "font": "sans-serif",
               "fontSize": 8
@@ -27104,9 +27220,9 @@
               "fontSize": 8
             },
             {
-              "x": 323.5,
+              "x": 316.5,
               "y": 123.91304347826082,
-              "align": "left",
+              "align": "right",
               "baseline": "middle",
               "fill": "#000",
               "opacity": 1,
@@ -27157,8 +27273,12 @@
               "fontSize": 8
             },
             {
+              "x": 200,
+              "y": 126.93478260869563,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Law Abiding Citizen",
               "font": "sans-serif",
               "fontSize": 8
@@ -27311,8 +27431,12 @@
               "fontSize": 8
             },
             {
+              "x": 296,
+              "y": 94.3260869565217,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Equilibrium",
               "font": "sans-serif",
               "fontSize": 8
@@ -27339,10 +27463,10 @@
               "fontSize": 8
             },
             {
-              "x": 160,
-              "y": 120.41304347826082,
-              "align": "center",
-              "baseline": "bottom",
+              "x": 156.5,
+              "y": 123.91304347826082,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
               "opacity": 1,
               "text": "The Life of David Gale",
@@ -27704,12 +27828,8 @@
               "fontSize": 8
             },
             {
-              "x": 304,
-              "y": 94.3260869565217,
-              "align": "center",
-              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Man on Fire",
               "font": "sans-serif",
               "fontSize": 8
@@ -27817,10 +27937,10 @@
               "fontSize": 8
             },
             {
-              "x": 243.5,
-              "y": 397.8260869565217,
-              "align": "left",
-              "baseline": "middle",
+              "x": 240,
+              "y": 394.3260869565217,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
               "opacity": 1,
               "text": "Meet the Browns",
@@ -27891,8 +28011,12 @@
               "fontSize": 8
             },
             {
+              "x": 208,
+              "y": 401.3260869565217,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Madea Goes To Jail",
               "font": "sans-serif",
               "fontSize": 8
@@ -28668,8 +28792,12 @@
               "fontSize": 8
             },
             {
+              "x": 416,
+              "y": 74.76086956521733,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Notebook",
               "font": "sans-serif",
               "fontSize": 8
@@ -28717,8 +28845,12 @@
               "fontSize": 8
             },
             {
+              "x": 60.5,
+              "y": 195.6521739130434,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Number 23",
               "font": "sans-serif",
               "fontSize": 8
@@ -29377,12 +29509,8 @@
               "fontSize": 8
             },
             {
-              "x": 280,
-              "y": 310.02173913043475,
-              "align": "center",
-              "baseline": "top",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "Psycho",
               "font": "sans-serif",
               "fontSize": 8
@@ -29994,8 +30122,12 @@
               "fontSize": 8
             },
             {
+              "x": 272,
+              "y": 113.89130434782601,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "I Am Sam",
               "font": "sans-serif",
               "fontSize": 8
@@ -30954,8 +31086,12 @@
               "fontSize": 8
             },
             {
+              "x": 96,
+              "y": 427.4130434782609,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Steel",
               "font": "sans-serif",
               "fontSize": 8
@@ -31640,8 +31776,12 @@
               "fontSize": 8
             },
             {
+              "x": 795.5,
+              "y": 19.5652173913043,
+              "align": "left",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Toy Story 3",
               "font": "sans-serif",
               "fontSize": 8
@@ -31834,8 +31974,12 @@
               "fontSize": 8
             },
             {
+              "x": 64,
+              "y": 368.71739130434787,
+              "align": "center",
+              "baseline": "top",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "The Wash",
               "font": "sans-serif",
               "fontSize": 8
@@ -32076,8 +32220,12 @@
               "fontSize": 8
             },
             {
+              "x": 580.5,
+              "y": 65.21739130434784,
+              "align": "right",
+              "baseline": "middle",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "V for Vendetta",
               "font": "sans-serif",
               "fontSize": 8
@@ -32150,12 +32298,8 @@
               "fontSize": 8
             },
             {
-              "x": 195.5,
-              "y": 384.78260869565213,
-              "align": "left",
-              "baseline": "middle",
               "fill": "#000",
-              "opacity": 1,
+              "opacity": 0,
               "text": "The Flintstones in Viva Rock Vegas",
               "font": "sans-serif",
               "fontSize": 8
@@ -32357,8 +32501,12 @@
               "fontSize": 8
             },
             {
+              "x": 192,
+              "y": 146.49999999999994,
+              "align": "center",
+              "baseline": "bottom",
               "fill": "#000",
-              "opacity": 0,
+              "opacity": 1,
               "text": "Wicker Park",
               "font": "sans-serif",
               "fontSize": 8

@@ -789,7 +789,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -27.68,
                               "y": 50,
                               "align": "center",
                               "baseline": "bottom",
@@ -1834,7 +1834,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -27.68,
                               "y": 50,
                               "align": "center",
                               "baseline": "bottom",
@@ -2078,7 +2078,7 @@
                           "zindex": 0
                         }
                       ],
-                      "x": -77.00000000000001,
+                      "x": -69.68,
                       "y": 50,
                       "align": "center",
                       "orient": "left",
@@ -2879,7 +2879,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -27.68,
                               "y": 50,
                               "align": "center",
                               "baseline": "bottom",
@@ -3925,7 +3925,7 @@
                           "clip": false,
                           "items": [
                             {
-                              "x": -35,
+                              "x": -27.68,
                               "y": 50,
                               "align": "center",
                               "baseline": "bottom",
