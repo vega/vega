@@ -64,6 +64,7 @@ function numberLocale(locale) {
       let precision;
 
       if (specifier.precision == null) {
+        if (!step) return this.formatFloat(specifier);
         switch (specifier.type) {
           case 's': {
             if (!isNaN(precision = precisionPrefix(step, value))) {
