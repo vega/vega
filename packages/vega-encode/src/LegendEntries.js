@@ -79,11 +79,13 @@ inherits(LegendEntries, Transform, {
       );
 
       if (ellipsis) {
+        const remaining = values.length - items.length;
         ellipsis = values[items.length];
         items.push(ingest({
-          index:    items.length,
-          label:    `\u2026${values.length-items.length} entries`,
-          value:    ellipsis,
+          index:     items.length,
+          label:     `\u2026${remaining} entries`,
+          remaining: remaining,
+          value:     ellipsis,
           offset:   offset,
           size:     size(ellipsis, _)
         }));
