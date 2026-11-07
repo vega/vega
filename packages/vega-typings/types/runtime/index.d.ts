@@ -298,6 +298,36 @@ export function schemeDiscretized(name: string, scheme?: any, interpolator?: any
 
 export function expressionFunction(name: string, fn?: any, visitor?: any): any;
 
+/**
+ * Output of a text processor. Metrics are in em units, relative to the font size.
+ */
+export interface TextProcessorOutput {
+  /** SVG markup with a root `svg` element and a `viewBox` attribute. */
+  svg: string;
+  /** Width of the output, in em units. */
+  width: number;
+  /** Distance from the text baseline to the top of the output, in em units. */
+  ascent: number;
+  /** Distance from the text baseline to the bottom of the output, in em units. */
+  descent: number;
+  /** Text to use for selection, copying and accessibility labels. Defaults to the source text. */
+  copyText?: string;
+}
+
+/**
+ * A text processor converts text into SVG output synchronously, and returns
+ * null if the text can not be processed. A processor that needs to load
+ * resources may return a Promise instead; it is invoked again once the
+ * Promise resolves.
+ */
+export type TextProcessor = (text: string) => TextProcessorOutput | Promise<unknown> | null;
+
+/**
+ * Get or set a named text processor. See https://vega.github.io/vega/docs/api/extensibility/#textProcessor.
+ */
+export function textProcessor(name: string): TextProcessor | undefined;
+export function textProcessor(name: string, processor: TextProcessor | null): TextProcessor | null;
+
 export const transforms: { [name: string]: Transform };
 
 export function resetSVGDefIds(): void;
