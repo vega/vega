@@ -1,6 +1,6 @@
 import {AxisRole, Group, LegendRole, TitleRole} from './constants.js';
 import {Transform} from 'vega-dataflow';
-import {Marks, boundClip} from 'vega-scenegraph';
+import {Marks, boundClip, textProcessorPending, textProcessorWarnings} from 'vega-scenegraph';
 import {inherits} from 'vega-util';
 
 /**
@@ -40,12 +40,7 @@ inherits(Bound, Transform, {
       mark.items.forEach(item => markBounds.union(boundItem(item, bound)));
 
       // force reflow for axes/legends/titles to propagate any layout changes
-      switch (mark.role) {
-        case AxisRole:
-        case LegendRole:
-        case TitleRole:
-          pulse.reflow();
-      }
+      reflow(mark, pulse);
     }
 
     else {
@@ -71,9 +66,46 @@ inherits(Bound, Transform, {
     // ensure mark bounds do not exceed any clipping region
     boundClip(mark);
 
-    return pulse.modifies('bounds');
+    const out = pulse.modifies('bounds');
+
+    // text processors may need to load resources (such as font data):
+    // wait for them, then re-bound, so that evaluation and exported images
+    // include the processed text rather than the standard text fallback
+    if (type === 'text') {
+      textProcessorWarnings().forEach(msg => view.warn(msg));
+      const pending = textProcessorPending();
+      if (pending.length) return reprocess(view, mark, bound, pulse, pending);
+    }
+
+    return out;
   }
 });
+
+async function reprocess(view, mark, bound, pulse, pending) {
+  // processors bound the number of retries for a text, so this terminates
+  while (pending.length) {
+    await Promise.allSettled(pending);
+    mark.bounds.clear();
+    mark.items.forEach(item => {
+      view.dirty(item);
+      mark.bounds.union(boundItem(item, bound));
+    });
+    boundClip(mark);
+    textProcessorWarnings().forEach(msg => view.warn(msg));
+    pending = textProcessorPending();
+  }
+  reflow(mark, pulse);
+  return pulse;
+}
+
+function reflow(mark, pulse) {
+  switch (mark.role) {
+    case AxisRole:
+    case LegendRole:
+    case TitleRole:
+      pulse.reflow();
+  }
+}
 
 function boundItem(item, bound, opt) {
   return bound(item.bounds.clear(), item, opt);
