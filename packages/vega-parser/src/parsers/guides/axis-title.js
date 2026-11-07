@@ -47,7 +47,8 @@ export default function(spec, config, userEncode, dataRef) {
     fontStyle:   _('titleFontStyle'),
     fontWeight:  _('titleFontWeight'),
     limit:       _('titleLimit'),
-    lineHeight:  _('titleLineHeight')
+    lineHeight:  _('titleLineHeight'),
+    textProcessor: _('titleTextProcessor')
   }, { // require update
     align:       _('titleAlign'),
     angle:       _('titleAngle'),

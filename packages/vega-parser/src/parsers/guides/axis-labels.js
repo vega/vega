@@ -94,7 +94,8 @@ export default function(spec, config, userEncode, dataRef, size, band) {
     fontWeight:  _('labelFontWeight'),
     fontStyle:   _('labelFontStyle'),
     limit:       _('labelLimit'),
-    lineHeight:  _('labelLineHeight')
+    lineHeight:  _('labelLineHeight'),
+    textProcessor: _('labelTextProcessor')
   }, {
     align:       labelAlign,
     baseline:    labelBaseline
