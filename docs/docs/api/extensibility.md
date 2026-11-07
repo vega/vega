@@ -4,7 +4,7 @@ title: Extensibility API
 permalink: /docs/api/extensibility/index.html
 ---
 
-Vega can be **extended** at runtime with new [scales](../../scales), [projections](../../projections), [color schemes](../../schemes), and [data transforms](../../transforms). While sometimes useful for custom deployments, keep in mind that extending Vega with new components can result in Vega JSON specifications that others may not be able to use directly.
+Vega can be **extended** at runtime with new [scales](../../scales), [projections](../../projections), [color schemes](../../schemes), [data transforms](../../transforms), and [text processors](#textProcessors). While sometimes useful for custom deployments, keep in mind that extending Vega with new components can result in Vega JSON specifications that others may not be able to use directly.
 
 ## Extensibility API Reference
 
@@ -14,6 +14,7 @@ Vega can be **extended** at runtime with new [scales](../../scales), [projection
 - [Transforms](#transform)
 - [Data Formats](#format)
 - [Expression Functions](#expressions)
+- [Text Processors](#textProcessors)
 
 
 ## <a name="projections"></a>Projections
@@ -143,3 +144,73 @@ Registry function for adding and accessing expression functions. The *name* argu
 The *visitor* argument is an expression AST (abstract syntax tree) visitor function which can be used to perform dependency analysis (e.g., for scale or data source lookups), and is used internally by Vega. For most basic functions no visitor is needed, in which case this argument can be omitted.
 
 Note that new expressions must be added _before_ parsing a spec that uses the custom function. After registering a new expression function, all subsequently parsed Vega specifications will have access to the function.
+
+
+## <a name="textProcessors"></a>Text Processors {% include tag ver="6.5" %}
+
+<a name="textProcessor" href="#textProcessor">#</a>
+vega.<b>textProcessor</b>(<i>name</i>[, <i>processor</i>])
+[<>](https://github.com/vega/vega/blob/main/packages/vega-scenegraph/src/util/textProcessor.js "Source")
+
+Registry function for adding and accessing text processors, which render the text of [text marks](../../marks/text/#text-processors) using an external library, such as for math typesetting. The *name* argument is a String indicating the processor name, as used by the *textProcessor* property of text marks, and the related properties of [titles](../../title), [axes](../../axes) and [legends](../../legends). The name `"default"` is reserved for standard text rendering. If the *processor* argument is not specified, this method returns the processor registered under the given *name*, or `undefined` if not found. If the *processor* argument is `null`, the processor is removed from the registry.
+
+The *processor* argument is a function that takes a text string and returns an object describing an SVG image of the processed text, or `null` if the text can not be processed. The returned object must have the following properties:
+
+- *svg*: An SVG markup string with a root `svg` element that includes a `viewBox` attribute. The image is scaled to the computed width and height, and any `width`, `height` and `style` attributes on the root element are ignored. Use `currentColor` to draw using the fill color of the text mark. The output is embedded as an image in both SVG and Canvas output, so it can not run scripts or load external resources: glyphs and other content must be included in the markup.
+- *width*: The width of the output in em units, relative to the font size.
+- *ascent*: The distance in em units from the text baseline to the top of the output.
+- *descent*: The distance in em units from the text baseline to the bottom of the output.
+- *copyText*: An optional string to use for text selection and accessibility labels in SVG output. Defaults to the processed text.
+
+Text processors run **synchronously**, as text bounds are calculated during dataflow evaluation. A processor that first needs to load resources, such as font data, may instead return a Promise that resolves once they are available. Dataflow evaluation then waits for the Promise and invokes the processor again, so that rendered and exported output (e.g., [`toSVG`](../view/#view_toSVG)) includes the processed text. A text is retried a limited number of times before standard text rendering is used and a warning is logged. Results are cached by processor name and text, so processors should return the same output for the same input; registering a processor again clears the cache for that name. Processors may be registered after a view is created: they apply the next time the view is evaluated.
+
+```js
+// a text processor that renders text as a filled box, for testing
+vega.textProcessor('box', text => ({
+  svg: `<svg viewBox="0 -800 ${600 * text.length} 1000">` +
+       `<rect y="-800" width="${600 * text.length}" height="1000" fill="currentColor"/></svg>`,
+  width: 0.6 * text.length,
+  ascent: 0.8,
+  descent: 0.2
+}));
+```
+
+<a name="textProcessor_mathjax"></a>**Using MathJax.** Any library that can produce SVG output can be used as a text processor. For example, the following registers a processor named `"tex"` that typesets LaTeX using [MathJax](https://www.mathjax.org/) version 4, loaded in the page with SVG output. MathJax describes the size of its output with a `viewBox` in thousandths of an em, with the text baseline at _y_ = 0. When MathJax needs to load font data, it throws an error with a `retry` Promise, which the processor returns so that Vega retries once the data has loaded. Input errors are thrown, so that Vega uses standard text rendering and logs the error message.
+
+```html
+<script>
+  window.MathJax = {
+    // one self-contained svg element per text, without inline line breaks
+    svg: {fontCache: 'none', linebreaks: {inline: false}},
+    startup: {typeset: false}
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-svg.js"></script>
+```
+
+```js
+await MathJax.startup.promise;
+
+vega.textProcessor('tex', text => {
+  let svg;
+  try {
+    svg = MathJax.tex2svg(text, {display: false}).firstChild;
+  } catch (err) {
+    // MathJax requests a retry when it needs to load font data
+    if (err.retry) return err.retry;
+    throw err;
+  }
+  const error = svg.querySelector('[data-mjx-error]');
+  if (error) throw new Error(error.getAttribute('data-mjx-error'));
+
+  const [, minY, width, height] = svg.getAttribute('viewBox').split(' ').map(Number);
+  return {
+    svg: new XMLSerializer().serializeToString(svg),
+    width: width / 1000,
+    ascent: -minY / 1000,
+    descent: (height + minY) / 1000
+  };
+});
+```
+
+MathML input can be registered in the same way using `MathJax.mathml2svg`. Libraries that produce HTML rather than SVG output, such as [KaTeX](https://katex.org/), can not be used directly as text processors: Vega needs the output's size during dataflow evaluation and draws it as an image in both renderers, including in headless environments such as Node.js, which requires self-contained SVG.
