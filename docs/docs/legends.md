@@ -52,6 +52,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | labelOffset   | {% include type t="Number" %}  | Offset in pixels between legend labels their corresponding symbol or gradient. |
 | labelOpacity  | {% include type t="Number" %}  | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap  | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
+| labelTextProcessor | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render legend labels, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 |labelSeparation| {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | legendX       | {% include type t="Number" %}  | The pixel x-coordinate of the legend group. Only applied if the _orient_ value is `"none"`. {% include tag ver="5.4" %} |
 | legendY       | {% include type t="Number" %}  | The pixel y-coordinate of the legend group. Only applied if the _orient_ value is `"none"`. {% include tag ver="5.4" %} |
@@ -81,6 +82,7 @@ Properties for specifying a legend. Legends accept one or more [scales](../scale
 | titleOpacity  | {% include type t="Number" %}  | Opacity of the legend title. {% include tag ver="4.1" %} |
 | titleOrient   | {% include type t="String" %}  | The orientation of the title legend, determining where it is placed relative to the legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding  | {% include type t="Number|Value" %} | The padding between the legend title and entries.|
+| titleTextProcessor | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render the legend title, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | values        | {% include type t="Array" %}   | Explicitly set the visible legend values. The array entries should be legal values in the backing scale domain.|
 | zindex        | {% include type t="Number" %}  | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. The default value is `0`.|
 
