@@ -436,3 +436,37 @@ tape('Label performs label layout over input multiple points outside of chart\'s
 
   t.end();
 });
+tape('Label does not place inside labels on top of previously placed labels', t => {
+  function data() {
+    return ['foo', 'bar'].map(text => ({
+      text, fontSize: 10,
+      datum: {
+        x: 5, y: 5, width: 40, height: 20, fill: 'black',
+        bounds: new Bounds().set(5, 5, 45, 25),
+        mark: {marktype: 'rect'}
+      }
+    }));
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect);
+  df.add(Label, {
+    size: [50, 30],
+    anchor: ['middle'],
+    offset: [0],
+    pulse: c0,
+    avoidBaseMark: true
+  });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  const out = c0.value;
+  closeTo(t, out[0].x, 25);
+  closeTo(t, out[0].y, 15);
+  t.equal(out[0].align, 'center');
+  t.equal(out[0].baseline, 'middle');
+  t.equal(out[0].opacity, 1);
+  // the second label has the same position as the first one, so it must stay hidden
+  t.equal(out[1].opacity, 0);
+
+  t.end();
+});

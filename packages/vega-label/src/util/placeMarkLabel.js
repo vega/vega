@@ -69,6 +69,8 @@ export default function($, bitmaps, anchors, offsets) {
         d.baseline = Baselines[dy * insideFactor + 1];
 
         bm0.setRange(_x1, _y1, _x2, _y2);
+        // inside anchors are tested against bm1, so mark the placed label there too
+        if (bm1) bm1.setRange(_x1, _y1, _x2, _y2);
         return true;
       }
     }
