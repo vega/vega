@@ -12,7 +12,10 @@ export default function($, bitmaps, anchors, offsets) {
 
   return function(d) {
     const boundary = d.boundary,
-          textHeight = d.datum.fontSize;
+          // processed text (e.g., typeset math) is measured up front, as it
+          // may be taller than its font size; otherwise width is found lazily
+          size = d.datum.textProcessor ? textMetrics.size(d.datum) : null,
+          textHeight = size ? size.height : d.datum.fontSize;
 
     // can not be placed if the mark is not visible in the graph bound
     if (boundary[2] < 0 || boundary[5] < 0 || boundary[0] > width || boundary[3] > height) {
@@ -49,7 +52,7 @@ export default function($, bitmaps, anchors, offsets) {
           continue;
         } else {
           // Otherwise, find the label width
-          textWidth = textMetrics.width(d.datum, d.datum.text);
+          textWidth = size ? size.width : textMetrics.width(d.datum, d.datum.text);
         }
       }
 

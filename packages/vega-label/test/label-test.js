@@ -1,7 +1,7 @@
 import tape from 'tape';
 import { truthy } from 'vega-util';
 import { Dataflow, changeset } from 'vega-dataflow';
-import {Bounds} from 'vega-scenegraph';
+import {Bounds, textProcessor} from 'vega-scenegraph';
 import {collect as Collect} from 'vega-transforms';
 import { label as Label } from '../index.js';
 
@@ -434,5 +434,58 @@ tape('Label performs label layout over input multiple points outside of chart\'s
   t.equal(out[1].baseline, 'middle');
   t.equal(out[1].opacity, 1);
 
+  t.end();
+});
+tape('Label uses processed text size for layout', t => {
+  // processed text is 1em wide and 2em tall: twice the height of plain text
+  textProcessor('label-test', () => ({
+    svg: '<svg viewBox="0 -1500 1000 2000"></svg>',
+    width: 1, ascent: 1.5, descent: 0.5
+  }));
+
+  function run(textProcessor) {
+    const df = new Dataflow(),
+          c0 = df.add(Collect),
+          lb = df.add(Label, {
+            size: [100, 50],
+            anchor: ['right'],
+            offset: [2],
+            pulse: c0
+          });
+
+    df.pulse(c0, changeset().insert([
+      {text: 'a', x: 20, y: 10, fontSize: 10, textProcessor},
+      {text: 'b', x: 20, y: 24, fontSize: 10, textProcessor}
+    ])).run();
+    t.equal(lb.stamp, df.stamp());
+    return c0.value.map(d => d.opacity);
+  }
+
+  t.deepEqual(run(undefined), [1, 1], 'plain labels do not overlap');
+  t.deepEqual(run('label-test'), [1, 0], 'taller processed labels overlap');
+  textProcessor('label-test', null);
+  t.end();
+});
+
+tape('Label repeats layout once text processor resources load', async t => {
+  let loaded = false;
+  const load = new Promise(r => setTimeout(() => { loaded = true; r(); }, 10));
+  textProcessor('label-pending', () => loaded
+    ? {svg: '<svg viewBox="0 -1500 1000 2000"></svg>', width: 1, ascent: 1.5, descent: 0.5}
+    : load);
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect);
+  df.add(Label, {size: [100, 50], anchor: ['right'], offset: [2], pulse: c0});
+
+  df.pulse(c0, changeset().insert([
+    {text: 'a', x: 20, y: 10, fontSize: 10, textProcessor: 'label-pending'},
+    {text: 'b', x: 20, y: 24, fontSize: 10, textProcessor: 'label-pending'}
+  ]));
+  await df.runAsync();
+
+  t.ok(loaded, 'resources loaded');
+  t.deepEqual(c0.value.map(d => d.opacity), [1, 0], 'layout uses processed size');
+  textProcessor('label-pending', null);
   t.end();
 });
