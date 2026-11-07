@@ -48,6 +48,7 @@ const title = oneOf(
     fontStyle: stringValue,
     fontWeight: fontWeightValue,
     lineHeight: numberValue,
+    textProcessor: stringValue,
 
     // SUBTITLE TEXT CONFIG
     subtitle: textOrSignal,
@@ -57,6 +58,7 @@ const title = oneOf(
     subtitleFontStyle: stringValue,
     subtitleFontWeight: fontWeightValue,
     subtitleLineHeight: numberValue,
+    subtitleTextProcessor: stringValue,
     subtitlePadding: numberOrSignal,
 
     // CUSTOM ENCODERS

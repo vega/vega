@@ -259,6 +259,8 @@ const encodeEntry = object({
   limit: numberValueRef,
   lineBreak: stringValueRef,
   lineHeight: numberValueRef,
+  textProcessor: stringValueRef,
+  textSelectable: booleanValueRef,
   dx: numberValueRef,
   dy: numberValueRef,
   radius:numberValueRef,
