@@ -82,6 +82,7 @@ const axis = object({
   titleFontWeight: fontWeightValue,
   titleLimit: numberValue,
   titleLineHeight: numberValue,
+  titleTextProcessor: stringValue,
   titleOpacity: numberValue,
 
   // DOMAIN CONFIG
@@ -135,6 +136,7 @@ const axis = object({
   labelFontStyle: stringValue,
   labelLimit: numberValue,
   labelLineHeight: numberValue,
+  labelTextProcessor: stringValue,
   labelOpacity: numberValue,
   labelOffset: numberValue,
   labelPadding: numberValue,
