@@ -231,7 +231,8 @@ export default class SVGRenderer extends Renderer {
       item = (mdef.nested ? mark.items[0] : item);
       if (item._update === id) continue; // already visited
 
-      if (!item._svg || !item._svg.ownerSVGElement) {
+      if (!item._svg || !item._svg.ownerSVGElement
+          || mdef.itemTag && item._svg.tagName !== mdef.itemTag(item)) {
         // ENTER
         this._dirtyAll = false;
         dirtyParents(item, id);
@@ -288,7 +289,8 @@ export default class SVGRenderer extends Renderer {
 
     const process = item => {
       const dirty = this.isDirty(item),
-            node = bind(item, parent, sibling, mdef.tag, svg);
+            tag = mdef.itemTag ? mdef.itemTag(item) : mdef.tag,
+            node = bind(item, parent, sibling, tag, svg, isGroup);
 
       if (dirty) {
         this._update(mdef, node, item);
@@ -509,8 +511,14 @@ function recurse(renderer, el, group, markTypes) {
 
 // Bind a scenegraph item to an SVG DOM element.
 // Create new SVG elements as needed.
-function bind(item, el, sibling, tag, svg) {
+function bind(item, el, sibling, tag, svg, isGroup) {
   let node = item._svg, doc;
+
+  // replace the dom node if the item's element type has changed
+  if (node && node.tagName !== tag) {
+    if (node.parentNode) node.parentNode.removeChild(node);
+    node = null;
+  }
 
   // create a new dom node if needed
   if (!node) {
@@ -523,7 +531,7 @@ function bind(item, el, sibling, tag, svg) {
       node.__values__ = {fill: 'default'};
 
       // if group, create background, content, and foreground elements
-      if (tag === 'g') {
+      if (isGroup) {
         const bg = domCreate(doc, 'path', svgns);
         node.appendChild(bg);
         bg.__data__ = item;
@@ -611,6 +619,13 @@ const mark_extras = {
     }
   },
   text(mdef, el, item) {
+    const content = mdef.itemContent(item);
+    if (content) {
+      // processed text: a group of child elements replaces the text content
+      setContent(el, content, item);
+      return;
+    }
+
     const tl = textLines(item);
     let key, value, doc, lh;
 
@@ -651,6 +666,31 @@ const mark_extras = {
     setAttribute(el, 'font-weight', item.fontWeight);
   }
 };
+
+// Set child elements of a processed text item, reusing existing nodes.
+function setContent(el, nodes, item) {
+  nodes.forEach((c, i) => {
+    const node = domChild(el, i, c.tag, svgns);
+    node.__data__ = item; // data binding
+
+    // remove attributes left over from previous content
+    for (const {name} of Array.from(node.attributes)) {
+      if (!(name in c.attrs)) node.removeAttribute(name);
+    }
+    for (const key in c.attrs) {
+      key === 'xlink:href'
+        ? setAttributeNS(node, key, c.attrs[key], metadata['xmlns:xlink'])
+        : setAttribute(node, key, c.attrs[key]);
+    }
+
+    if (c.text != null) {
+      if (node.textContent !== c.text) node.textContent = c.text;
+    } else {
+      setContent(node, c.children || [], item);
+    }
+  });
+  domClear(el, nodes.length);
+}
 
 function emit(name, value, ns) {
   // early exit if value is unchanged
