@@ -262,6 +262,11 @@ export interface BaseAxis {
   titleLineHeight?: NumberValue;
 
   /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render axis title text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  titleTextProcessor?: StringValue;
+
+  /**
    * Opacity of the axis title.
    */
   titleOpacity?: NumberValue;
@@ -475,6 +480,11 @@ export interface BaseAxis {
    * Line height in pixels for multi-line label text or label text with `"line-top"` or `"line-bottom"` baseline.
    */
   labelLineHeight?: NumberValue;
+
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render axis label text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  labelTextProcessor?: StringValue;
 
   /**
    * The strategy to use for resolving overlap of axis labels. If `false` (the default), no overlap reduction is attempted. If set to `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If set to `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).
