@@ -159,6 +159,11 @@ export interface BaseTitle {
    */
   lineHeight?: NumberValue;
 
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render title text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  textProcessor?: StringValue;
+
   // ---------- Subtitle Text ----------
   /**
    * Text color for subtitle text.
@@ -192,6 +197,11 @@ export interface BaseTitle {
    * Line height in pixels for multi-line subtitle text.
    */
   subtitleLineHeight?: NumberValue;
+
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render subtitle text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  subtitleTextProcessor?: StringValue;
 
   /**
    * The padding in pixels between title and subtitle text.

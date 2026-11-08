@@ -46,6 +46,7 @@ export {
   multiLineOffset,
   textMetrics
 } from './src/util/text.js';
+export {textProcessor, textProcessorPending, textProcessorWarnings} from './src/util/textProcessor.js';
 
 export {sceneEqual, pathEqual} from './src/util/equal.js';
 export {sceneToJSON, sceneFromJSON} from './src/util/serialize.js';

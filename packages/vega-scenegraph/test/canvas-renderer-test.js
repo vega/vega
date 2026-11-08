@@ -458,3 +458,38 @@ tape('CanvasRenderer should render text mark', t => {
   t.equal(comparePNGs(image, file), 0);
   t.end();
 });
+
+tape('CanvasRenderer should render processed text', t => {
+  renderAsync(marks['text-processor'], 500, 500, image => {
+    generate('png/marks-text-processor.png', image);
+    const file = load('png/marks-text-processor.png');
+    t.equal(comparePNGs(image, file), 0);
+    t.end();
+  });
+});
+
+tape('CanvasRenderer should draw previous processed text while loading', t => {
+  const scene = sceneFromJSON({
+    marktype: 'text',
+    items: [{x: 10, y: 20, text: 'one', textProcessor: 'test', fill: 'black'}]
+  });
+  const item = scene.items[0];
+  const r = new Renderer(loader()).initialize(null, 100, 100);
+  let first;
+
+  r.renderAsync(scene).then(() => {
+    first = item._textImage;
+    t.ok(first && first.complete, 'image is loaded');
+
+    // the new image loads asynchronously; draw the previous one meanwhile
+    item.text = 'three';
+    r.render(scene);
+    t.equal(item._textImage, first, 'previous image is drawn');
+
+    return r.renderAsync(scene);
+  }).then(() => {
+    t.ok(item._textImage.complete, 'new image is loaded');
+    t.notEqual(item._textImage, first, 'new image is drawn once loaded');
+    t.end();
+  });
+});

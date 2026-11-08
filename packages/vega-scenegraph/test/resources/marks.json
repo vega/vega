@@ -150,6 +150,23 @@
       {"x":90, "y":40, "text":"G", "baseline":"line-bottom", "lineHeight":20, "fontSize": 10, "font":"Arial", "fill":"black"}
     ]
   },
+  "text-processor": {
+    "marktype": "text",
+    "items": [
+      {"x": 20, "y": 40, "text": "abc", "textProcessor": "test", "fontSize": 20, "fill": "steelblue"},
+      {"x": 200, "y": 40, "text": "center", "align": "center", "baseline": "middle", "textProcessor": "test", "fontSize": 10, "fill": "red"},
+      {"x": 300, "y": 100, "text": "right", "align": "right", "baseline": "top", "textProcessor": "test", "fill": "black", "fillOpacity": 0.5},
+      {"x": 100, "y": 150, "text": "rotate", "angle": 45, "dx": 5, "dy": 5, "textProcessor": "test", "fill": "green"},
+      {"x": 50, "y": 250, "radius": 20, "theta": 1.57, "text": "polar", "baseline": "bottom", "textProcessor": "test", "fill": "purple"},
+      {"x": 50, "y": 300, "text": "copy", "textProcessor": "test", "fill": "orange", "opacity": 0.8},
+      {"x": 50, "y": 350, "text": "noselect", "textProcessor": "test", "textSelectable": false, "fill": "black"},
+      {"x": 50, "y": 400, "text": "described", "description": "Custom description", "textProcessor": "test", "fill": "black"},
+      {"x": 250, "y": 400, "text": "stroke", "textProcessor": "test", "stroke": "blue"},
+      {"x": 50, "y": 450, "text": "plain text", "font": "Arial", "fill": "black"},
+      {"x": 250, "y": 450, "text": "fail", "textProcessor": "test", "font": "Arial", "fill": "black"},
+      {"x": 400, "y": 450, "text": "default", "textProcessor": "default", "font": "Arial", "fill": "black"}
+    ]
+  },
   "trail": {
     "marktype": "trail",
     "items": [

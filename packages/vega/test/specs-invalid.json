@@ -3,5 +3,6 @@
   "padding",
   "signal",
   "signal-push",
-  "spec"
+  "spec",
+  "text-processor"
 ]

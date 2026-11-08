@@ -54,9 +54,11 @@ export default function(texts, size, compare, offset, anchor,
 
   // prepare text mark data for placing
   const data = texts.map(d => {
-    const textWidth = infPadding ? textMetrics.width(d, d.text) : undefined;
+    // processed text (e.g., typeset math) may be taller than its font size
+    const size = infPadding || d.textProcessor ? textMetrics.size(d) : null,
+          textWidth = infPadding ? size.width : undefined;
     maxTextWidth = Math.max(maxTextWidth, textWidth);
-    maxTextHeight = Math.max(maxTextHeight, d.fontSize);
+    maxTextHeight = Math.max(maxTextHeight, size ? size.height : d.fontSize);
 
     return {
       datum: d,

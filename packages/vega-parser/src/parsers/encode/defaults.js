@@ -2,14 +2,20 @@ import {has} from './util.js';
 import {FrameRole, MarkRole} from '../marks/roles.js';
 import {array, extend} from 'vega-util';
 
+const TextGlobals = ['lineBreak', 'textSelectable'];
+
 export default function(encode, type, role, style, config) {
   const defaults = {}, enter = {};
   let update, key, skip, props;
 
-  // if text mark, apply global lineBreak settings (#2370)
-  key = 'lineBreak';
-  if (type === 'text' && config[key] != null && !has(key, encode)) {
-    applyDefault(defaults, key, config[key]);
+  // if text mark, apply global lineBreak (#2370) and textSelectable settings
+  // these apply to all text marks, including axis, legend and title text
+  if (type === 'text') {
+    for (key of TextGlobals) {
+      if (config[key] != null && !has(key, encode)) {
+        applyDefault(defaults, key, config[key]);
+      }
+    }
   }
 
   // ignore legend and axis roles

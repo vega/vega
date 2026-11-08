@@ -444,6 +444,14 @@ tape('SVGStringRenderer should render text mark', t => {
   t.end();
 });
 
+tape('SVGStringRenderer should render processed text', t => {
+  const svg = render(marks['text-processor'], 500, 500);
+  generate('svg/marks-text-processor.svg', svg);
+  const file = load('svg/marks-text-processor.svg');
+  t.equal(svg, file);
+  t.end();
+});
+
 tape('SVGStringRenderer should inject hyperlinks', t => {
   const scene = loadScene('scenegraph-href.json');
   renderAsync(scene, 400, 200, svg => {

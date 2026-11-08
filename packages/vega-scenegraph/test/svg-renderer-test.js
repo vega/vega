@@ -414,3 +414,50 @@ tape('SVGRenderer should render text mark', t => {
   t.equal(svg, file);
   t.end();
 });
+
+tape('SVGRenderer should render processed text', t => {
+  const svg = render(marks['text-processor'], 500, 500);
+  const file = load('svg/marks-text-processor.svg');
+  t.equal(svg, file);
+  t.end();
+});
+
+tape('SVGRenderer should swap elements when text processing changes', t => {
+  const scene = sceneFromJSON({
+    marktype: 'text',
+    items: [
+      {x: 10, y: 20, text: 'first', textProcessor: 'test', fill: 'black'},
+      {x: 10, y: 40, text: 'second', fill: 'black'}
+    ]
+  });
+  const [a, b] = scene.items;
+
+  const r = new Renderer().initialize(doc.body, 100, 100).render(scene);
+  const node = a._svg;
+  t.equal(node.tagName, 'g');
+  t.equal(node.childNodes.length, 2);
+  t.equal(node.childNodes[0].__data__, a, 'image is bound to item');
+  t.equal(node.childNodes[1].__data__, a, 'selectable text is bound to item');
+  t.equal(b._svg.tagName, 'text');
+
+  // switch to standard text
+  a.textProcessor = 'default';
+  r.dirty(a);
+  r.render(scene);
+  t.equal(a._svg.tagName, 'text');
+  t.equal(a._svg.textContent, 'first');
+  t.equal(a._svg.__data__, a);
+  t.notOk(node.parentNode, 'replaced element is removed');
+  t.equal(a._svg.nextSibling, b._svg, 'element order is preserved');
+
+  // switch back to processed text, without the selectable text layer
+  a.textProcessor = 'test';
+  a.textSelectable = false;
+  r.dirty(a);
+  r.render(scene);
+  t.equal(a._svg.tagName, 'g');
+  t.equal(a._svg.childNodes.length, 1);
+  t.equal(a._svg.childNodes[0].tagName, 'image');
+  t.equal(a._svg.nextSibling, b._svg, 'element order is preserved');
+  t.end();
+});

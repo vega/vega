@@ -1,4 +1,5 @@
 import {context} from './canvas/context.js';
+import {processText} from './textProcessor.js';
 import {isArray, lruCache} from 'vega-util';
 
 // memoize text width measurement
@@ -9,6 +10,7 @@ export var textMetrics = {
   measureWidth: measureWidth,
   estimateWidth: estimateWidth,
   width: estimateWidth,
+  size: textSize,
   canvas: useCanvas
 };
 
@@ -16,6 +18,13 @@ useCanvas(true);
 
 function useCanvas(use) {
   textMetrics.width = (use && context) ? measureWidth : estimateWidth;
+}
+
+// measure the size of an item's text, accounting for text processors
+function textSize(item) {
+  const p = processedText(item);
+  return p ? {width: p.width, height: p.height}
+    : {width: textMetrics.width(item, item.text), height: fontSize(item)};
 }
 
 // make simple estimate if no canvas is available
@@ -46,6 +55,10 @@ function _measureWidth(text, currentFont) {
 
 export function fontSize(item) {
   return item.fontSize != null ? (+item.fontSize || 0) : 11;
+}
+
+export function processedText(item) {
+  return processText(item, fontSize(item));
 }
 
 export function lineHeight(item) {

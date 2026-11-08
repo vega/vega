@@ -77,7 +77,7 @@ export default class SVGStringRenderer extends Renderer {
    */
   mark(m, scene) {
     const mdef = Marks[scene.marktype],
-          tag  = mdef.tag,
+          isGroup = mdef.tag === 'g',
           attrList = [ariaItemAttributes, mdef.attr];
 
     // render opening group tag
@@ -88,21 +88,26 @@ export default class SVGStringRenderer extends Renderer {
       },
       ariaMarkAttributes(scene),
       {
-        'pointer-events': tag !== 'g' && scene.interactive === false ? 'none' : null
+        'pointer-events': !isGroup && scene.interactive === false ? 'none' : null
       }
     );
 
     // render contained elements
     const process = item => {
-      const href = this.href(item);
+      const href = this.href(item),
+            tag = mdef.itemTag ? mdef.itemTag(item) : mdef.tag,
+            content = mdef.itemContent && mdef.itemContent(item);
       if (href) m.open('a', href);
 
       m.open(
         tag,
-        this.attr(scene, item, attrList, tag !== 'g' ? tag : null)
+        this.attr(scene, item, attrList, !isGroup ? tag : null)
       );
 
-      if (tag === 'text') {
+      if (content) {
+        // processed text: a group of child elements replaces the text content
+        markupContent(m, content);
+      } else if (tag === 'text') {
         const tl = textLines(item);
         if (isArray(tl)) {
           // multi-line text
@@ -116,7 +121,7 @@ export default class SVGStringRenderer extends Renderer {
           // single-line text
           m.text(textValue(item, tl));
         }
-      } else if (tag === 'g') {
+      } else if (isGroup) {
         const fore = item.strokeForeground,
               fill = item.fill,
               stroke = item.stroke;
@@ -309,6 +314,16 @@ export default class SVGStringRenderer extends Renderer {
 
     m.close();
   }
+}
+
+// Write child elements of a processed text item.
+function markupContent(m, nodes) {
+  nodes.forEach(c => {
+    m.open(c.tag, c.attrs);
+    if (c.text != null) m.text(c.text);
+    else if (c.children) markupContent(m, c.children);
+    m.close();
+  });
 }
 
 // Helper function for attr for style presentation attributes

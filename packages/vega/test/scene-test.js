@@ -19,6 +19,14 @@ vega.setRandom(vega.randomLCG(123456789));
 // Standardize font metrics to suppress cross-platform variance.
 vega.textMetrics.canvas(false);
 
+// Deterministic text processor standing in for a typesetting library.
+vega.textProcessor('tex', text => ({
+  svg: `<svg viewBox="0 -800 ${600 * text.length} 1000"></svg>`,
+  width: 0.6 * text.length,
+  ascent: 0.8,
+  descent: 0.2
+}));
+
 tape('Vega generates scenegraphs for specifications', t => {
   let count = specs.length;
 

@@ -1,4 +1,5 @@
 import {domainCaption, isDiscrete} from 'vega-scale';
+import {processedText} from './text.js';
 import {array, peek, toSet} from 'vega-util';
 
 const ARIA_HIDDEN = 'aria-hidden';
@@ -57,9 +58,13 @@ export function ariaItemAttributes(emit, item) {
   emit(ARIA_HIDDEN, hide || undefined);
 
   if (hide || item.description == null) {
-    for (const prop in AriaEncode) {
-      emit(AriaEncode[prop], undefined);
-    }
+    // processed text (e.g., typeset math) is drawn as graphics,
+    // so it is labeled with its source text by default
+    const tp = !hide && item.mark && item.mark.marktype === 'text'
+      ? processedText(item) : null;
+    emit(ARIA_ROLE, tp ? 'img' : undefined);
+    emit(ARIA_ROLEDESCRIPTION, undefined);
+    emit(ARIA_LABEL, tp ? tp.copyText : undefined);
   } else {
     const type = item.mark.marktype;
     emit(

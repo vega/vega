@@ -103,7 +103,8 @@ function buildTitle(spec, _, userEncode, dataRef) {
     fontSize:   _('fontSize'),
     fontStyle:  _('fontStyle'),
     fontWeight: _('fontWeight'),
-    lineHeight: _('lineHeight')
+    lineHeight: _('lineHeight'),
+    textProcessor: _('textProcessor')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
@@ -141,7 +142,8 @@ function buildSubTitle(spec, _, userEncode, dataRef) {
     fontSize:   _('subtitleFontSize'),
     fontStyle:  _('subtitleFontStyle'),
     fontWeight: _('subtitleFontWeight'),
-    lineHeight: _('subtitleLineHeight')
+    lineHeight: _('subtitleLineHeight'),
+    textProcessor: _('subtitleTextProcessor')
   }, { // update
     align:      _('align'),
     angle:      _('angle'),
