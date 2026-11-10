@@ -58,14 +58,18 @@ export default function(texts, size, compare, offset, anchor,
     maxTextWidth = Math.max(maxTextWidth, textWidth);
     maxTextHeight = Math.max(maxTextHeight, d.fontSize);
 
+    const b = boundary(d);
+
     return {
       datum: d,
       opacity: 0,
-      x: undefined,
-      y: undefined,
-      align: undefined,
-      baseline: undefined,
-      boundary: boundary(d),
+      // unplaced labels keep the middle-anchor position, so that hidden items
+      // do not contribute layout bounds at the group origin
+      x: b[1],
+      y: b[4],
+      align: 'center',
+      baseline: 'middle',
+      boundary: b,
       textWidth
     };
   });
