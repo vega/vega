@@ -436,3 +436,36 @@ tape('Label performs label layout over input multiple points outside of chart\'s
 
   t.end();
 });
+tape('Label re-runs layout when input items are modified', t => {
+  function data() {
+    return [
+      {text: 'foo', x: 20, y: 15, fontSize: 10},
+      {text: 'bar', x: 30, y: 15, fontSize: 10}
+    ];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [80, 30],
+          anchor: ['left'],
+          offset: [2],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
+  // move the second item away from the first label without adding or
+  // removing any items: its label should now be placed
+  df.pulse(c0, changeset().modify(d => d.text === 'bar', 'x', 70)).run();
+  t.equal(lb.stamp, df.stamp());
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 1);
+  closeTo(t, out[1].x, 68);
+
+  t.end();
+});
