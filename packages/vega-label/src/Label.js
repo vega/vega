@@ -77,8 +77,11 @@ inherits(Label, Transform, {
       return isFunction(p) && pulse.modified(p.fields);
     }
 
-    const mod = _.modified();
-    if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
+    // re-run on parameter changes or input item changes. Modified items
+    // (e.g., moved by a scale domain update) can alter the layout
+    const mod = _.modified(),
+          rerun = mod || pulse.changed(pulse.ALL) || modp('sort');
+    if (!rerun) return;
     if (!_.size || _.size.length !== 2) {
       error('Size parameter should be specified as a [width, height] array.');
     }
@@ -108,6 +111,6 @@ inherits(Label, Transform, {
       t[as[4]] = l.baseline;
     });
 
-    return pulse.reflow(mod).modifies(as);
+    return pulse.reflow(rerun).modifies(as);
   }
 });
