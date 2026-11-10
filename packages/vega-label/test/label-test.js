@@ -436,3 +436,34 @@ tape('Label performs label layout over input multiple points outside of chart\'s
 
   t.end();
 });
+tape('Label avoids previously placed labels for inside anchors', t => {
+  function data() {
+    const mk = id => ({
+      text: id, fontSize: 10,
+      datum: {
+        x: 10, y: 10, width: 80, height: 20, fill: '#ddd',
+        bounds: new Bounds().set(10, 10, 90, 30),
+        mark: {marktype: 'rect'}
+      }
+    });
+    return [mk('first'), mk('second')];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [100, 40],
+          anchor: ['middle'],
+          offset: [1],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out.length, 2);
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
+  t.end();
+});
