@@ -91,6 +91,24 @@ tape('Bin handles tail aggregation for last bin', t => {
   t.end();
 });
 
+tape('Bin keeps the extent maximum in the last bin', t => {
+  // stop = start + n * step can land a few ulps below extent[1]
+  // inspired by vega/vega#4387
+  [
+    {extent: [-0.0099, -0.0065], maxbins: 10, last: -0.007},
+    {extent: [-0.0099, 0.001], maxbins: 20, last: 0}
+  ].forEach(({extent, maxbins, last}) => {
+    var df = new Dataflow(),
+        bin = df.add(Bin, {field: field('v'), extent, maxbins});
+
+    df.run();
+    t.ok(Math.abs(bin.value({v: extent[1]}) - last) < TOLERANCE);
+    t.equal(bin.value({v: extent[1] + bin.value.step}), Infinity);
+  });
+
+  t.end();
+});
+
 tape('Bin supports point output', t => {
   const data = [{v: 5.5}];
 
