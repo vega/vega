@@ -1,7 +1,7 @@
 import tape from 'tape';
 import fs from 'fs';
 import {loader } from 'vega-loader';
-import {Bounds, SVGRenderer as Renderer, resetSVGDefIds, sceneFromJSON, sceneToJSON} from '../index.js';
+import {Bounds, SVGRenderer as Renderer, SVGStringRenderer, resetSVGDefIds, sceneFromJSON, sceneToJSON} from '../index.js';
 import jsdom from 'jsdom';
 
 const doc = (new jsdom.JSDOM()).window.document;
@@ -28,6 +28,9 @@ function compensate(svg) {
   // correct capitalization to compensate for JSDOM
   svg = svg.replace(/clippath/g, 'clipPath');
   svg = svg.replace(/lineargradient/g, 'linearGradient');
+
+  // normalize document-specific namespaces for the shared SVG fixtures
+  svg = svg.replace(/(id="|#)vega_\d+_/g, '$1');
 
   return svg;
 }
@@ -139,6 +142,98 @@ tape('SVGRenderer should support clipping and gradients', t => {
   svg = compensate(r.render(scene).svg());
   file = load('svg/scenegraph-defs2.svg');
   t.equal(svg, file);
+  t.end();
+});
+
+tape('SVGRenderer should isolate definitions across module copies', async t => {
+  // A separate module evaluation must share the document's namespace allocator.
+  const {default: OtherRenderer} = await import('../src/SVGRenderer.js?copy');
+
+  for (const explicit of [false, true]) {
+    const document = (new jsdom.JSDOM()).window.document;
+    const renderers = [], scenes = [], ids = [];
+
+    for (const R of [Renderer, OtherRenderer]) {
+      // Simulate the definition counters restarting in a new Vega bundle.
+      resetSVGDefIds();
+      const scene = loadScene('scenegraph-defs.json');
+      const group = scene.items[0];
+      if (!explicit) delete group.fill.id;
+      group.stroke = {
+        gradient: 'radial',
+        stops: [{offset: 0, color: 'white'}, {offset: 1, color: 'black'}]
+      };
+
+      const container = document.body.appendChild(document.createElement('div'));
+      const r = new R().initialize(container, 102, 102).render(scene);
+      const svg = r.canvas();
+      const definitions = Array.from(svg.querySelectorAll('defs [id]'));
+      t.equal(definitions.length, 4, 'linear gradient, radial gradient, pattern and clip');
+      definitions.forEach(node => {
+        t.equal(document.getElementById(node.id), node, 'definition is document-unique');
+        ids.push(node.id);
+      });
+      renderers.push(r);
+      scenes.push(scene);
+    }
+
+    t.equal(new Set(ids).size, ids.length, 'independent renderers have disjoint IDs');
+
+    renderers.forEach((r, i) => {
+      const svg = r.canvas();
+      const before = r.svg();
+      r.render(scenes[i]);
+      t.equal(r.svg(), before, 'IDs and references survive a full redraw');
+
+      const group = scenes[i].items[0];
+      group.width = 50;
+      group.fill.stops[0].color = 'purple';
+      r.dirty(group);
+      r.render(scenes[i]);
+      t.deepEqual(
+        Array.from(svg.querySelectorAll('defs [id]'), node => node.id),
+        ids.slice(4 * i, 4 * (i + 1)),
+        'IDs survive an incremental update'
+      );
+      t.equal(svg.querySelector('clipPath rect').getAttribute('width'), '50');
+      t.equal(svg.querySelector('linearGradient stop').getAttribute('stop-color'), 'purple');
+
+      let references = 0;
+      for (const node of svg.querySelectorAll('[fill], [stroke], [clip-path]')) {
+        for (const attr of ['fill', 'stroke', 'clip-path']) {
+          const value = node.getAttribute(attr);
+          const match = value && /^url\([^#]*#([^)]+)\)$/.exec(value);
+          if (match) {
+            ++references;
+            t.ok(svg.contains(document.getElementById(match[1])),
+              'reference resolves within its own SVG');
+          }
+        }
+      }
+      t.equal(references, 4, 'references include the radial pattern and its gradient');
+    });
+  }
+  t.end();
+});
+
+tape('SVGRenderer should preserve scenegraph IDs for string exports', t => {
+  resetSVGDefIds();
+  const scene = loadScene('scenegraph-defs.json');
+  const document = (new jsdom.JSDOM()).window.document;
+  const r = new Renderer().initialize(document.body, 102, 102).render(scene);
+
+  t.equal(scene.items[0].fill.id, 'gradient_foo');
+  t.equal(scene.items[0].clip_id, 'clip1');
+  t.equal(new SVGStringRenderer().initialize(null, 102, 102).render(scene).svg(),
+    load('svg/scenegraph-defs.svg'), 'headless export retains its existing IDs');
+
+  const svg = new jsdom.JSDOM(r.svg(), {contentType: 'image/svg+xml'}).window.document;
+  for (const node of svg.querySelectorAll('[fill], [clip-path]')) {
+    for (const attr of ['fill', 'clip-path']) {
+      const match = /^url\(#([^)]+)\)$/.exec(node.getAttribute(attr));
+      if (match) t.ok(svg.getElementById(match[1]), 'DOM export is self-contained');
+    }
+  }
   t.end();
 });
 
