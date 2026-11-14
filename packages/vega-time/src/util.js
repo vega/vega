@@ -2,6 +2,13 @@ import {timeDay, timeMonday, timeWeek, utcDay, utcMonday, utcWeek} from 'd3-time
 
 const t0 = new Date;
 
+// Date.UTC maps years 0-99 to 1900-1999, so set the year again after it.
+function utcYear(y) {
+  t0.setTime(Date.UTC(y, 0, 1));
+  t0.setUTCFullYear(y);
+  return t0;
+}
+
 function localYear(y) {
   t0.setFullYear(y);
   t0.setMonth(0);
@@ -56,8 +63,10 @@ export function localFirst(y) {
 
 export function localDate(y, m, d, H, M, S, L) {
   if (0 <= y && y < 100) {
-    const date = new Date(-1, m, d, H, M, S, L);
-    date.setFullYear(y);
+    // Date maps years 0-99 to 1900-1999. Build the date 400 years later
+    // (same calendar) and shift back, so day overflow still crosses years.
+    const date = new Date(y + 400, m, d, H, M, S, L);
+    date.setFullYear(date.getFullYear() - 400);
     return date;
   }
   return new Date(y, m, d, H, M, S, L);
@@ -76,13 +85,11 @@ export function utcisoweek(d) {
 }
 
 export function utcDayOfYear(d) {
-  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
-  return utcDay.count(y - 1, d);
+  return utcDay.count(utcYear(d.getUTCFullYear()) - 1, d);
 }
 
 export function utcWeekNum(d) {
-  const y = Date.UTC(d.getUTCFullYear(), 0, 1);
-  return utcWeek.count(y - 1, d);
+  return utcWeek.count(utcYear(d.getUTCFullYear()) - 1, d);
 }
 
 export function utcISOWeekYear(d) {
@@ -94,7 +101,7 @@ export function utcISOWeekNum(d) {
 }
 
 function utcISOWeekOne(y) {
-  return utcMonday.floor(utcDay.offset(Date.UTC(y, 0, 1), 3));
+  return utcMonday.floor(utcDay.offset(utcYear(y), 3));
 }
 
 export function utcISOWeekOneDate(y) {
@@ -103,14 +110,14 @@ export function utcISOWeekOneDate(y) {
 }
 
 export function utcFirst(y) {
-  t0.setTime(Date.UTC(y, 0, 1));
-  return t0.getUTCDay();
+  return utcYear(y).getUTCDay();
 }
 
 export function utcDate(y, m, d, H, M, S, L) {
   if (0 <= y && y < 100) {
-    const date = new Date(Date.UTC(-1, m, d, H, M, S, L));
-    date.setUTCFullYear(d.y);
+    // See localDate.
+    const date = new Date(Date.UTC(y + 400, m, d, H, M, S, L));
+    date.setUTCFullYear(date.getUTCFullYear() - 400);
     return date;
   }
   return new Date(Date.UTC(y, m, d, H, M, S, L));
