@@ -201,3 +201,34 @@ tape('utcFloor handles step parameter for isoweek', t => {
 
   t.end();
 });
+
+// The calendar repeats every 400 years, so flooring a date in years 0-99 by units that
+// keep the year must give the same result as flooring the day 2000 years later, shifted back.
+function testTwoDigitYears(t, floorFn, setYear, getYear) {
+  const days = [[0, 1], [0, 3], [1, 29], [5, 15], [11, 31]];
+  [0, 1, 4, 50, 99].forEach(y => days.forEach(([m, d]) => {
+    if (m === 1 && y % 4) return;
+    UNITS.filter(unit => unit.startsWith('year')).forEach(unit => {
+      const f = floorFn(unit.split('-')),
+            date = new Date(Date.UTC(2000, m, d, 13, 45));
+      setYear.call(date, 2000 + y);
+      const later = f(+date);
+      setYear.call(date, y);
+      const expected = new Date(+later);
+      setYear.call(expected, getYear.call(later) - 2000);
+      t.equal(+f(+date), +expected, `${unit} ${y}-${m + 1}-${d}`);
+    });
+  }));
+}
+
+tape('timeFloor handles years 0-99', t => {
+  const P = Date.prototype;
+  testTwoDigitYears(t, vega.timeFloor, P.setFullYear, P.getFullYear);
+  t.end();
+});
+
+tape('utcFloor handles years 0-99', t => {
+  const P = Date.prototype;
+  testTwoDigitYears(t, vega.utcFloor, P.setUTCFullYear, P.getUTCFullYear);
+  t.end();
+});
