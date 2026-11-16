@@ -503,6 +503,9 @@ tape('Label re-runs layout when input items are modified', t => {
 });
 
 tape('Label re-runs layout when a layout-irrelevant field is modified', t => {
+  const data = [
+    {text: 'foo', fill: 'red', x: 20, y: 15, fontSize: 10}
+  ];
   const df = new Dataflow(),
         c0 = df.add(Collect),
         lb = df.add(Label, {
@@ -512,16 +515,14 @@ tape('Label re-runs layout when a layout-irrelevant field is modified', t => {
           pulse: c0
         });
 
-  df.pulse(c0, changeset().insert([
-    {text: 'foo', fill: 'red', x: 20, y: 15, fontSize: 10}
-  ])).run();
+  df.pulse(c0, changeset().insert(data)).run();
   t.equal(lb.stamp, df.stamp());
 
   // a modify-only pulse touching a field the layout does not read should
   // still re-run the layout
-  df.pulse(c0, changeset().modify(d => d.fill = 'blue')).run();
+  df.pulse(c0, changeset().modify(data[0], 'fill', 'blue')).run();
   t.equal(lb.stamp, df.stamp());
-  t.equal(c0.value[0].fill, 'blue');
+  t.equal(data[0].fill, 'blue');
 
   t.end();
 });
