@@ -502,6 +502,30 @@ tape('Label re-runs layout when input items are modified', t => {
   t.end();
 });
 
+tape('Label re-runs layout when a layout-irrelevant field is modified', t => {
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [80, 30],
+          anchor: ['left'],
+          offset: [2],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert([
+    {text: 'foo', fill: 'red', x: 20, y: 15, fontSize: 10}
+  ])).run();
+  t.equal(lb.stamp, df.stamp());
+
+  // a modify-only pulse touching a field the layout does not read should
+  // still re-run the layout
+  df.pulse(c0, changeset().modify(d => d.fill = 'blue')).run();
+  t.equal(lb.stamp, df.stamp());
+  t.equal(c0.value[0].fill, 'blue');
+
+  t.end();
+});
+
 tape('Label gives unplaced labels a position at the base mark center', t => {
   function data() {
     return [

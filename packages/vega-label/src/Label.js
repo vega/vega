@@ -1,6 +1,6 @@
 import labelLayout from './LabelLayout.js';
 import {Transform} from 'vega-dataflow';
-import {array, error, inherits, isFunction} from 'vega-util';
+import {array, error, inherits} from 'vega-util';
 
 const Output = [
   'x',
@@ -72,16 +72,9 @@ Label.Definition = {
 
 inherits(Label, Transform, {
   transform(_, pulse) {
-    function modp(param) {
-      const p = _[param];
-      return isFunction(p) && pulse.modified(p.fields);
-    }
-
-    // re-run on parameter changes or input item changes. Modified items
-    // (e.g., moved by a scale domain update) can alter the layout
-    const mod = _.modified(),
-          rerun = mod || pulse.changed(pulse.ALL) || modp('sort');
-    if (!rerun) return;
+    // re-run on parameter changes or input item changes. A moved item can
+    // change other labels' placement, so all items must reflow
+    if (!(_.modified() || pulse.changed(pulse.ALL))) return;
     if (!_.size || _.size.length !== 2) {
       error('Size parameter should be specified as a [width, height] array.');
     }
@@ -111,6 +104,6 @@ inherits(Label, Transform, {
       t[as[4]] = l.baseline;
     });
 
-    return pulse.reflow(rerun).modifies(as);
+    return pulse.reflow(true).modifies(as);
   }
 });
