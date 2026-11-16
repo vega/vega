@@ -58,15 +58,18 @@ export default function(texts, size, compare, offset, anchor,
     maxTextWidth = Math.max(maxTextWidth, textWidth);
     maxTextHeight = Math.max(maxTextHeight, d.fontSize);
 
-    const b = boundary(d);
+    // boundary is [x1, xc, x2, y1, yc, y2]: the base mark's bounds and center,
+    // or the data point for line/area marks
+    const b = boundary(d),
+          [, xc, , , yc] = b;
 
     return {
       datum: d,
       opacity: 0,
-      // unplaced labels keep the middle-anchor position, so that hidden items
-      // do not contribute layout bounds at the group origin
-      x: b[1],
-      y: b[4],
+      // fallback anchor for labels that cannot be placed; overwritten on
+      // success so hidden items do not add layout bounds at the group origin
+      x: xc,
+      y: yc,
       align: 'center',
       baseline: 'middle',
       boundary: b,
