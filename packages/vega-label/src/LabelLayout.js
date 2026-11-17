@@ -58,14 +58,21 @@ export default function(texts, size, compare, offset, anchor,
     maxTextWidth = Math.max(maxTextWidth, textWidth);
     maxTextHeight = Math.max(maxTextHeight, d.fontSize);
 
+    // boundary is [x1, xc, x2, y1, yc, y2]: the base mark's bounds and center,
+    // or the data point for line/area marks
+    const b = boundary(d),
+          [, xc, , , yc] = b;
+
     return {
       datum: d,
       opacity: 0,
-      x: undefined,
-      y: undefined,
-      align: undefined,
-      baseline: undefined,
-      boundary: boundary(d),
+      // fallback anchor for labels that cannot be placed; overwritten on
+      // success so hidden items do not add layout bounds at the group origin
+      x: xc,
+      y: yc,
+      align: 'center',
+      baseline: 'middle',
+      boundary: b,
       textWidth
     };
   });

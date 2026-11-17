@@ -436,3 +436,31 @@ tape('Label performs label layout over input multiple points outside of chart\'s
 
   t.end();
 });
+tape('Label gives unplaced labels a position at the base mark center', t => {
+  function data() {
+    return [
+      {text: 'foo', x: 20, y: 15, fontSize: 10},
+      {text: 'bar', x: 20, y: 15, fontSize: 10}
+    ];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect);
+  df.add(Label, {
+    size: [50, 30],
+    anchor: ['left'],
+    offset: [2],
+    pulse: c0
+  });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  const out = c0.value;
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+  closeTo(t, out[1].x, 20);
+  closeTo(t, out[1].y, 15);
+  t.equal(out[1].align, 'center');
+  t.equal(out[1].baseline, 'middle');
+
+  t.end();
+});
