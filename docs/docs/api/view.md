@@ -156,7 +156,7 @@ Enables hover event processing and returns this view instance. The optional argu
 view.<b>description</b>([<i>text</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source") {% include tag ver="5.10" %}
 
-Gets or sets descriptive *text* for this view. This description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute) for the view's container element. If no arguments are provided, returns the current description. If *text* is specified, this method sets the description and updates the view container element.
+Gets or sets descriptive *text* for this view. This description determines the [`aria-label` attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label) for the view's container element. If no arguments are provided, returns the current description. If *text* is specified, this method sets the description and updates the view container element.
 
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])
