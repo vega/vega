@@ -56,7 +56,37 @@ jobs:
           done
           [ "$missing" -ne 0 ] && exit 1 || true
 
+      - name: Verify fork PR has the preview label
+        id: pr
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // The build workflow file executes from the PR head, so a fork can
+            // edit it and remove the label check there. Labels are repository
+            // data, so the deploy job verifies the label with a server-side
+            // API call. The PR number also comes from this API call, not from
+            // the artifact, so fork-controlled files can not target other PRs.
+            const head = context.payload.workflow_run.head_repository.full_name;
+            const branch = context.payload.workflow_run.head_branch;
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${head}:${branch}`,
+              state: 'open',
+            });
+            const pr = prs[0];
+            if (!pr) {
+              core.notice('No open PR found for the build branch. Skip deploy.');
+              return;
+            }
+            if (!pr.labels.some(l => l.name === 'preview')) {
+              core.notice(`PR #${pr.number} does not have the preview label. Skip deploy.`);
+              return;
+            }
+            core.setOutput('number', pr.number);
+
       - name: Download built artifact
+        if: steps.pr.outputs.number != ''
         uses: actions/download-artifact@v8
         with:
           name: editor-dist
@@ -64,13 +94,10 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get PR number
-        id: pr
-        run: echo "number=$(cat editor-dist/pr-number.txt)" >> "$GITHUB_OUTPUT"
-
       # Deploys as branch alias `pr-<N>` in the existing Pages project, giving
       # a stable preview URL: https://pr-<N>.<CF_PAGES_PROJECT>.pages.dev
       - name: Deploy to Cloudflare Pages
+        if: steps.pr.outputs.number != ''
         id: pages
         uses: cloudflare/wrangler-action@v4
         with:
@@ -80,7 +107,7 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment preview URL
-        if: always()
+        if: always() && steps.pr.outputs.number != ''
         uses: actions/github-script@v9
         env:
           DEPLOYMENT_URL: ${{ steps.pages.outputs.deployment-url }}

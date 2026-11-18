@@ -6,7 +6,10 @@
 #
 # Forked PRs need the `preview` label. A maintainer adds the label. Then this
 # workflow builds, and the deploy job publishes a Cloudflare Pages preview of
-# the Vega Editor. The preview runs the Vega packages from the PR.
+# the Vega Editor. The preview runs the Vega packages from the PR. This file
+# executes from the PR head, so the label check here is a cost gate only. The
+# deploy job verifies the label with a server-side API call (labels are
+# repository data, and a fork can not change them).
 name: Editor preview (forked PRs) - Build
 
 on:
@@ -65,9 +68,6 @@ jobs:
       # builds the editor site to editor/dist with the local Vega changes.
       - name: Build editor preview
         run: npm run build-editor-preview
-
-      - name: Save PR number
-        run: echo "${{ github.event.pull_request.number }}" > editor/dist/pr-number.txt
 
       - name: Upload built artifact
         uses: actions/upload-artifact@v7
