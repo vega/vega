@@ -1,11 +1,12 @@
-# Build job for forked PR previews. Uses pull_request (NOT pull_request_target)
-# so it runs with no access to repository secrets. Untrusted fork code is safe
-# to execute here. The deploy job in editor-preview-deploy.yml picks up the
-# artifact. Modeled on https://github.com/ddev/ddev.com/pull/430 (see #432).
+# Build job for forked PR previews. It uses pull_request (NOT
+# pull_request_target). Thus it runs with no access to repository secrets.
+# Untrusted fork code is safe to execute here. The deploy job in
+# editor-preview-deploy.yml uses the artifact from this workflow. The design
+# comes from https://github.com/ddev/ddev.com/pull/430 (see #432).
 #
-# Forked PRs are label-gated: a maintainer adds the `preview` label to build
-# and deploy a Cloudflare Pages preview of the Vega Editor running the PR's
-# local Vega packages.
+# Forked PRs need the `preview` label. A maintainer adds the label. Then this
+# workflow builds, and the deploy job publishes a Cloudflare Pages preview of
+# the Vega Editor. The preview runs the Vega packages from the PR.
 name: Editor preview (forked PRs) - Build
 
 on:

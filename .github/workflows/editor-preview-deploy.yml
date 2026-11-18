@@ -1,6 +1,7 @@
-# Deploy job for forked PR previews. Triggered by workflow_run after the build
-# completes. This job has access to secrets but never checks out or executes
-# any fork code. Modeled on https://github.com/ddev/ddev.com/pull/430 (see #432).
+# Deploy job for forked PR previews. It triggers by workflow_run after the
+# build completes. This job has access to secrets. But it never checks out or
+# executes fork code. The design comes from
+# https://github.com/ddev/ddev.com/pull/430 (see #432).
 #
 # One-time repository configuration (Settings > Secrets and variables > Actions):
 #
@@ -11,11 +12,12 @@
 #   | Variable | CF_PAGES_PROJECT  | Existing Cloudflare Pages project name (Direct Upload mode)    |
 #
 # The Pages project must be in Direct Upload mode for these alias deployments.
-# Previews get a stable URL per PR: https://pr-<N>.<CF_PAGES_PROJECT>.pages.dev
-# Forked PRs are label-gated with 'preview' (see editor-preview-build.yml).
+# Each PR preview gets a stable URL: https://pr-<N>.<CF_PAGES_PROJECT>.pages.dev
+# Forked PRs need the `preview` label (see editor-preview-build.yml).
 #
-# Troubleshooting: a 403 from the Cloudflare API usually means the token lacks
-# Pages edit permission or is scoped to the wrong account.
+# Troubleshooting: a 403 from the Cloudflare API usually means one of these:
+# the token does not have Pages edit permission, or the token scope is for the
+# wrong account.
 name: Editor preview (forked PRs) - Deploy
 
 on:
