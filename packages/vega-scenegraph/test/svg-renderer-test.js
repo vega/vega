@@ -29,8 +29,8 @@ function compensate(svg) {
   svg = svg.replace(/clippath/g, 'clipPath');
   svg = svg.replace(/lineargradient/g, 'linearGradient');
 
-  // normalize document-specific namespaces for the shared SVG fixtures
-  svg = svg.replace(/(id="|#)vega_\d+_/g, '$1');
+  // normalize renderer-specific namespaces for the shared SVG fixtures
+  svg = svg.replace(/(id="|#)vega_[0-9a-z]{14}_/g, '$1');
 
   return svg;
 }
@@ -146,11 +146,12 @@ tape('SVGRenderer should support clipping and gradients', t => {
 });
 
 tape('SVGRenderer should isolate definitions across module copies', async t => {
-  // A separate module evaluation must share the document's namespace allocator.
+  // Separate module evaluations must generate independent namespaces.
   const {default: OtherRenderer} = await import('../src/SVGRenderer.js?copy');
 
   for (const explicit of [false, true]) {
     const document = (new jsdom.JSDOM()).window.document;
+    const properties = Reflect.ownKeys(document);
     const renderers = [], scenes = [], ids = [];
 
     for (const R of [Renderer, OtherRenderer]) {
@@ -178,6 +179,7 @@ tape('SVGRenderer should isolate definitions across module copies', async t => {
     }
 
     t.equal(new Set(ids).size, ids.length, 'independent renderers have disjoint IDs');
+    t.deepEqual(Reflect.ownKeys(document), properties, 'no document-global state');
 
     renderers.forEach((r, i) => {
       const svg = r.canvas();
@@ -212,6 +214,27 @@ tape('SVGRenderer should isolate definitions across module copies', async t => {
       }
       t.equal(references, 4, 'references include the radial pattern and its gradient');
     });
+  }
+  t.end();
+});
+
+tape('SVGRenderer should handle random values near zero and one', t => {
+  const document = (new jsdom.JSDOM()).window.document;
+  const random = Math.random;
+
+  try {
+    for (const value of [0, 1 - Number.EPSILON]) {
+      Math.random = () => value;
+      const scene = loadScene('scenegraph-defs.json');
+      const r = new Renderer().initialize(document.body, 102, 102).render(scene);
+      const gradient = r.canvas().querySelector('linearGradient');
+      t.ok(/^vega_[0-9a-z]{14}_gradient_foo$/.test(gradient.id),
+        'namespace is fixed-width even at the random number range boundaries');
+      t.equal(r.canvas().querySelector('path').getAttribute('fill'),
+        'url(#' + gradient.id + ')', 'reference uses the complete namespace');
+    }
+  } finally {
+    Math.random = random;
   }
   t.end();
 });

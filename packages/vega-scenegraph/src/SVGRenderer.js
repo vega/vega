@@ -12,7 +12,6 @@ import {rootAttributes, stylesAttr, stylesCss} from './util/svg/styles.js';
 import {isArray} from 'vega-util';
 
 const RootIndex = 0,
-      SVGNamespace = Symbol.for('vega-scenegraph.svg-namespace'),
       xmlns = 'http://www.w3.org/2000/xmlns/',
       svgns = metadata.xmlns;
 
@@ -39,7 +38,7 @@ export default class SVGRenderer extends Renderer {
    */
   initialize(el, width, height, origin, scaleFactor) {
     // create the svg definitions cache
-    this._defs = {prefix: el ? svgPrefix(el.ownerDocument) : ''};
+    this._defs = {prefix: el ? svgPrefix() : ''};
     this._clearDefs();
 
     if (el) {
@@ -407,11 +406,12 @@ export default class SVGRenderer extends Renderer {
   }
 }
 
-// Allocate namespaces on the document so independently loaded Vega bundles
-// cannot reuse IDs. Keep the prefix out of the scenegraph for string exports.
-function svgPrefix(doc) {
-  const id = doc[SVGNamespace] = (doc[SVGNamespace] || 0) + 1;
-  return 'vega_' + id + '_';
+// Use two random 32-bit values to keep collision risk low across bundles
+// without storing shared state on the document.
+function svgPrefix() {
+  const random = () => Math.floor(Math.random() * 0x100000000)
+    .toString(36).padStart(7, '0');
+  return 'vega_' + random() + random() + '_';
 }
 
 // mark ancestor chain with a dirty id
