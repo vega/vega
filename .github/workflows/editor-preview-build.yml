@@ -1,0 +1,77 @@
+# Build job for forked PR previews. Uses pull_request (NOT pull_request_target)
+# so it runs with no access to repository secrets. Untrusted fork code is safe
+# to execute here. The deploy job in editor-preview-deploy.yml picks up the
+# artifact. Modeled on https://github.com/ddev/ddev.com/pull/430 (see #432).
+#
+# Forked PRs are label-gated: a maintainer adds the `preview` label to build
+# and deploy a Cloudflare Pages preview of the Vega Editor running the PR's
+# local Vega packages.
+name: Editor preview (forked PRs) - Build
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 22
+
+concurrency:
+  group: editor-preview-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build editor preview (no secrets)
+    # Only forked PRs (same-repo PRs get previews from the Cloudflare Pages git
+    # integration), and only when the `preview` label is present.
+    if: >-
+      github.event.pull_request.head.repo.fork == true &&
+      (
+        (github.event.action == 'labeled' && github.event.label.name == 'preview') ||
+        (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'preview'))
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      # Skip the root postinstall script (dataset rsync); not needed for the
+      # editor preview build.
+      DISABLE_POSTINSTALL_SCRIPT: 1
+      NOYARNPOSTINSTALL: 1
+    steps:
+      - name: Checkout PR code (from fork)
+        uses: actions/checkout@v7
+        with:
+          # Explicitly check out the fork + head SHA so untrusted code runs
+          # without any repository credentials.
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Clones vega/editor, npm-links every local vega package into it, and
+      # builds the editor site to editor/dist with the local Vega changes.
+      - name: Build editor preview
+        run: npm run build-editor-preview
+
+      - name: Save PR number
+        run: echo "${{ github.event.pull_request.number }}" > editor/dist/pr-number.txt
+
+      - name: Upload built artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: editor-dist
+          path: editor/dist
+          if-no-files-found: error
+          retention-days: 7
