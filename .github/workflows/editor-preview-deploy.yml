@@ -1,6 +1,6 @@
 # Deploy job for forked PR previews. It triggers by workflow_run after the
-# build completes. This job has access to secrets. But it never checks out or
-# executes fork code. The design comes from
+# build completes. This job has access to secrets. But it does not check out
+# or execute fork code. The design comes from
 # https://github.com/ddev/ddev.com/pull/430 (see #432).
 #
 # One-time repository configuration (Settings > Secrets and variables > Actions):
