@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: 22
+  NODE_VERSION: 24
 
 concurrency:
   group: editor-preview-build-${{ github.event.pull_request.number }}
