@@ -96,7 +96,9 @@ tape('Bin keeps the extent maximum in the last bin', t => {
   // inspired by vega/vega#4387
   [
     {extent: [-0.0099, -0.0065], maxbins: 10, last: -0.007},
-    {extent: [-0.0099, 0.001], maxbins: 20, last: 0}
+    {extent: [-0.0099, 0.001], maxbins: 20, last: 0},
+    // far from zero: an error bound scaled by step alone is too small here
+    {extent: [-999.9998, -999.9988], maxbins: 10, last: -999.999}
   ].forEach(({extent, maxbins, last}) => {
     var df = new Dataflow(),
         bin = df.add(Bin, {field: field('v'), extent, maxbins});
