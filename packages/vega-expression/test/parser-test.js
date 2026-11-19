@@ -52,6 +52,19 @@ tape('Parser should allow literal string expressions', t => {
   t.end();
 });
 
+tape('Parser should keep keyword-like strings as literals', t => {
+  ['if', 'constructor', 'toString', 'valueOf', '__proto__'].forEach(s => {
+    t.deepEqual(parse(`'${s}'`)(), {
+      type: 'Literal',
+      value: s,
+      raw: `'${s}'`
+    });
+  });
+  t.equal(parse('"if"')().type, 'Literal');
+  t.equal(parse('if(a, b, c)')().callee.type, 'Identifier');
+  t.end();
+});
+
 tape('Parser should allow literal regular expressions', t => {
   t.deepEqual(parse('/a/')(), {
     type: 'Literal',
