@@ -42,15 +42,16 @@ jobs:
       github.event.workflow_run.head_repository.full_name != github.repository
     runs-on: ubuntu-latest
     steps:
-      - name: Check required variables
+      - name: Check required variables and secrets
         env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
           CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
         run: |
           missing=0
           for v in CF_API_TOKEN CF_ACCOUNT_ID CF_PAGES_PROJECT; do
             if [ -z "${!v}" ]; then
-              echo "::error::Missing variable '$v'."
+              echo "::error::Missing secret or variable '$v'."
               missing=1
             fi
           done
