@@ -44,13 +44,16 @@ jobs:
     steps:
       - name: Check required variables
         env:
+          # CF_API_TOKEN must be in env here so the emptiness check can see it.
+          # It is a secret, but the check only tests for presence, never prints it.
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
           CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
         run: |
           missing=0
           for v in CF_API_TOKEN CF_ACCOUNT_ID CF_PAGES_PROJECT; do
             if [ -z "${!v}" ]; then
-              echo "::error::Missing variable '$v'."
+              echo "::error::Missing secret or variable '$v'."
               missing=1
             fi
           done
