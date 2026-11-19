@@ -163,7 +163,7 @@ Gets or sets descriptive *text* for this view. This description determines the [
 view.<b>ariaLocale</b>([<i>localeObject</i>])
 [<>](https://github.com/vega/vega/blob/master/packages/vega-view/src/View.js "Source") {% include tag ver="FUTURE" %}
 
-Gets or sets the localization object that provides translations for structural elements labeled by ARIA. See the [Locale API](../locale/#ariaLocale) for the global configuration method and full list of localization keys. A blank or empty `localeObject` means that structural elements will use the default American English (en-us) translation provided by Vega.
+Gets or sets the localization object that provides translations for structural elements labeled by ARIA. See the [Locale API](../locale/#ariaLocale) for the global configuration method and full list of localization keys. Setting the locale updates the container's ARIA attributes and resets the renderer; call `view.runAsync()` to redraw the chart with the new labels. A blank or empty `localeObject` restores the view's construction-time global and configuration defaults, with unspecified keys falling back to American English (en-us).
 
 <a name="view_background" href="#view_background">#</a>
 view.<b>background</b>([<i>color</i>])

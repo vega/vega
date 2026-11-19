@@ -1,4 +1,4 @@
-import {ariaLabel} from './aria.js';
+import {ariaLabel, initializeAria} from './aria.js';
 import background from './background.js';
 import cursor, {setCursor} from './cursor.js';
 import {change, data, dataref, insert, remove} from './data.js';
@@ -200,6 +200,8 @@ inherits(View, Dataflow, {
   ariaLocale(definition) {
     if (arguments.length) {
       this._ariaLocale = extend({}, this._ariaLocaleBase, definition);
+      initializeAria(this);
+      this._resetRenderer();
       return this;
     }
     return this._ariaLocale;
