@@ -66,12 +66,16 @@ jobs:
             // data, so the deploy job verifies the label with a server-side
             // API call. The PR number also comes from this API call, not from
             // the artifact, so fork-controlled files can not target other PRs.
-            const head = context.payload.workflow_run.head_repository.full_name;
+            // The pulls.list head filter wants `owner:branch` (not
+            // `owner/repo:branch`), so use the fork owner login.
+            const owner = context.payload.workflow_run.head_repository.owner.login;
             const branch = context.payload.workflow_run.head_branch;
+            const head = `${owner}:${branch}`;
+            core.info(`Looking for an open PR with head ${head}`);
             const { data: prs } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: `${head}:${branch}`,
+              head,
               state: 'open',
             });
             const pr = prs[0];
