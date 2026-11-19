@@ -33,8 +33,6 @@ export default function(context, path, l, t, sX, sY) {
       controlY = 0, // current control point y
       tempX,
       tempY,
-      tempControlX,
-      tempControlY,
       anchorX = 0,
       anchorY = 0;
 
@@ -42,6 +40,19 @@ export default function(context, path, l, t, sX, sY) {
   if (t == null) t = 0;
   if (sX == null) sX = 1;
   if (sY == null) sY = sX;
+
+  // The first control point of a smooth curve (S, s, T, t) is the reflection
+  // of the last control point, if the previous command was a curve of the
+  // same kind (matched by `kind`), and the current point otherwise.
+  function reflectControl(kind) {
+    if (previous && kind.test(previous[0])) {
+      controlX = 2 * x - controlX;
+      controlY = 2 * y - controlY;
+    } else {
+      controlX = x;
+      controlY = y;
+    }
+  }
 
   if (context.beginPath) context.beginPath();
 
@@ -138,8 +149,7 @@ export default function(context, path, l, t, sX, sY) {
         tempX = x + current[3];
         tempY = y + current[4];
         // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
+        reflectControl(/[CcSs]/);
         context.bezierCurveTo(
           controlX + l,
           controlY + t,
@@ -164,8 +174,7 @@ export default function(context, path, l, t, sX, sY) {
         tempX = current[3];
         tempY = current[4];
         // calculate reflection of previous control points
-        controlX = 2*x - controlX;
-        controlY = 2*y - controlY;
+        reflectControl(/[CcSs]/);
         context.bezierCurveTo(
           controlX + l,
           controlY + t,
@@ -225,26 +234,8 @@ export default function(context, path, l, t, sX, sY) {
         tempX = x + current[1];
         tempY = y + current[2];
 
-        if (previous[0].match(/[QqTt]/) === null) {
-          // If there is no previous command or if the previous command was not a Q, q, T or t,
-          // assume the control point is coincident with the current point
-          controlX = x;
-          controlY = y;
-        }
-        else if (previous[0] === 't') {
-          // calculate reflection of previous control points for t
-          controlX = 2 * x - tempControlX;
-          controlY = 2 * y - tempControlY;
-        }
-        else if (previous[0] === 'q') {
-          // calculate reflection of previous control points for q
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-        }
-
-        tempControlX = controlX;
-        tempControlY = controlY;
-
+        // calculate reflection of previous control points
+        reflectControl(/[QqTt]/);
         context.quadraticCurveTo(
           controlX + l,
           controlY + t,
@@ -253,8 +244,6 @@ export default function(context, path, l, t, sX, sY) {
         );
         x = tempX;
         y = tempY;
-        controlX = x + current[1];
-        controlY = y + current[2];
         break;
 
       case 'T':
@@ -262,8 +251,7 @@ export default function(context, path, l, t, sX, sY) {
         tempY = current[2];
 
         // calculate reflection of previous control points
-        controlX = 2 * x - controlX;
-        controlY = 2 * y - controlY;
+        reflectControl(/[QqTt]/);
         context.quadraticCurveTo(
           controlX + l,
           controlY + t,
