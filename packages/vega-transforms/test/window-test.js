@@ -598,3 +598,84 @@ tape('Window handles negative frame offsets correctly', t => {
 
   t.end();
 });
+
+tape('Window handles empty sorted range frames', t => {
+  const cases = [
+    {
+      frame: [1, null],
+      initial: [[3, 9], [3, 9], [1, 4], [0, undefined], [0, undefined]],
+      modified: [[0, undefined], [4, 10], [2, 5], [1, 1], [0, undefined]]
+    },
+    {
+      frame: [null, -1],
+      initial: [[0, undefined], [1, 1], [3, 6], [3, 6], [0, undefined]],
+      modified: [[3, 9], [0, undefined], [2, 5], [2, 5], [0, undefined]]
+    }
+  ];
+
+  for (const {frame, initial, modified} of cases) {
+    const data = [
+      {group: 'a', key: 0, v: 1},
+      {group: 'a', key: 1, v: 2},
+      {group: 'a', key: 1, v: 3},
+      {group: 'a', key: 2, v: 4},
+      {group: 'b', key: 0, v: 5}
+    ];
+    const errors = [],
+          df = new Dataflow(),
+          col = df.add(Collect),
+          win = df.add(Window, {
+            groupby: [field('group')],
+            sort: compare('key'),
+            frame,
+            fields: [null, field('v')],
+            ops: ['count', 'sum'],
+            pulse: col
+          }),
+          out = df.add(Collect, {pulse: win}),
+          values = () => out.value.map(d => [d.count, d.sum_v]);
+    df.error = err => errors.push(err.message);
+
+    df.pulse(col, changeset().insert(data)).run();
+    t.deepEqual(errors, [], 'sorted partitions finish without errors');
+    t.deepEqual(values(), initial, 'preserves peers and empty boundary frames');
+
+    df.pulse(col, changeset().modify(data[0], 'key', 3)).run();
+    t.deepEqual(errors, [], 'sort changes finish without errors');
+    t.deepEqual(values(), modified, 'recomputes peers after sort changes');
+
+    df.pulse(col, changeset().remove(() => true)).run();
+    t.deepEqual(errors, [], 'empty partitions finish without errors');
+    t.deepEqual(values(), [], 'removes all rows');
+
+    df.pulse(col, changeset().insert({group: 'a', key: 0, v: 9})).run();
+    t.deepEqual(errors, [], 'a reinserted singleton finishes without errors');
+    t.deepEqual(values(), [[0, undefined]], 'singleton has an empty frame');
+  }
+  t.end();
+});
+
+tape('Window computes sorted lag with a following frame', t => {
+  const data = Array.from({length: 24}, (_, i) => ({v: i})),
+        errors = [],
+        df = new Dataflow(),
+        col = df.add(Collect),
+        win = df.add(Window, {
+          sort: compare('v', 'descending'),
+          frame: [12, null],
+          fields: [field('v')],
+          ops: ['lag'],
+          params: [12],
+          pulse: col
+        }),
+        out = df.add(Collect, {pulse: win});
+  df.error = err => errors.push(err.message);
+
+  df.pulse(col, changeset().insert(data)).run();
+  t.deepEqual(errors, [], 'lag finishes without comparing past the last row');
+  t.deepEqual(out.value.map(d => d.lag_v), [
+    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    null, null, null, null, null, null, null, null, null, null, null, null
+  ], 'lag uses the sorted partition independently of the frame');
+  t.end();
+});

@@ -6,14 +6,14 @@ import {pickPath} from '../util/canvas/pick.js';
 import {rotateItem} from '../util/svg/transform.js';
 import {DegToRad} from '../util/constants.js';
 
-export default function(type, shape, isect) {
+export default function(type, shape, isect, bound) {
 
   function attr(emit, item) {
     emit('transform', rotateItem(item));
     emit('d', shape(null, item));
   }
 
-  function bound(bounds, item) {
+  function defaultBound(bounds, item) {
     shape(context(bounds, item.angle), item);
     return boundStroke(bounds, item, true).translate(item.x || 0, item.y || 0);
   }
@@ -36,7 +36,7 @@ export default function(type, shape, isect) {
     tag:    'path',
     nested: false,
     attr:   attr,
-    bound:  bound,
+    bound:  bound || defaultBound,
     draw:   drawAll(draw),
     pick:   pickPath(draw),
     isect:  isect || intersectPath(draw)

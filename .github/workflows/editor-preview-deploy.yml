@@ -1,0 +1,170 @@
+# Deploy job for forked PR previews. It triggers by workflow_run after the
+# build completes. This job has access to secrets. But it does not check out
+# or execute fork code. The design comes from
+# https://github.com/ddev/ddev.com/pull/430 (see #432).
+#
+# One-time repository configuration (Settings > Secrets and variables > Actions):
+#
+#   | Type     | Name              | Value                                                          |
+#   |----------|-------------------|----------------------------------------------------------------|
+#   | Secret   | CF_API_TOKEN      | Cloudflare API token with Cloudflare Pages: Edit permission    |
+#   | Variable | CF_ACCOUNT_ID     | Cloudflare account ID                                          |
+#   | Variable | CF_PAGES_PROJECT  | Existing Cloudflare Pages project name (Direct Upload mode)    |
+#
+# The Pages project must be in Direct Upload mode for these alias deployments.
+# Each PR preview gets a stable URL: https://pr-<N>.<CF_PAGES_PROJECT>.pages.dev
+# Forked PRs need the `preview` label (see editor-preview-build.yml).
+#
+# Troubleshooting: a 403 from the Cloudflare API usually means one of these:
+# the token does not have Pages edit permission, or the token scope is for the
+# wrong account.
+name: Editor preview (forked PRs) - Deploy
+
+on:
+  workflow_run:
+    workflows: ["Editor preview (forked PRs) - Build"]
+    types: [completed]
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  deploy:
+    name: Deploy preview to Cloudflare Pages
+    # Only run when the build succeeded and the PR came from a fork (not same repo).
+    if: |
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check required variables and secrets
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+        run: |
+          missing=0
+          for v in CF_API_TOKEN CF_ACCOUNT_ID CF_PAGES_PROJECT; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Missing secret or variable '$v'."
+              missing=1
+            fi
+          done
+          [ "$missing" -ne 0 ] && exit 1 || true
+
+      - name: Verify fork PR has the preview label
+        id: pr
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // The build workflow file executes from the PR head, so a fork can
+            // edit it and remove the label check there. Labels are repository
+            // data, so the deploy job verifies the label with a server-side
+            // API call. The PR number also comes from this API call, not from
+            // the artifact, so fork-controlled files can not target other PRs.
+            const owner = context.payload.workflow_run.head_repository.owner.login;
+            const branch = context.payload.workflow_run.head_branch;
+            const head = `${owner}:${branch}`;
+            core.info(`Looking for an open PR with head ${head}`);
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head,
+              state: 'open',
+            });
+            const pr = prs[0];
+            if (!pr) {
+              core.notice('No open PR found for the build branch. Skip deploy.');
+              return;
+            }
+            if (!pr.labels.some(l => l.name === 'preview')) {
+              core.notice(`PR #${pr.number} does not have the preview label. Skip deploy.`);
+              return;
+            }
+            core.setOutput('number', pr.number);
+
+      - name: Download built artifact
+        if: steps.pr.outputs.number != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: editor-dist
+          path: editor-dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploys as branch alias `pr-<N>` in the existing Pages project, giving
+      # a stable preview URL: https://pr-<N>.<CF_PAGES_PROJECT>.pages.dev
+      - name: Deploy to Cloudflare Pages
+        if: steps.pr.outputs.number != ''
+        id: pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ vars.CF_ACCOUNT_ID }}
+          command: pages deploy editor-dist --project-name=${{ vars.CF_PAGES_PROJECT }} --branch=pr-${{ steps.pr.outputs.number }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment preview URL
+        if: always() && steps.pr.outputs.number != ''
+        uses: actions/github-script@v9
+        env:
+          DEPLOYMENT_URL: ${{ steps.pages.outputs.deployment-url }}
+          BRANCH_URL: ${{ steps.pages.outputs.pages-deployment-alias-url }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        with:
+          script: |
+            const url = process.env.BRANCH_URL || process.env.DEPLOYMENT_URL || '';
+            if (!url) return;
+
+            const prNumber = Number(process.env.PR_NUMBER);
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const existing = comments.find(c =>
+              (c.user?.login === 'github-actions[bot]' || c.user?.type === 'Bot') &&
+              c.body?.includes('Editor Preview for PR')
+            );
+
+            const body = `🌐 **Editor Preview for PR #${prNumber}**\n\n${url}\n\n*This preview runs the Vega Editor with the Vega packages from this PR. It updates automatically when you push changes to your fork.*`;
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
+
+  closed-note:
+    name: Note on PR close
+    # pull_request_target is safe here: no code from the fork is checked out or executed.
+    if: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.fork == true && github.event.action == 'closed' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'PR closed. The editor preview is no longer updated.',
+            });

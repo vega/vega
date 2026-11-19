@@ -148,6 +148,6 @@ function adjustRange(w, bisect) {
         d = w.data,
         n = d.length - 1;
 
-  if (r0 > 0 && !c(d[r0], d[r0-1])) w.i0 = bisect.left(d, d[r0]);
-  if (r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);
+  if (r0 > 0 && r0 <= n && !c(d[r0], d[r0-1])) w.i0 = bisect.left(d, d[r0]);
+  if (r1 >= 0 && r1 < n && !c(d[r1], d[r1+1])) w.i1 = bisect.right(d, d[r1]);
 }

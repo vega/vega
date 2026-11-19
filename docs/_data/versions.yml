@@ -1,4 +1,4 @@
-vega__latest: "6.1.2"
+vega__latest: "6.4.0"
 schema: "6"
 vega: "6"
 interpreter: "1"

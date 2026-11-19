@@ -11,6 +11,8 @@ import {
   symbol as d3_symbol
 } from 'd3-shape';
 
+export const DefaultSymbolSize = 64;
+
 function value(a, b) {
   return a != null ? a : b;
 }
@@ -31,7 +33,7 @@ const x =  item => item.x || 0,
       tr = item => value(item.cornerRadiusTopRight, item.cornerRadius) || 0,
       br = item => value(item.cornerRadiusBottomRight, item.cornerRadius) || 0,
       bl = item => value(item.cornerRadiusBottomLeft, item.cornerRadius) || 0,
-      sz = item => value(item.size, 64),
+      sz = item => value(item.size, DefaultSymbolSize),
       ts = item => item.size || 1,
       def = item => !(item.defined === false),
       type = item => symbols(item.shape || 'circle');

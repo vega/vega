@@ -1,0 +1,455 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "An interactive parallel coordinates chart.",
+  "usermeta": {
+    "author": "David Bacci",
+    "github": "https://github.com/PBI-David/Deneb-Showcase"
+  },
+  "width": 700,
+  "height": 400,
+  "padding": 25,
+  "config": {
+    "axisY": {
+      "titleX": 0,
+      "zindex": 1,
+      "titleY": 410,
+      "titleAngle": 0,
+      "titleAlign": "center",
+      "titleBaseline": "top",
+      "titleColor": "#454545"
+    }
+  },
+  "data": [
+    {
+      "name": "input",
+      "url": "data/cars.json",
+      "format": {"type": "json", "parse": {"Year": "date:%Y-%m-%d"}},
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Horsepower && datum.Miles_per_Gallon "
+        },
+        {
+          "type": "formula",
+          "as": "Year",
+          "expr": "isNumber(datum.year) ? datum.year : year(datum.Year)"
+        }
+      ]
+    },
+    {
+      "name": "dimensions",
+      "values": [
+        {"name": "Cylinders"},
+        {"name": "Displacement"},
+        {"name": "Weight_in_lbs"},
+        {"name": "Horsepower"},
+        {"name": "Acceleration"},
+        {"name": "Miles_per_Gallon"},
+        {"name": "Year"}
+      ]
+    },
+    {
+      "name": "dimensionCalcs",
+      "source": "dimensions",
+      "transform": [
+        {"type": "window", "ops": ["row_number"], "as": ["order"]},
+        {
+          "type": "formula",
+          "as": "x",
+          "expr": "xDelta  && src.scale == datum.name? clamp(xOrigin + xDelta,-20,width+20):(datum.order-1)*step"
+        },
+        {
+          "type": "window",
+          "ops": ["row_number"],
+          "as": ["order"],
+          "sort": {"field": "x", "order": "ascending"}
+        },
+        {
+          "type": "formula",
+          "as": "x",
+          "expr": "xDown ==null? (datum.order-1)*step:datum.x"
+        },
+        {
+          "type": "formula",
+          "as": "brush",
+          "expr": "yDelta  && src.name == datum.name? [clamp(yDown,0, height),clamp(yDown - yDelta,0, height)]:datum.brush"
+        },
+        {
+          "type": "formula",
+          "as": "brush",
+          "expr": "yAnchor && src.name == datum.name? clampRange([yAnchor[0]-yDelta,yAnchor[1]-yDelta],0, height):datum.brush"
+        },
+        {
+          "type": "formula",
+          "as": "brush",
+          "expr": "brushReset && brushReset.name == datum.name || brushReset == 'all' ? null:datum.brush"
+        }
+      ]
+    },
+    {
+      "name": "dimensionPositions",
+      "source": "dimensionCalcs",
+      "transform": [{"type": "pivot", "field": "name", "value": "x"}]
+    },
+    {
+      "name": "inputCalcs",
+      "source": "input",
+      "transform": [
+        {"type": "window", "ops": ["row_number"], "as": ["id"]},
+        {
+          "type": "fold",
+          "fields": {"signal": "pluck(data('dimensions'),'name')"}
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["id", "Name", "Origin", "Horsepower", "key", "value"]
+        },
+        {
+          "type": "lookup",
+          "from": "dimensionCalcs",
+          "key": "name",
+          "fields": ["key"],
+          "as": ["dim"]
+        },
+        {
+          "type": "formula",
+          "as": "colour",
+          "expr": " datum.dim.brush == null || datum.dim.brush != null && scale(datum.key, datum.value) >= extent(datum.dim.brush)[0] &&scale(datum.key, datum.value) <= extent(datum.dim.brush)[1]?1:0 "
+        },
+        {
+          "type": "window",
+          "groupby": ["id"],
+          "ops": ["first_value"],
+          "fields": ["colour"],
+          "as": ["colour"],
+          "frame": [null, 0],
+          "sort": {"field": "colour", "order": "ascending"}
+        }
+      ]
+    },
+    {
+      "name": "highlighted",
+      "source": "inputCalcs",
+      "transform": [{"type": "filter", "expr": "datum.colour == 1 "}]
+    },
+    {
+      "name": "muted",
+      "source": "inputCalcs",
+      "transform": [{"type": "filter", "expr": "datum.colour == 0 "}]
+    }
+  ],
+  "signals": [
+    {"name": "step", "init": "width/(length(data('dimensions'))-1)"},
+    {
+      "name": "src",
+      "value": {},
+      "on": [
+        {
+          "events": "text:pointerdown,@axisDomains:pointerdown,@brush:pointerdown",
+          "update": "datum"
+        },
+        {"events": "window:pointerup", "update": "{}"}
+      ]
+    },
+    {
+      "name": "xOrigin",
+      "value": null,
+      "on": [
+        {
+          "events": "text:pointerdown",
+          "update": "data('dimensionPositions')[0][datum.scale]"
+        },
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "xDelta",
+      "value": 0,
+      "on": [
+        {
+          "events": "[text:pointerdown, window:pointerup] > window:pointermove",
+          "update": " -(xDown-x())"
+        },
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "yDelta",
+      "value": 0,
+      "on": [
+        {
+          "events": "[@axisDomains:pointerdown, window:pointerup] > window:pointermove,[@brush:pointerdown, window:pointerup] > window:pointermove",
+          "update": "yDown-y()"
+        },
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "xDown",
+      "value": null,
+      "on": [
+        {"events": "text:pointerdown", "update": "x()"},
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "yDown",
+      "value": null,
+      "on": [
+        {
+          "events": "@axisDomains:pointerdown,@brush:pointerdown",
+          "update": "y()"
+        },
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "yAnchor",
+      "value": null,
+      "on": [
+        {"events": "@brush:pointerdown", "update": "datum.brush"},
+        {"events": "window:pointerup", "update": "null"}
+      ]
+    },
+    {
+      "name": "brushReset",
+      "value": null,
+      "on": [
+        {
+          "events": "dblclick",
+          "update": "datum != null && datum.name != null ? datum:'all'"
+        },
+        {"events": "pointermove", "update": "null"}
+      ]
+    },
+    {
+      "name": "cursor",
+      "value": "'default'",
+      "on": [
+        {
+          "events": "text:pointerover,[text:pointerdown, window:pointerup] > window:pointermove!",
+          "update": "'grab'"
+        },
+        {
+          "events": "@axisDomains:pointerover,[@axisDomains:pointerdown, window:pointerup] > window:pointermove!",
+          "update": "'row-resize'"
+        },
+        {
+          "events": "@brush:pointerover,[@brush:pointerdown, window:pointerup] > window:pointermove!",
+          "update": "yDown == null || yAnchor != null? 'grab':'row-resize'"
+        },
+        {
+          "events": "@brush:pointerout,@axisDomains:pointerout,text:pointerout, window:pointerup",
+          "update": "'default'"
+        }
+      ]
+    }
+  ],
+  "legends": [
+    {
+      "fill": "colour",
+      "title": "Horsepower",
+      "gradientLength": {"signal": "height"},
+      "titleColor": "#454545"
+    }
+  ],
+  "scales": [
+    {
+      "name": "colour",
+      "type": "linear",
+      "range": {"scheme": "turbo", "extent": [0.05, 1.3]},
+      "domain": {
+        "fields": [{"data": "input", "field": "Horsepower"}],
+        "sort": true
+      }
+    },
+    {
+      "name": "Cylinders",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Cylinders"}
+    },
+    {
+      "name": "Displacement",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Displacement"}
+    },
+    {
+      "name": "Weight_in_lbs",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Weight_in_lbs"}
+    },
+    {
+      "name": "Horsepower",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Horsepower"}
+    },
+    {
+      "name": "Acceleration",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Acceleration"}
+    },
+    {
+      "name": "Miles_per_Gallon",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Miles_per_Gallon"}
+    },
+    {
+      "name": "Year",
+      "type": "linear",
+      "range": "height",
+      "zero": false,
+      "nice": true,
+      "domain": {"data": "input", "field": "Year"}
+    }
+  ],
+  "axes": [
+    {
+      "orient": "left",
+      "scale": "Cylinders",
+      "title": "Cylinders",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "scale": "Displacement",
+      "title": "Displacement",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "zindex": 1,
+      "scale": "Weight_in_lbs",
+      "title": "Weight_in_lbs",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "zindex": 1,
+      "scale": "Horsepower",
+      "title": "Horsepower",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "zindex": 1,
+      "scale": "Acceleration",
+      "title": "Acceleration",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "zindex": 1,
+      "scale": "Miles_per_Gallon",
+      "title": "Miles_per_Gallon",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    },
+    {
+      "orient": "left",
+      "zindex": 1,
+      "scale": "Year",
+      "title": "Year",
+      "format": "d",
+      "offset": {"signal": "-data('dimensionPositions')[0][datum.scale]"},
+      "encode": {"title": {"interactive": true}}
+    }
+  ],
+  "marks": [
+    {
+      "type": "group",
+      "from": {"facet": {"name": "series", "data": "muted", "groupby": ["id"]}},
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "series"},
+          "sort": {"field": ["datum.dim.x"], "order": ["ascending"]},
+          "encode": {
+            "update": {
+              "x": {"signal": " datum.dim.x"},
+              "y": {"signal": "scale(datum.key,datum.value)"},
+              "stroke": {"value": "#dedede"},
+              "strokeWidth": {"value": 1},
+              "strokeOpacity": {"value": 1}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "from": {
+        "facet": {"name": "series", "data": "highlighted", "groupby": ["id"]}
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "series"},
+          "sort": {"field": ["datum.dim.x"], "order": ["ascending"]},
+          "encode": {
+            "update": {
+              "x": {"signal": " datum.dim.x"},
+              "y": {"signal": "scale(datum.key,datum.value)"},
+              "stroke": {"field": "Horsepower", "scale": "colour"},
+              "strokeWidth": {"value": 1.2},
+              "strokeOpacity": {"value": 0.5}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "rect",
+      "name": "axisDomains",
+      "description": "hidden rects to make mouse over axis interations easier to trigger",
+      "from": {"data": "dimensionCalcs"},
+      "encode": {
+        "update": {
+          "xc": {"field": "x"},
+          "y": {"value": -5},
+          "fill": {"value": "transparent"},
+          "width": {"value": 5},
+          "height": {"signal": "height+10"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "name": "brush",
+      "zindex": 2,
+      "from": {"data": "dimensionCalcs"},
+      "encode": {
+        "update": {
+          "xc": {"field": "x"},
+          "y": {"signal": "datum.brush != null? datum.brush[0]:null"},
+          "y2": {"signal": "datum.brush != null? datum.brush[1]:null"},
+          "width": {"value": 5},
+          "fill": {"value": "#333"},
+          "fillOpacity": {"value": 1}
+        }
+      }
+    }
+  ]
+}
