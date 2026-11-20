@@ -10,7 +10,7 @@ export function isGradient(value) {
   return value && value.gradient;
 }
 
-export function gradientRef(g, defs, base) {
+export function gradientRef(g, defs, base, namespace = '') {
   const type = g.gradient;
 
   let id = g.id,
@@ -39,7 +39,7 @@ export function gradientRef(g, defs, base) {
   defs[id] = g;
 
   // return url reference
-  return 'url(' + (base || '') + '#' + prefix + id + ')';
+  return 'url(' + (base || '') + '#' + namespace + prefix + id + ')';
 }
 
 function get(val, def) {
