@@ -26,7 +26,7 @@ import {
   registerScale
 } from 'vega-scale';
 
-const defaultPath = geoPath();
+const defaultPath = /*#__PURE__*/ geoPath();
 
 export const projectionProperties = [
   // standard properties in d3-geo
@@ -86,6 +86,9 @@ export function projection(type, proj) {
     projections[type] = create(type, proj);
     return this;
   } else {
+    if (!projections[type] && Object.hasOwn(baseProjections, type)) {
+      projections[type] = create(type, baseProjections[type]);
+    }
     return projections[type] || null;
   }
 }
@@ -94,7 +97,11 @@ export function getProjectionPath(proj) {
   return (proj && proj.path) || defaultPath;
 }
 
-const projections = {
+const projections = {};
+
+// Projections are added to `projections` the first time they're looked up, so
+// that importing this module has no side effects.
+const baseProjections = {
   // base d3-geo projection types
   albers:               geoAlbers,
   albersusa:            geoAlbersUsa,
@@ -103,18 +110,14 @@ const projections = {
   conicconformal:       geoConicConformal,
   conicequalarea:       geoConicEqualArea,
   conicequidistant:     geoConicEquidistant,
-  equalEarth:           geoEqualEarth,
+  equalearth:           geoEqualEarth,
   equirectangular:      geoEquirectangular,
   gnomonic:             geoGnomonic,
   identity:             geoIdentity,
   mercator:             geoMercator,
   mollweide:            geoMollweide,
-  naturalEarth1:        geoNaturalEarth1,
+  naturalearth1:        geoNaturalEarth1,
   orthographic:         geoOrthographic,
   stereographic:        geoStereographic,
   transversemercator:   geoTransverseMercator
 };
-
-for (const key in projections) {
-  projection(key, projections[key]);
-}
