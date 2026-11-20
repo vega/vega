@@ -225,6 +225,95 @@ tape('Aggregate handles distinct aggregates', t => {
   t.end();
 });
 
+tape('Aggregate updates min and max computed alongside quartiles', t => {
+  const data = [
+    {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:3}, {k:'a', v:4}, {k:'a', v:5}
+  ];
+  const next = [
+    {k:'a', v:10}, {k:'a', v:20}, {k:'a', v:30}, {k:'a', v:40}, {k:'a', v:50}
+  ];
+
+  var key = field('k'),
+      val = field('v'),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        groupby: [key],
+        fields: [val, val, val, val, val, val, val],
+        ops: ['q1', 'median', 'q3', 'min', 'max', 'argmin', 'argmax'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data)).run();
+  let d = out.value;
+  t.equal(d.length, 1);
+  t.equal(d[0].median_v, 3);
+  t.equal(d[0].min_v, 1);
+  t.equal(d[0].max_v, 5);
+  t.equal(d[0].argmin_v, data[0]);
+  t.equal(d[0].argmax_v, data[4]);
+
+  // replace all values: the quartiles are computed first, which must not
+  // make the extent memoized for the previous values look current
+  df.pulse(col, changeset().remove(data).insert(next)).run();
+  d = out.value;
+  t.equal(d.length, 1);
+  t.equal(d[0].median_v, 30);
+  t.equal(d[0].min_v, 10);
+  t.equal(d[0].max_v, 50);
+  t.equal(d[0].argmin_v, next[0]);
+  t.equal(d[0].argmax_v, next[4]);
+
+  // remove the extremes only
+  df.pulse(col, changeset().remove([next[0], next[4]])).run();
+  d = out.value;
+  t.equal(d[0].median_v, 30);
+  t.equal(d[0].min_v, 20);
+  t.equal(d[0].max_v, 40);
+  t.equal(d[0].argmin_v, next[1]);
+  t.equal(d[0].argmax_v, next[3]);
+
+  t.end();
+});
+
+tape('Aggregate memoizes stored statistics per field', t => {
+  const data = [
+    {k:'a', u:1, v:30}, {k:'a', u:2, v:20}, {k:'a', u:3, v:10}
+  ];
+
+  var key = field('k'),
+      u = field('u'),
+      v = field('v'),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      agg = df.add(Aggregate, {
+        groupby: [key],
+        fields: [u, u, v],
+        ops: ['median', 'argmin', 'argmax'],
+        as: ['median_u', 'argmin_u', 'argmax_v'],
+        pulse: col
+      }),
+      out = df.add(Collect, {pulse: agg});
+
+  df.pulse(col, changeset().insert(data)).run();
+  let d = out.value;
+  t.equal(d.length, 1);
+  t.equal(d[0].median_u, 2);
+  t.equal(d[0].argmin_u, data[0]);
+  t.equal(d[0].argmax_v, data[0]);
+
+  // the extent memoized last is for another field than the one requested
+  const extra = {k:'a', u:4, v:5};
+  df.pulse(col, changeset().insert([extra])).run();
+  d = out.value;
+  t.equal(d[0].median_u, 2.5);
+  t.equal(d[0].argmin_u, data[0]);
+  t.equal(d[0].argmax_v, data[0]);
+
+  t.end();
+});
+
 tape('Aggregate handles cross-product', t => {
   const data = [
     {a: 0, b: 2},
