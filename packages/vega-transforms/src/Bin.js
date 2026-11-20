@@ -88,11 +88,15 @@ inherits(Bin, Transform, {
       stop += d;
     }
 
+    // start + n * step can round a few ulps below the extent maximum,
+    // so values within that error still go into the last bin (#4387)
+    const eps = Epsilon * Math.max(Math.abs(start), Math.abs(stop));
+
     const f = function(t) {
       let v = toNumber(field(t));
       return v == null ? null
         : v < start ? -Infinity
-        : v > stop ? +Infinity
+        : v > stop + eps ? +Infinity
         : (
             v = Math.max(start, Math.min(v, stop - step)),
             start + step * Math.floor(Epsilon + (v - start) / step)
