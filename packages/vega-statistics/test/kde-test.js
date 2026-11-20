@@ -70,3 +70,18 @@ tape('kde auto-selects positive bandwidth values', t => {
   t.ok(stats.randomKDE([]).bandwidth() > 0);
   t.end();
 });
+
+tape('kde ignores null, undefined and NaN values', t => {
+  const valid = [1, 2, 2, 3, 5],
+        kde = stats.randomKDE([1, null, 2, undefined, 2, NaN, 3, 5]),
+        ref = stats.randomKDE(valid);
+
+  t.deepEqual(kde.data(), valid);
+  t.equal(kde.bandwidth(), ref.bandwidth());
+  for (let x = -2; x <= 8; x += 0.5) {
+    t.equal(kde.pdf(x), ref.pdf(x));
+    t.equal(kde.cdf(x), ref.cdf(x));
+  }
+
+  t.end();
+});

@@ -84,8 +84,9 @@ inherits(KDE, Transform, {
       }
 
       groups.forEach(g => {
-        const density = randomKDE(g, bandwidth)[method],
-              scale = _.counts ? g.length : 1,
+        const kde = randomKDE(g, bandwidth),
+              density = kde[method],
+              scale = _.counts ? kde.data().length : 1,
               local = domain || extent(g);
 
         sampleCurve(density, local, minsteps, maxsteps)
