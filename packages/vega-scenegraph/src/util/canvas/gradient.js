@@ -9,7 +9,7 @@ function addStops(gradient, stops) {
   return gradient;
 }
 
-export default function(context, spec, bounds) {
+export default function(context, spec, bounds, translate = true) {
   const w = bounds.width(),
         h = bounds.height();
   let gradient;
@@ -42,7 +42,8 @@ export default function(context, spec, bounds) {
       // not axis aligned: render gradient into a pattern (#2365)
       // this allows us to use normalized bounding box coordinates
       const image = canvas(Math.ceil(w), Math.ceil(h)),
-            ictx = image.getContext('2d');
+            ictx = image.getContext('2d'),
+            matrix = ictx.getTransform();
 
       ictx.scale(w, h);
       ictx.fillStyle = addStops(
@@ -51,7 +52,13 @@ export default function(context, spec, bounds) {
       );
       ictx.fillRect(0, 0, w, h);
 
-      return context.createPattern(image, 'no-repeat');
+      const pattern = context.createPattern(image, 'no-repeat');
+      if (translate) {
+        matrix.e = bounds.x1;
+        matrix.f = bounds.y1;
+        pattern.setTransform(matrix);
+      }
+      return pattern;
     }
   }
 
