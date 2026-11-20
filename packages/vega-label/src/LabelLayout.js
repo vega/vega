@@ -139,6 +139,9 @@ function markType(item) {
 }
 
 /**
+ * Group mark type of the labeled items, if any.
+ */
+/**
  * Factory function for function for getting base mark boundary, depending
  * on mark and group type. When mark type is undefined, line or area: boundary
  * is the coordinate of each data point. When base mark is grouped line,
@@ -171,4 +174,48 @@ function markBoundary(marktype, grouptype, lineAnchor, markIndex) {
       return [b.x1, (b.x1 + b.x2) / 2, b.x2, b.y1, (b.y1 + b.y2) / 2, b.y2];
     };
   }
+}
+
+/**
+ * Snapshot the item properties read by the layout: the base mark boundary
+ * coordinates and the text metric fields. Modify-only pulses re-run the
+ * layout only if this snapshot changes.
+ */
+export function inputSnapshot(texts, lineAnchor, markIndex) {
+  if (!texts.length) return [];
+
+  const marktype = markType(texts[0].datum),
+        grouptype = marktype === 'group' && texts[0].datum.items[markIndex].marktype,
+        boundary = markBoundary(marktype, grouptype, lineAnchor, markIndex);
+
+  return texts.map(d => {
+    const b = boundary(d);
+    return [
+      b[0], b[1], b[2], b[3], b[4], b[5],
+      d.text, d.fontSize, d.font, d.fontStyle, d.fontVariant,
+      d.fontWeight, d.limit
+    ];
+  });
+}
+
+/**
+ * Check if the layout inputs of the given items are unchanged from the
+ * previous snapshot. Stops at the first difference. NaN boundary values
+ * (e.g. for empty grouped line marks) compare as equal.
+ */
+export function sameInputs(texts, previous, lineAnchor, markIndex) {
+  const current = inputSnapshot(texts, lineAnchor, markIndex);
+  if (!previous || current.length !== previous.length) return false;
+
+  for (let i = 0; i < current.length; ++i) {
+    const x = current[i], y = previous[i];
+    if (x.length !== y.length) return false;
+
+    for (let j = 0; j < x.length; ++j) {
+      const u = x[j], v = y[j];
+      if (!(u === v || (u !== u && v !== v))) return false;
+    }
+  }
+
+  return true;
 }

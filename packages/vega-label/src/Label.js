@@ -1,4 +1,4 @@
-import labelLayout from './LabelLayout.js';
+import labelLayout, {inputSnapshot, sameInputs} from './LabelLayout.js';
 import {Transform} from 'vega-dataflow';
 import {array, error, inherits, isFunction} from 'vega-util';
 
@@ -77,8 +77,19 @@ inherits(Label, Transform, {
       return isFunction(p) && pulse.modified(p.fields);
     }
 
-    const mod = _.modified();
-    if (!(mod || pulse.changed(pulse.ADD_REM) || modp('sort'))) return;
+    const mod = _.modified(),
+          lineAnchor = _.lineAnchor || 'end',
+          markIndex = _.markIndex || 0,
+          src = pulse.materialize(pulse.SOURCE).source || [];
+
+    // Re-run on parameter changes, added or removed items, or modify-only
+    // pulses that change what the layout reads (snapshot comparison). Any
+    // placement-affecting change can move other labels, so all items reflow.
+    if (!(mod
+      || pulse.changed(pulse.ADD_REM)
+      || modp('sort')
+      || (pulse.changed(pulse.MOD) && !sameInputs(src, this._inputs, lineAnchor, markIndex))
+    )) return;
     if (!_.size || _.size.length !== 2) {
       error('Size parameter should be specified as a [width, height] array.');
     }
@@ -87,15 +98,15 @@ inherits(Label, Transform, {
 
     // run label layout
     labelLayout(
-      pulse.materialize(pulse.SOURCE).source || [],
+      src,
       _.size,
       _.sort,
       array(_.offset == null ? 1 : _.offset),
       array(_.anchor || Anchors),
       _.avoidMarks || [],
       _.avoidBaseMark !== false,
-      _.lineAnchor || 'end',
-      _.markIndex || 0,
+      lineAnchor,
+      markIndex,
       _.padding === undefined ? 0 : _.padding,
       _.method || 'naive'
     ).forEach(l => {
@@ -108,6 +119,10 @@ inherits(Label, Transform, {
       t[as[4]] = l.baseline;
     });
 
-    return pulse.reflow(mod).modifies(as);
+    // snapshot the consumed inputs after writing outputs, so hover-style
+    // pulses that only touch other fields compare equal and are skipped
+    this._inputs = inputSnapshot(src, lineAnchor, markIndex);
+
+    return pulse.reflow(true).modifies(as);
   }
 });
