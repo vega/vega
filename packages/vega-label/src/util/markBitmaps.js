@@ -13,7 +13,7 @@ export function baseBitmaps($, data) {
 }
 
 export function markBitmaps($, baseMark, avoidMarks, labelInside, isGroupArea) {
-  // create canvas
+  // canvas() automatically uses OffscreenCanvas in Web Workers when available
   const width = $.width,
         height = $.height,
         border = labelInside || isGroupArea,

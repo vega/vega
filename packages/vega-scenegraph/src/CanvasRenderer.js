@@ -5,7 +5,7 @@ import marks from './marks/index.js';
 import {domClear} from './util/dom.js';
 import clip from './util/canvas/clip.js';
 import resize from './util/canvas/resize.js';
-import {canvas} from 'vega-canvas';
+import {canvas, isOffscreenCanvas} from 'vega-canvas';
 import {error} from 'vega-util';
 
 export default class CanvasRenderer extends Renderer {
@@ -20,11 +20,14 @@ export default class CanvasRenderer extends Renderer {
   initialize(el, width, height, origin, scaleFactor, options) {
     this._options = options || {};
 
-    this._canvas = this._options.externalContext
-      ? null
-      : canvas(1, 1, this._options.type); // instantiate a small canvas
+    const { canvas: externalCanvas, externalContext } = this._options;
+    this._canvas = externalContext ? null
+      : externalCanvas || canvas(1, 1, this._options.type);
 
-    if (el && this._canvas) {
+    // OffscreenCanvas cannot be inserted into the DOM. We test for
+    // OffscreenCanvas rather than HTMLElement because node-canvas objects are
+    // not HTMLElement instances but can still be appended under jsdom.
+    if (el && this._canvas && !isOffscreenCanvas(this._canvas)) {
       domClear(el, 0).appendChild(this._canvas);
       this._canvas.setAttribute('class', 'marks');
       // an inline element sits on the text baseline, leaving a few pixels of
