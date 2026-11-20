@@ -1,0 +1,63 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "width": 300,
+  "height": 100,
+  "padding": 0,
+  "autosize": "pad",
+  "config": {
+    "trail": {
+      "size": 16
+    }
+  },
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        { "z": "a", "x": 0, "y": 1 },
+        { "z": "a", "x": 1, "y": 0.2 },
+        { "z": "a", "x": 2, "y": 0.39 },
+        { "z": "a", "x": 3, "y": 0.56 },
+        { "z": "a", "x": 4, "y": 0.72 },
+        { "z": "a", "x": 5, "y": 0.84 },
+        { "z": "a", "x": 6, "y": 0.93 },
+        { "z": "a", "x": 7, "y": 0.98 },
+        { "z": "b", "x": 7, "y": 1 },
+        { "z": "b", "x": 6, "y": 0.97 },
+        { "z": "b", "x": 5, "y": 0.91 },
+        { "z": "b", "x": 4, "y": 0.81 },
+        { "z": "b", "x": 3, "y": 0.68 },
+        { "z": "b", "x": 2, "y": 0.52 },
+        { "z": "b", "x": 1, "y": 0.33 },
+        { "z": "b", "x": 0, "y": 0.14 }
+      ]
+    }
+  ],
+  "scales": [
+    { "name": "x", "type": "linear", "range": "width", "domain": [0, 7] },
+    { "name": "y", "type": "linear", "range": "height", "domain": [0, 1] },
+    { "name": "c", "type": "ordinal", "domain": ["a", "b"], "range": ["steelblue", "orange"] }
+  ],
+  "marks": [
+    {
+      "name": "pathgroup",
+      "type": "group",
+      "marks": [
+        {
+          "type": "trail",
+          "from": { "data": "table" },
+          "encode": {
+            "enter": {
+              "x": { "scale": "x", "field": "x" },
+              "y": { "scale": "y", "field": "y" },
+              "stroke": { "scale": "c", "field": "z" },
+              "size": { "value": 16 }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "legends": [
+    { "stroke": "c", "orient": "right" }
+  ]
+}
