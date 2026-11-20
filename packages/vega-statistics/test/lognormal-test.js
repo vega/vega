@@ -14,6 +14,18 @@ tape('cumulativeLogNormal matches R output', t => {
   t.end();
 });
 
+tape('cumulativeLogNormal is zero for non-positive values', t => {
+  // R: plnorm(c(-1, -0.5, 0)) is 0 for any meanlog and sdlog
+  [-1, -0.5, -1e-300, 0, -Infinity].forEach(x => {
+    t.equal(stats.cumulativeLogNormal(x), 0);
+    t.equal(stats.cumulativeLogNormal(x, 2, 0.5), 0);
+    t.equal(stats.randomLogNormal(1, 3).cdf(x), 0);
+  });
+  t.ok(Number.isNaN(stats.cumulativeLogNormal(NaN)));
+
+  t.end();
+});
+
 tape('densityLogNormal matches R output', t => {
   var v = [0.125, 0.25, 0.5, 1, 2, 4, 16],
       R = [0.3673149759, 0.6104553042, 0.6274960771, 0.3989422804, 0.1568740193, 0.0381534565, 0.0005339804];
