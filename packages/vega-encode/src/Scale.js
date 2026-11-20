@@ -109,9 +109,11 @@ function scaleKey(_) {
     n = _.rawDomain ? _.rawDomain.length
       : _.domain ? _.domain.length + +(_.domainMid != null)
       : 0;
-    d = n === 2 ? Sequential + '-'
-      : n === 3 ? Diverging + '-'
-      : '';
+    if (t !== Time && t !== UTC) {
+      d = n === 2 ? Sequential + '-'
+        : n === 3 ? Diverging + '-'
+        : '';
+    }
   }
 
   return ((d + t) || Linear).toLowerCase();
@@ -119,7 +121,7 @@ function scaleKey(_) {
 
 function isContinuousColor(_) {
   const t = _.type;
-  return isContinuous(t) && t !== Time && t !== UTC && (
+  return isContinuous(t) && (
     _.scheme || _.range && _.range.length && _.range.every(isString)
   );
 }
@@ -273,6 +275,8 @@ function configureRange(scale, _, count) {
     if (isFunction(range)) {
       if (scale.interpolator) {
         return scale.interpolator(range);
+      } else if (scale.interpolate) {
+        return scale.interpolate(() => range);
       } else {
         error(`Scale type ${type} does not support interpolating color schemes.`);
       }
@@ -280,7 +284,7 @@ function configureRange(scale, _, count) {
   }
 
   // given a range array for an interpolating scale, convert to interpolator
-  if (range && isInterpolating(type)) {
+  if (range && isInterpolating(type) && scale.interpolator) {
     return scale.interpolator(
       interpolateColors(flip(range, _.reverse), _.interpolate, _.interpolateGamma)
     );
