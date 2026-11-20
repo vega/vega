@@ -58,10 +58,10 @@ function main(type, callback, opt) {
         vega.setRandom(vega.randomLCG(arg.seed));
     }
     // locale options, load custom number/time formats if specified
-    const locale = {
-        number: arg.format ? load(arg.format, 'format') : null,
-        time: arg.timeFormat ? load(arg.timeFormat, 'timeFormat') : null
-    };
+    // only set the formats that were given, so the spec's config.locale is kept
+    const locale = {};
+    if (arg.format) locale.number = load(arg.format, 'format');
+    if (arg.timeFormat) locale.time = load(arg.timeFormat, 'timeFormat');
     // instantiate view and invoke headless render method
     function render(spec) {
         const view = new vega.View(vega.parse(spec, config), {
