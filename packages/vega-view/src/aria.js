@@ -2,8 +2,10 @@
 export function initializeAria(view) {
   const el = view.container();
   if (el) {
+    const loc = view.ariaLocale();
     el.setAttribute('role', 'graphics-document');
-    el.setAttribute('aria-roleDescription', 'visualization');
+    el.setAttribute('aria-roleDescription',
+      loc['role.visualization'] || 'visualization');
     ariaLabel(el, view.description());
   }
 }

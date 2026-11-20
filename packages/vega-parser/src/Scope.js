@@ -34,6 +34,7 @@ export default function Scope(config, options) {
   this.operators = [];
   this.eventConfig = null;
   this.locale = null;
+  this.ariaLocale = null;
 
   this._id = 0;
   this._subid = 0;
@@ -93,7 +94,8 @@ Scope.prototype = Subscope.prototype = {
       updates:     this.updates,
       bindings:    this.bindings,
       eventConfig: this.eventConfig,
-      locale:      this.locale
+      locale:      this.locale,
+      ariaLocale:  this.ariaLocale
     };
   },
 
