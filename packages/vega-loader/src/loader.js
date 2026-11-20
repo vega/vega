@@ -48,7 +48,7 @@ async function load(uri, options) {
 
   return opt.localFile
     ? this.file(url)
-    : this.http(url, options?.http);
+    : this.http(url, {...options?.http, response: options?.response});
 }
 
 /**

@@ -98,6 +98,22 @@ tape('loader should load from http with headers', t => {
     .catch(e => { t.fail(e); t.end(); });
 });
 
+tape('loader should pass the response type to http', async t => {
+  const fetch = globalThis.fetch;
+  const bytes = new Uint8Array([1, 2, 3]);
+  globalThis.fetch = async () => new Response(bytes);
+  try {
+    const data = await loader.load(url, {context: 'dataflow', response: 'arrayBuffer'});
+    t.ok(data instanceof ArrayBuffer);
+    t.deepEqual(new Uint8Array(data), bytes);
+  } catch (e) {
+    t.fail(e);
+  } finally {
+    globalThis.fetch = fetch;
+    t.end();
+  }
+});
+
 tape('loader should resolve error with invalid url', t => {
   loader.load(url + '.invalid')
     .then(() => { t.fail(); t.end(); })
