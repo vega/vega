@@ -28,6 +28,18 @@ tape('regressionLinear fits a linear regression model', t => {
   t.end();
 });
 
+tape('regressionLinear is stable for large x values', t => {
+  var data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(v => [1e9 + v, 3 + 2 * v]),
+      fit = vega.regressionLinear(data, x, y);
+
+  closeTo(t, fit.coef[1], 2);
+  t.ok(Math.abs(fit.coef[0] - (3 - 2e9)) < 1e-6);
+  closeTo(t, fit.rSquared, 1);
+  data.forEach(d => closeTo(t, fit.predict(x(d)), y(d)));
+
+  t.end();
+});
+
 tape('regressionLog fits a logarithmic regression model', t => {
   var data = [1, 2, NaN, 3].map(v => [v, 2 + 3 * Math.log(v)]),
       fit = vega.regressionLog(data, x, y);

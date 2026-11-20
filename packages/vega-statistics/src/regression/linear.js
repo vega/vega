@@ -1,26 +1,29 @@
 import ols from './ols.js';
-import {visitPoints} from './points.js';
+import {points} from './points.js';
 import rSquared from './r-squared.js';
 
 // Adapted from d3-regression by Harry Stevens
 // License: https://github.com/HarryStevens/d3-regression/blob/master/LICENSE
 export default function(data, x, y) {
-  let X = 0, Y = 0, XY = 0, X2 = 0, n = 0;
+  const [xv, yv, ux, uy] = points(data, x, y),
+        n = xv.length;
 
-  visitPoints(data, x, y, (dx, dy) => {
-    ++n;
-    X += (dx - X) / n;
-    Y += (dy - Y) / n;
-    XY += (dx * dy - XY) / n;
-    X2 += (dx * dx - X2) / n;
-  });
+  let XY = 0, X2 = 0, i, dx;
 
-  const coef = ols(X, Y, XY, X2),
-        predict = x => coef[0] + coef[1] * x;
+  // accumulate moments of the mean-centered data
+  for (i=0; i<n;) {
+    dx = xv[i];
+    XY += (dx * yv[i++] - XY) / i;
+    X2 += (dx * dx - X2) / i;
+  }
+
+  // fit in mean-centered space, then transform the intercept back
+  const [, slope] = ols(0, 0, XY, X2),
+        predict = x => uy + slope * (x - ux);
 
   return {
-    coef: coef,
+    coef: [uy - slope * ux, slope],
     predict: predict,
-    rSquared: rSquared(data, x, y, Y, predict)
+    rSquared: rSquared(data, x, y, uy, predict)
   };
 }
