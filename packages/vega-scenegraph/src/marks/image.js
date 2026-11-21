@@ -94,7 +94,7 @@ function draw(context, scene, bounds) {
       }
     }
 
-    if (img.complete || img.toDataURL) {
+    if ((img.complete && (img.naturalWidth || img.width)) || img.toDataURL) {
       blend(context, item);
       context.globalAlpha = (opacity = item.opacity) != null ? opacity : 1;
       context.imageSmoothingEnabled = item.smooth !== false;
