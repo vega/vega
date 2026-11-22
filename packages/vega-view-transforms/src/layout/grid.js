@@ -6,7 +6,7 @@ import {
 } from '../constants.js';
 import {tempBounds} from './util.js';
 import {Bounds} from 'vega-scenegraph';
-import {isObject} from 'vega-util';
+import {identity, isObject} from 'vega-util';
 
 // aggregation functions for grid margin determination
 const min = (a, b) => Math.floor(Math.min(a, b));
@@ -71,7 +71,7 @@ function offsetValue(v) {
   return v < 0 ? Math.ceil(-v) : 0;
 }
 
-export function gridLayout(view, groups, opt) {
+export function gridLayout(view, groups, opt, roundExtent = Math.ceil) {
   var dirty = !opt.nodirty,
       bbox = opt.bounds === Flush ? bboxFlush : bboxFull,
       bounds = tempBounds.set(0, 0, 0, 0),
@@ -98,8 +98,8 @@ export function gridLayout(view, groups, opt) {
     g.y = g.y || 0; dy[i] = 0;
     c = i % ncols;
     r = ~~(i / ncols);
-    xMax = Math.max(xMax, px = Math.ceil(b.x2));
-    yMax = Math.max(yMax, py = Math.ceil(b.y2));
+    xMax = Math.max(xMax, px = roundExtent(b.x2));
+    yMax = Math.max(yMax, py = roundExtent(b.y2));
     xExtent[c] = Math.max(xExtent[c], px);
     yExtent[r] = Math.max(yExtent[r], py);
     xOffset[i] = padCol + offsetValue(b.x1);
@@ -239,7 +239,8 @@ export function trellisLayout(view, group, opt) {
       x, y, x2, y2, anchor, band, offset;
 
   // -- initial grid layout
-  const bounds = gridLayout(view, groups, opt);
+  const roundExtent = group.mark.role === 'legend-entry' ? Math.ceil : identity;
+  const bounds = gridLayout(view, groups, opt, roundExtent);
   if (bounds.empty()) bounds.set(0, 0, 0, 0); // empty grid
 
   // -- layout grid headers and footers --
