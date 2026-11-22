@@ -241,6 +241,35 @@ tape('TimeUnit supports unit inference', t => {
   t.end();
 });
 
+tape('TimeUnit re-floors all tuples when inferred units change', t => {
+  const data = [
+    {date: new Date(2020, 0, 15)},
+    {date: new Date(2020, 5, 15)}
+  ];
+  const later = {date: new Date(2030, 0, 15)};
+
+  var date = field('date'),
+      df = new Dataflow(),
+      c = df.add(Collect),
+      s = df.add(TimeUnit, {field: date, pulse: c, maxbins: 10});
+
+  df.pulse(c, changeset().insert(data)).run();
+  t.deepEqual(s.value.units, ['year', 'month']);
+  t.equal(+data[1].unit0, +new Date(2020, 5, 1));
+
+  // insert a date that widens the extent so that years are inferred
+  df.pulse(c, changeset().insert(later)).run();
+  t.deepEqual(s.value.units, ['year']);
+  t.equal(+data[0].unit0, +new Date(2020, 0, 1));
+  t.equal(+data[1].unit0, +new Date(2020, 0, 1));
+  t.equal(+data[1].unit1, +new Date(2021, 0, 1));
+  t.equal(+later.unit0, +new Date(2030, 0, 1));
+  t.equal(+s.value.start, +new Date(2020, 0, 1));
+  t.equal(+s.value.stop, +new Date(2031, 0, 1));
+
+  t.end();
+});
+
 tape('TimeUnit supports unit inference with extent', t => {
   const data = [
     {y: 2012, q: 0, m: 0, d: 1, w: 1, u: 0, iw: 52, iy: 2011, w1: 3, iu: 6},
