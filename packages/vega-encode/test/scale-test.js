@@ -355,3 +355,24 @@ tape('Scale respects bins parameter', t => {
 
   t.end();
 });
+
+tape('Scale updates bin-ordinal bins without a domain', t => {
+  var df = new Dataflow(),
+      bins = df.add({start: 0, stop: 100, step: 10}),
+      s = df.add(encode.scale, {type: 'bin-ordinal', bins});
+
+  df.run();
+  t.deepEqual(s.value.domain(), [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+
+  // shrink the bins
+  df.update(bins, {start: 0, stop: 50, step: 10}).run();
+  t.deepEqual(s.value.domain(), [0, 10, 20, 30, 40, 50]);
+  t.deepEqual(s.value.bins, [0, 10, 20, 30, 40, 50]);
+
+  // grow the bins again
+  df.update(bins, {start: 0, stop: 100, step: 10}).run();
+  t.deepEqual(s.value.domain(), [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+  t.deepEqual(s.value.bins, [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+
+  t.end();
+});

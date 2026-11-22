@@ -219,7 +219,10 @@ function configureBins(scale, _, count) {
 
   if (bins && !isArray(bins)) {
     // generate bin boundary array
-    const domain = scale.domain(),
+    // a bin-ordinal scale without a domain derives its domain from the bins
+    // (below), so ignore the domain left over from a previous evaluation
+    const domain = scale.type === BinOrdinal && !_.domain && !_.domainRaw
+            ? [] : scale.domain(),
           lo = domain[0],
           hi = peek(domain),
           step = bins.step;
