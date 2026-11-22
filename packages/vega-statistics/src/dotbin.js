@@ -7,6 +7,8 @@ export default function(array, step, smooth, f) {
   const n = array.length,
         v = new Float64Array(n);
 
+  if (!n) return v;
+
   let i = 0, j = 1,
       a = f(array[0]),
       b = a,
