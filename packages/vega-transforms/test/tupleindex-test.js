@@ -79,6 +79,63 @@ tape('TupleIndex maintains an index of tuples', t => {
   t.end();
 });
 
+tape('TupleIndex keeps a key while other tuples with that key remain', t => {
+  const a = {'id': 1, 'value': 'a'},
+        b = {'id': 2, 'value': 'b'};
+
+  function setup(data) {
+    const df = new Dataflow(),
+          c0 = df.add(Collect),
+          ti = df.add(TupleIndex, {field: field('id'), pulse: c0});
+    df.pulse(c0, changeset().insert(data)).run();
+    return {df, c0, ti};
+  }
+
+  // insert a duplicate key, then remove the duplicate
+  let {df, c0, ti} = setup([a, b]);
+  const a2 = {'id': 1, 'value': 'a2'};
+  df.pulse(c0, changeset().insert(a2)).run();
+  df.pulse(c0, changeset().remove(a2)).run();
+  t.equal(ti.value.size, 2);
+  t.equal(ti.value.get(1), a);
+
+  // replace in two steps: insert the new version, then remove the old
+  ({df, c0, ti} = setup([a, b]));
+  df.pulse(c0, changeset().insert(a2)).run();
+  df.pulse(c0, changeset().remove(a)).run();
+  t.equal(ti.value.size, 2);
+  t.equal(ti.value.get(1), a2);
+
+  // three tuples for one key: remove the oldest, then the newest
+  ({df, c0, ti} = setup([a, b]));
+  const a3 = {'id': 1, 'value': 'a3'};
+  df.pulse(c0, changeset().insert(a2)).run();
+  df.pulse(c0, changeset().insert(a3)).run();
+  df.pulse(c0, changeset().remove(a)).run();
+  df.pulse(c0, changeset().remove(a3)).run();
+  t.equal(ti.value.get(1), a2);
+
+  // initial duplicates: remove the last one
+  ({df, c0, ti} = setup([a, b, a2]));
+  t.equal(ti.value.get(1), a2);
+  df.pulse(c0, changeset().remove(a2)).run();
+  t.equal(ti.value.get(1), a);
+
+  // remove every tuple for a key
+  df.pulse(c0, changeset().remove(a)).run();
+  t.equal(ti.value.size, 1);
+  t.equal(ti.value.get(1), undefined);
+  t.equal(ti.value.get(2), b);
+
+  // replace within one changeset (already works; included as a regression check)
+  ({df, c0, ti} = setup([a, b]));
+  df.pulse(c0, changeset().insert(a2).remove(a)).run();
+  t.equal(ti.value.size, 2);
+  t.equal(ti.value.get(1), a2);
+
+  t.end();
+});
+
 tape('TupleIndex does not leak memory', t => {
   var df = new Dataflow(),
       c0 = df.add(Collect),
