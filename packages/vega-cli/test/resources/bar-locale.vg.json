@@ -1,0 +1,75 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "config": {
+    "locale": {
+      "number": {"decimal": ",", "thousands": ".", "grouping": [3], "currency": ["", " €"]}
+    }
+  },
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"u": 1,  "v": 28000}, {"u": 2,  "v": 55000},
+        {"u": 3,  "v": 43000}, {"u": 4,  "v": 91000},
+        {"u": 5,  "v": 81000}, {"u": 6,  "v": 53000},
+        {"u": 7,  "v": 19000}, {"u": 8,  "v": 87000},
+        {"u": 9,  "v": 52000}, {"u": 10, "v": 48000},
+        {"u": 11, "v": 24000}, {"u": 12, "v": 49000},
+        {"u": 13, "v": 87000}, {"u": 14, "v": 66000},
+        {"u": 15, "v": 17000}, {"u": 16, "v": 27000},
+        {"u": 17, "v": 68000}, {"u": 18, "v": 16000},
+        {"u": 19, "v": 49000}, {"u": 20, "v": 15000}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "range": "width",
+      "padding": 0.05,
+      "round": true,
+      "domain": {"data": "table", "field": "u"}
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "range": "height",
+      "domain": {"data": "table", "field": "v"},
+      "zero": true,
+      "nice": true
+    }
+  ],
+
+  "axes": [
+    {"orient": "bottom", "scale": "xscale", "labels": false, "zindex": 1},
+    {"orient": "left", "scale": "yscale", "zindex": 1}
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "u"},
+          "width": {"scale": "xscale", "band": 1},
+          "y": {"scale": "yscale", "field": "v"},
+          "y2": {"scale": "yscale", "value": 0}
+        },
+        "update": {
+          "fill": {"value": "steelblue"}
+        },
+        "hover": {
+          "fill": {"value": "red"}
+        }
+      }
+    }
+  ]
+}
