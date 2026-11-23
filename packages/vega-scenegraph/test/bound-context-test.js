@@ -1,7 +1,7 @@
 import tape from 'tape';
 import {Bounds, boundContext} from '../index.js';
 
-const EPSILON = 1e-10;
+const Epsilon = 1e-10;
 const x = 0;
 const y = 0;
 const r = 1;
@@ -39,10 +39,10 @@ const angles = [
 ];
 
 function boundEqual(b, array) {
-  return Math.abs(b.x1 - array[0]) < EPSILON
-      && Math.abs(b.y1 - array[1]) < EPSILON
-      && Math.abs(b.x2 - array[2]) < EPSILON
-      && Math.abs(b.y2 - array[3]) < EPSILON;
+  return Math.abs(b.x1 - array[0]) < Epsilon
+      && Math.abs(b.y1 - array[1]) < Epsilon
+      && Math.abs(b.x2 - array[2]) < Epsilon
+      && Math.abs(b.y2 - array[3]) < Epsilon;
 }
 
 function getContext(bounds, angle) {

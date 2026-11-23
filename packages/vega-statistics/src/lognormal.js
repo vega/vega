@@ -1,5 +1,5 @@
 import {cumulativeNormal, quantileNormal, sampleNormal} from './normal.js';
-import {SQRT2PI} from './constants.js';
+import {Sqrt2Pi} from './constants.js';
 
 export function sampleLogNormal(mean, stdev) {
   mean = mean || 0;
@@ -12,7 +12,7 @@ export function densityLogNormal(value, mean, stdev) {
   mean = mean || 0;
   stdev = stdev == null ? 1 : stdev;
   const z = (Math.log(value) - mean) / stdev;
-  return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI * value);
+  return Math.exp(-0.5 * z * z) / (stdev * Sqrt2Pi * value);
 }
 
 export function cumulativeLogNormal(value, mean, stdev) {

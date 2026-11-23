@@ -40,4 +40,4 @@ Accessibility properties are used to determine [ARIA (Accessible Rich Internet A
 | Property          | Type                          | Description  |
 | :---------------- | :---------------------------: | :------------|
 | aria              | {% include type t="Boolean" %}| A boolean flag (default `true`) indicating if ARIA attributes should be included (SVG output only). If `false`, the "aria-hidden" attribute will be set on the output SVG element, removing the mark item from the ARIA accessibility tree. |
-| description       | {% include type t="String" %} | A text description of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-label_attribute). |
+| description       | {% include type t="String" %} | A text description of the mark item for ARIA accessibility (SVG output only). If specified, this property determines the ["aria-label" attribute](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label). |

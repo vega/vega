@@ -436,3 +436,63 @@ tape('Label performs label layout over input multiple points outside of chart\'s
 
   t.end();
 });
+tape('Label avoids previously placed labels for inside anchors', t => {
+  function data() {
+    const mk = id => ({
+      text: id, fontSize: 10,
+      datum: {
+        x: 10, y: 10, width: 80, height: 20, fill: '#ddd',
+        bounds: new Bounds().set(10, 10, 90, 30),
+        mark: {marktype: 'rect'}
+      }
+    });
+    return [mk('first'), mk('second')];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [100, 40],
+          anchor: ['middle'],
+          offset: [1],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out.length, 2);
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
+  t.end();
+});
+
+tape('Label gives unplaced labels a position at the base mark center', t => {
+  function data() {
+    return [
+      {text: 'foo', x: 20, y: 15, fontSize: 10},
+      {text: 'bar', x: 20, y: 15, fontSize: 10}
+    ];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect);
+  df.add(Label, {
+    size: [50, 30],
+    anchor: ['left'],
+    offset: [2],
+    pulse: c0
+  });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  const out = c0.value;
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+  closeTo(t, out[1].x, 20);
+  closeTo(t, out[1].y, 15);
+  t.equal(out[1].align, 'center');
+  t.equal(out[1].baseline, 'middle');
+
+  t.end();
+});

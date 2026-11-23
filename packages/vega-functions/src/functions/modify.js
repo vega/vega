@@ -85,7 +85,11 @@ export default function(name, insert, remove, toggle, modify, values) {
       throw Error('modify parameter must be a data tuple, not a function');
     }
     for (key in values) {
-      changes.modify(modify, key, values[key]);
+      const value = values[key];
+      if (isFunction(value)) {
+        throw Error('modify values must be data values, not functions');
+      }
+      changes.modify(modify, key, value);
     }
   }
 

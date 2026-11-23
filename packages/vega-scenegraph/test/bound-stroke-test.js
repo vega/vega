@@ -1,7 +1,7 @@
 import tape from 'tape';
 import {Bounds, boundStroke} from '../index.js';
 
-const EPSILON = 1e-10;
+const Epsilon = 1e-10;
 
 function bounds() {
   return new Bounds().set(0, 0, 10, 10);
@@ -9,10 +9,10 @@ function bounds() {
 
 function boundEqual(t, b, array, msg) {
   t.ok(
-    Math.abs(b.x1 - array[0]) < EPSILON &&
-    Math.abs(b.y1 - array[1]) < EPSILON &&
-    Math.abs(b.x2 - array[2]) < EPSILON &&
-    Math.abs(b.y2 - array[3]) < EPSILON,
+    Math.abs(b.x1 - array[0]) < Epsilon &&
+    Math.abs(b.y1 - array[1]) < Epsilon &&
+    Math.abs(b.x2 - array[2]) < Epsilon &&
+    Math.abs(b.y2 - array[3]) < Epsilon,
     msg + ' -- expected [' + array + '], got [' + [b.x1, b.y1, b.x2, b.y2] + ']'
   );
 }
