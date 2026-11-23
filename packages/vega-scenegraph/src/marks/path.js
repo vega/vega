@@ -5,6 +5,7 @@ import pathRender from '../path/render.js';
 import {intersectPath} from '../util/intersect.js';
 import {drawAll} from '../util/canvas/draw.js';
 import {pickPath} from '../util/canvas/pick.js';
+import place from '../util/canvas/place.js';
 import {transformItem} from '../util/svg/transform.js';
 import {DegToRad} from '../util/constants.js';
 
@@ -34,12 +35,8 @@ function path(context, item) {
   }
 
   if (a && context.rotate && context.translate) {
-    // restore rather than rotate and translate back (#4409)
-    context.save();
-    context.translate(x, y);
-    context.rotate(a);
-    pathRender(context, cache, 0, 0, sx, sy);
-    context.restore();
+    // place the path rather than move the canvas matrix there and back (#4409)
+    pathRender(place(context, x, y, a), cache, 0, 0, sx, sy);
   } else {
     pathRender(context, cache, x, y, sx, sy);
   }
