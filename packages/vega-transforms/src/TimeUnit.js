@@ -35,7 +35,8 @@ TimeUnit.Definition = {
 
 inherits(TimeUnit, Transform, {
   transform(_, pulse) {
-    const field = _.field,
+    const prev = this.value,
+          field = _.field,
           band = _.interval !== false,
           utc = _.timezone === 'utc',
           floor = this._floor(_, pulse),
@@ -52,7 +53,8 @@ inherits(TimeUnit, Transform, {
     if (
       _.modified() ||
       pulse.changed(pulse.REM) ||
-      pulse.modified(accessorFields(field))
+      pulse.modified(accessorFields(field)) ||
+      changedUnits(prev, floor)
     ) {
       pulse = pulse.reflow(true);
       flag = pulse.SOURCE;
@@ -110,3 +112,10 @@ inherits(TimeUnit, Transform, {
     return this.value = floor;
   }
 });
+
+// check if the (possibly inferred) time units or step differ from the last run
+function changedUnits(prev, floor) {
+  return prev != null && (
+    prev.step !== floor.step || prev.units.join() !== floor.units.join()
+  );
+}
