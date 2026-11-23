@@ -23,12 +23,15 @@ export default function(type, shape, isect, bound) {
         y = item.y || 0,
         a = item.angle || 0;
 
+    // restore rather than translate back: where the canvas keeps its matrix
+    // in float32, the way back does not always cancel and the error adds up
+    // over many items (#4409)
+    context.save();
     context.translate(x, y);
-    if (a) context.rotate(a *= DegToRad);
+    if (a) context.rotate(a * DegToRad);
     context.beginPath();
     shape(context, item);
-    if (a) context.rotate(-a);
-    context.translate(-x, -y);
+    context.restore();
   }
 
   return {

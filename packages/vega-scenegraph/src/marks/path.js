@@ -34,11 +34,12 @@ function path(context, item) {
   }
 
   if (a && context.rotate && context.translate) {
+    // restore rather than rotate and translate back (#4409)
+    context.save();
     context.translate(x, y);
     context.rotate(a);
     pathRender(context, cache, 0, 0, sx, sy);
-    context.rotate(-a);
-    context.translate(-x, -y);
+    context.restore();
   } else {
     pathRender(context, cache, x, y, sx, sy);
   }
