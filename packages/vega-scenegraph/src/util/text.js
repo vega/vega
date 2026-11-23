@@ -43,7 +43,8 @@ function charWidth(c) {
     : (c >= 0x1100 && c <= 0x115f) || (c >= 0x2e80 && c <= 0xa4cf)
       || (c >= 0xac00 && c <= 0xd7a3) || (c >= 0xf900 && c <= 0xfaff)
       || (c >= 0xfe30 && c <= 0xfe4f) || (c >= 0xff00 && c <= 0xff60)
-      || (c >= 0xffe0 && c <= 0xffe6) || (c >= 0x20000 && c <= 0x3fffd) ? 1000
+      || (c >= 0xffe0 && c <= 0xffe6) || (c >= 0x20000 && c <= 0x3fffd)
+      || c === 0x2026 ? 1000
     : 600;
 }
 
@@ -148,6 +149,8 @@ function truncate(item, text) {
       if (width(text.slice(mid)) > limit) lo = mid + 1;
       else hi = mid;
     }
+    // do not split a surrogate pair
+    if (splitsPair(text, lo)) ++lo;
     return ellipsis + text.slice(lo);
   } else {
     while (lo < hi) {
@@ -155,8 +158,15 @@ function truncate(item, text) {
       if (width(text.slice(0, mid)) < limit) lo = mid;
       else hi = mid - 1;
     }
+    if (splitsPair(text, lo)) --lo;
     return text.slice(0, lo) + ellipsis;
   }
+}
+
+// true if index i falls between the two halves of a surrogate pair
+function splitsPair(text, i) {
+  const hi = text.charCodeAt(i - 1), lo = text.charCodeAt(i);
+  return hi >= 0xd800 && hi <= 0xdbff && lo >= 0xdc00 && lo <= 0xdfff;
 }
 
 export function fontFamily(item, quote) {

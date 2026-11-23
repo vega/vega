@@ -1,5 +1,6 @@
 import tape from 'tape';
 import {textMetrics} from '../index.js';
+import {textValue} from '../src/util/text.js';
 
 const estimate = textMetrics.estimateWidth;
 
@@ -32,6 +33,20 @@ tape('estimateWidth should count wide and joined characters once', t => {
   t.equal(estimate({fontSize: 10}, '\u{1F468}‍\u{1F469}‍\u{1F467}'), 12.5);
   // 'e' followed by a combining acute accent
   t.equal(estimate({fontSize: 10}, 'é'), estimate({fontSize: 10}, 'e'));
+  t.end();
+});
+
+tape('truncation should fit the ellipsis and keep emoji whole', t => {
+  textMetrics.canvas(false);
+  // the ellipsis is 1em wide in Arial
+  t.equal(estimate({fontSize: 10}, '…'), 10);
+  t.equal(textValue({fontSize: 11, limit: 50}, '01234567890123456789'), '012345…');
+  const rockets = '\u{1F680}'.repeat(5);
+  t.equal(textValue({fontSize: 11, limit: 34}, rockets), '\u{1F680}…');
+  t.equal(textValue({fontSize: 11, limit: 34, dir: 'rtl'}, rockets), '…\u{1F680}');
+  // a lone low surrogate is not part of a pair
+  t.equal(textValue({fontSize: 11, limit: 12}, '\u{1F680}abc'.slice(1)), '…');
+  textMetrics.canvas(true);
   t.end();
 });
 
