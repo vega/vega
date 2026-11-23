@@ -12,7 +12,7 @@ Vega version 5.13.0 and higher adds interpreter support for Vega expressions tha
 
 To use the interpreter, follow these three steps:
 
-1. Load the vega-interpreter module, either using a separate HTML script tag (as shown below) or as part of a custom Vega build.
+1. Import the vega-interpreter module (as shown below) or include it as part of a custom Vega build.
 2. Invoke the Vega parser with the `{ast: true}` option to enable inclusion of parsed ASTs in the output.
 3. Pass the interpreter as an option to the Vega View constructor. The runtime will use the alternate expression evaluator.
 
@@ -24,19 +24,20 @@ The HTML source of the site.
 
 ```html
 <head>
-  <meta http-equiv="Content-Security-Policy" content="script-src self cdn.jsdelivr.net" />
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-interpreter@{{ site.data.versions.interpreter }}"></script>
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' cdn.jsdelivr.net" />
 </head>
 <body>
   <div id="view"></div>
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 ```
 
 The `main.js` source. We are separating out the script as many CSPs do not allow `unsafe-inline`.
 
 ```js
+import * as vega from 'https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/+esm';
+import {expressionInterpreter} from 'https://cdn.jsdelivr.net/npm/vega-interpreter@{{ site.data.versions.interpreter }}/+esm';
+
 let view;
 
 fetch('https://vega.github.io/vega/examples/bar-chart.vg.json')
@@ -51,7 +52,7 @@ function render(spec) {
 
   // Call Vega View constructor with an 'expr' interpreter option
   view = new vega.View(runtime, {
-    expr:      vega.expressionInterpreter,
+    expr:      expressionInterpreter,
     renderer:  'svg',    // renderer (canvas or svg)
     container: '#view',  // parent DOM container
     hover:     true      // enable hover processing

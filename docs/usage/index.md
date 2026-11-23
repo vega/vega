@@ -27,36 +27,26 @@ Try Vega with Vega-Embed online and publish your own chart by forking [our examp
 
 ### <a name="import"></a>Import Vega JavaScript
 
-To use Vega on a web page you first need to load the Vega JavaScript files. The simplest option is to import the complete Vega bundle.
+To use Vega on a web page, import the Vega ES module. The simplest option is to import it from a CDN in a module script.
 
 ```html
-<head>
-  <script src="https://vega.github.io/vega/vega.min.js"></script>
-</head>
+<script type="module">
+  import * as vega from 'https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/+esm';
+</script>
 ```
 
-**Loading Vega from a CDN.** While the example above loads files from the Vega web site, for production deployments you will likely want to serve your own files or use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network). Vega releases are hosted on [jsDelivr](https://www.jsdelivr.com/package/npm/vega):
+Vega releases are available as ES modules on [jsDelivr](https://www.jsdelivr.com/package/npm/vega). For production deployments, you can use a [content delivery network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network) as shown above, or install Vega from npm and use a bundler. The module files in the npm package import their dependencies by package name, so to serve them directly you also need an [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap).
+
+**Using Vega with a bundler.** If you use Vega with a bundler like [Rollup](https://rollupjs.org/), install Vega from npm and import it as a module:
+
+```js
+import * as vega from 'vega';
+```
+
+**Using Vega without modules.** Vega also provides a self-contained bundle, including all dependencies, that can be loaded with a regular script tag and defines a global `vega` variable:
 
 ```html
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-</head>
-```
-
-**Using Vega and D3 together.** The full `vega.js` and `vega.min.js` files bundle up all dependencies, including [d3](https://d3js.org) modules and [topojson-client](https://github.com/topojson/topojson-client). If you plan to independently use d3.js on your page, you can use a smaller Vega bundle that excludes redundant d3 files. Import d3 first, then import the smaller `vega-core.min.js` file to reduce the total file size. If you plan to load TopoJSON data files, you'll need to import the topojson-client package as well.
-
-```html
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/d3@{{ site.data.versions.d3 }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/topojson-client@{{ site.data.versions.topojson }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/build/vega-core.min.js"></script>
-</head>
-```
-
-**Using Vega with a bundler.** If you use Vega with a bundler like [rollup.js](https://rollupjs.org/guide/en/#with-npm-packages), you can import Vega [as a module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
-
-```
-import * as vega from "vega";
+<script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
 ```
 
 
@@ -68,15 +58,12 @@ import * as vega from "vega";
 The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenient method for adding either Vega or Vega-Lite visualizations to a web page. This module will take care of steps such as loading specification files from a URL and generating views with standard configuration options. In addition, you can include accompanying links to export images and view source. For more, see the [Vega-Embed repository](https://github.com/vega/vega-embed).
 
 ```html
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-lite@{{ site.data.versions.vega-lite }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}"></script>
-</head>
 <body>
   <div id="view"></div>
-  <script>
-    vegaEmbed(
+  <script type="module">
+    import embed from 'https://cdn.jsdelivr.net/npm/vega-embed@{{ site.data.versions.vega-embed }}/+esm';
+
+    embed(
       '#view',
       'https://vega.github.io/vega/examples/bar-chart.vg.json'
     );
@@ -92,13 +79,12 @@ The [Vega-Embed](https://github.com/vega/vega-embed) module provides a convenien
 Vega's [View component](../docs/api/view) takes a parsed specification and configuration options as input and sets up an interactive web component. The View API also provides methods for streaming data updates, exporting static images, and accessing internal data for debugging purposes. For more, see the [View component](../docs/api/view) documentation.
 
 ```html
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}"></script>
-</head>
 <body>
   <div id="view"></div>
-  <script type="text/javascript">
-    var view;
+  <script type="module">
+    import * as vega from 'https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/+esm';
+
+    let view;
 
     fetch('https://vega.github.io/vega/examples/bar-chart.vg.json')
       .then(res => res.json())
@@ -193,7 +179,7 @@ vg2png -s 2 test/specs-valid/bar.vg.json bar.png
 
 ## <a name="node"></a>Server-Side Deployment using Node.js
 
-To use Vega as a component within a larger project, first install it either directly (`yarn add vega` or `npm install vega`) or by including `"vega"` among the dependencies in your package.json file. In node.js JavaScript code, import Vega using `require('vega')`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/api/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
+To use Vega as a component within a larger project, first install it either directly (`yarn add vega` or `npm install vega`) or by including `"vega"` among the dependencies in your package.json file. In node.js JavaScript code, import Vega using `import * as vega from 'vega'`. Much like browser-based deployments, Node.js deployments leverage the [Vega View API](../docs/api/view). However, server-side View instances should use the renderer type `none` and provide no DOM element to the `initialize` method.
 
 <a name="node-canvas"></a>To generate PNG images and accurately measure font metrics for text mark truncation, the [node-canvas package](https://github.com/Automattic/node-canvas) must be installed. The vega package does not require node-canvas by default, so you must include it as an explicit dependency in your own project if you wish to use it. The vega-cli package, on the other hand, _does_ include node-canvas as an explicit dependency.
 
@@ -202,7 +188,7 @@ Occasionally some system configurations may run into errors while installing nod
 ### Example
 
 ```js
-var vega = require('vega');
+import * as vega from 'vega';
 
 // create a new view instance for a given Vega JSON spec
 var view = new vega.View(vega.parse(spec), {renderer: 'none'});

@@ -8,11 +8,14 @@ In addition to generated code, the Vega parser output can include the parsed [Ab
 
 To use the interpreter, three steps must be taken:
 
-1. Load the Vega interpreter module, either using a separate HTML script tag or as part of a custom Vega build.
+1. Import the Vega interpreter module or include it as part of a custom Vega build.
 2. Invoke the Vega parser with the `{ ast: true }` option to enable inclusion of parsed ASTs in the output.
 3. Pass the interpreter as an option to the Vega View constructor. The underlying runtime will be configured to use the alternate expression evaluator.
 
 ```js
+import * as vega from 'vega';
+import {expressionInterpreter} from 'vega-interpreter';
+
 const spec; // Vega specification to show.
 
 // Parse the Vega specification with AST output enabled
@@ -21,7 +24,7 @@ const runtimeSpec = vega.parse(spec, null, { ast: true });
 
 // Call the Vega View constructor with an 'expr' interpreter option
 const view = new vega.View(runtimeSpec, {
-  expr:      vega.expressionInterpreter, // use interpreter
+  expr:      expressionInterpreter, // use interpreter
   renderer:  'canvas',  // renderer (canvas or svg)
   container: '#view',   // parent DOM container
   hover:     true       // enable hover processing
