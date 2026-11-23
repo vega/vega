@@ -70,3 +70,39 @@ tape('DotBin assigns dot plot bin positions', t => {
 
   t.end();
 });
+
+tape('DotBin handles empty input', t => {
+  const errors = [];
+
+  var df = new Dataflow().logger({
+        level() {},
+        error: err => errors.push(err),
+        warn() {},
+        info() {},
+        debug() {}
+      }),
+      c0 = df.add(Collect),
+      db = df.add(DotBin, {
+        field: field('value'),
+        step: 1,
+        pulse: c0,
+        as: 'x'
+      });
+
+  // Run with no data
+  df.run();
+  t.deepEqual(errors, []);
+  t.deepEqual(c0.value, []);
+
+  // Insert data, then remove all of it
+  const data = [{value: 1}, {value: 3}];
+  df.pulse(c0, changeset().insert(data)).run();
+  t.deepEqual(c0.value, [{value: 1, x: 1}, {value: 3, x: 3}]);
+
+  df.pulse(c0, changeset().remove(data)).run();
+  t.deepEqual(errors, []);
+  t.deepEqual(c0.value, []);
+  t.equal(db.pulse.rem.length, 2);
+
+  t.end();
+});

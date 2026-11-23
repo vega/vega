@@ -27,3 +27,10 @@ tape('dotbin calculates dot plot bin positions', t => {
 
   t.end();
 });
+
+tape('dotbin handles empty input', t => {
+  t.deepEqual(Array.from(dotbin([], 1)), []);
+  t.deepEqual(Array.from(dotbin([], 1, true)), []);
+  t.deepEqual(Array.from(dotbin([], 1, false, d => d.v)), []);
+  t.end();
+});
