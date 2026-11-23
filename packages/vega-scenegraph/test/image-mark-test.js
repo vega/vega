@@ -10,9 +10,6 @@ function scene(image) {
 
 function context(calls) {
   return {
-    globalAlpha: 1,
-    globalCompositeOperation: 'source-over',
-    imageSmoothingEnabled: true,
     drawImage(img) {
       if (!img.naturalWidth && !img.width) {
         throw new Error('InvalidStateError');
