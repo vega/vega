@@ -24,7 +24,7 @@ The HTML source of the site.
 
 ```html
 <head>
-  <meta http-equiv="Content-Security-Policy" content="script-src self cdn.jsdelivr.net" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' cdn.jsdelivr.net" />
 </head>
 <body>
   <div id="view"></div>

@@ -77,18 +77,23 @@ Vega can be extended with additional projections, such as those found in the [d3
 To register all extended projections from d3-geo-projection with Vega, simply import the [vega-projection-extended](https://github.com/vega/vega-projection-extended) library:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/vega-projection-extended@2"></script>
+<script type="module">
+  import * as vega from 'https://cdn.jsdelivr.net/npm/vega@{{ site.data.versions.vega }}/+esm';
+  import 'https://cdn.jsdelivr.net/npm/vega-projection-extended@{{ site.data.versions.vega-projection-extended }}/+esm';
+</script>
 ```
 
 Alternatively, custom projections can be manually registered using the `vega.projection` method:
 
 ```js
-// Assumes d3-geo-projection is imported under the d3 variable.
+import * as vega from 'vega';
+import {geoWinkel3} from 'd3-geo-projection';
+
 // To register with Vega, provide a name and projection function.
-vega.projection('winkel3', d3.geoWinkel3);
+vega.projection('winkel3', geoWinkel3);
 
 // Vega parser and runtime now support the 'winkel3' projection
-var runtime = vega.parse({
+const runtime = vega.parse({
   ...,
   "projections": [
     { "name": "proj", "type": "winkel3" }
