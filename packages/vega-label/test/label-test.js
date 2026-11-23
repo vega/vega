@@ -468,6 +468,120 @@ tape('Label avoids previously placed labels for inside anchors', t => {
   t.end();
 });
 
+tape('Label re-runs layout when input items are modified', t => {
+  // reactive geometry: base mark bounds are encoded from the data, so the
+  // label anchor (datum.bounds) is not overwritten by layout output
+  function mk(id, x1, x2) {
+    return {
+      text: id, fontSize: 10,
+      datum: {
+        x: x1, y: 15, width: x2 - x1, height: 20,
+        bounds: new Bounds().set(x1, 15, x2, 35),
+        mark: {marktype: 'rect'}
+      }
+    };
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [100, 40],
+          anchor: ['top'],
+          offset: [2],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert([mk('foo', 10, 50), mk('bar', 10, 50)])).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+  closeTo(t, out[0].x, 30);
+
+  // move the second base mark to the right without adding or removing any
+  // items: a modify-only pulse that changes what the layout reads should
+  // re-run the layout and place its label
+  df.pulse(c0, changeset().modify(out[1], 'datum', mk('bar', 55, 95).datum)).run();
+  t.equal(lb.stamp, df.stamp());
+  t.equal(out[1].opacity, 1);
+  closeTo(t, out[1].x, 75);
+
+  // the unmodified item keeps its placed position: the anchor is re-encoded
+  // from the data, so re-running does not drift the label
+  closeTo(t, out[0].x, 30);
+
+  t.end();
+});
+
+tape('Label re-runs layout when plain-data items are modified', t => {
+  function data() {
+    return [
+      {text: 'foo', x: 20, y: 15, fontSize: 10},
+      {text: 'bar', x: 30, y: 15, fontSize: 10}
+    ];
+  }
+
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [80, 30],
+          anchor: ['left'],
+          offset: [2],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert(data())).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 0);
+
+  // move the second item away from the first label without adding or
+  // removing any items: its label should now be placed. The unmodified
+  // item's x still drifts here: on plain data the anchor (x) is also the
+  // layout output, so a re-run anchors on the previous label position.
+  df.pulse(c0, changeset().modify(d => d.text === 'bar', 'x', 70)).run();
+  t.equal(lb.stamp, df.stamp());
+  t.equal(out[0].opacity, 1);
+  t.equal(out[1].opacity, 1);
+  closeTo(t, out[1].x, 68);
+
+  t.end();
+});
+
+tape('Label skips layout when a layout-irrelevant field is modified', t => {
+  const data = [
+    {text: 'foo', fill: 'red', x: 20, y: 15, fontSize: 10}
+  ];
+  const df = new Dataflow(),
+        c0 = df.add(Collect),
+        lb = df.add(Label, {
+          size: [80, 30],
+          anchor: ['left'],
+          offset: [2],
+          pulse: c0
+        });
+
+  df.pulse(c0, changeset().insert(data)).run();
+  t.equal(lb.stamp, df.stamp());
+  const out = c0.value;
+  closeTo(t, out[0].x, 18);
+
+  // a modify-only pulse touching a field the layout does not read should
+  // not re-run the layout, so the placed position does not drift
+  df.pulse(c0, changeset().modify(data[0], 'fill', 'blue')).run();
+  t.equal(data[0].fill, 'blue');
+  closeTo(t, out[0].x, 18);
+
+  // hover-style opacity changes are preserved: the layout does not re-run
+  // and overwrite the opacity output
+  df.pulse(c0, changeset().modify(data[0], 'opacity', 0.3)).run();
+  t.equal(out[0].opacity, 0.3);
+  closeTo(t, out[0].x, 18);
+
+  t.end();
+});
+
 tape('Label gives unplaced labels a position at the base mark center', t => {
   function data() {
     return [
