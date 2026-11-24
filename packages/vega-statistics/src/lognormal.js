@@ -16,6 +16,7 @@ export function densityLogNormal(value, mean, stdev) {
 }
 
 export function cumulativeLogNormal(value, mean, stdev) {
+  if (value <= 0) return 0;
   return cumulativeNormal(Math.log(value), mean, stdev);
 }
 
