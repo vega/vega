@@ -135,3 +135,28 @@ tape('Crossfilter consolidates after remove', t => {
 
   t.end();
 });
+
+tape('Crossfilter filters tuples inserted into a non-empty index', t => {
+  const data = [{x: 1}, {x: 2}, {x: 30}];
+
+  var df = new Dataflow(),
+      range = df.add([0, 10]),
+      c0 = df.add(Collect),
+      cf = df.add(CrossFilter, {fields:[field('x')], query:[range], pulse:c0}),
+      out = df.add(Collect, {pulse: df.add(ResolveFilter, {ignore:0, filter:cf, pulse:cf})});
+
+  // -- add data
+  df.pulse(c0, changeset().insert(data)).run();
+  t.deepEqual(out.value.map(d => d.x).sort((a, b) => a - b), [1, 2]);
+
+  // -- insert rows into the non-empty index
+  // x=50 is outside the range, x=5 is inside it
+  df.pulse(c0, changeset().insert([{x: 50}, {x: 5}])).run();
+  t.deepEqual(out.value.map(d => d.x).sort((a, b) => a - b), [1, 2, 5]);
+
+  // -- update the query afterwards: rows should reach the right filter state
+  df.update(range, [5, 100]).run();
+  t.deepEqual(out.value.map(d => d.x).sort((a, b) => a - b), [5, 30, 50]);
+
+  t.end();
+});

@@ -24,16 +24,19 @@ export default function SortedIndex() {
     }
     addv = sort(addv, addi);
 
+    // shift added indices to absolute positions in the data array,
+    // the stored index and the caller both use these coordinates
+    for (i=0; i<n1; ++i) {
+      addi[i] += base;
+    }
+
     if (n0) {
       oldv = value;
       oldi = index;
       value = Array(n0 + n1);
       index = array32(n0 + n1);
-      merge(base, oldv, oldi, n0, addv, addi, n1, value, index);
+      merge(oldv, oldi, n0, addv, addi, n1, value, index);
     } else {
-      if (base > 0) for (i=0; i<n1; ++i) {
-        addi[i] += base;
-      }
       value = addv;
       index = addi;
     }
@@ -101,7 +104,7 @@ function sort(values, index) {
   return permute(values, index);
 }
 
-function merge(base, value0, index0, n0, value1, index1, n1, value, index) {
+function merge(value0, index0, n0, value1, index1, n1, value, index) {
   let i0 = 0, i1 = 0, i;
 
   for (i=0; i0 < n0 && i1 < n1; ++i) {
@@ -110,7 +113,7 @@ function merge(base, value0, index0, n0, value1, index1, n1, value, index) {
       index[i] = index0[i0++];
     } else {
       value[i] = value1[i1];
-      index[i] = index1[i1++] + base;
+      index[i] = index1[i1++];
     }
   }
 
@@ -121,6 +124,6 @@ function merge(base, value0, index0, n0, value1, index1, n1, value, index) {
 
   for (; i1 < n1; ++i1, ++i) {
     value[i] = value1[i1];
-    index[i] = index1[i1] + base;
+    index[i] = index1[i1];
   }
 }
