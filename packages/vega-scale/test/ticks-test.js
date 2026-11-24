@@ -1,6 +1,27 @@
 import tape from 'tape';
 import { scale, tickCount, tickValues, validTicks } from '../index.js';
 import {timeInterval} from 'vega-time';
+import {tickLog} from '../src/ticks.js';
+
+tape('tickLog filters ticks in negative domains', t => {
+  const s = scale('log')().base(2).domain([-8, -1]),
+        ticks = [-8, -4, -2, -1];
+
+  t.deepEqual(tickLog(s, 4, true), ticks);
+  t.deepEqual(ticks.filter(tickLog(s, 4)), ticks);
+
+  s.base(10).domain([-100, -1]);
+  t.deepEqual(tickLog(s, 3, true), [-100, -10, -1]);
+  t.deepEqual(s.ticks(3).filter(tickLog(s, 3)), [-100, -10, -1]);
+
+  s.domain([-1, -100]);
+  t.deepEqual(tickLog(s, 3, true), [-1, -10, -100]);
+
+  s.domain([1, 100]);
+  t.deepEqual(tickLog(s, 3, true), [1, 10, 100]);
+
+  t.end();
+});
 
 tape('validTicks uses count correctly', t => {
   const data = [0, 1, 2, 3, 4, 5, 6, 7];
