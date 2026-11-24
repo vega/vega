@@ -4,7 +4,9 @@ import element from './element.js';
 import initializeRenderer from './initialize-renderer.js';
 import initializeHandler from './initialize-handler.js';
 import observeContainer from './observeContainer.js';
-import {CanvasHandler, renderModule} from 'vega-scenegraph';
+import {isOffscreenCanvas} from 'vega-canvas';
+import {CanvasHandler, RenderType, renderModule} from 'vega-scenegraph';
+import {error} from 'vega-util';
 
 export default function(el, elBind) {
   const view = this,
@@ -14,6 +16,18 @@ export default function(el, elBind) {
 
   // containing dom element
   el = view._el = el ? lookup(view, el, true) : null;
+
+  // the canvas option only works with the canvas renderer, and an
+  // OffscreenCanvas can not be displayed by a container element --
+  // fail loudly rather than silently rendering nowhere
+  if (view.canvas) {
+    if (type !== RenderType.Canvas) {
+      error('The canvas option requires the canvas renderer, not: ' + type);
+    }
+    if (el && isOffscreenCanvas(view.canvas)) {
+      error('An OffscreenCanvas can not be used with a container element.');
+    }
+  }
 
   // initialize aria attributes
   initializeAria(view);
@@ -25,7 +39,8 @@ export default function(el, elBind) {
 
   // initialize renderer and input handler
   view._renderer = !Renderer ? null
-    : initializeRenderer(view, view._renderer, el, Renderer);
+    : initializeRenderer(view, view._renderer, el, Renderer, undefined,
+        view.canvas ? {canvas: view.canvas} : undefined);
   view._handler = initializeHandler(view, view._handler, el, Handler);
   view._redraw = true;
 
