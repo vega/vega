@@ -29,6 +29,9 @@ tape('formatSpan formats number spans', t => {
   t.equal(locale.formatSpan(0, 10, 20)(5), '5.0');
   t.equal(locale.formatSpan(0, 10, 200)(5), '5.00');
   t.equal(locale.formatSpan(0, 10, 200, '.1f')(5), '5.0');
+  t.equal(locale.formatSpan(0.5, 0.5, 10)(0.5), '0.5');
+  t.equal(locale.formatSpan(5.5, 5.5, 10)(5.5), '5.5');
+  t.equal(locale.formatSpan(0.5, 0.5, 10, '.2f')(0.5), '0.50');
   t.end();
 });
 
