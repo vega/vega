@@ -1177,7 +1177,7 @@ function parsePrimaryExpression() {
   index = lookahead.start;
 
 
-  if (type === TokenIdentifier || legalKeywords[lookahead.value]) {
+  if (type === TokenIdentifier || (type === TokenKeyword && legalKeywords[lookahead.value])) {
     expr = finishIdentifier(lex().value);
   } else if (type === TokenStringLiteral || type === TokenNumericLiteral) {
     if (lookahead.octal) {
