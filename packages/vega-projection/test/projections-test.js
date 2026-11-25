@@ -10,11 +10,12 @@ tape('default projections are registered', t => {
     'conicconformal',
     'conicequalarea',
     'conicequidistant',
+    'equalearth',
     'equirectangular',
     'gnomonic',
     'identity',
     'mercator',
-    'naturalEarth1',
+    'naturalearth1',
     'orthographic',
     'stereographic',
     'transversemercator'
@@ -23,5 +24,12 @@ tape('default projections are registered', t => {
     t.notEqual(p, null);
   });
 
+  t.end();
+});
+
+tape('projection types are case-insensitive', t => {
+  t.equal(vega.projection('equalEarth'), vega.projection('equalearth'));
+  t.equal(vega.projection('NaturalEarth1'), vega.projection('naturalearth1'));
+  t.notEqual(vega.projection('equalEarth'), null);
   t.end();
 });

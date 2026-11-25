@@ -25,6 +25,10 @@
       "types": "./index.d.ts",
       "default": "./build/vega.module.js"
     },
+    "./base": {
+      "types": "./base.d.ts",
+      "default": "./build/vega-base.module.js"
+    },
     "./vega-schema.json": "./build/vega-schema.json"
   },
   "unpkg": "build/vega.min.js",
