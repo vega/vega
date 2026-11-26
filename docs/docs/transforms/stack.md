@@ -4,7 +4,7 @@ title: Stack Transform
 permalink: /docs/transforms/stack/index.html
 ---
 
-The **stack** transform computes a layout by stacking groups of values. The most common use case is to create stacked graphs, including stacked bar charts and stream graphs. This transform writes two properties to each datum, indicating the starting and ending stack values.
+The **stack** transform computes a layout by stacking groups of values. The most common use case is to create stacked graphs, including stacked bar charts and stream graphs. This transform writes two properties to each datum, indicating the starting and ending stack values. Values that coerce to NaN do not contribute to the stack, and their ending stack value remains NaN.
 
 ## Example
 
