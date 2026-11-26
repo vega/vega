@@ -70,3 +70,25 @@ tape('DotBin assigns dot plot bin positions', t => {
 
   t.end();
 });
+
+tape('DotBin handles data with no valid values', t => {
+  const errors = [];
+
+  var df = new Dataflow(),
+      c0 = df.add(Collect),
+      db = df.add(DotBin, {
+        field: field('value'),
+        pulse: c0,
+        as: 'x'
+      });
+
+  df.error = e => errors.push(e);
+
+  df.pulse(c0, changeset().insert([{value: null}, {value: NaN}])).run();
+  t.deepEqual(errors, []);
+  t.equal(db.pulse.add.length, 2);
+  t.ok(Number.isNaN(c0.value[0].x));
+  t.ok(Number.isNaN(c0.value[1].x));
+
+  t.end();
+});

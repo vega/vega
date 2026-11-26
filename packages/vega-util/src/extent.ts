@@ -39,8 +39,9 @@ export default function extent<T, U>(array: ArrayLike<T>, f?: (value: T) => U): 
         }
       }
     } else {
-      // find first valid value
-      for (v = f(array[i]); i < n && (v == null || v !== v); v = f(array[++i]));
+      // find first valid value, without calling f past the end of the array
+      for (v = f(array[i]); (v == null || v !== v) && ++i < n; v = f(array[i]));
+      if (i === n) return [undefined, undefined];
       min = max = v;
 
       // visit all other values
