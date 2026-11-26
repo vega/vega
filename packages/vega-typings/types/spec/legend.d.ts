@@ -251,6 +251,11 @@ export interface BaseLegend {
   titleLineHeight?: NumberValue;
 
   /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render legend title text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  titleTextProcessor?: StringValue;
+
+  /**
    * Opacity of the legend title.
    */
   titleOpacity?: NumberValue;
@@ -441,6 +446,11 @@ export interface BaseLegend {
    * __Default value:__ `160`.
    */
   labelLimit?: NumberValue;
+
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render legend label text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  labelTextProcessor?: StringValue;
 
   /**
    * Opacity of labels.

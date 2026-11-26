@@ -60,6 +60,7 @@ Properties defined in the top-level scope of the configuration object.
 | group         | {% include type t="Object" %}        | Default properties for the top-level group mark representing the data rectangle of a chart. Valid properties of this object are mark properties such as `"fill"`, `"stroke"` and `"strokeWidth"`. |
 | locale        | {% include type t="Object" %}        | Locale definitions for string parsing and formatting of number and date values. The locale object should contain `number` and/or `time` properties with [locale definitions](../api/locale). Locale definitions provided in the config block may be overridden by the View constructor *locale* option. {% include tag ver="5.12" %} |
 | lineBreak     | {% include type t="String|Signal" %} | A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the `lineBreak` mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid. {% include tag ver="5.10" %} |
+| textSelectable | {% include type t="Boolean|Signal" %}  | For text rendered by a [text processor](../api/extensibility/#textProcessor) in SVG output, whether to include an invisible text layer that allows the text to be selected, copied and searched (default `true`). This property provides a global default for all text marks, including axis, legend and title text, which is overridden by mark or style config settings, and by the `textSelectable` mark encoding channel. {% include tag ver="6.5" %} |
 
 ### Usage
 
@@ -257,6 +258,7 @@ Additional property blocks can target more specific axis types based on the orie
 | labelOverlap    | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of axis labels. If `false`, no overlap reduction is attempted. If `true` or `"parity"`, a strategy of removing every other label is used (this works well for standard linear axes). If `"greedy"`, a linear scan of the labels is performed, removing any labels that overlaps with the last visible label (this often works better for log-scaled axes).|
 | labelSeparation | {% include type t="Number" %}  | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | labelPadding    | {% include type t="Number" %}   | Padding in pixels between axis ticks and tick labels. |
+| labelTextProcessor | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render axis tick labels, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | maxExtent       | {% include type t="Number" %}   | The maximum extent in pixels that axis ticks and labels should use. This determines a maximum offset value for axis titles. |
 | minExtent       | {% include type t="Number" %}   | The minimum extent in pixels that axis ticks and labels should use. This determines a minimum offset value for axis titles. |
 | ticks           | {% include type t="Boolean" %}  | Boolean flag indicating if axis tick marks should be included by default. |
@@ -284,6 +286,7 @@ Additional property blocks can target more specific axis types based on the orie
 | titleLineHeight | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
 | titleOpacity    | {% include type t="Number" %}   | Opacity of axis titles. {% include tag ver="4.1" %} |
 | titlePadding    | {% include type t="Number" %}   | Padding in pixels between axis tick labels and titles. |
+| titleTextProcessor | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render axis titles, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | titleX          | {% include type t="Number" %}   | X-coordinate of the axis title relative to the axis group. |
 | titleY          | {% include type t="Number" %}   | Y-coordinate of the axis title relative to the axis group. |
 | translate       | {% include type t="Number" %}   | Coordinate space translation offset for axis layout. By default, axes are translated by a 0.5 pixel offset for both the x and y coordinates, in order to align stroked lines with the pixel grid. However, for vector graphics output these pixel-specific adjustments may be undesirable, in which case `translate` can be changed (for example, to zero). {% include tag ver="5.8" %} |
@@ -349,6 +352,7 @@ Properties defining default settings for legends. These properties are defined u
 | labelOffset           | {% include type t="Number" %}   | Horizontal offset in pixels between legend symbols and labels. |
 | labelOpacity          | {% include type t="Number" %}   | Opacity of legend labels. {% include tag ver="4.1" %} |
 | labelOverlap          | {% include type t="Boolean|String" %} | The strategy to use for resolving overlap of labels in gradient legends. If `false`, no overlap reduction is attempted. If set to `true` (default) or `"parity"`, a strategy of removing every other label is used. If set to `"greedy"`, a linear scan of the labels is performed, removing any label that overlaps with the last visible label.|
+| labelTextProcessor    | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render legend labels, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | labelSeparation       | {% include type t="Number" %}   | The minimum separation that must be between label bounding boxes for them to be considered non-overlapping (default `0`). This property is ignored if *labelOverlap* resolution is not enabled. {% include tag ver="5.0" %} |
 | layout                | [Layout](#legends-layout)       | An object specifying layout parameters for positioning a collection of legends with the same *orient* value. {% include tag ver="5.0" %} |
 | legendX               | {% include type t="Number" %}   | The pixel x-coordinate of the legend group. Only applied if the _orient_ value is `"none"`. {% include tag ver="5.4" %} |
@@ -387,6 +391,7 @@ Properties defining default settings for legends. These properties are defined u
 | titleOpacity          | {% include type t="Number" %}   | Opacity of legend titles. {% include tag ver="4.1" %} |
 | titleOrient           | {% include type t="String" %}  | The orientation of title legends, determining where they are placed relative to legend contents. One of `"top"` (default), `"left"`, `"bottom"`, or `"right"`. {% include tag ver="5.0" %} |
 | titlePadding          | {% include type t="Number" %}   | Padding in pixels between the legend title and entries. |
+| titleTextProcessor    | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render legend titles, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the legend group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
 
 ### <a name="legends-accessibility"></a>Legend Accessibility Properties
@@ -470,6 +475,7 @@ Properties defining default settings for titles. These properties are defined un
 | frame                 | {% include type t="String" %}   | The reference frame for the anchor position, one of `"bounds"` (to anchor relative to the full bounding box) or `"group"` (to anchor relative to the group width or height). |
 | limit                 | {% include type t="Number" %}   | The maximum allowed length in pixels of title and subtitle text. |
 | lineHeight            | {% include type t="Number" %}   | Line height in pixels for multi-line title text. {% include tag ver="5.7" %} |
+| textProcessor         | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render title text, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | offset                | {% include type t="Number" %}   | Offset in pixels of the title from the chart body and axes. |
 | orient                | {% include type t="String" %}   | Default title orientation (`"top"`, `"bottom"`, `"left"`, or `"right"`). |
 | subtitleColor         | {% include type t="Color" %}    | Text color of the subtitle text. {% include tag ver="5.7" %} |
@@ -479,6 +485,7 @@ Properties defining default settings for titles. These properties are defined un
 | subtitleFontWeight    | {% include type t="String|Number" %}   | Font weight for subtitle text. {% include tag ver="5.7" %} |
 | subtitleLineHeight    | {% include type t="Number" %}   | Line height in pixels for multi-line subtitle text. {% include tag ver="5.7" %} |
 | subtitlePadding       | {% include type t="Number" %}   | Padding in pixels between title and subtitle text. {% include tag ver="5.7" %} |
+| subtitleTextProcessor | {% include type t="String" %}  | The name of a registered [text processor](../api/extensibility/#textProcessor) used to render subtitle text, such as `"tex"` to typeset LaTeX math. The value `"default"` selects standard text rendering, overriding any inherited text processor. {% include tag ver="6.5" %} |
 | zindex                | {% include type t="Number" %}   | The integer z-index indicating the layering of the title group relative to other axis, mark, and legend groups. {% include tag ver="5.11" %} |
 
 ### <a name="title-accessibility"></a>Title Accessibility Properties

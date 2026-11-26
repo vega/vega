@@ -422,6 +422,16 @@ export interface TextEncodeEntry extends EncodeEntry, AlignProperty, ThetaProper
    */
   lineHeight?: ProductionRule<NumericValueRef>;
   radius?: ProductionRule<NumericValueRef>;
+
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render the text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering, and can be used to override an inherited processor.
+   */
+  textProcessor?: ProductionRule<StringValueRef>;
+
+  /**
+   * For text rendered by a text processor in SVG output, whether to include an invisible text layer so that the text can be selected and copied (default `true`).
+   */
+  textSelectable?: ProductionRule<BooleanValueRef>;
 }
 
 export interface TrailEncodeEntry extends EncodeEntry, DefinedProperty {}

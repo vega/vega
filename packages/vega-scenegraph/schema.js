@@ -380,6 +380,8 @@ const MARKS = {
       'lineHeight': { 'type': 'number' },
       'dir': { 'type': 'string', 'default': 'ltr' },
       'ellipsis': { 'type': 'string', 'default': '\u2026' },
+      'textProcessor': { 'type': 'string' },
+      'textSelectable': { 'type': 'boolean', 'default': true },
       'align': {
         'enum': [ 'left', 'center', 'right' ],
         'default': 'left'

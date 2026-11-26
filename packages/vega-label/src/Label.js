@@ -1,5 +1,6 @@
 import labelLayout from './LabelLayout.js';
 import {Transform} from 'vega-dataflow';
+import {textProcessorPending} from 'vega-scenegraph';
 import {array, error, inherits, isFunction} from 'vega-util';
 
 const Output = [
@@ -86,7 +87,7 @@ inherits(Label, Transform, {
     const as = _.as || Output;
 
     // run label layout
-    labelLayout(
+    const layout = () => labelLayout(
       pulse.materialize(pulse.SOURCE).source || [],
       _.size,
       _.sort,
@@ -108,6 +109,21 @@ inherits(Label, Transform, {
       t[as[4]] = l.baseline;
     });
 
-    return pulse.reflow(mod).modifies(as);
+    layout();
+    const out = () => pulse.reflow(mod).modifies(as);
+
+    // if text processors are loading resources (such as font data), label
+    // sizes are not yet known: wait for them, then repeat the layout
+    const pending = textProcessorPending();
+    return pending.length ? relayout(layout, pending).then(out) : out();
   }
 });
+
+async function relayout(layout, pending) {
+  // text processors bound the number of retries for a text, so this ends
+  while (pending.length) {
+    await Promise.allSettled(pending);
+    layout();
+    pending = textProcessorPending();
+  }
+}

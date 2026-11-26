@@ -63,6 +63,14 @@ export interface Config
    * A delimiter, such as a newline character, upon which to break text strings into multiple lines. This property provides a global default for text marks, which is overridden by mark or style config settings, and by the "lineBreak" mark encoding channel. If signal-valued, either string or regular expression (regexp) values are valid.
    */
   lineBreak?: string | SignalRef;
+
+  /**
+   * For text rendered by a text processor in SVG output, whether to include an invisible text layer so that the text can be selected and copied. This property provides a global default for all text marks, including axis, legend and title text, which is overridden by mark or style config settings, and by the "textSelectable" mark encoding channel.
+   *
+   * __Default value:__ `true`
+   */
+  textSelectable?: boolean | SignalRef;
+
   style?: {
     [style: string]: MarkConfig;
   };
@@ -383,6 +391,16 @@ export interface MarkConfig {
    * The line height in pixels (the spacing between subsequent lines of text) for multi-line text marks.
    */
   lineHeight?: number | SignalRef;
+
+  /**
+   * The name of a registered [text processor](https://vega.github.io/vega/docs/api/extensibility/#textProcessor) used to render text, such as `"tex"` to typeset LaTeX math. The value `"default"` (or no value) selects standard text rendering.
+   */
+  textProcessor?: string | SignalRef;
+
+  /**
+   * For text rendered by a text processor in SVG output, whether to include an invisible text layer so that the text can be selected and copied.
+   */
+  textSelectable?: boolean | SignalRef;
 
   /**
    * Polar coordinate angle, in radians, of the text label from the origin determined by the `x` and `y` properties. Values for `theta` follow the same convention of `arc` mark `startAngle` and `endAngle` properties: angles are measured in radians, with `0` indicating "north".

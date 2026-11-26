@@ -8,8 +8,9 @@ export default function($, bitmaps, avoidBaseMark, markIndex) {
   return function(d) {
     const items = d.datum.datum.items[markIndex].items, // area points
           n = items.length, // number of points
-          textHeight = d.datum.fontSize, // label width
-          textWidth = textMetrics.width(d.datum, d.datum.text); // label height
+          size = textMetrics.size(d.datum),
+          textHeight = size.height, // label width
+          textWidth = size.width; // label height
 
     let maxAreaWidth = 0,
         x1, x2, y1, y2, x, y, areaWidth;

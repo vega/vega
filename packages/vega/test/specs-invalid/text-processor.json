@@ -1,0 +1,10 @@
+[
+  {"title": {"text": "x^2", "textProcessor": 5}},
+  {"title": {"text": "x^2", "subtitleTextProcessor": true}},
+  {"axes": [{"scale": "x", "orient": "bottom", "labelTextProcessor": 1}]},
+  {"axes": [{"scale": "x", "orient": "bottom", "titleTextProcessor": ["tex"]}]},
+  {"legends": [{"fill": "c", "labelTextProcessor": false}]},
+  {"legends": [{"fill": "c", "titleTextProcessor": 0}]},
+  {"marks": [{"type": "text", "encode": {"enter": {"textProcessor": {"value": 5}}}}]},
+  {"marks": [{"type": "text", "encode": {"enter": {"textSelectable": {"value": "yes"}}}}]}
+]

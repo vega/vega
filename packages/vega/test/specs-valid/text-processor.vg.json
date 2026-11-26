@@ -1,0 +1,113 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Text rendered using text processors, such as for math typesetting.",
+  "width": 300,
+  "height": 200,
+  "padding": 5,
+
+  "config": {
+    "textSelectable": false,
+    "legend": {"titleTextProcessor": "tex"}
+  },
+
+  "signals": [
+    {"name": "labelProcessor", "value": "tex"}
+  ],
+
+  "title": {
+    "text": "y = e^{-\\lambda t}",
+    "textProcessor": "tex",
+    "subtitle": "\\lambda \\in \\{1, 2\\}",
+    "subtitleTextProcessor": "tex"
+  },
+
+  "data": [
+    {
+      "name": "table",
+      "values": [
+        {"t": 0, "y": 1, "lambda": 1},
+        {"t": 1, "y": 0.368, "lambda": 1},
+        {"t": 2, "y": 0.135, "lambda": 1},
+        {"t": 0, "y": 1, "lambda": 2},
+        {"t": 1, "y": 0.135, "lambda": 2},
+        {"t": 2, "y": 0.018, "lambda": 2}
+      ]
+    }
+  ],
+
+  "scales": [
+    {"name": "x", "type": "linear", "range": "width", "domain": [0, 2]},
+    {"name": "y", "type": "linear", "range": "height", "domain": [0, 1]},
+    {
+      "name": "color", "type": "ordinal", "range": "category",
+      "domain": {"data": "table", "field": "lambda"}
+    },
+    {
+      "name": "size", "type": "linear", "range": [10, 100],
+      "domain": {"data": "table", "field": "y"}
+    }
+  ],
+
+  "axes": [
+    {
+      "orient": "bottom", "scale": "x", "tickCount": 2,
+      "title": "t", "titleTextProcessor": "tex"
+    },
+    {
+      "orient": "left", "scale": "y", "tickCount": 2,
+      "title": "y", "titleTextProcessor": "default",
+      "labelTextProcessor": {"signal": "labelProcessor"},
+      "encode": {
+        "labels": {
+          "update": {"text": {"signal": "'\\\\frac{' + datum.value * 10 + '}{10}'"}}
+        }
+      }
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color", "title": "\\lambda", "labelTextProcessor": "tex",
+      "encode": {
+        "labels": {
+          "update": {"text": {"signal": "'\\\\lambda = ' + datum.value"}}
+        }
+      }
+    },
+    {
+      "size": "size", "title": "y", "labelTextProcessor": "tex",
+      "encode": {
+        "labels": {"update": {"textSelectable": {"value": true}}}
+      }
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "t"},
+          "y": {"scale": "y", "field": "y"},
+          "fill": {"scale": "color", "field": "lambda"},
+          "size": {"scale": "size", "field": "y"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {"data": "table"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "t"},
+          "y": {"scale": "y", "field": "y"},
+          "dx": {"value": 6},
+          "baseline": {"value": "middle"},
+          "text": {"signal": "'y_{' + datum.t + '}'"},
+          "textProcessor": {"signal": "datum.lambda === 1 ? 'tex' : 'default'"}
+        }
+      }
+    }
+  ]
+}
