@@ -99,3 +99,30 @@ tape('KDE computes unnormalized kernel density estimates', t => {
 
   t.end();
 });
+
+tape('KDE ignores null values', t => {
+  const valid = [
+    {k:'a', v:1}, {k:'a', v:2}, {k:'a', v:2}, {k:'a', v:3}
+  ];
+  const data = valid.concat([{k:'a', v:null}, {k:'a', v:NaN}]);
+
+  function run(values) {
+    var val = field('v'),
+        df = new Dataflow(),
+        col = df.add(Collect),
+        kde = df.add(KDE, {
+          counts: true,
+          steps: 10,
+          field: val,
+          pulse: col
+        }),
+        out = df.add(Collect, {pulse: kde});
+
+    df.pulse(col, changeset().insert(values)).run();
+    return out.value.map(d => [d.value, d.density]);
+  }
+
+  t.deepEqual(run(data), run(valid));
+
+  t.end();
+});

@@ -1,5 +1,6 @@
 import estimateBandwidth from './bandwidth.js';
 import gaussian from './normal.js';
+import numbers from './numbers.js';
 import {random} from './random.js';
 
 export default function(support, bandwidth) {
@@ -9,8 +10,9 @@ export default function(support, bandwidth) {
   const dist = {
     data(_) {
       if (arguments.length) {
-        support = _;
-        n = _ ? _.length : 0;
+        // ignore null, undefined and NaN values
+        support = _ ? Array.from(numbers(_)) : _;
+        n = support ? support.length : 0;
         return dist.bandwidth(bandwidth);
       } else {
         return support;
