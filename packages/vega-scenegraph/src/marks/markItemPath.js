@@ -3,6 +3,7 @@ import context from '../bound/boundContext.js';
 import {intersectPath} from '../util/intersect.js';
 import {drawAll} from '../util/canvas/draw.js';
 import {pickPath} from '../util/canvas/pick.js';
+import place from '../util/canvas/place.js';
 import {rotateItem} from '../util/svg/transform.js';
 import {DegToRad} from '../util/constants.js';
 
@@ -19,16 +20,11 @@ export default function(type, shape, isect, bound) {
   }
 
   function draw(context, item) {
-    var x = item.x || 0,
-        y = item.y || 0,
-        a = item.angle || 0;
+    var a = (item.angle || 0) * DegToRad;
 
-    context.translate(x, y);
-    if (a) context.rotate(a *= DegToRad);
+    // place the path rather than move the canvas matrix there and back (#4409)
     context.beginPath();
-    shape(context, item);
-    if (a) context.rotate(-a);
-    context.translate(-x, -y);
+    shape(place(context, item.x || 0, item.y || 0, a), item);
   }
 
   return {
