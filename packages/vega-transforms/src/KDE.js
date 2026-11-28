@@ -101,9 +101,10 @@ inherits(KDE, Transform, {
       });
 
       if (this.value) out.rem = this.value;
-      this.value = out.add = out.source = values;
+      this.value = out.add = values;
     }
 
+    out.source = this.value;
     return out;
   }
 });

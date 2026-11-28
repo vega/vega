@@ -75,3 +75,19 @@ tape('Loess adapts bandwidth when too small', t => {
 
   t.end();
 });
+
+tape('Loess keeps its output as the pulse source when nothing changes', t => {
+    const data = [{u: 1, v: 1}, {u: 2, v: 2}, {u: 3, v: 5}];
+
+    var df = new Dataflow(),
+        col = df.add(Collect),
+        reg = df.add(Loess, {x: field('u'), y: field('v'), bandwidth: 1, pulse: col});
+
+    df.pulse(col, changeset().insert(data)).run();
+    const n = reg.value.length;
+    df.pulse(col, changeset()).run();
+    t.equal(reg.pulse.source, reg.value);
+    t.equal(reg.pulse.source.length, n);
+
+    t.end();
+});

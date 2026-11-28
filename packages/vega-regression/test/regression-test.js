@@ -130,3 +130,18 @@ tape('Regression outputs model parameters', t => {
 
   t.end();
 });
+
+tape('Regression keeps its output as the pulse source when nothing changes', t => {
+  var data = [0, 1, 2, 3].map(x => ({x: x, y: 1 + x*x})),
+      df = new Dataflow(),
+      col = df.add(Collect),
+      reg = df.add(Regression, {method: 'quad', x: field('x'), y: field('y'), pulse: col});
+
+  df.pulse(col, changeset().insert(data)).run();
+  const n = reg.value.length;
+  df.pulse(col, changeset()).run();
+  t.equal(reg.pulse.source, reg.value);
+  t.equal(reg.pulse.source.length, n);
+
+  t.end();
+});
