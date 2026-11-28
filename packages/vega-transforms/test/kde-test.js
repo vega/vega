@@ -99,3 +99,19 @@ tape('KDE computes unnormalized kernel density estimates', t => {
 
   t.end();
 });
+
+tape('KDE keeps its output as the pulse source when nothing changes', t => {
+  const data = [{v:1}, {v:2}, {v:2}, {v:3}];
+
+  var df = new Dataflow(),
+      col = df.add(Collect),
+      kde = df.add(KDE, {steps: 10, field: field('v'), pulse: col});
+
+  df.pulse(col, changeset().insert(data)).run();
+  const n = kde.value.length;
+  df.pulse(col, changeset()).run();
+  t.equal(kde.pulse.source, kde.value);
+  t.equal(kde.pulse.source.length, n);
+
+  t.end();
+});
